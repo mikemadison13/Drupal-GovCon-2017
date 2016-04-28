@@ -1,0 +1,15 @@
+name = COD Sponsors: Session integration
+description = Sponsorship features for session nodes
+core = 7.x
+package = COD
+project = cod_support
+dependencies[] = cod_sponsors
+dependencies[] = cod_session
+dependencies[] = ctools
+dependencies[] = entityreference
+dependencies[] = features
+dependencies[] = options
+dependencies[] = text
+features[features_api][] = api:2
+features[field_base][] = field_related_sponsor
+features[field_instance][] = node-schedule_item-field_related_sponsor

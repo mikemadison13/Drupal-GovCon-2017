@@ -1,0 +1,6 @@
+name = Commerce Coupon Date
+description = Set a valid date range for coupons
+core = 7.x
+
+dependencies[] = commerce_coupon
+dependencies[] = date_popup

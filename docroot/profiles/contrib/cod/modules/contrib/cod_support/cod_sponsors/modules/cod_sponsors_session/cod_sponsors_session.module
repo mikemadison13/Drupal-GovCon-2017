@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the cod_sponsors_session feature.
+ */
+
+include_once 'cod_sponsors_session.features.inc';

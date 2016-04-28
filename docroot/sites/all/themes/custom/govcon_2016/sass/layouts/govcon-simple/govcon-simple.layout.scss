@@ -1,0 +1,707 @@
+/*******************************************************************************
+ * simple.layout.scss
+ *
+ * Styling of the "simple" layout demonstrating the Compass grid extension Susy
+ * and building mobile first layouts.
+ ******************************************************************************/
+
+@import '../../../node_modules/susy/sass/susy';
+@import '../../../node_modules/breakpoint-sass/stylesheets/breakpoint';
+
+
+// Susy Variables
+ 
+
+// Set consistent vertical and horizontal spacing units.
+$vert-spacing-unit: 20px;
+$horz-spacing-unit: 1em;
+
+// Define Susy grid variables mobile first.
+$total-columns: 4;
+$column-width: 4em;
+$gutter-width: $horz-spacing-unit;
+$grid-padding: 5px;
+
+$container-style: magic;
+$container-width: 1200px;
+
+// Susy Media Layouts @see http://susy.oddbird.net/guides/reference/#ref-media-layouts
+$tab: 44em 12; // At 44em use 12 columns.
+$desk: 70em 16; // At 70em use 16 columns.
+
+$susy: (
+  // the basics
+  columns: $total-columns,
+  gutters: $gutter-width / $column-width,
+  column-width: $column-width,
+
+  // advanced
+  container: $container-width,
+  math: if($container-style == magic, fluid, $container-style),
+);
+
+.l-header,
+.l-main,
+.l-footer {
+  @include container(); // Define these elements as the grid containers.
+  margin-bottom: $vert-spacing-unit;
+}
+
+.l-region--highlighted,
+.l-region--help,
+.l-region--sidebar-first,
+.l-region--sidebar-second {
+  margin-bottom: $vert-spacing-unit;
+}
+
+
+
+// Site Colors
+// rgba(4,75,118,1) // Blue
+// rgba(68,91,73,1) // Green
+// rgba(224,126,39,1) // Orange
+// rgba(210,195,179,1) // Tan
+// rgb(80,80,80) // Dark Gray
+
+
+// General Typography
+body {
+  background: rgba(210,195,179,1);
+  background: rgba(68,91,73,1);
+  background: rgba(210,195,179,1) url(/sites/default/files/gc-wave-background-grad.svg) top no-repeat;
+  background-size: 100% auto;
+  padding: 0;
+  color: rgb(80,80,80);
+  font-family: 'Alegreya Sans', sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  //font-family: Helvetica, Arial, sans-serif;
+  font-family: 'Playfair Display SC', serif;
+  font-weight: 900;
+  color: rgba(68,91,73,1);
+}
+
+h2 {
+  margin-bottom: 0;
+}
+
+h3 {
+  margin-bottom: 0;
+}
+
+h4 {
+  margin-bottom: 0;
+}
+
+h2 + p,
+h3 + p,
+h3 + ul,
+h3 + ol {
+  margin-top: 0;
+}
+
+h4 + p,
+h4 + ul,
+h4 + ol {
+  margin-top: 0;
+}
+
+a:link,
+a:visited {
+  color: rgba(224,126,39,1);
+  text-decoration: none;
+}
+
+a:hover {
+  color: rgba(68,91,73,1);
+  text-decoration: underline;
+}
+
+
+a.bodybutton:link,
+a.bodybutton:visited {
+  color: rgba(255,255,255,1);
+  text-decoration: none;
+  display: inline-block;
+  background-color: rgba(224,126,39,1);
+  padding: 0.25em 0.5em;
+  border-radius: 0.5em;
+  border: 1px solid rgba(68,91,73,1);
+  margin: 0.5em 0;
+
+}
+
+a.bodybutton:hover {
+  color: rgba(255,255,255,1);
+  text-decoration: none;
+  background-color: rgba(68,91,73,1);
+
+}
+
+// End General Typogrpahy
+
+
+.navwrapper {
+  background: rgba(68,91,73,1);
+}
+
+.l-navigation {
+  background: none; // Overrides COD default
+  color: rgba(255,255,255,1);
+  font-family: 'Playfair Display SC', serif;
+  font-weight: 900;
+  font-size: 1.2em;
+  margin-bottom: 0;
+}
+
+.headerwrapper {
+  //background: rgba(210,195,179,1);  
+}
+
+.l-header {
+  margin-bottom: 0;
+  padding: 0;
+}
+
+
+.l-branding a.site-logo {
+
+}
+
+.l-branding {
+  text-align: center;
+  background: rgba(255,255,255,0.6);
+  //padding: 1em;
+}
+
+.panel-pane.pane-page-logo {
+  display: none; // Hides site logo in mobile view
+}
+
+.panel-pane.pane-page-logo img {
+  width: 10em;
+  padding: 1em;
+}
+
+.panel-pane.pane-page-logo img:hover {
+  opacity: 0.5;
+}
+
+.panel-pane.pane-page-logo {
+  //display: none; // Hides site logo in mobile view
+}
+
+
+.mainwrapper {
+  //background: rgba(210,195,179,1);
+}
+
+.l-main {
+  background: rgba(255,255,255,0.6);
+  margin-bottom: 0;
+}
+
+.l-content {
+  padding: 1em 0;
+}
+
+.l-content p {
+  font-size: 1.2em;
+}
+
+.footerwrapper {
+  background: rgba(68,91,73,1);
+}
+
+.l-footer {
+  margin-bottom: 0;
+  color: rgba(255,255,255,0.7);
+  padding: 1em 0;
+}
+
+.l-footer a:link,
+.lfooter a:visited {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+
+}
+
+.l-footer a:hover {
+  color: rgba(255,255,255,1);
+
+}
+
+.l-footer p {
+  margin: 0 0 0.5em 0;
+}
+
+// Main Navigation Styling
+
+.l-navigation a:link,
+.l-navigation a:visited {
+  text-decoration: none;
+  color: rgba(255,255,255,0.8);
+}
+
+.l-navigation a:hover {
+  color: rgba(255,255,255,1);
+}
+
+.l-navigation ul.menu {
+  margin: 0;
+  text-align: center;
+}
+
+.l-navigation li {
+  list-style-type: none;
+  list-style-image: none;
+  display: inline-block;
+  padding: 0.5em;
+}
+
+.l-region--navigation .menu li {
+  //padding-top: 1em;
+}
+
+// Styling for Mean Menus
+.mean-bar {
+  z-index: 999998;
+
+}
+
+.mean-nav {
+
+}
+
+.mean-container div.mean-bar {
+  background: rgba(68,91,73,1);
+  //background: rgba(68,91,73,1) url(/sites/default/files/govcon-wordmark-rev.svg) 4% center no-repeat;
+  background: rgba(68,91,73,1) url(/sites/default/files/govcon-wordmark-rev.svg) 4% 0.5em no-repeat;
+  background-size: 2.25em;
+}
+
+.mean-container div.mean-bar nav.mean-nav ul.menu li.first.leaf {
+
+}
+
+
+.mean-container div.mean-bar nav.mean-nav ul li,
+.mean-container div.mean-bar nav.mean-nav ul.menu li.leaf {
+  //background: #0f0;
+  background: rgba(68,91,73,1);
+  font-family: 'Playfair Display SC', serif;
+  color: rgba(255,255,255,0.8);
+  font-weight: 900;
+  font-size: 1.2em;
+  list-style-image: none;
+  list-style-type: none;
+  //border-top: 1px solid rgba(255,255,255,0.3);
+  border-bottom: none;
+}
+
+.mean-container div.mean-bar nav.mean-nav ul.menu li.leaf a.active,
+.mean-container div.mean-bar nav.mean-nav ul.menu li.leaf a {
+  text-transform: capitalize;
+}
+
+
+.mean-container div.mean-bar nav.mean-nav ul li a {
+  border-top: 1px solid rgba(255,255,255,0.5);
+  //border-top: 1px solid #f00;
+  border-bottom: none;
+}
+
+
+// This element enables the home link for the site logo in mobile view
+.pane-block-5 {
+  //border: 1px solid #f00;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10em;
+  height: 2.75em;
+  //z-index: 1000000;
+  z-index: 999999;
+}
+
+.header_link {
+  //background: rgba(255,0,0,0.2);
+  min-height: 3em;
+
+}
+
+// Banner Image Area Styling
+.bannerimage {
+  //border: 1px solid #f00;
+  position: relative;
+  margin-bottom: -0.5em;
+}
+
+.view-banner-image picture img {
+  width: 100%;
+}
+
+.bannerimage .views-field.views-field-body .field-content {
+  position: absolute;
+  right: 0;
+  bottom: 10%;
+  left: 0;
+  margin: auto;
+  width: 75%;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 0 0.5em rgba(0,0,0,0.9);
+  text-align: center;
+}
+
+.bannerimage .views-field.views-field-body .field-content a:link,
+.bannerimage .views-field.views-field-body .field-content a:visited {
+  color: rgba(255,255,255,1);
+  border: 2px solid rgba(243,112,33,1);
+  text-shadow: 0 0 0.5em rgba(0,0,0,0.9);
+  background: rgba(243,112,33,0.9);
+  border-radius: 0.25em;
+  padding: 0.25em;
+  font-size: 1.5em;
+  margin: 0.25em;
+  display: inline-block;
+}
+
+.bannerimage .views-field.views-field-body .field-content a:hover {
+  text-decoration: none;
+  border: 2px solid rgba(255,255,255,1);
+  background: rgba(0,91,131,1);
+}
+
+.bannerimage .views-field.views-field-body .field-content a:last-child {
+  margin-top: 0.5em;
+}
+
+.bannerimage h2 {
+  font-size: 12vw;
+  margin-bottom: 0;
+  font-weight: 400;
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: rgba(255,255,255,1);
+}
+
+.bannerimage h3 {
+  font-size: 8vw;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,1);
+
+}
+
+
+
+// End Banner Image Area Styling
+
+// Footer Area Styling
+#footerleft,
+#footerright {
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+}
+
+#footermark {
+  width: 100%;
+  text-align: center;
+  display: block;
+  float: left;
+}
+
+#footermark img {
+  width: 3em;
+  opacity: 0.5;
+}
+
+img.sm-icons {
+  opacity: 0.5;
+  padding: 0 0.5em;
+}
+
+img.sm-icons:hover {
+  opacity: 1;
+}
+// End Footer Area Styling
+
+// Homepage Styling
+
+body.html.front .l-content {
+  padding: 1em 0;
+}
+
+#bannerintro {
+  font-family: 'Playfair Display SC', serif;
+  text-align: center;
+  margin-bottom: 1em;
+  margin-top: 0.5em;
+}
+
+#bannerintro h1 {
+  font-size: 3.5em;
+  line-height: 1.1;
+  margin-bottom: 0;
+  margin-top: 0.25em;
+}
+
+#bannerintro .bannerdate {
+  font-size: 3em;
+  color: rgba(224,126,39,1);
+  font-family: 'Playfair Display SC', serif;
+  font-style: italic;
+  margin: 0 auto;
+
+}
+
+#bannerintro .bannerlocation {
+  font-family: 'Playfair Display SC', serif;
+  color: rgba(68,91,73,1);
+  font-size: 2em;
+  line-height: 1.0;
+  margin: 0 0 0.5em 0;
+
+}
+
+#bannerintro .bannercity {
+  font-family: 'Playfair Display SC', serif;
+  color: rgba(4,75,118,1);
+  font-size: 1.5em;
+  margin-top: 0;
+
+}
+
+#bannerintro p {
+  font-size: 1.4em;
+}
+
+#bannerintro .leadin {
+  font-family: 'Playfair Display SC', serif;
+  color: rgba(68,91,73,1);
+}
+
+#bannerintro img.wordmark {
+  width: 4em;
+}
+
+
+body.html.front .panel-pane.pane-page-title,
+body.html.front .panelizer-view-mode.node.node-full.node-page.node-2 h2 {
+  display: none;
+}
+// End Homepage Styling
+
+
+// Breakpoint Styling Below
+
+/* Clearfix hack */
+.group:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+
+// Image Styling
+img.speaker_img {
+  border: 6px solid rgba(68,91,73,1);
+  border-radius: 50%;
+  //float: right;
+  //margin: 0 0 0 1em;
+  margin: 0 auto;
+  display: block; /* To center for mobile */
+  text-align: center; /* To center for mobile */
+}
+
+// End Image Styling
+
+@include breakpoint($tab) { // At a given Susy Media Layout, use a given amount of columns.
+  .l-header,
+  .l-main,
+  .l-footer {
+    max-width: container(12); // Reset only the container width (elements have already been declared as containers).
+  }
+
+
+  // Site Logo Display
+  .panel-pane.pane-page-logo {
+    display: block; // Hides site logo in mobile view
+  }
+
+  // Homepage elements
+      body.html.front .l-content {
+        padding: 1em 0;
+      }
+
+
+      img.speaker_img {
+      float: right;
+      margin: 0 0 0 1em;
+      display: inline; /* To center for mobile */
+      text-align: right; /* To center for mobile */
+    }
+
+  // End Homepage Elements
+
+
+  // End Site Logo Display
+
+  // Navigation Styling
+  // This element enables the home link for the site logo in mobile view
+  .pane-block-5 {
+    display: none;
+  }
+
+  // End Navigation Styling
+
+  // Banner Area Styling
+  .bannerimage h2 {
+    font-size: 12vw;
+  }
+
+  .bannerimage h3 {
+    font-size: 7vw;
+
+  }
+
+  .bannerimage a:link {
+    margin: 0.5em;
+  }
+
+  // End Banner Area Styling
+
+
+  // Footer Area Styling
+      #footerleft {
+      width: 45%;
+      display: block;
+      float: left;
+      text-align: left;
+    }
+
+    #footerright {
+      width: 45%;
+      display: block;
+      float: right;
+      text-align: right;
+    }
+
+    #footermark {
+      width: 100%;
+      text-align: center;
+      display: block;
+    }
+
+
+  // End Footer Area Styling
+
+
+  .l-branding {
+    @include span(4 of 12); // Span 4 out of 12 columns.
+    @include span(12 of 12);
+  }
+  .l-region--header{
+    @include span(8 of 12 last); // Span the last (omega) 8 columns of 12.
+    @include span(12 of 12);
+  }
+  .l-region--navigation {
+    clear: both;
+  }
+
+  .has-sidebar-first,
+  .has-sidebar-second,
+  .has-two-sidebars {
+    .l-content {
+      @include span(8 of 12); // Span 8 out of 12 columns.
+    }
+    .l-region--sidebar-first,
+    .l-region--sidebar-second {
+      @include span(4 of 12 last); // Span the last (omega) 4 columns of 12.
+    }
+    .l-region--sidebar-second {
+      clear: right;
+    }
+  }
+}
+
+@include breakpoint($desk) {
+  .l-header,
+  .l-main,
+  .l-footer {
+    max-width: container(12); // Reset only the container width (elements have already been declared as containers).
+  }
+
+
+  // Banner Image Styling
+  .bannerimage h2 {
+    font-size: 8vw;
+    font-size: 4vw;
+
+  }
+
+  .bannerimage h3 {
+    font-size: 3vw;   
+  }
+
+
+  // End Banner Image Styling
+
+  // Homepage Elements
+      body.html.front .l-content {
+      padding: 1em 10em;
+    }
+
+  // End Homepage Elements
+
+  .l-branding {
+    @include span(6 of 16); // Span 6 out of 16 columns.
+    @include span(16 of 16);
+  }
+  .l-region--header{
+    @include span(10 of 16 last); // Span the last (omega) 10 columns of 16.
+    @include span(16 of 16);
+  }
+
+  .has-sidebar-first {
+    .l-content {
+      @include span(12 of 16 last); // Span the last (omega) 12 columns of 16.
+    }
+    .l-region--sidebar-first {
+      @include span(4 of 16); // Span 4 out of 16 columns.
+    }
+  }
+  .has-sidebar-second {
+    .l-content {
+      @include span(12 of 16); // Span 12 out of 16 columns.
+    }
+    .l-region--sidebar-second {
+      @include span(4 of 16 last); // Span the last (omega) 4 columns of 16.
+      clear: none;
+    }
+  }
+
+  .has-two-sidebars {
+    .l-content {
+      @include span(8 of 16); // Span 8 out of 16 columns.
+      @include push(4 of 16);  // Push element by adding 4 out of 16 columns of left margin.
+    }
+    .l-region--sidebar-first,
+    .l-region--sidebar-second {
+      @include span(4 of 16); // Span 4 out of 16 columns.
+    }
+    .l-region--sidebar-first {
+      @include pull(12 of 16); // Pull element by adding 12 out of 16 columns of negative left margin.
+    }
+    .l-region--sidebar-second {
+      @include last; // This element spans the last (omega) column.
+      clear: none;
+    }
+  }
+}

@@ -1,0 +1,241 @@
+<?php
+
+/**
+ * @file
+ * Installs necessary fields for conference integration.
+ */
+
+/**
+ * Field setup
+ */
+function cod_commerce_install_helper() {
+  $instances_to_update = array();
+  // Create instances for above fields.
+  $instances = field_info_instances();
+
+  field_info_cache_clear();
+  $fields = field_info_fields();
+
+  if (empty($fields['commerce_discount_conference'])) {
+    $field = array(
+      'entity_types' => array('commerce_discount'),
+      'field_name' => 'commerce_discount_conference',
+      'type' => 'entityreference',
+      'locked' => TRUE,
+      'cardinality' => 1,
+      'settings' => array(
+        'handler' => 'base',
+        'handler_settings' => array(
+          'behaviors' => array(
+            'views-select-list' => array(
+              'status' => 0,
+            ),
+          ),
+          'sort' => array(
+            'direction' => 'ASC',
+            'property' => 'title',
+            'type' => 'property',
+          ),
+          'target_bundles' => array(
+            'event' => 'event',
+          ),
+        ),
+        'handler_submit' => 'Change handler',
+        'target_type' => 'node',
+      ),
+    );
+    field_create_field($field);
+  }
+  foreach (array('product_discount', 'order_discount') as $type) {
+    if (empty($instances['commerce_discount'][$type]['commerce_discount_conference'])) {
+      $instance = array(
+        'field_name' => 'commerce_discount_conference',
+        'entity_type' => 'commerce_discount',
+        'bundle' => $type,
+        'default_value' => NULL,
+        'default_value_function' => 'entityreference_prepopulate_field_default_value',
+        'deleted' => 0,
+        'description' => '',
+        'display' => array(
+          'default' => array(
+            'label' => 'above',
+            'module' => 'entityreference',
+            'settings' => array(
+              'link' => FALSE,
+            ),
+            'type' => 'entityreference_label',
+            'weight' => 0,
+          ),
+        ),
+        'label' => 'Conference',
+        'required' => TRUE,
+        'settings' => array(
+          'behaviors' => array(
+            'prepopulate' => array(
+              'action' => 'hide',
+              'action_on_edit' => 1,
+              'fallback' => 'redirect',
+              'providers' => array(
+                'og_context' => 1,
+              ),
+              'status' => 1,
+            ),
+          ),
+        ),
+        'widget' => array(
+          'active' => 0,
+          'module' => 'options',
+          'settings' => array(),
+          'type' => 'options_select',
+          'weight' => 8,
+        ),
+      );
+      field_create_instance($instance);
+
+    }
+  }
+
+  $field_types = array(
+    'commerce_order' => array('commerce_order'),
+  );
+  foreach ($field_types AS $entity_type => $bundle) {
+    foreach ($bundle AS $type) {
+      if (empty($instances[$entity_type][$type][OG_AUDIENCE_FIELD])) {
+        $instances_to_update[$entity_type][$type] = TRUE;
+        og_create_field(OG_AUDIENCE_FIELD, $entity_type, $type);
+      }
+    }
+  }
+  return $instances_to_update;
+}
+
+/*
+ * Implements hook_install().
+ */
+function cod_commerce_install() {
+  $instances_to_update = cod_commerce_install_helper();
+  $revert = array(
+    'cod_commerce' => array('field_instance'),
+  );
+  features_revert($revert);
+  og_invalidate_cache();
+  entity_property_info_cache_clear();
+
+  if (!empty($instances_to_update)) {
+    // Reset the schema version, so our update hooks can be processed after installation.
+    drupal_set_installed_schema_version('cod_commerce', '7001');
+    $message = t("Please run update.php or updb to migrate orders to conferences");
+    if (function_exists('drush_log')) {
+      drush_log($message, 'warning');
+    }
+    else {
+      drupal_set_message($message, 'warning');
+    }
+  }
+}
+
+function cod_commerce_uninstall() {
+  commerce_delete_field('commerce_conference');
+
+  foreach (array('product_discount', 'order_discount') as $type) {
+    $instance = array(
+      'field_name' => 'commerce_discount_conference',
+      'entity_type' => 'commerce_discount',
+      'bundle' => $type,
+      'label' => t('Related Conference'),
+      'required' => TRUE,
+      'widget' => array(
+        'type' => 'entityreference_autocomplete',
+        'weight' => 10
+      ),
+    );
+    field_delete_instance($instance);
+  }
+}
+
+/**
+ * Install necessary fields that weren't included in the original schema
+ */
+function cod_commerce_update_7001(&$sandbox) {
+  cod_commerce_install_helper();
+  $revert = array(
+    'cod_commerce' => array('field_instance', 'views_view', 'page_manager_pages'),
+  );
+  features_revert($revert);
+  og_invalidate_cache();
+  entity_property_info_cache_clear();
+}
+
+/**
+ * Migrate existing orders to have a conference if products include them.
+ */
+function cod_commerce_update_7002(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+     $sandbox['progress'] = 0;
+     $sandbox['current_oid'] = 0;
+     $sandbox['step'] = 1000;
+     $sandbox['max'] = db_select('commerce_order', 'o')
+       ->fields('o')
+       ->countQuery()
+       ->execute()
+       ->fetchField();
+   }
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'commerce_order')
+    ->entityCondition('bundle', 'commerce_order')
+    ->propertyOrderBy('created', 'DESC')
+    ->range($sandbox['current_oid'], $sandbox['step']);
+  $result = $query->execute();
+  $order_ids = array_keys($result['commerce_order']);
+  $orders = commerce_order_load_multiple($order_ids);
+
+  foreach ($orders as $order) {
+    //load each order as an entity
+    $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+    $conference = '';
+    foreach ($order_wrapper->commerce_line_items as $line_item_wrapper) {
+      //check if the order contains this node's product
+      $product = $line_item_wrapper->commerce_product;
+      // Find first line item that is a cod_paid_event and return the conference.
+      if ($product->getBundle() == 'cod_paid_event' || $product->getBundle() == 'sponsor') {
+        if (!isset($product->og_group_ref)) {
+          throw new DrupalUpdateException(t('Paid events and/or sponsors are not attached to a conference. Please add og_group_ref fields to these products before updating.'));
+        }
+        $conference = $product->og_group_ref->value();
+        break;
+      }
+    }
+    if (!empty($conference)) {
+      $order_wrapper->og_group_ref->set(array($conference[0]->nid));
+      $order_wrapper->save();
+    }
+
+    $sandbox['progress']++;
+  }
+
+  $sandbox['current_oid'] += $sandbox['step'];
+
+
+  if ($sandbox['progress'] < $sandbox['max']) {
+    $sandbox['#finished'] = $sandbox['progress'] / $sandbox['max'];
+  }
+  else {
+    $sandbox['#finished'] = 1;
+  }
+  // Show progress message if in drush.
+  if (function_exists('drush_log')) {
+    drush_log(t('Adding conferences to orders. @percent% complete.', array('@percent' => number_format(($sandbox['#finished'] * 100), 2))), 'success');
+  }
+}
+
+/**
+ * Add currency field to conferences.
+ */
+function cod_commerce_update_7003(&$sandbox) {
+  module_enable(array('commerce_currency'));
+  $revert = array(
+    'cod_commerce' => array('field_base', 'field_instance'),
+  );
+  features_revert($revert);
+}

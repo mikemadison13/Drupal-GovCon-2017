@@ -1,0 +1,11 @@
+name = COD Session Video
+core = 7.x
+package = COD
+dependencies[] = features
+dependencies[] = file
+dependencies[] = media
+dependencies[] = media_internet
+dependencies[] = oembed
+features[features_api][] = api:2
+features[field_base][] = field_session_video
+features[field_instance][] = node-session-field_session_video

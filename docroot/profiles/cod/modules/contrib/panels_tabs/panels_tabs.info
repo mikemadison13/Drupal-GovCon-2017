@@ -1,0 +1,5 @@
+name = Panels tabs
+description = Show panel panes in a region as tabs.
+core = 7.x
+package = Panels
+dependencies[] = panels

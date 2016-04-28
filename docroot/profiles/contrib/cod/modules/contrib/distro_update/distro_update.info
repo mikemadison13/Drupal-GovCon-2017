@@ -1,0 +1,6 @@
+name = Distribution Update Status Manager
+description = Provides an alternative Update Manager interface to limit status updates for modules/themes managed by a distribution's or module's .make file.
+core = 7.x
+dependencies[] = ctools
+dependencies[] = update
+configure = admin/reports/updates/settings
