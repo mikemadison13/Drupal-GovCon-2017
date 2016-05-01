@@ -1,0 +1,10 @@
+name = Commerce Billy Mail
+description = Mailing functionality for commerce billy. Allows to send out invoices via email using rules.
+package = Commerce (contrib)
+core = 7.x
+version = 1.0
+
+dependencies[] = rules
+dependencies[] = commerce_billy
+dependencies[] = commerce_billy_pdf
+dependencies[] = token

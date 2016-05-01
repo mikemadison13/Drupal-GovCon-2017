@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the ticket canceled feature.
+ */
+
+include_once 'cod_registration_email.features.inc';

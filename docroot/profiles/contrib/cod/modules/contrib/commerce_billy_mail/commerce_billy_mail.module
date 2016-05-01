@@ -1,0 +1,294 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function commerce_billy_mail_menu() {
+  $items['admin/commerce/config/billy-invoice/billy-mail'] = array(
+    'title' => 'Billy Mail',
+    'description' => 'Configure Commerce Billy Mail settings.',
+    'access arguments' => array('administer site configuration'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('commerce_billy_mail_settings_form'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'commerce_billy_mail.admin.inc');
+  $items['admin/commerce/orders/%commerce_order/resend-pdf-invoice'] = array(
+    'title' => 'Resend invoice mail',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('commerce_billy_mail_resend_form', 3),
+    'access callback' => 'commerce_billy_mail_resend_access',
+    'access arguments' => array(3),
+    'type' => MENU_LOCAL_ACTION,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+    'weight' => 10,
+    'file' => 'commerce_billy_mail.module',
+    'file path' => drupal_get_path('module', 'commerce_billy_mail') . '/',
+    // We have to set the base theme here, otherwise the admin page
+    // will wrongly inherit the admin theme for theming.
+    'theme callback' => 'commerce_billy_mail_custom_theme',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ *
+ * @return array
+ */
+function commerce_billy_mail_permission() {
+  return array(
+    'commerce_billy_mail_resend_invoice_mail' => array(
+      'title' => t('Resend invoice mail'),
+      'description' => t('Resend invoice mails from the order details view. Requires further conditions besides this permission (e.g. order state & order access).'),
+    ),
+  );
+}
+
+/**
+ * Access callback for the resending the invoice mail.
+ *
+ * Deny access if order is not in status 'invoiced' or the current user does not
+ * have view access to the order itself.
+ * Furthermore admins can access 'canceled' orders (credit memo).
+ */
+function commerce_billy_mail_resend_access($order) {
+  return commerce_billy_pdf_view_access($order) && user_access('commerce_billy_mail_resend_invoice_mail');
+}
+
+/**
+ * Helper function to send the order mail.
+ *
+ * @global stdClass $language
+ * @param stdClass $order
+ * @return boolean
+ */
+function _commerce_billy_mail_send_order_invoice($order) {
+  global $language;
+  if (empty($order) || !is_object($order)) {
+    drupal_set_message('Given order was empty or no object. No invoice was sent!', 'error');
+    watchdog('commerce_billy_mail', 'Given order was empty or no object. No invoice was sent!', WATCHDOG_ERROR);
+    return false;
+  }
+
+  $order_account_uid = $order->uid;
+  $order_account = user_load($order_account_uid);
+  // Get the order owners language.
+  $order_account_language = user_preferred_language($order_account);
+  // Save the site language temporarily.
+  // IMPORTANT: Because the site language may not match the order user language (cron runs e.g.) and we have no other chance
+  // we temporarily change the global language here until there is a better solution.
+  // TODO: This might change the language if the chain breaks between this and the reset.
+  $temp_language = $language;
+  $language = $order_account_language;
+
+  if (module_exists('i18n_variable')) {
+    // If i18n_variable module is used:
+    // Get the text variables directly and not from the cache, because the language might not match the current $language here.
+    $subject = i18n_variable_get('commerce_billy_mail_subject', $language->language, '');
+    $body = i18n_variable_get('commerce_billy_mail_body', $language->language, ''); //body text in HTML format
+  }
+  else {
+    // Default variable get.
+    $subject = variable_get('commerce_billy_mail_subject', '');
+    $body = variable_get('commerce_billy_mail_body', ''); //body text in HTML format
+  }
+
+  // Attachments:
+  if (variable_get('commerce_billy_mail_attach_pdf_invoice', TRUE)) {
+    $attachments = _commerce_billy_mail_get_attachments($order);
+  }
+  else {
+    $attachments = array();
+  }
+
+  // Replace tokens
+  $subject = token_replace($subject, array('user' => $order_account, 'commerce_order' => $order), array('language' => $order_account_language, 'clear' => TRUE));
+  $body = token_replace($body, array('user' => $order_account, 'commerce_order' => $order), array('language' => $order_account_language, 'clear' => TRUE));
+
+  // Set values in mail:
+  $plaintext = variable_get('commerce_billy_mail_plaintext', FALSE);
+  $params = array(
+    'subject' => $subject,
+    'body' => $body,
+    'plain' => !empty($plaintext),
+    'attachments' => $attachments,
+    'headers' => array(
+      'Cc' => trim(variable_get('commerce_billy_mail_cc', '')),
+      'Bcc' => trim(variable_get('commerce_billy_mail_bcc', '')),
+    ),
+    'context' => array(
+      'subject' => $subject,
+      'body' => $body,
+      'order' => $order,
+    ),
+  );
+  // Remove the Bcc and Cc headers if they are empty, else this will crash phpmailer and maybe other modules.
+  if (empty($params['headers']['Cc'])) {
+    unset($params['headers']['Cc']);
+  }
+  if (empty($params['headers']['Bcc'])) {
+    unset($params['headers']['Bcc']);
+  }
+
+  $from = variable_get('commerce_billy_mail_from', variable_get('site_mail', ini_get('sendmail_from')));
+  $mailkey = 'commerce_billy_send_order_invoice';
+  $send = true;
+  // Send!
+  $message = drupal_mail('commerce_billy_mail', $mailkey, $order->mail, $order_account_language, $params, $from, $send);
+
+  // Reset the global language to its initial value.
+  $language = $temp_language;
+  if (!$message['result']) {
+    watchdog('commerce_billy_mail', 'Error sending e-mail (from %from to %to).', array('%from' => $message['from'], '%to' => $message['to']), WATCHDOG_ERROR);
+    drupal_set_message(t('Unable to send e-mail. Contact the site administrator if the problem persists.'), 'error');
+    return FALSE;
+  }
+  return TRUE;
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * @param String $key
+ * @param array $message
+ * @param array $params
+ */
+function commerce_billy_mail_mail($key, &$message, $params) {
+  switch ($key) {
+    default:
+      if (isset($params['subject'])) {
+        $message['subject'] = $params['subject'];
+      }
+      if (isset($params['body'])) {
+        $message['body'][] = $params['body'];
+      }
+      if (isset($params['headers']) && is_array($params['headers'])) {
+        $message['headers'] = array_merge($message['headers'], $params['headers']);
+      }
+      if (isset($params['plain'])) {
+        $message['plain'] = $params['plain'];
+      }
+      if (isset($params['attachments'])) {
+        $message['attachments'][] = $params['attachments'];
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_custom_theme().
+ */
+function commerce_billy_mail_custom_theme() {
+  // We have to set the default theme by hard here, otherwise the pdf
+  // theming will be broken by admin theme in some cases.
+  // Mailsystem is no helper here, because it doesn't act on the PDF.
+  // Hint: This is not enough. Furthermore this function has to be set as
+  // "theme callback" in hook_menu for the resend functionality!
+  return variable_get('theme_default');
+}
+
+/**
+ * Returns the mail attachment(s).
+ *
+ * @param stdClass $order
+ * @return array
+ */
+function _commerce_billy_mail_get_attachments($order) {
+  $attachments = array();
+
+  list($html, $filename) = commerce_billy_mail_pdf_prepare($order);
+  $pdf_filecontent = commerce_billy_mail_pdf_create($html, $filename);
+  $filemime = 'application/pdf';
+  $attachments[] = array(
+    'filecontent' => $pdf_filecontent, // we use a dynamically created file.
+    'filename' => $filename, // can use any alias name here
+    'name' => $filename, // required for mandril and other libraries.
+    'filemime' => $filemime, // mime file type
+    'type' => $filemime, // required for mandril and other libraries
+    'list' => TRUE,
+  );
+
+  return $attachments;
+}
+
+/**
+ * Helper function to prepare the order mail.
+ * Returns its components as array.
+ *
+ * @param stdClass $order
+ * @return array
+ */
+function commerce_billy_mail_pdf_prepare($order) {
+  // Currently a copy of the first part of
+  // See: https://drupal.org/node/2099283
+  if (module_exists('commerce_billy_pdf')) {
+    module_load_include('module', 'commerce_billy_pdf');
+  }
+  else {
+    drupal_set_message('PDF email attachment could not be createt, because commerce_billy_pdf is disabled.', 'error');
+  }
+  $html = commerce_billy_pdf_html($order);
+
+  // TODO: Better use $filename = commerce_billy_pdf_gen_filename($order); when issue #2093643 is resolved in commerce_billy.
+  $filename = preg_replace('/[^a-z0-9]/', '_', drupal_strtolower('invoice_' . $order->order_number)) . '.pdf';
+  if (module_exists('transliteration')) {
+    $filename = transliteration_clean_filename($filename);
+  }
+  return array(
+    $html,
+    $filename,
+  );
+}
+
+/**
+ * Transforms HTML to PDF and returns its file contents.
+ *
+ * @param $html The HTML Content of the pdf.
+ * @param $filename The name of the PDF file to use.
+ * @return string The PDF file content (inline).
+ */
+function commerce_billy_mail_pdf_create($html, $filename) {
+  $dompdf = commerce_billy_pdf_prepare_dompdf($html, $filename);
+  if (!is_object($dompdf)) {
+    watchdog('commerce_billy_mail', 'PDF document could not be created. Check commerce_billy_pdf configuration to ensury DOMPDF is installed correctly.', WATCHDOG_ERROR);
+  }
+
+  $filecontent = $dompdf->output();
+
+  return $filecontent;
+}
+
+/**
+ * Form callback for pdf invoice mail resend.
+ *
+ * We are using a form to prevent CSRF for the resend link.
+ *
+ * @param StdObject $order Commerce Order object
+ */
+function commerce_billy_mail_resend_form($form, &$form_state, $order) {
+  $form = array();
+  $form['order'] = array(
+    '#type' => 'value',
+    '#value' => $order,
+  );
+  $form['send'] = array(
+    '#type' => 'submit',
+    '#value' => t('Resend invoice now'),
+  );
+  return $form;
+}
+
+/**
+ * Form submit handler for sending the invoice.
+ */
+function commerce_billy_mail_resend_form_submit($form, &$form_state) {
+  $order = $form_state['values']['order'];
+  $success = _commerce_billy_mail_send_order_invoice($order);
+  if ($success) {
+    drupal_set_message(t('The PDF invoice has been resent successfully.'), 'status');
+  }
+  else {
+    drupal_set_message(t('The PDF could not be resent.'), 'error');
+  }
+  $form_state['redirect'] = 'admin/commerce/orders/' . $order->order_id;
+}

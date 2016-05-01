@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Installs necessary fields for conference integration.
+ */
+
+/**
+ * Field setup
+ */
+
+/**
+ * Enable rules for billy
+ */
+function cod_billy_update_7001() {
+  $revert = array(
+    'cod_billy' => array('rules_config'),
+  );
+  features_revert($revert);
+}
