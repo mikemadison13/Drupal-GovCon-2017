@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the DGC Breakpoints feature.
+ */
+
+include_once 'dgc_breakpoints.features.inc';

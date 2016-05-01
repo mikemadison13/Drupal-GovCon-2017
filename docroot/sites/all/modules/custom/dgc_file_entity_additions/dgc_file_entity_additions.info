@@ -1,0 +1,10 @@
+name = DGC File Entity Additions
+description = Adding SVG to allowed content types.
+core = 7.x
+package = DGC
+version = 7.x-1.0
+dependencies[] = ctools
+dependencies[] = strongarm
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:2
+features[variable][] = file_entity_default_allowed_extensions

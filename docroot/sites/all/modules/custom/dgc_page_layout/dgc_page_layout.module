@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the DGC Page Layout feature.
+ */
+
+include_once 'dgc_page_layout.features.inc';

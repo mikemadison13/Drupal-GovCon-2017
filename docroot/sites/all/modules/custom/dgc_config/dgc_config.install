@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * DGC Config installation functions.
+ */
+
+/*################################################
+ *
+ * UPDATE HOOK - using code to update configuration
+ * settings in your site.
+ * Make your configuration changes in local development enviroment and
+ * then use UPDATE HOOKS to deploy these changes to other environments.
+ *
+ * Some examples follow
+ *
+ *#################################################
+ */
+
+ /*
+ * **********************************
+ * Example - how to enable a module
+ * **********************************
+ * Enable module foo
+function dgc_config_update_7001(){
+  module_enable(array('foo'));
+}
+ */
+ /*
+ * **********************************
+ * Example - how to disable a module
+ * **********************************
+ * Disable module foo
+function dgc_config_update_7002(){
+  module_disable(array('foo'));
+}
+ */
+/*
+ * **********************************
+ * Example - how to set a variable
+ * **********************************
+ * Set a variable foo to value 0
+function dgc_config_update_7003() {
+  variable_set('foo', 0);
+}
+ */
+
+/**
+ * Enables main configuration for dgc site.
+ */
+function dgc_config_install() {
+  // Enable the correct theme for 2016.
+  theme_enable(array('govcon_2016'));
+  // Set the 2016 theme to the site default theme.
+  variable_set('theme_default', 'govcon_2016');
+
+  // Create custom menu for 2016 site.
+  $menu = array();
+  $menu['menu_name'] = "main-menu-govcon-2016";
+  $menu['title'] = "Main Menu Govcon 2016";
+  $menu['description'] = "The <em>Main Menu Govcon 2016</em> menu contains links for that conference.";
+  menu_save($menu);
+
+  // Enable feature modules with layout and other config.
+  module_enable(array(
+    'dgc_breakpoints',
+    'dgc_banner_image',
+    'dgc_banner_image_content',
+    'dgc_file_entity_additions',
+    'dgc_location_maps',
+    'dgc_location_of_interest',
+    'dgc_page_layout',
+    'dgc_navigation',
+  ));
+}

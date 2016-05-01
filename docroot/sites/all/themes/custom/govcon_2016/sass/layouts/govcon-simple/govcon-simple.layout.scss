@@ -26,8 +26,8 @@ $container-style: magic;
 $container-width: 1200px;
 
 // Susy Media Layouts @see http://susy.oddbird.net/guides/reference/#ref-media-layouts
-$tab: 44em 12; // At 44em use 12 columns.
-$desk: 70em 16; // At 70em use 16 columns.
+$tab: 44em; // At 44em use 12 columns.
+$desk: 70em; // At 70em use 16 columns.
 
 $susy: (
   // the basics
@@ -68,7 +68,7 @@ $susy: (
 body {
   background: rgba(210,195,179,1);
   background: rgba(68,91,73,1);
-  background: rgba(210,195,179,1) url(/sites/default/files/gc-wave-background-grad.svg) top no-repeat;
+  background: rgba(210,195,179,1) url(../../../img/gc-wave-background-grad.svg) top no-repeat;
   background-size: 100% auto;
   padding: 0;
   color: rgb(80,80,80);
@@ -190,11 +190,6 @@ a.bodybutton:hover {
   opacity: 0.5;
 }
 
-.panel-pane.pane-page-logo {
-  //display: none; // Hides site logo in mobile view
-}
-
-
 .mainwrapper {
   //background: rgba(210,195,179,1);
 }
@@ -278,8 +273,7 @@ a.bodybutton:hover {
 
 .mean-container div.mean-bar {
   background: rgba(68,91,73,1);
-  //background: rgba(68,91,73,1) url(/sites/default/files/govcon-wordmark-rev.svg) 4% center no-repeat;
-  background: rgba(68,91,73,1) url(/sites/default/files/govcon-wordmark-rev.svg) 4% 0.5em no-repeat;
+  background: rgba(68,91,73,1) url(../../../img/govcon-wordmark-rev.svg) 4% 0.5em no-repeat;
   background-size: 2.25em;
 }
 

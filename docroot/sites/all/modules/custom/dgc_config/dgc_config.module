@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * dgc_config.module
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function dgc_config_menu() {
+  $items = array();
+  return $items;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function dgc_config_form_alter() {
+
+}

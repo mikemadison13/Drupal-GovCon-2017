@@ -11,3 +11,9 @@
     }
   }
 }
+
+// Override some obnoxious Orion styling.
+.not-front .l-content,
+.not-front .l-region--sidebar .block {
+  background-color: transparent;
+}
