@@ -1,4 +1,0 @@
-name = Commerce Coupon User
-description = Associate coupons with specific users
-core = 7.x
-dependencies[] = commerce_coupon

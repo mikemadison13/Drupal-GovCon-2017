@@ -1,6 +1,0 @@
-name = Basic Registration States
-description = Provides sample ticket registration states.
-package = Ticket
-core = 7.x
-
-dependencies[] = ticket_state

@@ -1,7 +1,0 @@
-name = OAuth2
-description = Extends OAuth functionality with Oauth2
-package = "OAuth"
-core = 7.x
-
-files[] = lib/DrupalOAuth2Client.inc
-
