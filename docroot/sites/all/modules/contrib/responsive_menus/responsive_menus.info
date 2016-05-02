@@ -1,5 +1,0 @@
-name = Responsive Menus
-description = Responsify any menu using CSS Selectors.
-package = User interface
-core = 7.x
-configure = admin/config/user-interface/responsive_menus

@@ -21,46 +21,35 @@
  *
  * Aliases are defined in an associative array named $sites. The array is
  * written in the format: '<port>.<domain>.<path>' => 'directory'. As an
- * example, to map www.drupal.org:8080/mysite/test to the configuration
+ * example, to map http://www.drupal.org:8080/mysite/test to the configuration
  * directory sites/example.com, the array should be defined as:
  * @code
  * $sites = array(
  *   '8080.www.drupal.org.mysite.test' => 'example.com',
  * );
  * @endcode
- * The URL, www.drupal.org:8080/mysite/test/, could be a symbolic link or
+ * The URL, http://www.drupal.org:8080/mysite/test/, could be a symbolic link or
  * an Apache Alias directive that points to the Drupal root containing
  * index.php. An alias could also be created for a subdomain. See the
- * @link drupal.org/documentation/install online Drupal installation guide @endlink
+ * @link http://drupal.org/documentation/install online Drupal installation guide @endlink
  * for more information on setting up domains, subdomains, and subdirectories.
  *
  * The following examples look for a site configuration in sites/example.com:
  * @code
- * URL: dev.drupal.org
+ * URL: http://dev.drupal.org
  * $sites['dev.drupal.org'] = 'example.com';
  *
- * URL: localhost/example
+ * URL: http://localhost/example
  * $sites['localhost.example'] = 'example.com';
  *
- * URL: localhost:8080/example
+ * URL: http://localhost:8080/example
  * $sites['8080.localhost.example'] = 'example.com';
  *
- * URL: www.drupal.org:8080/mysite/test/
+ * URL: http://www.drupal.org:8080/mysite/test/
  * $sites['8080.www.drupal.org.mysite.test'] = 'example.com';
  * @endcode
  *
  * @see default.settings.php
  * @see conf_path()
- * @see drupal.org/documentation/install/multi-site
+ * @see http://drupal.org/documentation/install/multi-site
  */
-
-// Site settings for `drush runserver` for automated tests on CI.
-// @see build/custom/phing/build.yml, behat.server-url
-// @see tests/behat/example.local.yml
-// @see sites/default/settings/default.local.settings.php
-$sites['8888.127.0.0.1'] = 'default';
-$sites['8889.127.0.0.1'] = 'example-multisite.com';
-
-if (file_exists(__DIR__ . '/local.sites.php')) {
-  require __DIR__ . '/local.sites.php';
-}
