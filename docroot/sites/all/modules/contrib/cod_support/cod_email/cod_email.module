@@ -1,0 +1,217 @@
+<?php
+/**
+ * @file
+ * Code for the COD Email feature.
+ */
+
+include_once 'cod_email.features.inc';
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function cod_email_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools' && $plugin == 'content_types') {
+    return 'plugins/content_types';
+  }
+}
+
+/**
+ * @param $msg
+ * @param $args
+ * @param $context
+ * Make the billy settings save make more sense.
+ */
+function cod_email_eck_entity_save_message_alter(&$msg, $args, $context) {
+  if($context['form']['#entity_type'] == 'cod_email') {
+    $msg = "E-mail template saved successfully.";
+  }
+}
+
+/**
+ * Hack in a redirect for billy settings.
+ */
+function cod_email_form_alter(&$form, &$form_state, $form_id) {
+  // Not looking at cod_emails, so return.
+  if (!isset($form_state['cod_email']) && !isset($form_state['cod_email']->entityType)) {
+    return;
+  }
+  if ($form_id == 'eck__entity__form_add_cod_email_'.$form_state['cod_email']->type ||
+    $form_id == 'eck__entity__form_edit_cod_email_'.$form_state['cod_email']->type) {
+    $form['actions']['submit']['#submit'] = array(
+      'eck__entity__form_submit',
+      'cod_email_settings_submit'
+    );
+  }
+}
+
+function cod_email_settings_submit($form, &$form_state) {
+  $form_state['redirect'] = current_path();
+}
+
+/**
+ * Action Implementation: Send mail.
+ */
+function cod_email_send_mail($to, $conference, $email_template, $settings, RulesState $state, RulesPlugin $element) {
+  // Get the email template
+  $query = new EntityFieldQuery();
+  $entity_type = 'cod_email';
+
+  $config = $query->entityCondition('entity_type', $entity_type)
+    ->entityCondition('bundle', $email_template)
+    ->fieldCondition('og_group_ref', 'target_id', $conference->nid)
+    ->range(0, 1)
+    ->execute();
+
+  // Found a config! load it.
+  if (isset($config[$entity_type])) {
+    $config_ids = array_keys($config[$entity_type]);
+    $email_configs = entity_load($entity_type, $config_ids);
+    $email_config = array_shift($email_configs);
+    $wrapper = entity_metadata_wrapper($entity_type, $email_config);
+
+    $to = str_replace(array("\r", "\n"), '', $to);
+    $from = $wrapper->field_email_from->value();
+    $from = !empty($from) ? str_replace(array(
+      "\r",
+      "\n"
+    ), '', $from) : NULL;
+
+    // Tokens
+
+    // Get full vs plaintext email
+    $body = $wrapper->field_email_body->value();
+    if ($body['format'] == 'full_html' || $body['format'] == 'filtered_html') {
+      // Process full html
+      $body = $body['value'];
+      $plaintext = FALSE;
+    }
+    else {
+      $body = $body['value'];
+      $plaintext = TRUE;
+    }
+
+    $subject = cod_email_rules_evaluate($wrapper->field_email_subject->value(), array(), $state);
+    $body = cod_email_rules_evaluate($body, array(), $state);
+
+    // Hardcoded for billy CT.
+    // TODO: Move into an alter function
+    // Attachments:
+    if ($email_template == 'billy' && $wrapper->field_billy_attach_pdf->value()) {
+      // We should have a commerce_order context to work from.
+      $order_wrapper = $state->variables['commerce_order'];
+      $order = commerce_order_load($order_wrapper->order_id->value());
+      $attachments = _commerce_billy_mail_get_attachments($order);
+    }
+    else {
+      $attachments = array();
+    }
+
+    $params = array(
+      'subject' => $subject,
+      'body' => $body,
+      'plain' => !empty($plaintext),
+      'attachments' => $attachments,
+      'headers' => array(
+        'cc' => trim($wrapper->field_email_cc->value()),
+        'bcc' => trim($wrapper->field_email_bcc->value()),
+      ),
+      'context' => array(
+        'subject' => $subject,
+        'body' => $body,
+        'order' => $order,
+      ),
+    );
+
+    // Set a unique key for this mail.
+    $name = isset($element->root()->name) ? $element->root()->name : 'unnamed';
+    $key = 'cod_email_' . $name . '_' . $element->elementId();
+    $languages = language_list();
+    $language = isset($languages[$wrapper->language->value()]) ? $languages[$wrapper->language->value()] : language_default();
+
+    $message = drupal_mail('cod_email', $key, $to, $language, $params, $from);
+    if ($message['result']) {
+      watchdog('cod_email', 'Successfully sent email to %recipient', array('%recipient' => $to));
+    }
+  }
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * @param String $key
+ * @param array $message
+ * @param array $params
+ */
+function cod_email_mail($key, &$message, $params) {
+  switch ($key) {
+    default:
+      if (isset($params['subject'])) {
+        $message['subject'] = $params['subject'];
+      }
+      if (isset($params['body'])) {
+        $message['body'][] = $params['body'];
+      }
+      if (isset($params['headers']) && is_array($params['headers'])) {
+        $message['headers'] = array_merge($message['headers'], $params['headers']);
+      }
+      if (isset($params['plain'])) {
+        $message['plain'] = $params['plain'];
+      }
+      if (isset($params['attachments'])) {
+        $message['attachments'][] = $params['attachments'];
+      }
+      break;
+  }
+}
+
+/**
+ * Taken from the system RulesTokenEvaluator class.
+ * Because we're making tokens in the entity, we cannot use the standard rules
+ * system of replacing tokens. Nor can we just use token replace (see below).
+ *
+ * We replace the tokens on our own as we cannot use token_replace(), because
+ * token usually assumes that $data['node'] is a of type node, which doesn't
+ * hold in general in our case.
+ * So we properly map variable names to variable data types and then run the
+ * replacement ourself.
+ */
+function cod_email_rules_evaluate($text, $options, RulesState $state) {
+    $var_info = $state->varInfo();
+    $options += array('sanitize' => FALSE);
+
+    $replacements = array();
+    $data = array();
+    // We also support replacing tokens in a list of textual values.
+    $whole_text = is_array($text) ? implode('', $text) : $text;
+    foreach (token_scan($whole_text) as $var_name => $tokens) {
+      $var_name = str_replace('-', '_', $var_name);
+      if (isset($var_info[$var_name]) && ($token_type = _rules_system_token_map_type($var_info[$var_name]['type']))) {
+        // We have to key $data with the type token uses for the variable.
+        $data = rules_unwrap_data(array($token_type => $state->get($var_name)), array($token_type => $var_info[$var_name]));
+        $replacements += token_generate($token_type, $tokens, $data, $options);
+      }
+      else {
+        $replacements += token_generate($var_name, $tokens, array(), $options);
+      }
+      // Remove tokens if no replacement value is found. As token_replace() does
+      // if 'clear' is set.
+      $replacements += array_fill_keys($tokens, '');
+    }
+
+    // Optionally clean the list of replacement values.
+    if (!empty($options['callback']) && function_exists($options['callback'])) {
+      $function = $options['callback'];
+      $function($replacements, $data, $options);
+    }
+
+    // Actually apply the replacements.
+    $tokens = array_keys($replacements);
+    $values = array_values($replacements);
+    if (is_array($text)) {
+      foreach ($text as $i => $text_item) {
+        $text[$i] = str_replace($tokens, $values, $text_item);
+      }
+      return $text;
+    }
+    return str_replace($tokens, $values, $text);
+  }

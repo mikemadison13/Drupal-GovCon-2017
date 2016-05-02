@@ -1,0 +1,189 @@
+<?php
+/**
+ * @file
+ * Code for the COD Billy feature.
+ */
+
+include_once 'cod_billy.features.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function cod_billy_menu() {
+  $items = array();
+
+  $items['admin/conference/%node/commerce/billy'] = array(
+    'title' => t('Billy Settings'),
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'cod_billy_settings',
+    'page arguments' => array(2),
+    'access arguments' => array('administer nodes'),
+  );
+  return $items;
+}
+
+function cod_billy_settings($conference) {
+  $entity_type = 'cod_commerce_billy';
+  // First, check to see if a configuration entity exists
+  $billyQuery = new EntityFieldQuery();
+   $config = $billyQuery->entityCondition('entity_type', $entity_type)
+     ->fieldCondition('og_group_ref', 'target_id', $conference->nid)
+     ->range(0, 1)
+     ->execute();
+
+  // Found a config! load it.
+   if (isset($config[$entity_type])) {
+     $config_ids = array_keys($config[$entity_type]);
+     $billy_configs = entity_load($entity_type, $config_ids);
+     $billy_config = array_shift($billy_configs);
+     $billy_config->og_group_ref[LANGUAGE_NONE][0]['target_id'] = $conference->nid;
+     $form = drupal_get_form("eck__entity__form_add_{$entity_type}_{$entity_type}", $billy_config);
+   }
+   // No config found, make a new entity.
+  else {
+    $billy_config = entity_create($entity_type, array('type' => $entity_type));
+    $billy_config->og_group_ref[LANGUAGE_NONE][0]['target_id'] = $conference->nid;
+    $form = drupal_get_form("eck__entity__form_edit_{$entity_type}_{$entity_type}", $billy_config);
+  }
+  // Set the OG Group Ref automatically.
+//  $form['og_group_ref'][LANGUAGE_NONE][0]
+  // Redirect the settings form.
+  return $form;
+}
+
+/**
+ * Hack in a redirect for billy settings.
+ */
+function cod_billy_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'eck__entity__form_add_cod_commerce_billy_cod_commerce_billy' ||
+    $form_id == 'eck__entity__form_edit_cod_commerce_billy_cod_commerce_billy'
+  )
+  $form['actions']['submit']['#submit'] = array('eck__entity__form_submit', 'cod_billy_settings_submit');
+}
+
+function cod_billy_settings_submit($form, &$form_state) {
+  $form_state['redirect'] = current_path();
+}
+
+/**
+ * @param $msg
+ * @param $args
+ * @param $context
+ * Make the billy settings save make more sense.
+ */
+function cod_billy_eck_entity_save_message_alter(&$msg, $args, $context) {
+  if($context['form']['#entity_type'] == 'cod_commerce_billy') {
+    $msg = "Commerce billy settings saved successfully.";
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter
+ * Needed so that we override the billy varaibles going to the order.
+ */
+function cod_billy_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'commerce_order_view') {
+    $group = $implementations['cod_billy'];
+    unset($implementations['cod_billy']);
+    $implementations['cod_billy'] = $group;
+  }
+}
+
+/**
+ * Implements hook_commerce_order_view().
+ */
+function cod_billy_commerce_order_view($order, $view_mode) {
+  // Add content variables for the PDF generation.
+  // Get the settings config entity based on the event.
+  if ($view_mode == "pdf" || $view_mode == 'canceled') {
+    if (isset($order->og_group_ref)) {
+      $entity_type = 'cod_commerce_billy';
+      $billyQuery = new EntityFieldQuery();
+      $result = $billyQuery->entityCondition('entity_type', $entity_type)
+        ->fieldCondition('og_group_ref', 'target_id', $order->og_group_ref[LANGUAGE_NONE][0]['target_id'])
+        ->range(0, 1)
+        ->execute();
+      if ($billyid = current($result[$entity_type])->id) {
+        $entity = entity_load_single('cod_commerce_billy', $billyid);
+        $settings = entity_metadata_wrapper('cod_commerce_billy', $entity);
+        $custom_date_format = $settings->field_billy_date_format->value() ? $settings->field_billy_date_format->value() : 'Y-m-d';
+        if ($view_mode == "pdf" || $view_mode == 'canceled') {
+          $order->content['invoice_footer'] = array(
+            '#markup' => $settings->field_billy_invoice_footer->value() ? $settings->field_billy_invoice_footer->value->value() : '',
+          );
+          $order->content['invoice_header'] = array(
+            '#markup' => $settings->field_billy_invoice_header->value() ? $settings->field_billy_invoice_header->value->value() : '',
+          );
+          $order->content['invoice_text'] = array(
+            '#markup' => $settings->field_billy_invoice_text->value() ? $settings->field_billy_invoice_text->value->value() : '',
+          );
+          $date_field_name = $view_mode == 'pdf' ? 'field_commerce_billy_i_date' : 'field_commerce_billy_cancel_date';
+          $date_formatted = format_date($order->{$date_field_name}[LANGUAGE_NONE][0]['value'], 'custom', $custom_date_format);
+          if ($settings->field_billy_invoice_location->value()) {
+            $invoice_header_date_text = t('@location, @date', array(
+              '@location' => $settings->field_billy_invoice_location->value->value(),
+              '@date' => $date_formatted
+            ));
+          }
+          else {
+            $invoice_header_date_text = $date_formatted;
+          }
+          $order->content['invoice_header_date'] = array(
+            '#markup' => $invoice_header_date_text,
+          );
+          // Parse the logo and get the path.
+          $uri = $settings->field_billy_logo->value();
+          isset($uri['uri']) ? $url = file_create_url($uri['uri']) : 'misc/druplicon.png';
+          $url = parse_url($url);
+          $order->content['invoice_logo'] = array(
+            '#value' => substr($url['path'], 1),
+          );
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Set CSS from the current order.
+ */
+function cod_billy_commerce_billy_pdf_html_prerender_alter(&$vars, $orders) {
+  // Grab the first order from the group.
+  $order = current($orders);
+  if (isset($order->og_group_ref)) {
+    $entity_type = 'cod_commerce_billy';
+    $billyQuery = new EntityFieldQuery();
+     $result = $billyQuery->entityCondition('entity_type', $entity_type)
+       ->fieldCondition('og_group_ref', 'target_id', $order->og_group_ref[LANGUAGE_NONE][0]['target_id'])
+       ->range(0, 1)
+       ->execute();
+    if ($billyid = current($result[$entity_type])->id) {
+      $entity = entity_load_single('cod_commerce_billy', $billyid);
+      $settings = entity_metadata_wrapper('cod_commerce_billy', $entity);
+
+      $css_files = $settings->field_billy_css->value() ? $settings->field_billy_css->value() : array(drupal_get_path('module', 'commerce_billy_pdf') . '/css/pdf.css');
+      if (!is_array($css_files)) {
+        $css_files = array($css_files);
+      }
+      $vars['inline_css'] = "";
+      foreach ($css_files as $file) {
+        $vars['inline_css'] .= file_get_contents($file);
+      }
+    }
+  }
+}
+
+/**
+ * @param $configs
+ * Disable commerce_checkout's default rules and replace them with our own.
+ */
+function cod_billy_default_rules_configuration_alter(&$configs) {
+  // commerce_checkout_order_status_update is replaced with cod_billy_order_status_update
+  if (isset($configs['commerce_checkout_order_status_update'])) {
+    $configs['commerce_checkout_order_status_update']->active = FALSE;
+  }
+  // commerce_checkout_order_email is replaced with cod_billy_order_email
+  if (isset($configs['commerce_checkout_order_email'])) {
+    $configs['commerce_checkout_order_email']->active = FALSE;
+  }
+}
