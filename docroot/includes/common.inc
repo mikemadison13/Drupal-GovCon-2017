@@ -356,6 +356,20 @@ function drupal_get_html_head() {
 }
 
 /**
+ * Restores output to the HEAD tag of the HTML page.
+ *
+ * The restored output is generally saved from a previous request. Useful for
+ * cached items that store what was added with drupal_add_html_head() and
+ * need to restore it after a cache hit.
+ *
+ * @param $head
+ *  A renderable array, usually returned from drupal_add_html_head().
+ */
+function drupal_restore_html_head($head) {
+  drupal_add_html_head($head);
+}
+
+/**
  * Adds a feed URL for the current page.
  *
  * This function can be called as long the HTML header hasn't been sent.
@@ -3161,6 +3175,22 @@ function drupal_get_css($css = NULL, $skip_alter = FALSE) {
 }
 
 /**
+ * Restores CSS files to the page.
+ *
+ * The restored output is generally saved from a previous request. Useful for
+ * cached items that store what was added with drupal_add_css() and need to
+ * restore it after a cache hit.
+ *
+ * @param $css
+ *   An associative array of CSS files, usually returned from drupal_add_css().
+ */
+function drupal_restore_css($css) {
+  foreach ($css as $args) {
+    drupal_add_css($args['data'], $args);
+  }
+}
+
+/**
  * Sorts CSS and JavaScript resources.
  *
  * Callback for uasort() within:
@@ -4507,6 +4537,30 @@ function drupal_get_js($scope = 'header', $javascript = NULL, $skip_alter = FALS
 }
 
 /**
+ * Restores JavaScript files or settings to the page.
+ *
+ * The restored output is generally saved from a previous request. Useful for
+ * cached items that store what was added with drupal_add_js() and need to
+ * restore it after a cache hit.
+ *
+ * @param $js
+ *   An associative array of JavaScript files or settings, usually returned from
+ *   drupal_add_js().
+ */
+function drupal_restore_js($js) {
+  foreach ($js as $key => $args) {
+    if ($key != 'settings') {
+      drupal_add_js($args['data'], $args);
+    }
+    else {
+      foreach ($args as $setting) {
+        drupal_add_js($setting, 'setting');
+      }
+    }
+  }
+}
+
+/**
  * Adds attachments to a render() structure.
  *
  * Libraries, JavaScript, CSS and other types of custom structures are attached
@@ -5513,12 +5567,22 @@ function drupal_system_listing($mask, $directory, $key = 'name', $min_depth = 1)
     $searchdir[] = "$config/$directory";
   }
 
+  // By default, do not check for files in common special-purpose directories.
+  // The folders here are front-end related and they have been added to avoid
+  // issues with Drupal recursive scanning. In this case, we added node_modules
+  // and bower_components. This also improves performance on frontend builds.
+  $ignore_directories = array(
+    'node_modules',
+    'bower_components',
+  );
+  $no_mask = '/^(\..*)|' . implode('|', $ignore_directories) .  '$/';
+
   // Get current list of items.
   if (!function_exists('file_scan_directory')) {
     require_once DRUPAL_ROOT . '/includes/file.inc';
   }
   foreach ($searchdir as $dir) {
-    $files_to_add = file_scan_directory($dir, $mask, array('key' => $key, 'min_depth' => $min_depth));
+    $files_to_add = file_scan_directory($dir, $mask, array('key' => $key, 'min_depth' => $min_depth, 'nomask' => $no_mask));
 
     // Duplicate files found in later search directories take precedence over
     // earlier ones, so we want them to overwrite keys in our resulting

@@ -657,6 +657,32 @@ class BlockCacheTestCase extends DrupalWebTestCase {
   }
 
   /**
+   * Tests the block cache with blocks that call drupal_add_js().
+   */
+  function testCacheWithJavascript() {
+    // Enable our test block.
+    $edit['blocks[block_test_test_cache_with_assets][region]'] = 'sidebar_first';
+    $this->drupalPost('admin/structure/block', $edit, t('Save blocks'));
+
+    $this->setCacheMode(DRUPAL_CACHE_GLOBAL);
+    $current_content = $this->randomName();
+    variable_set('block_test_content', $current_content);
+
+    $this->drupalGet('');
+    $this->assertText($current_content, 'Block content displays.');
+    $this->assertRaw('misc/collapse.js', 'Javascript file added in block callback is present.');
+
+    $old_content = $current_content;
+    $current_content = $this->randomName();
+    variable_set('block_test_content', $current_content);
+
+    $this->drupalLogout();
+    $this->drupalGet('user');
+    $this->assertRaw('misc/collapse.js', 'Javascript file from block callback restored on cache hit.');
+    $this->assertText($old_content, 'Block content served from cache.');
+  }
+
+  /**
    * Private helper method to set the test block's cache mode.
    */
   private function setCacheMode($cache_mode) {

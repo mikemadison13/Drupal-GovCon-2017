@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the DGC Banner Image feature.
+ */
+
+include_once 'dgc_banner_image.features.inc';

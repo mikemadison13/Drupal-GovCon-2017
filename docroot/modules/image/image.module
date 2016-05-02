@@ -822,7 +822,7 @@ function image_style_deliver($style, $scheme) {
     $valid = $valid && isset($_GET[IMAGE_DERIVATIVE_TOKEN]) && $_GET[IMAGE_DERIVATIVE_TOKEN] === image_style_path_token($style['name'], $scheme . '://' . $target);
   }
   if (!$valid) {
-    return MENU_ACCESS_DENIED;
+    return MENU_NOT_FOUND;
   }
 
   $image_uri = $scheme . '://' . $target;

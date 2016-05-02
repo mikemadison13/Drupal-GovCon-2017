@@ -1,0 +1,6 @@
+name = Coupon Batch
+description = Enables the mass generation of coupons.
+package = Commerce Coupon
+dependencies[] = commerce_coupon
+dependencies[] = views_bulk_operations
+core = 7.x

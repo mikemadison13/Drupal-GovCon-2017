@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the DGC-Location Maps feature.
+ */
+
+include_once 'dgc_location_maps.features.inc';

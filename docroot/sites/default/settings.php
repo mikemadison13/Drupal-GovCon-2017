@@ -247,28 +247,6 @@ $update_free_access = FALSE;
 $drupal_hash_salt = '';
 
 /**
- * Base URL (optional).
- *
- * If Drupal is generating incorrect URLs on your site, which could
- * be in HTML headers (links to CSS and JS files) or visible links on pages
- * (such as in menus), uncomment the Base URL statement below (remove the
- * leading hash sign) and fill in the absolute URL to your Drupal installation.
- *
- * You might also want to force users to use a given domain.
- * See the .htaccess file for more information.
- *
- * Examples:
- *   $base_url = 'http://www.example.com';
- *   $base_url = 'http://www.example.com:8888';
- *   $base_url = 'http://www.example.com/drupal';
- *   $base_url = 'https://www.example.com:8888/drupal';
- *
- * It is not allowed to have a trailing slash; Drupal will add it
- * for you.
- */
-# $base_url = 'http://www.example.com';  // NO trailing slash!
-
-/**
  * PHP settings:
  *
  * To see what PHP settings are possible, including whether they can be set at
@@ -315,17 +293,6 @@ ini_set('session.cookie_lifetime', 2000000);
 # ini_set('pcre.recursion_limit', 200000);
 
 /**
- * Drupal automatically generates a unique session cookie name for each site
- * based on its full domain name. If you have multiple domains pointing at the
- * same Drupal site, you can either redirect them all to a single domain (see
- * comment in .htaccess), or uncomment the line below and specify their shared
- * base domain. Doing so assures that users remain logged in as they cross
- * between your various domains. Make sure to always start the $cookie_domain
- * with a leading dot, as per RFC 2109.
- */
-# $cookie_domain = '.example.com';
-
-/**
  * Variable overrides:
  *
  * To override specific entries in the 'variable' table for this site,
@@ -357,96 +324,6 @@ ini_set('session.cookie_lifetime', 2000000);
 # $conf['maintenance_theme'] = 'bartik';
 
 /**
- * Reverse Proxy Configuration:
- *
- * Reverse proxy servers are often used to enhance the performance
- * of heavily visited sites and may also provide other site caching,
- * security, or encryption benefits. In an environment where Drupal
- * is behind a reverse proxy, the real IP address of the client should
- * be determined such that the correct client IP address is available
- * to Drupal's logging, statistics, and access management systems. In
- * the most simple scenario, the proxy server will add an
- * X-Forwarded-For header to the request that contains the client IP
- * address. However, HTTP headers are vulnerable to spoofing, where a
- * malicious client could bypass restrictions by setting the
- * X-Forwarded-For header directly. Therefore, Drupal's proxy
- * configuration requires the IP addresses of all remote proxies to be
- * specified in $conf['reverse_proxy_addresses'] to work correctly.
- *
- * Enable this setting to get Drupal to determine the client IP from
- * the X-Forwarded-For header (or $conf['reverse_proxy_header'] if set).
- * If you are unsure about this setting, do not have a reverse proxy,
- * or Drupal operates in a shared hosting environment, this setting
- * should remain commented out.
- *
- * In order for this setting to be used you must specify every possible
- * reverse proxy IP address in $conf['reverse_proxy_addresses'].
- * If a complete list of reverse proxies is not available in your
- * environment (for example, if you use a CDN) you may set the
- * $_SERVER['REMOTE_ADDR'] variable directly in settings.php.
- * Be aware, however, that it is likely that this would allow IP
- * address spoofing unless more advanced precautions are taken.
- */
-# $conf['reverse_proxy'] = TRUE;
-
-/**
- * Specify every reverse proxy IP address in your environment.
- * This setting is required if $conf['reverse_proxy'] is TRUE.
- */
-# $conf['reverse_proxy_addresses'] = array('a.b.c.d', ...);
-
-/**
- * Set this value if your proxy server sends the client IP in a header
- * other than X-Forwarded-For.
- */
-# $conf['reverse_proxy_header'] = 'HTTP_X_CLUSTER_CLIENT_IP';
-
-/**
- * Page caching:
- *
- * By default, Drupal sends a "Vary: Cookie" HTTP header for anonymous page
- * views. This tells a HTTP proxy that it may return a page from its local
- * cache without contacting the web server, if the user sends the same Cookie
- * header as the user who originally requested the cached page. Without "Vary:
- * Cookie", authenticated users would also be served the anonymous page from
- * the cache. If the site has mostly anonymous users except a few known
- * editors/administrators, the Vary header can be omitted. This allows for
- * better caching in HTTP proxies (including reverse proxies), i.e. even if
- * clients send different cookies, they still get content served from the cache.
- * However, authenticated users should access the site directly (i.e. not use an
- * HTTP proxy, and bypass the reverse proxy if one is used) in order to avoid
- * getting cached pages from the proxy.
- */
-# $conf['omit_vary_cookie'] = TRUE;
-
-/**
- * CSS/JS aggregated file gzip compression:
- *
- * By default, when CSS or JS aggregation and clean URLs are enabled Drupal will
- * store a gzip compressed (.gz) copy of the aggregated files. If this file is
- * available then rewrite rules in the default .htaccess file will serve these
- * files to browsers that accept gzip encoded content. This allows pages to load
- * faster for these users and has minimal impact on server load. If you are
- * using a webserver other than Apache httpd, or a caching reverse proxy that is
- * configured to cache and compress these files itself you may want to uncomment
- * one or both of the below lines, which will prevent gzip files being stored.
- */
-# $conf['css_gzip_compression'] = FALSE;
-# $conf['js_gzip_compression'] = FALSE;
-
-/**
- * Block caching:
- *
- * Block caching may not be compatible with node access modules depending on
- * how the original block cache policy is defined by the module that provides
- * the block. By default, Drupal therefore disables block caching when one or
- * more modules implement hook_node_grants(). If you consider block caching to
- * be safe on your site and want to bypass this restriction, uncomment the line
- * below.
- */
-# $conf['block_cache_bypass_node_grants'] = TRUE;
-
-/**
  * String overrides:
  *
  * To override specific strings on your site with or without enabling the Locale
@@ -458,29 +335,6 @@ ini_set('session.cookie_lifetime', 2000000);
 # $conf['locale_custom_strings_en'][''] = array(
 #   'forum'      => 'Discussion board',
 #   '@count min' => '@count minutes',
-# );
-
-/**
- *
- * IP blocking:
- *
- * To bypass database queries for denied IP addresses, use this setting.
- * Drupal queries the {blocked_ips} table by default on every page request
- * for both authenticated and anonymous users. This allows the system to
- * block IP addresses from within the administrative interface and before any
- * modules are loaded. However on high traffic websites you may want to avoid
- * this query, allowing you to bypass database access altogether for anonymous
- * users under certain caching configurations.
- *
- * If using this setting, you will need to add back any IP addresses which
- * you may have blocked via the administrative interface. Each element of this
- * array represents a blocked IP address. Uncommenting the array and leaving it
- * empty will have the effect of disabling IP blocking on your site.
- *
- * Remove the leading hash signs to enable.
- */
-# $conf['blocked_ips'] = array(
-#   'a.b.c.d',
 # );
 
 /**
@@ -522,8 +376,14 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  * necessary to add them to the '404_fast_paths_exclude' regular expression
  * above. Make sure that you understand the effects of this feature before
  * uncommenting the line below.
+ *
+ * We check for the existence of this function before calling in case this
+ * settings file has been included without bootstrapping Drupal.
  */
-# drupal_fast_404();
+if (function_exists('drupal_fast_404')) {
+  drupal_fast_404();
+}
+
 
 /**
  * External access proxy settings:
@@ -585,11 +445,64 @@ $conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN"
  */
 # $conf['theme_debug'] = TRUE;
 
+// Primary modules directory.
+$module_dir = 'sites/all/modules';
 
-// On Acquia Cloud, this include file configures Drupal to use the correct
-// database in each site environment (Dev, Stage, or Prod). To use this
-// settings.php for development on your local workstation, set $db_url
-// (Drupal 5 or 6) or $databases (Drupal 7 or 8) as described in comments above.
-if (file_exists('/var/www/site-php')) {
-  require('/var/www/site-php/capitalcamp/capitalcamp-settings.inc');
+// Includes required Acquia configuration and set $base_url correctly.
+require DRUPAL_ROOT . '/sites/default/settings/base.settings.php';
+
+// Includes default caching settings.
+require DRUPAL_ROOT . '/sites/default/settings/cache.settings.php';
+
+// Includes default cron configuration.
+require DRUPAL_ROOT . '/sites/default/settings/cron.settings.php';
+
+// Includes advanced configuration for Fast 404 module.
+require DRUPAL_ROOT . '/sites/default/settings/fast-404.settings.php';
+
+// Includes configuration for public and private file systems, composer_manager.
+require DRUPAL_ROOT . '/sites/default/settings/files.settings.php';
+
+// Includes configuration useful for running automated tests.
+require DRUPAL_ROOT . '/sites/default/settings/testing.settings.php';
+
+// Includes settings for using a CDN. See include file for config details.
+// require_once DRUPAL_ROOT . '/sites/default/settings/cdn.settings.php';
+
+// Include settings for having a separate "edit domain" for authenticated
+// traffic. Requires setting additional configuration within include file.
+// require_once DRUPAL_ROOT . '/sites/default/settings/edit-domain.settings.php';
+
+// Includes functions for protecting a site via ip, password, etc.
+// require_once DRUPAL_ROOT . '/sites/default/settings/site-protection.settings.php';
+
+// Includes settings for Acquia Search (via apachesolr).
+// require_once DRUPAL_ROOT . '/sites/default/settings/search.settings.php';
+
+/**
+ * Acquia Cloud settings.
+ */
+if ($is_ah_env && file_exists('/var/www/site-php')) {
+  require "/var/www/site-php/{$_ENV['AH_SITE_GROUP']}/{$_ENV['AH_SITE_GROUP']}-settings.inc";
+
+  // Store API Keys and things outside of version control.
+  // @see settings/sample-secrets.settings.php for sample code.
+  $secrets_file = sprintf('/mnt/gfs/%s.%s/secrets.settings.php', $_ENV['AH_SITE_GROUP'], $_ENV['AH_SITE_ENVIRONMENT']);
+  if (file_exists($secrets_file)) {
+    require $secrets_file;
+  }
+}
+
+/**
+ * Load local development override configuration, if available.
+ *
+ * Use local.settings.php to override variables on secondary (staging,
+ * development, etc) installations of this site. Typically used to disable
+ * caching, JavaScript/CSS compression, re-routing of outgoing emails, and
+ * other things that should not happen on development and testing sites.
+ *
+ * Keep this code block at the end of this file to take full effect.
+ */
+if ($is_local_env && file_exists(DRUPAL_ROOT . '/sites/default/settings/local.settings.php')) {
+  require DRUPAL_ROOT . '/sites/default/settings/local.settings.php';
 }

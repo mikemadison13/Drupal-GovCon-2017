@@ -910,8 +910,31 @@ function _block_render_blocks($region_blocks) {
       // Try fetching the block from the previously loaded cache entries.
       if (isset($cached_blocks[$cid])) {
         $array = $cached_blocks[$cid]->data;
+
+        // Restore headers, CSS, and JavaScript that would have been added
+        // during the block callback.
+        if (!empty($array['head'])) {
+          drupal_restore_html_head($array['head']);
+        }
+        if (!empty($array['js'])) {
+          drupal_restore_js($array['js']);
+        }
+        if (!empty($array['css'])) {
+          drupal_restore_css($array['css']);
+        }
       }
       else {
+        if (isset($cid)) {
+          // When a block is cacheable but there is a cache miss, store the
+          // headers/CSS/JS before rendering to save what the block would
+          // have added with the cached version.
+          $before_render = array(
+            'head' => drupal_add_html_head(),
+            'css' => drupal_add_css(),
+            'js' => drupal_add_js(),
+          );
+        }
+
         $array = module_invoke($block->module, 'block_view', $block->delta);
 
         // Valid PHP function names cannot contain hyphens.
@@ -921,6 +944,21 @@ function _block_render_blocks($region_blocks) {
         drupal_alter(array('block_view', "block_view_{$block->module}_{$delta}"), $array, $block);
 
         if (isset($cid)) {
+          // Get CSS and JavaScript after block renders.
+          $after_render = array(
+            'head' => drupal_add_html_head(),
+            'css' => drupal_add_css(),
+            'js' => drupal_add_js(),
+          );
+
+          foreach ($after_render as $key => $values) {
+            // If there are any differences between the old and the new CSS or
+            // JavaScript, store them to be added later.
+            $array[$key] = $added = array_diff_assoc($after_render[$key], $before_render[$key]);
+          }
+
+          // Special-case the settings key and get the difference of the data.
+          $array['js']['settings'] = array_diff_assoc($after_render['js']['settings']['data'], $before_render['js']['settings']['data']);
           cache_set($cid, $array, 'cache_block', CACHE_TEMPORARY);
         }
       }

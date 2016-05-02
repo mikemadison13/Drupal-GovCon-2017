@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the DGC File Entity Additions feature.
+ */
+
+include_once 'dgc_file_entity_additions.features.inc';

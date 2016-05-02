@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Installs necessary fields for email integration
+ */
+
+/**
+ * Enable cod_registration_email if cod_registration is enabled
+ */
+function cod_email_update_7001(&$sandbox) {
+  if (module_exists('cod_registration')) {
+    module_enable(array('cod_registration_email'));
+  }
+}
