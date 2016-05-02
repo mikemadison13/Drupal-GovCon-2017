@@ -1,8 +1,0 @@
-name = OG Menu Default Links
-description = "Allows creation of default links when adding new groups (menus)"
-files[] = og_menu_default_links.module
-dependencies[] = og_menu
-dependencies[] = token
-configure = admin/config/group/og_menu/default-links
-package = "Organic groups"
-core = 7.x
