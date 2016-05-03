@@ -1,0 +1,87 @@
+/**
+  * Colors Tints and Shades
+**/
+.color--tint {
+  _setting--tint-color: #fff;
+  _test: "tint(#b4d455, 25%)";
+  _result: #c7df80;
+  /* Set New Tint Color */
+  _setting--tint-color: #eee;
+  _test: "tint(#b4d455, 25%)";
+  _result: #c3db7b;
+}
+.color--shade {
+  _setting--shade-color: #000;
+  _test: "shade(#b4d455, 25%)";
+  _result: #879f40;
+  /* Set New Shade Color */
+  _setting--shade-color: #111;
+  _test: "shade(#b4d455, 25%)";
+  _result: #8ba344;
+}
+
+/**
+  * Luma
+**/
+.color--luma {
+  _test: "luma(#b4d455)";
+  _result: 187.954;
+}
+.color--luma-gte {
+  _test: "luma-gte(#b4d455, #c0ffee)";
+  _result: false;
+}
+.color--luma-lte {
+  _test: "luma-lte(#b4d455, #c0ffee)";
+  _result: true;
+}
+.color--luma-diff {
+  _test: "luma-diff(#b4d455, #c0ffee)";
+  _result: -46.271;
+}
+
+/**
+  * Color Stacks
+**/
+.color--stack {
+  _setting--color-stack-amounts: 25% 50% 75% 85% 90%;
+  _test: "color-stack(red, blue)";
+  _result: red #bf0040 purple #4000bf #2600d9 #1900e6;
+  _test: "color-stack(red, blue, 15%, 20%, 25%, 30%)";
+  _result: red #d90026 #cc0033 #bf0040 #b3004d;
+}
+.color--tint-stack {
+  _setting--tint-color: #eee;
+  _test: "tint-stack(red, 15%, 20%, 25%, 30%)";
+  _result: red #fc2424 #fc3030 #fb3c3c #fa4747;
+}
+.color--tint-stack {
+  _setting--shade-color: #111;
+  _test: "shade-stack(red, 15%, 20%, 25%, 30%)";
+  _result: red #db0303 #cf0303 #c40404 #b80505;
+}
+.color--tint-shade-stack {
+  _setting--tint-shade-stack-amounts: 75% 50% 25%;
+  _test: "tint-shade-stack(red)";
+  _result: #4d0d0d #880909 #c40404 red #fb3c3c #f77777 #f2b3b3;
+  _test: "tint-shade-stack(red, blue, 15%, 20%, 25%, 30%)";
+  _result: #db0303 #cf0303 #c40404 #b80505 red #fa4747 #fb3c3c #fc3030 #fc2424;
+}
+
+/**
+  * Color Scales
+**/
+.color--scale--no-alpha {
+  _setting--color-scale-shades: 6;
+  _test: "color-scale(red, blue)";
+  _result: red #ffcc00 #66ff00 #00ff66 #00ccff blue;
+  _test: "color-scale(red, blue, 3)";
+  _result: red lime blue;
+}
+.color--scale--alpha {
+  _setting--color-scale-shades: 6;
+  _test: "color-scale(rgba(lime, 1), rgba(tan, .5))";
+  _result: lime rgba(73, 223, 13, 0.9) rgba(121, 193, 24, 0.8) rgba(146, 165, 33, 0.7) rgba(139, 125, 40, 0.6) rgba(115, 85, 45, 0.5);
+  _test: "color-scale(rgba(lime, 1), rgba(tan, .5), 3)";
+  _result: lime rgba(136, 178, 29, 0.75) rgba(115, 85, 45, 0.5);
+}

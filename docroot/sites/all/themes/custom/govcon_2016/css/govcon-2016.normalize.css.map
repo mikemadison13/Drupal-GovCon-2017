@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "govcon-2016.normalize.css",
+	"sources": [
+		"../sass/govcon-2016.normalize.scss",
+		"../sass/_variablesMap.scss",
+		"../node_modules/sass-toolkit/stylesheets/toolkit/_kickstart.scss"
+	],
+	"mappings": "AAIA,OAAO,CAAP,gDAAO,CEJP,AAAA,IAAI,AAAC,CAKD,eAAe,CAAE,UAAW,CAC5B,UAAU,CAAE,UAAW,CAE1B,AAED,AAAA,CAAC,CAAE,AAAC,CAAA,AAAA,OAAO,CAAE,AAAC,CAAA,AAAA,MAAM,AAAC,CACnB,UAAU,CAAE,OAAQ,CACrB,AAED,AAAA,KAAK,CACL,AAAA,GAAG,CACH,AAAA,MAAM,CACN,AAAA,KAAK,AAAC,CACJ,SAAS,CAAE,IAAK,CAChB,MAAM,CAAE,IAAK,CACd",
+	"names": []
+}
