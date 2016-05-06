@@ -1,0 +1,90 @@
+/*
+Error: File to import not found or unreadable: hero.layout.
+       Load paths:
+         Compass::SpriteImporter
+         /Users/jraedeke/Sites/devdesktop/capitalcamp-dev/docroot/sites/all/themes/govcon/sass
+         /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-core-1.0.3/stylesheets
+         /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/susy-2.2.2/sass
+         /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-normalize-1.5/stylesheets
+         /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-rgbapng-0.2.1/lib/stylesheets
+         /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/toolkit-2.8.0/stylesheets
+         /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sassy-maps-0.4.0/sass
+         /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/breakpoint-2.5.0/stylesheets
+         /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/singularitygs-1.6.2/stylesheets
+         Sass::Globbing::Importer
+        on line 5 of /Users/jraedeke/Sites/devdesktop/capitalcamp-dev/docroot/sites/all/themes/govcon/sass/layouts/govcon/hero.layout.no-query.scss
+
+1: $breakpoint-no-queries: true;
+2: $breakpoint-no-query-fallbacks: true;
+3: 
+4: // Re import everything from ohm-hero-layout.scss but without media queries.
+5: @import "hero.layout";
+
+Backtrace:
+/Users/jraedeke/Sites/devdesktop/capitalcamp-dev/docroot/sites/all/themes/govcon/sass/layouts/govcon/hero.layout.no-query.scss:5
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/import_node.rb:66:in `rescue in import'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/import_node.rb:45:in `import'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/import_node.rb:28:in `imported_file'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/import_node.rb:37:in `css_import?'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:311:in `visit_import'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:36:in `visit'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:158:in `block in visit'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/stack.rb:79:in `block in with_base'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/stack.rb:115:in `with_frame'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/stack.rb:79:in `with_base'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:158:in `visit'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:52:in `block in visit_children'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:52:in `map'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:52:in `visit_children'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:167:in `block in visit_children'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:179:in `with_environment'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:166:in `visit_children'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:36:in `block in visit'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:186:in `visit_root'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:36:in `visit'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:157:in `visit'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:8:in `visit'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/root_node.rb:36:in `css_tree'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/tree/root_node.rb:29:in `render_with_sourcemap'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/engine.rb:368:in `_render_with_sourcemap'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/engine.rb:285:in `render_with_sourcemap'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/plugin/compiler.rb:490:in `update_stylesheet'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/plugin/compiler.rb:215:in `block in update_stylesheets'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/plugin/compiler.rb:209:in `each'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sass-3.4.13/lib/sass/plugin/compiler.rb:209:in `update_stylesheets'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-1.0.3/lib/compass/sass_compiler.rb:40:in `compile!'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-1.0.3/lib/compass/commands/update_project.rb:49:in `perform'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-1.0.3/lib/compass/commands/base.rb:18:in `execute'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-1.0.3/lib/compass/commands/project_base.rb:19:in `execute'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-compass-1.1.0/lib/guard/compass.rb:140:in `perform'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-compass-1.1.0/lib/guard/compass.rb:123:in `run_on_change'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:82:in `block in _supervise'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:79:in `catch'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:79:in `_supervise'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:61:in `block (3 levels) in run_on_changes'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:56:in `each'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:56:in `block (2 levels) in run_on_changes'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:119:in `block (2 levels) in _run_group_plugins'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:117:in `each'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:117:in `block in _run_group_plugins'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:116:in `catch'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:116:in `_run_group_plugins'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:54:in `block in run_on_changes'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:53:in `each'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/runner.rb:53:in `run_on_changes'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/internals/queue.rb:23:in `process'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/commander.rb:43:in `start'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/cli/environments/valid.rb:16:in `start_guard'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/cli.rb:113:in `start'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/thor-0.19.1/lib/thor/command.rb:27:in `run'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/thor-0.19.1/lib/thor/invocation.rb:126:in `invoke_command'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/thor-0.19.1/lib/thor.rb:359:in `dispatch'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/thor-0.19.1/lib/thor/base.rb:440:in `start'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/aruba_adapter.rb:32:in `execute'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/lib/guard/aruba_adapter.rb:19:in `execute!'
+/Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/guard-2.12.4/bin/_guard-core:11:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: File to import not found or unreadable: hero.layout.\A        Load paths:\A          Compass::SpriteImporter\A          /Users/jraedeke/Sites/devdesktop/capitalcamp-dev/docroot/sites/all/themes/govcon/sass\A          /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-core-1.0.3/stylesheets\A          /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/susy-2.2.2/sass\A          /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-normalize-1.5/stylesheets\A          /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/compass-rgbapng-0.2.1/lib/stylesheets\A          /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/toolkit-2.8.0/stylesheets\A          /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/sassy-maps-0.4.0/sass\A          /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/breakpoint-2.5.0/stylesheets\A          /Users/jraedeke/.rvm/gems/ruby-1.9.3-p551@omega.govcon/gems/singularitygs-1.6.2/stylesheets\A          Sass::Globbing::Importer\A         on line 5 of /Users/jraedeke/Sites/devdesktop/capitalcamp-dev/docroot/sites/all/themes/govcon/sass/layouts/govcon/hero.layout.no-query.scss\A \A 1: $breakpoint-no-queries: true;\A 2: $breakpoint-no-query-fallbacks: true;\A 3: \A 4: // Re import everything from ohm-hero-layout.scss but without media queries.\A 5: @import \"hero.layout\";"; }

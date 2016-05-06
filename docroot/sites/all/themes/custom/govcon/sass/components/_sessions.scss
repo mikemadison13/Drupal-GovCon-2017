@@ -1,0 +1,106 @@
+.view-id-dgc_sessions.view-display-id-attachment_1 {
+  .views-field-og-vocabulary .field-content {
+    margin-bottom: 4px;
+    background: $texture lighten($gold, 20%);
+  }
+  .views-field-og-vocabulary a {
+    background-size: 60px;
+    padding: 20px 20px 20px 80px;
+    background-position: 8px center;
+    display: block;
+    font-family: $script;
+    font-size: 1.3em;
+    &:hover, &:focus, &.active {
+      background-color: #fff;
+      color: $blue;
+    }
+  }
+}
+.page-node-sessions {
+  .view-empty { clear: both; }
+  .view-filters {
+    background: $texture $pale-blue;
+    padding: 30px;
+    .views-exposed-form .views-exposed-widget select {
+      background: #fff;
+    }
+  }
+  .l-content > .view > .view-content {
+    padding-top: 3em;
+  }
+  h3 { clear: both; }
+  h3 a {
+    font-size: 2em;
+    font-family: $script;
+    font-weight: normal;
+    background-size: 80px;
+    min-height: 80px;
+    display: block;
+    padding: 20px 20px 20px 100px;
+    background-position: 0 center;
+  }
+  .views-field-field-speakers { font-style: italic; }
+}
+.session {
+  margin: .2em 0 1em;
+  padding: 0;
+  p { margin: 0; }
+}
+.session-title {
+  border-top: 2px solid $gold;
+  padding-top: .2em;
+  font-size: 1.4em;
+  margin: 0;
+}
+[class*="track-icon-"] {
+  background: no-repeat 0 center transparent;
+}
+.track-icon-6 { background-image: url(../images/icons/ux.svg); }
+.track-icon-11 { background-image: url(../images/icons/devops.svg); }
+.track-icon-21 { background-image: url(../images/icons/business.svg); }
+.track-icon-26 { background-image: url(../images/icons/building.svg); }
+.track-icon-16 { background-image: url(../images/icons/keynote.svg); }
+.track-icon-1 { background-image: url(../images/icons/training.svg); }
+
+
+@include breakpoint($tab, true) {
+  .view-id-dgc_sessions.view-display-id-page_1 .view-id-dgc_sessions.view-display-id-attachment_1  {
+    @include grid-span(6, 1);
+  }
+  .page-node-sessions .view-filters {
+    @include grid-span(6, 7);
+    .views-exposed-form .views-exposed-widget {
+      width: 100%;
+    }
+    .views-exposed-form .views-exposed-widget {
+      &.views-submit-button, &.views-reset-button {
+        width: auto;
+      }
+    }
+  }
+  .page-node-sessions .view-content {
+    clear: both;
+  }
+  .session {
+    float: left;
+    width: 50%;
+    padding-left: 20px;
+  }
+  .session:nth-of-type(odd) {
+    clear: left;
+    padding-left: 0;
+  }
+}
+@include breakpoint($desk, true) {
+  .session {
+      width: 33%;
+  }
+  .session:nth-of-type(odd) {
+    clear: none;
+    padding-left: 20px;
+  }
+  .session:nth-of-type(3n+1) {
+    clear: left;
+    padding-left: 0;
+  }
+}

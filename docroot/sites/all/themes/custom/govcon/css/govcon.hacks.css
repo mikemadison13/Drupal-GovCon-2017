@@ -1,0 +1,17 @@
+@media all and (max-width: 800px) {
+  /* line 3, ../sass/govcon.hacks.scss */
+  #toolbar, #admin-menu {
+    display: none; }
+
+  /* line 8, ../sass/govcon.hacks.scss */
+  html body.toolbar, html body.admin-menu {
+    padding-top: 0 !important;
+    margin-top: 0 !important; } }
+@media all and (max-width: 900px) {
+  /* line 19, ../sass/govcon.hacks.scss */
+  .hydra.panel-layout .top-right-content,
+  .hydra.panel-layout .left-content {
+    width: 100% !important;
+    clear: both; } }
+
+/*# sourceMappingURL=govcon.hacks.css.map */

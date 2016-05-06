@@ -1,0 +1,112 @@
+/* header background shapes */
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -4;
+  background: $pale-blue;
+  height: 120px;
+  background-image: $texture;
+  overflow: hidden;
+}
+.header-bg--cutout {
+  z-index: -2;
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  margin-left: -500px;
+  display: block;
+  width: 1000px;
+  height: 400px;
+  @include border-radius(#{1000px} / 400px);
+  background-color: $ecru;
+  background-image: $texture;
+}
+.header-bg--buildings {
+  display: none;
+}
+  .page-node-1.node-type-event .header-bg--cutout { top: 300px; }
+  .page-node-1.node-type-event .header-bg { height: 600px; }
+.page-node-1.node-type-event .header-bg--buildings {
+  display: block;
+  background: url(../images/buildings.png) center center no-repeat transparent;
+  background-size: 333px 100px;
+  position: absolute;
+  top: 220px;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  z-index: -3;
+}
+
+@include breakpoint($tab, true) {
+
+  .header-bg { height: 250px; }
+  .header-bg--cutout { 
+    top: 120px; 
+    margin-left: -800px;
+    width: 1600px;
+    @include border-radius(#{1600px} / 400px);
+  }
+  .page-node-1.node-type-event .header-bg--cutout { top: 240px; }
+  .page-node-1.node-type-event .header-bg { height: 400px; }
+  .page-node-1.node-type-event .header-bg--buildings {
+  background-size: 667px 201px;
+  top: 80px;
+  height: 201px;
+}
+
+}
+.bevel {
+  background-color: $pale-blue;
+  padding: 2em;
+  position: relative;
+  * { position: relative; }
+  .bg {
+     background-color: $pale-blue;
+     position: absolute;
+     top: 0;
+     right: 0;
+     left: 0;
+     bottom: 0;
+  }
+  .bg-overlay {
+     @include texture-solid;
+  }
+  .tl,.tr,.bl,.br {
+    width: 0; 
+    height: 0;
+    position: absolute;
+  }
+  .tl {
+    top: 0;
+    left: 0;
+    border-top: 15px solid $ecru; 
+    border-right: 15px solid transparent;
+  }
+  .tr {
+    top: 0;
+    right: 0;
+    border-top: 15px solid $ecru; 
+    border-left: 15px solid transparent;
+  }
+  .bl {
+    bottom: 0; 
+    left: 0; 
+    border-bottom: 15px solid $ecru; 
+    border-right: 15px solid transparent; 
+  }
+  .br {
+    bottom: 0;
+    right: 0;
+    border-bottom: 15px solid $ecru; 
+    border-left: 15px solid transparent;
+  }
+}
+.bevel--white {
+  background: #fff;
+  .bg { background: #fff; }
+  .bg-overlay { background: none; }
+}

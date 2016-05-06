@@ -1,0 +1,30 @@
+<?php
+/**
+ * @file
+ * Code for the Drupal GovCon Extras feature.
+ */
+
+include_once 'dgc_extras.features.inc';
+
+/**
+ * Implements hook_date_formats().
+ */
+function dgc_extras_date_formats() {
+  return array(
+    // Creates a new format for a new, custom format type -- day of the week.
+    array(
+      'type' => 'day_of_the_week',
+      'format' => 'l',
+      'locales' => array(),
+    ),
+  );
+}
+
+/**
+ * Implements hook_date_format_types().
+ */
+function dgc_extras_date_format_types() {
+  return array(
+    'day_of_the_week' => t('Day of the week'),
+  );
+}

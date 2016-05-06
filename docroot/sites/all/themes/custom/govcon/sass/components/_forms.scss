@@ -1,0 +1,94 @@
+.form-item {
+  margin: 2em 1em 2em 0;
+}
+
+.filters .form-item {
+  margin: 0.5em 1em;
+  float: left;
+}
+.filters.form-wrapper {
+  @include clearfix;
+  float: left;
+}
+
+input[type=text] {
+  height: 45px; 
+}
+
+input[type=text], input[type=password], textarea, input[type=email] {
+  width: 100%;
+  font-size: .9em;
+  margin: 3px 0;
+  font-weight: normal;
+  padding: .5em 1em;
+  border: none;
+  color: #555555;
+  line-height: 2em;
+  @include border-radius(2px);
+}
+
+/* Overrides /modules/system/system.base.css with a custom throbber. */
+html.js input.form-autocomplete {
+  background-image: url(../images/throbber_govcon_small.gif);
+  background-position: 100% 0;
+  background-size: 20px 90px;
+}
+html.js .form-autocomplete.throbbing {
+  background-position: 100% -45px;
+}
+
+.ajax-progress .throbber {
+  background: transparent url(../images/throbber_govcon_small.gif) no-repeat 0 -58px;
+  background-size: 20px 90px;
+}
+
+
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+  &:focus { -webkit-box-shadow: 0 0 0px 1000px white inset; }
+  -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+form input:focus {
+  box-shadow: none;
+  outline: none;
+  box-shadow: inset 0 0 0 2px $red;
+}
+
+form .description {
+  color: #666;
+}
+
+/* Special forms */
+form.user-login {
+  input[type=text], input[type=password] {
+    max-width: 400px;
+  }
+}
+
+/* Views exposed filters */
+.views-exposed-form .views-exposed-widget.views-submit-button {
+  clear: left;
+}
+
+/* Drop downs */
+.form-type-select select {
+  background: transparent;
+}
+.form-type-select {
+}
+/* Autocomplete */
+form .field-multiple-table td.field-multiple-drag { width: 30px; padding-right: 0; }
+form .field-multiple-table td.field-multiple-drag a.tabledrag-handle { padding-right: 0.5em; }
+.draggable a.tabledrag-handle {
+  cursor: move;
+  float: left;
+  height: 1.7em;
+  overflow: hidden;
+  text-decoration: none;
+}
+a.tabledrag-handle .handle {
+  background-position: 8px 8px;
+  height: 26px;
+  width: 26px;
+  margin: 0;
+}

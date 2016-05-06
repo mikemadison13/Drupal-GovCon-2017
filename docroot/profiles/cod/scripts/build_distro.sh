@@ -8,7 +8,7 @@ pull_git() {
     if [[ -n $RESET ]]; then
       git reset --hard HEAD
     fi
-    git pull origin 7.x-2.x
+    git pull origin 7.x-1.x
 
     for i in `cat $BUILD_PATH/repos.txt`; do
       echo $i
@@ -42,51 +42,7 @@ release_notes() {
   echo $OUTPUT >> $BUILD_PATH/rn.txt
 }
 
-build_distro_raw() {
-  if [[ -d $BUILD_PATH ]]; then
-      cd $BUILD_PATH
-      #backup the sites directory
-      if [[ -d docroot ]]; then
-        rm -rf ./docroot
-      fi
-      # do we have the profile?
-      if [[ -d $BUILD_PATH/cod_profile ]]; then
-          rm -f /tmp/cod.tar.gz
-          drush make --no-cache --prepare-install --drupal-org=core $BUILD_PATH/cod_profile/drupal-org-core.make $BUILD_PATH/docroot
-          drush make --no-cache --no-core --contrib-destination --concurrency=5 --tar $BUILD_PATH/cod_profile/drupal-org.make /tmp/cod
-        # symlink the profile sites folder to our dev copy
-        cd docroot
-        if [[ -d $BUILD_PATH/sites ]]; then
-          rm -rf $BUILD_PATH/docroot/sites
-          ln -s ../sites $BUILD_PATH/docroot/sites
-        else
-          mv $BUILD_PATH/docroot/sites $BUILD_PATH/sites
-          ln -s ../sites $BUILD_PATH/docroot/sites
-        fi
-
-        ## put cod profile and modules into the profile folder
-        rsync -auv $BUILD_PATH/cod_profile/ $BUILD_PATH/docroot/profiles/cod/
-        ##rm -rf docroot/profiles/cod
-        UNTAR="tar -zxvf /tmp/cod.tar.gz"
-        cd $BUILD_PATH/docroot/profiles
-        eval $UNTAR
-        chmod -R 775 $BUILD_PATH/docroot/profiles/cod
-      else
-        if [[ -n $USERNAME ]]; then
-          git clone --branch 7.x-2.x ${USERNAME}@git.drupal.org:project/cod.git cod_profile
-        else
-          git clone http://git.drupal.org/project/cod.git cod_profile
-        fi
-        build_distro_raw $BUILD_PATH
-      fi
-  else
-    mkdir $BUILD_PATH
-    build_distro_raw $BUILD_PATH $USERNAME
-  fi
-  pull_git $BUILD_PATH
-
-}
-build_distro_symlinks() {
+build_distro() {
   if [[ -d $BUILD_PATH ]]; then
       cd $BUILD_PATH
       #backup the sites directory
@@ -120,7 +76,7 @@ build_distro_symlinks() {
               git clone http://git.drupal.org/project/${i}.git
             fi
           done
-          build_distro_symlinks $BUILD_PATH
+          build_distro $BUILD_PATH
         fi
         # symlink the profile sites folder to our dev copy
         cd docroot
@@ -154,15 +110,15 @@ build_distro_symlinks() {
         chmod -R 775 $BUILD_PATH/docroot/profiles/cod
       else
         if [[ -n $USERNAME ]]; then
-          git clone --branch 7.x-2.x ${USERNAME}@git.drupal.org:project/cod.git cod_profile
+          git clone --branch 7.x-1.x ${USERNAME}@git.drupal.org:project/cod.git cod_profile
         else
           git clone http://git.drupal.org/project/cod.git cod_profile
         fi
-        build_distro_symlinks $BUILD_PATH
+        build_distro $BUILD_PATH
       fi
   else
     mkdir $BUILD_PATH
-    build_distro_symlinks $BUILD_PATH $USERNAME
+    build_distro $BUILD_PATH $USERNAME
   fi
   pull_git $BUILD_PATH
 }
@@ -243,26 +199,14 @@ case $1 in
     if [[ -n $2 ]]; then
       BUILD_PATH=$2
     else
-      echo "Usage: build_distro.sh build [build_path] [username]"
+      echo "Usage: build_distro.sh build [build_path]"
       exit 1
     fi
     if [[ -n $3 ]]; then
       USERNAME=$3
     fi
     BUILD_PATH=$(abspath)
-    build_distro_raw $BUILD_PATH $USERNAME;;
-  build-sym)
-    if [[ -n $2 ]]; then
-      BUILD_PATH=$2
-    else
-      echo "Usage: build_distro.sh build-sym [build_path] [username]"
-      exit 1
-    fi
-    if [[ -n $3 ]]; then
-      USERNAME=$3
-    fi
-    BUILD_PATH=$(abspath)
-    build_distro_symlinks $BUILD_PATH $USERNAME;;
+    build_distro $BUILD_PATH $USERNAME;;
   update)
     if [[ -n $2 ]]; then
       DOCROOT=$2

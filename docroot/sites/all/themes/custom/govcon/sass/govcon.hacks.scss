@@ -1,0 +1,24 @@
+// Hide the toolbar or admin menu on small screens.
+@media all and (max-width: 800px) {
+  #toolbar, #admin-menu {
+    display: none;
+  }
+
+  html {
+    body.toolbar, body.admin-menu {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
+  }
+}
+
+// Instead of creating a whole new panels layout for the homepage
+// Let's just overide the sidebar width of they Hydra layout
+
+@media all and (max-width: 900px) {
+  .hydra.panel-layout .top-right-content,
+  .hydra.panel-layout .left-content {
+    width: 100% !important;
+    clear: both;
+  }
+}

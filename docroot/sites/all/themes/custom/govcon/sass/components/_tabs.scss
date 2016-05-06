@@ -1,0 +1,40 @@
+/* Tabs */
+
+.not-logged-in ul.tabs--primary { display: none; }
+
+ul.tabs--primary {
+	border: none;
+	padding: 1em 0;
+	li { 
+		margin: 0 2px 2px 0;
+	  a {
+			background-color: #fff;
+			color: $pale-blue;
+			font-weight: normal;
+			&:hover, &:focus { background-color: $pale-blue; color: #fff; }
+			@include border-top-radius(4px);
+		}
+	}
+}
+.tabs a.active {
+	background-color: $gold;
+	color: #fff;
+}
+
+/* Vertical tabs */
+.vertical-tabs {
+	background: #fff;
+	@include border-radius(3px);
+	border: 2px solid $gold;
+}
+
+.vertical-tabs ul.vertical-tabs-list li {
+	background: lighten($gold,20%);
+}
+.vertical-tabs fieldset.vertical-tabs-pane { padding: 1em; }
+
+
+/* Homepage */
+.page-node-1.node-type-event ul.tabs--primary {
+	display: none;
+}

@@ -1,0 +1,12 @@
+// Set consistent vertical and horizontal spacing units.
+$vert-spacing-unit: 18px;
+$horz-spacing-unit: 1em;
+
+$tab: 50em;
+$desk: 70em;
+$wide: 75em;
+
+$grids: 4;
+$grids: add-grid(12 at $tab);
+
+$gutters: 1/3;

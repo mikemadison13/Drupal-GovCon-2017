@@ -68,13 +68,12 @@ projects[ckeditor][type] = "module"
 projects[ckeditor][subdir] = "contrib"
 projects[ckeditor][version] = "1.17"
 
-; Cod Alpha5
 projects[cod_support][type] = "module"
 projects[cod_support][subdir] = "contrib"
-projects[cod_support][version] = "2.0-alpha5"
-projects[cod_support][download][type] = "git"
-projects[cod_support][download][url] = "http://git.drupal.org/project/cod_support.git"
-projects[cod_support][download][branch] = "7.x-2.x"
+projects[cod_support][version] = "1.0-rc1"
+;projects[cod_support][download][type] = "git"
+;projects[cod_support][download][url] = "http://git.drupal.org/project/cod_support.git"
+;projects[cod_support][download][branch] = "7.x-1.x"
 
 projects[commerce][type] = "module"
 projects[commerce][subdir] = "contrib"
@@ -92,41 +91,10 @@ projects[commerce][patch][] = https://www.drupal.org/files/issues/product_select
 ; See https://www.drupal.org/node/2415237#comment-10746838 for more info.
 projects[commerce][patch][] = https://www.drupal.org/files/issues/2657718-static_cache_default_currency-1.patch
 
-projects[commerce_billy][type] = "module"
-projects[commerce_billy][subdir] = "contrib"
-projects[commerce_billy][version] = "1.0"
-
-; Allow CSS styling to be programatically altered.
-; See https://www.drupal.org/node/2653972#comment-10770308 for more info.
-projects[commerce_billy][patch][] = "https://www.drupal.org/files/issues/2653972-billy-css-alter-2.patch"
-
-projects[commerce_billy_mail][type] = "module"
-projects[commerce_billy_mail][subdir] = "contrib"
-projects[commerce_billy_mail][version] = "1.0-beta3"
-projects[commerce_billy_mail][download][type] = "git"
-projects[commerce_billy_mail][download][url] = "http://git.drupal.org/project/commerce_billy_mail.git"
-projects[commerce_billy_mail][download][branch] = "7.x-1.x"
-projects[commerce_billy_mail][download][revision] = "6e9efbf95d1719a6b852e263b203da0cf86c02fd"
-
-; Clear out tokens if the values are empty.
-; See https://www.drupal.org/node/2434981#comment-9658333 for more info.
-projects[commerce_billy_mail][patch][] = "https://www.drupal.org/files/issues/2434981-billy-mail-token-clear-1.patch"
-
-projects[commerce_currency][type] = "module"
-projects[commerce_currency][version] = "1.0"
-projects[commerce_currency][subdir] = "contrib"
-
-; Commerce Currency Field is not showing on Rules
-; See https://www.drupal.org/node/2212615 for more info.
-projects[commerce_currency][patch][] = https://www.drupal.org/files/issues/2212615-field_visibility_for_rules-2.patch
-
-; Although the field is mark as required, it gets ignored in the node form.
-; See https://www.drupal.org/node/2327235 for more info.
-projects[commerce_currency][patch][] = https://www.drupal.org/files/issues/required_5.patch
 
 projects[commerce_features][type] = "module"
 projects[commerce_features][subdir] = "contrib"
-projects[commerce_features][version] = "1.1"
+projects[commerce_features][version] = "1.2"
 
 projects[commerce_stock][type] = "module"
 projects[commerce_stock][subdir] = "contrib"
@@ -138,21 +106,17 @@ projects[commerce_coupon][subdir] = "contrib"
 projects[commerce_coupon][download][type] = "git"
 projects[commerce_coupon][download][url] = "http://git.drupal.org/project/commerce_coupon.git"
 projects[commerce_coupon][download][branch] = "7.x-2.x"
-projects[commerce_coupon][download][revision] = "339c35c2c0df6dc25c366d7988e24e2f49f1d929"
+projects[commerce_coupon][download][revision] = "55bdc40eca0f7b32e11a77a94bf5ec21649849cc"
 
 projects[commerce_discount][type] = "module"
 projects[commerce_discount][subdir] = "contrib"
 projects[commerce_discount][download][type] = "git"
 projects[commerce_discount][download][url] = "http://git.drupal.org/project/commerce_discount.git"
 projects[commerce_discount][download][branch] = "7.x-1.x"
-projects[commerce_discount][download][revision] = "185aa9435661be35aaaf3e9c22d80af13d0f22e6"
+projects[commerce_discount][download][revision] = "7a78225fb778b2ff0b71aa7d5a13bea824b07b69"
 
 ; Add a weight to commerce_discount. https://www.drupal.org/node/1962484#comment-10026949
 projects[commerce_discount][patch][] = "https://www.drupal.org/files/issues/1962484-add-weight-commerce-discount-1.patch"
-
-; Add multicurrency support to commerce discount.
-; See https://www.drupal.org/node/2345311#comment-10747624 for more info.
-projects[commerce_discount][patch][] = "https://www.drupal.org/files/issues/2345311-commerce_discount_multicurrency-8.patch"
 
 projects[commerce_coupon_batch][type] = "module"
 projects[commerce_coupon_batch][subdir] = "contrib"
@@ -193,7 +157,7 @@ projects[date][patch][] = "https://www.drupal.org/files/issues/date-views-filter
 
 projects[date_ical][type] = "module"
 projects[date_ical][subdir] = "contrib"
-projects[date_ical][version] = "3.8"
+projects[date_ical][version] = "3.9"
 
 ; Remove icalcreator library from the date_ical module
 ; https://drupal.org/node/2209165
@@ -215,10 +179,6 @@ projects[distro_update][subdir] = "contrib"
 projects[distro_update][download][type] = "git"
 projects[distro_update][download][revision] = "f5ab9fe"
 projects[distro_update][download][branch] = "7.x-1.x"
-
-projects[eck][type] = "module"
-projects[eck][subdir] = "contrib"
-projects[eck][version] = "2.0-rc8"
 
 projects[efq_extra_field][type] = "module"
 projects[efq_extra_field][subdir] = "contrib"
@@ -267,15 +227,11 @@ projects[entityreference_prepopulate][patch][] = "https://www.drupal.org/files/i
 
 projects[features][type] = "module"
 projects[features][subdir] = "contrib"
-projects[features][version] = "2.8"
+projects[features][version] = "2.9"
 
 projects[fivestar][type] = "module"
 projects[fivestar][subdir] = "contrib"
-projects[fivestar][version] = "2.1"
-
-projects[field_extrawidgets][type] = "module"
-projects[field_extrawidgets][subdir] = "contrib"
-projects[field_extrawidgets][version] = "1.1"
+projects[fivestar][version] = "2.2"
 
 projects[field_group][type] = "module"
 projects[field_group][subdir] = "contrib"
@@ -316,7 +272,7 @@ projects[inline_conditions][download][branch] = "7.x-1.x"
 projects[inline_conditions][download][revision] = "3dd9495e0a7b95f7e8a29141a8860b073cba2b6a"
 
 projects[inline_entity_form][type] = "module"
-projects[inline_entity_form][version] = "1.6"
+projects[inline_entity_form][version] = "1.8"
 projects[inline_entity_form][subdir] = "contrib"
 
 projects[i18n][type] = "module"
@@ -404,10 +360,6 @@ projects[og][patch][] = "https://www.drupal.org/files/issues/og_id_user_access.p
 ; https://www.drupal.org/node/2493277#comment-9950303
 projects[og][patch][] = "https://www.drupal.org/files/issues/2493277-og-context-premature-empty-1.patch"
 
-; Allow og context to be passed into panels (useful for mini panels)
-; https://www.drupal.org/node/1781652#comment-6473660
-projects[og][patch][] = "https://www.drupal.org/files/og_context_ctools_relationship-1781652-5.patch"
-
 ; Assign a language to entities that don't assign it themselves inside og.
 ; See https://www.drupal.org/node/1865852 for more info.
 projects[og][patch][] = "https://www.drupal.org/files/issues/group-manager-language-1865852.patch"
@@ -431,10 +383,6 @@ projects[og_vocab][patch][2457113] = "https://www.drupal.org/files/issues/248115
 ; https://www.drupal.org/node/2531418#comment-10107836
 projects[og_vocab][patch][2531418] = "https://www.drupal.org/files/issues/fatal_error_with_metatag-2531418-1.patch"
 
-; Support cod_session's taxonomy machine name by event.
-; https://www.drupal.org/node/2604594#comment-10507976
-projects[og_vocab][patch][2604594] = "https://www.drupal.org/files/issues/2604594-og_vocab_get_ogv_by_id-1.patch"
-
 projects[og_theme][type] = "module"
 projects[og_theme][subdir] = "contrib"
 projects[og_theme][version] = "2.0"
@@ -452,7 +400,6 @@ projects[panels][type] = "module"
 projects[panels][subdir] = "contrib"
 projects[panels][version] = "3.x-dev"
 projects[panels][download][revision] = "e8623b704fb2585bbf77f31f06d4a98721556277"
-
 ; Fix IPE JS alert (Panelizer is Incompatible with Moderation)
 ; https://www.drupal.org/node/1402860#comment-9729091
 projects[panels][patch][1402860] = "https://www.drupal.org/files/issues/panelizer_is-1402860-82-fix-ipe-end-js-alert.patch"
@@ -518,10 +465,11 @@ projects[taxonomy_machine_name][version] = "1.2"
 ; For COD releases, we peg it to a release of ticket. For dev, we use the dev branch.
 projects[ticket][type] = "module"
 projects[ticket][subdir] = "contrib"
+projects[ticket][version] = "1.0-beta4"
 projects[ticket][download][type] = "git"
 projects[ticket][download][url] = "http://git.drupal.org/project/ticket.git"
 projects[ticket][download][branch] = "7.x-1.x"
-;projects[ticket][download][revision] = "9f94b5fb06c98a8547b0666f97c381992a4abdbc"
+;projects[ticket][download][revision] = "1b530acb2d31f2536ef777c98c28fb7fbc8a73b7"
 
 projects[title][type] = "module"
 projects[title][version] = "1.0-alpha8"
@@ -686,6 +634,3 @@ libraries[iCalcreator][download][url] = "https://github.com/iCalcreator/iCalcrea
 libraries[dompdf][download][type] = "get"
 libraries[dompdf][type] = "libraries"
 libraries[dompdf][download][url] = "https://github.com/dompdf/dompdf/releases/download/v0.6.2/dompdf-0.6.2.zip"
-; Remove dompdf example folder.
-; See https://www.drupal.org/node/2434767#comment-10749890 for more info.
-libraries[dompdf][patch][] = "https://www.drupal.org/files/issues/dompdf-remove-www-2.patch"

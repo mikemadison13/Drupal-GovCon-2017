@@ -1,0 +1,9 @@
+# Ignore the node modules folder (created by 'npm install').
+node_modules
+
+# We absolutely don't want to have the .sass-cache in git.
+.sass-cache
+
+# Ignore sass map files as they differ between dev environments
+# and aren't needed in production
+css/*.css.map

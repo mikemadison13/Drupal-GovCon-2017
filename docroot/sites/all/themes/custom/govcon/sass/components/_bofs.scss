@@ -1,0 +1,43 @@
+.page-node-bofs {
+  .view-cod-bof-schedule > .view-header {
+    margin-bottom: 30px;
+    margin-top: -20px;
+  }
+  .view-cod-bof-schedule .views-field-name {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1.1em;
+    min-width: 80px;
+  }
+  .view-cod-bof-schedule .quicktabs-views-group {
+    margin-bottom:-50px;
+  }
+   .view-cod-bof-schedule .quicktabs-views-group > .views-field-view {
+    padding-bottom: 50px;
+    .attachment a {
+      border: none;
+      background-image: none;
+      background-color: $red;
+      padding: 0.3em 0.5em;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      margin: 3px 3px 0 0;
+      &:hover { 
+        background: #fff; 
+        text-decoration: none; 
+        color: $red;
+      }
+    }
+    .views-field-title {
+      margin: 0;
+    }
+  }
+  .footer {
+    position: relative;
+    background: $texture $ecru;
+    height: 70px;
+    margin-top: -50px;
+    z-index: 100;
+  }
+}

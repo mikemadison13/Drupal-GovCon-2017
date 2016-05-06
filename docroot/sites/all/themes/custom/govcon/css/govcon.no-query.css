@@ -1,0 +1,2547 @@
+/* line 1, ../sass/base/_media.scss */
+img, media {
+  max-width: 100%; }
+
+/* line 1, ../sass/base/_tables.scss */
+table {
+  width: 99.9%;
+  -moz-box-shadow: 0 0 0 2px #b9a884;
+  -webkit-box-shadow: 0 0 0 2px #b9a884;
+  box-shadow: 0 0 0 2px #b9a884;
+  margin: 2px; }
+  /* line 5, ../sass/base/_tables.scss */
+  table th {
+    background: #ded6c5;
+    padding: 0.5em; }
+  /* line 9, ../sass/base/_tables.scss */
+  table tr {
+    width: 99%; }
+  /* line 12, ../sass/base/_tables.scss */
+  table tr.odd {
+    background-color: #fff; }
+  /* line 15, ../sass/base/_tables.scss */
+  table tr.even {
+    background-color: #efede9; }
+  /* line 18, ../sass/base/_tables.scss */
+  table td {
+    padding: 0.5em; }
+
+/* line 1, ../sass/base/_typography.scss */
+body {
+  font-family: "Source Sans Pro", Helvetica, sans-serif; }
+
+/* line 5, ../sass/base/_typography.scss */
+h1 {
+  text-transform: uppercase;
+  font-weight: 900;
+  color: #095380;
+  font-size: 2em;
+  line-height: 1.1;
+  position: relative;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  margin: 0.3em 0; }
+
+/* line 15, ../sass/base/_typography.scss */
+h1:after {
+  content: "";
+  background: url(../images/texture_font2.png) repeat transparent;
+  background-size: 100px 100px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+
+/* line 18, ../sass/base/_typography.scss */
+h2 {
+  color: #6ba0a8;
+  font-weight: 700;
+  margin: 1em 0 0 0;
+  padding: 0 0 .1em 0;
+  border-bottom: 2px solid #b9a884; }
+  /* line 24, ../sass/base/_typography.scss */
+  h2 a {
+    color: #e02d3b;
+    font-weight: 700;
+    letter-spacing: 0;
+    margin-bottom: 0; }
+    /* line 29, ../sass/base/_typography.scss */
+    h2 a:hover {
+      color: #095380;
+      text-decoration: none; }
+
+/* line 32, ../sass/base/_typography.scss */
+h2.pane-title, h2.block__title {
+  font-family: "Courgette", cursive;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -o-font-smoothing: antialiased;
+  color: #095380;
+  font-size: 2em;
+  font-weight: normal;
+  letter-spacing: 0;
+  margin: 0 0 0.5em;
+  border: none; }
+
+/* line 44, ../sass/base/_typography.scss */
+h2.node__title {
+  border: none;
+  padding-bottom: 0;
+  margin: 0; }
+
+/* line 49, ../sass/base/_typography.scss */
+h3 {
+  color: #095380;
+  font-weight: 600;
+  margin: 1em 0 0 0; }
+
+/* line 54, ../sass/base/_typography.scss */
+a {
+  color: #095380;
+  text-decoration: none;
+  font-weight: 700; }
+
+/* line 59, ../sass/base/_typography.scss */
+a:hover, a:focus {
+  color: #e02d3b; }
+
+/* line 64, ../sass/base/_typography.scss */
+h1 {
+  font-size: 3em; }
+
+/* line 70, ../sass/base/_typography.scss */
+h1 {
+  font-size: 4em; }
+
+/* line 1, ../sass/components/_admin.scss */
+.warning {
+  color: #e02d3b; }
+
+/* line 4, ../sass/components/_admin.scss */
+.messages.warning {
+  border-color: #e02d3b; }
+
+/* Admin tables */
+/* line 9, ../sass/components/_admin.scss */
+td.status {
+  width: 24px; }
+
+/* line 1, ../sass/components/_attendees.scss */
+.view-cod-community-attendees {
+  font-size: .8em; }
+  /* line 3, ../sass/components/_attendees.scss */
+  .view-cod-community-attendees ul {
+    padding: 0;
+    margin-top: 30px; }
+    /* line 6, ../sass/components/_attendees.scss */
+    .view-cod-community-attendees ul li.views-row {
+      list-style: none;
+      float: left;
+      padding: 10px;
+      margin: 0 10px 10px 0;
+      background: url(../images/texture200.png) #b9a884;
+      width: 120px;
+      height: 170px; }
+    /* line 15, ../sass/components/_attendees.scss */
+    .view-cod-community-attendees ul li.views-row.Organizer {
+      background: url(../images/texture200.png) #8bb5bb; }
+  /* line 19, ../sass/components/_attendees.scss */
+  .view-cod-community-attendees .views-field-picture {
+    width: 100px;
+    height: 100px;
+    background: url("../images/gold_star.svg") #095380;
+    position: relative;
+    margin-bottom: 4px; }
+    /* line 25, ../sass/components/_attendees.scss */
+    .view-cod-community-attendees .views-field-picture:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url(../images/texture200.png); }
+    /* line 34, ../sass/components/_attendees.scss */
+    .view-cod-community-attendees .views-field-picture img {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: auto; }
+  /* line 41, ../sass/components/_attendees.scss */
+  .view-cod-community-attendees .Organizer.views-field-picture {
+    background: url("../images/gold_star.svg") #e02d3b; }
+  /* line 44, ../sass/components/_attendees.scss */
+  .view-cod-community-attendees .views-field-field-profile-first,
+  .view-cod-community-attendees .views-field-field-profile-last {
+    display: inline; }
+    /* line 47, ../sass/components/_attendees.scss */
+    .view-cod-community-attendees .views-field-field-profile-first div,
+    .view-cod-community-attendees .views-field-field-profile-last div {
+      display: inline; }
+
+/* line 52, ../sass/components/_attendees.scss */
+.view-cod-community-attendees {
+  font-size: 1em; }
+  /* line 54, ../sass/components/_attendees.scss */
+  .view-cod-community-attendees ul li.views-row {
+    width: 180px;
+    height: 240px; }
+  /* line 55, ../sass/components/_attendees.scss */
+  .view-cod-community-attendees .views-field-picture {
+    width: 160px;
+    height: 160px; }
+
+/* line 3, ../sass/components/_blocks.scss */
+.l-region--footer .block {
+  padding: 20px;
+  margin: 0;
+  clear: both;
+  width: 100%; }
+
+/* Special blocks */
+/* line 11, ../sass/components/_blocks.scss */
+#block-block-6 {
+  display: none; }
+
+/* line 15, ../sass/components/_blocks.scss */
+#block-block-1 p {
+  margin: 0; }
+
+/* Special blocks */
+/* line 21, ../sass/components/_blocks.scss */
+#block-block-6 {
+  position: absolute;
+  left: -20px;
+  top: 10px;
+  display: block; }
+  /* line 22, ../sass/components/_blocks.scss */
+  #block-block-6 h2 {
+    overflow: hidden;
+    text-indent: -9000px;
+    display: block;
+    padding: 0;
+    margin: 0;
+    line-height: 0; }
+
+/* line 28, ../sass/components/_blocks.scss */
+.dgc-callout {
+  padding-top: 36px;
+  width: 150px;
+  height: 150px;
+  background: #e6e4dd;
+  -webkit-border-radius: 75px;
+  -moz-border-radius: 75px;
+  border-radius: 75px;
+  background-image: url(../images/texture200.png);
+  text-align: center;
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-weight: 900;
+  color: #e02d3b;
+  line-height: 1;
+  font-size: 18px;
+  -webkit-transform: rotate(-10deg);
+  -moz-transform: rotate(-10deg);
+  -ms-transform: rotate(-10deg);
+  -o-transform: rotate(-10deg);
+  -webkit-transition: 0.5s ease-in-out;
+  -moz-transition: 0.5s ease-in-out;
+  -o-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out; }
+  /* line 29, ../sass/components/_blocks.scss */
+  .dgc-callout div {
+    display: block; }
+  /* line 49, ../sass/components/_blocks.scss */
+  .dgc-callout .dgc-callout--3 {
+    text-transform: uppercase; }
+  /* line 50, ../sass/components/_blocks.scss */
+  .dgc-callout .dgc-callout--4 {
+    font-family: "Courgette", cursive;
+    font-weight: normal;
+    font-size: 22px;
+    color: #8bb5bb; }
+
+/* line 59, ../sass/components/_blocks.scss */
+#block-block-6 {
+  top: -10px; }
+
+/* line 62, ../sass/components/_blocks.scss */
+.dgc-callout {
+  padding-top: 60px;
+  width: 200px;
+  height: 200px;
+  background: #e6e4dd;
+  -webkit-border-radius: 100px;
+  -moz-border-radius: 100px;
+  border-radius: 100px;
+  background-image: url(../images/texture200.png);
+  font-size: 24px; }
+  /* line 67, ../sass/components/_blocks.scss */
+  .dgc-callout .dgc-callout--4 {
+    font-size: 28px; }
+
+/* line 2, ../sass/components/_bofs.scss */
+.page-node-bofs .view-cod-bof-schedule > .view-header {
+  margin-bottom: 30px;
+  margin-top: -20px; }
+/* line 6, ../sass/components/_bofs.scss */
+.page-node-bofs .view-cod-bof-schedule .views-field-name {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 1.1em;
+  min-width: 80px; }
+/* line 12, ../sass/components/_bofs.scss */
+.page-node-bofs .view-cod-bof-schedule .quicktabs-views-group {
+  margin-bottom: -50px; }
+/* line 15, ../sass/components/_bofs.scss */
+.page-node-bofs .view-cod-bof-schedule .quicktabs-views-group > .views-field-view {
+  padding-bottom: 50px; }
+  /* line 17, ../sass/components/_bofs.scss */
+  .page-node-bofs .view-cod-bof-schedule .quicktabs-views-group > .views-field-view .attachment a {
+    border: none;
+    background-image: none;
+    background-color: #e02d3b;
+    padding: 0.3em 0.5em;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+    margin: 3px 3px 0 0; }
+    /* line 26, ../sass/components/_bofs.scss */
+    .page-node-bofs .view-cod-bof-schedule .quicktabs-views-group > .views-field-view .attachment a:hover {
+      background: #fff;
+      text-decoration: none;
+      color: #e02d3b; }
+  /* line 32, ../sass/components/_bofs.scss */
+  .page-node-bofs .view-cod-bof-schedule .quicktabs-views-group > .views-field-view .views-field-title {
+    margin: 0; }
+/* line 36, ../sass/components/_bofs.scss */
+.page-node-bofs .footer {
+  position: relative;
+  background: url(../images/texture200.png) #e6e4dd;
+  height: 70px;
+  margin-top: -50px;
+  z-index: 100; }
+
+/* line 1, ../sass/components/_breadcrumbs.scss */
+.breadcrumb {
+  padding: 0.5em 0; }
+
+/* breadcrumb arrow */
+/* line 6, ../sass/components/_breadcrumbs.scss */
+.arrow {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid #b9a884;
+  display: inline-block;
+  margin: 0 0.2em; }
+
+/* line 1, ../sass/components/_buttons.scss */
+input[type=submit], button, .button, .more-link a, .view-cod-session-schedule .views-field-count a, .view-cod-session-schedule .views-field-ops a,
+.view-cod-bof-schedule .views-field-count a,
+.view-cod-bof-schedule .views-field-ops a,
+.view-cod-schedule .views-field-count a,
+.view-cod-schedule .views-field-ops a {
+  border: none;
+  background-image: none;
+  background-color: #095380;
+  padding: 0.3em 0.5em;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #fff;
+  margin: 3px 3px 0 0;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background: #095380;
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
+  font-family: "Source Sans Pro", Helvetica, sans-serif; }
+  /* line 14, ../sass/components/_buttons.scss */
+  input[type=submit]:hover, input[type=submit]:focus, button:hover, button:focus, .button:hover, .more-link a:hover, .view-cod-session-schedule .views-field-count a:hover, .view-cod-session-schedule .views-field-ops a:hover,
+  .view-cod-bof-schedule .views-field-count a:hover,
+  .view-cod-bof-schedule .views-field-ops a:hover,
+  .view-cod-schedule .views-field-count a:hover,
+  .view-cod-schedule .views-field-ops a:hover, .button:focus, .more-link a:focus, .view-cod-session-schedule .views-field-count a:focus, .view-cod-session-schedule .views-field-ops a:focus,
+  .view-cod-bof-schedule .views-field-count a:focus,
+  .view-cod-bof-schedule .views-field-ops a:focus,
+  .view-cod-schedule .views-field-count a:focus,
+  .view-cod-schedule .views-field-ops a:focus {
+    text-decoration: none;
+    background-color: #fff;
+    background-image: none;
+    color: #095380;
+    border: none; }
+
+/* big buttons */
+/* line 23, ../sass/components/_buttons.scss */
+a.button.btn-big, .more-link a.btn-big, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a,
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a,
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover,
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a,
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover,
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus,
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover,
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a,
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover,
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus,
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover, .view-cod-session-schedule .views-field-count a.btn-big, .view-cod-session-schedule .views-field-ops a.btn-big,
+.view-cod-bof-schedule .views-field-count a.btn-big,
+.view-cod-bof-schedule .views-field-ops a.btn-big,
+.view-cod-schedule .views-field-count a.btn-big,
+.view-cod-schedule .views-field-ops a.btn-big, .form-actions input[type=submit],
+.ticket-field-formatter-view-form input[type=submit],
+.exposed-filters input[type=submit].form-submit,
+.ticket-register-form input[type=submit],
+.pane-node-field-event-tickets input[type=submit],
+.views-exposed-widget input[type=submit].form-submit {
+  text-transform: uppercase;
+  padding: 0.5em;
+  font-size: 1rem;
+  background: #e02d3b; }
+  /* line 33, ../sass/components/_buttons.scss */
+  a.button.btn-big:hover, .more-link a.btn-big:hover, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:hover,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:hover,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:hover, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover:focus, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover:focus,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover:focus,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover, .view-cod-session-schedule .views-field-count a.btn-big:hover, .view-cod-session-schedule .views-field-ops a.btn-big:hover,
+  .view-cod-bof-schedule .views-field-count a.btn-big:hover,
+  .view-cod-bof-schedule .views-field-ops a.btn-big:hover,
+  .view-cod-schedule .views-field-count a.btn-big:hover,
+  .view-cod-schedule .views-field-ops a.btn-big:hover, a.button.btn-big:focus, .more-link a.btn-big:focus, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:focus,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:focus,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:focus, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus:hover,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus:hover,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus:hover, .view-cod-session-schedule .views-field-count a.btn-big:focus, .view-cod-session-schedule .views-field-ops a.btn-big:focus,
+  .view-cod-bof-schedule .views-field-count a.btn-big:focus,
+  .view-cod-bof-schedule .views-field-ops a.btn-big:focus,
+  .view-cod-schedule .views-field-count a.btn-big:focus,
+  .view-cod-schedule .views-field-ops a.btn-big:focus, .form-actions input[type=submit]:hover, .form-actions input[type=submit]:focus,
+  .ticket-field-formatter-view-form input[type=submit]:hover,
+  .ticket-field-formatter-view-form input[type=submit]:focus,
+  .exposed-filters input[type=submit].form-submit:hover,
+  .exposed-filters input[type=submit].form-submit:focus,
+  .ticket-register-form input[type=submit]:hover,
+  .ticket-register-form input[type=submit]:focus,
+  .pane-node-field-event-tickets input[type=submit]:hover,
+  .pane-node-field-event-tickets input[type=submit]:focus,
+  .views-exposed-widget input[type=submit].form-submit:hover,
+  .views-exposed-widget input[type=submit].form-submit:focus {
+    background-color: #fff;
+    color: #e02d3b; }
+
+/* line 38, ../sass/components/_buttons.scss */
+.exposed-filters input[type=submit].form-submit {
+  margin: 0.5em 1em; }
+
+/* line 41, ../sass/components/_buttons.scss */
+.views-ui-display-tab-actions .ctools-button-processed li a,
+.views-ui-display-tab-actions .ctools-button-processed input {
+  color: #095380; }
+
+/* more button */
+/* tickets button */
+/* line 54, ../sass/components/_buttons.scss */
+.panel-pane.tickets {
+  text-align: center;
+  margin-top: 100px; }
+  /* line 57, ../sass/components/_buttons.scss */
+  .panel-pane.tickets h2 {
+    color: #e02d3b;
+    font-size: 2.8em;
+    font-family: "Courgette", cursive;
+    border: none;
+    font-weight: normal; }
+  /* line 64, ../sass/components/_buttons.scss */
+  .panel-pane.tickets .tickets {
+    width: 215px;
+    padding: 40px 0 60px;
+    margin-top: 30px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 2.6em;
+    background: url(../images/ticket.svg) no-repeat top left;
+    background-size: contain;
+    position: relative;
+    display: inline-block;
+    color: #fff;
+    font-weight: bold;
+    -webkit-transform: rotate(-4deg);
+    -moz-transform: rotate(-4deg);
+    -ms-transform: rotate(-4deg);
+    -o-transform: rotate(-4deg);
+    -webkit-transition: 0.5s ease-in-out;
+    -moz-transition: 0.5s ease-in-out;
+    -o-transition: 0.5s ease-in-out;
+    transition: 0.5s ease-in-out; }
+  /* line 86, ../sass/components/_buttons.scss */
+  .panel-pane.tickets a.tickets:after {
+    content: "";
+    background: url(../images/texture_font2.png) repeat transparent;
+    background-size: 100px 100px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0; }
+  /* line 89, ../sass/components/_buttons.scss */
+  .panel-pane.tickets a.tickets:hover {
+    -webkit-transform: rotate(3deg);
+    -moz-transform: rotate(3deg);
+    -ms-transform: rotate(3deg);
+    -o-transform: rotate(3deg);
+    text-decoration: none; }
+
+/* Big star schedule button */
+/* line 99, ../sass/components/_buttons.scss */
+.panel-layout .schedule-star-pane {
+  text-align: center;
+  margin: -50px 0 -60px; }
+
+/* line 103, ../sass/components/_buttons.scss */
+.schedule-star a {
+  display: inline-block;
+  background: url("../images/gold_star.svg") no-repeat;
+  background-size: contain;
+  height: 340px;
+  width: 340px;
+  text-align: center;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 1.4em;
+  padding-top: 158px;
+  -webkit-transform: rotate(-4deg);
+  -moz-transform: rotate(-4deg);
+  -ms-transform: rotate(-4deg);
+  -o-transform: rotate(-4deg);
+  -webkit-transition: 0.5s ease-in-out;
+  -moz-transition: 0.5s ease-in-out;
+  -o-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+  opacity: 0.7; }
+  /* line 123, ../sass/components/_buttons.scss */
+  .schedule-star a:hover {
+    -webkit-transform: rotate(3deg);
+    -moz-transform: rotate(3deg);
+    -ms-transform: rotate(3deg);
+    -o-transform: rotate(3deg);
+    text-decoration: none;
+    opacity: 1; }
+
+/* line 134, ../sass/components/_buttons.scss */
+.panel-pane.tickets {
+  margin-top: 0;
+  position: absolute;
+  left: 0;
+  top: -30px; }
+  /* line 139, ../sass/components/_buttons.scss */
+  .panel-pane.tickets h2 {
+    font-size: 2em; }
+  /* line 140, ../sass/components/_buttons.scss */
+  .panel-pane.tickets .tickets {
+    width: 125px;
+    padding: 22px 0 30px;
+    text-transform: uppercase;
+    font-size: 1.4em; }
+
+/* line 147, ../sass/components/_buttons.scss */
+.panel-layout .container {
+  overflow: visible; }
+
+/* line 150, ../sass/components/_buttons.scss */
+.panel-layout .schedule-star-pane {
+  margin-top: 0;
+  position: absolute;
+  left: -90px;
+  top: -100px; }
+  /* line 155, ../sass/components/_buttons.scss */
+  .panel-layout .schedule-star-pane a {
+    height: 300px;
+    width: 300px;
+    padding-top: 140px;
+    font-size: 1.2em; }
+
+/* line 164, ../sass/components/_buttons.scss */
+.panel-pane.tickets {
+  left: 0;
+  top: -30px; }
+  /* line 167, ../sass/components/_buttons.scss */
+  .panel-pane.tickets .tickets {
+    width: 175px;
+    padding: 32px 0 50px;
+    text-transform: uppercase;
+    font-size: 2em; }
+
+/* line 174, ../sass/components/_buttons.scss */
+.panel-layout .schedule-star-pane {
+  margin-top: 0;
+  position: absolute;
+  left: -120px;
+  top: -140px; }
+  /* line 179, ../sass/components/_buttons.scss */
+  .panel-layout .schedule-star-pane a {
+    height: 400px;
+    width: 400px;
+    padding-top: 190px;
+    font-size: 1.6em; }
+
+/* check in view with exposed filters */
+/* line 2, ../sass/components/_checkin.scss */
+.view-id-dgc_registration_check_in {
+  /* button style flag for checking in attendees */ }
+  /* line 3, ../sass/components/_checkin.scss */
+  .view-id-dgc_registration_check_in .views-exposed-widgets {
+    background: #ded6c5;
+    margin-bottom: 30px;
+    width: 100%;
+    padding: 20px; }
+  /* line 10, ../sass/components/_checkin.scss */
+  .view-id-dgc_registration_check_in .views-field-ops {
+    width: 90px; }
+    /* line 12, ../sass/components/_checkin.scss */
+    .view-id-dgc_registration_check_in .views-field-ops .flag-wrapper {
+      width: 30px;
+      height: 30px;
+      display: block;
+      background: #fff;
+      border: 1px solid #333;
+      overflow: hidden;
+      line-height: 50px;
+      margin-left: 20px;
+      border-radius: 3px; }
+      /* line 22, ../sass/components/_checkin.scss */
+      .view-id-dgc_registration_check_in .views-field-ops .flag-wrapper a {
+        padding: 30px 0 0 30px;
+        background: #fff;
+        display: inline-block; }
+      /* line 27, ../sass/components/_checkin.scss */
+      .view-id-dgc_registration_check_in .views-field-ops .flag-wrapper a.unflag-action {
+        background: #e02d3b; }
+
+/* line 2, ../sass/components/_comments.scss */
+section#comments h3 {
+  margin-top: 0; }
+/* line 3, ../sass/components/_comments.scss */
+section#comments .indented {
+  border-left: 2px solid #b9a884;
+  margin-left: 0;
+  padding-left: 10px; }
+/* line 9, ../sass/components/_comments.scss */
+section#comments .comment .links li {
+  float: right; }
+/* line 10, ../sass/components/_comments.scss */
+section#comments .comment .links a {
+  font-size: 0.7em; }
+
+/* line 16, ../sass/components/_comments.scss */
+article.comment {
+  padding: 10px;
+  background: url(../images/texture200.png) #ded6c5;
+  margin: 1em 0; }
+
+/* line 21, ../sass/components/_comments.scss */
+.comment__submitted .permalink {
+  font-size: 0.7em;
+  background: #e6e4dd;
+  padding: 0.1em;
+  display: inline-block;
+  position: relative;
+  top: -2px;
+  margin-left: 1em; }
+
+/* line 30, ../sass/components/_comments.scss */
+mark.new {
+  padding: 0.2em;
+  background: #e02d3b;
+  color: #fff; }
+
+/* line 35, ../sass/components/_comments.scss */
+.comment-left {
+  float: left;
+  margin-right: 10px;
+  width: 80px; }
+
+/* line 40, ../sass/components/_comments.scss */
+.comment-right {
+  overflow: hidden; }
+
+/* line 1, ../sass/components/_fieldsets.scss */
+fieldset {
+  border: 2px solid #b9a884;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  margin-bottom: 1em;
+  padding: 1em; }
+
+/* line 9, ../sass/components/_fieldsets.scss */
+.fieldset-description {
+  margin-bottom: 1em; }
+
+/* line 1, ../sass/components/_forms.scss */
+.form-item {
+  margin: 2em 1em 2em 0; }
+
+/* line 5, ../sass/components/_forms.scss */
+.filters .form-item {
+  margin: 0.5em 1em;
+  float: left; }
+
+/* line 9, ../sass/components/_forms.scss */
+.filters.form-wrapper {
+  float: left; }
+  /* line 35, ../sass/abstractions/_mixins.scss */
+  .filters.form-wrapper:after {
+    content: "";
+    display: table;
+    clear: both; }
+
+/* line 14, ../sass/components/_forms.scss */
+input[type=text] {
+  height: 45px; }
+
+/* line 18, ../sass/components/_forms.scss */
+input[type=text], input[type=password], textarea, input[type=email] {
+  width: 100%;
+  font-size: .9em;
+  margin: 3px 0;
+  font-weight: normal;
+  padding: .5em 1em;
+  border: none;
+  color: #555555;
+  line-height: 2em;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px; }
+
+/* Overrides /modules/system/system.base.css with a custom throbber. */
+/* line 31, ../sass/components/_forms.scss */
+html.js input.form-autocomplete {
+  background-image: url(../images/throbber_govcon_small.gif);
+  background-position: 100% 0;
+  background-size: 20px 90px; }
+
+/* line 36, ../sass/components/_forms.scss */
+html.js .form-autocomplete.throbbing {
+  background-position: 100% -45px; }
+
+/* line 40, ../sass/components/_forms.scss */
+.ajax-progress .throbber {
+  background: transparent url(../images/throbber_govcon_small.gif) no-repeat 0 -58px;
+  background-size: 20px 90px; }
+
+/* line 46, ../sass/components/_forms.scss */
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset; }
+  /* line 47, ../sass/components/_forms.scss */
+  input:-webkit-autofill:focus, textarea:-webkit-autofill:focus, select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px white inset; }
+
+/* line 51, ../sass/components/_forms.scss */
+form input:focus {
+  box-shadow: none;
+  outline: none;
+  box-shadow: inset 0 0 0 2px #e02d3b; }
+
+/* line 57, ../sass/components/_forms.scss */
+form .description {
+  color: #666; }
+
+/* Special forms */
+/* line 63, ../sass/components/_forms.scss */
+form.user-login input[type=text], form.user-login input[type=password] {
+  max-width: 400px; }
+
+/* Views exposed filters */
+/* line 69, ../sass/components/_forms.scss */
+.views-exposed-form .views-exposed-widget.views-submit-button {
+  clear: left; }
+
+/* Drop downs */
+/* line 74, ../sass/components/_forms.scss */
+.form-type-select select {
+  background: transparent; }
+
+/* Autocomplete */
+/* line 80, ../sass/components/_forms.scss */
+form .field-multiple-table td.field-multiple-drag {
+  width: 30px;
+  padding-right: 0; }
+
+/* line 81, ../sass/components/_forms.scss */
+form .field-multiple-table td.field-multiple-drag a.tabledrag-handle {
+  padding-right: 0.5em; }
+
+/* line 82, ../sass/components/_forms.scss */
+.draggable a.tabledrag-handle {
+  cursor: move;
+  float: left;
+  height: 1.7em;
+  overflow: hidden;
+  text-decoration: none; }
+
+/* line 89, ../sass/components/_forms.scss */
+a.tabledrag-handle .handle {
+  background-position: 8px 8px;
+  height: 26px;
+  width: 26px;
+  margin: 0; }
+
+/* All headers */
+/* line 2, ../sass/components/_header.scss */
+.l-header {
+  margin: 20px auto 0;
+  padding-top: 0; }
+
+/* line 6, ../sass/components/_header.scss */
+.l-region--header {
+  position: absolute;
+  top: 0;
+  right: 10px; }
+
+/* line 2, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .breadcrumb {
+  display: none; }
+/* line 3, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .l-content > h1 {
+  overflow: hidden;
+  text-indent: -9000px;
+  display: block;
+  padding: 0;
+  margin: 0;
+  line-height: 0; }
+/* line 4, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-node-body {
+  text-align: center;
+  line-height: 1; }
+  /* line 7, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .pane-node-body h1 {
+    color: #e02d3b;
+    margin: 0;
+    font-size: 2.2em; }
+  /* line 8, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .pane-node-body h1:after {
+    background-image: none; }
+  /* line 9, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .pane-node-body h3 {
+    color: #095380;
+    font-size: 1.3em;
+    letter-spacing: 0.2;
+    margin: 0.5em 0; }
+  /* line 10, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .pane-node-body h4 {
+    color: #095380;
+    font-size: 1em;
+    text-transform: uppercase;
+    margin: 0.5em 0;
+    font-weight: 600; }
+/* line 12, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .panel-display > .container.footer {
+  border-top: 2px solid #b9a884;
+  padding-top: 30px;
+  margin-top: 30px; }
+/* line 17, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .featured-keynote {
+  padding: 0;
+  line-height: 1; }
+  /* line 20, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .featured-keynote .bl, .page-node-1.node-type-event .featured-keynote .br, .page-node-1.node-type-event .featured-keynote .tl, .page-node-1.node-type-event .featured-keynote .tr {
+    z-index: 1; }
+  /* line 21, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .featured-keynote .featured-keynote__heading {
+    z-index: 1; }
+  /* line 22, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .featured-keynote h2 {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+    color: #fff;
+    font-size: 1.4em; }
+  /* line 30, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .featured-keynote h3 {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: #fff;
+    text-transform: uppercase;
+    z-index: 3;
+    font-size: 2em; }
+  /* line 39, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .featured-keynote img {
+    min-width: 300px; }
+/* line 43, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .timeline-header h1.summary {
+  color: orange; }
+
+/* line 50, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .site-branding {
+  top: 148px;
+  width: 200px;
+  margin-left: -100px; }
+/* line 51, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .site-branding__logo img {
+  width: 200px; }
+/* line 53, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-node-body h1 {
+  color: #e02d3b;
+  margin: 0;
+  font-size: 3em; }
+/* line 54, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-node-body h1:after {
+  background-image: url(../images/texture_font2.png); }
+/* line 55, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-node-body h3 {
+  color: #095380;
+  font-size: 1.2em;
+  letter-spacing: 0.2;
+  margin: 0.5em 0; }
+/* line 56, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-node-body h4 {
+  color: #095380;
+  font-size: 1em;
+  text-transform: uppercase;
+  margin: 0.5em 0;
+  font-weight: 600; }
+/* line 58, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .featured-keynote h2, .page-node-1.node-type-event .featured-keynote h3 {
+  top: 40px;
+  left: 40px; }
+/* line 59, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .featured-keynote h2 {
+  font-size: 2em; }
+/* line 60, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .featured-keynote h3 {
+  font-size: 3em; }
+/* line 35, ../sass/abstractions/_mixins.scss */
+.page-node-1.node-type-event .pane-dgc-sessions:after {
+  content: "";
+  display: table;
+  clear: both; }
+/* line 63, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-dgc-sessions .views-row {
+  float: left;
+  width: 25%;
+  padding-right: 20px; }
+  /* line 67, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .pane-dgc-sessions .views-row a {
+    min-height: 220px;
+    padding: 110px 10px 10px;
+    text-align: center;
+    background-position: center 10px;
+    background-size: 90px; }
+
+/* line 82, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-node-body h1 {
+  color: #e02d3b;
+  margin: 0;
+  font-size: 4em; }
+/* line 83, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-node-body h3 {
+  color: #095380;
+  font-size: 1.6em;
+  letter-spacing: 0.2;
+  margin: 0.5em 0; }
+/* line 84, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-node-body h4 {
+  color: #095380;
+  font-size: 1.2em;
+  text-transform: uppercase;
+  margin: 0.5em 0;
+  font-weight: 600; }
+/* line 86, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .pane-dgc-sessions .views-row a {
+  min-height: 190px; }
+/* line 87, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .featured-keynote {
+  max-height: 330px;
+  overflow: hidden; }
+  /* line 90, ../sass/components/_homepage.scss */
+  .page-node-1.node-type-event .featured-keynote img {
+    top: -30px; }
+
+/* line 96, ../sass/components/_homepage.scss */
+.page-node-1.node-type-event .container.preface .pane-node-body {
+  margin-bottom: 100px; }
+
+/* line 2, ../sass/components/_navigation.scss */
+li.menu-item a {
+  text-transform: uppercase; }
+/* line 5, ../sass/components/_navigation.scss */
+li.menu-item a:hover, li.menu-item a.active {
+  color: #e02d3b; }
+
+/* Slick nav from Adminiimal toolbar */
+/* line 11, ../sass/components/_navigation.scss */
+.slicknav_menu {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  left: 0;
+  z-index: 20; }
+
+/* Main menu dropdowns */
+/* line 20, ../sass/components/_navigation.scss */
+#block-responsive-dropdown-menus-main-menu {
+  position: relative;
+  z-index: 10; }
+
+/* line 24, ../sass/components/_navigation.scss */
+.responsive-menu,
+.responsive-menu.links.inline {
+  max-height: 0;
+  overflow: hidden; }
+
+/* line 29, ../sass/components/_navigation.scss */
+.responsive-menu.menu-toggled,
+.responsive-menu.links.inline.menu-toggled {
+  max-height: none; }
+
+/* line 33, ../sass/components/_navigation.scss */
+.responsive-menu li,
+.responsive-menu.inline li {
+  position: relative;
+  display: block; }
+
+/* line 38, ../sass/components/_navigation.scss */
+ul.main-menu.menu-toggled {
+  padding-top: 40px; }
+
+/* line 39, ../sass/components/_navigation.scss */
+ul.main-menu {
+  text-align: center;
+  padding: 0 10px;
+  margin: 0;
+  background: url(../images/texture200.png) #8bb5bb; }
+  /* line 44, ../sass/components/_navigation.scss */
+  ul.main-menu li {
+    display: block;
+    margin-left: 2px;
+    text-align: left;
+    position: relative; }
+    /* line 49, ../sass/components/_navigation.scss */
+    ul.main-menu li a:hover, ul.main-menu li a:focus {
+      color: #e02d3b;
+      text-decoration: none; }
+
+/* line 52, ../sass/components/_navigation.scss */
+ul.main-menu > li > a {
+  padding: 20px 10px 6px 0;
+  display: inline-block;
+  font-size: 1.2em; }
+
+/* line 57, ../sass/components/_navigation.scss */
+ul.main-menu > li.last {
+  margin-bottom: 10px; }
+
+/* line 58, ../sass/components/_navigation.scss */
+ul.main-menu > li.active_trail,
+ul.main-menu > li.active-trail,
+ul.main-menu > li:hover {
+  position: relative;
+  background: transparent;
+  color: #e02d3b; }
+
+/* line 65, ../sass/components/_navigation.scss */
+ul.main-menu > li.active_trail > a,
+ul.main-menu > li.active-trail > a,
+ul.main-menu > li:hover > a {
+  color: #e02d3b; }
+
+/* line 70, ../sass/components/_navigation.scss */
+ul.main-menu > li:hover {
+  z-index: 1; }
+
+/* line 71, ../sass/components/_navigation.scss */
+ul.main-menu > li:hover:after {
+  z-index: 10; }
+
+/* line 72, ../sass/components/_navigation.scss */
+ul.main-menu > li.menu-parent:hover:after {
+  background: none; }
+
+/* line 75, ../sass/components/_navigation.scss */
+ul.tier-two {
+  left: -16px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background: url(../images/texture200.png) #e6e4dd;
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
+  border-left: 16px solid #e02d3b; }
+  /* line 83, ../sass/components/_navigation.scss */
+  ul.tier-two:after {
+    background-color: #e02d3b;
+    background: linear-gradient(-45deg, rgba(0, 0, 0, 0) 4px, #e02d3b 0%), linear-gradient(45deg, rgba(0, 0, 0, 0) 4px, #e02d3b 0%);
+    background-position: left-bottom;
+    background-repeat: repeat-x;
+    background-size: 6px 6px;
+    content: " ";
+    display: block;
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 16px;
+    height: 6px; }
+  /* line 97, ../sass/components/_navigation.scss */
+  ul.tier-two li {
+    margin: 0;
+    display: block; }
+    /* line 100, ../sass/components/_navigation.scss */
+    ul.tier-two li a {
+      border: none;
+      display: inline-block;
+      padding: 6px 10px 6px 4px; }
+  /* line 102, ../sass/components/_navigation.scss */
+  ul.tier-two li.first a {
+    padding-top: 12px; }
+  /* line 103, ../sass/components/_navigation.scss */
+  ul.tier-two li.last a {
+    padding-bottom: 12px; }
+
+/* line 105, ../sass/components/_navigation.scss */
+.menu-toggle {
+  margin-top: 10px;
+  margin-left: 10px;
+  background: url(../images/texture200.png) #095380;
+  text-align: center;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 6px;
+  color: #e6e4dd;
+  text-transform: uppercase;
+  display: inline-block;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  font-size: 0.9em; }
+
+/* line 119, ../sass/components/_navigation.scss */
+.menu-toggle:hover {
+  color: #e6e4dd;
+  background: url(../images/texture200.png) #095380;
+  text-decoration: none; }
+
+/* user menu */
+/* line 126, ../sass/components/_navigation.scss */
+.l-region--header .block {
+  float: right; }
+/* line 128, ../sass/components/_navigation.scss */
+.l-region--header ul.menu li {
+  display: inline-block;
+  list-style: none;
+  margin: 0 0 0 0.8em; }
+  /* line 132, ../sass/components/_navigation.scss */
+  .l-region--header ul.menu li a {
+    padding: 10px 0;
+    display: inline-block; }
+  /* line 133, ../sass/components/_navigation.scss */
+  .l-region--header ul.menu li a:hover {
+    text-decoration: none; }
+/* line 135, ../sass/components/_navigation.scss */
+.l-region--header ul.menu li {
+  position: relative; }
+  /* line 137, ../sass/components/_navigation.scss */
+  .l-region--header ul.menu li a[href="/drupal-govcon-2015/schedule"] {
+    display: none; }
+  /* line 142, ../sass/components/_navigation.scss */
+  .l-region--header ul.menu li a[href="/drupal-govcon-2015/registration"] {
+    top: 62px;
+    left: 0;
+    position: absolute;
+    padding: 10px 6px 20px;
+    font-size: 1em;
+    background: url(../images/ticket.svg) no-repeat top left;
+    background-size: contain;
+    position: relative;
+    top: 6px;
+    display: inline-block;
+    width: 70px;
+    text-align: center;
+    color: #fff;
+    -webkit-transform: rotate(10deg);
+    -moz-transform: rotate(10deg);
+    -ms-transform: rotate(10deg);
+    -o-transform: rotate(10deg);
+    -webkit-transition: 0.5s ease-in-out;
+    -moz-transition: 0.5s ease-in-out;
+    -o-transition: 0.5s ease-in-out;
+    transition: 0.5s ease-in-out; }
+    /* line 164, ../sass/components/_navigation.scss */
+    .l-region--header ul.menu li a[href="/drupal-govcon-2015/registration"]:after {
+      content: "";
+      background: url(../images/texture_font2.png) repeat transparent;
+      background-size: 100px 100px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0; }
+    /* line 167, ../sass/components/_navigation.scss */
+    .l-region--header ul.menu li a[href="/drupal-govcon-2015/registration"]:hover {
+      -webkit-transform: rotate(-3deg);
+      -moz-transform: rotate(-3deg);
+      -ms-transform: rotate(-3deg);
+      -o-transform: rotate(-3deg); }
+
+/* Main menu in footer */
+/* line 35, ../sass/abstractions/_mixins.scss */
+.l-region--footer .block--system-main-menu:after {
+  content: "";
+  display: table;
+  clear: both; }
+/* line 181, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu {
+  padding: 0;
+  margin-top: 0; }
+  /* line 35, ../sass/abstractions/_mixins.scss */
+  .l-region--footer .block--system-main-menu ul.menu:after {
+    content: "";
+    display: table;
+    clear: both; }
+/* line 182, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li {
+  float: left;
+  width: 50%;
+  list-style: none;
+  margin-bottom: 20px;
+  padding: 0 0 0 30px; }
+  /* line 188, ../sass/components/_navigation.scss */
+  .l-region--footer .block--system-main-menu ul.menu li a {
+    font-size: 1.4em;
+    line-height: 1.2;
+    margin-bottom: 0.3em;
+    display: block;
+    border-bottom: 2px solid #b9a884;
+    padding-bottom: 4px;
+    text-transform: uppercase;
+    color: #78a9b0; }
+    /* line 197, ../sass/components/_navigation.scss */
+    .l-region--footer .block--system-main-menu ul.menu li a:hover {
+      text-decoration: none; }
+/* line 200, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li:nth-child(odd) {
+  clear: left;
+  padding-left: 0; }
+/* line 201, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li a.active {
+  color: #e02d3b; }
+/* line 202, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu ul li {
+  margin: 0;
+  float: none;
+  width: 100%;
+  padding: 0 !important; }
+/* line 203, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu ul a {
+  font-size: 0.9em;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border: none;
+  text-transform: none;
+  color: #095380; }
+
+/* Login Tobaggan */
+/* line 214, ../sass/components/_navigation.scss */
+.toboggan-login-link {
+  padding: 10px;
+  display: inline-block; }
+
+/* line 218, ../sass/components/_navigation.scss */
+.touch {
+  /* so logo doesn't show over top dropdown menu */ }
+  /* line 220, ../sass/components/_navigation.scss */
+  .touch .site-branding {
+    z-index: 0; }
+  /* line 221, ../sass/components/_navigation.scss */
+  .touch .menu-toggle {
+    display: block;
+    width: 320px;
+    margin: 10px auto 0;
+    position: relative;
+    z-index: 90; }
+  /* line 222, ../sass/components/_navigation.scss */
+  .touch .block--responsive-dropdown-menus-main-menu {
+    padding-top: 10px; }
+  /* line 223, ../sass/components/_navigation.scss */
+  .touch ul.main-menu {
+    margin: -10px auto 0;
+    width: 300px;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.6);
+    padding-top: 0; }
+
+/* line 231, ../sass/components/_navigation.scss */
+.no-touch .menu-toggle {
+  display: none; }
+/* line 234, ../sass/components/_navigation.scss */
+.no-touch #block-responsive-dropdown-menus-main-menu {
+  z-index: 12; }
+/* line 237, ../sass/components/_navigation.scss */
+.no-touch .responsive-menu,
+.no-touch .responsive-menu.links.inline {
+  max-height: none;
+  overflow: visible; }
+/* line 242, ../sass/components/_navigation.scss */
+.no-touch .responsive-menu li {
+  display: inherit; }
+/* line 245, ../sass/components/_navigation.scss */
+.no-touch .responsive-menu.inline li {
+  display: inline-block; }
+/* line 248, ../sass/components/_navigation.scss */
+.no-touch .responsive-menu .sub-menu {
+  position: absolute;
+  z-index: 100;
+  max-height: 0;
+  overflow: hidden; }
+/* line 254, ../sass/components/_navigation.scss */
+.no-touch .responsive-menu .sub-menu.active, .no-touch .responsive-menu .menu-parent:focus .sub-menu {
+  max-height: none;
+  overflow: visible; }
+/* line 258, ../sass/components/_navigation.scss */
+.no-touch .responsive-menu .sub-menu li {
+  display: block; }
+/* line 261, ../sass/components/_navigation.scss */
+.no-touch ul.main-menu > li.last {
+  margin-bottom: 0; }
+/* line 262, ../sass/components/_navigation.scss */
+.no-touch .page-node-1.node-type-event ul.main-menu {
+  margin: 0 0 0 130px; }
+/* line 263, ../sass/components/_navigation.scss */
+.no-touch ul.main-menu {
+  padding: 0;
+  background: none; }
+  /* line 266, ../sass/components/_navigation.scss */
+  .no-touch ul.main-menu li.menu-item-primary.active_trail,
+  .no-touch ul.main-menu li.menu-item-primary.active-trail,
+  .no-touch ul.main-menu li.menu-item-primary:hover {
+    border-left: 16px solid #e02d3b; }
+    /* line 270, ../sass/components/_navigation.scss */
+    .no-touch ul.main-menu li.menu-item-primary.active_trail:after,
+    .no-touch ul.main-menu li.menu-item-primary.active-trail:after,
+    .no-touch ul.main-menu li.menu-item-primary:hover:after {
+      display: inline-block; }
+  /* line 272, ../sass/components/_navigation.scss */
+  .no-touch ul.main-menu li.menu-item-primary:hover {
+    z-index: 101; }
+  /* line 273, ../sass/components/_navigation.scss */
+  .no-touch ul.main-menu li.menu-item-primary {
+    border-left: 16px solid transparent;
+    display: inline-block; }
+  /* line 274, ../sass/components/_navigation.scss */
+  .no-touch ul.main-menu li.menu-item-primary:after {
+    background: linear-gradient(-45deg, rgba(0, 0, 0, 0) 4px, #e02d3b 0%), linear-gradient(45deg, rgba(0, 0, 0, 0) 4px, #e02d3b 0%);
+    background-position: left-bottom;
+    background-repeat: repeat-x;
+    background-size: 6px 6px;
+    content: " ";
+    position: absolute;
+    bottom: -6px;
+    left: -16px;
+    width: 16px;
+    height: 6px;
+    display: none; }
+  /* line 287, ../sass/components/_navigation.scss */
+  .no-touch ul.main-menu ul:after {
+    left: -16px;
+    bottom: -6px; }
+  /* line 288, ../sass/components/_navigation.scss */
+  .no-touch ul.main-menu ul {
+    width: 300px; }
+  /* line 289, ../sass/components/_navigation.scss */
+  .no-touch ul.main-menu li.menu-item-primary > a {
+    padding: 20px 10px 4px 4px;
+    font-size: 1em; }
+
+/* line 293, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li {
+  width: 33.3%;
+  float: left;
+  padding-left: 30px; }
+  /* line 294, ../sass/components/_navigation.scss */
+  .l-region--footer .block--system-main-menu ul.menu li.first {
+    padding: 0; }
+  /* line 295, ../sass/components/_navigation.scss */
+  .l-region--footer .block--system-main-menu ul.menu li ul li {
+    display: block;
+    width: 100%; }
+/* line 297, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li:nth-child(odd) {
+  clear: none;
+  padding-left: 30px; }
+/* line 298, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li:nth-child(3n+1) {
+  clear: left;
+  padding-left: 0; }
+
+/* line 303, ../sass/components/_navigation.scss */
+.no-touch .page-node-1.node-type-event ul.main-menu {
+  margin: 0 0 0 190px; }
+
+/* line 305, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li {
+  width: 20%; }
+/* line 306, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li:nth-child(3n+1) {
+  clear: none;
+  padding-left: 30px; }
+/* line 307, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li.first:nth-child(3n+1) {
+  padding: 0; }
+/* line 308, ../sass/components/_navigation.scss */
+.l-region--footer .block--system-main-menu ul.menu li:nth-child(5n+1) {
+  clear: left;
+  padding-left: 0; }
+
+/* line 312, ../sass/components/_navigation.scss */
+.no-touch .page-node-1.node-type-event ul.main-menu {
+  margin: 0 190px; }
+
+/* line 2, ../sass/components/_news.scss */
+article.node-teaser.node--news .view-row {
+  position: relative; }
+  /* line 35, ../sass/abstractions/_mixins.scss */
+  article.node-teaser.node--news .view-row:after {
+    content: "";
+    display: table;
+    clear: both; }
+/* line 6, ../sass/components/_news.scss */
+article.node-teaser.node--news .node__posted {
+  float: left;
+  width: 100px;
+  color: #b9a884;
+  font-weight: bold;
+  font-size: 2em; }
+/* line 13, ../sass/components/_news.scss */
+article.node-teaser.node--news .news-content {
+  margin-left: 20px;
+  overflow: hidden; }
+
+/* line 18, ../sass/components/_news.scss */
+.more-link {
+  clear: both; }
+
+/* @file
+ * COD schedules
+ */
+/* line 9, ../sass/components/_schedule.scss */
+.view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li,
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li,
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li {
+  border-radius: 0;
+  background: none;
+  padding: 0;
+  margin-bottom: 40px; }
+  /* line 14, ../sass/components/_schedule.scss */
+  .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a {
+    background-color: #8bb5bb;
+    background-image: url(../images/texture200.png); }
+/* line 20, ../sass/components/_schedule.scss */
+.view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active,
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active,
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active {
+  background: none; }
+  /* line 22, ../sass/components/_schedule.scss */
+  .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover {
+    color: #fff;
+    position: relative;
+    background-color: #e02d3b;
+    background-image: url(../images/texture200.png); }
+    /* line 28, ../sass/components/_schedule.scss */
+    .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:after, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover:after, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus:after, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover:after,
+    .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:after,
+    .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover:after,
+    .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus:after,
+    .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover:after,
+    .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:after,
+    .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:hover:after,
+    .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a:focus:after,
+    .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li.active a.active:hover:after {
+      content: "";
+      width: 20px;
+      height: 20px;
+      border-top: 20px solid #e23a47;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      margin-left: -20px;
+      background-image: url(../images/texture200.png); }
+/* line 44, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .quicktabs-views-group,
+.view-cod-bof-schedule .quicktabs-views-group,
+.view-cod-schedule .quicktabs-views-group {
+  position: relative; }
+/* line 47, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .views-field-field-slot-datetime-1,
+.view-cod-session-schedule .views-field-field-evttime-date-1,
+.view-cod-bof-schedule .views-field-field-slot-datetime-1,
+.view-cod-bof-schedule .views-field-field-evttime-date-1,
+.view-cod-schedule .views-field-field-slot-datetime-1,
+.view-cod-schedule .views-field-field-evttime-date-1 {
+  border-radius: 0;
+  padding: 0 0 0 210px;
+  text-align: left;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.2em;
+  background-color: #095380;
+  background-image: url(../images/texture200.png);
+  color: #8bb5bb; }
+/* line 59, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .views-field-field-slot-datetime-2,
+.view-cod-session-schedule .views-field-field-evttime-date-2,
+.view-cod-bof-schedule .views-field-field-slot-datetime-2,
+.view-cod-bof-schedule .views-field-field-evttime-date-2,
+.view-cod-schedule .views-field-field-slot-datetime-2,
+.view-cod-schedule .views-field-field-evttime-date-2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  width: 200px;
+  color: #fff;
+  padding: 0 10px; }
+/* line 72, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .view-cod-schedule-content .views-row,
+.view-cod-session-schedule .view-dgc-my-schedule-content .views-row,
+.view-cod-bof-schedule .view-cod-schedule-content .views-row,
+.view-cod-bof-schedule .view-dgc-my-schedule-content .views-row,
+.view-cod-schedule .view-cod-schedule-content .views-row,
+.view-cod-schedule .view-dgc-my-schedule-content .views-row {
+  position: relative;
+  padding: 0 0 0 146px;
+  min-height: 120px;
+  padding: 20px 0 20px 180px;
+  min-height: 140px; }
+  /* line 35, ../sass/abstractions/_mixins.scss */
+  .view-cod-session-schedule .view-cod-schedule-content .views-row:after,
+  .view-cod-session-schedule .view-dgc-my-schedule-content .views-row:after,
+  .view-cod-bof-schedule .view-cod-schedule-content .views-row:after,
+  .view-cod-bof-schedule .view-dgc-my-schedule-content .views-row:after,
+  .view-cod-schedule .view-cod-schedule-content .views-row:after,
+  .view-cod-schedule .view-dgc-my-schedule-content .views-row:after {
+    content: "";
+    display: table;
+    clear: both; }
+/* line 83, ../sass/components/_schedule.scss */
+.view-cod-session-schedule [class*="track-icon-"],
+.view-cod-bof-schedule [class*="track-icon-"],
+.view-cod-schedule [class*="track-icon-"] {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  padding: 58px 0 0;
+  background-size: 50px;
+  background-position: center 10px;
+  height: 100%;
+  width: 130px;
+  text-align: center;
+  font-family: "Courgette", cursive;
+  font-size: .9em;
+  border-right: 1px solid #ccc;
+  margin-right: 20px;
+  padding: 70px 10px 0;
+  width: 160px;
+  background-position: center 18px;
+  font-size: 1em; }
+/* line 105, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .track-icon-6,
+.view-cod-bof-schedule .track-icon-6,
+.view-cod-schedule .track-icon-6 {
+  color: #f6001b; }
+/* line 106, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .track-icon-11,
+.view-cod-bof-schedule .track-icon-11,
+.view-cod-schedule .track-icon-11 {
+  color: #f88d00; }
+/* line 107, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .track-icon-21,
+.view-cod-bof-schedule .track-icon-21,
+.view-cod-schedule .track-icon-21 {
+  color: #79648d; }
+/* line 108, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .track-icon-26,
+.view-cod-bof-schedule .track-icon-26,
+.view-cod-schedule .track-icon-26 {
+  color: #007c7f; }
+/* line 109, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .track-icon-16,
+.view-cod-bof-schedule .track-icon-16,
+.view-cod-schedule .track-icon-16 {
+  color: #005185; }
+/* line 110, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .track-icon-1,
+.view-cod-bof-schedule .track-icon-1,
+.view-cod-schedule .track-icon-1 {
+  color: #5fa44c; }
+/* line 111, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .views-field-title,
+.view-cod-bof-schedule .views-field-title,
+.view-cod-schedule .views-field-title {
+  margin: 4px 0 2px 0;
+  margin-top: 16px; }
+/* line 117, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .views-field-name,
+.view-cod-bof-schedule .views-field-name,
+.view-cod-schedule .views-field-name {
+  padding-left: 0;
+  margin-right: 20px;
+  margin-bottom: 0;
+  clear: both; }
+/* line 123, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .views-field-field-experience,
+.view-cod-bof-schedule .views-field-field-experience,
+.view-cod-schedule .views-field-field-experience {
+  font-family: "Courgette", cursive;
+  color: #666;
+  float: none;
+  clear: both;
+  margin-bottom: 10px;
+  position: absolute;
+  top: 2px;
+  right: 0;
+  margin: 0; }
+/* line 136, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .views-field-field-speakers,
+.view-cod-bof-schedule .views-field-field-speakers,
+.view-cod-schedule .views-field-field-speakers {
+  padding-left: 0;
+  height: auto; }
+/* line 140, ../sass/components/_schedule.scss */
+.view-cod-session-schedule .views-field-count, .view-cod-session-schedule .views-field-ops,
+.view-cod-bof-schedule .views-field-count,
+.view-cod-bof-schedule .views-field-ops,
+.view-cod-schedule .views-field-count,
+.view-cod-schedule .views-field-ops {
+  float: left;
+  margin: 0 20px 10px 0;
+  padding-top: 4px; }
+  /* line 146, ../sass/components/_schedule.scss */
+  .view-cod-session-schedule .views-field-count a.unflag-action, .view-cod-session-schedule .views-field-ops a.unflag-action,
+  .view-cod-bof-schedule .views-field-count a.unflag-action,
+  .view-cod-bof-schedule .views-field-ops a.unflag-action,
+  .view-cod-schedule .views-field-count a.unflag-action,
+  .view-cod-schedule .views-field-ops a.unflag-action {
+    background: #e02d3b; }
+    /* line 148, ../sass/components/_schedule.scss */
+    .view-cod-session-schedule .views-field-count a.unflag-action:hover, .view-cod-session-schedule .views-field-ops a.unflag-action:hover,
+    .view-cod-bof-schedule .views-field-count a.unflag-action:hover,
+    .view-cod-bof-schedule .views-field-ops a.unflag-action:hover,
+    .view-cod-schedule .views-field-count a.unflag-action:hover,
+    .view-cod-schedule .views-field-ops a.unflag-action:hover {
+      background: #fff; }
+
+/* hide extraneous exposed filters on each timeslot view */
+/* line 156, ../sass/components/_schedule.scss */
+form#views-exposed-form-cod-schedule-content-default {
+  display: none; }
+
+/* fake tabs for my schedule and bof schedule */
+/* hide active button */
+/* line 164, ../sass/components/_schedule.scss */
+.page-node-schedule h1,
+.page-node-bofs h1 {
+  margin-bottom: 0; }
+/* line 168, ../sass/components/_schedule.scss */
+.page-node-schedule .pane-custom.pane-1 a.button.btn-big, .page-node-schedule .pane-custom.pane-1 .more-link a.btn-big, .more-link .page-node-schedule .pane-custom.pane-1 a.btn-big, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a,
+.page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a,
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a,
+.page-node-schedule .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a,
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big, .view-cod-session-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big, .view-cod-session-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big,
+.page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big,
+.view-cod-bof-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big,
+.page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big,
+.view-cod-bof-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big,
+.page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big,
+.view-cod-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big,
+.page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big,
+.view-cod-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big,
+.page-node-bofs .pane-custom.pane-1 a.button.btn-big,
+.page-node-bofs .pane-custom.pane-1 .more-link a.btn-big,
+.more-link .page-node-bofs .pane-custom.pane-1 a.btn-big,
+.page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a,
+.view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a,
+.page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a,
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a,
+.page-node-bofs .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a,
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a,
+.page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big,
+.view-cod-session-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big,
+.page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big,
+.view-cod-session-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big,
+.page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big,
+.view-cod-bof-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big,
+.page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big,
+.view-cod-bof-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big,
+.page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big,
+.view-cod-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big,
+.page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big,
+.view-cod-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big {
+  background: #095380;
+  margin-bottom: 4px;
+  display: inline-block;
+  white-space: no-wrap; }
+  /* line 173, ../sass/components/_schedule.scss */
+  .page-node-schedule .pane-custom.pane-1 a.button.btn-big:hover, .page-node-schedule .pane-custom.pane-1 .more-link a.btn-big:hover, .more-link .page-node-schedule .pane-custom.pane-1 a.btn-big:hover, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:hover, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:hover,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:hover,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a:hover, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big:hover, .view-cod-session-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big:hover, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big:hover, .view-cod-session-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big:hover,
+  .view-cod-bof-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big:hover,
+  .view-cod-bof-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big:hover,
+  .view-cod-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big:hover,
+  .view-cod-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big:hover, .page-node-schedule .pane-custom.pane-1 a.button.btn-big:focus, .page-node-schedule .pane-custom.pane-1 .more-link a.btn-big:focus, .more-link .page-node-schedule .pane-custom.pane-1 a.btn-big:focus, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:focus, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:focus,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:focus,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a:focus, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big:focus, .view-cod-session-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big:focus, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big:focus, .view-cod-session-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big:focus,
+  .view-cod-bof-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big:focus,
+  .view-cod-bof-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big:focus,
+  .view-cod-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big:focus,
+  .view-cod-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big:focus, .page-node-schedule .pane-custom.pane-1 a.button.btn-big:active, .page-node-schedule .pane-custom.pane-1 .more-link a.btn-big:active, .more-link .page-node-schedule .pane-custom.pane-1 a.btn-big:active, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:active, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:active,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:active,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a:active, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big:active, .view-cod-session-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big:active, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big:active, .view-cod-session-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big:active,
+  .view-cod-bof-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big:active,
+  .view-cod-bof-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big:active,
+  .view-cod-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big:active,
+  .view-cod-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big:active,
+  .page-node-bofs .pane-custom.pane-1 a.button.btn-big:hover,
+  .page-node-bofs .pane-custom.pane-1 .more-link a.btn-big:hover,
+  .more-link .page-node-bofs .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:hover,
+  .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:hover,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:hover,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big:hover,
+  .view-cod-session-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big:hover,
+  .view-cod-session-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big:hover,
+  .view-cod-bof-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big:hover,
+  .view-cod-bof-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big:hover,
+  .view-cod-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big:hover,
+  .view-cod-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big:hover,
+  .page-node-bofs .pane-custom.pane-1 a.button.btn-big:focus,
+  .page-node-bofs .pane-custom.pane-1 .more-link a.btn-big:focus,
+  .more-link .page-node-bofs .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:focus,
+  .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:focus,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:focus,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big:focus,
+  .view-cod-session-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big:focus,
+  .view-cod-session-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big:focus,
+  .view-cod-bof-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big:focus,
+  .view-cod-bof-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big:focus,
+  .view-cod-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big:focus,
+  .view-cod-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big:focus,
+  .page-node-bofs .pane-custom.pane-1 a.button.btn-big:active,
+  .page-node-bofs .pane-custom.pane-1 .more-link a.btn-big:active,
+  .more-link .page-node-bofs .pane-custom.pane-1 a.btn-big:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:active,
+  .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:active,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a:active,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big:active,
+  .view-cod-session-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big:active,
+  .view-cod-session-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big:active,
+  .view-cod-bof-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big:active,
+  .view-cod-bof-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big:active,
+  .view-cod-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big:active,
+  .view-cod-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big:active {
+    background: #fff; }
+/* line 175, ../sass/components/_schedule.scss */
+.page-node-schedule .pane-custom.pane-1 a.button.btn-big[href=""], .page-node-schedule .pane-custom.pane-1 .more-link a.btn-big[href=""], .more-link .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""], .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""], .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""],
+.page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""],
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""],
+.page-node-schedule .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""],
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""], .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big[href=""], .view-cod-session-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""], .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big[href=""], .view-cod-session-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big[href=""],
+.view-cod-bof-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big[href=""],
+.view-cod-bof-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big[href=""],
+.view-cod-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big[href=""],
+.view-cod-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-bofs .pane-custom.pane-1 a.button.btn-big[href=""],
+.page-node-bofs .pane-custom.pane-1 .more-link a.btn-big[href=""],
+.more-link .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""],
+.view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""],
+.page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""],
+.view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""],
+.page-node-bofs .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""],
+.view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""],
+.page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big[href=""],
+.view-cod-session-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big[href=""],
+.view-cod-session-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big[href=""],
+.view-cod-bof-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big[href=""],
+.view-cod-bof-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big[href=""],
+.view-cod-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""],
+.page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big[href=""],
+.view-cod-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""] {
+  background: #e02d3b; }
+  /* line 177, ../sass/components/_schedule.scss */
+  .page-node-schedule .pane-custom.pane-1 a.button.btn-big[href=""]:hover, .page-node-schedule .pane-custom.pane-1 .more-link a.btn-big[href=""]:hover, .more-link .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:hover, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:hover, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""]:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:hover,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""]:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:hover,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""]:hover, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big[href=""]:hover, .view-cod-session-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:hover, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big[href=""]:hover, .view-cod-session-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big[href=""]:hover,
+  .view-cod-bof-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big[href=""]:hover,
+  .view-cod-bof-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big[href=""]:hover,
+  .view-cod-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big[href=""]:hover,
+  .view-cod-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:hover, .page-node-schedule .pane-custom.pane-1 a.button.btn-big[href=""]:focus, .page-node-schedule .pane-custom.pane-1 .more-link a.btn-big[href=""]:focus, .more-link .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:focus, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:focus, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""]:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:focus,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""]:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:focus,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""]:focus, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big[href=""]:focus, .view-cod-session-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:focus, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big[href=""]:focus, .view-cod-session-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big[href=""]:focus,
+  .view-cod-bof-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big[href=""]:focus,
+  .view-cod-bof-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big[href=""]:focus,
+  .view-cod-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big[href=""]:focus,
+  .view-cod-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:focus, .page-node-schedule .pane-custom.pane-1 a.button.btn-big[href=""]:active, .page-node-schedule .pane-custom.pane-1 .more-link a.btn-big[href=""]:active, .more-link .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:active, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:active, .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""]:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:active,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""]:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:active,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-schedule .pane-custom.pane-1 a[href=""]:active, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big[href=""]:active, .view-cod-session-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:active, .page-node-schedule .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big[href=""]:active, .view-cod-session-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big[href=""]:active,
+  .view-cod-bof-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big[href=""]:active,
+  .view-cod-bof-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big[href=""]:active,
+  .view-cod-schedule .views-field-count .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-schedule .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big[href=""]:active,
+  .view-cod-schedule .views-field-ops .page-node-schedule .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 a.button.btn-big[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .more-link a.btn-big[href=""]:hover,
+  .more-link .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:hover,
+  .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:hover,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:hover,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big[href=""]:hover,
+  .view-cod-session-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big[href=""]:hover,
+  .view-cod-session-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big[href=""]:hover,
+  .view-cod-bof-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big[href=""]:hover,
+  .view-cod-bof-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big[href=""]:hover,
+  .view-cod-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big[href=""]:hover,
+  .view-cod-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:hover,
+  .page-node-bofs .pane-custom.pane-1 a.button.btn-big[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .more-link a.btn-big[href=""]:focus,
+  .more-link .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:focus,
+  .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:focus,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:focus,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big[href=""]:focus,
+  .view-cod-session-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big[href=""]:focus,
+  .view-cod-session-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big[href=""]:focus,
+  .view-cod-bof-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big[href=""]:focus,
+  .view-cod-bof-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big[href=""]:focus,
+  .view-cod-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big[href=""]:focus,
+  .view-cod-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:focus,
+  .page-node-bofs .pane-custom.pane-1 a.button.btn-big[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .more-link a.btn-big[href=""]:active,
+  .more-link .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:active,
+  .view-cod-session-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:active,
+  .view-cod-bof-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li a[href=""]:active,
+  .view-cod-schedule ul.quicktabs-tabs.quicktabs-style-zen li .page-node-bofs .pane-custom.pane-1 a[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-count a.btn-big[href=""]:active,
+  .view-cod-session-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-session-schedule .views-field-ops a.btn-big[href=""]:active,
+  .view-cod-session-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-count a.btn-big[href=""]:active,
+  .view-cod-bof-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-bof-schedule .views-field-ops a.btn-big[href=""]:active,
+  .view-cod-bof-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-count a.btn-big[href=""]:active,
+  .view-cod-schedule .views-field-count .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:active,
+  .page-node-bofs .pane-custom.pane-1 .view-cod-schedule .views-field-ops a.btn-big[href=""]:active,
+  .view-cod-schedule .views-field-ops .page-node-bofs .pane-custom.pane-1 a.btn-big[href=""]:active {
+    color: #fff; }
+
+/* line 2, ../sass/components/_sessions.scss */
+.view-id-dgc_sessions.view-display-id-attachment_1 .views-field-og-vocabulary .field-content {
+  margin-bottom: 4px;
+  background: url(../images/texture200.png) #ded6c5; }
+/* line 6, ../sass/components/_sessions.scss */
+.view-id-dgc_sessions.view-display-id-attachment_1 .views-field-og-vocabulary a {
+  background-size: 60px;
+  padding: 20px 20px 20px 80px;
+  background-position: 8px center;
+  display: block;
+  font-family: "Courgette", cursive;
+  font-size: 1.3em; }
+  /* line 13, ../sass/components/_sessions.scss */
+  .view-id-dgc_sessions.view-display-id-attachment_1 .views-field-og-vocabulary a:hover, .view-id-dgc_sessions.view-display-id-attachment_1 .views-field-og-vocabulary a:focus, .view-id-dgc_sessions.view-display-id-attachment_1 .views-field-og-vocabulary a.active {
+    background-color: #fff;
+    color: #095380; }
+
+/* line 20, ../sass/components/_sessions.scss */
+.page-node-sessions .view-empty {
+  clear: both; }
+/* line 21, ../sass/components/_sessions.scss */
+.page-node-sessions .view-filters {
+  background: url(../images/texture200.png) #8bb5bb;
+  padding: 30px; }
+  /* line 24, ../sass/components/_sessions.scss */
+  .page-node-sessions .view-filters .views-exposed-form .views-exposed-widget select {
+    background: #fff; }
+/* line 28, ../sass/components/_sessions.scss */
+.page-node-sessions .l-content > .view > .view-content {
+  padding-top: 3em; }
+/* line 31, ../sass/components/_sessions.scss */
+.page-node-sessions h3 {
+  clear: both; }
+/* line 32, ../sass/components/_sessions.scss */
+.page-node-sessions h3 a {
+  font-size: 2em;
+  font-family: "Courgette", cursive;
+  font-weight: normal;
+  background-size: 80px;
+  min-height: 80px;
+  display: block;
+  padding: 20px 20px 20px 100px;
+  background-position: 0 center; }
+/* line 42, ../sass/components/_sessions.scss */
+.page-node-sessions .views-field-field-speakers {
+  font-style: italic; }
+
+/* line 44, ../sass/components/_sessions.scss */
+.session {
+  margin: .2em 0 1em;
+  padding: 0; }
+  /* line 47, ../sass/components/_sessions.scss */
+  .session p {
+    margin: 0; }
+
+/* line 49, ../sass/components/_sessions.scss */
+.session-title {
+  border-top: 2px solid #b9a884;
+  padding-top: .2em;
+  font-size: 1.4em;
+  margin: 0; }
+
+/* line 55, ../sass/components/_sessions.scss */
+[class*="track-icon-"] {
+  background: no-repeat 0 center transparent; }
+
+/* line 58, ../sass/components/_sessions.scss */
+.track-icon-6 {
+  background-image: url(../images/icons/ux.svg); }
+
+/* line 59, ../sass/components/_sessions.scss */
+.track-icon-11 {
+  background-image: url(../images/icons/devops.svg); }
+
+/* line 60, ../sass/components/_sessions.scss */
+.track-icon-21 {
+  background-image: url(../images/icons/business.svg); }
+
+/* line 61, ../sass/components/_sessions.scss */
+.track-icon-26 {
+  background-image: url(../images/icons/building.svg); }
+
+/* line 62, ../sass/components/_sessions.scss */
+.track-icon-16 {
+  background-image: url(../images/icons/keynote.svg); }
+
+/* line 63, ../sass/components/_sessions.scss */
+.track-icon-1 {
+  background-image: url(../images/icons/training.svg); }
+
+/* line 67, ../sass/components/_sessions.scss */
+.view-id-dgc_sessions.view-display-id-page_1 .view-id-dgc_sessions.view-display-id-attachment_1 {
+  width: 49.15254%;
+  float: left;
+  margin-right: -100%;
+  margin-left: 0;
+  clear: none; }
+
+/* line 70, ../sass/components/_sessions.scss */
+.page-node-sessions .view-filters {
+  width: 49.15254%;
+  float: right;
+  margin-left: 0;
+  margin-right: 0;
+  clear: none; }
+  /* line 72, ../sass/components/_sessions.scss */
+  .page-node-sessions .view-filters .views-exposed-form .views-exposed-widget {
+    width: 100%; }
+  /* line 76, ../sass/components/_sessions.scss */
+  .page-node-sessions .view-filters .views-exposed-form .views-exposed-widget.views-submit-button, .page-node-sessions .view-filters .views-exposed-form .views-exposed-widget.views-reset-button {
+    width: auto; }
+
+/* line 81, ../sass/components/_sessions.scss */
+.page-node-sessions .view-content {
+  clear: both; }
+
+/* line 84, ../sass/components/_sessions.scss */
+.session {
+  float: left;
+  width: 50%;
+  padding-left: 20px; }
+
+/* line 89, ../sass/components/_sessions.scss */
+.session:nth-of-type(odd) {
+  clear: left;
+  padding-left: 0; }
+
+/* line 95, ../sass/components/_sessions.scss */
+.session {
+  width: 33%; }
+
+/* line 98, ../sass/components/_sessions.scss */
+.session:nth-of-type(odd) {
+  clear: none;
+  padding-left: 20px; }
+
+/* line 102, ../sass/components/_sessions.scss */
+.session:nth-of-type(3n+1) {
+  clear: left;
+  padding-left: 0; }
+
+/* header background shapes */
+/* line 3, ../sass/components/_shapes.scss */
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -4;
+  background: #8bb5bb;
+  height: 120px;
+  background-image: url(../images/texture200.png);
+  overflow: hidden; }
+
+/* line 14, ../sass/components/_shapes.scss */
+.header-bg--cutout {
+  z-index: -2;
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  margin-left: -500px;
+  display: block;
+  width: 1000px;
+  height: 400px;
+  -moz-border-radius: 1000px / 400px;
+  -webkit-border-radius: 1000px;
+  border-radius: 1000px / 400px;
+  background-color: #e6e4dd;
+  background-image: url(../images/texture200.png); }
+
+/* line 27, ../sass/components/_shapes.scss */
+.header-bg--buildings {
+  display: none; }
+
+/* line 30, ../sass/components/_shapes.scss */
+.page-node-1.node-type-event .header-bg--cutout {
+  top: 300px; }
+
+/* line 31, ../sass/components/_shapes.scss */
+.page-node-1.node-type-event .header-bg {
+  height: 600px; }
+
+/* line 32, ../sass/components/_shapes.scss */
+.page-node-1.node-type-event .header-bg--buildings {
+  display: block;
+  background: url(../images/buildings.png) center center no-repeat transparent;
+  background-size: 333px 100px;
+  position: absolute;
+  top: 220px;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  z-index: -3; }
+
+/* line 46, ../sass/components/_shapes.scss */
+.header-bg {
+  height: 250px; }
+
+/* line 47, ../sass/components/_shapes.scss */
+.header-bg--cutout {
+  top: 120px;
+  margin-left: -800px;
+  width: 1600px;
+  -moz-border-radius: 1600px / 400px;
+  -webkit-border-radius: 1600px;
+  border-radius: 1600px / 400px; }
+
+/* line 53, ../sass/components/_shapes.scss */
+.page-node-1.node-type-event .header-bg--cutout {
+  top: 240px; }
+
+/* line 54, ../sass/components/_shapes.scss */
+.page-node-1.node-type-event .header-bg {
+  height: 400px; }
+
+/* line 55, ../sass/components/_shapes.scss */
+.page-node-1.node-type-event .header-bg--buildings {
+  background-size: 667px 201px;
+  top: 80px;
+  height: 201px; }
+
+/* line 62, ../sass/components/_shapes.scss */
+.bevel {
+  background-color: #8bb5bb;
+  padding: 2em;
+  position: relative; }
+  /* line 66, ../sass/components/_shapes.scss */
+  .bevel * {
+    position: relative; }
+  /* line 67, ../sass/components/_shapes.scss */
+  .bevel .bg {
+    background-color: #8bb5bb;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0; }
+  /* line 75, ../sass/components/_shapes.scss */
+  .bevel .bg-overlay {
+    content: "";
+    background: url(../images/texture200.png) repeat transparent;
+    background-size: 100px 100px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0; }
+  /* line 78, ../sass/components/_shapes.scss */
+  .bevel .tl, .bevel .tr, .bevel .bl, .bevel .br {
+    width: 0;
+    height: 0;
+    position: absolute; }
+  /* line 83, ../sass/components/_shapes.scss */
+  .bevel .tl {
+    top: 0;
+    left: 0;
+    border-top: 15px solid #e6e4dd;
+    border-right: 15px solid transparent; }
+  /* line 89, ../sass/components/_shapes.scss */
+  .bevel .tr {
+    top: 0;
+    right: 0;
+    border-top: 15px solid #e6e4dd;
+    border-left: 15px solid transparent; }
+  /* line 95, ../sass/components/_shapes.scss */
+  .bevel .bl {
+    bottom: 0;
+    left: 0;
+    border-bottom: 15px solid #e6e4dd;
+    border-right: 15px solid transparent; }
+  /* line 101, ../sass/components/_shapes.scss */
+  .bevel .br {
+    bottom: 0;
+    right: 0;
+    border-bottom: 15px solid #e6e4dd;
+    border-left: 15px solid transparent; }
+
+/* line 108, ../sass/components/_shapes.scss */
+.bevel--white {
+  background: #fff; }
+  /* line 110, ../sass/components/_shapes.scss */
+  .bevel--white .bg {
+    background: #fff; }
+  /* line 111, ../sass/components/_shapes.scss */
+  .bevel--white .bg-overlay {
+    background: none; }
+
+/* line 1, ../sass/components/_sponsors.scss */
+.view-cod-sponsors.bevel {
+  padding: 0 0 16px; }
+
+/* line 5, ../sass/components/_sponsors.scss */
+.view-cod-sponsors .view-content h3 {
+  color: #fff;
+  text-align: center;
+  font-family: "Courgette", cursive;
+  margin: 0;
+  padding: 0.6em 0 0.1em 0;
+  font-size: 32px;
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased; }
+
+/* line 15, ../sass/components/_sponsors.scss */
+.pane-cod-sponsors-panel-pane-1 {
+  margin-top: 50px;
+  background-color: #b9a884;
+  padding: 0 0 16px; }
+  /* line 19, ../sass/components/_sponsors.scss */
+  .pane-cod-sponsors-panel-pane-1 .bg {
+    background-color: #b9a884; }
+  /* line 20, ../sass/components/_sponsors.scss */
+  .pane-cod-sponsors-panel-pane-1 h2 {
+    overflow: hidden;
+    text-indent: -9000px;
+    display: block;
+    padding: 0;
+    margin: 0;
+    line-height: 0; }
+
+/* line 23, ../sass/components/_sponsors.scss */
+.view-cod-sponsors h3 {
+  margin-bottom: 0; }
+/* line 24, ../sass/components/_sponsors.scss */
+.view-cod-sponsors ul, .view-cod-sponsors .view-results {
+  background: #fff;
+  margin: 0;
+  padding: 10px;
+  text-align: center; }
+/* line 30, ../sass/components/_sponsors.scss */
+.view-cod-sponsors ul li.views-row, .view-cod-sponsors .sponsor {
+  display: inline-block;
+  list-style: none;
+  margin: 50px 20px;
+  text-align: center; }
+/* line 36, ../sass/components/_sponsors.scss */
+.view-cod-sponsors .views-field-field-sponsor-logo img, .view-cod-sponsors .sponsor img {
+  width: auto;
+  height: auto;
+  max-height: 100px;
+  max-width: 140px; }
+
+/* line 44, ../sass/components/_sponsors.scss */
+.panel-layout .sponsors-featured {
+  background-color: #fff;
+  position: relative;
+  margin: 5em 0 3em 0;
+  padding: 16px 0; }
+  /* line 49, ../sass/components/_sponsors.scss */
+  .panel-layout .sponsors-featured .bg {
+    background-color: #fff; }
+  /* line 50, ../sass/components/_sponsors.scss */
+  .panel-layout .sponsors-featured .bg-overlay {
+    background: none; }
+  /* line 51, ../sass/components/_sponsors.scss */
+  .panel-layout .sponsors-featured .pane-title {
+    position: absolute;
+    width: 100%;
+    top: -30px;
+    text-align: center;
+    color: #095380;
+    padding: 0.2em 0;
+    margin: 0; }
+  /* line 60, ../sass/components/_sponsors.scss */
+  .panel-layout .sponsors-featured ul {
+    text-align: center; }
+  /* line 61, ../sass/components/_sponsors.scss */
+  .panel-layout .sponsors-featured ul li.views-row, .panel-layout .sponsors-featured .sponsor {
+    margin: 0 20px; }
+
+/* line 66, ../sass/components/_sponsors.scss */
+.view-cod-sponsors ul li.views-row, .view-cod-sponsors .sponsor {
+  margin: 20px;
+  display: inline-block; }
+/* line 70, ../sass/components/_sponsors.scss */
+.view-cod-sponsors .views-field-field-sponsor-logo img, .view-cod-sponsors .sponsor img {
+  max-height: 100px;
+  max-width: 200px; }
+
+/* line 79, ../sass/components/_sponsors.scss */
+.view-cod-sponsors ul li.views-row, .view-cod-sponsors .sponsor {
+  margin: 20px;
+  display: inline-block; }
+
+/* line 88, ../sass/components/_sponsors.scss */
+.panel-layout .sponsors-featured {
+  position: absolute;
+  top: 0;
+  width: 200px;
+  right: 0;
+  margin: 0; }
+  /* line 94, ../sass/components/_sponsors.scss */
+  .panel-layout .sponsors-featured ul {
+    padding: 0 0 10px; }
+  /* line 95, ../sass/components/_sponsors.scss */
+  .panel-layout .sponsors-featured ul li {
+    margin: 0; }
+  /* line 96, ../sass/components/_sponsors.scss */
+  .panel-layout .sponsors-featured .pane-title {
+    top: -30px;
+    font-size: 1.5em;
+    line-height: 1;
+    padding: 0;
+    margin: 0; }
+  /* line 97, ../sass/components/_sponsors.scss */
+  .panel-layout .sponsors-featured .views-field-field-sponsor-logo img, .panel-layout .sponsors-featured .sponsor img {
+    max-height: 100px;
+    max-width: 140px; }
+
+/* Specific sponsor logo sizing */
+/* line 104, ../sass/components/_sponsors.scss */
+.view-cod-sponsors [href="http://www.aquilent.com/"] img {
+  width: 250px !important;
+  max-width: 250px !important; }
+
+/* line 105, ../sass/components/_sponsors.scss */
+.view-cod-sponsors [href="http://azrisolutions.com/"] img {
+  max-width: 130px !important; }
+
+/* line 106, ../sass/components/_sponsors.scss */
+.view-cod-sponsors [href="http://www.interactivestrategies.com/"] img {
+  max-height: 160px !important; }
+
+/* line 107, ../sass/components/_sponsors.scss */
+.view-cod-sponsors [href="http://www.bstonetech.com/"] img {
+  width: 270px !important;
+  max-width: 270px !important; }
+
+/* Tabs */
+/* line 3, ../sass/components/_tabs.scss */
+.not-logged-in ul.tabs--primary {
+  display: none; }
+
+/* line 5, ../sass/components/_tabs.scss */
+ul.tabs--primary {
+  border: none;
+  padding: 1em 0; }
+  /* line 8, ../sass/components/_tabs.scss */
+  ul.tabs--primary li {
+    margin: 0 2px 2px 0; }
+    /* line 10, ../sass/components/_tabs.scss */
+    ul.tabs--primary li a {
+      background-color: #fff;
+      color: #8bb5bb;
+      font-weight: normal;
+      -moz-border-radius-topleft: 4px;
+      -webkit-border-top-left-radius: 4px;
+      border-top-left-radius: 4px;
+      -moz-border-radius-topright: 4px;
+      -webkit-border-top-right-radius: 4px;
+      border-top-right-radius: 4px; }
+      /* line 14, ../sass/components/_tabs.scss */
+      ul.tabs--primary li a:hover, ul.tabs--primary li a:focus {
+        background-color: #8bb5bb;
+        color: #fff; }
+
+/* line 19, ../sass/components/_tabs.scss */
+.tabs a.active {
+  background-color: #b9a884;
+  color: #fff; }
+
+/* Vertical tabs */
+/* line 25, ../sass/components/_tabs.scss */
+.vertical-tabs {
+  background: #fff;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  border: 2px solid #b9a884; }
+
+/* line 31, ../sass/components/_tabs.scss */
+.vertical-tabs ul.vertical-tabs-list li {
+  background: #ded6c5; }
+
+/* line 34, ../sass/components/_tabs.scss */
+.vertical-tabs fieldset.vertical-tabs-pane {
+  padding: 1em; }
+
+/* Homepage */
+/* line 38, ../sass/components/_tabs.scss */
+.page-node-1.node-type-event ul.tabs--primary {
+  display: none; }
+
+/* line 1, ../sass/components/_teasers.scss */
+article.node-teaser {
+  margin: 0 0 1em 0; }
+  /* line 3, ../sass/components/_teasers.scss */
+  article.node-teaser p {
+    margin: 0; }
+  /* line 4, ../sass/components/_teasers.scss */
+  article.node-teaser .node__links a {
+    font-size: .9em; }
+  /* line 5, ../sass/components/_teasers.scss */
+  article.node-teaser .node__links a:hover {
+    text-decoration: none; }
+
+/* line 7, ../sass/components/_teasers.scss */
+.more-link {
+  clear: both; }
+
+/* line 1, ../sass/components/_twitter-timeline.scss */
+.twitter-timeline {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important; }
+
+/* line 7, ../sass/components/_twitter-timeline.scss */
+.twitter-timeline__header a.button, .twitter-timeline__header .more-link a, .more-link .twitter-timeline__header a, .twitter-timeline__header .view-cod-session-schedule .views-field-count a, .view-cod-session-schedule .views-field-count .twitter-timeline__header a, .twitter-timeline__header .view-cod-session-schedule .views-field-ops a, .view-cod-session-schedule .views-field-ops .twitter-timeline__header a,
+.twitter-timeline__header .view-cod-bof-schedule .views-field-count a,
+.view-cod-bof-schedule .views-field-count .twitter-timeline__header a,
+.twitter-timeline__header .view-cod-bof-schedule .views-field-ops a,
+.view-cod-bof-schedule .views-field-ops .twitter-timeline__header a,
+.twitter-timeline__header .view-cod-schedule .views-field-count a,
+.view-cod-schedule .views-field-count .twitter-timeline__header a,
+.twitter-timeline__header .view-cod-schedule .views-field-ops a,
+.view-cod-schedule .views-field-ops .twitter-timeline__header a {
+  float: right; }
+
+/* line 25, ../sass/govcon.styles.scss */
+body {
+  background: url(../images/texture200.png) #e6e4dd;
+  padding: 10px;
+  position: relative; }
+
+/* line 30, ../sass/govcon.styles.scss */
+.site-branding {
+  text-align: center;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  margin-left: -60px;
+  width: 120px;
+  z-index: 10; }
+
+/* line 39, ../sass/govcon.styles.scss */
+body.admin-menu,
+body.admin-menu.adminimal-menu.adminimal-backend,
+body.admin-menu.adminimal-menu.adminimal-frontend {
+  padding-top: 60px !important;
+  margin-top: 0 !important; }
+
+/* line 45, ../sass/govcon.styles.scss */
+.site-branding__logo img {
+  width: 120px;
+  height: auto; }
+
+/* line 49, ../sass/govcon.styles.scss */
+.site-branding__name {
+  overflow: hidden;
+  text-indent: -9000px;
+  display: block;
+  padding: 0;
+  margin: 0;
+  line-height: 0; }
+
+/* line 52, ../sass/govcon.styles.scss */
+.l-region--footer {
+  background: url(../images/texture200.png) #ded6c5;
+  padding: 10px; }
+
+/* get rid of background for all panel layouts running this theme */
+/* line 58, ../sass/govcon.styles.scss */
+.not-front .l-content, .not-front .l-region--sidebar .block {
+  background: none; }
+
+/* line 61, ../sass/govcon.styles.scss */
+.login-title {
+  overflow: hidden;
+  text-indent: -9000px;
+  display: block;
+  padding: 0;
+  margin: 0;
+  line-height: 0; }
+
+/* line 63, ../sass/govcon.styles.scss */
+.user-profile {
+  background: url(../images/texture200.png) #8bb5bb;
+  padding: 20px; }
+  /* line 66, ../sass/govcon.styles.scss */
+  .user-profile .user-picture {
+    background: #e6e4dd;
+    display: inline-block;
+    line-height: 0;
+    border: 10px solid #095380; }
+
+/* line 74, ../sass/govcon.styles.scss */
+p.submitted {
+  margin: .1em 0;
+  color: #666;
+  font-size: 0.8em; }
+
+/* line 79, ../sass/govcon.styles.scss */
+.panel-pane {
+  margin: 2em 0; }
+
+/* line 83, ../sass/govcon.styles.scss */
+body {
+  padding: 20px; }
+
+/* line 84, ../sass/govcon.styles.scss */
+.site-branding {
+  top: 70px; }
+
+/* line 88, ../sass/govcon.styles.scss */
+.preface-inner {
+  width: 100%; }
+
+/*# sourceMappingURL=govcon.no-query.css.map */

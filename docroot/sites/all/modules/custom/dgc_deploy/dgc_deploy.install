@@ -1,0 +1,252 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the dgc_deploy module.
+ */
+
+/**
+ * Improve usability of login form with super_login module.
+ */
+function dgc_deploy_update_7000() {
+  module_enable(array('super_login'));
+}
+
+/**
+ * Enable logintoboggan.
+ *
+ * Improve usability of registration and login actions
+ * with logintoboggan module.
+ */
+function dgc_deploy_update_7001() {
+  module_enable(array('logintoboggan'));
+}
+
+/**
+ * Enable hybridauth.
+ *
+ * Improve user registration with external sources via
+ * hybridauth social login module.
+ */
+function dgc_deploy_update_7002() {
+  module_enable(array('hybridauth'));
+}
+
+/**
+ * Disable hybridauth.
+ *
+ * Disable hybridauth for now due to complexity of using
+ * it with external services needing to register for each.
+ */
+function dgc_deploy_update_7003() {
+  module_disable(array('hybridauth'));
+}
+
+/**
+ * Enable responsive_dropdown_menus module and govcon theme.
+ *
+ * Set theme as default. Add responsive main menu block to
+ * navigation region. Add log in, logout, my account and register
+ * links to main menu.
+ */
+function dgc_deploy_update_7004() {
+  module_enable(array('responsive_dropdown_menus'));
+  theme_enable(array('govcon'));
+  variable_set('theme_default', 'govcon');
+
+  // Enable Responsive menu main menu block and set title to <none>.
+  $default_theme = variable_get('theme_default', 'govcon');
+  db_update('block')
+    ->fields(array(
+      'region' => 'navigation',
+      'title' => '<none>',
+    )
+    )
+    ->condition('module', 'responsive_dropdown_menus')
+    ->condition('delta', 'main-menu')
+    ->condition('theme', $default_theme)
+    ->execute();
+
+  // Add Register link to main menu.
+  $item = array(
+    'link_title' => 'Tickets',
+    'link_path' => 'user/register',
+    'menu_name' => 'user-menu',
+    'weight' => 0,
+    'plid' => 0,
+  );
+  menu_link_save($item);
+
+  // Add Log in link to main menu.
+  $item = array(
+    'link_title' => 'Log in',
+    'link_path' => 'user/login',
+    'menu_name' => 'user-menu',
+    'weight' => 10,
+    'plid' => 0,
+  );
+  menu_link_save($item);
+
+  // Add Register link to main menu.
+  $item = array(
+    'link_title' => 'Register',
+    'link_path' => 'user/register',
+    'menu_name' => 'main-menu',
+    'weight' => 10,
+    'plid' => 0,
+  );
+  menu_link_save($item);
+}
+
+/**
+ * Actually enable the responsive main menu block this time.
+ */
+function dgc_deploy_update_7005() {
+  // Enable Responsive menu main menu block.
+  $default_theme = variable_get('theme_default', 'govcon');
+  db_update('block')
+    ->fields(array(
+      'region' => 'navigation',
+      'status' => '1',
+    )
+    )
+    ->condition('module', 'responsive_dropdown_menus')
+    ->condition('delta', 'main-menu')
+    ->condition('theme', $default_theme)
+    ->execute();
+}
+
+/**
+ * Enable redirect module.
+ */
+function dgc_deploy_update_7006() {
+  module_enable(array('redirect'));
+}
+
+/**
+ * Set site_frontpage.
+ *
+ * Redirect front to 2015 event page. Redirect user/register to
+ * event registration page.
+ */
+function dgc_deploy_update_7007() {
+  variable_set('site_frontpage', 'node');
+  $urls = array(
+    array('source' => '', 'redirect' => 'node/1'),
+    array('source' => 'user/register', 'redirect' => 'node/1/registration'),
+  );
+
+  // Add redirects.
+  foreach ($urls as $url) {
+    $redirect = new stdClass();
+    redirect_object_prepare($redirect, $url);
+    redirect_save($redirect);
+  }
+}
+
+/**
+ * Enable system user-menu block to header region.
+ */
+function dgc_deploy_update_7008() {
+  // Enable user menu menu block and set title to <none>.
+  $default_theme = variable_get('theme_default', 'govcon');
+  db_update('block')
+    ->fields(array(
+      'region' => 'header',
+      'title' => '<none>',
+      'status' => '1',
+    )
+    )
+    ->condition('module', 'system')
+    ->condition('delta', 'user-menu')
+    ->condition('theme', $default_theme)
+    ->execute();
+}
+
+/**
+ * Enable dgc_extras feature module.
+ */
+function dgc_deploy_update_7009() {
+  module_enable(array('dgc_extras'));
+}
+
+/**
+ * Enable googleanalytics module.
+ */
+function dgc_deploy_update_7010() {
+  module_enable(array('googleanalytics'));
+}
+
+/**
+ * Enable mollom module.
+ */
+function dgc_deploy_update_7011() {
+  module_enable(array('mollom'));
+}
+
+/**
+ * Add main menu block to footer region.
+ */
+function dgc_deploy_update_7012() {
+  // Enable main menu block and set title to <none>.
+  $default_theme = variable_get('theme_default', 'govcon');
+  db_update('block')
+    ->fields(array(
+      'region' => 'footer',
+      'title' => '<none>',
+      'status' => '1',
+    )
+    )
+    ->condition('module', 'system')
+    ->condition('delta', 'main-menu')
+    ->condition('theme', $default_theme)
+    ->execute();
+}
+
+/**
+ * Enable form_builder module.
+ */
+function dgc_deploy_update_7013() {
+  module_enable(array('form_builder'));
+}
+
+/**
+ * Enable form_builder WEBFORM module.
+ */
+function dgc_deploy_update_7014() {
+  module_enable(array('form_builder_webform'));
+}
+
+/**
+ * Enable back_to_top module.
+ */
+function dgc_deploy_update_7015() {
+  module_enable(array('back_to_top'));
+}
+
+/**
+ * Enable modernizr module.
+ */
+function dgc_deploy_update_7016() {
+  module_enable(array('modernizr'));
+}
+
+/**
+ * Enable CAPTCHA module.
+ */
+function dgc_deploy_update_7017() {
+  module_enable(array('captcha'));
+}
+
+/**
+ * Enable honeypot module.
+ */
+function dgc_deploy_update_7018() {
+  module_enable(array('honeypot'));
+}
+
+/**
+ * Enable recaptcha module.
+ */
+function dgc_deploy_update_7019() {
+  module_enable(array('recaptcha'));
+}

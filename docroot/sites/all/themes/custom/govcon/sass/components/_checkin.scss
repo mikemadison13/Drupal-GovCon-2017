@@ -1,0 +1,32 @@
+/* check in view with exposed filters */
+.view-id-dgc_registration_check_in {
+  .views-exposed-widgets {
+    background: lighten($gold,20%);
+    margin-bottom: 30px;
+    width: 100%;
+    padding: 20px;
+  }
+  /* button style flag for checking in attendees */
+  .views-field-ops {
+    width: 90px;
+    .flag-wrapper {
+      width: 30px;
+      height: 30px;
+      display:  block;
+      background: #fff;
+      border:  1px solid #333;
+      overflow: hidden;
+      line-height: 50px;
+      margin-left: 20px;
+      border-radius: 3px;
+      a {
+        padding: 30px 0 0 30px;
+        background: #fff;
+        display: inline-block;
+      }
+      a.unflag-action {
+        background: $red;
+      }
+    }
+  }
+}

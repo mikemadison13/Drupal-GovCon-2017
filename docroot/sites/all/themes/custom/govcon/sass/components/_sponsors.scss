@@ -1,0 +1,109 @@
+.view-cod-sponsors.bevel {
+  padding: 0 0 16px;
+}
+
+.view-cod-sponsors .view-content h3 {
+	color: #fff; 
+	text-align: center;
+	font-family: $script;
+	margin: 0;
+	padding: 0.6em 0 0.1em 0;
+	font-size: 32px;
+	font-weight: normal;
+	 -webkit-font-smoothing: antialiased;
+}
+.pane-cod-sponsors-panel-pane-1 { 
+  margin-top: 50px;
+  background-color: $gold;
+  padding: 0 0 16px;
+  .bg { background-color: $gold; }
+  h2 { @include hide-text; }
+}
+.view-cod-sponsors {
+	h3 { margin-bottom: 0; }
+	ul, .view-results {
+		background: #fff;
+		margin: 0;
+		padding: 10px;
+		text-align: center;
+	}
+	ul li.views-row, .sponsor {
+		display: inline-block;
+		list-style: none;
+		margin: 50px 20px;
+		text-align: center;
+	}
+	.views-field-field-sponsor-logo img, .sponsor img {
+		width: auto;
+		height: auto;
+		max-height:100px;
+		max-width: 140px;
+	}
+}
+
+.panel-layout .sponsors-featured {
+	background-color: #fff;
+	position: relative;
+	margin: 5em 0 3em 0;
+	padding: 16px 0;
+  .bg { background-color: #fff; }
+  .bg-overlay { background: none; }
+	.pane-title { 
+		position: absolute;
+		width: 100%;
+		top: -30px;
+		text-align: center; 
+		color: $blue; 
+		padding: 0.2em 0; 
+		margin: 0; 
+	}
+	ul { text-align: center; }
+	ul li.views-row, .sponsor { margin: 0 20px; }
+}
+
+@include breakpoint($tab, true) {
+	.view-cod-sponsors {
+		ul li.views-row, .sponsor {
+			margin: 20px;
+			display: inline-block;
+		}
+		.views-field-field-sponsor-logo img, .sponsor img {
+			max-height: 100px;
+			max-width: 200px;
+		}
+	}
+}
+
+@include breakpoint($desk, true) {
+	.view-cod-sponsors {
+		ul li.views-row, .sponsor {
+			margin: 20px;
+			display: inline-block;
+		}
+	}	
+
+}
+
+@include breakpoint($wide, true) {
+	.panel-layout .sponsors-featured {
+		position: absolute;
+		top: 0;
+		width: 200px;
+		right: 0;
+		margin: 0;
+		ul { padding: 0 0 10px; }
+		ul li { margin: 0; }
+		.pane-title { top: -30px; font-size: 1.5em; line-height: 1; padding: 0; margin: 0; }
+		.views-field-field-sponsor-logo img, .sponsor img {
+			max-height: 100px;
+			max-width: 140px;
+		}
+	}
+}
+/* Specific sponsor logo sizing */
+.view-cod-sponsors [href="http://www.aquilent.com/"] img { width: 250px !important; max-width: 250px !important; }
+.view-cod-sponsors [href="http://azrisolutions.com/"] img { max-width: 130px !important; }
+.view-cod-sponsors [href="http://www.interactivestrategies.com/"] img { max-height: 160px !important; }
+.view-cod-sponsors [href="http://www.bstonetech.com/"] img { width: 270px !important; max-width: 270px !important; }
+
+	

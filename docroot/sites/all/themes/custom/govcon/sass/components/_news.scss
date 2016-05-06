@@ -1,0 +1,20 @@
+article.node-teaser.node--news {
+  .view-row {
+    position: relative;
+    @include clearfix;
+  }
+  .node__posted {
+    float: left;
+    width: 100px;
+    color: $gold;
+    font-weight: bold;
+    font-size: 2em;
+  }
+  .news-content {
+    margin-left: 20px;
+    overflow: hidden;
+  }
+}
+.more-link {
+  clear: both;
+}

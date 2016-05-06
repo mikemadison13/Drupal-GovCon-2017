@@ -1,0 +1,44 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the dgc_deploy_prod module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function dgc_deploy_prod_install() {
+  // Disable devel, devel_generate and dblog modules.
+  // Enable syslog, memcache and security_review modules.
+  module_disable(array('devel', 'devel_generate', 'dblog'));
+  module_enable(array('syslog', 'memcache'));
+  // Set initial variable values.
+  variable_set('cache', '1');
+  variable_set('page_cache_maximum_age', '300');
+  variable_set('preprocess_css', '1');
+  variable_set('preprocess_js', '1');
+  variable_set('page_compression', '1');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function dgc_deploy_prod_uninstall() {
+  // Disable production-only type modules.
+  module_disable(array('syslog', 'memcache'));
+  // Enable.
+  module_enable(array('dblog'));
+  // Set variable values back to default, non-production.
+  variable_set('cache', '0');
+  variable_set('page_cache_maximum_age', '0');
+  variable_set('preprocess_css', '0');
+  variable_set('preprocess_js', '0');
+  variable_set('page_compression', '0');
+}
+
+/**
+ * Enable Security Kit module.
+ */
+function dgc_deploy_prod_update_7000() {
+  module_enable(array('seckit'));
+}

@@ -10,4 +10,4 @@ projects[drupal] = 7.43
 projects[cod][type] = "module"
 projects[cod][download][type] = "git"
 projects[cod][download][url] = "http://git.drupal.org/project/cod.git"
-projects[cod][download][branch] = "7.x-2.x"
+projects[cod][download][branch] = "7.x-1.x"

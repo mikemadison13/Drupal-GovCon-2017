@@ -473,10 +473,8 @@ function cod_install() {
 
   // The installer requires that the system theme settings form
   // be submitted in order for its themes' settings to be properly set
-  // For more background, see https://www.drupal.org/node/1776730.
+  // For more background, see http://drupal.org/node/1776730.
   module_load_include('inc', 'system', 'system.admin');
-  // Enable the Origins theme and set it as the default.
-  $cod_themes = array('omega', 'pisces', 'adminimal', 'fisherman');
   foreach ($cod_themes as $theme_name) {
     $form_state = form_state_defaults();
     $form_state['build_info']['args'][0] = $theme_name;

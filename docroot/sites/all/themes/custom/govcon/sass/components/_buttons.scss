@@ -1,0 +1,186 @@
+input[type=submit], button, .button {
+	border: none;
+	background-image: none;
+	background-color: $blue;
+	padding: 0.3em 0.5em;
+	font-weight: 700;
+	font-size: 0.8rem;
+	color: #fff;
+	margin: 3px 3px 0 0;
+	@include border-radius(2px);
+	background: $blue;
+	box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
+  font-family: $sans-serif;
+	&:hover, &:focus {
+		text-decoration: none;
+		background-color: #fff;
+		background-image: none;
+		color: $blue;
+		border: none;
+	}
+}
+/* big buttons */
+a.button.btn-big, .form-actions input[type=submit], 
+.ticket-field-formatter-view-form input[type=submit], 
+.exposed-filters input[type=submit].form-submit,
+.ticket-register-form input[type=submit],
+.pane-node-field-event-tickets input[type=submit],
+.views-exposed-widget input[type=submit].form-submit {
+	text-transform: uppercase;
+	padding: 0.5em;
+	font-size: 1rem;
+	background: $red;
+	&:hover, &:focus {
+		background-color: #fff;
+		color: $red;
+	}
+}
+.exposed-filters input[type=submit].form-submit {
+	margin: 0.5em 1em;
+}
+.views-ui-display-tab-actions .ctools-button-processed li a, 
+.views-ui-display-tab-actions .ctools-button-processed input {
+	color: $blue;
+}
+
+/* more button */
+.more-link {
+  a {
+    @extend .button;
+  }
+}
+
+/* tickets button */
+.panel-pane.tickets {
+	text-align: center;
+	margin-top: 100px;
+	h2 {
+    color: $red;
+    font-size: 2.8em;
+    font-family: $script;
+    border: none;
+    font-weight: normal;
+	}
+  .tickets {
+    width: 215px;
+  	padding: 40px 0 60px;
+    margin-top: 30px;
+    text-align: center;
+  	text-transform: uppercase;
+  	font-size: 2.6em;
+  	background: url(../images/ticket.svg) no-repeat top left;
+	  background-size: contain;
+	  position: relative;
+	  display: inline-block;
+	  color: #fff;
+    font-weight: bold;
+	  -webkit-transform: rotate(-4deg);
+	  -moz-transform: rotate(-4deg);
+	  -ms-transform: rotate(-4deg);
+	  -o-transform: rotate(-4deg);
+	  -webkit-transition: 0.5s ease-in-out;
+    -moz-transition: 0.5s ease-in-out;
+    -o-transition: 0.5s ease-in-out;
+    transition: 0.5s ease-in-out;
+  }
+  a.tickets:after {
+  	@include texture-text;
+  } 
+  a.tickets:hover { 
+  	-webkit-transform: rotate(3deg);
+	  -moz-transform: rotate(3deg);
+	  -ms-transform: rotate(3deg);
+	  -o-transform: rotate(3deg);
+	  text-decoration: none;
+  }
+}
+
+/* Big star schedule button */
+.panel-layout .schedule-star-pane {
+  text-align: center;
+  margin: -50px 0 -60px;
+}
+.schedule-star a {
+  display: inline-block;
+  background: url('../images/gold_star.svg') no-repeat;
+  background-size: contain;
+  height: 340px;
+  width: 340px;
+  text-align: center;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 1.4em;
+  padding-top: 158px;
+  -webkit-transform: rotate(-4deg);
+  -moz-transform: rotate(-4deg);
+  -ms-transform: rotate(-4deg);
+  -o-transform: rotate(-4deg);
+  -webkit-transition: 0.5s ease-in-out;
+  -moz-transition: 0.5s ease-in-out;
+  -o-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+  opacity: 0.7;
+    &:hover {
+      -webkit-transform: rotate(3deg);
+      -moz-transform: rotate(3deg);
+      -ms-transform: rotate(3deg);
+      -o-transform: rotate(3deg);
+      text-decoration: none;
+      opacity: 1;
+    }
+}
+
+@include breakpoint($tab, true) {
+	.panel-pane.tickets {
+		margin-top: 0;
+		position: absolute;
+		left: 0;
+		top: -30px;
+		h2 { font-size: 2em; }
+		.tickets {
+      width: 125px;
+      padding: 22px 0 30px;
+	  	text-transform: uppercase;
+	  	font-size: 1.4em;
+		}
+	}
+  .panel-layout .container {
+    overflow: visible;
+  }
+  .panel-layout .schedule-star-pane {
+    margin-top: 0;
+    position: absolute;
+    left: -90px;
+    top: -100px;
+    a {
+      height: 300px;
+      width: 300px;
+      padding-top: 140px;
+      font-size: 1.2em;
+    }
+  }
+}
+@include breakpoint($desk, true) {
+	.panel-pane.tickets {
+		left: 0;
+		top: -30px;
+		.tickets {
+      width: 175px;
+      padding: 32px 0 50px;
+	  	text-transform: uppercase;
+	  	font-size: 2em;
+		}
+	}
+  .panel-layout .schedule-star-pane {
+    margin-top: 0;
+    position: absolute;
+    left: -120px;
+    top: -140px;
+    a {
+      height: 400px;
+      width: 400px;
+      padding-top: 190px;
+      font-size: 1.6em;
+    }
+  }
+}

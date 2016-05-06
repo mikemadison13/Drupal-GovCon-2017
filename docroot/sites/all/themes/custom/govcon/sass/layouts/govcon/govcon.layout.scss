@@ -1,0 +1,128 @@
+/*******************************************************************************
+ * govcon.layout.scss
+ *
+ * Styles for the GovCon layout.
+ ******************************************************************************/
+@import "compass";
+@import "breakpoint";
+@import "singularitygs";
+
+// Globbing from within sub-folders only works with relative paths.
+@import "../../variables/**/*";
+
+.l-constrained {
+  width: 95%;
+  margin: 0 auto;
+  max-width: 1200px;
+  @include pie-clearfix;
+}
+/* Nav */
+.l-region--navigation { }
+
+/* Header */
+.l-header {
+  position: relative;
+  max-width: 1400px;
+  margin: 30px auto 0;
+}
+.l-region--header {
+  position: absolute;
+  top: -56px;
+  left: 0;
+  width: 100%;
+  z-index: 13;
+}
+
+/* Content Area */
+.l-highlighted-wrapper {
+  padding: $vert-spacing-unit 0;
+}
+.l-region--highlighted {
+  @extend .l-constrained;
+}
+.l-region--help {
+  margin-bottom: $vert-spacing-unit;
+}
+.l-main {
+  margin-top: 80px;
+  margin-bottom: 2 * $vert-spacing-unit;
+}
+
+/* Sidebars */
+.l-region--sidebar-first,
+.l-region--sidebar-second {
+  padding: $vert-spacing-unit $horz-spacing-unit;
+}
+
+/* Footer */
+.l-footer-wrapper {
+  padding: $vert-spacing-unit 0;
+}
+.l-region--footer {
+  @extend .l-constrained;
+}
+
+.container {
+  @include clearfix;
+}
+
+@include breakpoint($tab, true) {
+  .l-main {
+    margin-top: 160px;
+  }
+  .page-node-1.node-type-event .l-main {
+    margin-top: 280px;
+  }
+
+  .l-constrained {
+    width: 90%;
+  }
+  .l-region--navigation { height: 60px; }
+  /* Sidebars */
+  .has-two-sidebars,
+  .has-one-sidebar {
+    .l-content {
+      @include grid-span(8, 1);
+    }
+    .l-region--sidebar-first,
+    .l-region--sidebar-second {
+      @include grid-span(4, 9);
+      clear: right;
+    }
+  }
+}
+
+@include breakpoint($desk, true) {
+
+  .page-node-1.node-type-event .l-main {
+    margin-top: 300px;
+  }
+
+  .l-constrained {
+    width: 80%;
+  }
+
+  /* Sidebars */
+  .has-one-sidebar {
+    .l-content {
+      @include grid-span(8, 1);
+    }
+    .l-region--sidebar-first {
+      @include grid-span(4, 9);
+      clear: none;
+    }
+  }
+  .has-two-sidebars {
+    .l-content {
+      @include grid-span(6, 1);
+    }
+    .l-region--sidebar-first,
+    .l-region--sidebar-second {
+      @include grid-span(3, 7);
+      clear: none;
+    }
+    .l-region--sidebar-second {
+      @include grid-span(3, 10);
+    }
+  }
+}

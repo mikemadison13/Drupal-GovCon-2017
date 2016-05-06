@@ -1,0 +1,9 @@
+.warning {
+	color: $red;
+}
+.messages.warning {
+	border-color: $red;
+}
+
+/* Admin tables */
+td.status { width: 24px; }

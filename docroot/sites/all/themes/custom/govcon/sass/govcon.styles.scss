@@ -1,0 +1,89 @@
+// Import external libraries.
+@import "compass";
+@import "breakpoint";
+@import "singularitygs";
+@import "toolkit";
+
+// Import variables, abstractions, base styles and components using globbing.
+//
+// Globbing will always import files alphabetically. Optimally, all your
+// components should be self-contained and explicit enough to not have any
+// contained styles leak into unrelated components: The import order should not
+// affect the result.
+//
+// If there are variables, functions or mixins that depend on each other and
+// therefore need to be imported in a specific order you can import them
+// directly. Variables-, function- or mixin providing partials should never
+// output any styles themselves: Importing them multiple times to resolve
+// dependencies shouldn't be a problem.
+@import "variables/**/*";
+@import "abstractions/**/*";
+@import "base/**/*";
+@import "components/**/*";
+
+
+body {
+  background: $texture $ecru;
+  padding: 10px;
+  position: relative;
+}
+.site-branding {
+  text-align: center;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  margin-left: -60px;
+  width: 120px;
+  z-index: 10;
+}
+body.admin-menu, 
+body.admin-menu.adminimal-menu.adminimal-backend, 
+body.admin-menu.adminimal-menu.adminimal-frontend { 
+  padding-top: 60px !important;
+  margin-top: 0 !important;
+}
+.site-branding__logo img {
+  width: 120px;
+  height: auto;
+}
+.site-branding__name {
+	@include hide-text;
+}
+.l-region--footer {
+  background: $texture lighten($gold, 20%);
+  padding: 10px;
+}
+
+/* get rid of background for all panel layouts running this theme */
+.not-front .l-content, .not-front .l-region--sidebar .block {
+  background: none;
+}
+.login-title { @include hide-text; }
+
+.user-profile {
+  background: $texture $pale-blue;
+  padding: 20px;
+    .user-picture { 
+      background: $ecru; 
+      display: inline-block;
+      line-height: 0;
+      border: 10px solid $blue; 
+    }
+}
+
+p.submitted {
+  margin: .1em 0;
+  color: #666;
+  font-size: 0.8em;
+}
+.panel-pane { margin: 2em 0; }
+
+
+@include breakpoint($tab, true) {
+  body { padding: 20px; }
+  .site-branding { top: 70px; }
+}
+
+@include breakpoint($desk, true) {
+  .preface-inner { width: 100%; }
+}

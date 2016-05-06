@@ -1,0 +1,313 @@
+li.menu-item {
+  a {
+    text-transform: uppercase;
+  }
+  a:hover, a.active {
+    color: $red;
+  }
+}
+
+/* Slick nav from Adminiimal toolbar */
+.slicknav_menu { 
+	position: absolute;
+	top: 0;
+	width: 100%;
+	left: 0; 
+	z-index: 20;
+}
+
+/* Main menu dropdowns */
+#block-responsive-dropdown-menus-main-menu {
+	position: relative;
+	z-index: 10;
+}
+.responsive-menu,
+.responsive-menu.links.inline {
+  max-height: 0;
+  overflow:hidden;
+  }
+  .responsive-menu.menu-toggled,
+  .responsive-menu.links.inline.menu-toggled {
+    max-height: none;
+  }
+.responsive-menu li,
+.responsive-menu.inline li {
+  position: relative;
+  display: block;
+}
+ul.main-menu.menu-toggled { padding-top: 40px; }
+ul.main-menu {
+	text-align: center;
+	padding: 0 10px;
+	margin: 0;
+	background: $texture $pale-blue;
+	li {
+		display: block;
+		margin-left: 2px;
+		text-align: left;
+		position: relative;
+	  a:hover, a:focus { color: $red; text-decoration: none; }
+	}
+}
+ul.main-menu > li > a {
+	padding: 20px 10px 6px 0;
+	display: inline-block; 
+	font-size: 1.2em;
+}
+ul.main-menu > li.last { margin-bottom: 10px; }
+ul.main-menu > li.active_trail,
+ul.main-menu > li.active-trail,
+ul.main-menu > li:hover {
+	position: relative;
+  background: transparent;
+  color: $red;
+}
+ul.main-menu > li.active_trail > a,
+ul.main-menu > li.active-trail > a,
+ul.main-menu > li:hover > a {
+	color: $red;
+}
+ul.main-menu > li:hover { z-index: 1; }
+ul.main-menu > li:hover:after { z-index: 10; }
+ul.main-menu > li.menu-parent:hover:after {
+  background: none;
+}
+ul.tier-two {
+	left: -16px;
+	margin: 0;
+  padding: 0;
+  width: 100%;
+  background: $texture $ecru;
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
+  border-left: 16px solid $red;
+  &:after {
+  	background-color: $red;
+  	background: linear-gradient(-45deg, transparent 4px, $red 0), linear-gradient(45deg, transparent 4px, $red 0);
+    background-position: left-bottom;
+    background-repeat: repeat-x;
+    background-size: 6px 6px;
+    content: " ";
+    display: block;
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 16px;
+    height: 6px;
+  }
+	li {
+		margin: 0;
+    display: block;
+    a { border: none; display: inline-block; padding: 6px 10px 6px 4px; }
+	}
+	li.first a { padding-top: 12px; }
+	li.last a { padding-bottom: 12px; }
+}
+.menu-toggle {
+	margin-top: 10px;
+	margin-left: 10px;
+	background: $texture $blue;
+	text-align: center;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 6px;
+	color: $ecru;
+	text-transform: uppercase;
+	display: inline-block;
+	@include border-radius(4px);
+	font-size: 0.9em;
+}
+.menu-toggle:hover {
+  color: $ecru;
+  background: $texture $blue;
+  text-decoration: none;
+}
+/* user menu */
+.l-region--header {
+	.block { float: right; }
+	ul.menu {
+		li { 
+			display: inline-block;
+			list-style: none;
+			margin: 0 0 0 0.8em; 
+			a {padding: 10px 0; display: inline-block; }
+			a:hover { text-decoration: none; }
+		}
+		li {
+			position: relative;
+      a[href="/drupal-govcon-2015/schedule"] {
+        @include breakpoint($tab, true) {
+          display: none;
+        }
+      }
+      a[href="/drupal-govcon-2015/registration"] { 
+        top: 62px;
+        left: 0;
+        position: absolute;
+      	padding: 10px 6px 20px;
+      	font-size: 1em;
+      	background: url(../images/ticket.svg) no-repeat top left;
+			  background-size: contain;
+			  position: relative;
+			  top: 6px;
+			  display: inline-block;
+        width: 70px;
+        text-align: center;
+			  color: #fff;
+			  -webkit-transform: rotate(10deg);
+			  -moz-transform: rotate(10deg);
+			  -ms-transform: rotate(10deg);
+			  -o-transform: rotate(10deg);
+			  -webkit-transition: 0.5s ease-in-out;
+		    -moz-transition: 0.5s ease-in-out;
+		    -o-transition: 0.5s ease-in-out;
+		    transition: 0.5s ease-in-out;
+			  &:after {
+			  	@include texture-text;
+			  } 
+			  &:hover { 
+			  	-webkit-transform: rotate(-3deg);
+				  -moz-transform: rotate(-3deg);
+				  -ms-transform: rotate(-3deg);
+				  -o-transform: rotate(-3deg);
+			  }
+      }
+		}
+	}
+}
+
+/* Main menu in footer */
+.l-region--footer .block--system-main-menu {
+  @include clearfix;
+  ul.menu { padding: 0; @include clearfix; margin-top: 0; }
+  ul.menu li {
+    float: left;
+    width: 50%;
+    list-style: none;
+    margin-bottom: 20px;
+    padding: 0 0 0 30px;
+    a {
+      font-size: 1.4em;
+      line-height: 1.2;
+      margin-bottom: 0.3em;
+      display: block;
+      border-bottom: 2px solid $gold;
+      padding-bottom: 4px;
+      text-transform: uppercase;
+      color: darken($pale-blue, 6%);
+      &:hover { text-decoration: none; }
+    }
+  }
+  ul.menu li:nth-child(odd) { clear: left; padding-left: 0; }
+  ul.menu li a.active { color: $red; }
+  ul.menu ul li { margin: 0; float: none; width: 100%; padding: 0 !important; }
+  ul.menu ul a {
+    font-size: 0.9em;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border: none;
+    text-transform: none;
+    color: $blue;
+  }
+}
+
+/* Login Tobaggan */
+.toboggan-login-link { padding: 10px; display: inline-block; }
+
+
+@include breakpoint($tab, true) {
+  .touch {
+    /* so logo doesn't show over top dropdown menu */
+    .site-branding { z-index: 0; }
+    .menu-toggle { display: block; width: 320px; margin: 10px auto 0; position: relative; z-index: 90; }
+    .block--responsive-dropdown-menus-main-menu { padding-top: 10px; }
+    ul.main-menu { 
+      margin: -10px auto 0; 
+      width: 300px; 
+      box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.60);
+      padding-top: 0;
+    }
+  }
+	.no-touch {
+    .menu-toggle {
+      display: none;
+    }
+  	#block-responsive-dropdown-menus-main-menu {
+  		z-index: 12;
+  	}
+  	.responsive-menu,
+    .responsive-menu.links.inline {
+      max-height: none;
+      overflow: visible;
+    }
+    .responsive-menu li {
+      display: inherit;
+    }
+    .responsive-menu.inline li {
+      display: inline-block;
+    }
+    .responsive-menu .sub-menu {
+      position: absolute;
+      z-index: 100;
+      max-height: 0;
+      overflow: hidden;
+    }
+    .responsive-menu .sub-menu.active, .responsive-menu .menu-parent:focus .sub-menu {
+      max-height: none;
+      overflow: visible;
+    }
+    .responsive-menu .sub-menu li {
+      display: block;
+    }
+    ul.main-menu > li.last { margin-bottom: 0; }
+    .page-node-1.node-type-event ul.main-menu { margin: 0 0 0 130px; }
+  	ul.main-menu {
+  		padding: 0;
+  		background: none;
+  		li.menu-item-primary.active_trail,
+  	  li.menu-item-primary.active-trail,
+  	  li.menu-item-primary:hover {
+        border-left: 16px solid $red;
+        &:after { display: inline-block; }
+  	  }
+  	  li.menu-item-primary:hover { z-index: 101; }
+  	  li.menu-item-primary { border-left: 16px solid transparent; display: inline-block; }
+      li.menu-item-primary:after {
+  		  background: linear-gradient(-45deg, transparent 4px, $red 0), linear-gradient(45deg, transparent 4px, $red 0);
+  		  background-position: left-bottom;
+  		  background-repeat: repeat-x;
+  		  background-size: 6px 6px;
+  		  content: " ";
+  		  position: absolute;
+  		  bottom: -6px;
+  		  left: -16px;
+  		  width: 16px;
+  		  height: 6px;
+  		  display: none;
+  		}
+  	  ul:after { left: -16px; bottom: -6px; }
+  	  ul { width: 300px; }
+  	  li.menu-item-primary > a { padding: 20px 10px 4px 4px; font-size: 1em; }
+    }
+  }
+  .l-region--footer .block--system-main-menu {
+    ul.menu li { width: 33.3%; float: left; padding-left: 30px;
+      &.first { padding: 0; }
+      ul li { display: block; width: 100%; }
+    }
+    ul.menu li:nth-child(odd) { clear: none; padding-left: 30px; }
+    ul.menu li:nth-child(3n+1) { clear: left; padding-left: 0; } 
+  }
+}
+
+@include breakpoint($desk, true) {
+  .no-touch .page-node-1.node-type-event ul.main-menu { margin: 0 0 0 190px; }
+  .l-region--footer .block--system-main-menu {
+    ul.menu li { width: 20%; }
+    ul.menu li:nth-child(3n+1) { clear: none; padding-left: 30px; } 
+    ul.menu li.first:nth-child(3n+1) { padding: 0; }
+    ul.menu li:nth-child(5n+1) { clear: left; padding-left: 0; }
+  }
+}
+@include breakpoint($wide, true) {
+  .no-touch .page-node-1.node-type-event ul.main-menu { margin: 0 190px; }
+}

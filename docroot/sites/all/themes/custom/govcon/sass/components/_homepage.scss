@@ -1,0 +1,97 @@
+.page-node-1.node-type-event {
+  .breadcrumb { display: none; }
+  .l-content > h1 { @include hide-text; }
+  .pane-node-body {
+    text-align: center;
+    line-height: 1;
+    h1 { color: $red; margin: 0; font-size: 2.2em; }
+    h1:after { background-image: none; }
+    h3 { color: $blue; font-size: 1.3em; letter-spacing: 0.2; margin: 0.5em 0; }
+    h4 { color: $blue; font-size: 1em; text-transform: uppercase; margin: 0.5em 0; font-weight: 600; }
+  }
+  .panel-display > .container.footer {
+    border-top: 2px solid $gold;
+    padding-top: 30px;
+    margin-top: 30px;
+  }
+  .featured-keynote {
+    padding: 0;
+    line-height: 1;
+    .bl, .br, .tl, .tr { z-index: 1; }
+    .featured-keynote__heading { z-index: 1; }
+    h2 { 
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 2;
+      color: #fff; 
+      font-size: 1.4em;
+    }
+    h3 { 
+      position: absolute; 
+      top: 20px; 
+      left: 20px; 
+      color: #fff; 
+      text-transform: uppercase; 
+      z-index: 3;
+      font-size: 2em; 
+    }
+    img {
+      min-width: 300px;
+    }
+  }
+  .timeline-header h1.summary {
+    color: orange;
+  }
+}
+
+@include breakpoint($tab, true) {
+  .page-node-1.node-type-event {
+    .site-branding { top: 148px; width: 200px; margin-left: -100px; }
+    .site-branding__logo img { width: 200px; }
+    .pane-node-body {
+      h1 { color: $red; margin: 0; font-size: 3em; }
+      h1:after { background-image: $texture-font; }
+      h3 { color: $blue; font-size: 1.2em; letter-spacing: 0.2; margin: 0.5em 0; }
+      h4 { color: $blue; font-size: 1em; text-transform: uppercase; margin: 0.5em 0; font-weight: 600; }
+    }
+    .featured-keynote h2, .featured-keynote h3 { top: 40px; left: 40px; }
+    .featured-keynote h2 { font-size: 2em; }
+    .featured-keynote h3 { font-size: 3em; }
+    .pane-dgc-sessions {
+      @include clearfix;
+      .views-row {
+        float: left;
+        width: 25%;
+        padding-right: 20px;
+        a {
+          min-height: 220px;
+          padding: 110px 10px 10px;
+          text-align: center;
+          background-position: center 10px;
+          background-size: 90px;
+        }
+      }
+    }
+  }
+}
+
+@include breakpoint($desk, true) {
+  .page-node-1.node-type-event { 
+    .pane-node-body {
+      h1 { color: $red; margin: 0; font-size: 4em; }
+      h3 { color: $blue; font-size: 1.6em; letter-spacing: 0.2; margin: 0.5em 0; }
+      h4 { color: $blue; font-size: 1.2em; text-transform: uppercase; margin: 0.5em 0; font-weight: 600; }
+    }
+    .pane-dgc-sessions .views-row a { min-height: 190px; }
+    .featured-keynote { 
+      max-height: 330px; 
+      overflow: hidden; 
+      img { top: -30px; }
+    }
+  }
+}
+
+@include breakpoint($wide, true) {
+  .page-node-1.node-type-event .container.preface .pane-node-body { margin-bottom: 100px; }
+}

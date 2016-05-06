@@ -1,0 +1,71 @@
+
+
+.l-region--footer .block {
+	padding: 20px;
+	margin: 0;
+	clear: both;
+	width: 100%;
+}
+
+/* Special blocks */
+#block-block-6 {
+	display:none;
+}
+#block-block-1 {
+	p { margin: 0; }
+}
+
+
+@include breakpoint($tab, true) {
+	/* Special blocks */
+	#block-block-6 {
+		h2 { @include hide-text; }
+		position: absolute;
+		left: -20px;
+		top: 10px;
+		display: block;
+	}
+	.dgc-callout {
+		div { display: block; }
+		padding-top: 36px;
+		@include circle(150px, $ecru);
+		background-image: $texture;
+		text-align: center;
+		font-family: $sans-serif;
+		font-weight: 900;
+		color: $red;
+		line-height: 1;
+		font-size: 18px;
+		-webkit-transform: rotate(-10deg);
+	  -moz-transform: rotate(-10deg);
+	  -ms-transform: rotate(-10deg);
+	  -o-transform: rotate(-10deg);
+	  -webkit-transition: 0.5s ease-in-out;
+	  -moz-transition: 0.5s ease-in-out;
+	  -o-transition: 0.5s ease-in-out;
+	  transition: 0.5s ease-in-out;
+		.dgc-callout--1 {}
+		.dgc-callout--2 {}
+		.dgc-callout--3 { text-transform: uppercase; }
+		.dgc-callout--4 {
+			font-family: $script;
+			font-weight: normal;
+			font-size: 22px;
+			color: $pale-blue;
+		}
+	}
+}
+@include breakpoint($desk, true) {
+	#block-block-6 {
+		top: -10px;
+	}
+	.dgc-callout {
+		padding-top: 60px;
+		@include circle(200px, $ecru);
+		background-image: $texture;
+		font-size: 24px;
+		.dgc-callout--4 {
+			font-size: 28px;
+		}
+	}
+}

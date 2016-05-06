@@ -22,11 +22,11 @@ PostgreSQL have been tested to a lesser extent. When using MySQL, version 4.1.1
 or greater is recommended to assure you can safely transfer the database.
 
 For more detailed information about Drupal requirements, see "Requirements"
-(https://www.drupal.org/requirements) in the Drupal handbook.
+(http://drupal.org/requirements) in the Drupal handbook.
 
 For detailed information on how to configure a test server environment using
 a variety of operating systems and web servers, see "Local server setup"
-(https://www.drupal.org/node/157602) in the Drupal handbook.
+(http://drupal.org/node/157602) in the Drupal handbook.
 
 OPTIONAL TASKS
 --------------
@@ -37,7 +37,7 @@ OPTIONAL TASKS
 - To use Drupal's "Clean URLs" feature on an Apache web server, you will need
   the mod_rewrite module and the ability to use local .htaccess files. For
   Clean URLs support on IIS, see "Using Clean URLs with IIS"
-  (https://www.drupal.org/node/3854) in the Drupal handbook.
+  (http://drupal.org/node/3854) in the Drupal handbook.
 
 - Various Drupal features require that the web server process (for
   example, httpd) be able to initiate outbound connections. This is usually
@@ -54,11 +54,11 @@ INSTALLATION
 
 1. DOWNLOAD DRUPAL AND OPTIONALLY A TRANSLATION
 
-   You can obtain the latest Drupal release from https://www.drupal.org/. The files
+   You can obtain the latest Drupal release from http://drupal.org/. The files
    are in .tar.gz format and can be extracted using most compression tools. On a
    typical Unix command line, use:
 
-     wget https://www.drupal.org/files/projects/drupal-x.x.tar.gz
+     wget http://drupal.org/files/projects/drupal-x.x.tar.gz
      tar -zxvf drupal-x.x.tar.gz
 
    This will create a new directory drupal-x.x/ containing all Drupal files
@@ -217,8 +217,8 @@ INSTALLATION
    name of each file for CHANGELOG.txt in the example.
 
    For more information on setting file permissions, see "Modifying Linux, Unix,
-   and Mac file permissions" (https://www.drupal.org/node/202483) or "Modifying
-   Windows file permissions" (https://www.drupal.org/node/202491) in the online
+   and Mac file permissions" (http://drupal.org/node/202483) or "Modifying
+   Windows file permissions" (http://drupal.org/node/202491) in the online
    handbook.
 
 7. CRON MAINTENANCE TASKS
@@ -239,7 +239,7 @@ INSTALLATION
    0   *   *   *   *   wget -O - -q -t 1 http://www.example.com/cron.php
 
    More information about cron maintenance tasks are available in the help pages
-   and in Drupal's online handbook at https://www.drupal.org/cron. Example scripts can
+   and in Drupal's online handbook at http://drupal.org/cron. Example scripts can
    be found in the scripts/ directory.
 
 DRUPAL ADMINISTRATION
@@ -259,7 +259,7 @@ For more information on configuration options, read the instructions which
 accompany the different configuration settings and consult the various help
 pages available in the administration panel.
 
-Community-contributed modules and themes are available at https://www.drupal.org/.
+Community-contributed modules and themes are available at http://drupal.org/.
 
 CUSTOMIZING YOUR THEME(S)
 -------------------------
@@ -270,7 +270,7 @@ drupal.org.
 
 Simple customization of your theme can be done using only CSS. Further changes
 require understanding the phptemplate engine that is part of Drupal. See
-https://www.drupal.org/handbook/customization to find out more.
+http://drupal.org/handbook/customization to find out more.
 
 MULTISITE CONFIGURATION
 -----------------------
@@ -336,15 +336,15 @@ MORE INFORMATION
 ----------------
 
 - For additional documentation, see the online Drupal handbook at
-  https://www.drupal.org/handbook.
+  http://drupal.org/handbook.
 
 - For a list of security announcements, see the "Security announcements" page
-  at https://www.drupal.org/security (available as an RSS feed). This page also
+  at http://drupal.org/security (available as an RSS feed). This page also
   describes how to subscribe to these announcements via e-mail.
 
 - For information about the Drupal security process, or to find out how to report
   a potential security issue to the Drupal security team, see the "Security team"
-  page at https://www.drupal.org/security-team.
+  page at http://drupal.org/security-team.
 
 - For information about the wide range of available support options, see the
-  "Support" page at https://www.drupal.org/support.
+  "Support" page at http://drupal.org/support.

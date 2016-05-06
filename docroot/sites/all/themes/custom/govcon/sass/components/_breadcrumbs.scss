@@ -1,0 +1,14 @@
+.breadcrumb {
+	padding: 0.5em 0;
+}
+
+/* breadcrumb arrow */
+.arrow {
+  width: 0; 
+  height: 0; 
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid $gold;
+  display: inline-block;
+  margin:0 0.2em;
+}

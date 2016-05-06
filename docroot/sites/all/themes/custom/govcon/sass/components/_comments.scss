@@ -1,0 +1,42 @@
+section#comments {
+	h3 { margin-top: 0; }
+	.indented {
+		border-left: 2px solid $gold;
+		margin-left: 0;
+		padding-left: 10px;
+	}
+	.comment .links {
+		li { float: right; }
+		a {
+			font-size: 0.7em;
+		}
+	}
+}
+
+article.comment {
+	padding: 10px;
+	background: $texture lighten($gold, 20%);
+	margin: 1em 0;
+}
+.comment__submitted .permalink {
+	font-size: 0.7em;
+	background: $ecru;
+	padding: 0.1em;
+	display: inline-block;
+	position: relative;
+	top: -2px;
+	margin-left: 1em;
+}
+mark.new {
+	padding: 0.2em;
+	background: $red;
+	color: #fff;
+}
+.comment-left {
+	float: left;
+	margin-right: 10px;
+	width: 80px;
+}
+.comment-right {
+	overflow: hidden;
+}

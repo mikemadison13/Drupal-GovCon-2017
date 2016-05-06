@@ -1,0 +1,11 @@
+fieldset {
+	border: 2px solid $gold;
+	@include border-radius(3px);
+	margin-bottom: 1em;
+	padding: 1em;
+}
+.fieldset-legend {
+}
+.fieldset-description {
+	margin-bottom: 1em;
+}

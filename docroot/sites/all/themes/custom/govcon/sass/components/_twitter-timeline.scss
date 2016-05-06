@@ -1,0 +1,11 @@
+.twitter-timeline { 
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important; 
+}
+.twitter-timeline__header {
+  a.button {
+    float: right;
+  }
+}
+.twitter-timeline__wrapper {}

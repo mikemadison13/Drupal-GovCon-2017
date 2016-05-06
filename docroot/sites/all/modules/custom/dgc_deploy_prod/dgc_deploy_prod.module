@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Drupal GovCon Deploy PRODUCTION feature.
+ */
+
+include_once 'dgc_deploy_prod.features.inc';
