@@ -1,3 +1,4 @@
 name = DGC Config
 description = Configuration and update hooks for Drupal GovCon
 core = 7.x
+package = DGC

@@ -230,10 +230,10 @@ function dgc_page_layout_default_page_manager_handlers() {
   $display->content['new-4d793f03-7e9a-42f5-8af6-32a55e0255bb'] = $pane;
   $display->panels['lower_second'][0] = 'new-4d793f03-7e9a-42f5-8af6-32a55e0255bb';
   $pane = new stdClass();
-  $pane->pid = 'new-1dbf65ae-da59-41aa-b7d3-f85fd41af2a1';
+  $pane->pid = 'new-edb359c2-fd56-4060-96ec-54c8c5a7c84a';
   $pane->panel = 'navigation';
   $pane->type = 'block';
-  $pane->subtype = 'menu-main-menu-govcon-2016';
+  $pane->subtype = 'system-main-menu';
   $pane->shown = TRUE;
   $pane->access = array();
   $pane->configuration = array(
@@ -249,9 +249,9 @@ function dgc_page_layout_default_page_manager_handlers() {
   $pane->extras = array();
   $pane->position = 0;
   $pane->locks = array();
-  $pane->uuid = '1dbf65ae-da59-41aa-b7d3-f85fd41af2a1';
-  $display->content['new-1dbf65ae-da59-41aa-b7d3-f85fd41af2a1'] = $pane;
-  $display->panels['navigation'][0] = 'new-1dbf65ae-da59-41aa-b7d3-f85fd41af2a1';
+  $pane->uuid = 'edb359c2-fd56-4060-96ec-54c8c5a7c84a';
+  $display->content['new-edb359c2-fd56-4060-96ec-54c8c5a7c84a'] = $pane;
+  $display->panels['navigation'][0] = 'new-edb359c2-fd56-4060-96ec-54c8c5a7c84a';
   $display->hide_title = PANELS_TITLE_FIXED;
   $display->title_pane = '0';
   $handler->conf['display'] = $display;
