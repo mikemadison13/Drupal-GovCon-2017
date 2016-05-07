@@ -187,6 +187,41 @@ function dgc_page_layout_default_page_manager_handlers() {
   $display->content['new-5e35e6aa-02b9-4a71-ae85-3f2455890a18'] = $pane;
   $display->panels['content'][2] = 'new-5e35e6aa-02b9-4a71-ae85-3f2455890a18';
   $pane = new stdClass();
+  $pane->pid = 'new-dc4e5797-80c2-4414-87ea-99f834b3fa97';
+  $pane->panel = 'footer';
+  $pane->type = 'custom';
+  $pane->subtype = 'custom';
+  $pane->shown = TRUE;
+  $pane->access = array();
+  $pane->configuration = array(
+    'admin_title' => '',
+    'title' => '',
+    'body' => '<footer class="group">
+	<div id="footerleft" class="group">
+		<p>Drupal GovCon is made possible by our wonderful sponsors and volunteers.</p>
+	</div>
+	<div class="group" id="footerright">
+		<p><a href="https://twitter.com/drupalgovcon"><img src="/sites/all/themes/custom/govcon_2016/img/icon-twitter.svg" alt="Twitter" class="sm-icons"></a> <a href="mailto:drupal4gov@gmail.com?subject=Contact from Website"><img src="/sites/all/themes/custom/govcon_2016/img/icon-email.svg" alt="E-mail" class="sm-icons"></a></p>
+	</div>
+	<div id="footermark" class="group">
+		<img src="/sites/all/themes/custom/govcon_2016/img/govcon-wordmark-rev.svg" class="wordmark group">
+	</div>
+</footer>',
+    'format' => 'full_html',
+    'substitute' => 1,
+  );
+  $pane->cache = array();
+  $pane->style = array(
+    'settings' => NULL,
+  );
+  $pane->css = array();
+  $pane->extras = array();
+  $pane->position = 0;
+  $pane->locks = array();
+  $pane->uuid = 'dc4e5797-80c2-4414-87ea-99f834b3fa97';
+  $display->content['new-dc4e5797-80c2-4414-87ea-99f834b3fa97'] = $pane;
+  $display->panels['footer'][0] = 'new-dc4e5797-80c2-4414-87ea-99f834b3fa97';
+  $pane = new stdClass();
   $pane->pid = 'new-4d793f03-7e9a-42f5-8af6-32a55e0255bb';
   $pane->panel = 'lower_second';
   $pane->type = 'views';

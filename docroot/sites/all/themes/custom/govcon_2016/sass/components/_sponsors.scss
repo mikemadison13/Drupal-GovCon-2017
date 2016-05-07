@@ -49,6 +49,7 @@
   position: relative;
   margin: 5em 0 3em 0;
   padding: 16px 0;
+
   .bg { background-color: #fff; }
   .bg-overlay { background: none; }
   .pane-title { 
@@ -89,15 +90,28 @@
 }
 
 @include breakpoint($wide, true) {
+  .node-type-event .pane-node-body {
+    @include span(10 of 12);
+
+  }
   .panel-layout .sponsors-featured {
-    position: absolute;
-    top: 0;
-    width: 200px;
-    right: 0;
-    margin: 0;
-    ul { padding: 0 0 10px; }
-    ul li { margin: 0; }
-    .pane-title { top: -30px; font-size: 1.5em; line-height: 1; padding: 0; margin: 0; }
+    @include span(2 of 12 last);
+    padding: 0;
+
+    ul { 
+      padding: 0 0 10px;
+    }
+    ul li {
+      margin: 0; 
+    }
+    .pane-title { 
+      font-size: 1.5em; 
+      line-height: 1; 
+      padding: 0; 
+      margin: 0;
+      position: relative;
+      top: 0;
+    }
     .views-field-field-sponsor-logo img, .sponsor img {
       max-height: 100px;
       max-width: 140px;
