@@ -1,0 +1,10 @@
+// Hide tabs.
+.tabs {
+  display: none;
+
+  // Show tabs on user page.
+  .page-user &,
+  .admin-menu & {
+    display: block;
+  }
+}

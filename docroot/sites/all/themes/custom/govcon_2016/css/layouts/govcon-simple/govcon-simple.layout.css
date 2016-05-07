@@ -38,14 +38,6 @@
   background: rgba(255, 255, 255, 0.6);
 }
 
-.tabs {
-  display: none;
-}
-
-.page-user .tabs {
-  display: block;
-}
-
 .l-main {
   background: rgba(255, 255, 255, 0.6);
   margin-bottom: 0;

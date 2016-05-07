@@ -32,16 +32,6 @@
   background: rgba(255,255,255,0.6);
 }
 
-// Hide tabs.
-.tabs {
-  display: none;
-
-  // Show tabs on user page.
-  .page-user & {
-    display: block;
-  }
-}
-
 .l-main {
   background: rgba(255,255,255,0.6);
   margin-bottom: 0;

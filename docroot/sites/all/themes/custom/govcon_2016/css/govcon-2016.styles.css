@@ -1314,4 +1314,13 @@ img.speaker_img {
   max-width: 270px !important;
 }
 
+.tabs {
+  display: none;
+}
+
+.page-user .tabs,
+.admin-menu .tabs {
+  display: block;
+}
+
 /*# sourceMappingURL=govcon-2016.styles.css.map */
