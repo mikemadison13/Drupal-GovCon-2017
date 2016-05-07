@@ -1,0 +1,40 @@
+.panel-pane.pane-page-logo {
+  display: none; // Hides site logo in mobile view
+}
+
+.panel-pane.pane-page-logo img {
+  width: 10em;
+  padding: 1em;
+}
+
+.panel-pane.pane-page-logo img:hover {
+  opacity: 0.5;
+}
+
+// This element enables the home link for the site logo in mobile view
+// @todo this needs brought in and given a class.
+.pane-block-5 {
+  //border: 1px solid #f00;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10em;
+  height: 2.75em;
+  //z-index: 1000000;
+  z-index: 999999;
+
+  @include breakpoint($tab) {
+    display: none;
+  }
+}
+
+.header_link {
+  min-height: 3em;
+}
+
+@include breakpoint($tab) {
+  // Site Logo Display
+  .panel-pane.pane-page-logo {
+    display: block; // Hides site logo in mobile view
+  }
+}

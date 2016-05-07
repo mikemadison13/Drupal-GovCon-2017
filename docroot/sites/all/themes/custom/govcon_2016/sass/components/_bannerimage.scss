@@ -1,0 +1,92 @@
+
+// Banner Image Area Styling
+.bannerimage {
+  //border: 1px solid #f00;
+  position: relative;
+  margin-bottom: -0.5em;
+}
+
+.view-banner-image picture img {
+  width: 100%;
+}
+
+.bannerimage .views-field.views-field-body .field-content {
+  position: absolute;
+  right: 0;
+  bottom: 10%;
+  left: 0;
+  margin: auto;
+  width: 75%;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 0 0.5em rgba(0,0,0,0.9);
+  text-align: center;
+}
+
+.bannerimage .views-field.views-field-body .field-content a:link,
+.bannerimage .views-field.views-field-body .field-content a:visited {
+  color: rgba(255,255,255,1);
+  border: 2px solid rgba(243,112,33,1);
+  text-shadow: 0 0 0.5em rgba(0,0,0,0.9);
+  background: rgba(243,112,33,0.9);
+  border-radius: 0.25em;
+  padding: 0.25em;
+  font-size: 1.5em;
+  margin: 0.25em;
+  display: inline-block;
+}
+
+.bannerimage .views-field.views-field-body .field-content a:hover {
+  text-decoration: none;
+  border: 2px solid rgba(255,255,255,1);
+  background: rgba(0,91,131,1);
+}
+
+.bannerimage .views-field.views-field-body .field-content a:last-child {
+  margin-top: 0.5em;
+}
+
+.bannerimage h2 {
+  font-size: 12vw;
+  margin-bottom: 0;
+  font-weight: 400;
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: rgba(255,255,255,1);
+}
+
+.bannerimage h3 {
+  font-size: 8vw;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,1);
+}
+
+@include breakpoint($tab) {
+  .bannerimage h2 {
+    font-size: 12vw;
+  }
+
+  .bannerimage h3 {
+    font-size: 7vw;
+  }
+
+  .bannerimage a:link {
+    margin: 0.5em;
+  }
+
+}
+
+@include breakpoint($desk) {
+  .bannerimage h2 {
+    font-size: 8vw;
+    font-size: 4vw;
+  }
+
+  .bannerimage h3 {
+    font-size: 3vw;   
+  }
+}
+
+

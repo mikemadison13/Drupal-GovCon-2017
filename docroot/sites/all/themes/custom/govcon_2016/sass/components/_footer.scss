@@ -1,0 +1,76 @@
+
+.footerwrapper {
+  background: rgba(68,91,73,1);
+}
+
+.l-footer {
+  margin-bottom: 0;
+  color: rgba(255,255,255,0.7);
+  padding: 1em 0;
+}
+
+.l-footer a:link,
+.lfooter a:visited {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+}
+
+.l-footer a:hover {
+  color: rgba(255,255,255,1);
+
+}
+
+.l-footer p {
+  margin: 0 0 0.5em 0;
+}
+
+// Footer Area Styling
+#footerleft,
+#footerright {
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+}
+
+#footermark {
+  width: 100%;
+  text-align: center;
+  display: block;
+  float: left;
+}
+
+#footermark img {
+  width: 3em;
+  opacity: 0.5;
+}
+
+img.sm-icons {
+  opacity: 0.5;
+  padding: 0 0.5em;
+}
+
+img.sm-icons:hover {
+  opacity: 1;
+}
+
+@include breakpoint($tab) {
+  #footerleft {
+    width: 45%;
+    display: block;
+    float: left;
+    text-align: left;
+  }
+
+  #footerright {
+    width: 45%;
+    display: block;
+    float: right;
+    text-align: right;
+  }
+
+  #footermark {
+    width: 100%;
+    text-align: center;
+    display: block;
+  }
+}

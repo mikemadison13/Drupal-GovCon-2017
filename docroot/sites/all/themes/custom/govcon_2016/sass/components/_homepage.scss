@@ -1,0 +1,65 @@
+// Homepage Styling
+
+body.html.front .l-content {
+  padding: 1em 0;
+}
+
+#bannerintro {
+  font-family: 'Playfair Display SC', serif;
+  text-align: center;
+  margin-bottom: 1em;
+  margin-top: 0.5em;
+}
+
+#bannerintro h1 {
+  font-size: 3.5em;
+  line-height: 1.1;
+  margin-bottom: 0;
+  margin-top: 0.25em;
+}
+
+#bannerintro .bannerdate {
+  font-size: 3em;
+  color: rgba(224,126,39,1);
+  font-family: 'Playfair Display SC', serif;
+  font-style: italic;
+  margin: 0 auto;
+
+}
+
+#bannerintro .bannerlocation {
+  font-family: 'Playfair Display SC', serif;
+  color: rgba(68,91,73,1);
+  font-size: 2em;
+  line-height: 1.0;
+  margin: 0 0 0.5em 0;
+
+}
+
+#bannerintro .bannercity {
+  font-family: 'Playfair Display SC', serif;
+  color: rgba(4,75,118,1);
+  font-size: 1.5em;
+  margin-top: 0;
+
+}
+
+#bannerintro p {
+  font-size: 1.4em;
+}
+
+#bannerintro .leadin {
+  font-family: 'Playfair Display SC', serif;
+  color: rgba(68,91,73,1);
+}
+
+#bannerintro img.wordmark {
+  width: 4em;
+}
+
+
+body.html.front .panel-pane.pane-page-title,
+body.html.front .panelizer-view-mode.node.node-full.node-page.node-2 h2 {
+  display: none;
+}
+// End Homepage Styling

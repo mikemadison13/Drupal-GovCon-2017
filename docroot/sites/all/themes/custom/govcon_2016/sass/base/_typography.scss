@@ -1,0 +1,78 @@
+
+// General Typography
+body {
+  background: rgba(210,195,179,1);
+  background: rgba(68,91,73,1);
+  background: rgba(210,195,179,1) url(../img/gc-wave-background-grad.svg) top no-repeat;
+  background-size: 100% auto;
+  padding: 0;
+  color: rgb(80,80,80);
+  font-family: 'Alegreya Sans', sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  //font-family: Helvetica, Arial, sans-serif;
+  font-family: 'Playfair Display SC', serif;
+  font-weight: 900;
+  color: rgba(68,91,73,1);
+}
+
+h2 {
+  margin-bottom: 0;
+}
+
+h3 {
+  margin-bottom: 0;
+}
+
+h4 {
+  margin-bottom: 0;
+}
+
+h2 + p,
+h3 + p,
+h3 + ul,
+h3 + ol {
+  margin-top: 0;
+}
+
+h4 + p,
+h4 + ul,
+h4 + ol {
+  margin-top: 0;
+}
+
+a:link,
+a:visited {
+  color: rgba(224,126,39,1);
+  text-decoration: none;
+}
+
+a:hover {
+  color: rgba(68,91,73,1);
+  text-decoration: underline;
+}
+
+a.bodybutton:link,
+a.bodybutton:visited {
+  color: rgba(255,255,255,1);
+  text-decoration: none;
+  display: inline-block;
+  background-color: rgba(224,126,39,1);
+  padding: 0.25em 0.5em;
+  border-radius: 0.5em;
+  border: 1px solid rgba(68,91,73,1);
+  margin: 0.5em 0;
+
+}
+
+a.bodybutton:hover {
+  color: rgba(255,255,255,1);
+  text-decoration: none;
+  background-color: rgba(68,91,73,1);
+
+}
+
+// End General Typogrpahy

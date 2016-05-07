@@ -1,6 +1,6 @@
 // Import external libraries.
 @import '../node_modules/breakpoint-sass/stylesheets/breakpoint';
-@import "../node_modules/sass-toolkit/stylesheets/toolkit";
+@import '../node_modules/sass-toolkit/stylesheets/toolkit';
 
 // Import variables, abstractions, base styles and components using globbing.
 //
@@ -14,7 +14,7 @@
 // directly. Variables-, function- or mixin providing partials should never
 // output any styles themselves: Importing them multiple times to resolve
 // dependencies shouldn't be a problem.
-@import "variablesMap";
-@import "abstractionsMap";
-@import "baseMap";
-@import "componentsMap";
+@import 'variablesMap';
+@import 'abstractionsMap';
+@import 'baseMap';
+@import 'componentsMap';

@@ -17,3 +17,10 @@
 .not-front .l-region--sidebar .block {
   background-color: transparent;
 }
+
+/* Clearfix hack */
+.group:after {
+  content: "";
+  display: table;
+  clear: both;
+}

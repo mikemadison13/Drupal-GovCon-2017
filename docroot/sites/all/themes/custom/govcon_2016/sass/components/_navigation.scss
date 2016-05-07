@@ -1,0 +1,98 @@
+.navwrapper {
+  background: rgba(68,91,73,1);
+}
+
+.l-navigation {
+  background: none; // Overrides COD default
+  color: rgba(255,255,255,1);
+  font-family: 'Playfair Display SC', serif;
+  font-weight: 900;
+  font-size: 1.2em;
+  margin-bottom: 0;
+}
+
+.l-region--navigation .menu {
+  padding-left: 0;
+}
+
+.l-region--navigation .menu .expanded .menu {
+    display: none;
+}
+
+.l-region--navigation .menu li,
+.l-navigation li {
+  list-style-type: none;
+  list-style-image: none;
+  display: inline-block;
+  padding: 0.5em;
+  font-size: inherit;
+  white-space: normal;
+}
+
+// Main Navigation Styling
+
+.l-navigation a:link,
+.l-navigation a:visited {
+  text-decoration: none;
+  color: rgba(255,255,255,0.8);
+}
+
+.l-navigation a:hover {
+  color: rgba(255,255,255,1);
+}
+
+.l-navigation ul.menu {
+  margin: 0;
+  text-align: center;
+}
+
+
+.l-region--navigation .menu li {
+  //padding-top: 1em;
+}
+
+// Styling for Mean Menus
+.mean-bar {
+  z-index: 999998;
+
+}
+
+.mean-nav {
+
+}
+
+.mean-container div.mean-bar {
+  background: rgba(68,91,73,1);
+  background: rgba(68,91,73,1) url(../img/govcon-wordmark-rev.svg) 4% 0.5em no-repeat;
+  background-size: 2.25em;
+}
+
+.mean-container div.mean-bar nav.mean-nav ul.menu li.first.leaf {
+
+}
+
+.mean-container div.mean-bar nav.mean-nav ul li,
+.mean-container div.mean-bar nav.mean-nav ul.menu li.leaf {
+  //background: #0f0;
+  background: rgba(68,91,73,1);
+  font-family: 'Playfair Display SC', serif;
+  color: rgba(255,255,255,0.8);
+  font-weight: 900;
+  font-size: 1.2em;
+  list-style-image: none;
+  list-style-type: none;
+  //border-top: 1px solid rgba(255,255,255,0.3);
+  border-bottom: none;
+}
+
+.mean-container div.mean-bar nav.mean-nav ul.menu li.leaf a.active,
+.mean-container div.mean-bar nav.mean-nav ul.menu li.leaf a {
+  text-transform: capitalize;
+}
+
+
+.mean-container div.mean-bar nav.mean-nav ul li a {
+  border-top: 1px solid rgba(255,255,255,0.5);
+  //border-top: 1px solid #f00;
+  border-bottom: none;
+}

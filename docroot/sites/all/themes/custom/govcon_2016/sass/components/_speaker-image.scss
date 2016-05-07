@@ -1,0 +1,17 @@
+// Image Styling
+img.speaker_img {
+  border: 6px solid rgba(68,91,73,1);
+  border-radius: 50%;
+  //float: right;
+  //margin: 0 0 0 1em;
+  margin: 0 auto;
+  display: block; /* To center for mobile */
+  text-align: center; /* To center for mobile */
+
+  @include breakpoint($tab) {
+    float: right;
+    margin: 0 0 0 1em;
+    display: inline; /* To center for mobile */
+    text-align: right; /* To center for mobile */
+  }
+}

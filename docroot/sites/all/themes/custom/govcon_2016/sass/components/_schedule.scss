@@ -1,0 +1,180 @@
+/* @file
+ * COD schedules
+ */
+
+.view-cod-session-schedule, 
+.view-cod-bof-schedule,
+.view-cod-schedule {
+  ul.quicktabs-tabs.quicktabs-style-zen {
+    li {
+      border-radius: 0;
+      background: none;
+      padding: 0;
+      margin-bottom: 40px;
+      a {
+        @extend a.button.btn-big;
+        background-color: $pale-blue;
+        background-image: $texture;
+      }
+    }
+    li.active {
+      background: none;
+      a, a:hover, a:focus, a.active:hover {
+        @extend a.button.btn-big;
+        color: #fff;
+        position: relative;
+        background-color: $red;
+        background-image: $texture;
+        &:after {
+          content: "";
+          width: 20px;
+          height: 20px;
+          border-top: 20px solid lighten($red, 3%);
+          border-left: 20px solid transparent;
+          border-right: 20px solid transparent;
+          position: absolute;
+          bottom: -20px;
+          left: 50%;
+          margin-left: -20px;
+          background-image: $texture;
+        }
+      }
+    }
+  }
+  .quicktabs-views-group {
+    position: relative;
+  }
+  .views-field-field-slot-datetime-1,
+  .views-field-field-evttime-date-1 {
+    border-radius: 0;
+    padding: 0 0 0 210px;
+    text-align: left;
+    height: 50px;
+    line-height: 50px;
+    font-size: 1.2em;
+    background-color: $green;
+    background-image: $texture;
+    color: $pale-blue;
+  }
+  .views-field-field-slot-datetime-2,
+  .views-field-field-evttime-date-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 50px;
+    line-height: 50px;
+    font-size: 1.2em;
+    font-weight: bold;
+    width: 200px;
+    color: #fff;
+    padding: 0 10px;
+  }
+  .view-cod-schedule-content .views-row,
+  .view-dgc-my-schedule-content .views-row {
+    position: relative;
+    padding: 0 0 0 146px;
+    min-height: 120px;
+    @include clearfix;
+    @include breakpoint($desk) {
+      padding: 20px 0 20px 180px;
+      min-height: 140px;
+    }
+  }
+  [class*="track-icon-"] {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    padding: 58px 0 0;
+    background-size: 50px;
+    background-position: center 10px;
+    height: 100%;
+    width: 130px;
+    text-align: center;
+    font-family: $serif;
+    font-size: .9em;
+    border-right: 1px solid #ccc;
+    margin-right: 20px;
+    @include breakpoint($desk) {
+      padding: 70px 10px 0;
+      width: 160px;
+      background-position: center 18px;
+      font-size: 1em;
+    }
+  }
+  .track-icon-6 { color: #f6001b; }
+  .track-icon-11 { color: #f88d00; }
+  .track-icon-21 { color: #79648d; }
+  .track-icon-26 { color: #007c7f; }
+  .track-icon-16 { color: #005185; }
+  .track-icon-1 { color: #5fa44c; }
+  .views-field-title {
+    margin: 4px 0 2px 0;
+    @include breakpoint($desk) {
+      margin-top: 16px;
+    }
+  }
+  .views-field-name {
+    padding-left: 0;
+    margin-right: 20px;
+    margin-bottom: 0;
+    clear: both;
+  }
+  .views-field-field-experience {
+    font-family: $serif;
+    color: #666;
+    float: none;
+    clear: both;
+    margin-bottom: 10px;
+    @include breakpoint($desk) {
+      position: absolute;
+      top: 2px;
+      right: 0;
+      margin: 0;
+    }
+  }
+  .views-field-field-speakers {
+    padding-left: 0;
+    height: auto;
+  }
+  .views-field-count, .views-field-ops {
+    float: left;
+    margin: 0 20px 10px 0;
+    padding-top: 4px;
+    a {
+      @extend .button;
+      &.unflag-action {
+        background: $red;
+        &:hover {
+          background: #fff;
+        }
+      }
+    }
+  }
+}
+/* hide extraneous exposed filters on each timeslot view */
+form#views-exposed-form-cod-schedule-content-default {
+  display: none;
+}
+/* fake tabs for my schedule and bof schedule */
+
+/* hide active button */
+.page-node-schedule,
+.page-node-bofs {
+  h1 {
+    margin-bottom: 0;
+  }
+  .pane-custom.pane-1 {
+    a.button.btn-big {
+      background: $green;
+      margin-bottom: 4px;
+      display: inline-block;
+      white-space: no-wrap;
+      &:hover, &:focus, &:active { background: #fff; }
+    }
+    a.button.btn-big[href=""] {
+      background: $red;
+      &:hover, &:focus, &:active { color: #fff; }
+    }
+  }
+}

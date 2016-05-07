@@ -1,3 +1,168 @@
-.l-header,.l-main,.l-footer{max-width:1200px;margin-left:auto;margin-right:auto;margin-bottom:20px}.l-header:after,.l-main:after,.l-footer:after{content:" ";display:block;clear:both}.l-region--highlighted,.l-region--help,.l-region--sidebar-first,.l-region--sidebar-second{margin-bottom:20px}body{background:#d2c3b3;background:#445b49;background:#d2c3b3 url(../../../img/gc-wave-background-grad.svg) top no-repeat;background-size:100% auto;padding:0;color:#505050;font-family:'Alegreya Sans', sans-serif;text-rendering:optimizeLegibility}h1,h2,h3,h4,h5,h6{font-family:'Playfair Display SC', serif;font-weight:900;color:#445b49}h2{margin-bottom:0}h3{margin-bottom:0}h4{margin-bottom:0}h2+p,h3+p,h3+ul,h3+ol{margin-top:0}h4+p,h4+ul,h4+ol{margin-top:0}a:link,a:visited{color:#e07e27;text-decoration:none}a:hover{color:#445b49;text-decoration:underline}a.bodybutton:link,a.bodybutton:visited{color:#fff;text-decoration:none;display:inline-block;background-color:#e07e27;padding:0.25em 0.5em;border-radius:0.5em;border:1px solid #445b49;margin:0.5em 0}a.bodybutton:hover{color:#fff;text-decoration:none;background-color:#445b49}.navwrapper{background:#445b49}.l-navigation{background:none;color:#fff;font-family:'Playfair Display SC', serif;font-weight:900;font-size:1.2em;margin-bottom:0}.l-header{margin-bottom:0;padding:0}.l-branding{text-align:center;background:rgba(255,255,255,0.6)}.panel-pane.pane-page-logo{display:none}.panel-pane.pane-page-logo img{width:10em;padding:1em}.panel-pane.pane-page-logo img:hover{opacity:0.5}.l-main{background:rgba(255,255,255,0.6);margin-bottom:0}.l-content{padding:1em 0}.l-content p{font-size:1.2em}.footerwrapper{background:#445b49}.l-footer{margin-bottom:0;color:rgba(255,255,255,0.7);padding:1em 0}.l-footer a:link,.lfooter a:visited{color:rgba(255,255,255,0.7);text-decoration:none}.l-footer a:hover{color:#fff}.l-footer p{margin:0 0 0.5em 0}.l-navigation a:link,.l-navigation a:visited{text-decoration:none;color:rgba(255,255,255,0.8)}.l-navigation a:hover{color:#fff}.l-navigation ul.menu{margin:0;text-align:center}.l-navigation li{list-style-type:none;list-style-image:none;display:inline-block;padding:0.5em}.mean-bar{z-index:999998}.mean-container div.mean-bar{background:#445b49;background:#445b49 url(../../../img/govcon-wordmark-rev.svg) 4% 0.5em no-repeat;background-size:2.25em}.mean-container div.mean-bar nav.mean-nav ul li,.mean-container div.mean-bar nav.mean-nav ul.menu li.leaf{background:#445b49;font-family:'Playfair Display SC', serif;color:rgba(255,255,255,0.8);font-weight:900;font-size:1.2em;list-style-image:none;list-style-type:none;border-bottom:none}.mean-container div.mean-bar nav.mean-nav ul.menu li.leaf a.active,.mean-container div.mean-bar nav.mean-nav ul.menu li.leaf a{text-transform:capitalize}.mean-container div.mean-bar nav.mean-nav ul li a{border-top:1px solid rgba(255,255,255,0.5);border-bottom:none}.pane-block-5{position:fixed;top:0;left:0;width:10em;height:2.75em;z-index:999999}.header_link{min-height:3em}.bannerimage{position:relative;margin-bottom:-0.5em}.view-banner-image picture img{width:100%}.bannerimage .views-field.views-field-body .field-content{position:absolute;right:0;bottom:10%;left:0;margin:auto;width:75%;color:rgba(255,255,255,0.9);text-shadow:0 0 0.5em rgba(0,0,0,0.9);text-align:center}.bannerimage .views-field.views-field-body .field-content a:link,.bannerimage .views-field.views-field-body .field-content a:visited{color:#fff;border:2px solid #f37021;text-shadow:0 0 0.5em rgba(0,0,0,0.9);background:rgba(243,112,33,0.9);border-radius:0.25em;padding:0.25em;font-size:1.5em;margin:0.25em;display:inline-block}.bannerimage .views-field.views-field-body .field-content a:hover{text-decoration:none;border:2px solid #fff;background:#005b83}.bannerimage .views-field.views-field-body .field-content a:last-child{margin-top:0.5em}.bannerimage h2{font-size:12vw;margin-bottom:0;font-weight:400;line-height:0.9;text-transform:uppercase;color:#fff}.bannerimage h3{font-size:8vw;font-weight:600;margin-top:0;margin-bottom:0.25em;text-transform:uppercase;color:#fff}#footerleft,#footerright{width:100%;text-align:center;display:inline-block}#footermark{width:100%;text-align:center;display:block;float:left}#footermark img{width:3em;opacity:0.5}img.sm-icons{opacity:0.5;padding:0 0.5em}img.sm-icons:hover{opacity:1}body.html.front .l-content{padding:1em 0}#bannerintro{font-family:'Playfair Display SC', serif;text-align:center;margin-bottom:1em;margin-top:0.5em}#bannerintro h1{font-size:3.5em;line-height:1.1;margin-bottom:0;margin-top:0.25em}#bannerintro .bannerdate{font-size:3em;color:#e07e27;font-family:'Playfair Display SC', serif;font-style:italic;margin:0 auto}#bannerintro .bannerlocation{font-family:'Playfair Display SC', serif;color:#445b49;font-size:2em;line-height:1.0;margin:0 0 0.5em 0}#bannerintro .bannercity{font-family:'Playfair Display SC', serif;color:#044b76;font-size:1.5em;margin-top:0}#bannerintro p{font-size:1.4em}#bannerintro .leadin{font-family:'Playfair Display SC', serif;color:#445b49}#bannerintro img.wordmark{width:4em}body.html.front .panel-pane.pane-page-title,body.html.front .panelizer-view-mode.node.node-full.node-page.node-2 h2{display:none}.group:after{content:"";display:table;clear:both}img.speaker_img{border:6px solid #445b49;border-radius:50%;margin:0 auto;display:block;text-align:center}@media (min-width: 44em){.l-header,.l-main,.l-footer{max-width:1200px}.panel-pane.pane-page-logo{display:block}body.html.front .l-content{padding:1em 0}img.speaker_img{float:right;margin:0 0 0 1em;display:inline;text-align:right}.pane-block-5{display:none}.bannerimage h2{font-size:12vw}.bannerimage h3{font-size:7vw}.bannerimage a:link{margin:0.5em}#footerleft{width:45%;display:block;float:left;text-align:left}#footerright{width:45%;display:block;float:right;text-align:right}#footermark{width:100%;text-align:center;display:block}.l-branding{width:32.2033898305%;float:left;margin-right:1.6949152542%;width:100%;float:left;margin-left:0;margin-right:0}.l-region--header{width:66.1016949153%;float:right;margin-right:0;width:100%;float:left;margin-left:0;margin-right:0}.l-region--navigation{clear:both}.has-sidebar-first .l-content,.has-sidebar-second .l-content,.has-two-sidebars .l-content{width:66.1016949153%;float:left;margin-right:1.6949152542%}.has-sidebar-first .l-region--sidebar-first,.has-sidebar-first .l-region--sidebar-second,.has-sidebar-second .l-region--sidebar-first,.has-sidebar-second .l-region--sidebar-second,.has-two-sidebars .l-region--sidebar-first,.has-two-sidebars .l-region--sidebar-second{width:32.2033898305%;float:right;margin-right:0}.has-sidebar-first .l-region--sidebar-second,.has-sidebar-second .l-region--sidebar-second,.has-two-sidebars .l-region--sidebar-second{clear:right}}@media (min-width: 70em){.l-header,.l-main,.l-footer{max-width:1200px}.bannerimage h2{font-size:8vw;font-size:4vw}.bannerimage h3{font-size:3vw}body.html.front .l-content{padding:1em 10em}.l-branding{width:36.7088607595%;float:left;margin-right:1.2658227848%;width:100%;float:left;margin-left:0;margin-right:0}.l-region--header{width:62.0253164557%;float:right;margin-right:0;width:100%;float:left;margin-left:0;margin-right:0}.has-sidebar-first .l-content{width:74.6835443038%;float:right;margin-right:0}.has-sidebar-first .l-region--sidebar-first{width:24.0506329114%;float:left;margin-right:1.2658227848%}.has-sidebar-second .l-content{width:74.6835443038%;float:left;margin-right:1.2658227848%}.has-sidebar-second .l-region--sidebar-second{width:24.0506329114%;float:right;margin-right:0;clear:none}.has-two-sidebars .l-content{width:49.3670886076%;float:left;margin-right:1.2658227848%;margin-left:25.3164556962%}.has-two-sidebars .l-region--sidebar-first,.has-two-sidebars .l-region--sidebar-second{width:24.0506329114%;float:left;margin-right:1.2658227848%}.has-two-sidebars .l-region--sidebar-first{margin-left:-75.9493670886%}.has-two-sidebars .l-region--sidebar-second{float:right;margin-right:0;clear:none}}
+/*******************************************************************************
+ * simple.layout.scss
+ *
+ * Styling of the "simple" layout demonstrating the Compass grid extension Susy
+ * and building mobile first layouts.
+ ******************************************************************************/
+.l-header,
+.l-main,
+.l-footer {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+
+.l-header:after,
+.l-main:after,
+.l-footer:after {
+  content: " ";
+  display: block;
+  clear: both;
+}
+
+.l-region--highlighted,
+.l-region--help,
+.l-region--sidebar-first,
+.l-region--sidebar-second {
+  margin-bottom: 20px;
+}
+
+.l-header {
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.l-branding {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.tabs {
+  display: none;
+}
+
+.page-user .tabs {
+  display: block;
+}
+
+.l-main {
+  background: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0;
+  padding: 1em;
+}
+
+.l-content {
+  padding: 1em 0;
+}
+
+.l-content p {
+  font-size: 1.2em;
+}
+
+@media (min-width: 44em) {
+  .l-header,
+  .l-main,
+  .l-footer {
+    max-width: 1200px;
+  }
+  .l-branding {
+    width: 100%;
+    float: left;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .l-region--header {
+    width: 100%;
+    float: left;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .l-region--navigation {
+    clear: both;
+  }
+  .has-sidebar-first .l-content,
+  .has-sidebar-second .l-content,
+  .has-two-sidebars .l-content {
+    width: 66.1016949153%;
+    float: left;
+    margin-right: 1.6949152542%;
+  }
+  .has-sidebar-first .l-region--sidebar-first,
+  .has-sidebar-first .l-region--sidebar-second,
+  .has-sidebar-second .l-region--sidebar-first,
+  .has-sidebar-second .l-region--sidebar-second,
+  .has-two-sidebars .l-region--sidebar-first,
+  .has-two-sidebars .l-region--sidebar-second {
+    width: 32.2033898305%;
+    float: right;
+    margin-right: 0;
+  }
+  .has-sidebar-first .l-region--sidebar-second,
+  .has-sidebar-second .l-region--sidebar-second,
+  .has-two-sidebars .l-region--sidebar-second {
+    clear: right;
+  }
+}
+
+@media (min-width: 70em) {
+  .l-header,
+  .l-main,
+  .l-footer {
+    max-width: 1200px;
+  }
+  .l-branding {
+    width: 100%;
+    float: left;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .l-region--header {
+    width: 100%;
+    float: right;
+    margin-right: 0;
+  }
+  .has-sidebar-first .l-content {
+    width: 74.6835443038%;
+    float: right;
+    margin-right: 0;
+  }
+  .has-sidebar-first .l-region--sidebar-first {
+    width: 24.0506329114%;
+    float: left;
+    margin-right: 1.2658227848%;
+  }
+  .has-sidebar-second .l-content {
+    width: 74.6835443038%;
+    float: left;
+    margin-right: 1.2658227848%;
+  }
+  .has-sidebar-second .l-region--sidebar-second {
+    width: 24.0506329114%;
+    float: right;
+    margin-right: 0;
+    clear: none;
+  }
+  .has-two-sidebars .l-content {
+    width: 49.3670886076%;
+    float: left;
+    margin-right: 1.2658227848%;
+    margin-left: 25.3164556962%;
+  }
+  .has-two-sidebars .l-region--sidebar-first,
+  .has-two-sidebars .l-region--sidebar-second {
+    width: 24.0506329114%;
+    float: left;
+    margin-right: 1.2658227848%;
+  }
+  .has-two-sidebars .l-region--sidebar-first {
+    margin-left: -75.9493670886%;
+  }
+  .has-two-sidebars .l-region--sidebar-second {
+    float: right;
+    margin-right: 0;
+    clear: none;
+  }
+}
 
 /*# sourceMappingURL=govcon-simple.layout.css.map */

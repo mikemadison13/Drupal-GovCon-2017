@@ -118,16 +118,18 @@ module.exports = function (grunt) {
     },
 
     sass_globbing: {
-     theme_imports: {
+     target_files: {
         files: {
-            'sass/_variablesMap.scss': 'sass/variables/**/*.scss',
-            'sass/_abstractionsMap.scss': 'sass/abstractions/**/*.scss',
-            'sass/_baseMap.scss': 'sass/base/**/*.scss',
-            'sass/_componentsMap.scss': 'sass/components/**/*.scss',
-          },
+          'sass/_variablesMap.scss': 'sass/variables/**/*.scss',
+          'sass/_abstractionsMap.scss': 'sass/abstractions/**/*.scss',
+          'sass/_baseMap.scss': 'sass/base/**/*.scss',
+          'sass/_componentsMap.scss': 'sass/components/**/*.scss',
+        },
       },
       options: {
-          useSingleQuotes: false
+        useSingleQuotes: true,
+        signature: '// Hello, World!'
+
       }
     },
   });
@@ -140,10 +142,27 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-sass-globbing');
   grunt.loadNpmTasks('grunt-sass');
 
+  grunt.registerTask('css:dist', [
+    'sass_globbing',
+    'sass:dist'
+  ]);
+
+  grunt.registerTask('css:dev', [
+    'sass_globbing',
+    'sass:dev'
+  ]);
+
   grunt.registerTask('build', [
     'uglify:dist',
     'jshint',
-    'sass:dist'
+    'css:dist'
   ]);
+
+  grunt.registerTask('build:dev', [
+    'uglify:dist',
+    'jshint',
+    'css:dev'
+  ]);
+
 
 };
