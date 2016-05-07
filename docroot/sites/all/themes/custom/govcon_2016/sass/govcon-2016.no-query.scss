@@ -1,5 +1,8 @@
-$breakpoint-no-queries: true;
-$breakpoint-no-query-fallbacks: true;
+@import '../node_modules/breakpoint-sass/stylesheets/breakpoint';
+
+@include breakpoint-set('no query fallbacks', true);
+@include breakpoint-set('no queries', true);
+
 
 // Re-render everything from styles.scss but without media queries.
 @import "govcon-2016.styles";

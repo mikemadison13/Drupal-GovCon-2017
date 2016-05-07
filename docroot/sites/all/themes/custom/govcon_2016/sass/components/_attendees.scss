@@ -47,7 +47,7 @@
   }
 }
 
-@include breakpoint($tab) {
+@include breakpoint($tab, true) {
   .view-cod-community-attendees {
     font-size: 1em;
     ul li.views-row { width: 180px; height: 240px; }
