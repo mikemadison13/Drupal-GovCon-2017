@@ -28,13 +28,12 @@ $is_ah_stage_env = ($ah_env == 'test');
 $is_ah_dev_cloud = (!empty($_SERVER['HTTP_HOST']) && strstr($_SERVER['HTTP_HOST'], 'devcloud'));
 $is_ah_dev_env = (preg_match('/^dev[0-9]*$/', $ah_env) == TRUE);
 $is_local_env = !$is_ah_env;
-$protocol = 'http://';
+$protocol = 'https://';
 
 if ($ah_env) {
   switch ($_ENV['AH_SITE_ENVIRONMENT']) {
     case 'prod':
       $domain = "www.drupalgovcon.org";
-      $protocol = 'https://';
     default:
       // Dynamically set base url based on Acquia environment variable.
       $domain_prefix = $is_ah_dev_cloud ? 'devcloud' : 'prod';
