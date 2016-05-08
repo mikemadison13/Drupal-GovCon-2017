@@ -34,6 +34,7 @@ if ($ah_env) {
   switch ($_ENV['AH_SITE_ENVIRONMENT']) {
     case 'prod':
       $domain = "www.drupalgovcon.org";
+      break;
     default:
       // Dynamically set base url based on Acquia environment variable.
       $domain_prefix = $is_ah_dev_cloud ? 'devcloud' : 'prod';
