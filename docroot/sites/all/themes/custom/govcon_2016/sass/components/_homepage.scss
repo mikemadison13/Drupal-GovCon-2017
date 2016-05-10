@@ -58,6 +58,18 @@ body.html.front .l-content {
   width: 4em;
 }
 
+body.html.front .section-drupal-govcon-2016 div.panel-pane.pane-page-logo {
+  display: none;
+}
+
+body.html.front .panel-pane.pane-page-logo img {
+  display: none;
+}
+
+body.html.not-front.not-logged-in.page-node.page-node-.page-node-1.node-type-event.og-context.og-context-node.og-context-node-1.section-drupal-govcon-2016 div.panel-pane.pane-page-logo {
+  display: none;
+}
+
 
 body.html.front .panel-pane.pane-page-title,
 body.html.front .panelizer-view-mode.node.node-full.node-page.node-2 h2 {
