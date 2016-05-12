@@ -65,7 +65,7 @@
 
 @include breakpoint($tab) {
   .bannerimage h2 {
-    font-size: 12vw;
+    font-size: 8.5vw;
   }
 
   .bannerimage h3 {
@@ -80,7 +80,6 @@
 
 @include breakpoint($desk) {
   .bannerimage h2 {
-    font-size: 8vw;
     font-size: 4vw;
   }
 

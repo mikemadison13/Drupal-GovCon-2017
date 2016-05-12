@@ -58,7 +58,8 @@ body.html.front .l-content {
   width: 4em;
 }
 
-body.html.front .section-drupal-govcon-2016 div.panel-pane.pane-page-logo {
+body.html.front .section-drupal-govcon-2016 div.panel-pane.pane-page-logo,
+.page-node-1 .pane-page-logo {
   display: none;
 }
 
@@ -70,9 +71,23 @@ body.html.not-front.not-logged-in.page-node.page-node-.page-node-1.node-type-eve
   display: none;
 }
 
-
 body.html.front .panel-pane.pane-page-title,
 body.html.front .panelizer-view-mode.node.node-full.node-page.node-2 h2 {
   display: none;
+}
+
+.pane-node-body,
+.view-cod-news {
+  display: block;
+  width: 100%;
+}
+
+.diamond_banner {
+  margin-top: none;
+  background-color: rgba(255,255,255,1);
+}
+
+.diamond_banner h3 {
+  color: $gold;
 }
 // End Homepage Styling
