@@ -13,8 +13,9 @@
       margin-bottom: 40px;
       a {
         @extend a.button.btn-big;
-        background-color: $pale-blue;
+        background-color: $green;
         background-image: $texture;
+        font-family: $serif;
       }
     }
     li.active {
@@ -23,13 +24,13 @@
         @extend a.button.btn-big;
         color: #fff;
         position: relative;
-        background-color: $red;
+        background-color: $orange;
         background-image: $texture;
         &:after {
           content: "";
           width: 20px;
           height: 20px;
-          border-top: 20px solid lighten($red, 3%);
+          border-top: 20px solid lighten($orange, 3%);
           border-left: 20px solid transparent;
           border-right: 20px solid transparent;
           position: absolute;
@@ -42,31 +43,37 @@
     }
   }
   .quicktabs-views-group {
-    position: relative;
+    position: relative;  // Turned off to test. This will need to be the container for the elements here.
+    //@include clearfix; // Added test
+    //background: rgba(255,0,0,0.2); // Added test
   }
   .views-field-field-slot-datetime-1,
   .views-field-field-evttime-date-1 {
     border-radius: 0;
     padding: 0 0 0 210px;
+    //display: inline-block; // Added Test, cuts background bar to width of text.
     text-align: left;
     height: 50px;
     line-height: 50px;
     font-size: 1.2em;
+    font-family: $serif;
     background-color: $green;
     background-image: $texture;
-    color: $pale-blue;
+    color: rgba(255,255,255,0.7); // Final
+    color: #0f0;
   }
   .views-field-field-slot-datetime-2,
   .views-field-field-evttime-date-2 {
-    position: absolute;
+    position: absolute; // Turned off to test. If turned off, many display issues are resolved.
     top: 0;
     left: 0;
     height: 50px;
     line-height: 50px;
     font-size: 1.2em;
-    font-weight: bold;
+    font-weight: 400;
     width: 200px;
     color: #fff;
+    color: #f00; // Test color
     padding: 0 10px;
   }
   .view-cod-schedule-content .views-row,
@@ -82,7 +89,7 @@
   }
   [class*="track-icon-"] {
     position: absolute;
-    z-index: -1;
+    //z-index: -1;
     top: 0;
     left: 0;
     padding: 58px 0 0;
@@ -102,12 +109,12 @@
       font-size: 1em;
     }
   }
-  .track-icon-6 { color: #f6001b; }
-  .track-icon-11 { color: #f88d00; }
-  .track-icon-21 { color: #79648d; }
-  .track-icon-26 { color: #007c7f; }
-  .track-icon-16 { color: #005185; }
-  .track-icon-1 { color: #5fa44c; }
+  .track-icon-6 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-frontend.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
+  .track-icon-11 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-code.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
+  .track-icon-21 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-business.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
+  .track-icon-26 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-sitebuilding.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
+  .track-icon-16 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-keynote.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
+  .track-icon-1 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-training.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
   .views-field-title {
     margin: 4px 0 2px 0;
     @include breakpoint($desk) {
@@ -167,10 +174,12 @@ form#views-exposed-form-cod-schedule-content-default {
   .pane-custom.pane-1 {
     a.button.btn-big {
       background: $green;
+      color: rgba(255,255,255,1);
       margin-bottom: 4px;
       display: inline-block;
+      padding: 0.25em;
       white-space: no-wrap;
-      &:hover, &:focus, &:active { background: #fff; }
+      &:hover, &:focus, &:active { background: $orange; text-decoration: none; }
     }
     a.button.btn-big[href=""] {
       background: $red;

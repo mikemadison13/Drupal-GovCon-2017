@@ -1,0 +1,57 @@
+input {
+	background: rgba(255,255,255,0.5);
+	border: 1px solid rgba( $dark-gray, 0.5 );
+	padding: 0.25em;
+	border-radius: 0.25em;
+}
+
+label {
+	font-family: $sans-serif;
+	font-weight: 400;
+	font-size: 0.8em;
+}
+
+.views-exposed-form label {
+	font-weight: 400; // Overrides default COD style
+}
+
+.description {
+	font-style: italic;
+}
+
+input.form-submit {
+	color: rgba(255,255,255,1);
+	text-decoration: none;
+	display: inline-block;
+	background-color: rgba(224,126,39,1);
+	padding: 0.25em 0.5em;
+	border-radius: 0.25em;
+	border: 1px solid rgba( $green, 0.7);
+	margin: 0.5em 0;
+}
+
+input.form-submit:hover {
+	background: $green;
+
+}
+
+.views-exposed-form .views-exposed-widget .form-submit {
+	margin-top: 1.25em;  // Overrides default styling
+}
+
+html.js .form-autocomplete {
+	background-position: 100% 8px; // Displays default Omega autocomplete in proper area
+}
+
+select {
+	-webkit-appearance: none;  /*Removes default chrome and safari style*/
+	-moz-appearance: none; /* Removes Default Firefox style*/
+	color: rgba(255,255,255,1);
+	font-size: 1em;
+	background: $green url(/sites/all/themes/custom/govcon_2016/img/gc-downarrow-rev.svg) 96% center no-repeat;
+	border: 1px solid rgba( $green, 0.7);
+	padding: 0.25em 0.5em;
+	border-radius: 0.25em;
+	text-indent: 0.01px;
+	text-overflow: '';
+}
