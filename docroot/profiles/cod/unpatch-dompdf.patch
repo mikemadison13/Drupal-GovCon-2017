@@ -1,0 +1,11 @@
+diff --git a/drupal-org.make b/drupal-org.make
+index a5471a8..9a3a9e8 100755
+--- a/drupal-org.make
++++ b/drupal-org.make
+@@ -634,6 +634,3 @@ libraries[iCalcreator][download][url] = "https://github.com/iCalcreator/iCalcrea
+ libraries[dompdf][download][type] = "get"
+ libraries[dompdf][type] = "libraries"
+ libraries[dompdf][download][url] = "https://github.com/dompdf/dompdf/releases/download/v0.6.2/dompdf-0.6.2.zip"
+-; Remove dompdf example folder.
+-; See https://www.drupal.org/node/2434767#comment-10749890 for more info.
+-libraries[dompdf][patch][] = "https://www.drupal.org/files/issues/dompdf-remove-www-2.patch"

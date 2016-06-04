@@ -1,0 +1,7 @@
+name = Ticket User Registration
+description = Provides user fields on ticket types to associate users with ticket registrations.
+package = Ticket
+core = 7.x
+
+dependencies[] = ticket
+dependencies[] = user
