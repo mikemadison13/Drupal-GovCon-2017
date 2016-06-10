@@ -10,7 +10,7 @@
       border-radius: 0;
       background: none;
       padding: 0;
-      margin-bottom: 40px;
+      margin-bottom: 1em;
       a {
         @extend a.button.btn-big;
         background-color: $green;
@@ -20,134 +20,114 @@
     }
     li.active {
       background: none;
+      margin-left: 0;
       a, a:hover, a:focus, a.active:hover {
         @extend a.button.btn-big;
         color: #fff;
         position: relative;
         background-color: $orange;
         background-image: $texture;
-        &:after {
-          content: "";
-          width: 20px;
-          height: 20px;
-          border-top: 20px solid lighten($orange, 3%);
-          border-left: 20px solid transparent;
-          border-right: 20px solid transparent;
-          position: absolute;
-          bottom: -20px;
-          left: 50%;
-          margin-left: -20px;
-          background-image: $texture;
-        }
       }
     }
   }
   .quicktabs-views-group {
-    position: relative;  // Turned off to test. This will need to be the container for the elements here.
-    //@include clearfix; // Added test
-    //background: rgba(255,0,0,0.2); // Added test
+    position: relative;  // Added
+    @include clearfix; // Added
+    border-top: 3px solid $green;
+    //border-bottom: 3px solid #00f;    //background: none; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient($green, $green 3em, rgba(255,255,255,0) 3em, rgba(255,255,255,0) 100%); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient($green, $green 3em, rgba(255,255,255,0) 3em, rgba(255,255,255,0) 100%); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient($green, $green 3em, rgba(255,255,255,0) 3em, rgba(255,255,255,0) 100%); /* For Firefox 3.6 to 15 */
+    background: linear-gradient($green, $green 3em, rgba(255,255,255,0) 3em, rgba(255,255,255,0) 100%); /* Standard syntax */
   }
+
+  // This styles the day of the week
   .views-field-field-slot-datetime-1,
   .views-field-field-evttime-date-1 {
     border-radius: 0;
-    padding: 0 0 0 210px;
-    //display: inline-block; // Added Test, cuts background bar to width of text.
+    padding: 0.5em 0.25em 0.5em 0.5em; // Added
+    display: inline-block; // Added Test, cuts background bar to width of text.
     text-align: left;
-    height: 50px;
-    line-height: 50px;
+    width: 160px; // Added
     font-size: 1.2em;
     font-family: $serif;
-    background-color: $green;
-    background-image: $texture;
+    background-color: none; // Added
+    background: none; // Added to override default styling
     color: rgba(255,255,255,0.7); // Final
-    color: #0f0;
   }
+  // This styles the times
   .views-field-field-slot-datetime-2,
   .views-field-field-evttime-date-2 {
-    position: absolute; // Turned off to test. If turned off, many display issues are resolved.
-    top: 0;
-    left: 0;
-    height: 50px;
-    line-height: 50px;
+    display: inline-block; // Added
     font-size: 1.2em;
     font-weight: 400;
-    width: 200px;
+    width: 200px; // Original 
     color: #fff;
-    color: #f00; // Test color
-    padding: 0 10px;
+    background-color: $green;  // Added
+    background-color: none; // Added
+    padding: 0.5em 0.25em 0.5em 0.25em; // Added
   }
   .view-cod-schedule-content .views-row,
   .view-dgc-my-schedule-content .views-row {
-    position: relative;
-    padding: 0 0 0 146px;
-    min-height: 120px;
+    position: relative; // Original
     @include clearfix;
     @include breakpoint($desk) {
-      padding: 20px 0 20px 180px;
-      min-height: 140px;
+      //padding: 20px 0 20px 180px; // Original
+      //min-height: 140px; // Original
     }
   }
   [class*="track-icon-"] {
-    position: absolute;
-    //z-index: -1;
-    top: 0;
-    left: 0;
-    padding: 58px 0 0;
-    background-size: 50px;
-    background-position: center 10px;
-    height: 100%;
-    width: 130px;
-    text-align: center;
-    font-family: $serif;
-    font-size: .9em;
-    border-right: 1px solid #ccc;
-    margin-right: 20px;
+    display: block;
+    float: left;
+    margin-right: 0.5em;
+    margin-bottom: 0.25em;
+    width: 2em;
+    height: 2em;
+    color: rgba( $green, 1);
+    background-size: 100%; // Gets overridden--see below
+    background-position: 0% 0%; 
+    text-indent: -9999px; // Hides Text
+    white-space: nowrap; // Hides Text
+    overflow: hidden; // Hides Text
     @include breakpoint($desk) {
-      padding: 70px 10px 0;
-      width: 160px;
-      background-position: center 18px;
-      font-size: 1em;
+
     }
   }
-  .track-icon-6 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-frontend.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
-  .track-icon-11 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-code.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
-  .track-icon-21 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-business.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
-  .track-icon-26 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-sitebuilding.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
-  .track-icon-16 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-keynote.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
-  .track-icon-1 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-training.svg) no-repeat; background-size: 35%; background-position: 50% 20%;}
+  .track-icon-6 { background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-frontend.svg) no-repeat; background-size: 100%;} // Added
+  .track-icon-11 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-code.svg) no-repeat; background-size: 100%;} // Added
+  .track-icon-21 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-business.svg) no-repeat; background-size: 100%;} // Added
+  .track-icon-26 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-sitebuilding.svg) no-repeat; background-size: 100%;} // Added
+  .track-icon-16 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-keynote.svg) no-repeat; background-size: 100%;} // Added
+  .track-icon-1 { color: rgba( $green, 1); background: url(/sites/all/themes/custom/govcon_2016/img/gc-trackicon-training.svg) no-repeat; background-size: 100%;} // Added
+
   .views-field-title {
-    margin: 4px 0 2px 0;
+    margin-bottom: 0.25em;
     @include breakpoint($desk) {
-      margin-top: 16px;
+      //margin-top: 16px;  // Original
     }
   }
+
+
+
+  // This displays the location
   .views-field-name {
     padding-left: 0;
     margin-right: 20px;
     margin-bottom: 0;
-    clear: both;
+    clear: both;  // Original
   }
   .views-field-field-experience {
     font-family: $serif;
     color: #666;
-    float: none;
-    clear: both;
-    margin-bottom: 10px;
     @include breakpoint($desk) {
-      position: absolute;
-      top: 2px;
-      right: 0;
-      margin: 0;
+
     }
   }
   .views-field-field-speakers {
-    padding-left: 0;
-    height: auto;
+
   }
   .views-field-count, .views-field-ops {
-    float: left;
-    margin: 0 20px 10px 0;
-    padding-top: 4px;
+ 
     a {
       @extend .button;
       &.unflag-action {
@@ -159,6 +139,43 @@
     }
   }
 }
+
+// Override Base COD Styling
+.view-cod-session-schedule .views-field-room, .view-cod-session-schedule .views-field-name,
+.view-cod-session-schedule .views-field-field-speakers, .view-cod-session-schedule .views-field-field-session-track,
+.view-cod-bof-schedule .views-field-room, .view-cod-bof-schedule .views-field-name,
+.view-cod-bof-schedule .views-field-field-speakers, .view-cod-bof-schedule .views-field-field-session-track,
+.view-cod-schedule .views-field-room, .view-cod-schedule .views-field-name,
+.view-cod-schedule .views-field-field-speakers, .view-cod-schedule .views-field-field-session-track {
+    float: none;
+    height: inherit;
+    margin: 0;
+    padding-top: 0;
+    padding-left: 0;
+}
+
+  // Added to style title
+  .view-cod-schedule .views-field-title {
+    font-size: 1.6em;
+  }
+
+  .view-cod-schedule .views-field-name {
+    //display: inline-block;
+  }
+
+
+  .view-cod-schedule-content .views-field.views-field-count,
+  .view-cod-schedule-content .views-field.views-field-field-experience,
+  .view-cod-schedule-content .views-field.views-field-ops {
+    display: inline-block;
+    float: left;
+    margin-right: 0.5em;
+    padding-bottom: 0.5em;
+  }
+
+
+
+
 /* hide extraneous exposed filters on each timeslot view */
 form#views-exposed-form-cod-schedule-content-default {
   display: none;
