@@ -25,6 +25,8 @@
   margin: 0 0 0.5em 0;
 }
 
+
+
 // Footer Area Styling
 #footerleft,
 #footerright {
@@ -53,6 +55,13 @@ img.sm-icons {
 img.sm-icons:hover {
   opacity: 1;
 }
+
+img#nih-footer-logo.sm-icons {
+  position: relative;
+  top: 0.25em;
+}
+
+ 
 
 @include breakpoint($tab) {
   #footerleft {
