@@ -1,0 +1,6 @@
+{
+  "name": "drupal/multiversion",
+  "description": "Extends the revision support for content entities.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+"
+}

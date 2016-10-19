@@ -1,0 +1,71 @@
+<project name="properties" default="build">
+
+  <!-- Define the repo root as a property, and resolve to an absolute file path. -->
+  <!-- We assume that Phing is running in vendor/acquia/blt/phing of a parent project. -->
+  <property name="repo.root.relative" value="${phing.dir}/../../../.." logoutput="false"/>
+  <resolvepath propertyName="repo.root" file="${repo.root.relative}"/>
+
+  <property name="blt.root.relative" value="${phing.dir}/.." logoutput="false"/>
+  <resolvepath propertyName="blt.root" file="${blt.root.relative}"/>
+
+  <!-- Load file directory and binary locations. -->
+  <property file="${phing.dir}/build.yml" override="true" logoutput="false"/>
+
+  <!-- Load the root project.yml file for this project. -->
+  <property file="${repo.root}/project.yml" override="true" logoutput="false"/>
+
+  <!-- Load the local project.local.yml file for this project. -->
+  <!--@todo Change this so that it is only loaded for local:* targets. -->
+  <if>
+    <available file="${repo.root}/project.local.yml" type="file" property="local.properties"/>
+    <then>
+      <property file="${repo.root}/project.local.yml" override="true" logoutput="false"/>
+    </then>
+  </if>
+
+  <!--verbosityTask is used to set the verbosity level of Phing via a property. It is necessary because the -verbose, -debug, -silent, and -quiet command line options are not available as properties and cannot be utilized in task conditionals. -->
+  <verbosityTask level="${blt.level}"/>
+  <!-- Think of blt.level as a maximum verbosity level. Anything above the default level of info (e.g., verbose and debug) are hidden unless the maximum verbosity is raised to the "verbose" or "debug" level. Raising blt.level increases the visibility of otherwise hidden output. -->
+  <!-- When blt.level is above "warn", then increase verbosity of common project tasks. -->
+  <if>
+    <or>
+      <equals arg1="${blt.level}" arg2="debug"/>
+      <equals arg1="${blt.level}" arg2="verbose"/>
+      <equals arg1="${blt.level}" arg2="info"/>
+    </or>
+    <then>
+      <!--blt.exec_level is used for most <exec> tasks.-->
+      <property name="blt.exec_level" value="info"/>
+      <!--blt.verbose is used to toggle the verbosity on other tasks, such as Drush and Behat-->
+      <property name="blt.verbose" value="true"/>
+    </then>
+  </if>
+
+  <echo level="verbose">Executing commands against multisite "${multisite.name}"</echo>
+
+  <!-- Default drush alias. -->
+  <property name="drush.alias" value="${drush.default_alias}" override="false" logoutput="false"/>
+  <if>
+    <equals arg1="${env.USER}" arg2="vagrant"/>
+    <then>
+      <echo level="verbose">You are running commands inside of a vagrant machine. Setting drush alias to @self.</echo>
+      <property name="drush.alias" value="self" override="true"/>
+    </then>
+  </if>
+
+  <target name="echo-property" description="Echoes the value of a Phing property." hidden="true">
+    <fail unless="property.name" message="property.name must be set!"/>
+    <echo>${property.name}</echo>
+    <if>
+      <isset property="${property.name}"/>
+      <then>
+        <echo level="warning">${${property.name}}</echo>
+      </then>
+    </if>
+  </target>
+
+  <target name="echo-properties" description="Echoes the value of all Phing properties." hidden="true">
+    <echoproperties/>
+  </target>
+
+</project>
