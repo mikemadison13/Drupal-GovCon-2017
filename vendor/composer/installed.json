@@ -3729,9 +3729,9 @@
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/klausi/coder/zipball/b08682bd939cf7d3ac7034bee792aa17f80e19d7",
+            "url": "https://ftp.drupal.org/files/projects/coder-8.x-2.9.zip",
             "reference": "b08682bd939cf7d3ac7034bee792aa17f80e19d7",
-            "shasum": ""
+            "shasum": null
         },
         "require": {
             "ext-mbstring": "*",
@@ -3745,7 +3745,7 @@
         "time": "2016-09-17 16:49:15",
         "type": "library",
         "installation-source": "dist",
-        "notification-url": "https://packagist.org/downloads/",
+        "notification-url": "https://packagist.drupal-composer.org/downloads/",
         "license": [
             "GPL-2.0+"
         ],
@@ -5613,6 +5613,49 @@
         ]
     },
     {
+        "name": "drupal/google_analytics",
+        "version": "8.2.1",
+        "version_normalized": "8.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/google_analytics",
+            "reference": "5a44ad5643af5510ec15c07727ce0d124ee1c1c1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/google_analytics-8.x-2.1.zip",
+            "reference": null,
+            "shasum": null
+        },
+        "require": {
+            "drupal/core": "8.*"
+        },
+        "time": "2016-08-09 21:26:53",
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-8.x-2.x": "8.2.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packagist.drupal-composer.org/downloads/",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "hass",
+                "homepage": "https://www.drupal.org/u/hass"
+            },
+            {
+                "name": "See other contributors",
+                "homepage": "https://www.drupal.org/node/49388/committers"
+            }
+        ],
+        "description": "Allows your site to be tracked by Google Analytics by adding a Javascript tracking code to every page.",
+        "homepage": "https://www.drupal.org/project/google_analytics"
+    },
+    {
         "name": "drupal/key_value",
         "version": "8.1.0",
         "version_normalized": "8.1.0.0",
@@ -5719,7 +5762,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/replication-8.x-1.0-alpha4.zip",
-            "reference": null,
+            "reference": "6361d76da3571301f679e3cea81c5b6f4a6f8b50",
             "shasum": null
         },
         "require": {
@@ -5756,7 +5799,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/workspace-8.x-1.0-alpha3.zip",
-            "reference": null,
+            "reference": "6b21cbeada234f6bfb0e3ca24ddd11033578c9ff",
             "shasum": null
         },
         "require": {
@@ -5798,7 +5841,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/workbench_moderation-8.x-1.1.zip",
-            "reference": null,
+            "reference": "661c2108c84e961a00ae7174c91053858447a7d2",
             "shasum": null
         },
         "require": {
@@ -5989,7 +6032,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/scheduled_updates-8.x-1.0-alpha5.zip",
-            "reference": null,
+            "reference": "cdeceb8fd89a3644fb34a8a5bcc194ca7cbd84fe",
             "shasum": null
         },
         "require": {
@@ -6162,7 +6205,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/panels-8.x-3.0-beta5.zip",
-            "reference": null,
+            "reference": "9de5382bf248af198391a22be27d770f94396dbc",
             "shasum": null
         },
         "require": {
@@ -6221,7 +6264,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/panelizer-8.x-3.0-alpha2.zip",
-            "reference": null,
+            "reference": "75a432927539383b391e6905fb5614cbe85a4b84",
             "shasum": null
         },
         "require": {
@@ -6313,7 +6356,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/metatag-8.x-1.0-beta10.zip",
-            "reference": null,
+            "reference": "c0610ad2ad9318298823c24db66b8769095910a3",
             "shasum": null
         },
         "require": {
