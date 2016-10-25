@@ -5710,7 +5710,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/environment_indicator-8.x-3.0-beta1.zip",
-            "reference": null,
+            "reference": "a2dee2b1dd12587c49355a23ad4beebc56f84a77",
             "shasum": null
         },
         "require": {
