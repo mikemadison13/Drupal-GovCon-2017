@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit553c7cb233b0ff6e553c9b13df24da1e
+class ComposerStaticInit34d064b15b5de2c2cd68b0d00a04842b
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -5446,12 +5446,16 @@ class ComposerStaticInit553c7cb233b0ff6e553c9b13df24da1e
         'Twig_Sandbox_SecurityError' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Sandbox/SecurityError.php',
         'Twig_Sandbox_SecurityNotAllowedFilterError' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Sandbox/SecurityNotAllowedFilterError.php',
         'Twig_Sandbox_SecurityNotAllowedFunctionError' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Sandbox/SecurityNotAllowedFunctionError.php',
+        'Twig_Sandbox_SecurityNotAllowedMethodError' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Sandbox/SecurityNotAllowedMethodError.php',
+        'Twig_Sandbox_SecurityNotAllowedPropertyError' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Sandbox/SecurityNotAllowedPropertyError.php',
         'Twig_Sandbox_SecurityNotAllowedTagError' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Sandbox/SecurityNotAllowedTagError.php',
         'Twig_Sandbox_SecurityPolicy' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Sandbox/SecurityPolicy.php',
         'Twig_Sandbox_SecurityPolicyInterface' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Sandbox/SecurityPolicyInterface.php',
         'Twig_SimpleFilter' => __DIR__ . '/..' . '/twig/twig/lib/Twig/SimpleFilter.php',
         'Twig_SimpleFunction' => __DIR__ . '/..' . '/twig/twig/lib/Twig/SimpleFunction.php',
         'Twig_SimpleTest' => __DIR__ . '/..' . '/twig/twig/lib/Twig/SimpleTest.php',
+        'Twig_Source' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Source.php',
+        'Twig_SourceContextLoaderInterface' => __DIR__ . '/..' . '/twig/twig/lib/Twig/SourceContextLoaderInterface.php',
         'Twig_Template' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Template.php',
         'Twig_TemplateInterface' => __DIR__ . '/..' . '/twig/twig/lib/Twig/TemplateInterface.php',
         'Twig_Test' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Test.php',
@@ -5812,10 +5816,10 @@ class ComposerStaticInit553c7cb233b0ff6e553c9b13df24da1e
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit553c7cb233b0ff6e553c9b13df24da1e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit553c7cb233b0ff6e553c9b13df24da1e::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit553c7cb233b0ff6e553c9b13df24da1e::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit553c7cb233b0ff6e553c9b13df24da1e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit34d064b15b5de2c2cd68b0d00a04842b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit34d064b15b5de2c2cd68b0d00a04842b::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit34d064b15b5de2c2cd68b0d00a04842b::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit34d064b15b5de2c2cd68b0d00a04842b::$classMap;
 
         }, null, ClassLoader::class);
     }

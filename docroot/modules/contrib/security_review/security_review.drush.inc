@@ -32,6 +32,17 @@ function security_review_drush_command() {
       'secrev --lastrun' => 'Output the stored results from the last run of the checklist',
     ],
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
+    'outputformat' => [
+      'default' => 'table',
+      'pipe-format' => 'csv',
+      'fields-default' => ['message', 'status'],
+      'field-labels' => [
+        'message' => 'Message',
+        'status' => 'Status',
+        'findings' => 'Findings',
+      ],
+      'output-data-type' => 'format-table',
+    ],
   ];
 
   return $items;
@@ -66,9 +77,8 @@ function security_review_drush() {
   $show_findings = drush_get_option('results');
 
   // Set temporary logging.
-  if ($log) {
-    $security_review->setLogging(TRUE, TRUE);
-  }
+  $log = in_array($log, [TRUE, 1, 'TRUE']);
+  $security_review->setLogging($log, TRUE);
 
   if (!empty($short_titles)) {
     $short_titles = TRUE;
@@ -145,7 +155,7 @@ function security_review_drush() {
     }
   }
 
-  _security_review_drush_print_results($results, $short_titles, $show_findings);
+  return _security_review_drush_format_results($results, $short_titles, $show_findings);
 }
 
 /**
@@ -175,7 +185,7 @@ function _security_review_drush_get_check($check_name) {
 }
 
 /**
- * Helper function to print Security Review results using drush_log().
+ * Helper function to compile Security Review results.
  *
  * @param \Drupal\security_review\CheckResult[] $results
  *   An array of CheckResults.
@@ -184,8 +194,13 @@ function _security_review_drush_get_check($check_name) {
  *   message.
  * @param bool $show_findings
  *   Whether to print failed check results.
+ *
+ * @return array
+ *   The results of the security review checks.
  */
-function _security_review_drush_print_results(array $results, $short_titles = FALSE, $show_findings = FALSE) {
+function _security_review_drush_format_results(array $results, $short_titles = FALSE, $show_findings = FALSE) {
+  $output = [];
+
   foreach ($results as $result) {
     if ($result instanceof CheckResult) {
       if (!$result->isVisible()) {
@@ -224,7 +239,13 @@ function _security_review_drush_print_results(array $results, $short_titles = FA
         }
       }
 
-      drush_log($message, $status);
+      $output[$check->id()] = [
+        'message' => (string) $message,
+        'status' => $status,
+        'findings' => $result->findings(),
+      ];
     }
   }
+
+  return $output;
 }
