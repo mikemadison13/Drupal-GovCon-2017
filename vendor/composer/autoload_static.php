@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit749443494a9d7588bded6c7009694b41
+class ComposerStaticInitb4bcbee2c9bc09b7b2bb736c7a57e7b4
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -111,6 +111,7 @@ class ComposerStaticInit749443494a9d7588bded6c7009694b41
         array (
             'Composer\\Semver\\' => 16,
             'Composer\\Installers\\' => 20,
+            'CloudFlarePhpSdk\\' => 17,
         ),
         'A' => 
         array (
@@ -336,6 +337,10 @@ class ComposerStaticInit749443494a9d7588bded6c7009694b41
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
         ),
+        'CloudFlarePhpSdk\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src',
+        ),
         'Alchemy\\Zippy\\' => 
         array (
             0 => __DIR__ . '/..' . '/alchemy/zippy/src',
@@ -558,6 +563,30 @@ class ComposerStaticInit749443494a9d7588bded6c7009694b41
         'Character' => __DIR__ . '/..' . '/phing/phing/classes/phing/system/lang/Character.php',
         'ChmodTask' => __DIR__ . '/..' . '/phing/phing/classes/phing/tasks/system/ChmodTask.php',
         'ChownTask' => __DIR__ . '/..' . '/phing/phing/classes/phing/tasks/system/ChownTask.php',
+        'CloudFlarePhpSdk\\ApiEndpoints\\CloudFlareAPI' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiEndpoints/CloudFlareAPI.php',
+        'CloudFlarePhpSdk\\ApiEndpoints\\ZoneApi' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiEndpoints/ZoneApi.php',
+        'CloudFlarePhpSdk\\ApiTypes\\CloudFlareApiResponse' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/CloudFlareApiResponse.php',
+        'CloudFlarePhpSdk\\ApiTypes\\CloudFlareUser' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/CloudFlareUser.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\Zone' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/Zone.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingBase' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingBase.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingBool' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingBool.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingBrowserCacheTtl' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingBrowserCacheTtl.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingChallengeTtl' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingChallengeTtl.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingMinify' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingMinify.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingMobileRedirect' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingMobileRedirect.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingSecurityHeader' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingSecurityHeader.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingSecurityLevel' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingSecurityLevel.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingSelectBase' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingSelectBase.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettingSsl' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettingSsl.php',
+        'CloudFlarePhpSdk\\ApiTypes\\Zone\\ZoneSettings' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/Zone/ZoneSettings.php',
+        'CloudFlarePhpSdk\\Exceptions\\CloudFlareApiException' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/Exceptions/CloudFlareApiException.php',
+        'CloudFlarePhpSdk\\Exceptions\\CloudFlareException' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/Exceptions/CloudFlareException.php',
+        'CloudFlarePhpSdk\\Exceptions\\CloudFlareHttpException' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/Exceptions/CloudFlareHttpException.php',
+        'CloudFlarePhpSdk\\Exceptions\\CloudFlareInvalidCredentialException' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/Exceptions/CloudFlareInvalidCredentialException.php',
+        'CloudFlarePhpSdk\\Exceptions\\CloudFlareInvalidSettingValueException' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/Exceptions/CloudFlareInvalidSettingValueException.php',
+        'CloudFlarePhpSdk\\Exceptions\\CloudFlareNotModifiableException' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/Exceptions/CloudFlareNotModifiableException.php',
+        'CloudFlarePhpSdk\\Exceptions\\CloudFlareTimeoutException' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/Exceptions/CloudFlareTimeoutException.php',
+        'CloudFlarePhpSdk\\Utils' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/Utils.php',
         'CloverPHPUnitResultFormatter' => __DIR__ . '/..' . '/phing/phing/classes/phing/tasks/ext/phpunit/formatter/CloverPHPUnitResultFormatter.php',
         'Commandline' => __DIR__ . '/..' . '/phing/phing/classes/phing/types/Commandline.php',
         'CommandlineArgument' => __DIR__ . '/..' . '/phing/phing/classes/phing/types/Commandline.php',
@@ -5816,10 +5845,10 @@ class ComposerStaticInit749443494a9d7588bded6c7009694b41
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit749443494a9d7588bded6c7009694b41::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit749443494a9d7588bded6c7009694b41::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit749443494a9d7588bded6c7009694b41::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit749443494a9d7588bded6c7009694b41::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb4bcbee2c9bc09b7b2bb736c7a57e7b4::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb4bcbee2c9bc09b7b2bb736c7a57e7b4::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitb4bcbee2c9bc09b7b2bb736c7a57e7b4::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitb4bcbee2c9bc09b7b2bb736c7a57e7b4::$classMap;
 
         }, null, ClassLoader::class);
     }

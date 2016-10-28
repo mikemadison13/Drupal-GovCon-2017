@@ -59,6 +59,7 @@ return array(
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
     'Composer\\Semver\\' => array($vendorDir . '/composer/semver/src'),
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
+    'CloudFlarePhpSdk\\' => array($vendorDir . '/d8-contrib-modules/cloudflarephpsdk/src'),
     'Alchemy\\Zippy\\' => array($vendorDir . '/alchemy/zippy/src'),
     'Acquia\\LightningExtension\\' => array($baseDir . '/docroot/profiles/contrib/lightning/src/LightningExtension'),
     'Acquia\\Blt\\Tests\\' => array($vendorDir . '/acquia/blt/tests/phpunit/src'),

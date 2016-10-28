@@ -6,8 +6,8 @@ description: 'Provides services and entities types to assist with and log conten
 dependencies:
   - multiversion
 
-# Information added by Drupal.org packaging script on 2016-10-10
-version: '8.x-1.0-alpha4'
+# Information added by Drupal.org packaging script on 2016-10-25
+version: '8.x-1.0-alpha5'
 core: '8.x'
 project: 'replication'
-datestamp: 1476112469
+datestamp: 1477394954
