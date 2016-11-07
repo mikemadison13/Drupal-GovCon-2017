@@ -21,17 +21,14 @@ class ContentEntityBase extends SourcePluginBase {
     $result = [];
     foreach ($entities as $entity_id => $entity) {
       foreach ($entity as $field_name => $field) {
-        $value = NULL;
         /** @var \Drupal\Core\Field\FieldItemListInterface $field */
-        /** @var \Drupal\Core\Field\FieldItemInterface $item */
-        if ($field->count() == 1) {
-          $item = $field->first();
-          $value = $item->get($item->mainPropertyName())->getValue();
-        }
-        elseif ($field->count() > 1) {
-          $value = array();
-          foreach ($field as $item) {
-            $value[] = $item->get($item->mainPropertyName())->getValue();
+        $value = $field->getValue();
+        // If there is only one value in the field, unwrap it.
+        if (count($value) == 1) {
+          $value = reset($value);
+          // If there's only one property in the field value, unwrap it.
+          if (count($value) == 1) {
+            $value = reset($value);
           }
         }
         // Set the 'migrate://' scheme for files.

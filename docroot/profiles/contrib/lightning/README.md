@@ -69,6 +69,8 @@ If you don't want to use Composer, you can install Lightning the traditional way
 by downloading a tarball from our
 [drupal.org project page](https://www.drupal.org/project/lightning).
 
+You can customize your installation using [lightning.extend.yml](https://github.com/acquia/lightning/blob/8.x-1.x/lightning.extend.yml). Using this file, you can choose which Lightning features to install as well as install your own custom features.
+
 ## Project Roadmap
 The roadmap is subject to change, but our projected schedule is:
 
@@ -129,13 +131,6 @@ will not need to do this.
   under certain circumstances.
 * The Workspace listing page will display a PHP warning caused by the Workspace
   module which is effectively harmless but may look alarming.
-* The Author user-reference relationship that is implicit with all Node Entities
-  is lost when replicating from workspace to workspace. So if UserA creates
-  NodeB on the Live workspace, and that node is pulled to the Stage workspace,
-  the Stage workspace will be unaware of the author and will set the author to
-  Anonymous. Furthermore, if an edit is then made to NodeB on the Stage
-  workspace, and that edit is pushed back to Live, NodeB on the Live workspace
-  will also lose its author.
 * There is no way yet to properly resolve conflicts between workspaces. Users
   can delete conflicting entities from one of the two workspaces to remove
   conflicts, but there is no interface yet for picking the winner and keeping

@@ -1,7 +1,7 @@
 name: Lightning
 type: profile
 description: 'A fast and feature-rich Drupal distribution.'
-core: 8.x
+# core: 8.x
 distribution:
   name: Lightning
 
@@ -46,3 +46,9 @@ dependencies:
 themes:
   - bartik
   - seven
+
+# Information added by Drupal.org packaging script on 2016-11-03
+version: '8.x-1.12'
+core: '8.x'
+project: 'lightning'
+datestamp: 1478190348
