@@ -7280,7 +7280,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/lightning-8.x-1.12.zip",
-            "reference": null,
+            "reference": "dd2a4d6a2bf97be127acbc2f5ad1d93c8755a66e",
             "shasum": null
         },
         "require": {
