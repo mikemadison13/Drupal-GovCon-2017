@@ -720,7 +720,12 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
 require DRUPAL_ROOT . "/../vendor/acquia/blt/settings/blt.settings.php";
 
 /**
- * Environment Specific Customizations based on the Environment Indicator
+ * Environment Specific Customizations based on the Environment Indicator.
  */
+require DRUPAL_ROOT . "/sites/default/settings/environment.settings.php";
 
-require DRUPAL_ROOT . "/sites/default/settings/environment.settings.php";$settings['install_profile'] = 'lightning';
+/**
+ * Caching settings.
+ */
+require DRUPAL_ROOT . "/sites/default/settings/cache.settings.php";
+$settings['install_profile'] = 'lightning';
