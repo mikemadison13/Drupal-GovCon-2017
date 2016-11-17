@@ -5328,17 +5328,17 @@
     },
     {
         "name": "drupal/core",
-        "version": "8.2.1",
-        "version_normalized": "8.2.1.0",
+        "version": "8.2.3",
+        "version_normalized": "8.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drupal-composer/drupal-core.git",
-            "reference": "a5549f2a541c0fbb0565e1576a63b917813fadba"
+            "reference": "63b3346647a7e43bcde3947a3aea02eabdf8fa56"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/drupal-composer/drupal-core/zipball/a5549f2a541c0fbb0565e1576a63b917813fadba",
-            "reference": "a5549f2a541c0fbb0565e1576a63b917813fadba",
+            "url": "https://api.github.com/repos/drupal-composer/drupal-core/zipball/63b3346647a7e43bcde3947a3aea02eabdf8fa56",
+            "reference": "63b3346647a7e43bcde3947a3aea02eabdf8fa56",
             "shasum": ""
         },
         "require": {
@@ -5480,7 +5480,7 @@
             "phpunit/phpunit": "~4.8",
             "symfony/css-selector": "~2.8"
         },
-        "time": "2016-10-11 10:18:49",
+        "time": "2016-11-16 18:45:36",
         "type": "drupal-core",
         "extra": {
             "patches_applied": {

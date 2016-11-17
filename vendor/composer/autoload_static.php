@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit97482cbefc48251d2d8bc0fab36250f0
+class ComposerStaticInit438e7f0f0ebcc7800807d6df72257911
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -2611,6 +2611,7 @@ class ComposerStaticInit97482cbefc48251d2d8bc0fab36250f0
         'Drupal\\Core\\Test\\TestDatabase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/TestDatabase.php',
         'Drupal\\Core\\Test\\TestKernel' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/TestKernel.php',
         'Drupal\\Core\\Test\\TestRunnerKernel' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/TestRunnerKernel.php',
+        'Drupal\\Core\\Test\\TestStatus' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Test/TestStatus.php',
         'Drupal\\Core\\Theme\\ActiveTheme' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Theme/ActiveTheme.php',
         'Drupal\\Core\\Theme\\AjaxBasePageNegotiator' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Theme/AjaxBasePageNegotiator.php',
         'Drupal\\Core\\Theme\\DefaultNegotiator' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Theme/DefaultNegotiator.php',
@@ -6343,10 +6344,10 @@ class ComposerStaticInit97482cbefc48251d2d8bc0fab36250f0
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit97482cbefc48251d2d8bc0fab36250f0::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit97482cbefc48251d2d8bc0fab36250f0::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit97482cbefc48251d2d8bc0fab36250f0::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit97482cbefc48251d2d8bc0fab36250f0::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit438e7f0f0ebcc7800807d6df72257911::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit438e7f0f0ebcc7800807d6df72257911::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit438e7f0f0ebcc7800807d6df72257911::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit438e7f0f0ebcc7800807d6df72257911::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -2116,6 +2116,7 @@ return array(
     'Drupal\\Core\\Test\\TestDatabase' => $baseDir . '/docroot/core/lib/Drupal/Core/Test/TestDatabase.php',
     'Drupal\\Core\\Test\\TestKernel' => $baseDir . '/docroot/core/lib/Drupal/Core/Test/TestKernel.php',
     'Drupal\\Core\\Test\\TestRunnerKernel' => $baseDir . '/docroot/core/lib/Drupal/Core/Test/TestRunnerKernel.php',
+    'Drupal\\Core\\Test\\TestStatus' => $baseDir . '/docroot/core/lib/Drupal/Core/Test/TestStatus.php',
     'Drupal\\Core\\Theme\\ActiveTheme' => $baseDir . '/docroot/core/lib/Drupal/Core/Theme/ActiveTheme.php',
     'Drupal\\Core\\Theme\\AjaxBasePageNegotiator' => $baseDir . '/docroot/core/lib/Drupal/Core/Theme/AjaxBasePageNegotiator.php',
     'Drupal\\Core\\Theme\\DefaultNegotiator' => $baseDir . '/docroot/core/lib/Drupal/Core/Theme/DefaultNegotiator.php',
