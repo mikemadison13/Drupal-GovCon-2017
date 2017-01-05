@@ -266,16 +266,13 @@ class AcquiaCloudPurger extends PurgerBase implements PurgerInterface {
     foreach ($invalidations as $invalidation) {
       $expression = $invalidation->getExpression();
 
-      // Detect tags with the "|" character in it. Officially this character is
-      // not forbidden to be used in tags, but is likely going to cause issues
-      // for Varnish based implementations. Therefore we explicitly forbid this
-      // practice and log about it as well.
-      if (strpos($expression, '|') !== FALSE) {
+      // Detect tags with spaces in it. This is the only character Drupal core
+      // forbids explicitely to be used in tags, as we're using it as separator
+      // for multiple tags.
+      if (strpos($expression, ' ') !== FALSE) {
         $invalidation->setState(InvalidationInterface::FAILED);
         $this->logger->error(
-          "The tag '%tag' contains the | sign, which is a explicitly forbidden practice, this character causes"
-          . " problems for Varnish based invalidation implementations. Please file an issue against the module"
-          . " that generated it or a core issue if it comes from Drupal itself.",
+          "The tag '%tag' contains a space, this is forbidden.",
           [
             '%tag' => $expression,
           ]
@@ -294,24 +291,16 @@ class AcquiaCloudPurger extends PurgerBase implements PurgerInterface {
       }
       return;
     }
-    $tags_string = implode('|', $tags);
+    $tags_string = implode(' ', $tags);
 
     // Predescribe the requests to make.
     $requests = [];
     $site_identifier = $this->hostingInfo->getSiteIdentifier();
     foreach ($this->hostingInfo->getBalancerAddresses() as $ip_address) {
-      if (count($tags) === 1) {
-        $r = Request::create("http://$ip_address/tag", 'BAN');
-        $this->disableTrustedHostsMechanism($r);
-        $r->headers->set('X-Acquia-Purge', $site_identifier);
-        $r->headers->set('X-Acquia-Purge-Tag', $tags_string);
-      }
-      else {
-        $r = Request::create("http://$ip_address/tags", 'BAN');
-        $this->disableTrustedHostsMechanism($r);
-        $r->headers->set('X-Acquia-Purge', $site_identifier);
-        $r->headers->set('X-Acquia-Purge-Tags', $tags_string);
-      }
+      $r = Request::create("http://$ip_address/tags", 'BAN');
+      $this->disableTrustedHostsMechanism($r);
+      $r->headers->set('X-Acquia-Purge', $site_identifier);
+      $r->headers->set('X-Acquia-Purge-Tags', $tags_string);
       $r->headers->remove('Accept-Language');
       $r->headers->remove('Accept-Charset');
       $r->headers->remove('Accept');
