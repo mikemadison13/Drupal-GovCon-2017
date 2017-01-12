@@ -6,10 +6,14 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'vierbergenlars\\SemVer\\' => array($vendorDir . '/vierbergenlars/php-semver/src'),
+    'vierbergenlars\\LibJs\\' => array($vendorDir . '/vierbergenlars/php-semver/src'),
+    'phpDocumentor' => array($vendorDir . '/phpdocumentor/reflection-docblock/src'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Stack' => array($vendorDir . '/stack/builder/src'),
     'Solarium\\' => array($vendorDir . '/solarium/solarium/library'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
+    'PHPDocsMD' => array($vendorDir . '/victorjonsson/markdowndocs/src'),
     'JakubOnderka\\PhpConsoleHighlighter' => array($vendorDir . '/jakub-onderka/php-console-highlighter/src'),
     'JakubOnderka\\PhpConsoleColor' => array($vendorDir . '/jakub-onderka/php-console-color/src'),
     'Instagram' => array($vendorDir . '/php-instagram-api/php-instagram-api'),
@@ -23,5 +27,7 @@ return array(
     'Doctrine\\Common\\' => array($vendorDir . '/doctrine/common/lib'),
     'Dflydev\\PlaceholderResolver' => array($vendorDir . '/dflydev/placeholder-resolver/src'),
     'Dflydev\\DotAccessData' => array($vendorDir . '/dflydev/dot-access-data/src'),
+    'Consolidation' => array($vendorDir . '/drush/drush/lib'),
+    'Asm89\\Twig\\Lint\\' => array($vendorDir . '/asm89/twig-lint/src'),
     'Asm89\\Stack' => array($vendorDir . '/asm89/stack-cors/src'),
 );

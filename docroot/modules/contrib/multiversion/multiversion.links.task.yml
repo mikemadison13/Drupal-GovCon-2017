@@ -1,5 +1,0 @@
-multiversion.uninstall:
-  title: Multiversion Uninstall
-  route_name: multiversion.uninstall
-  description: 'Uninstall the Multiversion Module.'
-  base_route: multiversion.uninstall

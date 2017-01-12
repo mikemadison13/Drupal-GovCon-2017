@@ -165,6 +165,8 @@ function multiversion_data_type_info_alter(&$info) {
 function multiversion_field_info_alter(&$info) {
   $info['uuid']['class'] = '\Drupal\multiversion\Field\UuidItem';
   $info['entity_reference']['class'] = '\Drupal\multiversion\EntityReferenceItem';
+  $info['file']['class'] = '\Drupal\multiversion\FileItem';
+  $info['image']['class'] = '\Drupal\multiversion\ImageItem';
 }
 
 /**

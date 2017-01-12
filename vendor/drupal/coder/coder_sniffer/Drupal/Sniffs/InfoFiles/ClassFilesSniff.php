@@ -2,8 +2,6 @@
 /**
  * Drupal_Sniffs_InfoFiles_ClassFilesSniff.
  *
- * PHP version 5
- *
  * @category PHP
  * @package  PHP_CodeSniffer
  * @link     http://pear.php.net/package/PHP_CodeSniffer
@@ -140,7 +138,8 @@ class Drupal_Sniffs_InfoFiles_ClassFilesSniff implements PHP_CodeSniffer_Sniff
             $data,
             $matches,
             PREG_SET_ORDER
-        ) !== false) {
+        ) !== false
+        ) {
             foreach ($matches as $match) {
                 // Fetch the key and value string.
                 $i = 0;

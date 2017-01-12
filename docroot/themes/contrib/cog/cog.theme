@@ -51,7 +51,7 @@ function cog_preprocess_block(&$variables) {
  */
 function cog_preprocess_node(&$variables) {
   // Helper variables for multiple nodes.
-  if ($variables['elements']['#entity_type']) {
+  if (!empty($variables['elements']['#entity_type'])) {
     $variables['attributes']['class'][] = Html::cleanCssIdentifier('entity--type-' . $variables['elements']['#entity_type']);
   }
 }

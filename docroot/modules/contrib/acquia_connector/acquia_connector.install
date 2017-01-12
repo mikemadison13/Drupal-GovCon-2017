@@ -215,3 +215,18 @@ function acquia_connector_update_8003() {
   $config->set('spi.set_variables_automatic', array_values($variables_automatic));
   $config->save(TRUE);
 }
+
+/**
+ * Delete the multisite related settings as it is not currently supported.
+ */
+function acquia_connector_update_8004() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('acquia_connector.settings');
+
+  $config->clear('spi.multisite_identifier');
+  $config->clear('spi.is_multisite');
+  $config->clear('spi.machine_multisite_identifier');
+
+  $config->save(TRUE);
+}
+

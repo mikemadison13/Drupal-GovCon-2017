@@ -4,8 +4,7 @@ namespace Drupal\Tests\workspace\Functional;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\simpletest\BrowserTestBase;
-use Drupal\Tests\workspace\Functional\WorkspaceTestUtilities;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Test the workspace entity.
@@ -79,4 +78,5 @@ class EntityTypeAlterTest extends BrowserTestBase {
     $length = strlen($i) + 9;
     return Unicode::truncate($rev, $length, FALSE, TRUE);
   }
+
 }

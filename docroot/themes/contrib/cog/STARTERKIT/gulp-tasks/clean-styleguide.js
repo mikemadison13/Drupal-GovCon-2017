@@ -3,8 +3,9 @@
  * Task: Clean:Styleguide.
  */
 
-'use strict';
 module.exports = function (gulp, plugins, options) {
+  'use strict';
+
   // Clean style guide files.
   gulp.task('clean:styleguide', function () {
     // You can use multiple globbing patterns as you would with `gulp.src`.

@@ -34,5 +34,9 @@ view_revision_trees:
   title: View revision trees
   description: View the revision tree for any entities.
 
+update any workspace from upstream:
+  title: Update any workspace from upstream
+  description: Update any workspace with the latest changes from its upstream workspace.
+
 permission_callbacks:
   - workspace.entity_access::workspacePermissions

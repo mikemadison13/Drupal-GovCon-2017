@@ -2,8 +2,6 @@
 /**
  * PHP_CodeSniffer_Sniffs_Drupal_Commenting_InlineCommentSniff.
  *
- * PHP version 5
- *
  * @category PHP
  * @package  PHP_CodeSniffer
  * @link     http://pear.php.net/package/PHP_CodeSniffer
@@ -87,6 +85,7 @@ class Drupal_Sniffs_Commenting_InlineCommentSniff implements PHP_CodeSniffer_Sni
                        T_ABSTRACT,
                        T_CONST,
                        T_PROPERTY,
+                       T_VAR,
                       );
 
             // Also ignore all doc blocks defined in the outer scope (no scope
@@ -262,7 +261,11 @@ class Drupal_Sniffs_Commenting_InlineCommentSniff implements PHP_CodeSniffer_Sni
             $isUrl = isset($matches[0]) === true;
             preg_match('/[$a-zA-Z_]+\([$a-zA-Z_]*\)/', $lastWord, $matches);
             $isFunction = isset($matches[0]) === true;
-            if ($isUrl === false && $isFunction === false) {
+
+            // Also allow closing tags like @endlink or @endcode.
+            $isEndTag = $lastWord[0] === '@';
+
+            if ($isUrl === false && $isFunction === false && $isEndTag === false) {
                 $error = 'Inline comments must end in %s';
                 $ender = '';
                 foreach ($acceptedClosers as $closerName => $symbol) {

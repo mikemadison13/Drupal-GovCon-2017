@@ -13,15 +13,13 @@ namespace Symfony\Component\VarDumper\Tests;
 
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
-use Symfony\Component\VarDumper\Test\VarDumperTestTrait;
+use Symfony\Component\VarDumper\Test\VarDumperTestCase;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class CliDumperTest extends \PHPUnit_Framework_TestCase
+class CliDumperTest extends VarDumperTestCase
 {
-    use VarDumperTestTrait;
-
     public function testGet()
     {
         require __DIR__.'/Fixtures/dumb-var.php';
@@ -44,8 +42,17 @@ class CliDumperTest extends \PHPUnit_Framework_TestCase
         $out = preg_replace('/[ \t]+$/m', '', $out);
         $intMax = PHP_INT_MAX;
         $res = (int) $var['res'];
-
+        $closure54 = '';
         $r = defined('HHVM_VERSION') ? '' : '#%d';
+
+        if (PHP_VERSION_ID >= 50400) {
+            $closure54 = <<<EOTXT
+
+    class: "Symfony\Component\VarDumper\Tests\CliDumperTest"
+    this: Symfony\Component\VarDumper\Tests\CliDumperTest {{$r} …}
+EOTXT;
+        }
+
         $this->assertStringMatchesFormat(
             <<<EOTXT
 array:24 [
@@ -73,9 +80,7 @@ array:24 [
     +foo: "foo"
     +"bar": "bar"
   }
-  "closure" => Closure {{$r}
-    class: "Symfony\Component\VarDumper\Tests\CliDumperTest"
-    this: Symfony\Component\VarDumper\Tests\CliDumperTest {{$r} …}
+  "closure" => Closure {{$r}{$closure54}
     parameters: {
       \$a: {}
       &\$b: {
@@ -115,7 +120,7 @@ EOTXT
         $var = xml_parser_create();
 
         $this->assertDumpMatchesFormat(
-            <<<EOTXT
+            <<<'EOTXT'
 xml resource {
   current_byte_index: %i
   current_column_number: %i
@@ -137,7 +142,7 @@ EOTXT
         $var[''] = 2;
 
         $this->assertDumpMatchesFormat(
-            <<<EOTXT
+            <<<'EOTXT'
 array:4 [
   "0" => {}
   "1" => &1 null
@@ -156,7 +161,7 @@ EOTXT
         $var->{1} = 2;
 
         $this->assertDumpMatchesFormat(
-            <<<EOTXT
+            <<<'EOTXT'
 {
   +1: 1
   +"1": 2
@@ -194,38 +199,6 @@ EOTXT
             ,
             $out
         );
-    }
-
-    public function testFlags()
-    {
-        putenv('DUMP_LIGHT_ARRAY=1');
-        putenv('DUMP_STRING_LENGTH=1');
-
-        $var = array(
-            range(1, 3),
-            array('foo', 2 => 'bar'),
-        );
-
-        $this->assertDumpEquals(
-            <<<EOTXT
-[
-  [
-    1
-    2
-    3
-  ]
-  [
-    0 => (3) "foo"
-    2 => (3) "bar"
-  ]
-]
-EOTXT
-            ,
-            $var
-        );
-
-        putenv('DUMP_LIGHT_ARRAY=');
-        putenv('DUMP_STRING_LENGTH=');
     }
 
     /**
@@ -281,7 +254,7 @@ stream resource {@{$ref}
     -trace: {
       %d. __TwigTemplate_VarDumperFixture_u75a09->doDisplay() ==> new Exception(): {
         src: {
-          %sTwig.php:19: """
+          %sTwig.php:21: """
                 // line 2\\n
                 throw new \Exception('Foobar');\\n
             }\\n
@@ -378,7 +351,7 @@ EOTXT
         $var = $this->getSpecialVars();
 
         $this->assertDumpEquals(
-            <<<EOTXT
+            <<<'EOTXT'
 array:3 [
   0 => array:1 [
     0 => &1 array:1 [
@@ -424,7 +397,7 @@ EOTXT
         $dumper->dump($data);
 
         $this->assertSame(
-            <<<EOTXT
+            <<<'EOTXT'
 array:2 [
   1 => array:1 [
     "GLOBALS" => &1 array:1 [
@@ -466,7 +439,7 @@ EOTXT
         });
 
         $this->assertSame(
-            <<<EOTXT
+            <<<'EOTXT'
 array:1 [
   0 => array:1 [
     0 => array:1 [

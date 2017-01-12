@@ -41,8 +41,11 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
   public function getOperations(EntityInterface $entity) {
     $operations = parent::getOperations($entity);
 
+    // Set the defaults that should not be deletable
+    $protected_defaults = ['global', '403', '404', 'node', 'front', 'taxonomy_term', 'user'];
+
     // Global and entity defaults can be reverted but not deleted.
-    if (strpos($entity->id(), '__') === FALSE) {
+    if (in_array($entity->id(), $protected_defaults)) {
       unset($operations['delete']);
       $operations['revert'] = [
         'title' => t('Revert'),
@@ -109,8 +112,11 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
    */
   public function render() {
     $build['header'] = [
-      '#markup' => '<p>' . t("To view a summary of the default meta tags and the inheritance, click on a meta tag type. If you need to set metatags for a specific entity, edit its bundle and add the Metatag field.") . '</p>',
+      '#markup' => '<p>' . t("Configure global meta tags below using the available field tokens. Fields must be added to the content type prior to meta tag configuration. This allows for custom or standard fields to be utilized as meta tags for more effective results. The standard meta tag field may be used if it has been added to the content type if needed, though this may require greater effort from content managers.") . '</p>'
+        . '<p>' . t("If the top-level configuration is not specific enough, additional default meta tag configuration can be added to a specific node or taxonomy type.") . '</p>'
+        . '<p>' . t("To view a summary of the default meta tags and the inheritance, click on a meta tag type. If you need to set metatags for a specific entity, edit its bundle and add the Metatag field.") . '</p>',
     ];
     return $build + parent::render();
   }
+
 }

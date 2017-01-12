@@ -1,8 +1,62 @@
-## Cog: Acquia D8 Theme
+# Cog: Acquia D8 Theme
 
-Cog is a developer-focused base theme and starterkit created by Acquia's Professional Service FrontEnd Team. It intended as a minimalist starting point for custom theming, while exposing common tools and workflows. Cog provides a small amount of code to get started, but still packed with utilities and documentation to start quickly.
+<ul>
+    <li><a href="#installation">Installation</a>
+        <ul>
+            <li><a href="#create-cog-sub-theme">Create Cog Sub-Theme</a></li>
+            <li><a href="#setup-local-development">Setup Local Development</a>
+            </li>
+        </ul>
+    </li>
+    <li><a href="#overview">Theme Overview</a>
+        <ul>
+            <li><a href="#folder-structure">Folder Structure</a></li>
+            <li><a href="#sass-structure">Sass Structure</a></li>
+            <li><a href="#gulp">Gulp</a></li>
+            <li><a href="#javascript">JavaScript</a></li>
+            <li><a href="#grid-system">Grid System</a></li>
+            <li><a href="#theme-regions">Theme Regions</a></li>
+            <li><a href="#images">Images</a></li>
+        </ul>
+    </li>
+    <li><a href="#further-documentation">Further Documentation</a></li>
+    <li><a href="#build-notes">Build Notes</a></li>
+</ul>
 
-### Features
+----------------
+
+
+## Installation
+
+The Cog theme is set up to utilize the `base => sub-theme` relationship. The steps below will create your custom sub-theme that is cloned from `STARTERKIT/` folder, along with installing the proper dependencies to setup in a matter of minutes. This approach supports release updates, in addition to providing source references for required and optional pieces.
+
+### Create Cog Sub-Theme
+
+* In your `themes/` directory create the `contrib/` and `custom/` directories
+* Download Cog into the `themes/contrib` folder and enable using `drush en cog`
+* Create the sub-theme with `drush cog "MyTheme"`
+* Enable your new `MyTheme` theme with `drush en mytheme` which is located in `themes/custom`
+* Set `MyTheme` as your default theme `drush config-set system.theme default mytheme`
+
+Available options for creating your new theme `drush help cog`
+
+### Setup Local Development
+
+Once you have created a custom sub-theme, you will setup for local compiling. If you would like to review an extension explanation of these steps, read the [full setup readme](_readme/setup-full.md).
+
+* Navigate to `themes/custom/mytheme` folder in your terminal
+* Install Node.js with `./install-node.sh 4.4.4` and then point to the proper version with `source ~/.bashrc && nvm use --delete-prefix 4.4.4` 
+ * (optional) If you are not using avn then run `nvm use 4.4.4` when closing and reopening your session
+ * (optional) If you choose to use avn follow the instructions [here](_readme/setup-full.md#avn)
+* Install the [Yarn](https://yarnpkg.com/en/docs/install) package manager globally `npm install -g yarn` 
+* Run the command `yarn install` within your `themes/custom/mytheme` folder
+* To confirm Gulp and other items are instantiated `npm run build`
+* You can now compile both your Sass and JS with `gulp watch`
+
+
+## Theme Overview
+
+Cog is a developer-focused base theme and starterkit created by Acquia's Professional Service Front-end Team. It is intended as a minimalistic baseline for custom theming, while exposing common tools and workflows. Cog provides a small amount of code to get started, but is still packed with utilities to extend.
 
 * Responsive containers built on Susy grid system
 * Initial SMACSS file architecture
@@ -11,47 +65,18 @@ Cog is a developer-focused base theme and starterkit created by Acquia's Profess
 * Modular gulp tasks for compiling and linting
 * Living style guide construction via KSS-node
 
-## Set up your Theme with Cog
-
 Cog is created with the intent of being used as a traditional base theme. By following the steps listed next, you will be cloning the starter sub-theme located in `cog/STARTERKIT`. This allows for proper delineation of the original Cog code from the flexible aspects of your custom theme.  
 
 ```
 contrib/ (theme folder)
 |-- cog/
 |---- STARTERKIT/ 
+
 custom/ (theme folder)
 |-- mytheme/ (cloned from starterkit) 
 ```
 
-### Create your custom sub-theme
-
-* In your `themes/` directory create the `contrib` and `custom` directories
-* Download Cog into the `themes/contrib` folder and enable Cog using `drush en cog`
-* Set Cog as your default theme: `drush config-set system.theme default cog`
-* To create a subtheme using the default options use `drush cog "MyTheme"`
-* Enable your new `MyTheme` theme with `drush en mytheme` which is located in `themes/custom`
-* Set `MyTheme` as your default theme `drush config-set system.theme default mytheme`
-
-Available options for creating your new theme `drush help cog`
-
-### Setup locally for development
-
-Once you have created a custom subtheme, you will know follow these quick steps to start. If you would like to review extension explanations of these steps, be sure to read the [full setup readme](_readme/setup-full.md).
-
-* Navigate to `themes/custom/mytheme` folder in your terminal
-* Install Node.js with `./install-node.sh 4.4.4` and then point to the proper version with `source ~/.bashrc && nvm use --delete-prefix 4.4.4` 
-* If you are not using avn then run `nvm use 4.4.4` when closing and reopening your session
-* If you choose to use avn follow the instructions [here](_readme/setup-full.md#avn)
-* Install local library dependencies `npm run install-tools`
-* To confirm Gulp and other items are instantiated `npm run build`
-* You can now compile both your Sass and JS with `gulp watch` from your theme directory
-
-
-## Theme Architecture Overview
-
-### Files & Folder Structure
-
-The core files are fairly minimal when setting up a new theme. These files are considered as the initial configurable pieces. 
+### Folder Structure
 
 ```
 |-- css/  (generated css) 
@@ -95,17 +120,17 @@ sass/
 * **_config.scss** this configuration is housing common mixins, variables, or similar, normally you would want to break these out in separate partials
 * **styles.scss**  the manifest file that imports all the partials or folders with globbing 
 * **base/** intended as the baseline pstyles that you extend upon and will include things like resets, global typography, or common form selectors.
-* **layout/**  for structural layout that can apply to both the outer containers like the sidebars or headers, but also on inner structual pieces.
+* **layout/**  for structural layout that can apply to both the outer containers like the sidebars or headers, but also on inner structural pieces.
 * **components/** these module files are the reusable or component parts of our design.
 * **state/** modules will adjust when in a particular state, in regards to targeting how changes happen on contextual alterations for regions or similar  
 * **style-guide-only/** contains homepage.md which provides the content for the Overview section of the styleguide, and kss-only.scss which generates a css file for styling needed by a component for display in the style guide, but not loaded into the actual theme  
 
 ### Gulp 
 
-The Gulp installation and tasks are setup to work on install, but are still intended to be easily updates based on project needs. The tasks are declared in `gulpfile.js` and broken out within the `gulp-tasks/` subfolder. You can list the available Gulp tasks with `gulp --tasks`. The most common gulp task is `gulp watch` when developing locally, which covers Sass compiling, JS linting, and building dynamic styleguides.  
+The Gulp installation and tasks are setup to work on install, but are still intended to be easily updated based on project needs. The tasks are declared in `gulpfile.js` and broken out within the `gulp-tasks/` subfolder. You can list the available Gulp tasks with `gulp --tasks`. The most common gulp task is `gulp watch` when developing locally, which covers Sass compiling, JS linting, and building dynamic styleguides.  
 
 
-### JavaScript Files
+### JavaScript
 
 An example JS file `theme.js` is added by default in the `js/` folder. This file contains sample code wrapped in the `Drupal.behaviors` code standard. This JS file is added to the theme with the following portion of the code from `[theme-name].libraries.yml`. Cog does not have compression enabled for Gulp since it is relying on Drupal's caching system. 
 
@@ -115,16 +140,14 @@ lib:
     js/theme.js: {}
 ```
 
-### Theme Layout
 
-
-#### Grid System
+### Grid System
 
 The Cog grid structure was setup with the intent of having a very minimalist starting point. The theme grid container is setup with a single class `.mq--t` located in `layout/_containers.scss` that contains the following starter Susy container: `@include container(80em)`. In the `layout/_sidebars.scss` file is the column code for each combination of sidebars based on the Susy syntax. The body classes are defined with a preprocess conditional in `[theme-name].theme` for each scenario.
 
-#### Theme Regions
+### Theme Regions
 
-The regions avaiable are standard with classic sidebar region, along with pre and post content areas. The intent is to allow for containers to go full-width and rely on the grid containers for inner Susy containers. 
+The regions available are standard with classic sidebar region, along with pre and post content areas. The intent is to allow for containers to go full-width and rely on the grid containers for inner Susy containers.
 
 ```
 [theme-name].info.yml
@@ -132,11 +155,11 @@ The regions avaiable are standard with classic sidebar region, along with pre an
 regions:
   branding: Branding
   header: Header
-  pre_content: 'Pre Content'
+  pre_content: 'Pre content'
   content: Content
   sidebar_first: 'Sidebar first'
   sidebar_second: 'Sidebar second'
-  post_content: 'Post Content'
+  post_content: 'Post content'
   footer: Footer
 ```
 ![regions](http://content.screencast.com/users/BedimStudios/folders/Jing/media/8ad8ecf1-bb60-4292-80b0-115fae8daac0/00001643.png)
@@ -149,10 +172,8 @@ The images designated for your custom theme can be placed in the `images/` folde
 
 ## Further Documentation
 
-Cog also ships with an extensive list of documentation and code samples that were intentionally left of of the theme. 
+Cog also ships with an extensive list of documentation and code samples that which were intentionally left out of the theme. 
 We have collected all the examples in an easy reference [listed here](_theming-guide/readme.md).
-
-
 
 
 ## Build Notes

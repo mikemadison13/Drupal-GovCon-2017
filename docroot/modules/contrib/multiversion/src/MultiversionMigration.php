@@ -4,7 +4,7 @@ namespace Drupal\multiversion;
 
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -19,9 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MultiversionMigration implements MultiversionMigrationInterface {
 
   /**
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface
@@ -41,9 +41,9 @@ class MultiversionMigration implements MultiversionMigrationInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, EntityManagerInterface $entity_manager) {
+  public static function create(ContainerInterface $container, EntityTypeManagerInterface $entity_type_manager) {
     return new static(
-      $entity_manager,
+      $entity_type_manager,
       $container->get('entity.definition_update_manager'),
       $container->get('module_handler'),
       $container->get('module_installer')
@@ -53,16 +53,17 @@ class MultiversionMigration implements MultiversionMigrationInterface {
   /**
    * Constructor.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $update_manager
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    * @param \Drupal\Core\Extension\ModuleInstallerInterface $module_installer
    */
-  public function __construct(EntityManagerInterface $entity_manager, EntityDefinitionUpdateManagerInterface $update_manager, ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityDefinitionUpdateManagerInterface $update_manager, ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->updateManager = $update_manager;
     $this->moduleHandler = $module_handler;
     $this->moduleInstaller = $module_installer;
+    
   }
 
   /**
@@ -124,7 +125,7 @@ class MultiversionMigration implements MultiversionMigrationInterface {
   /**
    * {@inheritdoc}
    */
-  public function emptyOldStorage(EntityTypeInterface $entity_type, EntityStorageInterface $storage) {
+  public function emptyOldStorage(EntityStorageInterface $storage) {
     $entities = $storage->loadMultiple();
     if ($entities) {
       // Purge entities if the storage class is an instance of
@@ -199,9 +200,15 @@ class MultiversionMigration implements MultiversionMigrationInterface {
    */
   public function getFieldMap(EntityTypeInterface $entity_type, $migration_from_tmp = FALSE) {
     $map = array();
-    $bundle_info = $this->entityManager->getBundleInfo($entity_type->id());
+    // For some reasons it sometimes doesn't work if injecting the service.
+    $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
+    $entity_type_bundle_info->clearCachedBundles();
+    $bundle_info = $entity_type_bundle_info->getBundleInfo($entity_type->id());
     foreach ($bundle_info as $bundle_id => $bundle_label) {
-      $definitions = $this->entityManager->getFieldDefinitions($entity_type->id(), $bundle_id);
+      // For some reasons it sometimes doesn't work if injecting the service.
+      $entity_field_manager = \Drupal::service('entity_field.manager');
+      $entity_field_manager->clearCachedFieldDefinitions();
+      $definitions = $entity_field_manager->getFieldDefinitions($entity_type->id(), $bundle_id);
       foreach ($definitions as $definition) {
         $name = $definition->getName();
         $type = $definition->getType();

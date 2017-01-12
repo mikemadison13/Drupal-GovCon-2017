@@ -7,5 +7,5 @@
 // Style guide: components.header
 
 .region-header {
-  @include region-spacer($md-gr);
+  @include region-spacer($light-gray);
 }

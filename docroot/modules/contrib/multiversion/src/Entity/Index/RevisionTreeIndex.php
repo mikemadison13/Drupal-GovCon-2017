@@ -6,6 +6,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\multiversion\Entity\Workspace;
 use Drupal\multiversion\Workspace\WorkspaceManagerInterface;
+use Fhaculty\Graph\Graph;
 
 /**
  * @todo: {@link https://www.drupal.org/node/2597444 Consider caching once/if
@@ -63,6 +64,75 @@ class RevisionTreeIndex implements RevisionTreeIndexInterface {
   public function getTree($uuid) {
     $values = $this->buildTree($uuid);
     return $values['tree'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getGraph($uuid) {
+    $tree = $this->getTree($uuid);
+    $graph = new Graph();
+    $rev_ids = array();
+    $this->storeNodesId($tree, $rev_ids);
+    $vertices = $this->generateVertices($graph, $rev_ids);
+    $this->generateEdges($vertices, $tree);
+    return $graph;
+  }
+
+  /**
+   * Helper function to store all revision IDs in an array.
+   *
+   * @param array $tree
+   *   An associative array containing information about tree.
+   * @param array $rev_ids
+   *   An array to store all revision ID.
+   */
+  protected function storeNodesId($tree, &$revision_ids) {
+    foreach ($tree as $value) {
+      $current_id = $value['#rev'];
+      $revision_ids[$current_id] = $current_id;
+      if (count($value['children'])) {
+        $this->storeNodesId($value['children'], $revision_ids);
+      }
+    }
+  }
+
+  /**
+   * Helper function to create Edges between parent and children.
+   *
+   * @param array $revisions_array
+   *   Associative array containing graph nodes.
+   * @param array $tree
+   *   Associative array containing tree structure.
+   * @param int $parent
+   *   Parent vertex Id.
+   */
+  protected function generateEdges($revisions_array, $tree, $parent = -1 ) {
+    foreach ($tree as $item) {
+      $current_id = $item['#rev'];
+      if($parent != -1) {
+        $revisions_array[$parent]->createEdgeTo($revisions_array[$current_id]);
+      }
+      if(count($item['children'])) {
+        $this->generateEdges($revisions_array, $item['children'], $current_id);
+      }
+    }
+  }
+
+  /**
+   * Generates vertices for Graph.
+   *
+   * @param Graph $graph
+   * @param array $revision_ids
+   *
+   * @return array
+   *   An array of vertices.
+   */
+  protected function generateVertices(Graph $graph, $revision_ids) {
+    foreach ($revision_ids as $id) {
+      $ids[] = $id;
+    }
+    return $graph->createVertices($ids)->getMap();
   }
 
   /**

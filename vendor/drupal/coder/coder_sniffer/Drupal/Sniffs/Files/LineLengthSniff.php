@@ -2,8 +2,6 @@
 /**
  * Drupal_Sniffs_Files_LineLengthSniff.
  *
- * PHP version 5
- *
  * @category PHP
  * @package  PHP_CodeSniffer
  * @link     http://pear.php.net/package/PHP_CodeSniffer
@@ -89,6 +87,10 @@ class Drupal_Sniffs_Files_LineLengthSniff extends Generic_Sniffs_Files_LineLengt
                 // Allow long paths or namespaces in annotations such as
                 // "list_builder" = "Drupal\rules\Entity\Controller\RulesReactionListBuilder".
                 || preg_match('#= ("|\')\S+[\\\\/]\S+("|\'),*$#', $tokens[($stackPtr - 2)]['content']) === 1)
+                // Allow @link tags in lists.
+                || strpos($tokens[($stackPtr - 2)]['content'], '- @link') !== false
+                // Allow hook implementation line to exceed 80 characters.
+                || preg_match('/^Implements hook_[a-zA-Z0-9_]+\(\)/', $tokens[($stackPtr - 2)]['content']) === 1
             ) {
                 return;
             }
@@ -102,8 +104,8 @@ class Drupal_Sniffs_Files_LineLengthSniff extends Generic_Sniffs_Files_LineLengt
     /**
      * Returns the length of a defined line.
      *
-     * @param PHP_CodeSniffer_File $phpcsFile
-     * @param int                  $currentLine
+     * @param PHP_CodeSniffer_File $phpcsFile   The file being scanned.
+     * @param int                  $currentLine The current line.
      *
      * @return int
      */

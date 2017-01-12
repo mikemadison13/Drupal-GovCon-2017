@@ -46,7 +46,7 @@ services:
     arguments: ['@database']
   multiversion.manager:
     class: Drupal\multiversion\MultiversionManager
-    arguments: ['@workspace.manager', '@serializer', '@entity.manager', '@state', '@language_manager', '@cache.discovery', '@database']
+    arguments: ['@workspace.manager', '@serializer', '@entity.manager', '@state', '@language_manager', '@cache.discovery', '@database', '@entity_field.manager']
     calls:
       - [setContainer, ['@service_container']]
   workspace.manager:
@@ -89,3 +89,7 @@ services:
       - [setWorkspaceManager, ['@workspace.manager']]
     tags:
       - { name: workspace_negotiator, priority: 100 }
+  conflict.complexlca_resolver:
+    class: Drupal\multiversion\Entity\Index\ComplexLcaResolver
+    tags:
+      - { name: lca_resolver, priority: 20 }

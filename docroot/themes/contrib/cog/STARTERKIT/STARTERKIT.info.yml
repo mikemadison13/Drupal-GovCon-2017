@@ -1,22 +1,23 @@
-name: STARTERKIT
+name: Cog STARTERKIT
 type: theme
 description: 'Acquia D8 starter theme'
 # core: 8.x
 base theme: cog
 libraries:
-  - STARTERKIT/lib
+  - STARTERKIT/fonts
+  - STARTERKIT/global
 regions:
   branding: Branding
   header: Header
-  pre_content: 'Pre Content'
+  pre_content: 'Pre content'
   content: Content
   sidebar_first: 'Sidebar first'
   sidebar_second: 'Sidebar second'
-  post_content: 'Post Content'
+  post_content: 'Post content'
   footer: Footer
 
-# Information added by Drupal.org packaging script on 2016-09-26
-version: '8.x-1.0'
+# Information added by Drupal.org packaging script on 2016-12-16
+version: '8.x-1.3'
 core: '8.x'
 project: 'cog'
-datestamp: 1474908678
+datestamp: 1481917084

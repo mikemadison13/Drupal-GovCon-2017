@@ -25,7 +25,6 @@ class PanelizerNode extends PanelizerEntityBase {
   public function getDefaultDisplay(EntityViewDisplayInterface $display, $bundle, $view_mode) {
     $panels_display = parent::getDefaultDisplay($display, $bundle, $view_mode)
       ->setPageTitle('[node:title]');
-    $panels_display->setConfiguration(['label' => $this->t('Default')] + $panels_display->getConfiguration());
 
     // Remove the 'title' block because it's covered already.
     foreach ($panels_display->getRegionAssignments() as $region => $blocks) {

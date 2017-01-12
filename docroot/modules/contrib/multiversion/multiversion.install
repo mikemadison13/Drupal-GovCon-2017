@@ -2,7 +2,6 @@
 
 use Drupal\multiversion\Entity\Workspace;
 use Drupal\Core\Database\Database;
-use Drupal\Core\Utility\UpdateException;
 use \Drupal\Core\Database\Driver\mysql\Connection;
 use Drupal\multiversion\MultiversionMigration;
 
@@ -132,22 +131,6 @@ function multiversion_update_8001() {
     }
   }
 }
-
-/**
- * Enable content_storage_migrate module.
- */
-function multiversion_update_8002() {
-  if (!Drupal::moduleHandler()->moduleExists('entity_storage_migrate')) {
-    $modules = array('entity_storage_migrate');
-    // Enable the module.
-    $enabled = \Drupal::service('module_installer')->install($modules);
-    // If not, throw an exception.
-    if (!$enabled) {
-      throw new UpdateException('Could not enable entity_storage_migrate module.');
-    }
-  }
-}
-
 
 /**
  * Update user entity type to non-multiversionable.

@@ -2,8 +2,7 @@
 
 namespace Drupal\Tests\workspace\Functional;
 
-use Drupal\simpletest\BrowserTestBase;
-use Drupal\Tests\workspace\Functional\WorkspaceTestUtilities;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Test the workspace entity.
@@ -39,4 +38,5 @@ class WorkspaceTest extends BrowserTestBase {
     $page->findButton(t('Save'))->click();
     $session->getPage()->hasContent("This value is not valid");
   }
+  
 }

@@ -3,8 +3,9 @@
  * Task: Build.
  */
 
-'use strict';
 module.exports = function (gulp, plugins, options) {
+  'use strict';
+
   gulp.task('build', [
     'compile:sass',
     'minify:css',

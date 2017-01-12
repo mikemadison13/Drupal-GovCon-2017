@@ -6,11 +6,15 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_preprocess_html().
  */
 function STARTERKIT_preprocess_html(&$variables) {
+  $path = \Drupal::service('path.current')->getPath();
+  $alias = trim(\Drupal::service('path.alias_manager')
+    ->getAliasByPath($path), '/');
   // Body classes for sidebars.
   if (isset($variables['page']['sidebar_first']) && isset($variables['page']['sidebar_second'])) {
     $variables['attributes']['class'][] = Html::cleanCssIdentifier('body-sidebars-both');
@@ -24,10 +28,31 @@ function STARTERKIT_preprocess_html(&$variables) {
   else {
     $variables['attributes']['class'][] = Html::cleanCssIdentifier('body-sidebars-none');
   }
-  $system_path = \Drupal::service('path.current')->getPath();
-  $page_path = explode('/', $system_path)[1];
-  if (!empty($page_path)) {
-    $variables['attributes']['class'][] = Html::cleanCssIdentifier('path--' . $page_path);
+  // Alias path class.
+  $alias_class = preg_replace("/\//", '-', $alias);
+  if (!empty($alias_class) && strpos($alias_class, 'node') !== 0) {
+    $variables['attributes']['class'][] = Html::cleanCssIdentifier('alias--' . $alias_class);
+  }
+  // If is homepage.
+  $variables['attributes']['class'][] = \Drupal::service('path.matcher')
+    ->isFrontPage() ? 'frontpage' : '';
+  // Node type class.
+  $variables['attributes']['class'][] = isset($variables['node_type']) ? 'nodetype--' . $variables['node_type'] : '';
+  // Logged in class.
+  $variables['attributes']['class'][] = $variables['logged_in'] ? 'log-in' : 'log-out';
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function STARTERKIT_preprocess_page(&$variables) {
+  // Check if page is panel pages.
+  $route_options = \Drupal::routeMatch()->getRouteObject()->getOptions();
+  if (isset($route_options['parameters']['page_manager_page'])) {
+    $variables['attributes']['class'][] = Html::cleanCssIdentifier('page-panel');
+  }
+  else {
+    $variables['attributes']['class'][] = Html::cleanCssIdentifier('page-standard');
   }
 }
 
@@ -51,7 +76,57 @@ function STARTERKIT_preprocess_block(&$variables) {
  */
 function STARTERKIT_preprocess_node(&$variables) {
   // Helper variables for multiple nodes.
-  if ($variables['elements']['#entity_type']) {
+  if (!empty($variables['elements']['#entity_type'])) {
     $variables['attributes']['class'][] = Html::cleanCssIdentifier('entity--type-' . $variables['elements']['#entity_type']);
   }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter() for \Drupal\node\NodeForm.
+ * Changes vertical tabs to container and adds meta information.
+ * Code borrowed from Seven theme.
+ */
+function STARTERKIT_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  $node = $form_state->getFormObject()->getEntity();
+  $form['#theme'] = array('node_edit_form');
+  $form['advanced']['#type'] = 'container';
+  $is_new = !$node->isNew() ? format_date($node->getChangedTime(), 'short') : t('Not saved yet');
+  $form['meta'] = array(
+    '#attributes' => array('class' => array('entity-meta__header')),
+    '#type'       => 'container',
+    '#group'      => 'advanced',
+    '#weight'     => -100,
+    'published'   => array(
+      '#type'       => 'html_tag',
+      '#tag'        => 'h3',
+      '#value'      => $node->isPublished() ? t('Published') : t('Not published'),
+      '#access'     => !$node->isNew(),
+      '#attributes' => array(
+        'class' => 'entity-meta__title',
+      ),
+    ),
+    'changed'     => array(
+      '#type'               => 'item',
+      '#wrapper_attributes' => array(
+        'class' => array(
+          'entity-meta__last-saved',
+          'container-inline',
+        ),
+      ),
+      '#markup'             => '<h4 class="label inline">' . t('Last saved') . '</h4> ' . $is_new,
+    ),
+    'author'      => array(
+      '#type'               => 'item',
+      '#wrapper_attributes' => array(
+        'class' => array(
+          'author',
+          'container-inline',
+        ),
+      ),
+      '#markup'             => '<h4 class="label inline">' . t('Author') . '</h4> ' . $node->getOwner()
+          ->getUsername(),
+    ),
+  );
+  $form['revision_information']['#type'] = 'container';
+  $form['revision_information']['#group'] = 'meta';
 }

@@ -281,7 +281,7 @@ function drush_get_global_options($brief = FALSE) {
 
   if (!$brief) {
     $options['version']            = array('description' => "Show drush version.");
-    $options['php']                = array('description' => "The absolute path to your PHP intepreter, if not 'php' in the path.", 'example-value' => '/path/to/file', 'never-propagate' => TRUE);
+    $options['php']                = array('description' => "The absolute path to your PHP interpreter, if not 'php' in the path.", 'example-value' => '/path/to/file', 'never-propagate' => TRUE);
     $options['interactive']        = array('short-form' => 'ia', 'description' => "Force interactive mode for commands run on multiple targets (e.g. `drush @site1,@site2 cc --ia`).", 'never-propagate' => TRUE);
     $options['tty']                = array('hidden' => TRUE, 'description' => "Force allocation of tty for remote commands", 'never-propagate' => TRUE);
     $options['quiet']               = array('short-form' => 'q', 'description' => 'Suppress non-error messages.');
@@ -1262,23 +1262,23 @@ function drush_log($message, $type = LogLevel::NOTICE, $error = null) {
 }
 
 /**
+ * Future: add some sort of dependency injection to Drush.
+ */
+function _drush_create_default_logger() {
+  $drush_logger = new Logger();
+  drush_set_context('DRUSH_LOGGER', $drush_logger);
+  drush_set_context('DRUSH_LOG_CALLBACK', $drush_logger);
+}
+
+/**
  * Call the default logger, or the user's log callback, as
  * appropriate.
  */
 function _drush_log($entry) {
   $callback = drush_get_context('DRUSH_LOG_CALLBACK');
-  if (!$callback) {
-    $callback = \Drush::logger();
-  }
 
   if ($callback instanceof LoggerInterface) {
-    $context = $entry;
-    $log_level = $entry['type'];
-    $message = $entry['message'];
-    unset($entry['type']);
-    unset($entry['message']);
-
-    $callback->log($log_level, $message, $context);
+    _drush_log_to_logger($callback, $entry);
   }
   elseif ($callback) {
     $log =& drush_get_context('DRUSH_LOG', array());
@@ -1286,6 +1286,25 @@ function _drush_log($entry) {
     drush_backend_packet('log', $entry);
     return $callback($entry);
   }
+}
+
+// Maintain compatibility with extensions that hook into
+// DRUSH_LOG_CALLBACK (e.g. drush_ctex_bonus)
+function _drush_print_log($entry) {
+  $drush_logger = drush_get_context('DRUSH_LOGGER');
+  if ($drush_logger) {
+    _drush_log_to_logger($drush_logger, $entry);
+  }
+}
+
+function _drush_log_to_logger($logger, $entry) {
+    $context = $entry;
+    $log_level = $entry['type'];
+    $message = $entry['message'];
+    unset($entry['type']);
+    unset($entry['message']);
+
+    $logger->log($log_level, $message, $context);
 }
 
 function drush_log_has_errors($types = array(LogLevel::WARNING, LogLevel::ERROR, LogLevel::FAILED)) {

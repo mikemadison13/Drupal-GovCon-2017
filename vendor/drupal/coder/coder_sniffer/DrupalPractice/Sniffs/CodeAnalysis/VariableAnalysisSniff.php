@@ -2,8 +2,6 @@
 /**
  * This file is part of the VariableAnalysis addon for PHP_CodeSniffer.
  *
- * PHP version 5
- *
  * @category  PHP
  * @package   PHP_CodeSniffer
  * @author    Sam Graham <php-codesniffer-variableanalysis BLAHBLAH illusori.co.uk>
@@ -550,13 +548,13 @@ class DrupalPractice_Sniffs_CodeAnalysis_VariableAnalysisSniff implements PHP_Co
      *  Allows exceptions in a catch block to be unused without provoking unused-var warning.
      *  Set generic.codeanalysis.variableanalysis.allowUnusedCaughtExceptions to a true value.
      */
-    public $allowUnusedCaughtExceptions = false;
+    public $allowUnusedCaughtExceptions = true;
 
     /**
      *  Allow function parameters to be unused without provoking unused-var warning.
      *  Set generic.codeanalysis.variableanalysis.allowUnusedFunctionParameters to a true value.
      */
-    public $allowUnusedFunctionParameters = false;
+    public $allowUnusedFunctionParameters = true;
 
     /**
      *  A list of names of placeholder variables that you want to ignore from
@@ -1163,8 +1161,23 @@ class DrupalPractice_Sniffs_CodeAnalysis_VariableAnalysisSniff implements PHP_Co
                 // TODO: typeHints in use?
                 $this->markVariableDeclaration($varName, 'bound', null, $stackPtr, $functionPtr);
                 $this->markVariableAssignment($varName, $stackPtr, $functionPtr);
+
+                // Are we pass-by-reference?
+                $referencePtr = $phpcsFile->findPrevious(
+                    T_WHITESPACE,
+                    ($stackPtr - 1),
+                    null,
+                    true,
+                    null,
+                    true
+                );
+                if (($referencePtr !== false) && ($tokens[$referencePtr]['code'] === T_BITWISE_AND)) {
+                    $varInfo = $this->getVariableInfo($varName, $functionPtr);
+                    $varInfo->passByReference = true;
+                }
+
                 return true;
-            }
+            }//end if
         }//end if
 
         return false;
@@ -1268,7 +1281,8 @@ class DrupalPractice_Sniffs_CodeAnalysis_VariableAnalysisSniff implements PHP_Co
              'argv',
              'argc',
             )
-        ) === true) {
+        ) === true
+        ) {
             return true;
         }
 

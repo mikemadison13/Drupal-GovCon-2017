@@ -8,8 +8,8 @@ dependencies:
   - cloudflare
   - purge
 
-# Information added by Drupal.org packaging script on 2016-10-10
-version: '8.x-1.0-alpha4'
+# Information added by Drupal.org packaging script on 2016-11-01
+version: '8.x-1.0-alpha7'
 core: '8.x'
 project: 'cloudflare'
-datestamp: 1476105240
+datestamp: 1477961354

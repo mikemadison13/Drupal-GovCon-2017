@@ -10,7 +10,7 @@
 // Sidebar First /////////////////
 //////////////////////////////////
 .body-sidebars-first {
-  @include breakpoint($min-tablet) {
+  @media #{$up-sm}  {
     aside.sidebar-first {
       @include span(3 of 12);
       > * {
@@ -29,7 +29,7 @@
 // Sidebar Second ////////////////
 //////////////////////////////////
 .body-sidebars-second {
-  @include breakpoint($min-tablet) {
+  @media #{$up-sm}  {
     aside.sidebar-second {
       @include span(3 of 12 last);
       > * {
@@ -48,7 +48,7 @@
 // Sidebar Both //////////////////
 //////////////////////////////////
 .body-sidebars-both {
-  @include breakpoint($min-tablet) {
+  @media #{$up-sm}  {
     aside.sidebar-first {
       @include span(2 of 12);
       > * {

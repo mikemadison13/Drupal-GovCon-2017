@@ -3,15 +3,12 @@
 namespace Drupal\multiversion\Entity\Storage\Sql;
 
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\entity_storage_migrate\Entity\Storage\ContentEntityStorageSchemaTrait;
 use Drupal\file\FileStorageSchema as CoreFileStorageSchema;
 
 /**
  * Storage schema handler for files.
  */
 class FileStorageSchema extends CoreFileStorageSchema {
-
-  use ContentEntityStorageSchemaTrait;
 
   /**
    * {@inheritdoc}

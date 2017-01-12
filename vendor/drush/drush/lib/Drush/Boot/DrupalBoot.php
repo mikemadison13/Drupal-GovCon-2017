@@ -3,9 +3,11 @@
 namespace Drush\Boot;
 
 use Drush\Log\LogLevel;
-use Psr\Log\LoggerInterface;
 
 abstract class DrupalBoot extends BaseBoot {
+
+  function __construct() {
+  }
 
   function valid_root($path) {
   }
@@ -109,7 +111,7 @@ abstract class DrupalBoot extends BaseBoot {
     $searchpath = array();
     switch ($phase) {
       case DRUSH_BOOTSTRAP_DRUPAL_ROOT:
-        $drupal_root = \Drush::bootstrapManager()->getRoot();
+        $drupal_root = drush_get_context('DRUSH_SELECTED_DRUPAL_ROOT');
         $searchpath[] = $drupal_root . '/../drush';
         $searchpath[] = $drupal_root . '/drush';
         $searchpath[] = $drupal_root . '/sites/all/drush';
@@ -254,7 +256,7 @@ abstract class DrupalBoot extends BaseBoot {
    * context and DRUPAL_ROOT constant if it is considered a valid option.
    */
   function bootstrap_drupal_root_validate() {
-    $drupal_root = \Drush::bootstrapManager()->getRoot();
+    $drupal_root = drush_get_context('DRUSH_SELECTED_DRUPAL_ROOT');
 
     if (empty($drupal_root)) {
       return drush_bootstrap_error('DRUSH_NO_DRUPAL_ROOT', dt("A Drupal installation directory could not be found"));
@@ -269,7 +271,7 @@ abstract class DrupalBoot extends BaseBoot {
       return drush_set_error('DRUSH_DRUPAL_VERSION_UNSUPPORTED', dt('Drush !drush_version does not support Drupal !major_version.', array('!drush_version' => DRUSH_VERSION, '!major_version' => $major_version)));
     }
 
-    drush_bootstrap_value('drupal_root', realpath($drupal_root));
+    drush_bootstrap_value('drupal_root', $drupal_root);
     define('DRUSH_DRUPAL_SIGNATURE', $signature);
 
     return TRUE;
@@ -307,7 +309,7 @@ abstract class DrupalBoot extends BaseBoot {
 
     _drush_preflight_global_options();
 
-    $this->logger->log(LogLevel::BOOTSTRAP, dt("Initialized Drupal !version root directory at !drupal_root", array("!version" => $version, '!drupal_root' => $drupal_root)));
+    drush_log(dt("Initialized Drupal !version root directory at !drupal_root", array("!version" => $version, '!drupal_root' => $drupal_root)), LogLevel::BOOTSTRAP);
   }
 
   /**
@@ -406,7 +408,7 @@ abstract class DrupalBoot extends BaseBoot {
     $site = drush_set_context('DRUSH_DRUPAL_SITE', drush_bootstrap_value('site'));
     $conf_path = drush_set_context('DRUSH_DRUPAL_SITE_ROOT', drush_bootstrap_value('conf_path'));
 
-    $this->logger->log(LogLevel::BOOTSTRAP, dt("Initialized Drupal site !site at !site_root", array('!site' => $site, '!site_root' => $conf_path)));
+    drush_log(dt("Initialized Drupal site !site at !site_root", array('!site' => $site, '!site_root' => $conf_path)), LogLevel::BOOTSTRAP);
 
     _drush_preflight_global_options();
   }
@@ -518,7 +520,7 @@ abstract class DrupalBoot extends BaseBoot {
   function bootstrap_drupal_database() {
     // We presume that our derived classes will connect and then
     // either fail, or call us via parent::
-    $this->logger->log(LogLevel::BOOTSTRAP, dt("Successfully connected to the Drupal database."));
+    drush_log(dt("Successfully connected to the Drupal database."), LogLevel::BOOTSTRAP);
   }
 
   /**

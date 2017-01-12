@@ -46,7 +46,6 @@ class PanelizerNodeFunctionalTest extends WebTestBase {
     $user = $this->drupalCreateUser([
       'administer node display',
       'administer nodes',
-      'administer pages',
       'administer content types',
       'create page content',
       'create article content',

@@ -1,3 +1,42 @@
+## 2.0.1
+* Replaced test files with generic Lightning logos. (Issue #2836442)
+
+##  2.0.0
+* Switched to the official Drupal.org packagist.
+
+## 1.14
+* Added Panelizer support for view mode descriptions. (Issue #2828638)
+* Tarball releases are now built with contrib versions from drupal.org and not
+  git (Issue #2827227)
+* Updated Panelizer patch to fix a problem where it did not properly define its
+  dependency on Field UI (GitHub #226)
+* Improved the author-facing Panelizer experience by implementing "Internal"
+  View Modes for which Panelizer is always disabled. (GitHub #194 & 223)
+* Fixed a bug where Lightning assumptions + certain contrib modules would cause
+  an infinite loop. (Issue #2831550)
+* Included a script that will convert your project's root composer.json file to
+  use the official Drupal.org packagist and update your project to Lightning
+  2.0.0 which also uses the official Packagist. (See: [Lightning Packagist Switch](http://lightning.acquia.com/blog/packagist-switch))
+* Lightning no longer provides default content for the Shortcut menu.
+  (Issue #2834874)
+* Made it possible for modules and themes to pass CSS to a CKEditor instance.
+  (Issue #2729377)
+
+## 1.13
+* Tests now ensure that composer.lock is kept up to date. (GitHub #132)
+* The page title block is now properly placed in the Seven theme. (GitHub #190)
+* Twitter media entities can now be configured to automatically generate
+  thumbnails for textual tweets. (GitHub #203)
+* CI now uses database snapshots for update tests. (GitHub #201)
+* Fix Multiversion regression of node revisions list. (Issue #2824633
+  and #2825477)
+* Display modes and user roles can now have associated descriptions.
+  (GitHub #195)
+* Improved usability of the Panelizer interface. (Issue #2826071)
+* Lightning extender can now be used to exclude submodules of Lightning
+  extensions. (GitHub #220)
+* Updated all dependencies and core to their latest releases. (GitHub #219)
+
 ## 1.12
 * Drupal core, and several contributed dependencies, were updated to their
   latest stable releases.

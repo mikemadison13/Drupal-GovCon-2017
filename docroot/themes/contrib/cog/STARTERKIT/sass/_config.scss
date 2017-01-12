@@ -1,17 +1,19 @@
 // Colors ///////////////
-$wht: #fafafa;
-$lt-blk: #323232;
+// common colors
+$white: #fff;
 $red: #ee696c;
-$sft-blu: #226e8e;
-$lt-blu: #f3f9fc;
-$md-gr: #999;
-$slv: #ccc;
-$lt-gr: #ddd;
-$ltr-gr: #fafafa;
+$yellow: #e8ed57;
+// b&w colors as placeholders
+$blk: #000;
+$dark-gray: lighten($blk, 20%);
+$med-gray: lighten($blk, 40%);
+$light-gray: lighten($blk, 70%);
+$lighter-gray: lighten($blk, 90%);
+$off-white: lighten($blk, 97%);
 
 // Utility color variables ///////////////
-$heading: $sft-blu;
-$link: $sft-blu;
+$heading: $dark-gray;
+$link: $med-gray;
 
 // Fonts ///////////////
 $opensans: 'Open Sans';
@@ -22,12 +24,30 @@ $body_font: $signika;
 
 // Susy config ///////////////
 $susy: (
- columns: 12, // The number of columns in your grid
- gutters: 1/4, // The size of a gutter in relation to a single column
+columns: 12, // The number of columns in your grid
+gutters: 1/4, // The size of a gutter in relation to a single column
 );
 
-// Breakpoints ///////////////
-$min-tablet: 768px;
+// Breakpoints & MQ's ///////////////
+$screen: "only screen" !default;
+$small-max: 767px !default;
+$medium-max: 1023px !default;
+
+$small:  "#{$screen} and (max-width: #{$small-max})";
+$up-sm:  "#{$screen} and (min-width: #{$small-max + 1})";
+$medium: "#{$screen} and (min-width: #{$small-max + 1}) and (max-width: #{$medium-max})";
+$large:  "#{$screen} and (min-width: #{$medium-max + 1})";
+
+// EXAMPLE FOR MQ REFERENCES =>
+/*
+body {
+  background: green !important;
+  @media #{$small}  { background: orange !important; }
+  @media #{$medium} { background: teal !important; }
+  @media #{$large}  { background: orchid !important; }
+  @media #{$up-sm}  { background: aliceblue !important; }
+}
+*/
 
 // Example Mixins ///////////////
 @mixin opac-color($r, $g, $b, $pertc) {
@@ -44,7 +64,12 @@ $min-tablet: 768px;
     margin-bottom: 25px;
   }
 }
-
+@mixin borderradius($px:5px){
+  -moz-border-radius: $px;
+  -webkit-border-radius: $px;
+  border-radius: $px;
+  // background-clip: padding-box;
+}
 // Example Placeholders ///////////////
 .no-ul-list {
   list-style-type: none;
@@ -56,9 +81,20 @@ $min-tablet: 768px;
     margin: 2px;
   }
 }
-.blk-style {
-  border: 1px solid $lt-gr;
-  padding: 10px;
+.tmp-shadow {
+  -webkit-box-shadow: 0 0 2px 0 rgba($med-gray, 1);
+  -moz-box-shadow: 0 0 2px 0 rgba($med-gray, 1);
+  box-shadow: 0 0 2px 0 rgba($med-gray, 1);
+}
+.tmp-shadow-none {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.blocked-style {
+  border: 1px solid $white;
+  padding: 12px;
   border-radius: 5px;
-  background: $lt-blu;
+  background: $off-white;
+  @extend .tmp-shadow;
 }

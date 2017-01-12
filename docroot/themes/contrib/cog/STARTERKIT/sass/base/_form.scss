@@ -9,22 +9,21 @@ form {
   margin: 0 0 1em;
 }
 label {
-  margin: 0;
   display: inline-block;
-  color: $lt-blk;
+  color: $dark-gray;
   cursor: pointer;
-  display: block;
   font-weight: 500;
-  margin-bottom: 0.1875em;
+  margin: 0 0 0.1875em 0;
+  padding-right: 4px;
+  vertical-align: top;
 }
 input[type="text"],
 input[type="password"],
 input[type="date"],
 textarea {
-  border-radius: 0;
-  background-color: $wht;
+  background-color: white;
   font-family: inherit;
-  border: 1px solid $slv;
+  border: 1px solid $lighter-gray;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
   color: rgba(0, 0, 0, 0.75);
   display: block;
@@ -32,7 +31,7 @@ textarea {
   margin: 0 0 1em;
   padding: 0.5em;
   height: 2.3125em;
-  width: 100%;
+  width: auto;
   box-sizing: border-box;
   transition: box-shadow 0.45s, border-color 0.45s ease-in-out;
 }
@@ -40,22 +39,10 @@ input[type="text"]:focus,
 input[type="password"]:focus,
 input[type="date"]:focus,
 textarea:focus {
-  box-shadow: 0 0 5px $md-gr;
-  border-color: $md-gr;
-}
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="date"]:focus,
-textarea:focus {
-  background: $ltr-gr;
-  border-color: $md-gr;
+  box-shadow: 0 0 5px $light-gray;
+  border-color: $light-gray;
+  background: white;
   outline: none;
-}
-input[type="text"][disabled],
-input[type="password"][disabled],
-input[type="date"][disabled],
-textarea[disabled] {
-  background-color: $lt-gr;
 }
 input[type="file"],
 input[type="checkbox"],
@@ -67,7 +54,7 @@ input[type="file"] {
   width: 100%;
 }
 fieldset {
-  border: solid 1px $lt-gr;
+  border: solid 1px $light-gray;
   padding: 1.25em;
   margin: 1.125em 0;
 }
@@ -77,6 +64,18 @@ fieldset legend {
   padding: 0 0.1875em;
   margin: 0;
   margin-left: -0.1875em;
+}
+// buttons /////////////////////////
+button, html input[type="button"], input[type="reset"], input[type="submit"] {
+  @include borderradius();
+  background: $off-white;
+  border: 1px solid $white;
+  padding: 5px 11px;
+  background: $off-white;
+  @extend .tmp-shadow;
+  &:hover, &:focus {
+    background: $lighter-gray;
+  }
 }
 // Error conditions ////////////////////////////
 .error
@@ -89,8 +88,8 @@ fieldset legend {
 .error input:focus,
 .error textarea:focus,
 .error select:focus {
-  background: $ltr-gr;
-  border-color: $md-gr;
+  background: $off-white;
+  border-color: $light-gray;
 }
 .error label,
 .error label.error {
@@ -118,16 +117,16 @@ textarea.error {
 }
 input.error:focus,
 textarea.error:focus {
-  background: $ltr-gr;
-  border-color: $md-gr;
+  background: $off-white;
+  border-color: $light-gray;
 }
 .error select {
   border-color: $red;
   background-color: rgba(198, 15, 19, 0.1);
 }
 .error select:focus {
-  background: $ltr-gr;
-  border-color: $md-gr;
+  background: $off-white;
+  border-color: $light-gray;
 }
 label.error {
   color: $red;
@@ -147,10 +146,9 @@ input[type="search"],
 input[type="tel"],
 input[type="time"],
 input[type="url"] {
-  border-radius: 0;
-  background-color: $wht;
+  background-color: white;
   font-family: inherit;
-  border: 1px solid $slv;
+  border: 1px solid $lighter-gray;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
   color: rgba(0, 0, 0, 0.75);
   display: block;
@@ -158,7 +156,7 @@ input[type="url"] {
   margin: 0 0 1em;
   padding: 0.5em;
   height: 2.3125em;
-  width: 100%;
+  width: auto;
   box-sizing: border-box;
   transition: box-shadow 0.45s, border-color 0.45s ease-in-out;
 }
@@ -172,32 +170,21 @@ input[type="search"]:focus,
 input[type="tel"]:focus,
 input[type="time"]:focus,
 input[type="url"]:focus {
-  box-shadow: 0 0 5px $md-gr;
-  border-color: $md-gr;
-}
-input[type="datetime"]:focus,
-input[type="datetime-local"]:focus,
-input[type="month"]:focus,
-input[type="week"]:focus,
-input[type="email"]:focus,
-input[type="number"]:focus,
-input[type="search"]:focus,
-input[type="tel"]:focus,
-input[type="time"]:focus,
-input[type="url"]:focus {
-  background: $ltr-gr;
-  border-color: $md-gr;
+  box-shadow: 0 0 5px $light-gray;
+  border-color: $light-gray;
   outline: none;
 }
-input[type="datetime"][disabled],
-input[type="datetime-local"][disabled],
-input[type="month"][disabled],
-input[type="week"][disabled],
-input[type="email"][disabled],
-input[type="number"][disabled],
-input[type="search"][disabled],
-input[type="tel"][disabled],
-input[type="time"][disabled],
-input[type="url"][disabled] {
-  background-color: $lt-gr;
+form input[disabled], form button[disabled] {
+  background-color: $light-gray;
+  box-shadow: none;
+  &:hover {
+    background-color: $light-gray;
+  }
+}
+// simple transitions ////////////////////
+form button, form input {
+  transition: all 0.3s ease;
+  &[disabled] {
+    transition: auto;
+  }
 }

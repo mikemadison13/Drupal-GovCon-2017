@@ -2,6 +2,8 @@
 
 namespace Drush\Sql;
 
+use PDO;
+
 class Sqlmysql extends SqlBase {
 
   public function command() {
@@ -51,6 +53,26 @@ EOT;
       $parameters['socket'] = $this->db_spec['pdo']['unix_socket'];
     }
 
+    if (!empty($this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_CA])) {
+      $parameters['ssl-ca'] = $this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_CA];
+    }
+
+    if (!empty($this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_CAPATH])) {
+      $parameters['ssl-capath'] = $this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_CAPATH];
+    }
+
+    if (!empty($this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_CERT])) {
+      $parameters['ssl-cert'] = $this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_CERT];
+    }
+
+    if (!empty($this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_CIPHER])) {
+      $parameters['ssl-cipher'] = $this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_CIPHER];
+    }
+
+    if (!empty($this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_KEY])) {
+      $parameters['ssl-key'] = $this->db_spec['pdo'][PDO::MYSQL_ATTR_SSL_KEY];
+    }
+
     return $this->params_to_options($parameters);
   }
 
@@ -66,7 +88,12 @@ EOT;
     $sql[] = sprintf('CREATE DATABASE %s /*!40100 DEFAULT CHARACTER SET utf8 */;', $dbname);
     $db_superuser = drush_get_option('db-su');
     if (isset($db_superuser)) {
-      $sql[] = sprintf('GRANT ALL PRIVILEGES ON %s.* TO \'%s\'@\'%%\'', $dbname, $this->db_spec['username']);
+      // - For a localhost database, create a localhost user.  This is important for security.
+      //   localhost is special and only allows local Unix socket file connections.
+      // - If the database is on a remote server, create a wilcard user with %.
+      //   We can't easily know what IP adderss or hostname would represent our server.
+      $domain = ($this->db_spec['host'] == 'localhost') ? 'localhost' : '%';
+      $sql[] = sprintf('GRANT ALL PRIVILEGES ON %s.* TO \'%s\'@\'%s\'', $dbname, $this->db_spec['username'], $domain);
       $sql[] = sprintf("IDENTIFIED BY '%s';", $this->db_spec['password']);
       $sql[] = 'FLUSH PRIVILEGES;';
     }

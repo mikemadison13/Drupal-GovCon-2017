@@ -3,13 +3,8 @@
 namespace Drush\Boot;
 
 use Drush\Log\LogLevel;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 
-
-abstract class BaseBoot implements Boot, LoggerAwareInterface {
-  use LoggerAwareTrait;
+abstract class BaseBoot implements Boot {
 
   function __construct() {
   }
@@ -65,7 +60,7 @@ abstract class BaseBoot implements Boot, LoggerAwareInterface {
           $this->enforce_requirement($command);
 
           if ($bootstrap_result && empty($command['bootstrap_errors'])) {
-            $this->logger->log(LogLevel::BOOTSTRAP, dt("Found command: !command (commandfile=!commandfile)", array('!command' => $command['command'], '!commandfile' => $command['commandfile'])));
+            drush_log(dt("Found command: !command (commandfile=!commandfile)", array('!command' => $command['command'], '!commandfile' => $command['commandfile'])), LogLevel::BOOTSTRAP);
 
             $command_found = TRUE;
             // Dispatch the command(s).

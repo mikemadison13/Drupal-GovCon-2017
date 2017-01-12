@@ -74,6 +74,6 @@ workspace.update.form:
   defaults:
     _form: '\Drupal\workspace\Form\UpdateForm'
   requirements:
-    _permission: 'administer deployments'
+    _permission: 'update any workspace from upstream'
   options:
     _admin_route: TRUE

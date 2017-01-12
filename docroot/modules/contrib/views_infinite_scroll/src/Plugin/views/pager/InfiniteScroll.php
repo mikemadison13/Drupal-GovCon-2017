@@ -3,7 +3,7 @@
 
 namespace Drupal\views_infinite_scroll\Plugin\views\pager;
 
-use Drupal\views\Plugin\views\pager\Mini;
+use Drupal\views\Plugin\views\pager\SqlBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -17,7 +17,7 @@ use Drupal\Core\Form\FormStateInterface;
  *  theme = "views_infinite_scroll_pager"
  * )
  */
-class InfiniteScroll extends Mini {
+class InfiniteScroll extends SqlBase {
 
   /**
    * {@inheritdoc}

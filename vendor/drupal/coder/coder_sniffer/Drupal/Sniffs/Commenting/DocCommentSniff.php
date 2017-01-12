@@ -2,8 +2,6 @@
 /**
  * Ensures doc blocks follow basic formatting.
  *
- * PHP version 5
- *
  * @category PHP
  * @package  PHP_CodeSniffer
  * @link     http://pear.php.net/package/PHP_CodeSniffer
@@ -136,6 +134,12 @@ class Drupal_Sniffs_Commenting_DocCommentSniff implements PHP_CodeSniffer_Sniff
             // JSDoc has many cases of @type declaration that don't have a
             // description.
             if ($phpcsFile->tokenizerType === 'JS') {
+                return;
+            }
+
+            // PHPUnit test methods are allowed to skip the short description and
+            // only provide an @covers annotation.
+            if ($tokens[$short]['content'] === '@covers') {
                 return;
             }
 

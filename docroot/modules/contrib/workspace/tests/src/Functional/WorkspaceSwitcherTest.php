@@ -2,10 +2,8 @@
 
 namespace Drupal\Tests\workspace\Functional;
 
-use Drupal\multiversion\Entity\Workspace;
 use Drupal\simpletest\BlockCreationTrait;
-use Drupal\simpletest\BrowserTestBase;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests workspace switching functionality.
@@ -50,6 +48,6 @@ class WorkspaceSwitcherTest extends BrowserTestBase {
     $page->findButton(t('Activate'))->click();
 
     $session->getPage()->findLink($gravity->label());
-
   }
+  
 }

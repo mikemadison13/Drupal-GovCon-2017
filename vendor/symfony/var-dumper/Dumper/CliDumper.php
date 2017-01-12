@@ -54,12 +54,12 @@ class CliDumper extends AbstractDumper
     /**
      * {@inheritdoc}
      */
-    public function __construct($output = null, $charset = null, $flags = 0)
+    public function __construct($output = null, $charset = null)
     {
-        parent::__construct($output, $charset, $flags);
+        parent::__construct($output, $charset);
 
         if ('\\' === DIRECTORY_SEPARATOR && 'ON' !== @getenv('ConEmuANSI') && 'xterm' !== @getenv('TERM')) {
-            // Use only the base 16 xterm colors when using ANSICON or standard Windows 10 CLI 
+            // Use only the base 16 xterm colors when using ANSICON or standard Windows 10 CLI
             $this->setStyles(array(
                 'default' => '31',
                 'num' => '1;34',
@@ -180,9 +180,6 @@ class CliDumper extends AbstractDumper
             $m = count($str) - 1;
             $i = $lineCut = 0;
 
-            if (self::DUMP_STRING_LENGTH & $this->flags) {
-                $this->line .= '('.$attr['length'].') ';
-            }
             if ($bin) {
                 $this->line .= 'b';
             }
@@ -252,7 +249,7 @@ class CliDumper extends AbstractDumper
         } elseif (Cursor::HASH_RESOURCE === $type) {
             $prefix = $this->style('note', $class.' resource').($hasChild ? ' {' : ' ');
         } else {
-            $prefix = $class && !(self::DUMP_LIGHT_ARRAY & $this->flags) ? $this->style('note', 'array:'.$class).' [' : '[';
+            $prefix = $class ? $this->style('note', 'array:'.$class).' [' : '[';
         }
 
         if ($cursor->softRefCount || 0 < $cursor->softRefHandle) {
@@ -317,9 +314,6 @@ class CliDumper extends AbstractDumper
             switch ($cursor->hashType) {
                 default:
                 case Cursor::HASH_INDEXED:
-                    if (self::DUMP_LIGHT_ARRAY & $this->flags) {
-                        break;
-                    }
                     $style = 'index';
                 case Cursor::HASH_ASSOC:
                     if (is_int($key)) {

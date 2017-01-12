@@ -3,7 +3,8 @@
  * Task: Clean.
  */
 
-'use strict';
 module.exports = function (gulp, plugins, options) {
+  'use strict';
+
   gulp.task('clean', ['clean:css', 'clean:styleguide']);
 };

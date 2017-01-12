@@ -145,6 +145,12 @@ if (file_exists('/var/www/site-php')) {
     $config['migrate_drush_path'] = '/usr/local/bin/drush';
   }
 
+  // Do not override the private path if the customer has defined its value
+  // in a pre-settings-php hook.
+  if (empty($settings['file_private_path']) && !empty($site_settings['file_private_path'])) {
+    $settings['file_private_path'] = $site_settings['file_private_path'];
+  }
+
   if (!empty($site_settings['conf'])) {
     foreach ((array) $site_settings['conf'] as $key => $value) {
       $config[$key] = $value;

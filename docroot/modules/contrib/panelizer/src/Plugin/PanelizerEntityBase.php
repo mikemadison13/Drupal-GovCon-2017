@@ -70,6 +70,7 @@ abstract class PanelizerEntityBase extends PluginBase implements PanelizerEntity
   public function getDefaultDisplay(EntityViewDisplayInterface $display, $bundle, $view_mode) {
     $panels_display = $this->panelsManager->createDisplay();
 
+    $panels_display->setConfiguration(['label' => $this->t('Default')] + $panels_display->getConfiguration());
     $panels_display->setLayout('onecol');
     // @todo: For now we always use the IPE, but we should support not using the ipe.
     $panels_display->setBuilder('ipe');

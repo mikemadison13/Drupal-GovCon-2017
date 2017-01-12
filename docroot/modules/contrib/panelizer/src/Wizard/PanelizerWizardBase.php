@@ -26,6 +26,11 @@ abstract class PanelizerWizardBase extends FormWizardBase {
     $operation = $this->getOperation($cached_values);
     $operations = $this->getOperations($cached_values);
     $default_operation = reset($operations);
+
+    // Get the machine name. There are two ways we can get this data.
+    $storage = $form_state->getStorage();
+    $prefix = isset($storage['machine_name_prefix']) ? $storage['machine_name_prefix'] : $form_state->getTemporaryValue('wizard')['id'];
+
     if ($operation['form'] == $default_operation['form']) {
       // Create id and label form elements.
       $form['name'] = array(
@@ -47,6 +52,8 @@ abstract class PanelizerWizardBase extends FormWizardBase {
         '#maxlength' => 128,
         '#machine_name' => array(
           'source' => array('name', 'label'),
+          'exists' => $this->exists(),
+          'prefix' => $prefix,
         ),
         '#description' => $this->t('A unique machine-readable name for this display. It must only contain lowercase letters, numbers, and underscores.'),
         '#default_value' => !empty($cached_values['id']) ? $cached_values['id'] : '',
@@ -68,6 +75,13 @@ abstract class PanelizerWizardBase extends FormWizardBase {
    */
   public function getMachineLabel() {
     return $this->t('Wizard name');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function exists() {
+    return '\Drupal\panelizer\Form\PanelizerWizardGeneralForm::validateMachineName';
   }
 
   /**

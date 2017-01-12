@@ -52,7 +52,7 @@
 // -------------------------------------
 
 // -------------------------------------
-//   Front End Dependencies
+//   Front-End Dependencies
 // -------------------------------------
 // breakpoint-sass       : Really Simple Media Queries with Sass
 // kss                   : A methodology for documenting CSS and building style guides
@@ -62,7 +62,6 @@
 // typey                 : A complete framework for working with typography in sass
 // -------------------------------------
 
-'use strict';
 var gulp = require('gulp');
 // Setting pattern this way allows non gulp- plugins to be loaded as well.
 var plugins = require('gulp-load-plugins')({

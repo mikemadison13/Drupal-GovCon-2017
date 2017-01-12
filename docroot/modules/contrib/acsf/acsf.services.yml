@@ -8,4 +8,9 @@ services:
   acsf.route_subscriber:
     class: Drupal\acsf\Routing\RouteSubscriber
     tags:
-     - { name: event_subscriber }
+      - { name: event_subscriber }
+  acsf.maintenance_mode_subscriber:
+    class: Drupal\acsf\EventSubscriber\AcsfMaintenanceModeSubscriber
+    arguments: ['@state']
+    tags:
+      - { name: event_subscriber }

@@ -3,14 +3,12 @@
 namespace Drupal\multiversion\Entity\Storage\Sql;
 
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\entity_storage_migrate\Entity\Storage\ContentEntityStorageSchemaTrait;
 use Drupal\node\NodeStorageSchema as CoreNodeStorageSchema;
+
 /**
  * Storage schema handler for nodes.
  */
 class NodeStorageSchema extends CoreNodeStorageSchema {
-
-  use ContentEntityStorageSchemaTrait;
 
   /**
    * {@inheritdoc}

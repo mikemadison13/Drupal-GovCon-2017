@@ -6,7 +6,7 @@ This setup is tested for OSX and Linux. nvm and avn are not compatible with Wind
 
 ## Bash script local environment setup
 
-This sub theme uses node and npm to manage build tools such as sass. There are no additional front end dependencies such as ruby. It is highly recommended to use [nvm](https://github.com/creationix/nvm) to install and manage node versions, and the theme provides a bash install script to install both nvm and the version of node that the theme uses, also via nvm.
+This sub theme uses node and npm to manage build tools such as sass. There are no additional front-end dependencies such as ruby. It is highly recommended to use [nvm](https://github.com/creationix/nvm) to install and manage node versions, and the theme provides a bash install script to install both nvm and the version of node that the theme uses, also via nvm.
 
 Script usage (from generated sub theme directory):
 

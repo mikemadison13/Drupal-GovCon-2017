@@ -7,9 +7,9 @@ use Drupal\Core\Extension\InfoParserInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\Element\Checkboxes;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\lightning\Extender;
+use Drupal\lightning\FormHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -39,6 +39,13 @@ class ExtensionSelectForm extends FormBase {
   protected $infoParser;
 
   /**
+   * The form helper.
+   *
+   * @var \Drupal\lightning\FormHelper
+   */
+  protected $formHelper;
+
+  /**
    * ExtensionSelectForm constructor.
    *
    * @param \Drupal\lightning\Extender $extender
@@ -49,12 +56,15 @@ class ExtensionSelectForm extends FormBase {
    *   The info parser service.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translator
    *   The string translation service.
+   * @param \Drupal\lightning\FormHelper $form_helper
+   *   The form helper.
    */
-  public function __construct(Extender $extender, $root, InfoParserInterface $info_parser, TranslationInterface $translator) {
+  public function __construct(Extender $extender, $root, InfoParserInterface $info_parser, TranslationInterface $translator, FormHelper $form_helper) {
     $this->extender = $extender;
     $this->root = $root;
     $this->infoParser = $info_parser;
     $this->stringTranslation = $translator;
+    $this->formHelper = $form_helper;
   }
 
   /**
@@ -65,7 +75,8 @@ class ExtensionSelectForm extends FormBase {
       $container->get('lightning.extender'),
       $container->get('app.root'),
       $container->get('info_parser'),
-      $container->get('string_translation')
+      $container->get('string_translation'),
+      $container->get('lightning.form_helper')
     );
   }
 
@@ -99,6 +110,7 @@ class ExtensionSelectForm extends FormBase {
 
     $extensions = $this->pluck(
       [
+        'lightning_core',
         'lightning_media',
         'lightning_layout',
         'lightning_workflow',
@@ -120,13 +132,20 @@ class ExtensionSelectForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state, array &$install_state = NULL) {
     $form['#title'] = $this->t('Extensions');
 
+    $form['help'] = [
+      '#weight' => -1,
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+    ];
     $form['modules'] = [
       '#type' => 'checkboxes',
+      '#weight' => 0,
     ];
     $form['experimental'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Experimental'),
       '#tree' => TRUE,
+      '#weight' => 1,
     ];
     $form['experimental']['gate'] = [
       '#type' => 'checkbox',
@@ -136,18 +155,6 @@ class ExtensionSelectForm extends FormBase {
     ];
     $form['experimental']['modules'] = [
       '#type' => 'checkboxes',
-      '#process' => [
-        // Apply normal checkbox processing...
-        [
-          Checkboxes::class,
-          'processCheckboxes',
-        ],
-        // ...and our own special sauce.
-        [
-          __CLASS__,
-          'addExperimentalGate',
-        ],
-      ],
     ];
     $form['actions'] = [
       'continue' => [
@@ -155,7 +162,18 @@ class ExtensionSelectForm extends FormBase {
         '#value' => $this->t('Continue'),
       ],
       '#type' => 'actions',
+      '#weight' => 5,
     ];
+    $form['sub_components'] = [
+      '#type' => 'value',
+      '#value' => [],
+    ];
+
+    $this->formHelper->applyStandardProcessing($form['modules']);
+    $form['modules']['#process'][] = [__CLASS__, 'requireCore'];
+
+    $this->formHelper->applyStandardProcessing($form['experimental']['modules']);
+    $form['experimental']['modules']['#process'][] = [__CLASS__, 'addExperimentalGate'];
 
     foreach ($this->getExtensionInfo() as $key => $info) {
       if (empty($info['experimental'])) {
@@ -164,6 +182,11 @@ class ExtensionSelectForm extends FormBase {
       }
       else {
         $form['experimental']['modules']['#options'][$key] = $info['name'];
+      }
+
+      // Store the list sub-components to avoid re-parsing the info file.
+      if (isset($info['components'])) {
+        $form['sub_components']['#value'][$key] = $info['components'];
       }
     }
 
@@ -193,13 +216,33 @@ class ExtensionSelectForm extends FormBase {
       $form['experimental']['gate']['#default_value'] = TRUE;
 
       // Explain ourselves.
-      drupal_set_message($this->t('Lightning extensions have been pre-selected in the lightning.extend.yml file in your sites directory.'), 'warning');
+      $form['help']['#markup'] = $this->t("Lightning extensions have been pre-selected in the lightning.extend.yml file in your sites directory and are disabled here as a result.");
     }
     else {
-      $form['modules']['#description'] = $this->t("You can choose to disable some of Lightning's functionality above. However, it is not recommended.");
+      $form['help']['#markup'] = $this->t("You can choose to disable some of Lightning's functionality below. However, it is not recommended.");
     }
 
     return $form;
+  }
+
+  /**
+   * Forces the Lightning Core extension to be selected.
+   *
+   * Turns the Lightning Core checkbox into a persistent server-side value so
+   * that it is always installed.
+   *
+   * @param array $element
+   *   The set of checkboxes listing the available extensions.
+   *
+   * @return array
+   *   The modified checkboxes.
+   */
+  public static function requireCore(array $element) {
+    $element['lightning_core'] = [
+      '#type' => 'value',
+      '#value' => $element['lightning_core']['#return_value'],
+    ];
+    return $element;
   }
 
   /**
@@ -233,13 +276,15 @@ class ExtensionSelectForm extends FormBase {
     }
     $modules = array_filter($modules);
 
-    if (in_array('lightning_media', $modules)) {
-      $modules[] = 'lightning_media_document';
-      $modules[] = 'lightning_media_image';
-      $modules[] = 'lightning_media_instagram';
-      $modules[] = 'lightning_media_twitter';
-      $modules[] = 'lightning_media_video';
+    // Merge in sub-components of enabled extensions...
+    $sub_components = $form_state->getValue('sub_components');
+    foreach ($modules as $module) {
+      if (isset($sub_components[$module])) {
+        $modules = array_merge($modules, $sub_components[$module]);
+      }
     }
+    // ...except the ones excluded by the extender.
+    $modules = array_diff($modules, $this->extender->getExcludedComponents());
 
     $GLOBALS['install_state']['lightning']['modules'] = array_merge($modules, $this->extender->getModules());
   }

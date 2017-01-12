@@ -48,9 +48,9 @@ class HtmlDumper extends CliDumper
     /**
      * {@inheritdoc}
      */
-    public function __construct($output = null, $charset = null, $flags = 0)
+    public function __construct($output = null, $charset = null)
     {
-        AbstractDumper::__construct($output, $charset, $flags);
+        AbstractDumper::__construct($output, $charset);
         $this->dumpId = 'sf-dump-'.mt_rand();
     }
 

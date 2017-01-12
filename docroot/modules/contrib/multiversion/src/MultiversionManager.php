@@ -4,13 +4,16 @@ namespace Drupal\multiversion;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\multiversion\Entity\Storage\ContentEntityStorageInterface;
 use Drupal\multiversion\Workspace\WorkspaceManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -31,9 +34,9 @@ class MultiversionManager implements MultiversionManagerInterface, ContainerAwar
   protected $serializer;
 
   /**
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * @var \Drupal\Core\State\StateInterface
@@ -56,6 +59,13 @@ class MultiversionManager implements MultiversionManagerInterface, ContainerAwar
    * @var \Drupal\Core\Database\Connection
    */
   protected $connection;
+
+  /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
 
   /**
    * @var int
@@ -83,6 +93,7 @@ class MultiversionManager implements MultiversionManagerInterface, ContainerAwar
     'user',
     'shortcut',
     'contact_message',
+    'content_moderation_state',
     'entity_test_no_id',
     'entity_test_base_field_display',
   );
@@ -90,20 +101,22 @@ class MultiversionManager implements MultiversionManagerInterface, ContainerAwar
   /**
    * @param \Drupal\multiversion\Workspace\WorkspaceManagerInterface $workspace_manager
    * @param \Symfony\Component\Serializer\Serializer $serializer
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    * @param \Drupal\Core\State\StateInterface $state
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
    * @param \Drupal\Core\Database\Connection $connection
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    */
-  public function __construct(WorkspaceManagerInterface $workspace_manager, Serializer $serializer, EntityManagerInterface $entity_manager, StateInterface $state, LanguageManagerInterface $language_manager, CacheBackendInterface $cache, Connection $connection) {
+  public function __construct(WorkspaceManagerInterface $workspace_manager, Serializer $serializer, EntityTypeManagerInterface $entity_type_manager, StateInterface $state, LanguageManagerInterface $language_manager, CacheBackendInterface $cache, Connection $connection, EntityFieldManagerInterface $entity_field_manager) {
     $this->workspaceManager = $workspace_manager;
     $this->serializer = $serializer;
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->state = $state;
     $this->languageManager = $language_manager;
     $this->cache = $cache;
     $this->connection = $connection;
+    $this->entityFieldManager = $entity_field_manager;
   }
 
   /**
@@ -182,7 +195,7 @@ class MultiversionManager implements MultiversionManagerInterface, ContainerAwar
    */
   public function getSupportedEntityTypes() {
     $entity_types = [];
-    foreach ($this->entityManager->getDefinitions() as $entity_type_id => $entity_type) {
+    foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
       if ($this->isSupportedEntityType($entity_type)) {
         $entity_types[$entity_type->id()] = $entity_type;
       }
@@ -228,51 +241,16 @@ class MultiversionManager implements MultiversionManagerInterface, ContainerAwar
   public function enableEntityTypes() {
     $entity_types = $this->getSupportedEntityTypes();
     $migration = $this->createMigration();
-
     $migration->installDependencies();
-
-    // For data integrity and consistency reasons we need to finish each
-    // migration step for all entity types before moving on to the next step.
-
-    $has_data = [];
-    // Walk through and verify that the original storage is in good order.
-    // Flakey contrib modules or mocked tests where some schemas aren't properly
-    // installed should be ignored.
-    foreach ($entity_types as $entity_type_id => $entity_type) {
-      $storage = $this->entityManager->getStorage($entity_type_id);
-
-      $has_data[$entity_type_id] = FALSE;
-      try {
-        if ($storage->hasData()) {
-          $has_data[$entity_type_id] = TRUE;
-        }
-      }
-      catch (\Exception $e) {
-        // Don't bother with this entity type any more.
-        unset($entity_types[$entity_type_id]);
-      }
-
-      // Migrate content to temporary storage. And empty the old storage.
-      if ($has_data[$entity_type_id]) {
-        if ($entity_type_id == 'file') {
-          $storage = $this->entityManager->getStorage($entity_type_id);
-          $migration->copyFilesToMigrateDirectory($storage);
-        }
-        $migration->migrateContentToTemp($entity_type);
-
-        // Because of the way the Entity API treats entity definition updates we
-        // need to ensure each storage is empty before we can apply the new
-        // definition.
-        $migration->emptyOldStorage($entity_type, $storage);
-      }
-    }
+    $has_data = $this->prepareContentForMigration($entity_types, $migration);
 
     // Nasty workaround until {@link https://www.drupal.org/node/2549143 there
     // is a better way to invalidate caches in services}.
     // For some reason we have to clear cache on the "global" service as opposed
     // to the injected one. Services in the dark corners of Entity API won't see
     // the same result otherwise. Very strange.
-    \Drupal::entityManager()->clearCachedDefinitions();
+    \Drupal::entityTypeManager()->clearCachedDefinitions();
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
     foreach ($entity_types as $entity_type_id => $entity_type) {
       $cid = "entity_base_field_definitions:$entity_type_id:" . $this->languageManager->getCurrentLanguage()->getId();
       $this->cache->invalidate($cid);
@@ -327,58 +305,23 @@ class MultiversionManager implements MultiversionManagerInterface, ContainerAwar
   public function disableEntityTypes() {
     $entity_types = $this->getSupportedEntityTypes();
     $migration = $this->createMigration();
-
     $migration->installDependencies();
-
-    $has_data = [];
-    // Walk through and verify that the original storage is in good order.
-    // Flakey contrib modules or mocked tests where some schemas aren't properly
-    // installed should be ignored.
-    foreach ($entity_types as $entity_type_id => $entity_type) {
-      $storage = $this->entityManager->getStorage($entity_type_id);
-
-      $has_data[$entity_type_id] = FALSE;
-      try {
-        if ($storage->hasData()) {
-          $has_data[$entity_type_id] = TRUE;
-        }
-      }
-      catch (\Exception $e) {
-        // Don't bother with this entity type any more.
-        unset($entity_types[$entity_type_id]);
-      }
-
-      // Migrate content to temporary storage. And empty the old storage.
-      if ($has_data[$entity_type_id]) {
-        if ($entity_type_id == 'file') {
-          $storage = $this->entityManager->getStorage($entity_type_id);
-          $migration->copyFilesToMigrateDirectory($storage);
-        }
-        $migration->migrateContentToTemp($entity_type);
-
-        // Because of the way the Entity API treats entity definition updates we
-        // need to ensure each storage is empty before we can apply the new
-        // definition.
-        $migration->emptyOldStorage($entity_type, $storage);
-      }
-    }
+    $has_data = $this->prepareContentForMigration($entity_types, $migration);
 
     // Delete all content of workspace type.
-    $storage = $this->entityManager->getStorage('workspace');
-    $entity_type = $storage->getEntityType();
-    $migration->emptyOldStorage($entity_type, $storage);
+    $storage = $this->entityTypeManager->getStorage('workspace');
+    $this->emptyOldStorage($storage, $migration);
 
     // Uninstall field storage definitions provided by multiversion.
-    $entity_manager = \Drupal::entityManager();
-    $entity_manager->clearCachedDefinitions();
+    $this->entityTypeManager->clearCachedDefinitions();
     $update_manager = \Drupal::entityDefinitionUpdateManager();
-    foreach ($entity_manager->getDefinitions() as $entity_type) {
+    foreach ($this->entityTypeManager->getDefinitions() as $entity_type) {
       if ($entity_type->isSubclassOf(FieldableEntityInterface::CLASS)) {
         $entity_type_id = $entity_type->id();
         $revision_key = $entity_type->getKey('revision');
         /** @var \Drupal\Core\Entity\FieldableEntityStorageInterface $storage */
-        $storage = $entity_manager->getStorage($entity_type_id);
-        foreach ($entity_manager->getFieldStorageDefinitions($entity_type_id) as $storage_definition) {
+        $storage = $this->entityTypeManager->getStorage($entity_type_id);
+        foreach ($this->entityFieldManager->getFieldStorageDefinitions($entity_type_id) as $storage_definition) {
           // @todo We need to trigger field purging here.
           //   See https://www.drupal.org/node/2282119.
           if ($storage_definition->getProvider() == 'multiversion' && !$storage->countFieldData($storage_definition, TRUE) && $storage_definition->getName() != $revision_key) {
@@ -469,7 +412,48 @@ class MultiversionManager implements MultiversionManagerInterface, ContainerAwar
    * @return \Drupal\multiversion\MultiversionMigrationInterface
    */
   protected function createMigration() {
-    return MultiversionMigration::create($this->container, $this->entityManager);
+    return MultiversionMigration::create($this->container, $this->entityTypeManager, $this->entityFieldManager);
+  }
+
+  protected function prepareContentForMigration($entity_types, MultiversionMigrationInterface $migration) {
+    $has_data = [];
+    // Walk through and verify that the original storage is in good order.
+    // Flakey contrib modules or mocked tests where some schemas aren't properly
+    // installed should be ignored.
+    foreach ($entity_types as $entity_type_id => $entity_type) {
+      /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
+      $storage = $this->entityTypeManager->getStorage($entity_type_id);
+
+      $has_data[$entity_type_id] = FALSE;
+      try {
+        if ($storage->hasData()) {
+          $has_data[$entity_type_id] = TRUE;
+        }
+      }
+      catch (\Exception $e) {
+        // Don't bother with this entity type any more.
+        unset($entity_types[$entity_type_id]);
+      }
+
+      // Migrate content to temporary storage. And empty the old storage.
+      if ($has_data[$entity_type_id]) {
+        $this->emptyOldStorage($storage, $migration);
+      }
+    }
+
+    return $has_data;
+  }
+
+  protected function emptyOldStorage(EntityStorageInterface $storage, MultiversionMigrationInterface $migration) {
+    if ($storage->getEntityTypeId() === 'file') {
+      $migration->copyFilesToMigrateDirectory($storage);
+    }
+    $migration->migrateContentToTemp($storage->getEntityType());
+
+    // Because of the way the Entity API treats entity definition updates we
+    // need to ensure each storage is empty before we can apply the new
+    // definition.
+    $migration->emptyOldStorage($storage);
   }
 
 }

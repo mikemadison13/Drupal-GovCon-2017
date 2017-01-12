@@ -21,7 +21,7 @@ class WorkspacePointerTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['workspace', 'replication', 'multiversion', 'entity_storage_migrate', 'key_value', 'serialization', 'user', 'system'];
+  public static $modules = ['workspace', 'replication', 'multiversion', 'key_value', 'serialization', 'user', 'system'];
 
   /**
    * {@inheritdoc}

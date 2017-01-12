@@ -2,6 +2,7 @@ sudo: false
 language: php
 
 php:
+  - 7
   - 5.6
 
 env:
@@ -11,6 +12,7 @@ env:
     - COGNIZANT_DIR=$DOCROOT/themes/custom/cognizant
 
 cache:
+  yarn: true
   bundler: true
   apt: true
   directories:
@@ -69,14 +71,12 @@ install:
   - drush en cog -y
   - drush cog "Cognizant"
 
-  # Set up front end dependencies.
+  # Set up front-end dependencies.
   - cd $COGNIZANT_DIR
 
-  - ./install-node.sh 4.4.4
-  - nvm use 4.4.4
-
-  - npm run install-tools
-  - npm rebuild node-sass
+  - ./install-node.sh 6.9.0
+  - nvm use 6.9.0
+  - yarn install --force
 
 # Run cog tasks.
 script:

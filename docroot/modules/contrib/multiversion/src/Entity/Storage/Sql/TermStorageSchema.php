@@ -3,15 +3,12 @@
 namespace Drupal\multiversion\Entity\Storage\Sql;
 
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\entity_storage_migrate\Entity\Storage\ContentEntityStorageSchemaTrait;
 use Drupal\taxonomy\TermStorageSchema as CoreTermStorageSchema;
 
 /**
  * Storage schema handler for taxonomy terms.
  */
 class TermStorageSchema extends CoreTermStorageSchema {
-
-  use ContentEntityStorageSchemaTrait;
 
   /**
    * {@inheritdoc}

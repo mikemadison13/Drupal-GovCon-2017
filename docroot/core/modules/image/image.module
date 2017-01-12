@@ -290,12 +290,22 @@ function template_preprocess_image_style(&$variables) {
 
   $style->transformDimensions($dimensions, $variables['uri']);
 
+  // If the current image toolkit supports this file type, prepare the URI for
+  // the derivative image. If not, just use the original image resized to the
+  // dimensions specified by the style.
+  if (in_array(pathinfo($variables['uri'], PATHINFO_EXTENSION), \Drupal::service('image.factory')->getSupportedExtensions())) {
+    $uri = $style->buildUrl($variables['uri']);
+  }
+  else {
+    $uri = $variables['uri'];
+  }
+
   $variables['image'] = array(
     '#theme' => 'image',
     '#width' => $dimensions['width'],
     '#height' => $dimensions['height'],
     '#attributes' => $variables['attributes'],
-    '#uri' => $style->buildUrl($variables['uri']),
+    '#uri' => $uri,
     '#style_name' => $variables['style_name'],
   );
 

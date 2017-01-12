@@ -33,7 +33,7 @@ class WorkspaceForm extends ContentEntityForm {
    * Constructs a ContentEntityForm object.
    *
    * @param ConflictTrackerInterface $conflict_tracker
-   *   The confict tracking service.
+   *   The conflict tracking service.
    */
   public function __construct(ConflictTrackerInterface $conflict_tracker) {
     $this->conflictTracker = $conflict_tracker;
@@ -64,7 +64,7 @@ class WorkspaceForm extends ContentEntityForm {
           [
             '@count' => count($conflicts),
             ':link' => Url::fromRoute('entity.workspace.conflicts', ['workspace' => $workspace->id()])->toString(),
-            ':target' => $workspace->get('upstream')->entity->label(),
+            ':target' => $workspace->get('upstream')->entity ? $workspace->get('upstream')->entity->label() : '',
           ]
         ));
         $form['is_aborted_on_conflict'] = [

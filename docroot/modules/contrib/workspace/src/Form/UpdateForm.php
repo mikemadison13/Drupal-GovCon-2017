@@ -10,6 +10,7 @@ use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
+use Drupal\multiversion\Workspace\ConflictTrackerInterface;
 use Drupal\multiversion\Workspace\WorkspaceManagerInterface;
 use Drupal\replication\Entity\ReplicationLogInterface;
 use Drupal\workspace\ReplicatorInterface;
@@ -49,6 +50,13 @@ class UpdateForm extends ConfirmFormBase {
   protected $renderer;
 
   /**
+   * The injected service to track conflicts during replication.
+   *
+   * @var ConflictTrackerInterface
+   */
+  protected $conflictTracker;
+
+  /**
    * Inject services needed by the form.
    *
    * @param \Drupal\multiversion\Workspace\WorkspaceManagerInterface $workspace_manager
@@ -59,12 +67,15 @@ class UpdateForm extends ConfirmFormBase {
    *   The replicator manager.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
+   * @param ConflictTrackerInterface $conflict_tracker
+   *   The conflict tracking service.
    */
-  public function __construct(WorkspaceManagerInterface $workspace_manager, EntityTypeManagerInterface $entity_type_manager, ReplicatorInterface $replicator_manager, RendererInterface $renderer) {
+  public function __construct(WorkspaceManagerInterface $workspace_manager, EntityTypeManagerInterface $entity_type_manager, ReplicatorInterface $replicator_manager, RendererInterface $renderer, ConflictTrackerInterface $conflict_tracker) {
     $this->workspaceManager = $workspace_manager;
     $this->entityTypeManager = $entity_type_manager;
     $this->replicatorManager = $replicator_manager;
     $this->renderer = $renderer;
+    $this->conflictTracker = $conflict_tracker;
   }
 
   /**
@@ -75,7 +86,8 @@ class UpdateForm extends ConfirmFormBase {
       $container->get('workspace.manager'),
       $container->get('entity_type.manager'),
       $container->get('workspace.replicator_manager'),
-      $container->get('renderer')
+      $container->get('renderer'),
+      $container->get('workspace.conflict_tracker')
     );
   }
 
@@ -163,8 +175,28 @@ class UpdateForm extends ConfirmFormBase {
 
       $response = $this->replicatorManager->update($upstream, $active, $task);
 
-      if (($response instanceof ReplicationLogInterface) && ($response->get('ok')->value === TRUE)) {
-        drupal_set_message($this->t('%workspace has been updated with content from %upstream.', ['%upstream' => $upstream->label(), '%workspace' => $active->label()]));
+      if (($response instanceof ReplicationLogInterface) && ($response->get('ok')->value == TRUE)) {
+
+        // Notify the user if there are now conflicts.
+        $conflicts = $this->conflictTracker
+          ->useWorkspace($active->getWorkspace())
+          ->getAll();
+
+        if ($conflicts) {
+          drupal_set_message($this->t(
+            '%workspace has been updated with content from %upstream, but there are <a href=":link">@count conflict(s) with the %target workspace</a>.',
+            [
+              '%upstream' => $upstream->label(),
+              '%workspace' => $active->label(),
+              ':link' => Url::fromRoute('entity.workspace.conflicts', ['workspace' => $active->getWorkspace()->id()])->toString(),
+              '@count' => count($conflicts),
+              '%target' => $upstream->label(),
+            ]
+          ), 'error');
+        }
+        else {
+          drupal_set_message($this->t('%workspace has been updated with content from %upstream.', ['%upstream' => $upstream->label(), '%workspace' => $active->label()]));
+        }
       }
       else {
         drupal_set_message($this->t('Error updating %workspace from %upstream.', ['%upstream' => $upstream->label(), '%workspace' => $active->label()]), 'error');

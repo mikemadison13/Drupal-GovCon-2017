@@ -3,6 +3,7 @@
 namespace Drush\Sql;
 
 use Drush\Log\LogLevel;
+use Webmozart\PathUtil\Path;
 
 class SqlBase {
 
@@ -116,7 +117,7 @@ class SqlBase {
         if (empty($backup_dir)) {
           $backup_dir = drush_find_tmp();
         }
-        $file = $backup_dir . '/@DATABASE_@DATE.sql';
+        $file = Path::join($backup_dir, '@DATABASE_@DATE.sql');
       }
       $file = str_replace(array('@DATABASE', '@DATE'), array($database, gmdate('Ymd_His')), $file);
     }
@@ -200,7 +201,7 @@ class SqlBase {
       // Enable prefix processing which can be dangerous so off by default. See http://drupal.org/node/1219850.
       if (drush_get_option('db-prefix')) {
         if (drush_drupal_major_version() >= 7) {
-          $query = Database::getConnection()->prefixTables($query);
+          $query = \Database::getConnection()->prefixTables($query);
         }
         else {
           $query = db_prefix_tables($query);
@@ -215,11 +216,21 @@ class SqlBase {
     return $query;
   }
 
+  /**
+   * Drop specified database.
+   *
+   * @param array $tables
+   *   An array of table names
+   * @return boolean
+   *   True if successful, FALSE if failed.
+   */
   public function drop($tables) {
+    $return = TRUE;
     if ($tables) {
       $sql = 'DROP TABLE '. implode(', ', $tables);
-      return $this->query($sql);
+      $return = $this->query($sql);
     }
+    return $return;
   }
 
   /**
@@ -239,10 +250,12 @@ class SqlBase {
    * @param boolean $quoted
    *   Quote the database name. Mysql uses backticks to quote which can cause problems
    *   in a Windows shell. Set TRUE if the CREATE is not running on the bash command line.
+   * @return boolean
+   *   True if successful, FALSE otherwise.
    */
   public function createdb($quoted = FALSE) {
     $dbname = $this->db_spec['database'];
-    $sql = $this->createdb_sql($dbname);
+    $sql = $this->createdb_sql($dbname, $quoted);
     // Adjust connection to allow for superuser creds if provided.
     $this->su();
     return $this->query($sql);
@@ -256,10 +269,10 @@ class SqlBase {
    */
   public function drop_or_create() {
     if ($this->db_exists()) {
-      $this->drop($this->listTables());
+      return $this->drop($this->listTables());
     }
     else {
-      $this->createdb();
+      return $this->createdb();
     }
   }
 

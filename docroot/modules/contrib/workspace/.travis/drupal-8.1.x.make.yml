@@ -5,12 +5,12 @@ core: 8.x
 projects:
   drupal: 8.1.x
   key_value: 1.x
-  entity_storage_migrate:
+  conflict:
     type: module
     download:
       type: git
       branch: 8.x-1.x
-      url: "https://github.com/dickolsson/drupal-entity_storage_migrate.git"
+      url: "https://github.com/drupaldeploy/drupal-conflict.git"
   multiversion:
     type: module
     download:
@@ -21,5 +21,5 @@ projects:
     type: module
     download:
       type: git
-      branch: 8.x-1.x 
+      branch: 8.x-1.x
       url: "https://github.com/relaxedws/drupal-replication.git"

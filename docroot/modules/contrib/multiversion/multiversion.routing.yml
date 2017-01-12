@@ -1,9 +1,0 @@
-multiversion.uninstall:
-  path: '/admin/config/multiversion-uninstall'
-  defaults:
-    _title: 'Uninstall Multiversion'
-    _form: '\Drupal\multiversion\Form\MultiversionUninstallForm'
-  requirements:
-    _permission: 'administer modules'
-  options:
-    _admin_route: TRUE

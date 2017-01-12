@@ -7,8 +7,6 @@
 
 use Drush\Log\LogLevel;
 
-use League\Container\Container;
-
 /**
  * The main Drush function.
  *
@@ -73,10 +71,13 @@ function drush_main() {
   // the bootstrap object returned from drush_preflight().  This will
   // require some adjustments to Drush bootstrapping.
   // See: https://github.com/drush-ops/drush/pull/1303
-  if ($bootstrap = \Drush::bootstrap()) {
+  if ($bootstrap = drush_get_bootstrap_object()) {
     $bootstrap->terminate();
   }
   drush_postflight();
+  if (is_object($return)) {
+    $return = 0;
+  }
 
   // How strict are we?  If we are very strict, turn 'ok' into 'error'
   // if there are any warnings in the log.
@@ -112,7 +113,7 @@ function drush_preflight_prepare() {
     $vendor_path = $global_vendor_path;
   }
   else {
-    $msg = "Unable to load autoload.php. Run composer install to fetch dependencies and write this file (http://docs.drush.org/en/master/install-alternative/). Or if you prefer, use the drush.phar which already has depdencies included (http://docs.drush.org/en/master/install).\n";
+    $msg = "Unable to load autoload.php. Run composer install to fetch dependencies and write this file (http://docs.drush.org/en/master/install-alternative/). Or if you prefer, use the drush.phar which already has dependencies included (http://docs.drush.org/en/master/install).\n";
     fwrite(STDERR, $msg);
     return FALSE;
   }
@@ -122,6 +123,7 @@ function drush_preflight_prepare() {
   require_once DRUSH_BASE_PATH . '/includes/startup.inc';
   require_once DRUSH_BASE_PATH . '/includes/bootstrap.inc';
   require_once DRUSH_BASE_PATH . '/includes/environment.inc';
+  require_once DRUSH_BASE_PATH . '/includes/annotationcommand_adapter.inc';
   require_once DRUSH_BASE_PATH . '/includes/command.inc';
   require_once DRUSH_BASE_PATH . '/includes/drush.inc';
   require_once DRUSH_BASE_PATH . '/includes/engines.inc';
@@ -135,14 +137,14 @@ function drush_preflight_prepare() {
   require_once DRUSH_BASE_PATH . '/includes/cache.inc';
   require_once DRUSH_BASE_PATH . '/includes/filesystem.inc';
   require_once DRUSH_BASE_PATH . '/includes/dbtng.inc';
+  require_once DRUSH_BASE_PATH . '/includes/array_column.inc';
 
   // Stash our vendor path and classloader.
   drush_set_context('DRUSH_VENDOR_PATH', dirname($vendor_path));
   drush_set_context('DRUSH_CLASSLOADER', $classloader);
 
-  // We need to load our services right away, as we cannot log
-  // or do much else until after this is done.
-  drush_init_dependency_injection_container();
+  // Can't log until we have a logger, so we'll create this ASAP.
+  _drush_create_default_logger();
 
   // Terminate immediately unless invoked as a command line script
   if (!drush_verify_cli()) {
@@ -154,7 +156,7 @@ function drush_preflight_prepare() {
   // PHP_VERSION, such as drush_json_encode(), runserver/runserver.drush.inc, and also
   // adjust _drush_environment_check_php_ini() and the php_prohibited_options
   // list in the drush script.  See http://drupal.org/node/1748228
-  define('DRUSH_MINIMUM_PHP', '5.5.0');
+  define('DRUSH_MINIMUM_PHP', '5.4.5');
   if (version_compare(phpversion(), DRUSH_MINIMUM_PHP) < 0 && !getenv('DRUSH_NO_MIN_PHP')) {
     return drush_set_error('DRUSH_REQUIREMENTS_ERROR', dt('Your command line PHP installation is too old. Drush requires at least PHP !version. To suppress this check, set the environment variable DRUSH_NO_MIN_PHP=1', array('!version' => DRUSH_MINIMUM_PHP)));
   }
@@ -163,11 +165,9 @@ function drush_preflight_prepare() {
     return; // An error was logged.
   }
 
-  // Set up for backwards-compatibility. New code should call
-  // \Drush::getVersion() and \Drush::getMajorVersion() directly
-  $drush_version = \Drush::getVersion();
-  $version_parts = explode('.', $drush_version);
-  define('DRUSH_VERSION', $drush_version);
+  $drush_info = drush_read_drush_info();
+  define('DRUSH_VERSION', $drush_info['drush_version']);
+  $version_parts = explode('.', DRUSH_VERSION);
   define('DRUSH_MAJOR_VERSION', $version_parts[0]);
   define('DRUSH_MINOR_VERSION', $version_parts[1]);
 
@@ -186,33 +186,6 @@ function drush_preflight_prepare() {
   _drush_preflight_global_options();
 
   drush_log(dt("Drush preflight prepare loaded autoloader at !autoloader", array('!autoloader' => realpath($vendor_path))), LogLevel::PREFLIGHT);
-}
-
-/**
- * Set up our dependency injection container, and load drush-services.yml.
- */
-function drush_init_dependency_injection_container() {
-
-  // Set up our dependency injection container.
-  $container = new Container();
-
-  $container->share('logger', 'Drush\Log\Logger');
-  $container->share('bootstrap.default', 'Drush\Boot\EmptyBoot');
-  $container->share('bootstrap.drupal6', 'Drush\Boot\DrupalBoot6');
-  $container->share('bootstrap.drupal7', 'Drush\Boot\DrupalBoot7');
-  $container->share('bootstrap.drupal8', 'Drush\Boot\DrupalBoot8');
-  $container->share('bootstrap.manager', 'Drush\Boot\BootstrapManager')
-    ->withArgument('bootstrap.default');
-  $container->extend('bootstrap.manager')
-    ->withMethodCall('add', ['bootstrap.drupal6'])
-    ->withMethodCall('add', ['bootstrap.drupal7'])
-    ->withMethodCall('add', ['bootstrap.drupal8']);
-
-  $container->inflector('Psr\Log\LoggerAwareInterface')
-          ->invokeMethod('setLogger', ['logger']);
-
-  // Store the container in the \Drush object
-  \Drush::setContainer($container);
 }
 
 /**
@@ -341,7 +314,7 @@ function drush_preflight() {
   drush_set_environment_vars($alias_record);
 
   // Select the bootstrap object and return it.
-  return \Drush::bootstrapManager()->bootstrap();
+  return drush_select_bootstrap_class();
 }
 
 /**
@@ -355,12 +328,26 @@ function drush_preflight_root() {
   if ($root) {
     $root = realpath($root);
   }
+  // @todo This context name should not mention Drupal.
   // @todo Drupal code should use DRUSH_DRUPAL_ROOT instead of this constant.
-  \Drush::bootstrapManager()->setRoot($root);
+  drush_set_context('DRUSH_SELECTED_DRUPAL_ROOT', $root);
 
   // Load the config options from Drupal's /drush, ../drush, and sites/all/drush directories,
   // even prior to bootstrapping the root.
   drush_load_config('drupal');
+
+  // Search for commandfiles in the root locations
+  $discovery = annotationcommand_adapter_get_discovery();
+  $searchpath = [dirname($root) . '/drush', "$root/drush", "$root/sites/all/drush"];
+
+  $drush_root_extensions = $discovery->discover($searchpath, '\Drush');
+  drush_set_context(
+    'DRUSH_ANNOTATED_COMMANDFILES',
+    array_merge(
+      drush_get_context('DRUSH_ANNOTATED_COMMANDFILES'),
+      $drush_root_extensions
+    )
+  );
 }
 
 function drush_preflight_site() {
@@ -541,6 +528,25 @@ function _drush_find_commandfiles_drush() {
 
   // @todo the zero parameter is a bit weird here. It's $phase.
   _drush_add_commandfiles($searchpath, 0);
+
+  // Also discover Drush's own annotation commands.
+  $discovery = annotationcommand_adapter_get_discovery();
+  $annotation_commandfiles = $discovery->discover(DRUSH_BASE_PATH . '/lib/Drush', '\Drush');
+
+  // And, finally, search for commandfiles in the $searchpath
+  $searchpath = array_map(
+    function ($item) {
+      if (strtolower(basename($item)) == 'commands') {
+        return dirname($item);
+      }
+      return $item;
+    },
+    $searchpath
+  );
+  $global_drush_extensions = $discovery->discover($searchpath, '\Drush');
+  $annotation_commandfiles += $global_drush_extensions;
+
+  drush_set_context('DRUSH_ANNOTATED_COMMANDFILES', $annotation_commandfiles);
 }
 
 /**
@@ -599,7 +605,7 @@ function drush_preflight_command_dispatch() {
   }
   $args = drush_get_arguments();
   $command_name = array_shift($args);
-  $root = \Drush::bootstrapManager()->getRoot();
+  $root = drush_get_context('DRUSH_SELECTED_DRUPAL_ROOT');
   $local_drush = drush_get_option('drush-script');
   if (empty($local_drush) && !empty($root)) {
     $local_drush = find_wrapper_or_launcher($root);
@@ -608,7 +614,7 @@ function drush_preflight_command_dispatch() {
   $values = NULL;
   if (!empty($root) && !empty($local_drush) && empty($is_local)) {
     if (!drush_is_absolute_path($local_drush)) {
-      $local_drush = $root . '/' . $local_drush;
+      $local_drush = $root . DIRECTORY_SEPARATOR . $local_drush;
     }
     $local_drush = realpath($local_drush);
     $this_drush = drush_find_drush();

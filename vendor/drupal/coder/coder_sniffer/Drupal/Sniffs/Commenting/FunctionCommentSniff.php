@@ -2,8 +2,6 @@
 /**
  * Parses and verifies the doc comments for functions.
  *
- * PHP version 5
- *
  * @category PHP
  * @package  PHP_CodeSniffer
  * @link     http://pear.php.net/package/PHP_CodeSniffer
@@ -653,9 +651,8 @@ class Drupal_Sniffs_Commenting_FunctionCommentSniff implements PHP_CodeSniffer_S
 
                 if ($suggestedTypeHint !== '' && isset($realParams[$checkPos]) === true) {
                     $typeHint = $realParams[$checkPos]['type_hint'];
-                    // Array type hints and primitive type hints are allowed to be
-                    // omitted.
-                    if ($typeHint === '' && in_array($suggestedTypeHint, ['array', 'string', 'int', 'float', 'bool']) === false) {
+                    // Primitive type hints are allowed to be omitted.
+                    if ($typeHint === '' && in_array($suggestedTypeHint, ['string', 'int', 'float', 'bool']) === false) {
                         $error = 'Type hint "%s" missing for %s';
                         $data  = array(
                                   $suggestedTypeHint,
@@ -865,7 +862,7 @@ class Drupal_Sniffs_Commenting_FunctionCommentSniff implements PHP_CodeSniffer_S
             return $type;
         }
 
-        $type = preg_replace('/[^a-zA-Z_\\\[\]]/', '', $type);
+        $type = preg_replace('/[^a-zA-Z0-9_\\\[\]]/', '', $type);
 
         return $type;
 

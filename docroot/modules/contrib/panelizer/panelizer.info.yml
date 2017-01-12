@@ -7,6 +7,8 @@ package: Layout
 dependencies:
   - panels
   - ctools_block
+  # @todo: Break the dependency on Field UI
+  - field_ui
   # @todo: Allow editing without the IPE
   - panels_ipe
 

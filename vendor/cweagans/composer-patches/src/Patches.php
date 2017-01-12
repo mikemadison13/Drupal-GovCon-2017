@@ -20,7 +20,7 @@ use Composer\Plugin\PluginInterface;
 use Composer\Installer\PackageEvents;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
-use Composer\Script\PackageEvent;
+use Composer\Installer\PackageEvent;
 use Composer\Util\ProcessExecutor;
 use Composer\Util\RemoteFilesystem;
 use Symfony\Component\Process\Process;
@@ -139,10 +139,12 @@ class Patches implements PluginInterface, EventSubscriberInterface {
   public function gatherPatches(PackageEvent $event) {
     // If we've already done this, then don't do it again.
     if (isset($this->patches['_patchesGathered'])) {
+      $this->io->write('<info>Patches already gathered. Skipping</info>');
       return;
     }
     // If patching has been disabled, bail out here.
     elseif (!$this->isPatchingEnabled()) {
+      $this->io->write('<info>Patching is disabled. Skipping.</info>');
       return;
     }
 
@@ -395,7 +397,7 @@ class Patches implements PluginInterface, EventSubscriberInterface {
   protected function isPatchingEnabled() {
     $extra = $this->composer->getPackage()->getExtra();
 
-    if (empty($extra['patches']) && empty($extra['patches-ignore'])) {
+    if (empty($extra['patches']) && empty($extra['patches-ignore']) && !isset($extra['patches-file'])) {
       // The root package has no patches of its own, so only allow patching if
       // it has specifically opted in.
       return isset($extra['enable-patching']) ? $extra['enable-patching'] : FALSE;

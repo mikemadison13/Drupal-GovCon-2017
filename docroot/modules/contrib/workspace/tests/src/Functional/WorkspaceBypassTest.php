@@ -3,7 +3,7 @@
 namespace Drupal\Tests\workspace\Functional;
 
 use Drupal\simpletest\BlockCreationTrait;
-use Drupal\simpletest\BrowserTestBase;
+use Drupal\Tests\BrowserTestBase;
 use Drupal\workspace\ReplicatorManager;
 
 /**
@@ -95,7 +95,6 @@ class WorkspaceBypassTest extends BrowserTestBase {
     $this->drupalGet('/node/' . $bears_vanilla_node->id() . '/edit');
     $session = $this->getSession();
     $this->assertEquals(403, $session->getStatusCode());
-
   }
 
   /**
@@ -160,6 +159,5 @@ class WorkspaceBypassTest extends BrowserTestBase {
     $session = $this->getSession();
     $this->assertEquals(403, $session->getStatusCode());
   }
-
 
 }

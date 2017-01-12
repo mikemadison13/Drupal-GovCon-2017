@@ -21,5 +21,4 @@ return array(
     'e7223560d890eab89cda23685e711e2c' => $vendorDir . '/psy/psysh/src/Psy/functions.php',
     'decc78cc4436b1292c6c0d151b19445c' => $vendorDir . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
     'aca594cec0c196659a3b7d4dc2665c0b' => $vendorDir . '/j7mbo/twitter-api-php/TwitterAPIExchange.php',
-    '9dd66fa958f6645ed3d54a216c0dd1fd' => $vendorDir . '/drush/drush/lib/Drush.php',
 );

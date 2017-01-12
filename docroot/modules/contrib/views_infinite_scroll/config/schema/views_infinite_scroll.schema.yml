@@ -6,7 +6,7 @@ views.pager.infinite_scroll:
       type: mapping
       mapping:
         button_text:
-          type: string
+          type: label
           label: 'Button Text'
         automatically_load_content:
           type: boolean

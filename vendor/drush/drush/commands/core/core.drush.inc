@@ -500,7 +500,7 @@ function _core_site_credentials($right_margin = 0) {
 function _core_path_aliases($project = '') {
   $paths = array();
   $site_wide = drush_drupal_sitewide_directory();
-  $boot = \Drush::bootstrap();
+  $boot = drush_get_bootstrap_object();
   if ($drupal_root = drush_get_context('DRUSH_DRUPAL_ROOT')) {
     $paths['%root'] = $drupal_root;
     if ($site_root = drush_get_context('DRUSH_DRUPAL_SITE_ROOT')) {
@@ -564,7 +564,7 @@ function _core_site_status_table($project = '') {
   $phase = drush_get_context('DRUSH_BOOTSTRAP_PHASE');
   if ($drupal_root = drush_get_context('DRUSH_DRUPAL_ROOT')) {
     $status_table['drupal-version'] = drush_drupal_version();
-    $boot_object = \Drush::bootstrap();
+    $boot_object = drush_get_bootstrap_object();
     $conf_dir = $boot_object->conf_path();
     $settings_file = "$conf_dir/settings.php";
     $status_table['drupal-settings-file'] = file_exists($settings_file) ? $settings_file : '';
@@ -586,10 +586,13 @@ function _core_site_status_table($project = '') {
         $status_table['db-port'] = isset($db_spec['port']) ? $db_spec['port'] : NULL;
         if ($phase > DRUSH_BOOTSTRAP_DRUPAL_CONFIGURATION) {
           $status_table['install-profile'] = $boot_object->get_profile();
-          if ($phase > DRUSH_BOOTSTRAP_DRUPAL_FULL) {
-            $status_table['bootstrap'] = dt('Successful');
-            if ($phase == DRUSH_BOOTSTRAP_DRUPAL_LOGIN) {
-              $status_table['user'] = drush_user_get_class()->getCurrentUserAsSingle()->getUsername();
+          if ($phase > DRUSH_BOOTSTRAP_DRUPAL_DATABASE) {
+            $status_table['db-status'] = dt('Connected');
+            if ($phase > DRUSH_BOOTSTRAP_DRUPAL_FULL) {
+              $status_table['bootstrap'] = dt('Successful');
+              if ($phase == DRUSH_BOOTSTRAP_DRUPAL_LOGIN) {
+                $status_table['user'] = drush_user_get_class()->getCurrentUserAsSingle()->getUsername();
+              }
             }
           }
         }
@@ -890,7 +893,7 @@ function drush_core_quick_drupal() {
   drush_set_option('backend', TRUE);
   drush_set_option('strict', FALSE); // We fail option validation because do so much internal drush_invoke().
   $makefile = drush_get_option('makefile');
-  $root = \Drush::bootstrapManager()->getRoot();
+  $root = drush_get_context('DRUSH_SELECTED_DRUPAL_ROOT');
   if (drush_get_option('use-existing', ($root != FALSE))) {
     if (!$root) {
       return drush_set_error('QUICK_DRUPAL_NO_ROOT_SPECIFIED', 'Must specify site with --root when using --use-existing.');
@@ -944,12 +947,12 @@ function drush_core_quick_drupal() {
     }
   }
   if (!drush_get_option('db-url', FALSE)) {
-    drush_set_option('db-url', 'sqlite://' . $base . '/sites/' . strtolower(drush_get_option('sites-subdir', 'default')) . "/$name.sqlite");
+    drush_set_option('db-url', 'sqlite://sites/' . strtolower(drush_get_option('sites-subdir', 'default')) . "/files/$name.sqlite");
   }
   // We have just created a site root where one did not exist before.
-  // We therefore must manually reset the selected root to
+  // We therefore must manually reset DRUSH_SELECTED_DRUPAL_ROOT to
   // our new root, and force a bootstrap to DRUSH_BOOTSTRAP_DRUPAL_ROOT.
-  \Drush::bootstrapManager()->setRoot($root);
+  drush_set_context('DRUSH_SELECTED_DRUPAL_ROOT', $root);
   if (!drush_bootstrap_to_phase(DRUSH_BOOTSTRAP_DRUPAL_ROOT)) {
     return drush_set_error('QUICK_DRUPAL_ROOT_LOCATE_FAIL', 'Unable to locate Drupal root directory.');
   }
@@ -990,7 +993,7 @@ function drush_core_quick_drupal() {
       // Current CLI user is also the web server user, which is for development
       // only. Hence we can safely make the site directory writable. This makes
       // it easier to delete and edit settings.php.
-      $boot = \Drush::bootstrap();
+      $boot = drush_get_bootstrap_object();
       @chmod($boot->conf_path(), 0700);
       drush_invoke_process(array('root' => $root, 'uri' => $server_uri), 'runserver', array($server));
     }
@@ -1196,9 +1199,8 @@ function _drush_core_eval_shebang_script($script_filename) {
   return $found;
 }
 
-
 /**
- * Process sets from the specified batch.
+ * Command callback. Process sets from the specified batch.
  *
  * This is the default batch processor that will be used if the $command parameter
  * to drush_backend_batch_process() has not been specified.
@@ -1208,7 +1210,7 @@ function drush_core_batch_process($id) {
 }
 
 /**
- * Process outstanding updates during updatedb.
+ * Command callback. Process outstanding updates during updatedb.
  *
  * This is a batch processing command that makes use of the drush_backend_invoke
  * api.
@@ -1306,7 +1308,7 @@ function drush_core_execute() {
   $cmd = implode(' ', $args);
   // If we selected a Drupal site, then cwd to the site root prior to exec
   $cwd = FALSE;
-  if ($selected_root = \Drush::bootstrapManager()->getRoot()) {
+  if ($selected_root = drush_get_context('DRUSH_SELECTED_DRUPAL_ROOT')) {
     if (is_dir($selected_root)) {
       $cwd = getcwd();
       drush_op('chdir', $selected_root);
@@ -1344,11 +1346,21 @@ function drush_core_execute() {
 function drush_core_twig_compile() {
   require_once DRUSH_DRUPAL_CORE . "/themes/engines/twig/twig.engine";
   // Scan all enabled modules and themes.
-  // @todo Refactor to not reuse commandfile paths directly.
-  $boot = \Drush::bootstrap();
-  $searchpaths = $boot->commandfile_searchpaths(DRUSH_BOOTSTRAP_DRUPAL_FULL);
-  $searchpaths[] = drupal_get_path('theme', drush_theme_get_default());;
-  $searchpaths[] = drupal_get_path('theme', drush_theme_get_admin());
+  // @todo refactor since \Drush\Boot\DrupalBoot::commandfile_searchpaths is similar.
+  $ignored_modules = drush_get_option_list('ignored-modules', array());
+  $cid = drush_cid_install_profile();
+  if ($cached = drush_cache_get($cid)) {
+    $ignored_modules[] = $cached->data;
+  }
+  foreach (array_diff(drush_module_list(), $ignored_modules) as $module) {
+    $searchpaths[] = drupal_get_path('module', $module);
+  }
+
+  $themes = drush_theme_list();
+  foreach ($themes as $name => $theme) {
+    $searchpaths[] = $theme->getPath();
+  }
+  
   foreach ($searchpaths as $searchpath) {
     foreach ($file = drush_scan_directory($searchpath, '/\.html.twig/', array('tests')) as $file) {
       $relative = str_replace(drush_get_context('DRUSH_DRUPAL_ROOT'). '/', '', $file->filename);

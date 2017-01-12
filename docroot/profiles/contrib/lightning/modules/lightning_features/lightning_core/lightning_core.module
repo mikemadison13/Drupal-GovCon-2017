@@ -5,25 +5,93 @@
  * Contains core functionality for the Lightning distribution.
  */
 
+use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\InstallStorage;
+use Drupal\Core\Entity\EntityDisplayModeInterface;
+use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\NodeTypeInterface;
 use Drupal\path\Plugin\Field\FieldType\PathFieldItemList;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_help().
+ */
+function lightning_core_help($route_name, RouteMatchInterface $route_match) {
+  $matched = [];
+  // Parse the route name to figure out what display mode we're looking at:
+  // 0 is the entire string.
+  // 1 is 'view' or 'form'.
+  // 2 is the ID of the affected entity type.
+  // 3 is 'view_mode' or 'form_mode'.
+  // 4 is 'view' or 'form'.
+  $expr = '/^entity\.entity_(view|form)_display\.([a-z_]+)\.((view|form)_mode)$/';
+
+  if (preg_match($expr, $route_name, $matched)) {
+    $entity_id = $matched[2] . '.' . $route_match->getParameter($matched[3] . '_name');
+
+    $description = \Drupal::entityTypeManager()
+      ->getStorage('entity_' . $matched[3])
+      ->load($entity_id)
+      ->getThirdPartySetting('lightning_core', 'description');
+
+    if ($description) {
+      return '<p>' . $description . '</p>';
+    }
+  }
+}
+
+/**
+ * Implements hook_modules_installed().
+ */
+function lightning_core_modules_installed(array $modules) {
+  if (in_array('token', $modules)) {
+    $view_modes = [];
+    foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type) {
+      $view_modes[] = $entity_type->id() . '.token';
+    }
+
+    $view_modes = EntityViewMode::loadMultiple($view_modes);
+    /** @var \Drupal\Core\Entity\EntityViewModeInterface $view_mode */
+    foreach ($view_modes as $view_mode) {
+      $view_mode->setThirdPartySetting('lightning_core', 'internal', TRUE)
+        ->save();
+    }
+  }
+}
 
 /**
  * Implements hook_entity_load().
  */
-function lightning_core_entity_load(array $entities, $entity_type_id) {
+function lightning_core_entity_load(array $entities) {
+  // Maintain a list of entity UUIDs whose aliases we've already looked up.
+  // We only want to look up a particular entity's alias once per request in
+  // order to prevent infinite loops (see issue #2831550).
+  static $looked_up = [];
+
   /** @var \Drupal\Core\Path\AliasStorageInterface $alias_storage */
   $alias_storage = \Drupal::service('path.alias_storage');
 
   foreach ($entities as $entity) {
+    $uuid = $entity->uuid();
+
     // If the entity has an empty path field, try to set its value. Amazingly,
     // Path does not do this on its freaking own.
-    if ($entity instanceof FieldableEntityInterface && $entity->hasField('path') && $entity->path instanceof PathFieldItemList && $entity->path->isEmpty()) {
+    if (
+      empty($looked_up[$uuid]) &&
+      $entity instanceof FieldableEntityInterface &&
+      $entity->hasField('path') &&
+      $entity->path instanceof PathFieldItemList &&
+      $entity->path->isEmpty()
+    ) {
+      $looked_up[$uuid] = TRUE;
+
       $alias = $alias_storage->load([
         'source' => '/' . $entity->toUrl()->getInternalPath(),
       ]);
@@ -81,6 +149,67 @@ function lightning_core_disable_buttons(array $element) {
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function lightning_core_form_alter(array &$form, FormStateInterface $form_state) {
+  $form_object = $form_state->getFormObject();
+
+  if ($form_object instanceof EntityFormInterface) {
+    $supported_operations = ['default', 'add', 'edit'];
+    $entity = $form_object->getEntity();
+
+    if (($entity instanceof EntityDisplayModeInterface || $entity instanceof RoleInterface) && in_array($form_object->getOperation(), $supported_operations)) {
+      $form['description'] = [
+        '#type' => 'textarea',
+        '#title' => t('Description'),
+        '#description' => t('Additional relevant information about this @entity_type, such as where it is used and what it is for.', [
+          '@entity_type' => $entity->getEntityType()->getSingularLabel(),
+        ]),
+        '#rows' => 2,
+        '#default_value' => $entity->getThirdPartySetting('lightning_core', 'description'),
+      ];
+      $form['actions']['submit']['#submit'][] = 'lightning_core_set_third_party_description';
+    }
+  }
+}
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function lightning_core_block_view_alter(array &$build, BlockPluginInterface $block) {
+  \Drupal::service('renderer')->addCacheableDependency($build, $block);
+
+  // Always add block_view:BASE_PLUGIN_ID as a cache tag.
+  $build['#cache']['tags'][] = 'block_view:' . $block->getBaseId();
+
+  // If the plugin is a derivative, add block_view:FULL_PLUGIN_ID as well.
+  if ($block->getDerivativeId()) {
+    $build['#cache']['tags'][] = 'block_view:' . $block->getPluginId();
+  }
+}
+
+/**
+ * Form submit handler: updates the description of a configuration entity.
+ *
+ * @param array $form
+ *   The complete form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current form state.
+ */
+function lightning_core_set_third_party_description(array &$form, FormStateInterface $form_state) {
+  $form_state
+    ->getFormObject()
+    ->getEntity()
+    ->setThirdPartySetting('lightning_core', 'description', $form_state->getValue('description'))
+    ->save();
+
+  // The help text block is very likely to be render cached, so invalidate the
+  // relevant cache tag. See lightning_core_block_view_alter() and
+  // lightning_core_help().
+  \Drupal::service('cache_tags.invalidator')->invalidateTags(['block_view:help_block']);
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function lightning_core_form_system_modules_alter(array &$form) {
@@ -92,6 +221,44 @@ function lightning_core_form_system_modules_alter(array &$form) {
     ]);
     $form['modules'][$package]['#description'] = '<p>' . $warning . '</p>';
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function lightning_core_form_user_form_alter(array &$form) {
+  if (isset($form['account']['roles'])) {
+    // Ensure the standard process functions run first.
+    \Drupal::service('lightning.form_helper')
+      ->applyStandardProcessing($form['account']['roles']);
+
+    $form['account']['roles']['#process'][] = 'lightning_core_set_role_descriptions';
+  }
+}
+
+/**
+ * Element process function: sets descriptions for role checkboxes on user_form.
+ *
+ * @param array $element
+ *   The element to process.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current form state.
+ * @param array $complete_form
+ *   The complete form.
+ *
+ * @return array
+ *   The processed element.
+ */
+function lightning_core_set_role_descriptions(array $element, FormStateInterface $form_state, array &$complete_form) {
+  // Try to add a description for each individual role.
+  foreach (Element::children($element) as $role) {
+    // Don't overwrite any existing description.
+    if (empty($element[$role]['#description'])) {
+      $element[$role]['#description'] = Role::load($role)
+        ->getThirdPartySetting('lightning_core', 'description');
+    }
+  }
+  return $element;
 }
 
 /**

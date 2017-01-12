@@ -31,6 +31,20 @@ class PanelizerWizardGeneralForm extends FormBase {
   }
 
   /**
+   * @param $machine_name
+   * @param $element
+   */
+  public static function validateMachineName($machine_name, $element) {
+    // Attempt to load via the machine name and entity type.
+    if (isset($element['#machine_name']['prefix'])) {
+      $panelizer = \Drupal::service('panelizer');
+      // Load the panels display variant.
+      $full_machine_name = $element['#machine_name']['prefix'] . '__' . $machine_name;
+      return $panelizer->getDefaultPanelsDisplayByMachineName($full_machine_name);
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $machine_name = NULL) {

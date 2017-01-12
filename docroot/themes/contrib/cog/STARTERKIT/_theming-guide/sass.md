@@ -136,7 +136,7 @@ There are two ways to really build a responsive site. Which way you go, usually 
 
 **Things to keep in mind**
 - Design doesn't have to dictate methods, but it's often easier if you let it.
-- All front end developers need to be on the same page. Meaning, dev A can't work mobile first while dev B is doing desktop down.
+- All front-end developers need to be on the same page. Meaning, dev A can't work mobile first while dev B is doing desktop down.
 - If developing with a mobile-first strategy, do it. Meaning, write styles and check in a browser at the smallest viewport before working your way up in regards to viewport size.
 - A task isn't complete until all viewports are correct
 - Sadly, regardless of how many breakpoints are defined by a designer, and the comps provided by the designer, unless design was done in a browser, there are going to be natural breaks in between breakpoints. Since the number and variety of devices continue to grow all the time, you usually can't ignore those. If you're defining your media queries or breakpoints as variables and/or using a mixin, I find it easier to handle one-offs as hand coded media queries because if you decide to adjust breakpoints globally, these rules generally aren't effected and you don't want them to change.

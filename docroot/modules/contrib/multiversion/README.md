@@ -14,7 +14,12 @@ This module is part of [the content staging suite for D8](https://www.drupal.org
 Multiversion depends on
   * Drupal core's serialization module
   * [Key-value Extensions](https://www.drupal.org/project/key_value)
-  * [Entity Storage Migrate API](https://drupal.org/project/entity_storage_migrate)
+  
+## Uninstall
+
+Multiversion can't be uninstalled as other modules because it modifies the entity storage.
+
+To unistall Multiversion use the `multiversion-uninstall` command or the `mun` alias for Drush.
 
 ## Presentations
 

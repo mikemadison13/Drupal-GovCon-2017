@@ -25,3 +25,19 @@ function workspace_install() {
   \Drupal::service('router.builder')->rebuild();
 }
 
+/**
+ * Allow "administer deployment" roles access to the Toolbar Update button.
+ */
+function workspace_update_8101() {
+  if (\Drupal::moduleHandler()->moduleExists('deploy')) {
+    $roles = \Drupal::entityTypeManager()
+      ->getStorage('user_role')
+      ->loadMultiple();
+    foreach ($roles as $role) {
+      if ($role->hasPermission('administer deployments')) {
+        $role->grantPermission('update any workspace from upstream');
+        $role->save();
+      }
+    }
+  }
+}

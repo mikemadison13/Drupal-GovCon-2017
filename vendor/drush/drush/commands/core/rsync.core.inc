@@ -53,7 +53,6 @@ function drush_core_rsync($source, $destination, $additional_options = array()) 
   if (!drush_get_context('DRUSH_SIMULATE')) {
     drush_print(dt("You will delete files in !target and replace with data from !source", array('!source' => $source_path, '!target' => $destination_path)));
     if (!drush_confirm(dt('Do you really want to continue?'))) {
-      // was: return drush_set_error('CORE_SYNC_ABORT', 'Aborting.');
       return drush_user_abort();
     }
   }
@@ -267,12 +266,20 @@ function _drush_core_rsync_both_remote($source, $destination, $additional_option
   // in the destination (i.e. there is no 'tmpdir' in the destination).
   //
   // All three of these cases need to be handled correctly in order
-  // to ensure the correct results.  In all cases, though, the first
-  // rsync always copies to $tmpDir, and the second rsync always
-  // copies from $tmpDir/basename($source_path).  So, the actual logic
-  // comes out to be much simpler than the analysis.
+  // to ensure the correct results.  In all cases the first
+  // rsync always copies to $tmpDir, however the second rsync has
+  // two cases that depend on the source path.  If the source path ends
+  // in /, the contents of a directory have been copied to $tmpDir, and
+  // the contents of $tmpDir must be copied to the destination.  Otherwise,
+  // a specific file or directory has been copied to $tmpDir and that
+  // specific item, identified by basename($source_path) must be copied to
+  // the destination.
+
   $putInTmpPath = drush_tempdir();
-  $getFromTmpPath = "$putInTmpPath/" . basename($source_path);
+  $getFromTmpPath = "$putInTmpPath/";
+  if (substr($source_path, -1) !== '/') {
+    $getFromTmpPath .= basename($source_path);
+  }
 
   // Copy from the source to the temporary location. Exit on failure.
   $values = drush_invoke_process('@self', 'core-rsync', array($source, $putInTmpPath), $options);

@@ -22,6 +22,7 @@ If you need to make requests via a proxy server, please [configure git to use a 
 
 ## Initial Setup
 
+1. Verify that your system meets the [system requirements for BLT](../INSTALL.md)
 1. [Fork](https://help.github.com/articles/fork-a-repo) the primary GitHub repository
 1. Clone your fork to your local machine:
 
@@ -67,7 +68,7 @@ Ensure that your local email address correctly matches the email address for you
 
 ## Updating you local environment
 
-The project is configured to update the local environment with a local drush alias and a remote alias as defined in `project.yml` or `project.local.yml`. Given that these aliases match, those in `drush/site-aliases/`, you can update the site with BLT.
+The project is configured to update the local environment with a local drush alias and a remote alias as defined in `blt/project.yml` or `blt/project.local.yml`. Given that these aliases match, those in `drush/site-aliases/`, you can update the site with BLT.
 
 [Local Development Tasks](project-tasks.md#local-tasks)
 

@@ -130,6 +130,9 @@ class PanelizerWizardContextForm extends ManageContext {
    * {@inheritdoc}
    */
   protected function isEditableContext($cached_values, $row) {
+    if (!isset($cached_values['contexts'][$row])) {
+      return FALSE;
+    }
     $context = $cached_values['contexts'][$row];
     return !empty($context['value']);
   }

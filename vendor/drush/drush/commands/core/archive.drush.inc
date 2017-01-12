@@ -14,7 +14,8 @@ function archive_drush_command() {
     'arguments' => array(
       'sites' => 'Optional. Site specifications, delimited by commas. Typically, list subdirectory name(s) under /sites.',
     ),
-    'options' => array(
+    // Most options on sql-dump should not be shown, so just offer a subset.
+    'options' => drush_sql_get_table_selection_options() + array(
       'description' => 'Describe the archive contents.',
       'tags' => 'Add tags to the archive manifest. Delimit multiple by commas.',
       'destination' => 'The full path and filename in which the archive should be stored. If omitted, it will be saved to the drush-backups directory and a filename will be generated.',
@@ -285,7 +286,11 @@ function drush_archive_dump($sites_subdirs = '@self') {
   }
 
   // Compress the archive
-  drush_shell_exec("gzip --no-name -f %s", $destination);
+  if (!drush_shell_exec("gzip --no-name -f %s", $destination)) {
+    // Clean up the tar file
+    drush_register_file_for_deletion($destination);
+    return drush_set_error(DRUSH_APPLICATION_ERROR, dt('Failed to gzip !destination', ['!destination' => $destination]));
+  }
 
   // gzip appends .gz unless the name already ends in .gz, .tgz, or .taz.
   if ("{$destination}.gz" != $final_destination) {

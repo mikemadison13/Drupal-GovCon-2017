@@ -1,0 +1,36 @@
+project:
+    machine_name: capitalcamp
+    prefix: DGC
+    human_name: 'Drupal GovCon'
+    profile:
+        name: lightning
+    local:
+        protocol: http
+        hostname: '127.0.0.1:8888'
+git:
+    default_branch: master
+    remotes:
+        - 'capitalcamp@svn-6971.prod.hosting.acquia.com:capitalcamp.git'
+drush:
+    aliases:
+        remote: '${project.machine_name}.test'
+        local: self
+        ci: self
+    default_alias: '${drush.aliases.local}'
+target-hooks:
+    frontend-setup:
+        dir: '${docroot}/themes/custom/twentyseventeen'
+        command: 'npm run install-tools'
+    frontend-build:
+        dir: '${docroot}/themes/custom/twentyseventeen'
+        command: 'npm run build'
+    post-deploy-build:
+        dir: '${deploy.dir}/docroot/profiles/contrib/lightning'
+        command: 'npm run install-libraries'
+    post-setup-build:
+        dir: '${docroot}/profiles/contrib/lightning'
+        command: 'npm run install-libraries'
+import: '${repo.root}/blt/custom.xml'
+behat:
+    paths:
+        - '${repo.root}/tests/behat'

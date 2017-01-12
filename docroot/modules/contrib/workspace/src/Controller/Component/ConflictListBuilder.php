@@ -7,7 +7,7 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\multiversion\Entity\Index\EntityIndexInterface;
+use Drupal\multiversion\Entity\Index\RevisionIndexInterface;
 use Drupal\multiversion\Entity\Workspace;
 use Drupal\multiversion\Workspace\ConflictTrackerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,11 +24,31 @@ class ConflictListBuilder {
   use DependencySerializationTrait;
 
   /**
+   * @var \Drupal\multiversion\Workspace\ConflictTrackerInterface
+   */
+  protected $conflictTracker;
+
+  /**
+   * @var \Drupal\multiversion\Entity\Index\RevisionIndexInterface
+   */
+  protected $revisionIndex;
+
+  /**
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateFormatter;
+
+  /**
    * Inject services needed to build the list.
    *
    * @param \Drupal\multiversion\Workspace\ConflictTrackerInterface $conflict_tracker
    *   The conflict tracking service.
-   * @param \Drupal\multiversion\Entity\Index\EntityIndexInterface $entity_index
+   * @param \Drupal\multiversion\Entity\Index\RevisionIndexInterface $revision_index
    *   The entity index service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
@@ -37,12 +57,12 @@ class ConflictListBuilder {
    */
   public function __construct(
     ConflictTrackerInterface $conflict_tracker,
-    EntityIndexInterface $entity_index,
+    RevisionIndexInterface $revision_index,
     EntityTypeManagerInterface $entity_type_manager,
     DateFormatterInterface $date_formatter
   ) {
     $this->conflictTracker = $conflict_tracker;
-    $this->entityIndex = $entity_index;
+    $this->revisionIndex = $revision_index;
     $this->entityTypeManager = $entity_type_manager;
     $this->dateFormatter = $date_formatter;
   }
@@ -155,11 +175,14 @@ class ConflictListBuilder {
    *
    * @see workspace_preprocess_workspace_rev
    *
-   * @return \Drupal\Core\Entity\EntityInterface[]
-   *   An array of entities.
+   * @param string $workspace_id
+   *   The workspace ID to build the conflict list for.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface[] An array of entities.
+   * An array of entities.
    */
   public function load($workspace_id) {
-    /* \Drupal\multiversion\Entity\Workspace $workspace */
+    /** \Drupal\multiversion\Entity\Workspace $workspace */
     $workspace = Workspace::load($workspace_id);
 
     $conflicts = $this->conflictTracker
@@ -170,15 +193,16 @@ class ConflictListBuilder {
     foreach ($conflicts as $uuid => $conflict) {
       // @todo figure out why this is an array and what to do if there is more than 1
       // @todo what happens when the conflict value is not "available"? what does this mean?
-      $rev = reset(array_keys($conflict));
-      $rev_info = $this->entityIndex
-        ->useWorkspace($workspace->id())
+      $conflict_keys = array_keys($conflict);
+      $rev = reset($conflict_keys);
+      $rev_info = $this->revisionIndex
+        ->useWorkspace($workspace_id)
         ->get("$uuid:$rev");
 
       if (!empty($rev_info['revision_id'])) {
         $entity_revisions[] = $this->entityTypeManager
           ->getStorage($rev_info['entity_type_id'])
-          ->useWorkspace($workspace->id())
+          ->useWorkspace($workspace_id)
           ->loadRevision($rev_info['revision_id']);
       }
     }
@@ -207,12 +231,12 @@ class ConflictListBuilder {
     $entities = $this->load($workspace_id);
     foreach ($entities as $entity) {
       if ($row = $this->buildRow($entity)) {
-        $build['table']['#rows'][$entity->id()] = $row;
+        $build['table']['#rows'][] = $row;
       }
     }
 
     // Only add the pager if a limit is specified.
-    if ($this->limit) {
+    if (!empty($this->limit)) {
       $build['pager'] = array(
         '#type' => 'pager',
       );

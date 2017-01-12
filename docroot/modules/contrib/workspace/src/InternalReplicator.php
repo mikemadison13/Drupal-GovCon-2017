@@ -13,6 +13,7 @@ use Drupal\replication\ReplicationTask\ReplicationTask;
 use Drupal\replication\ReplicationTask\ReplicationTaskInterface;
 use Drupal\replication\RevisionDiffFactoryInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * A replicator within the current Drupal runtime.
@@ -84,7 +85,11 @@ class InternalReplicator implements ReplicatorInterface {
   /**
    * {@inheritdoc}
    */
-  public function replicate(WorkspacePointerInterface $source, WorkspacePointerInterface $target, ReplicationTaskInterface $task = NULL) {
+  public function replicate(WorkspacePointerInterface $source, WorkspacePointerInterface $target, $task = NULL) {
+    if ($task !== NULL && !$task instanceof ReplicationTaskInterface) {
+      throw new UnexpectedTypeException($task, 'ReplicationTaskInterface');
+    }
+    
     $missing_found = 0;
     $docs_read = 0;
     $docs_written = 0;

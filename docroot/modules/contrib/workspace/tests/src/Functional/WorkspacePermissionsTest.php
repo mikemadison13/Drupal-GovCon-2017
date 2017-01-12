@@ -4,8 +4,7 @@ namespace Drupal\Tests\workspace\Functional;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\multiversion\Entity\WorkspaceInterface;
-use Drupal\simpletest\BrowserTestBase;
-
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests permission controls on workspaces.
@@ -13,7 +12,6 @@ use Drupal\simpletest\BrowserTestBase;
  * @group workspace
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
- *
  */
 class WorkspacePermissionsTest extends BrowserTestBase {
   use WorkspaceTestUtilities;
@@ -165,4 +163,5 @@ class WorkspacePermissionsTest extends BrowserTestBase {
     $this->drupalGet("/admin/structure/workspace/{$bears->id()}/edit");
     $this->assertEquals(200, $session->getStatusCode());
   }
+
 }

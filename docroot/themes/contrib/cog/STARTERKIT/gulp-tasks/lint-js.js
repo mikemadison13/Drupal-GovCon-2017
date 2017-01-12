@@ -3,8 +3,9 @@
  * Task: Lint: Scripts.
  */
 
-'use strict';
 module.exports = function (gulp, plugins, options) {
+  'use strict';
+
   // Lint JavaScript.
   gulp.task('lint:js', function () {
     return gulp.src(options.jsLinting.files.theme)

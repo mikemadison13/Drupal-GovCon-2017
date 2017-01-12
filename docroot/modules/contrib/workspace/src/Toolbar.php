@@ -114,31 +114,40 @@ class Toolbar {
       ],
     ];
 
-    $items['workspace_update'] = [
-      '#type' => 'toolbar_item',
-      '#weight' => 124,
-      'tab' => [
-        '#type' => 'link',
-        '#title' => t('Update'),
-        '#url' => Url::fromRoute('workspace.update.form'),
-        '#attributes' => [
-          'title' => t('Update current workspace from upstream'),
-          'class' => ['toolbar-icon', 'toolbar-icon-workspace-update', 'use-ajax'],
-          'data-dialog-type' => 'modal',
-          'data-dialog-options' => json_encode([
-            'width' => '50%',
-          ])
+    $user = \Drupal::currentUser();
+    $update_access = $user->hasPermission('update any workspace from upstream');
+    $has_upstream = isset($active->upstream) && !$active->upstream->isEmpty();
+    if ($update_access && $has_upstream) {
+      $items['workspace_update'] = [
+        '#type' => 'toolbar_item',
+        '#weight' => 124,
+        'tab' => [
+          '#type' => 'link',
+          '#title' => t('Update'),
+          '#url' => Url::fromRoute('workspace.update.form'),
+          '#attributes' => [
+            'title' => t('Update current workspace from upstream'),
+            'class' => [
+              'toolbar-icon',
+              'toolbar-icon-workspace-update',
+              'use-ajax'
+            ],
+            'data-dialog-type' => 'modal',
+            'data-dialog-options' => json_encode([
+              'width' => '50%',
+            ])
+          ],
         ],
-      ],
-      '#wrapper_attributes' => [
-        'class' => ['workspace-update-toolbar-tab'],
-      ],
-      '#attached' => [
-        'library' => [
-          'workspace/drupal.workspace.toolbar',
+        '#wrapper_attributes' => [
+          'class' => ['workspace-update-toolbar-tab'],
         ],
-      ],
-    ];
+        '#attached' => [
+          'library' => [
+            'workspace/drupal.workspace.toolbar',
+          ],
+        ],
+      ];
+    }
 
     return $items;
   }

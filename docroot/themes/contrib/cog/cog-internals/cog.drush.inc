@@ -122,11 +122,19 @@ function drush_cog($machine_name = NULL, $name = NULL) {
     "core: '8.x'\n" => '',
     "project: 'cog'\n" => '',
   );
+
   if ($description = drush_get_option('description')) {
     $info_strings['Read the included README.md on how to create a theme with cog.'] = $description;
   }
 
-  drush_op('cog_file_replace', $sub_theme_path . '/STARTERKIT.info.yml', $info_strings);
+  // Remove theme info added by Drupal.org.
+  $info_regexs = array(
+    array('pattern' => '/\# Information added by Drupal\.org packaging script on [\d-]+\n/', 'replacement' => ''),
+    array('pattern' => "/version: '[^']+'\n/", 'replacement' => ''),
+    array('pattern' => '/datestamp: \d+\n/', 'replacement' => ''),
+  );
+
+  drush_op('cog_file_replace', $sub_theme_path . '/STARTERKIT.info.yml', $info_strings, $info_regexs);
 
   // ***************************************************
   // Replace STARTERKIT in file names and contents.

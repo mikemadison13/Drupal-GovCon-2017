@@ -17,7 +17,8 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Workspace"),
  *   bundle_label = @Translation("Workspace type"),
  *   handlers = {
- *     "storage" = "Drupal\Core\Entity\Sql\SqlContentEntityStorage"
+ *     "storage" = "Drupal\Core\Entity\Sql\SqlContentEntityStorage",
+ *     "views_data" = "Drupal\views\EntityViewsData"
  *   },
  *   admin_permission = "administer workspaces",
  *   base_table = "workspace",

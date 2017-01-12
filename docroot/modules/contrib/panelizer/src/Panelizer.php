@@ -146,6 +146,20 @@ class Panelizer implements PanelizerInterface {
   }
 
   /**
+   * Load a Panels Display via an ID (Machine Name).
+   *
+   * @return \Drupal\panels\Plugin\DisplayVariant\PanelsDisplayVariant|NULL
+   *   The default Panels display with the given name if it exists; otherwise
+   *   NULL.
+   */
+  public function getDefaultPanelsDisplayByMachineName($full_machine_name) {
+    list($entity_type, $bundle, $view_mode, $machine_name) = explode('__', $full_machine_name);
+    /** @var \Drupal\panelizer\Panelizer $panelizer */
+    // @todo this $display_id looks all wrong to me since it's the name and view_mode.
+    return $this->getDefaultPanelsDisplay($machine_name, $entity_type, $bundle, $view_mode);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getEntityViewDisplay($entity_type_id, $bundle, $view_mode) {
