@@ -83,6 +83,7 @@ There are ten types of hooks supported:
 - Alter
 - Status
 - Extract
+- On-event
 
 Most of these also have "pre" and "post" varieties, to give more flexibility vis-a-vis hook ordering (and for consistency). Note that many validate, process and alter hooks may run, but the first status or extract hook that successfully returns a result will halt processing of further hooks of the same type.
 
@@ -145,6 +146,38 @@ The extract hook ([ExtractOutputInterface](src/Hooks/ExtractOutputInterface.php)
 
 If no extract hook returns any data, then the result object itself is printed if it is a string; otherwise, no output is emitted (other than any produced by the command itself).
 
+### On-Event hook
+
+Commands can define their own custom events; to do so, they need only implement the CustomEventAwareInterface, and use the CustomEventAwareTrait. Event handlers for each custom event can then be defined using the on-event hook.
+
+A handler using an on-event hook looks something like the following:
+```
+/**
+ * @hook on-event custom-event
+ */
+public function handlerForCustomEvent(/* arbitrary parameters, as defined by custom-event */)
+{
+    // do the needful, return what custom-event expects
+}
+```
+Then, to utilize this in a command:
+```
+class MyCommands implements CustomEventAwareInterface
+{
+    use CustomEventAwareTrait;
+
+    /**
+     * @command my-command
+     */
+    public myCommand($options = [])
+    {
+        $handlers = $this->getCustomEventHandlers('custom-event');
+        // iterate and call $handlers
+    }
+}
+```
+It is up to the command that defines the custom event to declare what the expected parameters for the callback function should be, and what the return value is and how it should be used.
+
 ## Output
 
 If a command method returns an integer, it is used as the command exit status code. If the command method returns a string, it is printed.
@@ -162,6 +195,10 @@ If you want to use annotations, but still want access to the Symfony Command, e.
 It is also possible to add InputInterface or OutputInterface parameters to any annotated method of a command file.
 
 ## API Usage
+
+If you would like to use Annotated Commands to build a commandline tool, it is recommended that you use [Robo as a framework](http://robo.li/framework.md), as it will set up all of the various command classes for you. If you would like to integrate Annotated Commands into some other framework, see the sections below.
+
+### Set up Command Factory and Instantiate Commands
 
 To use annotated commands in an application, pass an instance of your command class in to AnnotatedCommandFactory::createCommandsFromClass(). The result will be a list of Commands that may be added to your application.
 ```php
@@ -182,6 +219,8 @@ Note that the `setFormatterManager()` operation is optional; omit this if not us
 
 A CommandInfoAltererInterface can be added via AnnotatedCommandFactory::addCommandInfoAlterer(); it will be given the opportunity to adjust every CommandInfo object parsed from a command file prior to the creation of commands.
 
+### Command File Discovery
+
 A discovery class, CommandFileDiscovery, is also provided to help find command files on the filesystem. Usage is as follows:
 ```php
 $discovery = new CommandFileDiscovery();
@@ -198,6 +237,20 @@ If different namespaces are used at different command file paths, change the cal
 $myCommandFiles = $discovery->discover(['\Ns1' => $path1, '\Ns2' => $path2]);
 ```
 As a shortcut for the above, the method `discoverNamespaced()` will take the last directory name of each path, and append it to the base namespace provided. This matches the conventions used by Drupal modules, for example.
+
+### Configuring Output Formatts (e.g. to enable wordwrap)
+
+The Output Formatters project supports automatic formatting of tabular output. In order for wordwrapping to work correctly, the terminal width must be passed in to the Output Formatters handlers via `FormatterOptions::setWidth()`.
+
+In the Annotated Commands project, this is done via dependency injection. If a `PrepareFormatter` object is passed to `CommandProcessor::addPrepareFormatter()`, then it will be given an opportunity to set properties on the `FormatterOptions` when it is created.
+
+A `PrepareTerminalWidthOption` class is provided to use the Symfony Application class to fetch the terminal width, and provide it to the FormatterOptions. It is injected as follows:
+```php
+$terminalWidthOption = new PrepareTerminalWidthOption();
+$terminalWidthOption->setApplication($application);
+$commandFactory->commandProcessor()->addPrepareFormatter($terminalWidthOption);
+```
+To provide greater control over the width used, create your own `PrepareTerminalWidthOption` subclass, and adjust the width as needed.
 
 ## Other Callbacks
 

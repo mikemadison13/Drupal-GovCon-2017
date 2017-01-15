@@ -94,6 +94,12 @@ entity_browser.browser.widget.upload:
     upload_location:
       type: string
       label: 'Upload location'
+    multiple:
+      type: boolean
+      label: 'Allow multiple uploads'
+    extensions:
+      type: string
+      label: 'Allowed file extensions'
 
 entity_browser.browser.widget.view:
   type: mapping
@@ -176,6 +182,10 @@ entity_browser.field_widget_display.label:
 entity_browser.field_widget_display.thumbnail:
   type: mapping
   label: 'Image thumbnail display config'
+  mapping:
+    image_style:
+      type: string
+      label: 'Image style'
 
 entity_browser.field_widget_display.rendered_entity:
   type: mapping

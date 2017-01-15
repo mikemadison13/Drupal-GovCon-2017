@@ -320,6 +320,20 @@ class CommandInfo
     }
 
     /**
+     * Return the topics for this command.
+     *
+     * @return string[]
+     */
+    public function getTopics()
+    {
+        if (!$this->hasAnnotation('topics')) {
+            return [];
+        }
+        $topics = $this->getAnnotation('topics');
+        return explode(',', trim($topics));
+    }
+
+    /**
      * Return the list of refleaction parameters.
      *
      * @return ReflectionParameter[]
