@@ -19,7 +19,7 @@ class AcquiaPurgeTagsHeader extends TagsHeaderBase implements TagsHeaderInterfac
    * {@inheritdoc}
    */
   public function getValue(array $tags) {
-    return implode('|', $tags);
+    return implode(' ', $tags);
   }
 
 }
