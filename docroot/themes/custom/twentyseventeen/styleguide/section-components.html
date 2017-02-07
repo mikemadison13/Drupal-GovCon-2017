@@ -596,10 +596,39 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
     <span class="nav__icon-line"></span>
   </label>
   <nav role="navigation" class="nav">
-    <ul class="nav__items">
-              <li class="nav__item"><a href="#">Home</a></li>
-              <li class="nav__item"><a href="#">Sponsor</a></li>
-              <li class="nav__item"><a href="#">Present</a></li>
+    <ul class="nav__items nav__items--first-level">
+              <li class="nav__item nav__item--first-level">
+          <a href="#">Home</a>
+                  </li>
+              <li class="nav__item nav__item--first-level">
+          <a href="#">Sponsor</a>
+                      <ul class="nav__items nav__items--second-level">
+                              <li class="nav__item nav__item--second-level">
+                  <a href="#">Second level link 1</a>
+                  <ul class="nav__items nav__items--third-level">
+                                          <li class="nav__item nav__item--third-level">
+                        <a href="#">Third level link 1</a>
+                      </li>
+                                          <li class="nav__item nav__item--third-level">
+                        <a href="#">Third level link 2</a>
+                      </li>
+                                      </ul>
+                </li>
+                              <li class="nav__item nav__item--second-level">
+                  <a href="#">Second level link 2</a>
+                  <ul class="nav__items nav__items--third-level">
+                                      </ul>
+                </li>
+                              <li class="nav__item nav__item--second-level">
+                  <a href="#">Second level link 3</a>
+                  <ul class="nav__items nav__items--third-level">
+                                      </ul>
+                </li>
+                          </ul>
+                  </li>
+              <li class="nav__item nav__item--first-level">
+          <a href="#">Present</a>
+                  </li>
           </ul>
   </nav>
 </div>
@@ -625,10 +654,39 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
     &lt;span class=&quot;nav__icon-line&quot;&gt;&lt;/span&gt;
   &lt;/label&gt;
   &lt;nav role=&quot;navigation&quot; class=&quot;nav&quot;&gt;
-    &lt;ul class=&quot;nav__items&quot;&gt;
-              &lt;li class=&quot;nav__item&quot;&gt;&lt;a href=&quot;#&quot;&gt;Home&lt;/a&gt;&lt;/li&gt;
-              &lt;li class=&quot;nav__item&quot;&gt;&lt;a href=&quot;#&quot;&gt;Sponsor&lt;/a&gt;&lt;/li&gt;
-              &lt;li class=&quot;nav__item&quot;&gt;&lt;a href=&quot;#&quot;&gt;Present&lt;/a&gt;&lt;/li&gt;
+    &lt;ul class=&quot;nav__items nav__items--first-level&quot;&gt;
+              &lt;li class=&quot;nav__item nav__item--first-level&quot;&gt;
+          &lt;a href=&quot;#&quot;&gt;Home&lt;/a&gt;
+                  &lt;/li&gt;
+              &lt;li class=&quot;nav__item nav__item--first-level&quot;&gt;
+          &lt;a href=&quot;#&quot;&gt;Sponsor&lt;/a&gt;
+                      &lt;ul class=&quot;nav__items nav__items--second-level&quot;&gt;
+                              &lt;li class=&quot;nav__item nav__item--second-level&quot;&gt;
+                  &lt;a href=&quot;#&quot;&gt;Second level link 1&lt;/a&gt;
+                  &lt;ul class=&quot;nav__items nav__items--third-level&quot;&gt;
+                                          &lt;li class=&quot;nav__item nav__item--third-level&quot;&gt;
+                        &lt;a href=&quot;#&quot;&gt;Third level link 1&lt;/a&gt;
+                      &lt;/li&gt;
+                                          &lt;li class=&quot;nav__item nav__item--third-level&quot;&gt;
+                        &lt;a href=&quot;#&quot;&gt;Third level link 2&lt;/a&gt;
+                      &lt;/li&gt;
+                                      &lt;/ul&gt;
+                &lt;/li&gt;
+                              &lt;li class=&quot;nav__item nav__item--second-level&quot;&gt;
+                  &lt;a href=&quot;#&quot;&gt;Second level link 2&lt;/a&gt;
+                  &lt;ul class=&quot;nav__items nav__items--third-level&quot;&gt;
+                                      &lt;/ul&gt;
+                &lt;/li&gt;
+                              &lt;li class=&quot;nav__item nav__item--second-level&quot;&gt;
+                  &lt;a href=&quot;#&quot;&gt;Second level link 3&lt;/a&gt;
+                  &lt;ul class=&quot;nav__items nav__items--third-level&quot;&gt;
+                                      &lt;/ul&gt;
+                &lt;/li&gt;
+                          &lt;/ul&gt;
+                  &lt;/li&gt;
+              &lt;li class=&quot;nav__item nav__item--first-level&quot;&gt;
+          &lt;a href=&quot;#&quot;&gt;Present&lt;/a&gt;
+                  &lt;/li&gt;
           &lt;/ul&gt;
   &lt;/nav&gt;
 &lt;/div&gt;
