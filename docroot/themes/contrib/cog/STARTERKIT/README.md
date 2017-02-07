@@ -143,7 +143,7 @@ lib:
 
 ### Grid System
 
-The Cog grid structure was setup with the intent of having a very minimalist starting point. The theme grid container is setup with a single class `.mq--t` located in `layout/_containers.scss` that contains the following starter Susy container: `@include container(80em)`. In the `layout/_sidebars.scss` file is the column code for each combination of sidebars based on the Susy syntax. The body classes are defined with a preprocess conditional in `[theme-name].theme` for each scenario.
+The Cog grid structure was setup with the intent of having a very minimalist starting point. The theme grid container is setup with a single class `.cog--mq` located in `layout/_containers.scss` that contains the following starter Susy container: `@include container(80em)`. In the `layout/_sidebars.scss` file is the column code for each combination of sidebars based on the Susy syntax. The body classes are defined with a preprocess conditional in `[theme-name].theme` for each scenario.
 
 ### Theme Regions
 

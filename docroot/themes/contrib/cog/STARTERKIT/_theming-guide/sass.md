@@ -1,4 +1,17 @@
-## Sass Style Organization
+## Theming Guide: Sass in Drupal
+
+###Table of Contents
+- <a href="#sassorg">Sass Style Organization</a>
+- <a href="#componenmqs">Component Rules with Media Queries</a>
+- <a href="#csspreprocess">CSS Preprocessing</a>
+- <a href="#effectivestyles">Writing Effective Style Rules</a>
+- <a href="#mqtechniques">Media Queries Coding Techniques</a>
+
+<!-- -------------------------- -->
+<!-- -------------------------- -->
+
+<a name="sassorg"></a>
+### Sass Style Organization
 This theme breaks down stylesheets according to the SMACSS-BEM methodology, similar to the core theme Classy. The following categories are broken down into actual folders that contain sass partials. Everything in these folders is compiled down to a single stylesheet that is loaded by the theme.
 
 - **Base Rules** > Base styles for HTML elements and normalization rules
@@ -11,15 +24,17 @@ This theme breaks down stylesheets according to the SMACSS-BEM methodology, simi
 
 *With SMACSS, the intent is to keep the styles that pertain to a specific component with the rest of the component. That means that instead of having a single break point, either in a main CSS file or in a separate media query style sheet, place media queries around the component states.*
 
-## Example Component rule with media query.
+<!-- -------------------------- -->
+
+<a name="componenmqs"></a>
+### Component Rules with Media Queries
 
 **CSS Version**
 
-```css
+```
 .summary {
   font-size: 18px;
 }
-
 @media screen and (min-width: 767px) {
   .summary {
     font-size: 20px;
@@ -28,7 +43,8 @@ This theme breaks down stylesheets according to the SMACSS-BEM methodology, simi
 ```
 
 **SASS Version**
-```scss
+
+```
 .summary {
   font-size: 18px;
   @media screen and (min-width: 767px) {
@@ -37,7 +53,8 @@ This theme breaks down stylesheets according to the SMACSS-BEM methodology, simi
 }
 ```
 
-## CSS Preprocessing
+<a name="csspreprocess"></a>
+### CSS Preprocessing
 CSS preprocessors allow themers to be more efficient when developing a sub theme. We prefer SASS, using scss syntax, and using Compass. These are the Zen 5 defaults and work well. We recommend using Compass for creating sprites for your site using two sprite directories, one for standard resolution, one for retina resolutions.
 
 The majority of your scss files should be partials. These partials are then imported into a single scss file and compiled out as one file. For example:
@@ -58,14 +75,19 @@ The majority of your scss files should be partials. These partials are then impo
 @import "components/footer";
 ```
 
-## Style Rules
-When writing styles, the themer’s goal should be to write efficient CSS. This means using the least amount of selectors possible. The best performance in CSS is the ID, but this is often not a realistic selector to use because it limits it's reusability. The exceptions are for layout rules and unique rules for unique items, like the site-name. After that is the class selector, which should be the target of the majority of your rules. Though we write CSS left to right ( `#content .field-item p` ) a browser reads CSS right to left. So in the previous rule, it would first find every paragraph on the page. Then it invalidate the ones that aren’t inside a `.field-item` class. Then invalidate the remaining ones that aren’t inside of an element with the ID `#content`. **When using a CSS Preprocessor, a lot of care needs to be taken in regards to selector depth. It’s extremely easy to nest selectors which will result in extremely inefficient styles.**
+<!-- -------------------------- -->
+
+<a name="effectivestyles"></a>
+
+### Writing Effective Style Rules
+
+When writing styles, the themer’s goal should be to write efficient CSS. This means using the least amount of selectors possible. The best performance in CSS is the ID, but this is often not a realistic selector to use because it limits it's reusability. The exceptions are for layout rules and unique rules for unique items, like the site-name. After that is the class selector, which should be the target of the majority of your rules. Though we write CSS left to right ( `#content .field-item p` ) a browser reads CSS right to left. So in the previous rule, it would first find every paragraph on the page. Then it invalidate the ones that aren’t inside a `.field-item` class. Then invalidate the remaining ones that aren’t inside of an element with the ID `#content`. When using a CSS Preprocessor, a lot of care needs to be taken in regards to selector depth. It’s extremely easy to nest selectors which will result in extremely inefficient styles.
 
 Keep your styles generic when you can, think broad strokes. If you can, apply your style to `.field-item` instead of `.article .field-item`. Likewise, when you need to apply the style to a more limited scope, use the semantic class and not the drupal generic class. So, use `.view-articles` instead of simply `.view`.
 
 **Example: You need to apply a style to an ul, li, and an a tag for a particular view of articles. You may be tempted to write SASS like this:**
 
-```css
+```
 .article-view {
   /* view styles */
   ul {
@@ -79,15 +101,19 @@ Keep your styles generic when you can, think broad strokes. If you can, apply yo
   }
 }
 ```
+
 **The previous would compile to:**
-```css
+
+```
 .article-view {/* view styles */}
 .article-view ul {/* ul styles */}
 .article-view ul li {/* li styles */}
 .article-view ul li a {/* a styles */}
 ```
+
 **A better way would be:**
-```scss
+
+```
 .article-view {
   /* view styles */
   ul { */ ul styles */}
@@ -95,13 +121,16 @@ Keep your styles generic when you can, think broad strokes. If you can, apply yo
   a {/* a styles */}
 }
 ```
+
 **Which compiles to:**
+
 ```css
 .article-view {/* view styles */}
 .article-view ul {/* ul styles */}
 .article-view li {/* li styles */}
 .article-view a {/* a styles */}
 ```
+
 If you look at the first set (the bad one) in the previous example, the last rule requires the browser match 4 items. Since a browser reads right to left, this is extremely inefficient. Nested tags is the most expensive rule in regards to front-end performance. If the HTML tags have classes, like a typical drupal site would, the most efficient rule would use those.
 
 For more information on CSS selector efficiency: https://developers.google.com/speed/docs/best-practices/rendering
@@ -112,8 +141,13 @@ A great module that can be used to set up your theme’s generic styles is the s
 
 Though drupal.org style guidelines don’t consider css preprocessors very much, and some information seems outdated, the css guidelines are worth reading. https://drupal.org/node/1886770
 
+<!-- -------------------------- -->
 
-## Media Queries
+
+<a name="mqtechniques"></a>
+
+### Media Queries Coding Techniques
+
 There are two ways to really build a responsive site. Which way you go, usually depends on the design provided, which determines the way you work and how you write your media queries.
 
 **Mobile First:** When working mobile first, you should build from the smallest veiwport to the widest desktop. So when writing styles, the styles outside of a media query would work on all viewports and mobile viewports. Media queried rules would apply to larger viewports. Here are some sample media queries for mobile-first. Notice the use of min-width. Mobile only rule does use a max-width. This should be used in the case that the rule is **only mobile**.
@@ -142,20 +176,12 @@ There are two ways to really build a responsive site. Which way you go, usually 
 - Sadly, regardless of how many breakpoints are defined by a designer, and the comps provided by the designer, unless design was done in a browser, there are going to be natural breaks in between breakpoints. Since the number and variety of devices continue to grow all the time, you usually can't ignore those. If you're defining your media queries or breakpoints as variables and/or using a mixin, I find it easier to handle one-offs as hand coded media queries because if you decide to adjust breakpoints globally, these rules generally aren't effected and you don't want them to change.
 
 
+<br><hr>
 
-
-## Links
-### SMACSS
+### Additional References
+- [SMACSS Homepage](http://smacss.com/)
 - [SMACSS in themes](http://www.acquia.com/blog/organize-your-styles-introduction-smacss)
-- [SMACSS](http://smacss.com/)
-
-### CSS Performance
 - [Chrome - Optimize Browser Rendering](https://developers.google.com/speed/docs/best-practices/rendering)
 - [Mozilla - Writing Efficient CSS](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Writing_efficient_CSS)
-
-### Drupal Coding Standards
 - [CSS Architecture for Drupal 8](https://www.drupal.org/coding-standards/css/architecture)
-- [JavaScript](https://drupal.org/node/172169)
-
-### Drupal Guides
 - [Drupal 8 Theming Guide](https://www.drupal.org/theme-guide/8)

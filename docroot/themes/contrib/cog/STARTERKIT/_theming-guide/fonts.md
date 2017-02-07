@@ -1,14 +1,14 @@
-## Theming Guide: Web Fonts
+## Theming Guide: Using Web Fonts in Drupal
 
 ###Table of Contents
-- <a href="#cdnfonts">Adding external Web fonts to your theme</a>
-- <a href="#localfonts">Adding local Web fonts to your theme</a>
+- <a href="#cdnfonts">Adding External Web Fonts in Drupal</a>
+- <a href="#localfonts">Adding Local Web Fonts in Drupal</a>
 
 
 <!-- -------------------------- -->
 
 <a name="cdnfonts"></a>
-### Adding external Web fonts to your theme 
+### Adding External Web Fonts in Drupal
 Most popular web font stacks can be included with minimal effort, especially when loading from an external source. In this example we will load a Google font into our theme thru the libraries file. 
 
 #### Filename
@@ -16,9 +16,9 @@ Most popular web font stacks can be included with minimal effort, especially whe
 
 #### File contents
 ```
-lib:
+fonts:
   version: VERSION
-    fonts:
+    example:
       '//fonts.googleapis.com/css?family=Open+Sans:400,700,300': { type: external}
 ```
 
@@ -26,12 +26,23 @@ lib:
 
 
 <a name="localfonts"></a>
-### Adding local Web fonts to your theme 
+### Adding Local Web Fonts in Drupal
 
-When implementing local fonts, we typically recommend using the `@font-face` rule to accomplish this. The below example shows broader coverage for each browser, but this can be trimmed based on the available font library. 
+When implementing local web fonts, you can reference a local CSS within your libraries file to isolate the font import. After adding to the theme libraries file, we recommend using the `@font-face` rule to accomplish this. The below example shows broader coverage for each browser, but this can be trimmed based on the available font library. 
 
 #### Filename
-`_font.scss`
+`example.libraries.yml`
+
+#### File contents
+```
+fonts:
+  version: VERSION
+    example:
+      fonts/example.css: {} # local font
+```
+
+#### Filename
+`fonts/example.css`
 
 #### File contents
 ```
@@ -49,10 +60,9 @@ When implementing local fonts, we typically recommend using the `@font-face` rul
 <!-- -------------------------- -->
 
 
-
 <br><hr>
 
 ### Additional References
-- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face">MDN @font-face</a>
 - <a href="https://www.drupal.org/docs/8/theming-drupal-8/adding-stylesheets-css-and-javascript-js-to-a-drupal-8-theme">Adding stylesheets (CSS) and JavaScript (JS) to a Drupal 8 theme</a>
+- <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face">MDN @font-face</a>
 - <a href="https://www.drupal.org/docs/8/theming">Using @font-face CSS Tricks</a>

@@ -127,8 +127,9 @@ function drush_cog($machine_name = NULL, $name = NULL) {
     $info_strings['Read the included README.md on how to create a theme with cog.'] = $description;
   }
 
-  // Remove theme info added by Drupal.org.
+  // Remove unwanted theme info.
   $info_regexs = array(
+    array('pattern' => '/hidden: truen/', 'replacement' => ''),
     array('pattern' => '/\# Information added by Drupal\.org packaging script on [\d-]+\n/', 'replacement' => ''),
     array('pattern' => "/version: '[^']+'\n/", 'replacement' => ''),
     array('pattern' => '/datestamp: \d+\n/', 'replacement' => ''),

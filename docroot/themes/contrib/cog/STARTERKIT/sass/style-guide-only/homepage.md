@@ -20,3 +20,7 @@ While our styles are organized as above in the style guide, our Sass files are o
 - components: component-based styles
 - layout: component styles that only apply layout to major chunks of the page
 - style-guide: some helper files needed to build this automated style guide
+
+## Creating a styleguide entry
+
+Please view the "Example Button" entry inside of the "components" section to view an example entry.

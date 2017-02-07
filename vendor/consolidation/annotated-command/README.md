@@ -2,7 +2,11 @@
 
 Initialize Symfony Console commands from annotated command class methods.
 
-[![Travis CI](https://travis-ci.org/consolidation/annotated-command.svg?branch=master)](https://travis-ci.org/consolidation/annotated-command) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/consolidation/annotated-command/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/consolidation/annotated-command/?branch=master) [![Coverage Status](https://coveralls.io/repos/github/consolidation/annotated-command/badge.svg?branch=master)](https://coveralls.io/github/consolidation/annotated-command?branch=master) [![License](https://poser.pugx.org/consolidation/annotated-command/license)](https://packagist.org/packages/consolidation/annotated-command)
+[![Travis CI](https://travis-ci.org/consolidation/annotated-command.svg?branch=master)](https://travis-ci.org/consolidation/annotated-command)
+[![Windows CI](https://ci.appveyor.com/api/projects/status/c2c4lcf43ux4c30p?svg=true)](https://ci.appveyor.com/project/greg-1-anderson/annotated-command)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/consolidation/annotated-command/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/consolidation/annotated-command/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/consolidation/annotated-command/badge.svg?branch=master)](https://coveralls.io/github/consolidation/annotated-command?branch=master) 
+[![License](https://poser.pugx.org/consolidation/annotated-command/license)](https://packagist.org/packages/consolidation/annotated-command)
 
 ## Component Status
 
@@ -196,7 +200,7 @@ It is also possible to add InputInterface or OutputInterface parameters to any a
 
 ## API Usage
 
-If you would like to use Annotated Commands to build a commandline tool, it is recommended that you use [Robo as a framework](http://robo.li/framework.md), as it will set up all of the various command classes for you. If you would like to integrate Annotated Commands into some other framework, see the sections below.
+If you would like to use Annotated Commands to build a commandline tool, it is recommended that you use [Robo as a framework](http://robo.li/framework), as it will set up all of the various command classes for you. If you would like to integrate Annotated Commands into some other framework, see the sections below.
 
 ### Set up Command Factory and Instantiate Commands
 

@@ -83,6 +83,7 @@ function STARTERKIT_preprocess_node(&$variables) {
 
 /**
  * Implements hook_form_BASE_FORM_ID_alter() for \Drupal\node\NodeForm.
+ *
  * Changes vertical tabs to container and adds meta information.
  * Code borrowed from Seven theme.
  */
@@ -124,7 +125,7 @@ function STARTERKIT_form_node_form_alter(&$form, FormStateInterface $form_state)
         ),
       ),
       '#markup'             => '<h4 class="label inline">' . t('Author') . '</h4> ' . $node->getOwner()
-          ->getUsername(),
+        ->getUsername(),
     ),
   );
   $form['revision_information']['#type'] = 'container';

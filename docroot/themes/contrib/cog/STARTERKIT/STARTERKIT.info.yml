@@ -2,9 +2,11 @@ name: Cog STARTERKIT
 type: theme
 description: 'Acquia D8 starter theme'
 # core: 8.x
+hidden: true
 base theme: cog
 libraries:
   - STARTERKIT/fonts
+  - STARTERKIT/fontawesome
   - STARTERKIT/global
 regions:
   branding: Branding
@@ -16,8 +18,8 @@ regions:
   post_content: 'Post content'
   footer: Footer
 
-# Information added by Drupal.org packaging script on 2016-12-16
-version: '8.x-1.3'
+# Information added by Drupal.org packaging script on 2017-02-03
+version: '8.x-1.4'
 core: '8.x'
 project: 'cog'
-datestamp: 1481917084
+datestamp: 1486133585

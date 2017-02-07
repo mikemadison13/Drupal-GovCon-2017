@@ -2,7 +2,7 @@
 // 
 // Base form elements.
 //
-// Markup: form_html.hbs
+// Markup: form_html.twig
 //
 // Style guide: form.common
 form {
@@ -30,7 +30,6 @@ textarea {
   font-size: 0.875em;
   margin: 0 0 1em;
   padding: 0.5em;
-  height: 2.3125em;
   width: auto;
   box-sizing: border-box;
   transition: box-shadow 0.45s, border-color 0.45s ease-in-out;
@@ -72,6 +71,7 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
   border: 1px solid $white;
   padding: 5px 11px;
   background: $off-white;
+  color: $med-gray;
   @extend .tmp-shadow;
   &:hover, &:focus {
     background: $lighter-gray;
@@ -133,7 +133,7 @@ label.error {
 }
 // Form HTML5
 //
-// Markup: form_html5.hbs
+// Markup: form_html5.twig
 //
 // Style guide: form.html5
 input[type="datetime"],

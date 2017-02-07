@@ -19,19 +19,23 @@ Be sure to visit our [about document](https://github.com/acquia-pso/cog/tree/8.x
 <a name="created"></a> 
 
 
-<br>
+#### Theming Guide 
 
-<!--
+We have included a wide collection of snippets and resources in Cog in the format of a [theming guide](https://github.com/acquia-pso/cog/tree/8.x-1.x/STARTERKIT/_theming-guide). These code samples are referenced by common topics and technical methodologies. 
 
-Let's wait until this is cleaner....
+- <a href="https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/sass.md">Sass in Drupal</a>
+- <a href="https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/fonts.md">Using Web Fonts in Drupal</a>
+- <a href="https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/twig.md">Twig for Drupal 8</a>
+- <a href="https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/images.md">Images in Drupal</a> 
+- <a href="https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/libraries.md">Drupal 8 Libraries</a>
+- <a href="https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/preprocessing.md">Preprocessing in Drupal</a>
+- <a href="https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/javascript.md">JavaScript in Drupal</a>
 
-## Further Documentation
 
-Cog also ships with an extensive list of documentation and code samples that were intentionally left of of the theme. We have collected all the examples in an easy reference [listed here](STARTERKIT/_theming-guide/readme.md).
 
--->
 
-<hr />
+
+<br /> <hr />
 
 
 ### License, support, and contribution

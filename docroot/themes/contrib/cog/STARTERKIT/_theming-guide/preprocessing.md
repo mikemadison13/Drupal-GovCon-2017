@@ -1,15 +1,15 @@
-## Drupal Preprocessing
-This document is a reference for techniques to create new customize variable in Drupal's preprocessing functions.
+## Theming Guide: Preprocessing in Drupal
+
 
 ###Table of Contents
-- <a href="#customvars">Creating and passing custom variables to twig</a>
-- <a href="#userrole">Creating body classes based on user role</a>
-- <a href="#regionvar">Counting and creating classes elements per region</a>
-- <a href="#homepage">Creating a body class for the homepage</a>
-- <a href="#themespec">Creating a theme-specific variable to pass to twig</a>
-- <a href="#pathalias">Creating body classes based on path alias</a>
-- <a href="#nodetype">Creating body classes based on node type</a>
-- <a href="#commonvars">Common variables available in primary twig files</a>
+- <a href="#customvars">Creating and Passing Custom Variables to Twig</a>
+- <a href="#userrole">Creating Body Classes based on User Role</a>
+- <a href="#regionvar">Counting and Creating Classes per Region</a>
+- <a href="#homepage">Creating a Body Class for the Homepage</a>
+- <a href="#themespec">Creating a Theme-Specific Variable for Twig</a>
+- <a href="#pathalias">Creating Body Classes based on Path Alias</a>
+- <a href="#nodetype">Creating Body Classes based on Node Type</a>
+- <a href="#commonvars">Common Variables in Twig files</a>
 
 
 <!-- -------------------------- -->
@@ -18,8 +18,8 @@ This document is a reference for techniques to create new customize variable in 
 
 <!-- -------------------------- -->
 
-### Creating and passing custom variables to twig
-Preprocess functions are generally intended to introduce custom variables for certain portions of the theme layer. In the following example, we will introduce a new variable and then print within the template. 
+### Creating and Passing Custom Variables to Twig
+Preprocess functions are generally intended to introduce custom variables for certain portions of the theme layer. In the following example we will introduce a new variable and print within the template. 
 
 #### Filenames
 `mytheme.theme` `node.html.twig`
@@ -39,8 +39,8 @@ function mytheme_preprocess_node(&$variables) {
 <!-- -------------------------- -->
 
 <a name="userrole"></a>
-### Creating body classes based on user role 
-In this example we add body classes based on the assigned roles based on the logged-in user. 
+### Creating Body Classes based on User Role
+In this example we will add body classes based on the assigned roles based on the logged-in user. 
 
 #### Filename
 `mytheme.theme`
@@ -62,7 +62,7 @@ function mytheme_preprocess_html(&$variables) {
 
 <!-- -------------------------- -->
 <a name="regionvar"></a>
-### Counting and creating classes elements per region
+### Counting and Creating Classes per Region
 In this example we will add DOM classes wrappers to each element in each region. This would typically be used to assign grid declarations for Susy columns. 
 
 #### Filename
@@ -96,7 +96,7 @@ function mytheme_preprocess_region(&$variables) {
 
 
 <a name="homepage"></a>
-### Creating a body class for the homepage
+### Creating a Body Class for the Homepage
 In this example we add a body class based on frontpage path.
 
 #### Filename
@@ -115,7 +115,7 @@ function mytheme_preprocess_html(&$variables) {
 <!-- -------------------------- -->
 
 <a name="themespec"></a>
-### Creating a theme-specific variable to pass to twig 
+### Creating a Theme-Specific Variable for Twig 
 In this example we create a new theme variables to reference in multiple places with the preprocess functions that can be utilized in the twig file. 
 
 #### Filename
@@ -131,7 +131,7 @@ function mytheme_preprocess_html(&$variables) {
 <!-- -------------------------- -->
 
 <a name="pathalias"></a>
-### Creating body classes based on path alias 
+### Creating Body Classes based on Path Alias 
 In this example we create a new body classes that will render based on Drupal URL path.
 
 #### Filename
@@ -156,7 +156,7 @@ function mytheme_preprocess_html(&$variables) {
 <!-- -------------------------- -->
 
 <a name="nodetype"></a>
-### Creating body classes based on node type
+### Creating Body Classes based on Node Type
 In this example we create a new body classes that will render on content type.
 
 #### Filename
@@ -176,7 +176,7 @@ function mytheme_preprocess_html(&$variables) {
 
 
 <a name="commonvars"></a>
-### Common variables available in primary twig files  
+### Common Variables in Twig files
 Many used and unused variables exist out of the box for most of the core Twig files.
 
 #### Filename
@@ -254,7 +254,6 @@ Many used and unused variables exist out of the box for most of the core Twig fi
 <br><hr>
 
 ### Additional References
-
 - <a href="https://www.drupal.org/docs/8/theming/twig/twig-best-practices-preprocess-functions-and-templates">Drupal.org Twig best practices - preprocess functions and templates</a>
 - <a href="https://www.drupal.org/docs/8/theming">Theming Drupal 8</a>
 - <a href="https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Render!theme.api.php/function/hook_preprocess_HOOK/8.2.x">Drupal.org docs for hook\_preprocess\_HOOK</a>
