@@ -18,7 +18,17 @@
 
 <!-- Hidden SVG sprite - must be available for use -->
 <div class="svg-sprite">
-  <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol id="email" viewBox="-255.5 -1087.5 32 32">
+  <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol id="GovCon-DownArrow-SM-Rev" viewBox="0 0 14 14">
+<polygon fill="#FFFFFF" points="9.3,7 9.3,0 4.7,0 4.7,7 0,7 7,14 14,7 "/>
+</symbol><symbol id="GovCon-FileUpload-SM-Rev" viewBox="0 0 14 14">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+</style>
+<g>
+	<polygon class="st0" points="4.7,9.3 9.3,9.3 9.3,7 14,7 7,0 0,7 4.7,7 	"/>
+	<polygon class="st0" points="11.7,11.7 2.3,11.7 2.3,9.3 0,9.3 0,11.7 0,14 2.3,14 11.7,14 14,14 14,11.7 14,9.3 11.7,9.3 	"/>
+</g>
+</symbol><symbol id="email" viewBox="-255.5 -1087.5 32 32">
 <g>
 	<polygon points="-254.258,-1078.781 -255.5,-1081.265 -255.5,-1059.463 -251.832,-1059.463 -246.285,-1074.252 	"/>
 	<polygon points="-239.5,-1070.399 -244.524,-1073.252 -249.696,-1059.463 -229.303,-1059.463 -234.475,-1073.253
@@ -325,7 +335,7 @@ to an HTML element, these styles will be the ones displayed.</p>
           </div>
               
               <div class="kss-source kss-style">
-          Source: <code>base/elements/_elements.scss</code>, line 75
+          Source: <code>base/elements/_elements.scss</code>, line 79
         </div>
           </section>
           <section id="kssref-base-forms" class="kss-section kss-section--depth-2">
@@ -408,34 +418,34 @@ to an HTML element, these styles will be the ones displayed.</p>
     </select>
   </p>
 
-  <p>Radio Buttons:
-    <label><input type="radio" class="radio" name="radio_button" value="radio_1">
-      Radio 1</label>
-    <label><input type="radio" class="radio" name="radio_button" value="radio_2">
-      Radio 2</label>
-    <label><input type="radio" class="radio" name="radio_button" value="radio_3">
-      Radio 3</label>
-    <label><input type="radio" class="radio" name="radio_button" value="radio_4" disabled="">
-      Radio Disabled</label>
+  <p class="form_radio">Radio Buttons:
+    <input id="radio_1" type="radio" class="radio" name="radio_button" value="radio_1" checked>
+      <label for="radio_1">Radio 1</label>
+    <input id="radio_2" type="radio" class="radio" name="radio_button" value="radio_2">
+      <label for="radio_2">Radio 2</label>
+    <input id="radio_3" type="radio" class="radio" name="radio_button" value="radio_3">
+      <label for="radio_3">Radio 3</label>
+    <input id="radio_4" type="radio" class="radio" name="radio_button" value="radio_4" disabled="">
+      <label for="radio_4">Radio Disabled</label>
   </p>
 
-  <p>Checkboxes:
-    <label><input type="checkbox" class="checkbox" name="checkboxes" value="check_1">
-      Checkbox 1</label>
-    <label><input type="checkbox" class="checkbox" name="checkboxes" value="check_2">
-      Checkbox 2</label>
-    <label><input type="checkbox" class="checkbox" name="checkboxes" value="check_3">
-      Checkbox 3</label>
-    <label><input type="checkbox" class="checkbox" name="checkboxes" value="check_4" disabled="">
-      Checkbox Disabled</label>
+  <p class="form_checkbox">Checkboxes:
+    <input id="check_1" type="checkbox" class="checkbox" name="checkboxes" value="check_1">
+      <label for="check_1">Checkbox 1</label>
+    <input id="check_2" type="checkbox" class="checkbox" name="checkboxes" value="check_2">
+      <label for="check_2">Checkbox 2</label>
+    <input id="check_3"  type="checkbox" class="checkbox" name="checkboxes" value="check_3">
+      <label for="check_3">Checkbox 3</label>
+    <input id="check_4" type="checkbox" class="checkbox" name="checkboxes" value="check_4" disabled="">
+      <label for="check_4">Checkbox Disabled</label>
   </p>
 
   <p><label for="password">Password:</label>
     <input type="password" class="password" id="password">
   </p>
 
-  <p><label for="file">File Input:</label>
-    <input type="file" class="file" id="file">
+  <p><input type="file" class="inputfile" id="file" />
+    <label for="file">Upload File</label>
   </p>
 
 </form>
@@ -500,41 +510,41 @@ to an HTML element, these styles will be the ones displayed.</p>
     &lt;/select&gt;
   &lt;/p&gt;
 
-  &lt;p&gt;Radio Buttons:
-    &lt;label&gt;&lt;input type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_1&quot;&gt;
-      Radio 1&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_2&quot;&gt;
-      Radio 2&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_3&quot;&gt;
-      Radio 3&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_4&quot; disabled=&quot;&quot;&gt;
-      Radio Disabled&lt;/label&gt;
+  &lt;p class=&quot;form_radio&quot;&gt;Radio Buttons:
+    &lt;input id=&quot;radio_1&quot; type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_1&quot; checked&gt;
+      &lt;label for=&quot;radio_1&quot;&gt;Radio 1&lt;/label&gt;
+    &lt;input id=&quot;radio_2&quot; type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_2&quot;&gt;
+      &lt;label for=&quot;radio_2&quot;&gt;Radio 2&lt;/label&gt;
+    &lt;input id=&quot;radio_3&quot; type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_3&quot;&gt;
+      &lt;label for=&quot;radio_3&quot;&gt;Radio 3&lt;/label&gt;
+    &lt;input id=&quot;radio_4&quot; type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_4&quot; disabled=&quot;&quot;&gt;
+      &lt;label for=&quot;radio_4&quot;&gt;Radio Disabled&lt;/label&gt;
   &lt;/p&gt;
 
-  &lt;p&gt;Checkboxes:
-    &lt;label&gt;&lt;input type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_1&quot;&gt;
-      Checkbox 1&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_2&quot;&gt;
-      Checkbox 2&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_3&quot;&gt;
-      Checkbox 3&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_4&quot; disabled=&quot;&quot;&gt;
-      Checkbox Disabled&lt;/label&gt;
+  &lt;p class=&quot;form_checkbox&quot;&gt;Checkboxes:
+    &lt;input id=&quot;check_1&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_1&quot;&gt;
+      &lt;label for=&quot;check_1&quot;&gt;Checkbox 1&lt;/label&gt;
+    &lt;input id=&quot;check_2&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_2&quot;&gt;
+      &lt;label for=&quot;check_2&quot;&gt;Checkbox 2&lt;/label&gt;
+    &lt;input id=&quot;check_3&quot;  type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_3&quot;&gt;
+      &lt;label for=&quot;check_3&quot;&gt;Checkbox 3&lt;/label&gt;
+    &lt;input id=&quot;check_4&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_4&quot; disabled=&quot;&quot;&gt;
+      &lt;label for=&quot;check_4&quot;&gt;Checkbox Disabled&lt;/label&gt;
   &lt;/p&gt;
 
   &lt;p&gt;&lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
     &lt;input type=&quot;password&quot; class=&quot;password&quot; id=&quot;password&quot;&gt;
   &lt;/p&gt;
 
-  &lt;p&gt;&lt;label for=&quot;file&quot;&gt;File Input:&lt;/label&gt;
-    &lt;input type=&quot;file&quot; class=&quot;file&quot; id=&quot;file&quot;&gt;
+  &lt;p&gt;&lt;input type=&quot;file&quot; class=&quot;inputfile&quot; id=&quot;file&quot; /&gt;
+    &lt;label for=&quot;file&quot;&gt;Upload File&lt;/label&gt;
   &lt;/p&gt;
 
 &lt;/form&gt;</code></pre>
           </div>
               
               <div class="kss-source kss-style">
-          Source: <code>base/form/_form.scss</code>, line 135
+          Source: <code>base/form/_form.scss</code>, line 161
         </div>
           </section>
           <section id="kssref-base-forms" class="kss-section kss-section--depth-2">
@@ -621,34 +631,34 @@ to an HTML element, these styles will be the ones displayed.</p>
     </select>
   </p>
 
-  <p>Radio Buttons:
-    <label><input type="radio" class="radio" name="radio_button" value="radio_1">
-      Radio 1</label>
-    <label><input type="radio" class="radio" name="radio_button" value="radio_2">
-      Radio 2</label>
-    <label><input type="radio" class="radio" name="radio_button" value="radio_3">
-      Radio 3</label>
-    <label><input type="radio" class="radio" name="radio_button" value="radio_4" disabled="">
-      Radio Disabled</label>
+  <p class="form_radio">Radio Buttons:
+    <input id="radio_1" type="radio" class="radio" name="radio_button" value="radio_1" checked>
+      <label for="radio_1">Radio 1</label>
+    <input id="radio_2" type="radio" class="radio" name="radio_button" value="radio_2">
+      <label for="radio_2">Radio 2</label>
+    <input id="radio_3" type="radio" class="radio" name="radio_button" value="radio_3">
+      <label for="radio_3">Radio 3</label>
+    <input id="radio_4" type="radio" class="radio" name="radio_button" value="radio_4" disabled="">
+      <label for="radio_4">Radio Disabled</label>
   </p>
 
-  <p>Checkboxes:
-    <label><input type="checkbox" class="checkbox" name="checkboxes" value="check_1">
-      Checkbox 1</label>
-    <label><input type="checkbox" class="checkbox" name="checkboxes" value="check_2">
-      Checkbox 2</label>
-    <label><input type="checkbox" class="checkbox" name="checkboxes" value="check_3">
-      Checkbox 3</label>
-    <label><input type="checkbox" class="checkbox" name="checkboxes" value="check_4" disabled="">
-      Checkbox Disabled</label>
+  <p class="form_checkbox">Checkboxes:
+    <input id="check_1" type="checkbox" class="checkbox" name="checkboxes" value="check_1">
+      <label for="check_1">Checkbox 1</label>
+    <input id="check_2" type="checkbox" class="checkbox" name="checkboxes" value="check_2">
+      <label for="check_2">Checkbox 2</label>
+    <input id="check_3"  type="checkbox" class="checkbox" name="checkboxes" value="check_3">
+      <label for="check_3">Checkbox 3</label>
+    <input id="check_4" type="checkbox" class="checkbox" name="checkboxes" value="check_4" disabled="">
+      <label for="check_4">Checkbox Disabled</label>
   </p>
 
   <p><label for="password">Password:</label>
     <input type="password" class="password" id="password">
   </p>
 
-  <p><label for="file">File Input:</label>
-    <input type="file" class="file" id="file">
+  <p><input type="file" class="inputfile" id="file" />
+    <label for="file">Upload File</label>
   </p>
 
 </form>
@@ -713,34 +723,34 @@ to an HTML element, these styles will be the ones displayed.</p>
     &lt;/select&gt;
   &lt;/p&gt;
 
-  &lt;p&gt;Radio Buttons:
-    &lt;label&gt;&lt;input type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_1&quot;&gt;
-      Radio 1&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_2&quot;&gt;
-      Radio 2&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_3&quot;&gt;
-      Radio 3&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_4&quot; disabled=&quot;&quot;&gt;
-      Radio Disabled&lt;/label&gt;
+  &lt;p class=&quot;form_radio&quot;&gt;Radio Buttons:
+    &lt;input id=&quot;radio_1&quot; type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_1&quot; checked&gt;
+      &lt;label for=&quot;radio_1&quot;&gt;Radio 1&lt;/label&gt;
+    &lt;input id=&quot;radio_2&quot; type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_2&quot;&gt;
+      &lt;label for=&quot;radio_2&quot;&gt;Radio 2&lt;/label&gt;
+    &lt;input id=&quot;radio_3&quot; type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_3&quot;&gt;
+      &lt;label for=&quot;radio_3&quot;&gt;Radio 3&lt;/label&gt;
+    &lt;input id=&quot;radio_4&quot; type=&quot;radio&quot; class=&quot;radio&quot; name=&quot;radio_button&quot; value=&quot;radio_4&quot; disabled=&quot;&quot;&gt;
+      &lt;label for=&quot;radio_4&quot;&gt;Radio Disabled&lt;/label&gt;
   &lt;/p&gt;
 
-  &lt;p&gt;Checkboxes:
-    &lt;label&gt;&lt;input type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_1&quot;&gt;
-      Checkbox 1&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_2&quot;&gt;
-      Checkbox 2&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_3&quot;&gt;
-      Checkbox 3&lt;/label&gt;
-    &lt;label&gt;&lt;input type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_4&quot; disabled=&quot;&quot;&gt;
-      Checkbox Disabled&lt;/label&gt;
+  &lt;p class=&quot;form_checkbox&quot;&gt;Checkboxes:
+    &lt;input id=&quot;check_1&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_1&quot;&gt;
+      &lt;label for=&quot;check_1&quot;&gt;Checkbox 1&lt;/label&gt;
+    &lt;input id=&quot;check_2&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_2&quot;&gt;
+      &lt;label for=&quot;check_2&quot;&gt;Checkbox 2&lt;/label&gt;
+    &lt;input id=&quot;check_3&quot;  type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_3&quot;&gt;
+      &lt;label for=&quot;check_3&quot;&gt;Checkbox 3&lt;/label&gt;
+    &lt;input id=&quot;check_4&quot; type=&quot;checkbox&quot; class=&quot;checkbox&quot; name=&quot;checkboxes&quot; value=&quot;check_4&quot; disabled=&quot;&quot;&gt;
+      &lt;label for=&quot;check_4&quot;&gt;Checkbox Disabled&lt;/label&gt;
   &lt;/p&gt;
 
   &lt;p&gt;&lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
     &lt;input type=&quot;password&quot; class=&quot;password&quot; id=&quot;password&quot;&gt;
   &lt;/p&gt;
 
-  &lt;p&gt;&lt;label for=&quot;file&quot;&gt;File Input:&lt;/label&gt;
-    &lt;input type=&quot;file&quot; class=&quot;file&quot; id=&quot;file&quot;&gt;
+  &lt;p&gt;&lt;input type=&quot;file&quot; class=&quot;inputfile&quot; id=&quot;file&quot; /&gt;
+    &lt;label for=&quot;file&quot;&gt;Upload File&lt;/label&gt;
   &lt;/p&gt;
 
 &lt;/form&gt;</code></pre>
@@ -1074,7 +1084,7 @@ to an HTML element, these styles will be the ones displayed.</p>
           </div>
               
               <div class="kss-source kss-style">
-          Source: <code>base/elements/_elements.scss</code>, line 88
+          Source: <code>base/elements/_elements.scss</code>, line 95
         </div>
           </section>
           <section id="kssref-base-table" class="kss-section kss-section--depth-2">
@@ -1159,7 +1169,7 @@ to an HTML element, these styles will be the ones displayed.</p>
           </div>
               
               <div class="kss-source kss-style">
-          Source: <code>base/elements/_elements.scss</code>, line 124
+          Source: <code>base/elements/_elements.scss</code>, line 131
         </div>
           </section>
           <section id="kssref-base-text" class="kss-section kss-section--depth-2">
@@ -1212,7 +1222,7 @@ to an HTML element, these styles will be the ones displayed.</p>
           </div>
               
               <div class="kss-source kss-style">
-          Source: <code>base/elements/_elements.scss</code>, line 57
+          Source: <code>base/elements/_elements.scss</code>, line 60
         </div>
           </section>
           <section id="kssref-base-utility" class="kss-section kss-section--depth-2">
