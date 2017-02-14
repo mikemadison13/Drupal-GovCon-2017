@@ -19,7 +19,7 @@ use Drupal\acquia_purge\HostingInfoInterface;
  *   cooldown_time = 0.2,
  *   description = @Translation("Invalidates Varnish powered load balancers on your Acquia Cloud site."),
  *   multi_instance = FALSE,
- *   types = {"url"},
+ *   types = {"url", "tag"},
  * )
  */
 class AcquiaCloudPurger extends PurgerBase implements PurgerInterface {
