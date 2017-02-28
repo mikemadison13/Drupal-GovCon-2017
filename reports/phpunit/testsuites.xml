@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="AllTests" tests="15" assertions="22" failures="0" errors="0" time="16.728411">
-    <testsuite name="Acquia\Blt\Tests\BltProject\BehatTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/BehatTest.php" tests="1" assertions="2" failures="0" errors="0" time="0.002578">
-      <testcase name="testSetupBehat" class="Acquia\Blt\Tests\BltProject\BehatTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/BehatTest.php" line="19" assertions="2" time="0.002578"/>
+  <testsuite name="AllTests" tests="15" assertions="22" failures="0" errors="0" time="21.216574">
+    <testsuite name="Acquia\Blt\Tests\BltProject\BehatTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/BehatTest.php" tests="1" assertions="2" failures="0" errors="0" time="0.002703">
+      <testcase name="testSetupBehat" class="Acquia\Blt\Tests\BltProject\BehatTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/BehatTest.php" line="19" assertions="2" time="0.002703"/>
     </testsuite>
-    <testsuite name="Acquia\Blt\Tests\BltProject\BuildTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/BuildTest.php" tests="1" assertions="3" failures="0" errors="0" time="0.000794">
-      <testcase name="testSetupMake" class="Acquia\Blt\Tests\BltProject\BuildTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/BuildTest.php" line="21" assertions="3" time="0.000794"/>
+    <testsuite name="Acquia\Blt\Tests\BltProject\BuildTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/BuildTest.php" tests="1" assertions="3" failures="0" errors="0" time="0.000889">
+      <testcase name="testSetupMake" class="Acquia\Blt\Tests\BltProject\BuildTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/BuildTest.php" line="21" assertions="3" time="0.000889"/>
     </testsuite>
-    <testsuite name="Acquia\Blt\Tests\BltProject\SettingsTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/SettingsTest.php" tests="1" assertions="1" failures="0" errors="0" time="0.000803">
-      <testcase name="testSetupLocalSettings" class="Acquia\Blt\Tests\BltProject\SettingsTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/SettingsTest.php" line="19" assertions="1" time="0.000803"/>
+    <testsuite name="Acquia\Blt\Tests\BltProject\SettingsTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/SettingsTest.php" tests="1" assertions="1" failures="0" errors="0" time="0.000861">
+      <testcase name="testSetupLocalSettings" class="Acquia\Blt\Tests\BltProject\SettingsTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/SettingsTest.php" line="19" assertions="1" time="0.000861"/>
     </testsuite>
-    <testsuite name="Acquia\Blt\Tests\BltProject\GitTasksTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/GitTest.php" tests="11" assertions="14" failures="0" errors="0" time="14.483519">
-      <testcase name="testGitConfig" class="Acquia\Blt\Tests\BltProject\GitTasksTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/GitTest.php" line="19" assertions="3" time="0.000838"/>
-      <testsuite name="Acquia\Blt\Tests\BltProject\GitTasksTest::testGitHookCommitMsg" tests="9" assertions="9" failures="0" errors="0" time="4.031148">
-        <testcase name="testGitHookCommitMsg with data set #0" assertions="1" time="0.448130">
+    <testsuite name="Acquia\Blt\Tests\BltProject\GitTasksTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/GitTest.php" tests="11" assertions="14" failures="0" errors="0" time="17.400103">
+      <testcase name="testGitConfig" class="Acquia\Blt\Tests\BltProject\GitTasksTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/GitTest.php" line="19" assertions="3" time="0.000866"/>
+      <testsuite name="Acquia\Blt\Tests\BltProject\GitTasksTest::testGitHookCommitMsg" tests="9" assertions="9" failures="0" errors="0" time="5.441837">
+        <testcase name="testGitHookCommitMsg with data set #0" assertions="1" time="0.455205">
           <system-out>Executing "mkdir -p /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp &amp;&amp; echo 'This is a bad commit.' &gt; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg &amp;&amp; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/.git/hooks/commit-msg /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg 2&gt;&amp;1" 
 </system-out>
         </testcase>
-        <testcase name="testGitHookCommitMsg with data set #1" assertions="1" time="0.470627">
+        <testcase name="testGitHookCommitMsg with data set #1" assertions="1" time="0.452827">
           <system-out>Executing "mkdir -p /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp &amp;&amp; echo '123: This is a bad commit.' &gt; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg &amp;&amp; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/.git/hooks/commit-msg /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg 2&gt;&amp;1" 
 </system-out>
         </testcase>
-        <testcase name="testGitHookCommitMsg with data set #2" assertions="1" time="0.446465">
+        <testcase name="testGitHookCommitMsg with data set #2" assertions="1" time="0.515551">
           <system-out>Executing "mkdir -p /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp &amp;&amp; echo 'DGC: This is a bad commit.' &gt; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg &amp;&amp; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/.git/hooks/commit-msg /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg 2&gt;&amp;1" 
 </system-out>
         </testcase>
-        <testcase name="testGitHookCommitMsg with data set #3" assertions="1" time="0.444337">
+        <testcase name="testGitHookCommitMsg with data set #3" assertions="1" time="0.781915">
           <system-out>Executing "mkdir -p /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp &amp;&amp; echo 'DGC-123 This is a bad commit.' &gt; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg &amp;&amp; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/.git/hooks/commit-msg /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg 2&gt;&amp;1" 
 </system-out>
         </testcase>
-        <testcase name="testGitHookCommitMsg with data set #4" assertions="1" time="0.444419">
+        <testcase name="testGitHookCommitMsg with data set #4" assertions="1" time="0.857309">
           <system-out>Executing "mkdir -p /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp &amp;&amp; echo 'DGC-123: This is a bad commit' &gt; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg &amp;&amp; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/.git/hooks/commit-msg /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg 2&gt;&amp;1" 
 </system-out>
         </testcase>
-        <testcase name="testGitHookCommitMsg with data set #5" assertions="1" time="0.443448">
+        <testcase name="testGitHookCommitMsg with data set #5" assertions="1" time="0.651997">
           <system-out>Executing "mkdir -p /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp &amp;&amp; echo 'DGC-123: Hello.' &gt; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg &amp;&amp; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/.git/hooks/commit-msg /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg 2&gt;&amp;1" 
 </system-out>
         </testcase>
-        <testcase name="testGitHookCommitMsg with data set #6" assertions="1" time="0.441207">
+        <testcase name="testGitHookCommitMsg with data set #6" assertions="1" time="0.574641">
           <system-out>Executing "mkdir -p /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp &amp;&amp; echo 'NOT-123: This is a bad commit.' &gt; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg &amp;&amp; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/.git/hooks/commit-msg /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg 2&gt;&amp;1" 
 </system-out>
         </testcase>
-        <testcase name="testGitHookCommitMsg with data set #7" assertions="1" time="0.444858">
+        <testcase name="testGitHookCommitMsg with data set #7" assertions="1" time="0.581687">
           <system-out>Executing "mkdir -p /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp &amp;&amp; echo 'DGC-123: This is a good commit.' &gt; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg &amp;&amp; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/.git/hooks/commit-msg /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg 2&gt;&amp;1" 
 </system-out>
         </testcase>
-        <testcase name="testGitHookCommitMsg with data set #8" assertions="1" time="0.447657">
+        <testcase name="testGitHookCommitMsg with data set #8" assertions="1" time="0.570705">
           <system-out>Executing "mkdir -p /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp &amp;&amp; echo 'DGC-123: This is an exceptionally long--seriously, really, really, REALLY long, but still good commit.' &gt; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg &amp;&amp; /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/.git/hooks/commit-msg /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/tmp/blt_commit_msg 2&gt;&amp;1" 
 </system-out>
         </testcase>
       </testsuite>
-      <testcase name="testGitPreCommitHook" class="Acquia\Blt\Tests\BltProject\GitTasksTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/GitTest.php" line="69" assertions="2" time="10.451533"/>
+      <testcase name="testGitPreCommitHook" class="Acquia\Blt\Tests\BltProject\GitTasksTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/GitTest.php" line="69" assertions="2" time="11.957400"/>
     </testsuite>
-    <testsuite name="Acquia\Blt\Tests\BltProject\DrushTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/DrushTest.php" tests="1" assertions="2" failures="0" errors="0" time="2.240718">
-      <testcase name="testDrushConfig" class="Acquia\Blt\Tests\BltProject\DrushTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/DrushTest.php" line="19" assertions="2" time="2.240718">
+    <testsuite name="Acquia\Blt\Tests\BltProject\DrushTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/DrushTest.php" tests="1" assertions="2" failures="0" errors="0" time="3.812018">
+      <testcase name="testDrushConfig" class="Acquia\Blt\Tests\BltProject\DrushTest" file="/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/acquia/blt/tests/phpunit/BltProject/DrushTest.php" line="19" assertions="2" time="3.812018">
         <system-out>Executing "/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/bin/drush status --format=json" in /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/docroot 
 Executing "/home/travis/build/Drupal4Gov/Drupal-GovCon-2017/vendor/bin/drush status --format=json" in /home/travis/build/Drupal4Gov/Drupal-GovCon-2017/docroot/sites/default 
 </system-out>
