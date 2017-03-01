@@ -71,6 +71,7 @@ return array(
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
     'CloudFlarePhpSdk\\' => array($vendorDir . '/d8-contrib-modules/cloudflarephpsdk/src'),
     'Alchemy\\Zippy\\' => array($vendorDir . '/alchemy/zippy/src'),
+    'Ajgl\\Twig\\Extension\\' => array($vendorDir . '/ajgl/breakpoint-twig-extension/src'),
     'Acquia\\LightningExtension\\' => array($baseDir . '/docroot/profiles/contrib/lightning/src/LightningExtension'),
     'Acquia\\Blt\\Tests\\' => array($vendorDir . '/acquia/blt/tests/phpunit/src'),
     'Acquia\\Blt\\' => array($vendorDir . '/acquia/blt/src'),

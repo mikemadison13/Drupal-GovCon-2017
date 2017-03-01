@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit12ac19118469328b1011f20083b967b3
+class ComposerStaticInitc7d5edc4778bfe930c31669001aa1ebe
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -137,6 +137,7 @@ class ComposerStaticInit12ac19118469328b1011f20083b967b3
         'A' => 
         array (
             'Alchemy\\Zippy\\' => 14,
+            'Ajgl\\Twig\\Extension\\' => 20,
             'Acquia\\LightningExtension\\' => 26,
             'Acquia\\Blt\\Tests\\' => 17,
             'Acquia\\Blt\\' => 11,
@@ -404,6 +405,10 @@ class ComposerStaticInit12ac19118469328b1011f20083b967b3
         array (
             0 => __DIR__ . '/..' . '/alchemy/zippy/src',
         ),
+        'Ajgl\\Twig\\Extension\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ajgl/breakpoint-twig-extension/src',
+        ),
         'Acquia\\LightningExtension\\' => 
         array (
             0 => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension',
@@ -572,6 +577,9 @@ class ComposerStaticInit12ac19118469328b1011f20083b967b3
         'AdhocTask' => __DIR__ . '/..' . '/phing/phing/classes/phing/tasks/system/AdhocTask.php',
         'AdhocTaskdefTask' => __DIR__ . '/..' . '/phing/phing/classes/phing/tasks/system/AdhocTaskdefTask.php',
         'AdhocTypedefTask' => __DIR__ . '/..' . '/phing/phing/classes/phing/tasks/system/AdhocTypedefTask.php',
+        'Ajgl\\Twig\\Extension\\BreakpointExtension' => __DIR__ . '/..' . '/ajgl/breakpoint-twig-extension/src/BreakpointExtension.php',
+        'Ajgl\\Twig\\Extension\\SymfonyBundle\\AjglBreakpointTwigExtensionBundle' => __DIR__ . '/..' . '/ajgl/breakpoint-twig-extension/src/SymfonyBundle/AjglBreakpointTwigExtensionBundle.php',
+        'Ajgl\\Twig\\Extension\\SymfonyBundle\\DependencyInjection\\AjglBreakpointTwigExtensionExtension' => __DIR__ . '/..' . '/ajgl/breakpoint-twig-extension/src/SymfonyBundle/DependencyInjection/AjglBreakpointTwigExtensionExtension.php',
         'Alchemy\\Zippy\\Adapter\\AbstractAdapter' => __DIR__ . '/..' . '/alchemy/zippy/src/Adapter/AbstractAdapter.php',
         'Alchemy\\Zippy\\Adapter\\AbstractBinaryAdapter' => __DIR__ . '/..' . '/alchemy/zippy/src/Adapter/AbstractBinaryAdapter.php',
         'Alchemy\\Zippy\\Adapter\\AbstractTarAdapter' => __DIR__ . '/..' . '/alchemy/zippy/src/Adapter/AbstractTarAdapter.php',
@@ -6522,10 +6530,10 @@ class ComposerStaticInit12ac19118469328b1011f20083b967b3
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit12ac19118469328b1011f20083b967b3::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit12ac19118469328b1011f20083b967b3::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit12ac19118469328b1011f20083b967b3::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit12ac19118469328b1011f20083b967b3::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitc7d5edc4778bfe930c31669001aa1ebe::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitc7d5edc4778bfe930c31669001aa1ebe::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitc7d5edc4778bfe930c31669001aa1ebe::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitc7d5edc4778bfe930c31669001aa1ebe::$classMap;
 
         }, null, ClassLoader::class);
     }
