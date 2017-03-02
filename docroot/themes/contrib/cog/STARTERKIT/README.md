@@ -1,30 +1,20 @@
 # Cog: Acquia D8 Theme
 
-<ul>
-    <li><a href="#installation">Installation</a>
-        <ul>
-            <li><a href="#create-cog-sub-theme">Create Cog Sub-Theme</a></li>
-            <li><a href="#setup-local-development">Setup Local Development</a>
-            </li>
-        </ul>
-    </li>
-    <li><a href="#overview">Theme Overview</a>
-        <ul>
-            <li><a href="#folder-structure">Folder Structure</a></li>
-            <li><a href="#sass-structure">Sass Structure</a></li>
-            <li><a href="#gulp">Gulp</a></li>
-            <li><a href="#javascript">JavaScript</a></li>
-            <li><a href="#grid-system">Grid System</a></li>
-            <li><a href="#theme-regions">Theme Regions</a></li>
-            <li><a href="#images">Images</a></li>
-        </ul>
-    </li>
-    <li><a href="#further-documentation">Further Documentation</a></li>
-    <li><a href="#build-notes">Build Notes</a></li>
-</ul>
+* [Installation](#installation)
+  * [Create Cog Sub-Theme](#create-cog-sub-theme)
+  * [Setup Local Development](#setup-local-development)
+* [Theme Overview](#overview)
+  * [Folder Structure](#folder-structure)
+  * [Sass Structure](#sass-structure)
+  * [Gulp](#gulp)
+  * [JavaScript](#javascript)
+  * [Grid System](#grid-system)
+  * [Theme Regions](#theme-regions)
+  * [Images](#images)
+* [Further Documentation](#further-documentation)
+* [Build Notes](#build-notes)
 
-----------------
-
+---
 
 ## Installation
 
@@ -46,13 +36,12 @@ Once you have created a custom sub-theme, you will setup for local compiling. If
 
 * Navigate to `themes/custom/mytheme` folder in your terminal
 * Install Node.js with `./install-node.sh 4.4.4` and then point to the proper version with `source ~/.bashrc && nvm use --delete-prefix 4.4.4` 
- * (optional) If you are not using avn then run `nvm use 4.4.4` when closing and reopening your session
- * (optional) If you choose to use avn follow the instructions [here](_readme/setup-full.md#avn)
+  * (optional) If you are not using avn then run `nvm use 4.4.4` when closing and reopening your session
+  * (optional) If you choose to use avn follow the instructions [here](_readme/setup-full.md#avn)
 * Install the [Yarn](https://yarnpkg.com/en/docs/install) package manager globally `npm install -g yarn` 
 * Run the command `yarn install` within your `themes/custom/mytheme` folder
 * To confirm Gulp and other items are instantiated `npm run build`
 * You can now compile both your Sass and JS with `gulp watch`
-
 
 ## Theme Overview
 
@@ -98,7 +87,6 @@ custom/ (theme folder)
 |-- theme-settings.php (file to use for making theme settings available in the GUI)
 ```
 
-
 ### Sass Structure
 
 Setup of the Sass files so that they are properly broken out in partials and according to the SMACSS methodologies.
@@ -117,7 +105,7 @@ sass/
   |-- style.scss
 ```
 
-* **_config.scss** this configuration is housing common mixins, variables, or similar, normally you would want to break these out in separate partials
+* **\_config.scss** this configuration is housing common mixins, variables, or similar, normally you would want to break these out in separate partials
 * **styles.scss**  the manifest file that imports all the partials or folders with globbing 
 * **base/** intended as the baseline pstyles that you extend upon and will include things like resets, global typography, or common form selectors.
 * **layout/**  for structural layout that can apply to both the outer containers like the sidebars or headers, but also on inner structural pieces.
@@ -129,7 +117,6 @@ sass/
 
 The Gulp installation and tasks are setup to work on install, but are still intended to be easily updated based on project needs. The tasks are declared in `gulpfile.js` and broken out within the `gulp-tasks/` subfolder. You can list the available Gulp tasks with `gulp --tasks`. The most common gulp task is `gulp watch` when developing locally, which covers Sass compiling, JS linting, and building dynamic styleguides.  
 
-
 ### JavaScript
 
 An example JS file `theme.js` is added by default in the `js/` folder. This file contains sample code wrapped in the `Drupal.behaviors` code standard. This JS file is added to the theme with the following portion of the code from `[theme-name].libraries.yml`. Cog does not have compression enabled for Gulp since it is relying on Drupal's caching system. 
@@ -139,7 +126,6 @@ lib:
   js:
     js/theme.js: {}
 ```
-
 
 ### Grid System
 
@@ -162,19 +148,17 @@ regions:
   post_content: 'Post content'
   footer: Footer
 ```
-![regions](http://content.screencast.com/users/BedimStudios/folders/Jing/media/8ad8ecf1-bb60-4292-80b0-115fae8daac0/00001643.png)
 
+![regions](http://content.screencast.com/users/BedimStudios/folders/Jing/media/8ad8ecf1-bb60-4292-80b0-115fae8daac0/00001643.png)
 
 ### Images 
 
 The images designated for your custom theme can be placed in the `images/` folder. By default we do not have compression setup with subfolder, but do highly recommend based on need. Image compression and spriting requires vast differences with the amount images and this can be a task-intensive process for Gulp and automated builds. However for most of our builds, we do utilize both image compression and spriting with the standard subfolders with Gulp automation workflow: `images/src/` `images/dist/`
 
-
 ## Further Documentation
 
 Cog also ships with an extensive list of documentation and code samples that which were intentionally left out of the theme. 
 We have collected all the examples in an easy reference [listed here](_theming-guide/readme.md).
-
 
 ## Build Notes
 

@@ -103,7 +103,7 @@ function drush_cog($machine_name = NULL, $name = NULL) {
     return drush_set_error('COG_STARTERKIT_NOT_FOUND', dt('The STARTERKIT directory was not found in "!directory"', array('!directory' => dirname($starterkit_path))));
   }
 
-  drush_print(dt('Copying files from starter kit…'));
+  drush_print(dt('Copying files from STARTERKIT...'));
 
   // Make a fresh copy of the original starter kit.
   if (!drush_op('drush_copy_dir', $starterkit_path, $sub_theme_path)) {
@@ -129,7 +129,7 @@ function drush_cog($machine_name = NULL, $name = NULL) {
 
   // Remove unwanted theme info.
   $info_regexs = array(
-    array('pattern' => '/hidden: truen/', 'replacement' => ''),
+    array('pattern' => "/hidden: true\n/", 'replacement' => ''),
     array('pattern' => '/\# Information added by Drupal\.org packaging script on [\d-]+\n/', 'replacement' => ''),
     array('pattern' => "/version: '[^']+'\n/", 'replacement' => ''),
     array('pattern' => '/datestamp: \d+\n/', 'replacement' => ''),

@@ -88,7 +88,7 @@ $settings['hash_salt'] = file_get_contents(DRUPAL_ROOT . '/../salt.txt');
  * Acquia Cloud settings.
  */
 if ($is_ah_env) {
-  if (!$is_acsf && file_exists('/var/www/site-php')) {
+  if (!$is_acsf && file_exists('/var/www/site-php') && $site_dir == 'default') {
     require "/var/www/site-php/{$_ENV['AH_SITE_GROUP']}/{$_ENV['AH_SITE_GROUP']}-settings.inc";
   }
 
@@ -98,6 +98,16 @@ if ($is_ah_env) {
   if (file_exists($secrets_file)) {
     require $secrets_file;
   }
+}
+
+/**
+ * Include optional site specific includes file.
+ *
+ * This is being included before the local file so all available settings are
+ * able to be overridden in the local.settings.php file below.
+ */
+if (file_exists(DRUPAL_ROOT . "/sites/$site_dir/settings/includes.settings.php")) {
+  require DRUPAL_ROOT . "/sites/$site_dir/settings/includes.settings.php";
 }
 
 /**

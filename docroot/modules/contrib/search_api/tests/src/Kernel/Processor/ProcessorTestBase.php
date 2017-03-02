@@ -6,7 +6,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\Item\Field;
-use Drupal\search_api\Utility;
+use Drupal\search_api\Utility\Utility;
 use Drupal\system\Entity\Action;
 
 /**
@@ -23,7 +23,7 @@ abstract class ProcessorTestBase extends KernelTestBase {
     'field',
     'search_api',
     'search_api_db',
-    'search_api_test_backend',
+    'search_api_test',
     'comment',
     'text',
     'action',
@@ -65,10 +65,12 @@ abstract class ProcessorTestBase extends KernelTestBase {
     parent::setUp();
 
     $this->installSchema('node', array('node_access'));
-    $this->installSchema('search_api', array('search_api_item', 'search_api_task'));
+    $this->installSchema('search_api', array('search_api_item'));
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('comment');
+    $this->installEntitySchema('search_api_task');
+    $this->installSchema('comment', array('comment_entity_statistics'));
     $this->installConfig(array('field'));
 
     Action::create([
@@ -77,15 +79,18 @@ abstract class ProcessorTestBase extends KernelTestBase {
       'plugin' => 'comment_publish_action',
     ])->save();
 
+    // Do not use a batch for tracking the initial items after creating an
+    // index when running the tests via the GUI. Otherwise, it seems Drupal's
+    // Batch API gets confused and the test fails.
+    if (php_sapi_name() != 'cli') {
+      \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
+    }
+
+    // Set tracking page size so tracking will work properly.
     \Drupal::configFactory()
       ->getEditable('search_api.settings')
       ->set('tracking_page_size', 100)
       ->save();
-
-    // Do not use a batch for tracking the initial items after creating an
-    // index when running the tests via the GUI. Otherwise, it seems Drupal's
-    // Batch API gets confused and the test fails.
-    \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
 
     $this->server = Server::create(array(
       'id' => 'server',
@@ -104,21 +109,12 @@ abstract class ProcessorTestBase extends KernelTestBase {
       'name' => 'Index name',
       'status' => TRUE,
       'datasource_settings' => array(
-        'entity:comment' => array(
-          'plugin_id' => 'entity:comment',
-          'settings' => array(),
-        ),
-        'entity:node' => array(
-          'plugin_id' => 'entity:node',
-          'settings' => array(),
-        ),
+        'entity:comment' => array(),
+        'entity:node' => array(),
       ),
       'server' => 'server',
       'tracker_settings' => array(
-        'default' => array(
-          'plugin_id' => 'default',
-          'settings' => array(),
-        ),
+        'default' => array(),
       ),
     ));
     $this->index->setServer($this->server);
@@ -140,8 +136,7 @@ abstract class ProcessorTestBase extends KernelTestBase {
 
     if ($processor) {
       /** @var \Drupal\search_api\Processor\ProcessorPluginManager $plugin_manager */
-      $plugin_manager = \Drupal::service('plugin.manager.search_api.processor');
-      $this->processor = $plugin_manager->createInstance($processor, array('index' => $this->index));
+      $this->processor = $this->index->createPlugin('processor', $processor);
       $this->index->addProcessor($this->processor);
     }
     $this->index->save();
@@ -181,6 +176,16 @@ abstract class ProcessorTestBase extends KernelTestBase {
     }
 
     return $extracted_items;
+  }
+
+  /**
+   * Indexes all (unindexed) items.
+   *
+   * @return int
+   *   The number of successfully indexed items.
+   */
+  protected function indexItems() {
+    return $this->index->indexItems();
   }
 
 }

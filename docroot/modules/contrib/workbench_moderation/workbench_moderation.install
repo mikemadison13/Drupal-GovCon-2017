@@ -6,6 +6,47 @@
  */
 
 /**
+ * Implements hook_schema().
+ */
+function workbench_moderation_schema() {
+  $schema['workbench_revision_tracker'] = [
+    'description' => 'Tracks the latest revision for any entity',
+    'fields' => [
+      'entity_type' => [
+        'description' => 'The entity type',
+        'type' => 'varchar_ascii',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'entity_id' => [
+        'description' => 'The entity ID',
+        'type' => 'int',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'langcode' => [
+        'description' => 'The language of the entity revision',
+        'type' => 'varchar',
+        'length' => 12,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'revision_id' => [
+        'description' => 'The latest revision ID for this entity',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+    ],
+    'primary key' => ['entity_type', 'entity_id', 'langcode'],
+  ];
+
+  return $schema;
+}
+
+/**
  * Implements hook_install().
  */
 function workbench_moderation_install() {
@@ -36,5 +77,14 @@ function workbench_moderation_install() {
   foreach ($revisionable_entity_defintions as $type) {
     $workbench_moderation_definition = $field_manager->getFieldStorageDefinitions($type->id())['moderation_state'];
     $entity_definition_update_manager->installFieldStorageDefinition('moderation_state', $type->id(), 'moderation_state', $workbench_moderation_definition);
+  }
+}
+
+/**
+ * Creates the workbench_revision_tracker table if needed.
+ */
+function workbench_moderation_update_8001() {
+  if (!db_table_exists('workbench_revision_tracker')) {
+    drupal_install_schema('workbench_moderation');
   }
 }

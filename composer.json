@@ -12,18 +12,14 @@
     "prefer-stable": true,
     "require": {
         "drush/drush": "^8.1.8",
-        "acquia/blt": "^8.3",
+        "acquia/blt": "^8.6.14",
         "composer/installers": "^1.0.20",
         "cweagans/composer-patches": "^1.6.0",
-        "drupal/acquia_connector": "^1.5.0",
         "drupal/acsf": "^1.32.0",
         "drupal/cog": "^1.0.0",
-        "drupal/console": "1.0.0-beta5",
         "drupal/core": "^8.0",
         "drupal/features": "^3.0.0",
         "drupal/memcache": "2.x-dev",
-        "drupal/search_api": "1.0.0-alpha14",
-        "drupal/search_api_solr": "1.0.0-alpha3",
         "drupal/security_review": "*",
         "drupal/google_analytics": "*@stable",
         "drupal/adminimal_admin_toolbar": "^1.0",
@@ -34,11 +30,15 @@
         "drupal/acquia_purge": "1.x-dev",
         "drupal/cloudflare": "^1.0.0-alpha7",
         "drupal/purge": "^3.0.0-beta6",
-        "acquia/lightning": "2.0.1",
+        "acquia/lightning": "2.0.3",
         "drupal/seckit": "^1.0.0-alpha2",
         "drupal/shield": "^1.0.0",
         "drupal/extlink": "^1.0",
-        "drupal/twig_xdebug": "1.x-dev"
+        "drupal/twig_xdebug": "1.x-dev",
+        "drupal/console": "~1",
+        "drupal-composer/drupal-security-advisories": "8.x-dev",
+        "roave/security-advisories": "dev-master",
+        "drupal/acquia_connector": "^1.5.0"
     },
     "require-dev": {
         "behat/behat": "^3.1",
@@ -48,9 +48,16 @@
         "drupal-composer/drupal-scaffold": "^2.1.0",
         "jarnaiz/behat-junit-formatter": "^1.3.2",
         "se/selenium-server-standalone": "^2.53",
-        "squizlabs/php_codesniffer": "^2.7",
+        "squizlabs/php_codesniffer": "2.*",
         "geerlingguy/drupal-vm": "~3.4",
-        "drupal/devel": "^1.0.0-alpha1"
+        "drupal/devel": "^1.0.0-alpha1",
+        "drupal/console": "^1.0.0-rc13",
+        "jakoch/phantomjs-installer": "^2.1.1-p07",
+        "behat/mink-browserkit-driver": "*",
+        "behat/mink-extension": "*",
+        "behat/mink-goutte-driver": "*",
+        "drupal/coder": "~8.2",
+        "phing/phing": "~2"
     },
     "scripts": {
         "blt-alias": "blt install-alias -Dcreate_alias=true",
@@ -62,6 +69,12 @@
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
         "install-phantomjs": [
             "rm -rf vendor/bin/phantomjs",
+            "PhantomInstaller\\Installer::installPhantomJS"
+        ],
+        "post-install-cmd": [
+            "PhantomInstaller\\Installer::installPhantomJS"
+        ],
+        "post-update-cmd": [
             "PhantomInstaller\\Installer::installPhantomJS"
         ]
     },
@@ -89,17 +102,29 @@
             ],
             "drush/contrib/{$name}": [
                 "type:drupal-drush"
+            ],
+            "docroot/modules/custom/{$name}": [
+                "type:drupal-custom-module"
+            ],
+            "docroot/profiles/custom/{$name}": [
+                "type:drupal-custom-profile"
+            ],
+            "docroot/themes/custom/{$name}": [
+                "type:drupal-custom-theme"
+            ],
+            "docroot/libraries": [
+                "type:drupal-library"
             ]
         },
         "patches": {
+            "acquia/blt": {
+                "Prevent BLT from linting node-modules": "patches/remove-blt-node-linting.patch"
+            },
             "drupal/core": {
                 "Ignore front end vendor folders to improve directory search performance": "https://www.drupal.org/files/issues/ignore_front_end_vendor-2329453-116.patch"
             },
             "drupal/acquia_purge": {
                 "Bypass Acquia purge alpha program check to enable tag based purging.": "patches/purge-bypass-alpha-program.patch"
-            },
-            "acquia/lightning": {
-                "New LightningExtension subcontexts do not autoload": "https://www.drupal.org/files/issues/2836258-3-lightning-extension-autoload.patch"
             }
         },
         "drupal-scaffold": {

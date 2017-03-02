@@ -2,11 +2,14 @@
 
 namespace Drupal\search_api\Plugin\search_api\processor;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\search_api\Item\FieldInterface;
+use Drupal\search_api\Plugin\search_api\data_type\value\TextValueInterface;
 use Drupal\search_api\Processor\FieldsProcessorPluginBase;
-use Drupal\search_api\Utility;
+use Drupal\search_api\Utility\Utility;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser;
@@ -17,10 +20,11 @@ use Symfony\Component\Yaml\Parser;
  * @SearchApiProcessor(
  *   id = "html_filter",
  *   label = @Translation("HTML filter"),
- *   description = @Translation("Strips HTML tags from fulltext fields and decodes HTML entities. Use this processor when indexing HTML data, e.g., node bodies for certain text formats. The processor also allows to boost (or ignore) the contents of specific elements."),
+ *   description = @Translation("Strips HTML tags from fulltext fields and decodes HTML entities. Use this processor when indexing HTML data – for example, node bodies for certain text formats. The processor also allows to boost (or ignore) the contents of specific elements."),
  *   stages = {
- *     "preprocess_index" = -10,
- *     "preprocess_query" = -10
+ *     "pre_index_save" = 0,
+ *     "preprocess_index" = -15,
+ *     "preprocess_query" = -15,
  *   }
  * )
  */
@@ -102,7 +106,7 @@ class HtmlFilter extends FieldsProcessorPluginBase {
       }
     }
     catch (ParseException $exception) {
-      $errors[] = $this->t('Tags is not valid YAML. See @link for information on how to write correctly formed YAML.', array('@link' => 'http://yaml.org'));
+      $errors[] = $this->t('Tags is not a valid YAML map. See @link for information on how to write correctly formed YAML.', array('@link' => 'http://yaml.org'));
       $tags = array();
     }
     foreach ($tags as $key => $value) {
@@ -111,7 +115,7 @@ class HtmlFilter extends FieldsProcessorPluginBase {
         $errors[] = $this->t("Boost value for tag @tag can't be an array.", array('@tag' => $tag));
       }
       elseif (!is_numeric($value)) {
-        $errors[] = $this->t("Boost value for tag @tag must be numeric.", array('@tag' => $tag));
+        $errors[] = $this->t('Boost value for tag @tag must be numeric.', array('@tag' => $tag));
       }
       elseif ($value < 0) {
         $errors[] = $this->t('Boost value for tag @tag must be non-negative.', array('@tag' => $tag));
@@ -125,18 +129,39 @@ class HtmlFilter extends FieldsProcessorPluginBase {
     }
     $form_state->setValue('tags', $tags);
     if ($errors) {
-      $form_state->setError($form['tags'], implode("<br />\n", $errors));
+      $message = array_shift($errors);
+      foreach ($errors as $error) {
+        $args = array(
+          '@message1' => $message,
+          '@message2' => $error,
+        );
+        $message = new FormattableMarkup('@message1<br />@message2', $args);
+      }
+      $form_state->setError($form['tags'], $message);
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function processFieldValue(&$value, &$type) {
+  protected function processField(FieldInterface $field) {
+    parent::processField($field);
+
+    foreach ($field->getValues() as $value) {
+      if ($value instanceof TextValueInterface) {
+        $value->setProperty('strip_html');
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function processFieldValue(&$value, $type) {
     // Remove invisible content.
     $text = preg_replace('@<(applet|audio|canvas|command|embed|iframe|map|menu|noembed|noframes|noscript|script|style|svg|video)[^>]*>.*</\1>@siU', ' ', $value);
     // Let removed tags still delimit words.
-    $is_text_type = Utility::isTextType($type, array('text', 'tokenized_text'));
+    $is_text_type = Utility::isTextType($type);
     if ($is_text_type) {
       $text = str_replace(array('<', '>'), array(' <', '> '), $text);
       if ($this->configuration['title']) {
@@ -149,7 +174,6 @@ class HtmlFilter extends FieldsProcessorPluginBase {
     if ($this->configuration['tags'] && $is_text_type) {
       $text = strip_tags($text, '<' . implode('><', array_keys($this->configuration['tags'])) . '>');
       $value = $this->parseHtml($text);
-      $type = 'tokenized_text';
     }
     else {
       $text = strip_tags($text);
@@ -181,20 +205,27 @@ class HtmlFilter extends FieldsProcessorPluginBase {
    * @param float $boost
    *   (optional) The currently active boost value. Internal use only.
    *
-   * @return array
+   * @return \Drupal\search_api\Plugin\search_api\data_type\value\TextTokenInterface[]
    *   Tokenized text with appropriate scores.
    */
   protected function parseHtml(&$text, $active_tag = NULL, $boost = 1.0) {
     $ret = array();
     while (($pos = strpos($text, '<')) !== FALSE) {
+      $text_before = substr($text, 0, $pos);
+      $text_after = substr($text, $pos + 1);
+      // Attempt some small error tolerance when literal "<" characters aren't
+      // escaped properly (and are free-standing).
+      if (!preg_match('#^(/?)([-:_a-zA-Z0-9]+)#', $text_after, $m)) {
+        $text = $text_before . '&lt;' . $text_after;
+        continue;
+      }
       if ($boost && $pos > 0) {
-        $value = $this->normalizeText(substr($text, 0, $pos));
+        $value = $this->normalizeText($text_before);
         if ($value !== '') {
           $ret[] = Utility::createTextToken($value, $boost);
         }
       }
-      $text = substr($text, $pos + 1);
-      preg_match('#^(/?)([-:_a-zA-Z0-9]+)#', $text, $m);
+      $text = $text_after;
       $pos = strpos($text, '>');
       $empty_tag = $text[$pos - 1] == '/';
       $text = substr($text, $pos + 1);

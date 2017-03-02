@@ -1,5 +1,7 @@
 <?php
 
+// @codingStandardsIgnoreFile
+
 /**
  * This file was generated via php core/scripts/generate-proxy-class.php 'Drupal\search_api\ParamConverter\SearchApiConverter' "modules/search_api/src/".
  */
@@ -14,7 +16,7 @@ use Symfony\Component\Routing\Route;
 /**
  * Provides a proxy class for \Drupal\search_api\ParamConverter\SearchApiConverter.
  *
- * @see \Drupal\Component\ProxyBuilder
+ * @see \Drupal\Component\ProxyBuilder\ProxyBuilder
  */
 class SearchApiConverter implements ParamConverterInterface {
 

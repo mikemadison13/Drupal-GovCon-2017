@@ -77,30 +77,6 @@ class PanelsSubContext extends DrupalSubContextBase {
   }
 
   /**
-   * Places a block into a Panels layout.
-   *
-   * @param string $plugin_id
-   *   The block plugin ID.
-   * @param string $category
-   *   The block's category.
-   *
-   * @When I place the :plugin_id block from the :category category
-   */
-  public function placeBlock($plugin_id, $category) {
-    $this->lightning->clickElementBySelector('a[title = "Manage Content"]');
-    $this->minkContext->iWaitForAjaxToFinish();
-
-    $this->lightning->clickElementBySelector('a[data-category = "' . $category . '"]');
-    $this->minkContext->iWaitForAjaxToFinish();
-
-    $this->lightning->clickElementBySelector('a[data-plugin-id = "' . $plugin_id . '"]');
-    $this->minkContext->iWaitForAjaxToFinish();
-
-    $this->lightning->clickElementBySelector('[value = "Add"]');
-    $this->minkContext->iWaitForAjaxToFinish();
-  }
-
-  /**
    * Changes the layout of an IPE controlled entity via the IPE.
    *
    * @param string $category
@@ -237,32 +213,6 @@ class PanelsSubContext extends DrupalSubContextBase {
   }
 
   /**
-   * Saves the current Panels layout as a custom layout.
-   *
-   * @When I save the layout
-   */
-  public function saveCustomLayout() {
-    $this->lightning->clickElementBySelector('a[title = "Save"]');
-    $this->minkContext->iWaitForAjaxToFinish();
-
-    $this->lightning->clickElementBySelector('a.panelizer-ipe-save-custom');
-    $this->minkContext->iWaitForAjaxToFinish();
-  }
-
-  /**
-   * Saves the current Panels layout as a default layout.
-   *
-   * @When I save the layout as default
-   */
-  public function saveDefaultLayout() {
-    $this->lightning->clickElementBySelector('a[title = "Save"]');
-    $this->minkContext->iWaitForAjaxToFinish();
-
-    $this->lightning->clickElementBySelector('a.panelizer-ipe-save-default');
-    $this->minkContext->iWaitForAjaxToFinish();
-  }
-
-  /**
    * Asserts that a block with a specific plugin ID is present.
    *
    * @param string $plugin_id
@@ -275,7 +225,7 @@ class PanelsSubContext extends DrupalSubContextBase {
   }
 
   /**
-   * Asserts that a block with a specific plugin ID is not present.
+   * Asserts that a block with a specific plugin ID is NOT present.
    *
    * @param string $plugin_id
    *   The block plugin ID.

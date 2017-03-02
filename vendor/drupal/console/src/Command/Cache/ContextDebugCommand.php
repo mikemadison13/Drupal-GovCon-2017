@@ -10,8 +10,8 @@ namespace Drupal\Console\Command\Cache;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
-use Drupal\Console\Command\Shared\ContainerAwareCommandTrait;
-use Drupal\Console\Style\DrupalStyle;
+use Drupal\Console\Core\Command\Shared\ContainerAwareCommandTrait;
+use Drupal\Console\Core\Style\DrupalStyle;
 
 /**
  * Class ContextDebugCommand.
@@ -38,26 +38,27 @@ class ContextDebugCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new DrupalStyle($input, $output);
-        $contextManager = \Drupal::service('cache_contexts_manager');
+        $contextManager = $this->get('cache_contexts_manager');
 
         $tableHeader = [
-          $this->trans('commands.cache.context.debug.messages.code'),
-          $this->trans('commands.cache.context.debug.messages.label'),
-          $this->trans('commands.cache.context.debug.messages.class'),
+            $this->trans('commands.cache.context.debug.messages.code'),
+            $this->trans('commands.cache.context.debug.messages.label'),
+            $this->trans('commands.cache.context.debug.messages.class'),
         ];
 
         $tableRows = [];
 
         foreach ($contextManager->getAll() as $code) {
-            $context = \Drupal::service('cache_context.'.$code);
-
+            $context = $this->get('cache_context.'.$code);
             $tableRows[] = [
-              \Drupal\Component\Utility\SafeMarkup::checkPlain($code),
-              $context->getLabel()->render(),
-              get_class($context),
+                $code,
+                $context->getLabel()->render(),
+                get_class($context),
             ];
         }
 
         $io->table($tableHeader, $tableRows, 'compact');
+
+        return 0;
     }
 }

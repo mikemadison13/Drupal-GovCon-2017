@@ -2,10 +2,10 @@
 
 namespace Drupal\search_api\Plugin\views\argument;
 
+use Drupal\Core\Cache\UncacheableDependencyTrait;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\SearchApiException;
-use Drupal\search_api\UncacheableDependencyTrait;
 
 /**
  * Defines a contextual filter for displaying a "More Like This" list.
@@ -70,7 +70,7 @@ class SearchApiMoreLikeThis extends SearchApiStandard {
       $server = $this->query->getIndex()->getServerInstance();
       if (!$server->supportsFeature('search_api_mlt')) {
         $backend_id = $server->getBackendId();
-        \Drupal::logger('search_api')->error('The search backend "@backend_id" does not offer "More like this" functionality.',
+        \Drupal::service('logger.channel.search_api')->error('The search backend "@backend_id" does not offer "More like this" functionality.',
           array('@backend_id' => $backend_id));
         $this->query->abort();
         return;

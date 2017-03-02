@@ -9,13 +9,7 @@
   <taskdef name="filterFileListByFileSet" classname="phingcludes.FilterFileListByFileSetTask"/>
   <taskdef name="verbosityTask" classname="phingcludes.VerbosityTask"/>
   <taskdef name="phpVariable" classname="phingcludes.PhpVariableTask"/>
-
-  <if>
-    <available property="xdebug.enabled" extension="xdebug"/>
-    <then>
-      <echo level="warning">You are running BLT with xdebug enabled. This has a major impact on runtime performance.</echo>
-    </then>
-  </if>
+  <taskdef name="yamlLint" classname="phingcludes.YamlLintTask"/>
 
   <!--Increase PHP memory limit. -->
   <property name="php.memory_limit" value="2G" override="false" />
@@ -77,9 +71,10 @@
   <!-- Contains Drupal SimpleSAMLphp tasks. -->
   <import file="${phing.dir}/tasks/simplesamlphp.xml"/>
 
-  <!-- Disable targets defined in the disable-targets array in project.yml. -->
+  <!-- Disable targets defined in the disable-targets array in project.yml or project.local.yml. -->
   <!-- This must be executed after all targets are defined. -->
   <disabletargets file="${blt.config-files.project}" property="disable-targets"/>
+  <disabletargets file="${blt.config-files.local}" property="disable-targets"/>
 
   <target name="list" hidden="true">
     <exec dir="${repo.root}" command="cat ${blt.root}/scripts/blt/ascii-art.txt" logoutput="true" passthru="true" checkreturn="false"/>

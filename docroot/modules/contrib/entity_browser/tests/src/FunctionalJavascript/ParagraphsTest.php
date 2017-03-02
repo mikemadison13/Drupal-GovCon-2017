@@ -91,7 +91,7 @@ class ParagraphsTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->elementTextContains('css', $selector_1, 'Hello world');
 
     // Testing nested paragraphs field.
-    $this->getSession()->getPage()->pressButton('field_paragraph_0_subform_field_paragraphs_nested_content_embed_add_more');
+    $this->getSession()->getPage()->pressButton('field_paragraph_0_subform_field_paragraphs_nested_nested_paragraph_add_more');
     $this->waitForAjaxToFinish();
     $this->assertSession()->linkExists('Select entities');
     $this->getSession()->getPage()->clickLink('Select entities');
@@ -103,7 +103,7 @@ class ParagraphsTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->switchToIFrame();
     $this->waitForAjaxToFinish();
 
-    $this->getSession()->getPage()->pressButton('field_paragraph_0_subform_field_paragraphs_nested_content_embed_add_more');
+    $this->getSession()->getPage()->pressButton('field_paragraph_0_subform_field_paragraphs_nested_nested_paragraph_add_more');
     $this->waitForAjaxToFinish();
     $this->assertSession()->linkExists('Select entities');
     $this->getSession()->getPage()->clickLink('Select entities');

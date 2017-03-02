@@ -39,7 +39,7 @@ function STARTERKIT_preprocess_html(&$variables) {
   // Node type class.
   $variables['attributes']['class'][] = isset($variables['node_type']) ? 'nodetype--' . $variables['node_type'] : '';
   // Logged in class.
-  $variables['attributes']['class'][] = $variables['logged_in'] ? 'log-in' : 'log-out';
+  $variables['attributes']['class'][] = $variables['logged_in'] ? 'logged-in' : 'logged-out';
 }
 
 /**

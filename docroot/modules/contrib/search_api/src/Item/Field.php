@@ -2,12 +2,12 @@
 
 namespace Drupal\search_api\Item;
 
-use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
+use Drupal\search_api\DataType\DataTypePluginManager;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\IndexInterface;
+use Drupal\search_api\Processor\ConfigurablePropertyInterface;
 use Drupal\search_api\SearchApiException;
-use Drupal\search_api\Utility;
+use Drupal\search_api\Utility\Utility;
 
 /**
  * Represents a field on a search item that can be indexed.
@@ -37,6 +37,13 @@ class Field implements \IteratorAggregate, FieldInterface {
    * @var string
    */
   protected $fieldIdentifier;
+
+  /**
+   * The field's original identifier.
+   *
+   * @var string
+   */
+  protected $originalFieldIdentifier;
 
   /**
    * The field's datasource's ID.
@@ -125,6 +132,13 @@ class Field implements \IteratorAggregate, FieldInterface {
   protected $typeLocked;
 
   /**
+   * The field's configuration.
+   *
+   * @var array
+   */
+  protected $configuration = array();
+
+  /**
    * This field's dependencies, if any.
    *
    * @var string[][]
@@ -146,6 +160,13 @@ class Field implements \IteratorAggregate, FieldInterface {
   protected $originalType;
 
   /**
+   * The data type manager.
+   *
+   * @var \Drupal\search_api\DataType\DataTypePluginManager|null
+   */
+  protected $dataTypeManager;
+
+  /**
    * Constructs a Field object.
    *
    * @param \Drupal\search_api\IndexInterface $index
@@ -155,7 +176,30 @@ class Field implements \IteratorAggregate, FieldInterface {
    */
   public function __construct(IndexInterface $index, $field_identifier) {
     $this->index = $index;
-    $this->fieldIdentifier = $field_identifier;
+    $this->fieldIdentifier = $this->originalFieldIdentifier = $field_identifier;
+  }
+
+  /**
+   * Retrieves the data type manager.
+   *
+   * @return \Drupal\search_api\DataType\DataTypePluginManager
+   *   The data type manager.
+   */
+  public function getDataTypeManager() {
+    return $this->dataTypeManager ?: \Drupal::service('plugin.manager.search_api.data_type');
+  }
+
+  /**
+   * Sets the data type manager.
+   *
+   * @param \Drupal\search_api\DataType\DataTypePluginManager $data_type_manager
+   *   The new data type manager.
+   *
+   * @return $this
+   */
+  public function setDataTypeManager(DataTypePluginManager $data_type_manager) {
+    $this->dataTypeManager = $data_type_manager;
+    return $this;
   }
 
   /**
@@ -173,6 +217,7 @@ class Field implements \IteratorAggregate, FieldInterface {
       throw new \InvalidArgumentException('Attempted to change the index of a field object.');
     }
     $this->index = $index;
+    $this->datasource = NULL;
     return $this;
   }
 
@@ -186,6 +231,28 @@ class Field implements \IteratorAggregate, FieldInterface {
   /**
    * {@inheritdoc}
    */
+  public function getOriginalFieldIdentifier() {
+    return $this->originalFieldIdentifier;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setFieldIdentifier($field_id) {
+    $this->fieldIdentifier = $field_id;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function wasRenamed() {
+    return $this->fieldIdentifier != $this->originalFieldIdentifier;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSettings() {
     $settings = array(
       'label' => $this->getLabel(),
@@ -193,6 +260,9 @@ class Field implements \IteratorAggregate, FieldInterface {
       'property_path' => $this->getPropertyPath(),
       'type' => $this->getType(),
     );
+    if ($this->getDatasourceId() === NULL) {
+      unset($settings['datasource_id']);
+    }
     if ($this->getBoost() != 1.0) {
       $settings['boost'] = $this->getBoost();
     }
@@ -204,6 +274,9 @@ class Field implements \IteratorAggregate, FieldInterface {
     }
     if ($this->isHidden()) {
       $settings['hidden'] = TRUE;
+    }
+    if ($this->getConfiguration()) {
+      $settings['configuration'] = $this->getConfiguration();
     }
     if ($this->getDependencies()) {
       $settings['dependencies'] = $this->getDependencies();
@@ -232,6 +305,9 @@ class Field implements \IteratorAggregate, FieldInterface {
    * {@inheritdoc}
    */
   public function setDatasourceId($datasource_id) {
+    if ($this->datasourceId != $datasource_id) {
+      $this->datasource = NULL;
+    }
     $this->datasourceId = $datasource_id;
     return $this;
   }
@@ -279,7 +355,13 @@ class Field implements \IteratorAggregate, FieldInterface {
   public function getDescription() {
     if (!isset($this->description)) {
       try {
-        $this->description = $this->getDataDefinition()->getDescription();
+        $property = $this->getDataDefinition();
+        if ($property instanceof ConfigurablePropertyInterface) {
+          $this->description = $property->getFieldDescription($this);
+        }
+        else {
+          $this->description = $property->getDescription();
+        }
         $this->description = $this->description ?: FALSE;
       }
       catch (SearchApiException $e) {
@@ -347,42 +429,15 @@ class Field implements \IteratorAggregate, FieldInterface {
   public function getDataDefinition() {
     if (!isset($this->dataDefinition)) {
       $definitions = $this->index->getPropertyDefinitions($this->getDatasourceId());
-      $definition = $this->getNestedDefinition($definitions, explode(':', $this->getPropertyPath()));
+      $definition = Utility::retrieveNestedProperty($definitions, $this->getPropertyPath());
       if (!$definition) {
-        $args['%field'] = $this->getLabel();
-        $args['%index'] = $this->getIndex()->label();
-        throw new SearchApiException(new FormattableMarkup('Could not retrieve data definition for field %field on index %index.', $args));
+        $field_label = $this->getLabel();
+        $index_label = $this->getIndex()->label();
+        throw new SearchApiException("Could not retrieve data definition for field '$field_label' on index '$index_label'.");
       }
       $this->dataDefinition = $definition;
     }
     return $this->dataDefinition;
-  }
-
-  /**
-   * Retrieves a nested property definition from an array of definitions.
-   *
-   * @param \Drupal\Core\TypedData\DataDefinitionInterface[] $properties
-   *   The given array of base definitions.
-   * @param string[] $keys
-   *   An array of keys to apply to the definitions to arrive at the one that
-   *   should be returned.
-   *
-   * @return \Drupal\Core\TypedData\DataDefinitionInterface|null
-   *   The requested property definition, or NULL if it could not be found.
-   */
-  protected function getNestedDefinition(array $properties, array $keys) {
-    $key = array_shift($keys);
-    if (!isset($properties[$key])) {
-      return NULL;
-    }
-    $property = Utility::getInnerProperty($properties[$key]);
-    if (!$keys) {
-      return $property;
-    }
-    if (!$property instanceof ComplexDataDefinitionInterface) {
-      return NULL;
-    }
-    return $this->getNestedDefinition($property->getPropertyDefinitions(), $keys);
   }
 
   /**
@@ -395,11 +450,22 @@ class Field implements \IteratorAggregate, FieldInterface {
   /**
    * {@inheritdoc}
    */
+  public function getDataTypePlugin() {
+    $data_type_manager = $this->getDataTypeManager();
+    if ($data_type_manager->hasDefinition($this->getType())) {
+      return $data_type_manager->createInstance($this->getType());
+    }
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setType($type) {
     if ($type != $this->type && $this->isTypeLocked()) {
-      $args['%field'] = $this->getLabel();
-      $args['%index'] = $this->getIndex()->label();
-      throw new SearchApiException(new FormattableMarkup('Trying to change the type of field %field on index %index, which is locked.', $args));
+      $field_label = $this->getLabel();
+      $index_label = $this->getIndex()->label();
+      throw new SearchApiException("Trying to change the type of field '$field_label' on index '$index_label', which is locked.");
     }
     $this->type = $type;
     return $this;
@@ -424,6 +490,13 @@ class Field implements \IteratorAggregate, FieldInterface {
    * {@inheritdoc}
    */
   public function addValue($value) {
+    // The data type has to be able to alter the given value before it is
+    // included.
+    $data_type_plugin = $this->getDataTypePlugin();
+    if ($data_type_plugin) {
+      $value = $data_type_plugin->getValue($value);
+    }
+
     $this->values[] = $value;
     return $this;
   }
@@ -500,6 +573,21 @@ class Field implements \IteratorAggregate, FieldInterface {
   /**
    * {@inheritdoc}
    */
+  public function getConfiguration() {
+    return $this->configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    $this->configuration = $configuration;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getDependencies() {
     return $this->dependencies;
   }
@@ -547,7 +635,11 @@ class Field implements \IteratorAggregate, FieldInterface {
     $this->indexId = $this->index->id();
     $properties = get_object_vars($this);
     // Don't serialize objects in properties or the field values.
-    unset($properties['index'], $properties['datasource'], $properties['dataDefinition'], $properties['values']);
+    unset($properties['index']);
+    unset($properties['datasource']);
+    unset($properties['dataDefinition']);
+    unset($properties['dataTypeManager']);
+    unset($properties['values']);
     return array_keys($properties);
   }
 
@@ -555,7 +647,9 @@ class Field implements \IteratorAggregate, FieldInterface {
    * Implements the magic __wakeup() method to control object unserialization.
    */
   public function __wakeup() {
-    if ($this->indexId) {
+    // Make sure we have a container to do this. This is important to correctly
+    // display test failures.
+    if ($this->indexId && \Drupal::hasContainer()) {
       $this->index = Index::load($this->indexId);
       unset($this->indexId);
     }

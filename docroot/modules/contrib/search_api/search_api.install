@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the Search API module.
  */
 
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\Link;
 use Drupal\search_api\Entity\Server;
 use Drupal\Core\Url;
 
@@ -30,7 +32,7 @@ function search_api_schema() {
       'item_id' => array(
         'description' => 'The unique identifier of this item',
         'type' => 'varchar',
-        'length' => 50,
+        'length' => 150,
         'not null' => TRUE,
       ),
       'changed' => array(
@@ -50,58 +52,8 @@ function search_api_schema() {
     ),
     'primary key' => array('index_id', 'item_id'),
   );
-  $schema['search_api_task'] = array(
-    'description' => 'Stores pending tasks for servers.',
-    'fields' => array(
-      'id' => array(
-        'description' => 'An integer identifying this task',
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'server_id' => array(
-        'description' => 'The ID of the server for which this task should be executed',
-        'type' => 'varchar',
-        'length' => 50,
-        'not null' => TRUE,
-      ),
-      'type' => array(
-        'description' => 'A keyword identifying the type of task that should be executed',
-        'type' => 'varchar',
-        'length' => 50,
-        'not null' => TRUE,
-      ),
-      'index_id' => array(
-        'description' => 'The ID of the index to which this task pertains, if applicable for this type',
-        'type' => 'varchar',
-        'length' => 50,
-        'not null' => FALSE,
-      ),
-      'data' => array(
-        'description' => 'Some data needed for the task, might be optional depending on the type',
-        'type' => 'text',
-        'size' => 'medium',
-        'serialize' => TRUE,
-        'not null' => FALSE,
-      ),
-    ),
-    'indexes' => array(
-      'execution' => array('type', 'server_id', 'id'),
-    ),
-    'primary key' => array('id'),
-  );
 
   return $schema;
-}
-
-/**
- * Implements hook_install().
- */
-function search_api_install() {
-  $message = _search_api_search_module_warning();
-  if ($message) {
-    drupal_set_message($message, 'warning');
-  }
 }
 
 /**
@@ -121,6 +73,7 @@ function search_api_requirements($phase) {
       );
     }
 
+    /** @var \Drupal\search_api\ServerInterface[] $servers */
     $servers = Server::loadMultiple();
     $unavailable_servers = array();
     foreach ($servers as $server) {
@@ -143,23 +96,107 @@ function search_api_requirements($phase) {
       );
     }
 
+    $pending_tasks = \Drupal::getContainer()
+      ->get('search_api.task_manager')
+      ->getTasksCount();
+    if ($pending_tasks) {
+      $args['@link'] = '';
+      $url = Url::fromRoute('search_api.execute_tasks');
+      if ($url->access()) {
+        $link = new Link(t('Execute now'), $url);
+        $link = $link->toString();
+        $args['@link'] = $link;
+        $args['@link'] = new FormattableMarkup(' (@link)', $args);
+      }
+
+      $requirements['search_api_pending_tasks'] = array(
+        'title' => t('Search API'),
+        'value' => \Drupal::translation()->formatPlural(
+          $pending_tasks,
+          'There is @count pending Search API task. @link',
+          'There are @count pending Search API tasks. @link',
+          $args
+        ),
+        'severity' => REQUIREMENT_WARNING,
+      );
+    }
+
     return $requirements;
   }
   return array();
 }
 
 /**
- * Returns a warning message if the Core Search module is enabled.
- *
- * @return string|null
- *   A warning message if needed, NULL otherwise.
- *
- * @see search_api_install()
- * @see search_api_requirements()
+ * Adapts index config schema to remove an unnecessary layer for plugins.
  */
-function _search_api_search_module_warning() {
-  if (Drupal::moduleHandler()->moduleExists('search')) {
-    return t('The default Drupal Search module is still enabled. If you are using Search API, you probably want to <a href=":url">uninstall</a> the Search module for performance reasons.', array(':url' => Url::fromRoute('system.modules_uninstall')->toString()));
+function search_api_update_8101() {
+  // This update function updates search indexes for the change from
+  // https://www.drupal.org/node/2656052.
+  $config_factory = \Drupal::configFactory();
+  $plugin_types = [
+    'processor',
+    'datasource',
+    'tracker',
+  ];
+
+  foreach ($config_factory->listAll('search_api.index.') as $index_id) {
+    $index = $config_factory->getEditable($index_id);
+    $changed = FALSE;
+
+    foreach ($plugin_types as $plugin_type) {
+      $property = $plugin_type . '_settings';
+      $plugins = $index->get($property);
+      foreach ($plugins as $id => $config) {
+        if (isset($config['plugin_id']) && isset($config['settings'])) {
+          $changed = TRUE;
+          $plugins[$id] = $config['settings'];
+        }
+      }
+      $index->set($property, $plugins);
+    }
+
+    if ($changed) {
+      // Mark the resulting configuration as trusted data. This avoids issues
+      // with future schema changes.
+      $index->save(TRUE);
+    }
   }
+
+  return t('Index config schema updated.');
+}
+
+/**
+ * Removes unsupported cache plugins from Search API views.
+ */
+function search_api_update_8102() {
+  $config_factory = \Drupal::configFactory();
+  $changed = [];
+
+  foreach ($config_factory->listAll('views.view.') as $view_config_name) {
+    $view = $config_factory->getEditable($view_config_name);
+    $displays = $view->get('display');
+
+    if ($displays['default']['display_options']['query']['type'] === 'search_api_query') {
+      $change = FALSE;
+      foreach ($displays as $id => $display) {
+        if (!empty($display['display_options']['cache']['type']) && in_array($display['display_options']['cache']['type'], ['tag', 'time'])
+        ) {
+          $displays[$id]['display_options']['cache']['type'] = 'none';
+          $change = TRUE;
+        }
+      }
+
+      if ($change) {
+        $view->set('display', $displays);
+        $view->save(TRUE);
+        $changed[] = $view->get('id');
+      }
+    }
+  }
+
+  if (!empty($changed)) {
+    return \Drupal::translation()->translate('Removed incompatible cache options for the following Search API-based views: @ids', ['@ids' => implode(', ', array_unique($changed))]);
+  }
+
   return NULL;
 }

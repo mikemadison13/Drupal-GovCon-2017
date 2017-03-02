@@ -1,0 +1,101 @@
+<?php
+
+/**
+ * @file
+ * Contains installation and update routines for Lightning Dev.
+ */
+
+use Drupal\media_entity\Entity\MediaBundle;
+use Drupal\views\Entity\View;
+
+/**
+ * Implements hook_install().
+ */
+function lightning_dev_install() {
+  \Drupal::configFactory()
+    ->getEditable('system.performance')
+    ->set('css.preprocess', FALSE)
+    ->set('js.preprocess', FALSE)
+    ->save();
+
+  \Drupal::configFactory()
+    ->getEditable('system.logging')
+    ->set('error_level', ERROR_REPORTING_DISPLAY_ALL)
+    ->save();
+
+  // Set up Media Entity Twitter to use Twitter's API for thumbnail generation.
+  $tweet_bundle = MediaBundle::load('tweet');
+  $configuration = array_merge($tweet_bundle->getTypeConfiguration(), [
+    'use_twitter_api' => TRUE,
+    'consumer_key' => 'EOPhWrgHCRnCB9cGualb1UVBM',
+    'consumer_secret' => 'AX5w9QYDvUJWdD0y0g2EtG3tFIZC9Lg4kR21iaAYakkPG8YKIp',
+    'oauth_access_token' => '52258222-ICStkPK2QcFN5d7v1FKJ1BMnqqPuuJnLIDr12Jsjs',
+    'oauth_access_token_secret' => 'Z4qff1DPLhqxHwei0jXgsnU0xdBFET4wSpQYn6Si3G3lF',
+    'generate_thumbnails' => TRUE,
+  ]);
+  $tweet_bundle->setTypeConfiguration($configuration);
+  $tweet_bundle->save();
+
+  \Drupal::service('module_installer')->install(['lightning_preview']);
+
+  // This module was introduced in Lightning 2.0.3, so we'll need to run manual
+  // update steps for versions older than that. We can remove this when 2.0.3
+  // is the oldest tested version of Lightning.
+  lightning_dev_update_8001();
+  lightning_dev_update_8002();
+}
+
+/**
+ * Executes manual updates for Lightning 2.0.1 --> 2.0.2.
+ */
+function lightning_dev_update_8001() {
+  \Drupal::service('module_installer')
+    ->install(['diff', 'lightning_contact_form']);
+}
+
+/**
+ * Executes manual updates for Lightning 2.0.2 --> 2.0.3.
+ */
+function lightning_dev_update_8002() {
+  /** @var \Drupal\lightning_core\ConfigHelper $config_helper */
+  $config_helper = \Drupal::service('lightning.config_helper')
+    ->install('lightning_landing_page')
+    ->createEntity('field_config', 'node.landing_page.body')
+    ->createEntity('entity_view_display', 'node.landing_page.teaser');
+
+  $values = $config_helper
+    ->read('core.entity_form_display.node.landing_page.default');
+  entity_get_form_display('node', 'landing_page', 'default')
+    ->setComponent('body', $values['content']['body'])
+    ->save();
+
+  $values = $config_helper
+    ->read('core.entity_view_display.node.landing_page.default');
+  entity_get_display('node', 'landing_page', 'default')
+    ->setComponent('body', $values['content']['body'])
+    ->unsetThirdPartySetting('panelizer', 'enable')
+    ->unsetThirdPartySetting('panelizer', 'custom')
+    ->unsetThirdPartySetting('panelizer', 'allow')
+    ->unsetThirdPartySetting('panelizer', 'default')
+    ->unsetThirdPartySetting('panelizer', 'displays')
+    ->save();
+
+  \Drupal::service('module_installer')
+    ->install(['search_api_db', 'lightning_search']);
+
+  \Drupal::service('lightning.content_roles')
+    ->grantPermissions('reviewer', [
+      'access content overview',
+      'use published_archived transition',
+    ]);
+
+  // Add a relationship to the latest revision, and the forward revision
+  // indicator, to the content view. This is copied directly out of
+  // lightning_workflow_install(), so any changes there will need to be cloned
+  // here. Which sucks, but there's not a lot of choice here...
+  $view = View::load('content');
+  $display = &$view->getDisplay('default');
+  $display['display_options']['relationships']['latest_revision__node'] = unserialize('a:8:{s:2:"id";s:21:"latest_revision__node";s:5:"table";s:26:"workbench_revision_tracker";s:5:"field";s:21:"latest_revision__node";s:12:"relationship";s:4:"none";s:10:"group_type";s:5:"group";s:11:"admin_label";s:15:"latest revision";s:8:"required";b:1;s:9:"plugin_id";s:8:"standard";}');
+  $display['display_options']['fields']['forward_revision_exists'] = unserialize('a:23:{s:2:"id";s:23:"forward_revision_exists";s:5:"table";s:15:"node_field_data";s:5:"field";s:23:"forward_revision_exists";s:12:"relationship";s:4:"none";s:10:"group_type";s:5:"group";s:11:"admin_label";s:0:"";s:5:"label";s:21:"Has unpublished edits";s:7:"exclude";b:0;s:5:"alter";a:26:{s:10:"alter_text";b:0;s:4:"text";s:0:"";s:9:"make_link";b:0;s:4:"path";s:0:"";s:8:"absolute";b:0;s:8:"external";b:0;s:14:"replace_spaces";b:0;s:9:"path_case";s:4:"none";s:15:"trim_whitespace";b:0;s:3:"alt";s:0:"";s:3:"rel";s:0:"";s:10:"link_class";s:0:"";s:6:"prefix";s:0:"";s:6:"suffix";s:0:"";s:6:"target";s:0:"";s:5:"nl2br";b:0;s:10:"max_length";i:0;s:13:"word_boundary";b:1;s:8:"ellipsis";b:1;s:9:"more_link";b:0;s:14:"more_link_text";s:0:"";s:14:"more_link_path";s:0:"";s:10:"strip_tags";b:0;s:4:"trim";b:0;s:13:"preserve_tags";s:0:"";s:4:"html";b:0;}s:12:"element_type";s:0:"";s:13:"element_class";s:0:"";s:18:"element_label_type";s:0:"";s:19:"element_label_class";s:0:"";s:19:"element_label_colon";b:1;s:20:"element_wrapper_type";s:0:"";s:21:"element_wrapper_class";s:0:"";s:23:"element_default_classes";b:1;s:5:"empty";s:0:"";s:10:"hide_empty";b:0;s:10:"empty_zero";b:0;s:16:"hide_alter_empty";b:1;s:11:"entity_type";s:4:"node";s:9:"plugin_id";s:23:"forward_revision_exists";}');
+  $view->save();
+}

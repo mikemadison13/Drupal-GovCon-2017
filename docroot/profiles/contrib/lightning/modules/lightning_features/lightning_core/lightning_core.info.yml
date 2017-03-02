@@ -1,10 +1,10 @@
-name: Lightning Core
+name: 'Lightning Core'
 core: 8.x
 type: module
 package: Lightning
-description: Shared functionality for the Lightning distribution.
+description: 'Shared functionality for the Lightning distribution.'
+version: '8.x-2.03'
 dependencies:
-  # config dependencies
   - menu_ui
   - metatag
   - node
@@ -12,4 +12,6 @@ dependencies:
   - text
   - user
 components:
+  - lightning_contact_form
   - lightning_page
+  - lightning_search

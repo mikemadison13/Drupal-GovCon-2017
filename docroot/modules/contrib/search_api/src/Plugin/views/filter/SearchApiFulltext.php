@@ -3,11 +3,13 @@
 namespace Drupal\search_api\Plugin\views\filter;
 
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Cache\UncacheableDependencyTrait;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\search_api\Entity\Index;
-use Drupal\search_api\UncacheableDependencyTrait;
+use Drupal\search_api\ParseMode\ParseModePluginManager;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a filter for adding a fulltext search to the view.
@@ -22,21 +24,98 @@ class SearchApiFulltext extends FilterPluginBase {
   use SearchApiFilterTrait;
 
   /**
+   * The parse mode manager.
+   *
+   * @var \Drupal\search_api\ParseMode\ParseModePluginManager|null
+   */
+  protected $parseModeManager;
+
+  /**
    * {@inheritdoc}
    */
-  public function showOperatorForm(&$form, FormStateInterface $form_state) {
-    parent::showOperatorForm($form, $form_state);
-    $form['operator']['#description'] = $this->t('This operator only applies when using "Search keys" as the "Use as" setting.');
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    /** @var static $plugin */
+    $plugin = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+
+    $plugin->setParseModeManager($container->get('plugin.manager.search_api.parse_mode'));
+
+    return $plugin;
+  }
+
+  /**
+   * Retrieves the parse mode manager.
+   *
+   * @return \Drupal\search_api\ParseMode\ParseModePluginManager
+   *   The parse mode manager.
+   */
+  public function getParseModeManager() {
+    return $this->parseModeManager ?: \Drupal::service('plugin.manager.search_api.parse_mode');
+  }
+
+  /**
+   * Sets the parse mode manager.
+   *
+   * @param \Drupal\search_api\ParseMode\ParseModePluginManager $parse_mode_manager
+   *   The new parse mode manager.
+   *
+   * @return $this
+   */
+  public function setParseModeManager(ParseModePluginManager $parse_mode_manager) {
+    $this->parseModeManager = $parse_mode_manager;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function operatorForm(&$form, FormStateInterface $form_state) {
+    parent::operatorForm($form, $form_state);
+
+    if (!empty($form['operator'])) {
+      $form['operator']['#description'] = $this->t('Based on the parse mode set, some of these options might not work as expected. Please either use "Multiple terms" as the parse mode or make sure that the filter behaves as expected for multiple words.');
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function operatorOptions($which = 'title') {
+    $options = array();
+    foreach ($this->operators() as $id => $info) {
+      $options[$id] = $info[$which];
+    }
+
+    return $options;
+  }
+
+  /**
+   * Returns information about the available operators for this filter.
+   *
+   * @return array[]
+   *   An associative array mapping operator identifiers to their information.
+   *   The operator information itself is an associative array with the
+   *   following keys:
+   *   - title: The translated title for the operator.
+   *   - short: The translated short title for the operator.
+   *   - values: The number of values the operator requires as input.
+   */
+  public function operators() {
     return array(
-      'and' => $this->t('Contains all of these words'),
-      'or' => $this->t('Contains any of these words'),
-      'not' => $this->t('Contains none of these words'),
+      'and' => array(
+        'title' => $this->t('Contains all of these words'),
+        'short' => $this->t('and'),
+        'values' => 1,
+      ),
+      'or' => array(
+        'title' => $this->t('Contains any of these words'),
+        'short' => $this->t('or'),
+        'values' => 1,
+      ),
+      'not' => array(
+        'title' => $this->t('Contains none of these words'),
+        'short' => $this->t('not'),
+        'values' => 1,
+      ),
     );
   }
 
@@ -46,6 +125,7 @@ class SearchApiFulltext extends FilterPluginBase {
   public function defineOptions() {
     $options = parent::defineOptions();
 
+    $options['parse_mode'] = array('default' => 'terms');
     $options['operator']['default'] = 'and';
 
     $options['min_length']['default'] = '';
@@ -59,6 +139,25 @@ class SearchApiFulltext extends FilterPluginBase {
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
+
+    $form['parse_mode'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Parse mode'),
+      '#description' => $this->t('Choose how the search keys will be parsed.'),
+      '#options' => $this->getParseModeManager()->getInstancesOptions(),
+      '#default_value' => $this->options['parse_mode'],
+    );
+    foreach ($this->getParseModeManager()->getInstances() as $key => $mode) {
+      if ($mode->getDescription()) {
+        $states['visible'][':input[name="options[parse_mode]"]']['value'] = $key;
+        $form["parse_mode_{$key}_description"] = array(
+          '#type' => 'item',
+          '#title' => $mode->label(),
+          '#description' => $mode->getDescription(),
+          '#states' => $states,
+        );
+      }
+    }
 
     $fields = $this->getFulltextFields();
     if (!empty($fields)) {
@@ -154,14 +253,18 @@ class SearchApiFulltext extends FilterPluginBase {
       $this->value = $this->value ? reset($this->value) : '';
     }
     // Catch empty strings entered by the user, but not "0".
-    // @todo Is this needed? It seems Views doesn't call filters with empty
-    //   values by default anyways.
     if ($this->value === '') {
       return;
     }
     $fields = $this->options['fields'];
     $fields = $fields ? $fields : array_keys($this->getFulltextFields());
     $query = $this->getQuery();
+
+    if ($this->options['parse_mode']) {
+      $parse_mode = $this->getParseModeManager()
+        ->createInstance($this->options['parse_mode']);
+      $query->setParseMode($parse_mode);
+    }
 
     // If something already specifically set different fields, we silently fall
     // back to mere filtering.
@@ -181,7 +284,7 @@ class SearchApiFulltext extends FilterPluginBase {
     // If the operator was set to OR or NOT, set OR as the conjunction. It is
     // also set for NOT since otherwise it would be "not all of these words".
     if ($this->operator != 'and') {
-      $query->setOption('conjunction', 'OR');
+      $query->getParseMode()->setConjunction('OR');
     }
 
     $query->setFulltextFields($fields);

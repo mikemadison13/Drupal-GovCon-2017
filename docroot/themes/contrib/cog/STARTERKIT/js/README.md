@@ -1,11 +1,14 @@
-### Adding a Javascript file in Drupal 
+## Adding a Javascript file in Drupal 
+
 We have left out any default JavaScript files in Cog to eliminate any extraneous code when installing. In the code below, we will add the library reference and provide an example Javascript file (containing local closures around Drupal.behaviors) as a reference to add your first JS file to your them.
 
-#### Filename
+### Filename
+
 `example.libraries.yml`
 
-#### File contents
-```
+### File contents
+
+```yaml
 lib:
   version: VERSION
   js:
@@ -15,12 +18,13 @@ lib:
     - core/drupal
 ```
 
+### Filename
 
-#### Filename
 `js/theme.js`
 
-#### File contents
-```
+### File contents
+
+```js
 (function ($, Drupal, window, document, undefined) {
   'use strict';
 

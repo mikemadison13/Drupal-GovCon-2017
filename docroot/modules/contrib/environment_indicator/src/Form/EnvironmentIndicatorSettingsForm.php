@@ -21,12 +21,6 @@ class EnvironmentIndicatorSettingsForm extends ConfigFormBase implements FormInt
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('environment_indicator.settings');
     $form = parent::buildForm($form, $form_state);
-    $form['git'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Show git information'),
-      '#description' => $this->t('If available, git information will be shown with the environment name.'),
-      '#default_value' => $config->get('git') ?: FALSE,
-    ];
     $form['toolbar_integration'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Toolbar integration'),
@@ -57,7 +51,7 @@ class EnvironmentIndicatorSettingsForm extends ConfigFormBase implements FormInt
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('environment_indicator.settings');
-    $properties = ['git', 'toolbar_integration', 'favicon'];
+    $properties = ['toolbar_integration', 'favicon'];
     array_walk($properties, function ($property) use ($config, $form_state) {
       $config->set($property, $form_state->getValue($property));
     });

@@ -14,10 +14,11 @@ behat:
   # An array of paths with behat tests that should be executed.
   paths:
     # - ${docroot}/modules
-    - ${docroot}/profiles
+    # - ${docroot}/profiles
     - ${repo.root}/tests/behat
   tags: '~ajax&&~experimental&&~lightningextension'
   verbose: ${blt.verbose}
+  extra: ''
 
 blt:
   update:
@@ -31,13 +32,21 @@ blt:
     local: ${repo.root}/blt/project.local.yml
     example-local: ${repo.root}/blt/example.project.local.yml
     schema-version: ${repo.root}/blt/.schema_version
+    multisite: ${docroot}/sites/${multisite.name}/site.yml
 
 composer:
-  bin: ${repo.root}/vendor/bin
+  bin: ${repo.root}/${bin.path}
 
 cm:
   core:
-    config-dir: sync
+    config-dir:
+      # Corresponding values are defined in default.local.settings.php.
+      key: sync
+      path: ${repo.root}/config/default
+      # A different config key is used by the deploy:update step, which is executed on Acquia Cloud.
+      deploy-key: vcs
+    partial: true
+
 
 deploy:
   # If true, dependencies will be built during deploy. If false, you should commit dependencies directly.
@@ -55,15 +64,17 @@ drupal:
   account.name: admin
   account.password: admin
   account.mail: no-reply@acquia.com
+  locale: en
 
 drush:
   bin: ${composer.bin}/drush
-  cmd: ${drush.bin} @${drush.alias} -r ${docroot} -l ${multisite.name}
+  cmd: ${drush.bin} @${drush.alias} -l default
   dir: ${docroot}
-  uri: ${multisite.name}
+  uri: default
   assume: yes
   passthru: yes
   logoutput: yes
+  sanitize: true
   verbose: ${blt.verbose}
 
 git:
@@ -88,7 +99,10 @@ phpcs:
   filesets:
     - files.php.custom.modules
     - files.php.tests
+    - files.php.custom.themes
     - files.frontend.custom.themes
+  haltonerror: true
+  haltonwarning: true
 
 project:
   local:

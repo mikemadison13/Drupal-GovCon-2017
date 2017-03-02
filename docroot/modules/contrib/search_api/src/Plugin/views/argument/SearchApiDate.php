@@ -4,8 +4,8 @@ namespace Drupal\search_api\Plugin\views\argument;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Cache\UncacheableDependencyTrait;
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\search_api\UncacheableDependencyTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -160,7 +160,7 @@ class SearchApiDate extends SearchApiStandard {
   /**
    * {@inheritdoc}
    */
-  protected function unpackArgumentValue() {
+  protected function unpackArgumentValue($force_int = FALSE) {
     // Set up the defaults.
     if (!isset($this->value)) {
       $this->value = array();

@@ -1,8 +1,9 @@
-name: Lightning Preview
-type: module
+name: 'Lightning Preview'
 core: 8.x
-description: Preview everything before you publish.
-package: Lightning (Experimental)
+type: module
+description: 'Preview everything before you publish.'
+version: '8.x-2.03'
+package: 'Lightning (Experimental)'
 experimental: true
 dependencies:
   - lightning_workflow

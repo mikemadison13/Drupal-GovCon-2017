@@ -9,3 +9,7 @@ Source: https://www.drupal.org/files/issues/2822915-2.patch
 Source: https://www.drupal.org/files/issues/2825477-2.patch
 
 
+2844998 - multiversion_views_post_execute() triggers a warning for Search API views
+Source: https://www.drupal.org/files/issues/2844998-2.patch
+
+

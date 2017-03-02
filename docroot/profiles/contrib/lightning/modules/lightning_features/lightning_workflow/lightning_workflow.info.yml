@@ -1,11 +1,11 @@
-name: Lightning Workflow
-type: module
-description: Tools to improve your content workflow.
+name: 'Lightning Workflow'
 core: 8.x
+type: module
+description: 'Tools to improve your content workflow.'
+version: '8.x-2.03'
 package: Lightning
 dependencies:
   - inline_entity_form
   - lightning_core
   - scheduled_updates
   - workbench_moderation
-

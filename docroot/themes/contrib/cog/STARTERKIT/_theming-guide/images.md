@@ -1,25 +1,23 @@
-## Theming Guide: Images in Drupal
+# Theming Guide: Images in Drupal
 
-###Table of Contents
-- <a href="#origrenderarray">Create Render Array for Original Image</a>
-- <a href="#stylerenderarray">Create Render Array with Image Style</a>
-- <a href="#imguri">Create Image Object from URI</a>
-- <a href="#imgfiduri">Return Image Information from File ID</a>
-- <a href="#gulpcompr">Compressing Images with Gulp</a>
-
-
-<!-- -------------------------- -->
-
+* [Create Render Array for Original Image](#origrenderarray)
+* [Create Render Array with Image Style](#stylerenderarray)
+* [Create Image Object from URI](#imguri)
+* [Return Image Information from File ID](#imgfiduri)
+* [Compressing Images with Gulp](#gulpcompr)
 
 <a name="origrenderarray"></a>
-### Create Render Array for Original Image
+## Create Render Array for Original Image
+
 Some situations will arise in which you will need to create an original version of an image to render in Twig. In the following example we will create a render array to render image within your template. 
 
-#### Filename
+### Filename
+
 `example.theme`
 
-#### File contents
-```
+### File contents
+
+```php
 use Drupal\file\Entity\File;
 
 function EXAMPLE_preprocess_node(&$variables) {
@@ -45,27 +43,28 @@ function EXAMPLE_preprocess_node(&$variables) {
 }
 ```
 
-#### Filename
+### Filename
+
 `node.html.twig`
 
-#### File contents
-```
+### File contents
+
+```twig
 <div> {{ original_image_render_array }} </div>
 ```
 
-
-<!-- -------------------------- -->
-
-
 <a name="stylerenderarray"></a>
-### Create Render Array with Image Style
+## Create Render Array with Image Style
+
 There are common scenarios in which you will need to create alternate versions of an image to render in Twig. In the following example we will create a proper render array to print a thumbnail version of an image within your template. 
 
-#### Filename
+### Filename
+
 `example.theme`
 
-#### File contents
-```
+### File contents
+
+```php
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 
@@ -98,51 +97,46 @@ function EXAMPLE_preprocess_node(&$variables) {
 }
 ```
 
-#### Filename
+### Filename
+
 `node.html.twig`
 
-#### File contents
-```
+### File contents
+
+```twig
 <div> {{ image_styled_render_array }} </div>
 ```
 
-
-<!-- -------------------------- -->
-
-
-<!-- -------------------------- -->
-
-
 <a name="imguri"></a>
-### Create Image Object from URI
+## Create Image Object from URI
+
 In scenarios in which will need to reference image properties from the URI, you can make use of the image.factory service. 
 
-#### Filename
+### Filename
+
 `example.theme`
 
-#### File contents
-```
+### File contents
+
+```php
 function EXAMPLE_preprocess_node(&$variables) {
   $img_uri = 'public://test/test-dog.jpg';
   $image_obj = \Drupal::service('image.factory')->get($img_uri);
 }
 ```
-<!-- -------------------------- -->
-
-
-
-<!-- -------------------------- -->
-
 
 <a name="imgfiduri"></a>
-### Return Image Information from File ID
+## Return Image Information from File ID
+
 When you will need to retrieve the URI based on the `fid`, you can use the `File` class with the `getFileUri` function. Other useful utility functions are included in this class when needing file information from the `file_managed` table. 
 
-#### Filename
+### Filename
+
 `example.theme`
 
-#### File contents
-```
+### File contents
+
+```php
 use Drupal\file\Entity\File;
 
 function EXAMPLE_preprocess_node(&$variables) { 
@@ -157,15 +151,10 @@ function EXAMPLE_preprocess_node(&$variables) {
 }
 
 ```
-<!-- -------------------------- -->
-
-
-
-
-<!-- -------------------------- -->
 
 <a name="gulpcompr"></a>
-### Compressing Images with Gulp
+## Compressing Images with Gulp
+
 There are instances where your theme will use a good amount of images for common elements on your site. To assist with performance, we typically use the gulp-imagemin package to minify images. 
 
 We start by creating 2 folders with our images folder: `images/src` which will contain the original images and `images/dist` which is designated to the compressed versions. 
@@ -174,7 +163,7 @@ In our package.json we include the new package dependency by adding `"gulp-image
 
 Now that the setup is complete, we can add a new Gulp task specifically for minifying our theme images with the following code: 
 
-```
+```js
 var imagemin = require('gulp-imagemin');
 
 gulp.task('imagemin', function () {
@@ -192,14 +181,11 @@ After you run the new image task with `gulp imagemin`, the images in `src/` will
 
 ![normal](https://content.screencast.com/users/BedimStudios/folders/Jing/media/9664c1e6-fb09-4a91-8855-e9b84bedf819/00001982.png "") ![normal](https://content.screencast.com/users/BedimStudios/folders/Jing/media/a74122bb-44cb-4e17-9e5f-036a9db13a5d/00001983.png "")
 
+---
 
+## Additional References
 
-<!-- -------------------------- -->
-
-<br><hr>
-
-### Additional References
-- <a href="https://www.drupal.org/docs/8/api/render-api/render-arrays">Render Arrays in Drupal 8</a>
--  <a href="http://gulpjs.com/">GulpJS homepage</a>
--  <a href="https://www.npmjs.com/package/gulp-imagemin">Image Min Gulp library</a>
+* [Render Arrays in Drupal 8](https://www.drupal.org/docs/8/api/render-api/render-arrays)
+* [GulpJS homepage](http://gulpjs.com/)
+* [Image Min Gulp library](https://www.npmjs.com/package/gulp-imagemin)
 

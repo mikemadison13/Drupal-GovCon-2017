@@ -13,7 +13,7 @@ use Drupal\search_api\Datasource\DatasourceInterface;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\SearchApiException;
-use Drupal\search_api\Utility;
+use Drupal\search_api\Utility\Utility;
 
 /**
  * Implements hook_views_data().
@@ -51,17 +51,19 @@ function search_api_views_data() {
       );
 
       // Add suitable handlers for all indexed fields.
-      foreach ($index->getFields() as $field_id => $field) {
+      foreach ($index->getFields(TRUE) as $field_id => $field) {
         $field_alias = _search_api_views_find_field_alias($field_id, $table);
         $field_definition = _search_api_views_get_handlers($field);
         // The field handler has to be extra, since it is a) determined by the
         // field's underlying property and b) needs a different "real field"
         // set.
-        $field_handler = _search_api_views_get_field_handler_for_property($field->getDataDefinition(), $field->getPropertyPath());
-        if ($field_handler) {
-          $field_definition['field'] = $field_handler;
-          $field_definition['field']['real field'] = $field->getCombinedPropertyPath();
-          $field_definition['field']['click sortable'] = TRUE;
+        if ($field->getPropertyPath()) {
+          $field_handler = _search_api_views_get_field_handler_for_property($field->getDataDefinition(), $field->getPropertyPath());
+          if ($field_handler) {
+            $field_definition['field'] = $field_handler;
+            $field_definition['field']['real field'] = $field->getCombinedPropertyPath();
+            $field_definition['field']['search_api field'] = $field_id;
+          }
         }
         if ($field_definition) {
           $field_label = $field->getLabel();
@@ -219,6 +221,9 @@ function _search_api_views_handler_mapping() {
   if (!isset($mapping)) {
     $mapping = array(
       'boolean' => array(
+        'argument' => array(
+          'id' => 'search_api',
+        ),
         'filter' => array(
           'id' => 'search_api_boolean',
         ),
@@ -235,6 +240,10 @@ function _search_api_views_handler_mapping() {
         ),
       ),
       'decimal' => array(
+        'argument' => array(
+          'id' => 'search_api',
+          'filter' => 'floatval',
+        ),
         'filter' => array(
           'id' => 'search_api_numeric',
         ),
@@ -243,6 +252,10 @@ function _search_api_views_handler_mapping() {
         ),
       ),
       'integer' => array(
+        'argument' => array(
+          'id' => 'search_api',
+          'filter' => 'intval',
+        ),
         'filter' => array(
           'id' => 'search_api_numeric',
         ),
@@ -251,6 +264,9 @@ function _search_api_views_handler_mapping() {
         ),
       ),
       'string' => array(
+        'argument' => array(
+          'id' => 'search_api',
+        ),
         'filter' => array(
           'id' => 'search_api_string',
         ),
@@ -275,8 +291,12 @@ function _search_api_views_handler_mapping() {
         ),
       ),
       'entity:taxonomy_term' => array(
+        'argument' => array(
+          'id' => 'search_api',
+          'filter' => 'intval',
+        ),
         'filter' => array(
-          'id' => 'search_api_term',
+          'id' => 'search_api',
         ),
         'sort' => array(
           'id' => 'search_api',
@@ -335,12 +355,6 @@ function _search_api_views_handler_adjustments($type, FieldInterface $field, arr
       }
     }
   }
-
-  // Special case for our own language field.
-  if ($field->getCombinedPropertyPath() === 'search_api_language') {
-    $definitions['filter']['id'] = 'search_api_language';
-    $definitions['filter']['allow empty'] = FALSE;
-  }
 }
 
 /**
@@ -351,9 +365,9 @@ function _search_api_views_handler_adjustments($type, FieldInterface $field, arr
  */
 function _search_api_views_data_special_fields(array &$table) {
   $id_field = _search_api_views_find_field_alias('search_api_id', $table);
-  $table[$id_field]['title'] = t('Entity ID');
-  $table[$id_field]['help'] = t("The entity's ID");
-  $table[$id_field]['field']['id'] = 'numeric';
+  $table[$id_field]['title'] = t('Item ID');
+  $table[$id_field]['help'] = t("The item's internal (Search API-specific) ID");
+  $table[$id_field]['field']['id'] = 'standard';
   $table[$id_field]['sort']['id'] = 'search_api';
   if ($id_field != 'search_api_id') {
     $table[$id_field]['real field'] = 'search_api_id';
@@ -362,11 +376,24 @@ function _search_api_views_data_special_fields(array &$table) {
   $datasource_field = _search_api_views_find_field_alias('search_api_datasource', $table);
   $table[$datasource_field]['title'] = t('Datasource');
   $table[$datasource_field]['help'] = t("The data source ID");
+  $table[$datasource_field]['argument']['id'] = 'search_api';
+  $table[$datasource_field]['argument']['disable_break_phrase'] = TRUE;
   $table[$datasource_field]['field']['id'] = 'standard';
   $table[$datasource_field]['filter']['id'] = 'search_api_datasource';
   $table[$datasource_field]['sort']['id'] = 'search_api';
   if ($datasource_field != 'search_api_datasource') {
     $table[$datasource_field]['real field'] = 'search_api_datasource';
+  }
+
+  $language_field = _search_api_views_find_field_alias('search_api_language', $table);
+  $table[$language_field]['title'] = t('Item language');
+  $table[$language_field]['help'] = t("The item's language");
+  $table[$language_field]['field']['id'] = 'language';
+  $table[$language_field]['filter']['id'] = 'search_api_language';
+  $table[$language_field]['filter']['allow empty'] = FALSE;
+  $table[$language_field]['sort']['id'] = 'search_api';
+  if ($language_field != 'search_api_language') {
+    $table[$language_field]['real field'] = 'search_api_language';
   }
 
   $relevance_field = _search_api_views_find_field_alias('search_api_relevance', $table);
@@ -375,7 +402,7 @@ function _search_api_views_data_special_fields(array &$table) {
   $table[$relevance_field]['help'] = t('The relevance of this search result with respect to the query');
   $table[$relevance_field]['field']['type'] = 'decimal';
   $table[$relevance_field]['field']['id'] = 'numeric';
-  $table[$relevance_field]['field']['click sortable'] = TRUE;
+  $table[$relevance_field]['field']['search_api field'] = 'search_api_relevance';
   $table[$relevance_field]['sort']['id'] = 'search_api';
   if ($relevance_field != 'search_api_relevance') {
     $table[$relevance_field]['real field'] = 'search_api_relevance';
@@ -663,7 +690,9 @@ function _search_api_views_get_field_handler_mapping() {
     $plain_mapping['field_item:text_long'] = $text_mapping;
     $plain_mapping['field_item:text_with_summary'] = $text_mapping;
 
-    $numeric_mapping = array('id' => 'search_api_numeric');
+    $numeric_mapping = array(
+      'id' => 'search_api_numeric',
+    );
     $plain_mapping['field_item:integer'] = $numeric_mapping;
     $plain_mapping['field_item:list_integer'] = $numeric_mapping;
     $plain_mapping['integer'] = $numeric_mapping;
@@ -679,17 +708,23 @@ function _search_api_views_get_field_handler_mapping() {
     $plain_mapping['decimal'] = $float_mapping;
     $plain_mapping['float'] = $float_mapping;
 
-    $date_mapping = array('id' => 'search_api_date');
+    $date_mapping = array(
+      'id' => 'search_api_date',
+    );
     $plain_mapping['field_item:created'] = $date_mapping;
     $plain_mapping['field_item:changed'] = $date_mapping;
     $plain_mapping['datetime_iso8601'] = $date_mapping;
     $plain_mapping['timestamp'] = $date_mapping;
 
-    $bool_mapping = array('id' => 'search_api_boolean');
+    $bool_mapping = array(
+      'id' => 'search_api_boolean',
+    );
     $plain_mapping['boolean'] = $bool_mapping;
     $plain_mapping['field_item:boolean'] = $bool_mapping;
 
-    $ref_mapping = array('id' => 'search_api_entity');
+    $ref_mapping = array(
+      'id' => 'search_api_entity',
+    );
     $plain_mapping['field_item:entity_reference'] = $ref_mapping;
     $plain_mapping['field_item:comment'] = $ref_mapping;
 

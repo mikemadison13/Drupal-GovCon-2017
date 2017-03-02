@@ -4,6 +4,7 @@
 /.idea
 /.travis.yml
 /.vagrant
+/acquia-pipelines.yml
 /blt.sh
 /box
 /build
@@ -12,7 +13,7 @@
 /docroot/libraries/contrib
 /docroot/modules/contrib
 /docroot/sites/*/files
-/docroot/sites/*/files-private
+/files-private
 /docroot/sites/*/private
 /docroot/themes/contrib
 /drush/contrib
@@ -29,3 +30,4 @@ local.settings.php
 local.drushrc.php
 node_modules
 /vendor
+project.local.yml

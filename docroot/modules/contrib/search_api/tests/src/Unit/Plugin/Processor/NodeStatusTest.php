@@ -4,7 +4,7 @@ namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 use Drupal\search_api\Plugin\search_api\processor\NodeStatus;
-use Drupal\search_api\Utility;
+use Drupal\search_api\Utility\Utility;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -15,6 +15,8 @@ use Drupal\Tests\UnitTestCase;
  * @var \Drupal\search_api\Plugin\search_api\processor\NodeStatus
  */
 class NodeStatusTest extends UnitTestCase {
+
+  use TestItemsTrait;
 
   /**
    * The processor to be tested.
@@ -35,6 +37,8 @@ class NodeStatusTest extends UnitTestCase {
    */
   protected function setUp() {
     parent::setUp();
+
+    $this->setUpMockContainer();
 
     $this->processor = new NodeStatus(array(), 'node_status', array());
 
@@ -103,7 +107,7 @@ class NodeStatusTest extends UnitTestCase {
    */
   public function testNodeStatus() {
     $this->assertCount(2, $this->items, '2 nodes in the index.');
-    $this->processor->preprocessIndexItems($this->items);
+    $this->processor->alterIndexedItems($this->items);
     $this->assertCount(1, $this->items, 'An item was removed from the items list.');
     $published_nid = Utility::createCombinedId('entity:node', '2:en');
     $this->assertTrue(isset($this->items[$published_nid]), 'Correct item was removed.');

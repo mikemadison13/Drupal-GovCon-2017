@@ -17,11 +17,12 @@ use Drupal\environment_indicator\Entity\EnvironmentIndicator;
 function environment_indicator_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case 'environment_indicator.settings':
-      $output = '<p>' . t('The Environment Indicator adds a coloured strip to the site informing you which environment you are currently in (Development, Staging, Production, etc.') . '</p>';
+      $output = '<p>' . t('The Environment Indicator adds a coloured strip to the site informing you which environment you are currently in (Development, Staging, Production, etc.)') . '</p>';
       $output .= '<p>' . t('The Environment Indicator\'s visibility depends upon the permissions of the viewer. The <a href="@permissions">access environment indicator</a> permission must be enabled for a user role in order for users of that role to see the indicator.', [
           '@permissions' => Url::fromRoute('user.admin_permissions', [], ['fragment' => 'module-environment_indicator'])
             ->toString(),
         ]) . '</p>';
+      $output .= '<p>'. t('The recommended way to add information about your release is to set the \'environment_indicator.current_release\' state. Use your git hooks to set the state using drush: <code>drush sset environment_indicator.current_release v1.2.44</code>') .'</p>';
       return $output;
 
     case 'entity.environment_indicator.collection':
@@ -39,6 +40,7 @@ function environment_indicator_help($route_name, RouteMatchInterface $route_matc
       $output .= '<dt><em>$config[\'environment_indicator.indicator\'][\'fg_color\']</em></dt><dd>' . t('A valid CSS color for the text of the indicator.') . '<br/>$config[\'environment_indicator.indicator\'][\'fg_color\'] = \'#555533\';<br /></dd></dt>';
       $output .= '<dt><em>$config[\'environment_indicator.indicator\'][\'name\']</em></dt><dd>' . t('The text that will be displayed on the indicator.') . '<br/>$config[\'environment_indicator.indicator\'][\'name\'] = \'Staging\';<br /></dd></dt>';
       $output .= '</dl>';
+      $output .= '<p>'. t('The recommended way to add information about your release is to set the \'environment_indicator.current_release\' state. Use your git hooks to set the state using drush: <code>drush sset environment_indicator.current_release v1.2.44</code>') .'</p>';
 
       return $output;
   }
@@ -59,7 +61,7 @@ function environment_indicator_page_top(array &$page_top) {
     '#title' => $active_environment->get('name'),
     '#fg_color' => $active_environment->get('fg_color'),
     '#bg_color' => $active_environment->get('bg_color'),
-    '#description' => _environment_indicator_get_git_info(),
+    '#description' => \Drupal::state()->get('environment_indicator.current_release'),
     '#access' => \Drupal::currentUser()
       ->hasPermission('access environment indicator'),
     '#attached' => [
@@ -110,8 +112,7 @@ function environment_indicator_theme($existing, $type, $theme, $path) {
  * @param array $variables
  *   An associative array containing:
  *   - element: An associative array containing the properties of the element.
- *     Properties used: #title, #value, #options, #description, #required,
- *     #attributes.
+ *     Properties used: #title, #value, #description, #required, #attributes.
  */
 function template_preprocess_environment_indicator(&$variables) {
   $element = $variables['element'];
@@ -136,7 +137,7 @@ function template_preprocess_environment_indicator(&$variables) {
   $attributes['style'] = implode('; ', $data);
   $attributes['id'] = (empty($attributes['id']) ? (empty($attributes['#id']) ? 'environment-indicator' : $attributes['#id']) : $attributes['id']);
   $variables['attributes'] = $attributes;
-  $variables['switcher'] = $element['switcher'];
+  $variables['switcher'] = isset($element['switcher']) ? $element['switcher'] : '';
 }
 
 /**
@@ -183,22 +184,20 @@ function environment_indicator_toolbar() {
     return $items;
   }
   $title = $active_environment->get('name');
-  $git_info = _environment_indicator_get_git_info();
-  $title = empty($git_info) ? $title : $title . ' (' . $git_info . ')';
+  $release_info = \Drupal::state()->get('environment_indicator.current_release');
+  $title = empty($release_info) ? $title : $title . ' (' . $release_info . ')';
   $items['environment_indicator'] += [
     'tab' => [
       '#type' => 'link',
       '#access' => $permission,
       '#title' => $title,
       '#url' => \Drupal\Core\Url::fromRoute('environment_indicator.settings'),
-      '#options' => [
-        'attributes' => [
-          'title' => t('Environments'),
-          'class' => [
-            'toolbar-icon',
-            'toolbar-item',
-            'toolbar-icon-environment',
-          ],
+      '#attributes' => [
+        'title' => t('Environments'),
+        'class' => [
+          'toolbar-icon',
+          'toolbar-item',
+          'toolbar-icon-environment',
         ],
       ],
     ],
@@ -211,11 +210,9 @@ function environment_indicator_toolbar() {
         '#title' => t('Configure'),
         '#url' => \Drupal\Core\Url::fromRoute('environment_indicator.settings'),
         '#weight' => 100,
-        '#options' => [
-          'attributes' => [
-            'title' => t('Environment switcher configuration'),
-            'class' => ['edit-environments'],
-          ],
+        '#attributes' => [
+          'title' => t('Environment switcher configuration'),
+          'class' => ['edit-environments'],
         ],
       ],
     ],
@@ -323,81 +320,6 @@ function _environment_indicator_switcher_cache_tags() {
   }
 
   return $cache_tags;
-}
-
-/**
- * Helper function to get the git information.
- *
- * @return string
- *   The git branch or tag.
- */
-function _environment_indicator_get_git_info() {
-  if (!\Drupal::config('environment_indicator.settings')->get('git')) {
-    return NULL;
-  }
-  $release = NULL;
-  // Show the git branch, if it exists.
-  if (command_exists('git') && $git_describe = environment_indicator_execute_os_command('git describe --all')) {
-    // Execute "git describe --all" and get the last part of heads/7.x-2.x as the
-    // tag/branch.
-    if (empty($git_describe)) {
-      return NULL;
-    }
-    $tag_branch_parts = explode('/', $git_describe);
-    $release = end($tag_branch_parts);
-  }
-  return trim($release);
-}
-
-/**
- * Determines if a command exists on the current environment.
- *
- * @param string $command
- *   The command to check.
- *
- * @return bool
- *   TRUE if the command has been found; otherwise, FALSE.
- */
-function command_exists($command) {
-  if ($obj = \Drupal::cache()->get('command_exists:' . $command)) {
-    return $obj->data;
-  }
-  $where_is_command = (PHP_OS == 'WINNT') ? 'where' : 'which';
-
-  $command_return = environment_indicator_execute_os_command("$where_is_command $command");
-  $output = !empty($command_return);
-  \Drupal::cache()->set('command_exists:' . $command, $output);
-  return $output;
-}
-
-/**
- * Execute a system command and return the results.
- *
- * @param string $command
- *   The command to execute.
- *
- * @return string
- *   The results of the string execution.
- */
-function environment_indicator_execute_os_command($command) {
-  $process = proc_open($command, [
-    // STDIN.
-    0 => ["pipe", "r"],
-    // STDOUT.
-    1 => ["pipe", "w"],
-    // STDERR.
-    2 => ["pipe", "w"],
-  ], $pipes);
-  if ($process === FALSE) {
-    return FALSE;
-  }
-  $stdout = stream_get_contents($pipes[1]);
-  stream_get_contents($pipes[2]);
-  fclose($pipes[1]);
-  fclose($pipes[2]);
-  proc_close($process);
-
-  return $stdout;
 }
 
 /**

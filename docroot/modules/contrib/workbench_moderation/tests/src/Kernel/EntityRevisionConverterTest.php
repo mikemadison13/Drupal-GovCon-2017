@@ -30,13 +30,6 @@ class EntityRevisionConverterTest extends KernelTestBase {
     \Drupal::service('router.builder')->rebuild();
   }
 
-  /**
-   * Asserts that the converter service can be constructed by the container.
-   */
-  public function testContainerGet() {
-    $this->container->get('paramconverter.latest_revision');
-  }
-
   public function testConvertNonRevisionableEntityType() {
     $entity_test = EntityTest::create([
       'name' => 'test',

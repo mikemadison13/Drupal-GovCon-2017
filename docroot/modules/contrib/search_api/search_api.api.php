@@ -31,6 +31,22 @@ function hook_search_api_backend_info_alter(array &$backend_info) {
 }
 
 /**
+ * Alter the features a given search server supports.
+ *
+ * @param string[] $features
+ *   The features supported by the server's backend.
+ * @param \Drupal\search_api\ServerInterface $server
+ *   The search server in question.
+ *
+ * @see \Drupal\search_api\Backend\BackendSpecificInterface::getSupportedFeatures()
+ */
+function hook_search_api_server_features_alter(array &$features, \Drupal\search_api\ServerInterface $server) {
+  if ($server->getBackend() instanceof \Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend) {
+    $features[] = 'my_custom_feature';
+  }
+}
+
+/**
  * Alter the available datasources.
  *
  * Modules may implement this hook to alter the information that defines
@@ -78,6 +94,49 @@ function hook_search_api_processor_info_alter(array &$processors) {
 function hook_search_api_data_type_info_alter(array &$data_type_definitions) {
   if (isset($data_type_definitions['text'])) {
     $data_type_definitions['text']['label'] = t('Parsed text');
+  }
+}
+
+/**
+ * Alter the available parse modes.
+ *
+ * @param array $parse_mode_definitions
+ *   The definitions of the data type plugins.
+ *
+ * @see \Drupal\search_api\ParseMode\ParseModePluginBase
+ */
+function hook_search_api_parse_mode_info_alter(array &$parse_mode_definitions) {
+  if (isset($parse_mode_definitions['direct'])) {
+    $parse_mode_definitions['direct']['label'] = t('Solr syntax');
+  }
+}
+
+/**
+ * Alter the tracker info.
+ *
+ * @param array $tracker_info
+ *   The Search API tracker info array, keyed by tracker ID.
+ *
+ * @see \Drupal\search_api\Tracker\TrackerPluginBase
+ */
+function hook_search_api_tracker_info_alter(array &$tracker_info) {
+  if (isset($tracker_info['default'])) {
+    $tracker_info['default']['example_original_class'] = $tracker_info['default']['class'];
+    $tracker_info['default']['class'] = '\Drupal\my_module\Plugin\search_api\tracker\MyCustomImplementationTracker';
+  }
+}
+
+/**
+ * Alter the list of known search displays.
+ *
+ * @param array $displays
+ *   The Search API display info array, keyed by display ID
+ *
+ * @see \Drupal\search_api\Display\DisplayPluginBase
+ */
+function hook_search_api_displays_alter(&$displays) {
+  if (isset($displays['some_key'])) {
+    $displays['some_key']['label'] = t('New label for existing Display');
   }
 }
 
@@ -138,8 +197,8 @@ function hook_search_api_views_handler_mapping_alter(array &$mapping) {
  *
  * @param array $mapping
  *   An associative array with property data types as the keys and Views field
- *   handler definitions as the values (i.e., just the inner "field" portion of
- *   Views data definition items). In some cases the value might also be NULL
+ *   handler definitions as the values (that is, just the inner "field" portion
+ *   of Views data definition items). In some cases the value might also be NULL
  *   instead, to indicate that properties of this type shouldn't have field
  *   handlers. The data types in the keys might also contain asterisks (*) as
  *   wildcard characters. Data types with wildcards will be matched only if no
@@ -173,7 +232,7 @@ function hook_search_api_views_field_handler_mapping_alter(array &$mapping) {
  */
 function hook_search_api_index_items_alter(\Drupal\search_api\IndexInterface $index, array &$items) {
   foreach ($items as $item_id => $item) {
-    list(, $raw_id) = \Drupal\search_api\Utility::splitCombinedId($item->getId());
+    list(, $raw_id) = \Drupal\search_api\Utility\Utility::splitCombinedId($item->getId());
     if ($raw_id % 5 == 0) {
       unset($items[$item_id]);
     }

@@ -95,7 +95,7 @@ class Updates {
       'phpunit/phpunit',
       'behat/mink-extension',
       'behat/mink-goutte-driver',
-      'behat/mink-browserkit-driver'
+      'behat/mink-browserkit-driver',
     ];
     foreach ($remove_packages as $package) {
       unset($composer_json['require'][$package]);
@@ -114,6 +114,29 @@ class Updates {
     $composer_json = $this->updater->getComposerJson();
     unset($composer_json['require-dev']['drush/drush']);
     $this->updater->writeComposerJson($composer_json);
+  }
+
+  /**
+   * @Update(
+   *   version = "8.6.7",
+   *   description = "Changes drupal scaffold excludes from associative to indexed array."
+   * )
+   */
+  public function update_867() {
+    $composer_json = $this->updater->getComposerJson();
+    if (!empty($composer_json['extra']['drupal-scaffold']['excludes'])) {
+      $composer_json['extra']['drupal-scaffold']['excludes'] = array_unique(array_values($composer_json['extra']['drupal-scaffold']['excludes']));
+    }
+    $this->updater->writeComposerJson($composer_json);
+  }
+  /**
+   * @Update(
+   *   version = "8.6.12",
+   *   description = "Removes lightning patch."
+   * )
+   */
+  public function update_8612() {
+    $this->updater->removeComposerPatch("acquia/lightning", "https://www.drupal.org/files/issues/2836258-3-lightning-extension-autoload.patch");
   }
 
 }

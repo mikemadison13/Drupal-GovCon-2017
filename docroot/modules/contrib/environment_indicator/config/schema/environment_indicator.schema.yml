@@ -27,9 +27,6 @@ environment_indicator.settings:
   type: config_object
   label: 'Environment indicator settings'
   mapping:
-    git:
-      type: boolean
-      label: 'Show git information'
     toolbar_integration:
       type: sequence
       label: 'Integrate with the toolbars if present'

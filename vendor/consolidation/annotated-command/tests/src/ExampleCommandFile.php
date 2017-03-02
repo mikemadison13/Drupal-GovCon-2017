@@ -7,6 +7,7 @@ use Consolidation\AnnotatedCommand\CommandError;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -142,7 +143,7 @@ class ExampleCommandFile
      *   Add two plus two and then negate.
      * @custom
      */
-    public function testArithmatic($one, $two, $options = ['negate' => false])
+    public function testArithmatic($one, $two = 2, $options = ['negate' => false, 'unused' => 'bob'])
     {
         $result = $one + $two;
         if ($options['negate']) {
@@ -355,5 +356,55 @@ class ExampleCommandFile
             return "only $one";
         }
         return "nothing provided";
+    }
+
+    /**
+     * @return string
+     */
+    public function defaultOptionOne($options = ['foo' => '1'])
+    {
+        return "Foo is " . $options['foo'];
+    }
+
+    /**
+     * @return string
+     */
+    public function defaultOptionTwo($options = ['foo' => '2'])
+    {
+        return "Foo is " . $options['foo'];
+    }
+
+    /**
+     * @return string
+     */
+    public function defaultOptionNone($options = ['foo' => InputOption::VALUE_REQUIRED])
+    {
+        return "Foo is " . $options['foo'];
+    }
+
+    /**
+     * This is the test:required-array-option command
+     *
+     * This command will print all the valused of passed option
+     *
+     * @param array $opts
+     * @return string
+     */
+    public function testRequiredArrayOption($opts = ['arr|a' => []])
+    {
+        return implode(' ', $opts['arr']);
+    }
+
+    /**
+     * This is the test:array-option command
+     *
+     * This command will print all the valused of passed option
+     *
+     * @param array $opts
+     * @return string
+     */
+    public function testArrayOption($opts = ['arr|a' => ['1', '2', '3']])
+    {
+        return implode(' ', $opts['arr']);
     }
 }

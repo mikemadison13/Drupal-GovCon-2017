@@ -4,7 +4,7 @@ namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 use Drupal\search_api\Plugin\search_api\processor\RoleFilter;
-use Drupal\search_api\Utility;
+use Drupal\search_api\Utility\Utility;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -15,6 +15,8 @@ use Drupal\Tests\UnitTestCase;
  * @see \Drupal\search_api\Plugin\search_api\processor\RoleFilter
  */
 class RoleFilterTest extends UnitTestCase {
+
+  use TestItemsTrait;
 
   /**
    * The processor to be tested.
@@ -35,6 +37,8 @@ class RoleFilterTest extends UnitTestCase {
    */
   protected function setUp() {
     parent::setUp();
+
+    $this->setUpMockContainer();
 
     $this->processor = new RoleFilter(array(), 'role_filter', array());
 
@@ -91,7 +95,7 @@ class RoleFilterTest extends UnitTestCase {
     $configuration['default'] = 0;
     $this->processor->setConfiguration($configuration);
 
-    $this->processor->preprocessIndexItems($this->items);
+    $this->processor->alterIndexedItems($this->items);
 
     $this->assertTrue(!empty($this->items[Utility::createCombinedId('entity:user', '1:en')]), 'User with two roles was not removed.');
     $this->assertTrue(!empty($this->items[Utility::createCombinedId('entity:user', '2:en')]), 'User with only the authenticated role was not removed.');
@@ -106,7 +110,7 @@ class RoleFilterTest extends UnitTestCase {
     $configuration['default'] = 1;
     $this->processor->setConfiguration($configuration);
 
-    $this->processor->preprocessIndexItems($this->items);
+    $this->processor->alterIndexedItems($this->items);
 
     $this->assertTrue(empty($this->items[Utility::createCombinedId('entity:user', '1:en')]), 'User with editor role was successfully removed.');
     $this->assertTrue(!empty($this->items[Utility::createCombinedId('entity:user', '2:en')]), 'User without the editor role was not removed.');

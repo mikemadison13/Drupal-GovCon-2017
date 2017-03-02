@@ -51,6 +51,7 @@ class MyCommandClass
      * @command my:cat
      * @param integer $one The first parameter.
      * @param integer $two The other parameter.
+     * @option arr An option that takes multiple values.
      * @option flip Whether or not the second parameter should come first in the result.
      * @aliases c
      * @usage bet alpha --flip
@@ -65,6 +66,15 @@ class MyCommandClass
     }
 }
 ``` 
+Note that the `$options` array must be an associative array whose key is the name of the option, and whose value is one of:
+
+- A **string** containing the default value for the option.
+- The boolean value `false`, which indicates that the option takes no value.
+- The special value InputOption::VALUE_REQUIRED, which indicates that the user must provide a value for the option whenever it is used.
+- An empty array, which indicates that the option may be used multiple times.
+
+No other values should be used for the default value. For example, `$options = ['a' => 1]` is **incorrect**; instead, use `$options = ['a' => '1']`.
+
 ## Hooks
 
 Commandfiles may provide hooks in addition to commands. A commandfile method that contains a @hook annotation is registered as a hook instead of a command.  The format of the hook annotation is:

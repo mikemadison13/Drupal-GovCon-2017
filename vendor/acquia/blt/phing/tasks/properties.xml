@@ -8,11 +8,18 @@
   <property name="blt.root.relative" value="${phing.dir}/.." logoutput="false"/>
   <resolvepath propertyName="blt.root" file="${blt.root.relative}"/>
 
+  <property name="bin.path" value="vendor/bin" logoutput="false"/>
+
   <!-- Load file directory and binary locations. -->
   <property file="${phing.dir}/build.yml" override="true" logoutput="false"/>
 
   <!-- Load the root project.yml file for this project. -->
-  <property file="${blt.config-files.project}" override="true" logoutput="false"/>
+  <if>
+    <available file="${blt.config-files.project}" type="file"/>
+    <then>
+      <property file="${blt.config-files.project}" override="true" logoutput="${blt.verbose}"/>
+    </then>
+  </if>
 
   <!-- Load the local project.local.yml file for this project. -->
   <!--@todo Change this so that it is only loaded for local:* targets. -->
@@ -46,6 +53,19 @@
     <then>
       <!-- blt.verbose is used to toggle the verbosity on other tasks, such as Drush and Behat. -->
       <property name="blt.verbose" value="true"/>
+    </then>
+  </if>
+
+  <if>
+    <!-- There is multisite config. Allow it to override default values. -->
+    <available file="${blt.config-files.multisite}" />
+    <then>
+      <property file="${blt.config-files.multisite}" logoutput="false" override="true"/>
+      <!--
+        Here we override drush.uri explicitly (which defaults to 'default')
+        in order to run commands against multisite.name.
+      -->
+      <property name="drush.uri" value="${multisite.name}" override="true"/>
     </then>
   </if>
 

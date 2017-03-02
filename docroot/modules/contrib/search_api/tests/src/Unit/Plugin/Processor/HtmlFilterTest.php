@@ -3,7 +3,7 @@
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\search_api\Plugin\search_api\processor\HtmlFilter;
-use Drupal\search_api\Utility;
+use Drupal\search_api\Utility\Utility;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -16,12 +16,16 @@ use Drupal\Tests\UnitTestCase;
 class HtmlFilterTest extends UnitTestCase {
 
   use ProcessorTestTrait;
+  use TestItemsTrait;
 
   /**
    * Creates a new processor object for use in the tests.
    */
   public function setUp() {
     parent::setUp();
+
+    $this->setUpMockContainer();
+
     $this->processor = new HtmlFilter(array(), 'html_filter', array());
   }
 
@@ -47,7 +51,6 @@ class HtmlFilterTest extends UnitTestCase {
     $type = 'text';
     $this->invokeMethod('processFieldValue', array(&$passed_value, &$type));
     $this->assertEquals($expected_value, $passed_value);
-
   }
 
   /**
@@ -130,6 +133,14 @@ class HtmlFilterTest extends UnitTestCase {
         array(
           Utility::createTextToken('ALT', 2),
           Utility::createTextToken('word'),
+        ),
+        TRUE,
+      ),
+      // Test fault tolerance.
+      array(
+        'a < b',
+        array(
+          Utility::createTextToken('a < b'),
         ),
         TRUE,
       ),

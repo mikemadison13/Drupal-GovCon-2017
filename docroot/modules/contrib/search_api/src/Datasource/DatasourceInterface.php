@@ -2,6 +2,7 @@
 
 namespace Drupal\search_api\Datasource;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\search_api\Plugin\IndexPluginInterface;
 
@@ -32,6 +33,9 @@ interface DatasourceInterface extends IndexPluginInterface {
 
   /**
    * Retrieves the properties exposed by the underlying complex data type.
+   *
+   * Property names have to start with a letter or an underscore, followed by
+   * any number of letters, numbers and underscores.
    *
    * @return \Drupal\Core\TypedData\DataDefinitionInterface[]
    *   An associative array of property data types, keyed by the property name.
@@ -67,8 +71,9 @@ interface DatasourceInterface extends IndexPluginInterface {
    * @param \Drupal\Core\TypedData\ComplexDataInterface $item
    *   An object from this datasource.
    *
-   * @return string
-   *   The datasource-internal, unique ID of the item.
+   * @return string|null
+   *   The datasource-internal, unique ID of the item. Or NULL if the given item
+   *   is no valid item of this datasource.
    */
   public function getItemId(ComplexDataInterface $item);
 
@@ -99,6 +104,17 @@ interface DatasourceInterface extends IndexPluginInterface {
   public function getItemBundle(ComplexDataInterface $item);
 
   /**
+   * Retrieves the item's language.
+   *
+   * @param \Drupal\Core\TypedData\ComplexDataInterface $item
+   *   An item of this datasource's type.
+   *
+   * @return string
+   *   The language code of this item.
+   */
+  public function getItemLanguage(ComplexDataInterface $item);
+
+  /**
    * Retrieves a URL at which the item can be viewed on the web.
    *
    * @param \Drupal\Core\TypedData\ComplexDataInterface $item
@@ -109,6 +125,20 @@ interface DatasourceInterface extends IndexPluginInterface {
    *   item has no URL of its own.
    */
   public function getItemUrl(ComplexDataInterface $item);
+
+  /**
+   * Checks whether a user has permission to view the given item.
+   *
+   * @param \Drupal\Core\TypedData\ComplexDataInterface $item
+   *   An item of this datasource's type.
+   * @param \Drupal\Core\Session\AccountInterface|null $account
+   *   (optional) The user session for which to check access, or NULL to check
+   *   access for the current user.
+   *
+   * @return bool
+   *   TRUE if access is granted, FALSE otherwise.
+   */
+  public function checkItemAccess(ComplexDataInterface $item, AccountInterface $account = NULL);
 
   /**
    * Returns the available view modes for this datasource.
@@ -189,9 +219,9 @@ interface DatasourceInterface extends IndexPluginInterface {
    *   implemented by this datasource; or NULL to retrieve all items at once.
    *
    * @return string[]|null
-   *   An array with datasource-specific (i.e., not prefixed with the datasource
-   *   ID) item IDs; or NULL if there are no more items for this and all
-   *   following pages.
+   *   An array with datasource-specific item IDs (that is, raw item IDs not
+   *   prefixed with the datasource ID); or NULL if there are no more items for
+   *   this and all following pages.
    */
   public function getItemIds($page = NULL);
 

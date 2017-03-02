@@ -104,8 +104,8 @@ interface ResultSetInterface extends \Traversable {
    * Returns the ignored search keys, if any.
    *
    * @return string[]
-   *   A numeric array of search keys that were ignored for this search
-   *   (e.g., because of being too short or stop words).
+   *   A numeric array of search keys that were ignored for this search (for
+   *   example, because of being too short or stop words).
    */
   public function getIgnoredSearchKeys();
 
@@ -178,9 +178,21 @@ interface ResultSetInterface extends \Traversable {
    *   key instead.
    *
    * @return $this
+   *
+   * @todo Add unsetExtraData() instead of special NULL handling? And/or
+   *  just have to use &getAllExtraData()?
    */
-  // @todo Add unsetExtraData() instead of special NULL handling? And/or
-  //   just have to use &getAllExtraData()?
   public function setExtraData($key, $data = NULL);
+
+  /**
+   * Creates a clone of this result set based on the given query.
+   *
+   * @param \Drupal\search_api\Query\QueryInterface $query
+   *   The query for the new result set.
+   *
+   * @return static
+   *   A clone of this result set.
+   */
+  public function getCloneForQuery(QueryInterface $query);
 
 }

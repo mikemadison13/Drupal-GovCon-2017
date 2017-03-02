@@ -40,11 +40,10 @@ CONFIGURATION
 In order for a user to see the environment indicator, they will need the "See
 environment indicator" permission.
 
-Global options, such as whether to try to determine the Git branch when the
-environment name is unavailable, whether to change the background of the
-Toolbar, and whether to show an overlay on top of the favicon, can be configured
-from the settings page at admin/config/development/environment-indicator. In
-order for a user to change the global options, they will need the "Administer
+Global options, such as  whether to change the background of the Toolbar, and
+whether to show an overlay on top of the favicon, can be configured from the
+settings page at admin/config/development/environment-indicator. In order for a
+user to change the global options, they will need the "Administer
 environment_indicator settings" permission.
 
 Since each copy of the site should have it's own `settings.local.php` (to store
@@ -89,8 +88,13 @@ configure Environment Indicator by adding some configuration overrides to
    run, so you cannot use the t() function here.
 
    This configuration is optional. If you do not set it, Environment Indicator
-   will try to find the name of the current git branch. If the current git
-   branch name cannot be determined, then it will appear as an empty string.
+   will try to find the name of the current release. If the current release name
+   cannot be determined, then it will appear as an empty string.
+
+   The release name is stored as a state:
+   ```php
+   \Drupal::state()->set('environment_indicator.current_release', 'v1.2.44');
+   ```
 
 An example configuration could look like:
 

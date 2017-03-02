@@ -10,6 +10,8 @@ You must have the following tools on the command line of your *host operating sy
 * [Composer](https://getcomposer.org/download/)
 * [PHP 5.6+](http://php.net/manual/en/install.php)
 
+Instructions for installing _all_ requirements are listed below.
+
 ## Installing requirements
 
 ### Mac OSX
@@ -29,7 +31,6 @@ Then install the  minimum dependencies for BLT. The preferred method is via Home
 If you'd like to create a VM with BLT, you will require the following additional libraries. If you'd like to use a LAMP stack other than Drupal VM, see [Local Development](readme/local-development.md).
 
         brew tap caskroom/cask
-        brew install ansible
         brew cask install virtualbox vagrant
 
 The minimum required versions are VirtualBox 5.1.x and Vagrant 1.8.6. 

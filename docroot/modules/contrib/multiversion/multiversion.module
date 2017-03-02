@@ -245,7 +245,7 @@ function multiversion_views_post_execute(ViewExecutable $view) {
   $base_field = $view->storage->get('base_field');
   $table_info = $view->query->getEntityTableInfo();
   $content_type_info = array_column($table_info, 'entity_type');
-  if (is_array($view->result) && $content_type = $content_type_info[0]) {
+  if (is_array($view->result) && $content_type = reset($content_type_info)) {
     $manager = \Drupal::service('multiversion.manager');
     $storage = \Drupal::entityTypeManager()->getStorage($content_type);
     if ($manager->isEnabledEntityType($storage->getEntityType())) {

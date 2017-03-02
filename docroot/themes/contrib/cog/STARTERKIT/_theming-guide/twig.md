@@ -1,24 +1,17 @@
-## Theming Guide: Twig in Drupal 8
+# Theming Guide: Twig in Drupal 8
 
 The introduction of the Twig rendering engine in Drupal 8 offers a wide range of flexibility within templates. The core syntax is very similiar to most programming languages, with slight alterations based on context. Below are some code examples of common tasks when coding within Twig.
 
-###Table of Contents
-- <a href="#twigbasics">Twig Basics</a>
-- <a href="#twigcompare">Twig Comparison and Control Operators</a>
-- <a href="#twigfunc">Twig Functions and Filters</a>
-- <a href="#twigenabledebug">Enable Twig Debugging</a>
-- <a href="#twigdebug">Debugging Options in Twig</a>
-
-
-<!-- -------------------------- -->
-
-<!-- -------------------------- -->
-
+* [Twig Basics](#twigbasics)
+* [Twig Comparison and Control Operators](#twigcompare)
+* [Twig Functions and Filters](#twigfunc)
+* [Enable Twig Debugging](#twigenabledebug)
+* [Debugging Options in Twig](#twigdebug)
 
 <a name="twigbasics"></a>
-### Twig Basics
+## Twig Basics
 
-```
+```twig
 # print variable 
 I am {{ hamburgers }}
 
@@ -35,14 +28,10 @@ I am {{ hamburgers }}
 {% set myarray = {'acorn': 'awesome', 'tree': 'better'} %}
 ```
 
-<!-- -------------------------- -->
-
-<!-- -------------------------- -->
-
 <a name="twigcompare"></a>
-### Twig Comparison and Control Operators
+## Twig Comparison and Control Operators
 
-```
+```twig
 # foreach loop for myarray
 {% for arrayfor in myarray %} {% endfor %}
 
@@ -84,15 +73,10 @@ I am {{ hamburgers }}
 {% if numbers matches '/^[\\d\\.]+$/' %} {% endif %}
 ```
 
-<!-- -------------------------- -->
-
-
-<!-- -------------------------- -->
-
 <a name="twigfunc"></a>
-### Twig Functions and Filters
+## Twig Functions and Filters
 
-```
+```twig
 # strip_tags
 {{ myarray.acorn|striptags }} 
 
@@ -165,19 +149,18 @@ I am {{ hamburgers }}
 {% users|sort %}
 ```
 
-<!-- -------------------------- -->
-
 <a name="twigenabledebug"></a>
-### Enable Twig Debugging
+## Enable Twig Debugging
 
 In order to enable Twig debugging you simply need to change a variable in the `sites/default/services.yml` file. If you have not created your `services.yml` yet, just copy and rename your  `default.services.yml` file. 
 
+### Filename
 
-#### Filename
 `services.yml`
 
-#### File contents
-```
+### File contents
+
+```yaml
 parameters:
   twig.config:
     debug: true
@@ -185,7 +168,7 @@ parameters:
 
 After you have enabled debugging, you will see similiar markup in your DOM.
 
-```
+```html
 <!-- THEME DEBUG -->
 <!-- THEME HOOK: 'node' -->
 <!-- FILE NAME SUGGESTIONS:
@@ -199,12 +182,10 @@ After you have enabled debugging, you will see similiar markup in your DOM.
    x node.html.twig
 ```
 
-<!-- -------------------------- -->
-
 <a name="twigdebug"></a>
 ### Debugging Options in Twig 
 
-```
+```twig
 # using kint in twig file 
 {{ kint(page.content) }}
 
@@ -223,17 +204,13 @@ After you have enabled debugging, you will see similiar markup in your DOM.
 {% endfor %}
 ```
 
-<!-- -------------------------- -->
+---
 
-
-
-<br><hr>
-
-### Additional References
-- [Comparison of PHPTemplate and Twig theming paradigms](https://www.drupal.org/node/1918824)
-- [Working With Twig Templates](https://www.drupal.org/node/2186401)
-- [Debugging Twig templates](https://www.drupal.org/node/1906392)
-- [Filters - Modifying Variables In Twig Templates](https://www.drupal.org/node/2357633)
-- [Functions - In Twig Templates](https://www.drupal.org/node/2486991)
-- [Twig best practices - preprocess functions and templates](https://www.drupal.org/node/1920746)
-- [Drupal-defined Twig Filters](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Template%21TwigExtension.php/function/TwigExtension%3A%3AgetFilters/8)
+## Additional References
+* [Comparison of PHPTemplate and Twig theming paradigms](https://www.drupal.org/node/1918824)
+* [Working With Twig Templates](https://www.drupal.org/node/2186401)
+* [Debugging Twig templates](https://www.drupal.org/node/1906392)
+* [Filters - Modifying Variables In Twig Templates](https://www.drupal.org/node/2357633)
+* [Functions - In Twig Templates](https://www.drupal.org/node/2486991)
+* [Twig best practices - preprocess functions and templates](https://www.drupal.org/node/1920746)
+* [Drupal-defined Twig Filters](https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Template%21TwigExtension.php/function/TwigExtension%3A%3AgetFilters/8)

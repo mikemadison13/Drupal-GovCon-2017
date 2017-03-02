@@ -11,6 +11,10 @@
 /bin/pdepend
 /bin/php-cs-fixer
 /bin/phpmd
+PATCHES.txt
+
+# Develop
+autoload.local.php
 
 # Binaries
 /box.phar
@@ -23,3 +27,8 @@
 
 # Drupal
 /core
+/nbproject/
+
+# drupal/console-extend-plugin generated files
+extend.console.config.yml
+extend.console.services.yml

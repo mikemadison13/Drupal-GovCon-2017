@@ -1,52 +1,48 @@
-## Theming Guide: Preprocessing in Drupal
+# Theming Guide: Preprocessing in Drupal
 
+* [Creating and Passing Custom Variables to Twig](#customvars)
+* [Creating Body Classes based on User Role](#userrole)
+* [Counting and Creating Classes per Region](#regionvar)
+* [Creating a Body Class for the Homepage](#homepage)
+* [Creating a Theme-Specific Variable for Twig](#themespec)
+* [Creating Body Classes based on Path Alias](#pathalias)
+* [Creating Body Classes based on Node Type](#nodetype)
+* [Common Variables in Twig files](#commonvars)
 
-###Table of Contents
-- <a href="#customvars">Creating and Passing Custom Variables to Twig</a>
-- <a href="#userrole">Creating Body Classes based on User Role</a>
-- <a href="#regionvar">Counting and Creating Classes per Region</a>
-- <a href="#homepage">Creating a Body Class for the Homepage</a>
-- <a href="#themespec">Creating a Theme-Specific Variable for Twig</a>
-- <a href="#pathalias">Creating Body Classes based on Path Alias</a>
-- <a href="#nodetype">Creating Body Classes based on Node Type</a>
-- <a href="#commonvars">Common Variables in Twig files</a>
+## Creating and Passing Custom Variables to Twig
 
-
-<!-- -------------------------- -->
- 
-
-
-<!-- -------------------------- -->
-
-### Creating and Passing Custom Variables to Twig
 Preprocess functions are generally intended to introduce custom variables for certain portions of the theme layer. In the following example we will introduce a new variable and print within the template. 
 
-#### Filenames
+### Filenames
+
 `mytheme.theme` `node.html.twig`
 
-#### File contents
-```
+### File contents
+
+```php
 /* mytheme.theme */
 function mytheme_preprocess_node(&$variables) {
   $variables['my_node_id'] = 'custom-var-' . $variables['node']->nid->value;
 }
 ```
-```
+
+```twig
 /* node.html.twig */
 {{ my_node_id }}
 ```
 
-<!-- -------------------------- -->
-
 <a name="userrole"></a>
-### Creating Body Classes based on User Role
+## Creating Body Classes based on User Role
+
 In this example we will add body classes based on the assigned roles based on the logged-in user. 
 
-#### Filename
+### Filename
+
 `mytheme.theme`
 
-#### File contents
-```
+### File contents
+
+```php
 use Drupal\Component\Utility\Html;
 
 function mytheme_preprocess_html(&$variables) {
@@ -59,17 +55,18 @@ function mytheme_preprocess_html(&$variables) {
 }
 ```
 
-
-<!-- -------------------------- -->
 <a name="regionvar"></a>
-### Counting and Creating Classes per Region
+## Counting and Creating Classes per Region
+
 In this example we will add DOM classes wrappers to each element in each region. This would typically be used to assign grid declarations for Susy columns. 
 
-#### Filename
+### Filename
+
 `mytheme.theme`
 
-#### File contents
-```
+### File contents
+
+```php
 use Drupal\Component\Utility\Html;
 
 function mytheme_preprocess_region(&$variables) {
@@ -92,18 +89,18 @@ function mytheme_preprocess_region(&$variables) {
 }
 ```
 
-<!-- -------------------------- -->
-
-
 <a name="homepage"></a>
-### Creating a Body Class for the Homepage
+## Creating a Body Class for the Homepage
+
 In this example we add a body class based on frontpage path.
 
-#### Filename
+### Filename
+
 `mytheme.theme`
 
-#### File contents
-```
+### File contents
+
+```php
 use Drupal\Component\Utility\Html;
 
 function mytheme_preprocess_html(&$variables) {
@@ -112,33 +109,35 @@ function mytheme_preprocess_html(&$variables) {
 }
 ```
 
-<!-- -------------------------- -->
-
 <a name="themespec"></a>
-### Creating a Theme-Specific Variable for Twig 
+## Creating a Theme-Specific Variable for Twig 
+
 In this example we create a new theme variables to reference in multiple places with the preprocess functions that can be utilized in the twig file. 
 
-#### Filename
+### Filename
+
 `mytheme.theme`
 
-#### File contents
-```
+### File contents
+
+```php
 function mytheme_preprocess_html(&$variables) {
   $variables['theme_path'] = drupal_get_path('theme’, 'mytheme');
 }
 ```
 
-<!-- -------------------------- -->
-
 <a name="pathalias"></a>
-### Creating Body Classes based on Path Alias 
+## Creating Body Classes based on Path Alias 
+
 In this example we create a new body classes that will render based on Drupal URL path.
 
-#### Filename
+### Filename
+
 `mytheme.theme`
 
-#### File contents
-```
+### File contents
+
+```php
 use Drupal\Component\Utility\Html;
 
 function mytheme_preprocess_html(&$variables) {
@@ -153,18 +152,18 @@ function mytheme_preprocess_html(&$variables) {
 }
 ```
 
-<!-- -------------------------- -->
-
 <a name="nodetype"></a>
-### Creating Body Classes based on Node Type
+## Creating Body Classes based on Node Type
+
 In this example we create a new body classes that will render on content type.
 
-#### Filename
+### Filename
+
 `mytheme.theme`
 
-#### File contents
-```
+### File contents
 
+```php
 function mytheme_preprocess_html(&$variables) {
   // Node type class.
   $variables['attributes']['class'][] = isset($variables['node_type']) ? 'nodetype--' .
@@ -172,18 +171,18 @@ function mytheme_preprocess_html(&$variables) {
 }
 ```
 
-<!-- -------------------------- -->
-
-
 <a name="commonvars"></a>
-### Common Variables in Twig files
+## Common Variables in Twig files
+
 Many used and unused variables exist out of the box for most of the core Twig files.
 
-#### Filename
+### Filename
+
 `html.html.twig`
 
-#### File contents
-```
+### File contents
+
+```twig
 {{ attributes }}  Attributes rendered on body tag 
 {{ logged_in }}  If user is logged in
 {{ is_admin }}  If user is admin
@@ -202,11 +201,13 @@ Many used and unused variables exist out of the box for most of the core Twig fi
 {{ dump(user) }}  User object reference 
 ```
 
-#### Filename
+### Filename
+
 `page.html.twig`
 
-#### File contents
-```
+### File contents
+
+```twig
 {{ base_path }}  The base path of site 
 {{ directory }}  Theme directory path 
 {{ attributes }}  Attributes rendered on outside <div>
@@ -225,12 +226,13 @@ Many used and unused variables exist out of the box for most of the core Twig fi
 {{ dump(node) }}  Node object reference 
 ```
 
+### Filename
 
-#### Filename
 `node.html.twig`
 
-#### File contents
-```
+### File contents
+
+```twig
 {{ view_mode }}  View mode on nodes 
 {{ teaser }}  Teaser content 
 {{ node }}  Node object 
@@ -245,15 +247,10 @@ Many used and unused variables exist out of the box for most of the core Twig fi
 {{ db_is_active }}  DB is active
 ```
 
+---
 
+## Additional References
 
-<!-- -------------------------- -->
-
-
-
-<br><hr>
-
-### Additional References
-- <a href="https://www.drupal.org/docs/8/theming/twig/twig-best-practices-preprocess-functions-and-templates">Drupal.org Twig best practices - preprocess functions and templates</a>
-- <a href="https://www.drupal.org/docs/8/theming">Theming Drupal 8</a>
-- <a href="https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Render!theme.api.php/function/hook_preprocess_HOOK/8.2.x">Drupal.org docs for hook\_preprocess\_HOOK</a>
+* [Drupal.org Twig best practices - preprocess functions and templates](https://www.drupal.org/docs/8/theming/twig/twig-best-practices-preprocess-functions-and-templates)
+* [Theming Drupal 8](https://www.drupal.org/docs/8/theming)
+* [Drupal.org docs for hook\_preprocess\_HOOK](https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Render!theme.api.php/function/hook_preprocess_HOOK/8.2.x)
