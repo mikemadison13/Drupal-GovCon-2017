@@ -49,13 +49,14 @@ script:
   - source ${BLT_DIR}/scripts/travis/run_tests
   - source ${BLT_DIR}/scripts/blt/ci/internal/doctor.sh
   - phpunit ${BLT_DIR}/tests/phpunit --group blt-project -c ${BLT_DIR}/tests/phpunit/phpunit.xml
+  - phpunit ${BLT_DIR}/tests/phpunit --group blt-multisite -c ${BLT_DIR}/tests/phpunit/phpunit.xml
   # Deploy build artifact.
   - blt deploy:build
   - source ${BLT_DIR}/scripts/blt/ci/internal/test_artifact.sh
 
 deploy:
   - provider: script
-    # Deploys build artifact to acquia-pso/blted8 on GitHub.
+    # Deploys build artifact for generated `blt-project` to acquia-pso/blted8 on GitHub and also to bolt8 sub on ACF.
     script: ${BLT_DIR}/scripts/travis/deploy_branch && phpunit $BLT_DIR/tests/phpunit --group=deploy
     skip_cleanup: true
     on:

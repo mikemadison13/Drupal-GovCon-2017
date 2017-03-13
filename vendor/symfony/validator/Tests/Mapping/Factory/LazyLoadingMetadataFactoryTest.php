@@ -11,13 +11,14 @@
 
 namespace Symfony\Component\Validator\Tests\Mapping\Factory;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\LoaderInterface;
 use Symfony\Component\Validator\Tests\Fixtures\ConstraintA;
 
-class LazyLoadingMetadataFactoryTest extends \PHPUnit_Framework_TestCase
+class LazyLoadingMetadataFactoryTest extends TestCase
 {
     const CLASS_NAME = 'Symfony\Component\Validator\Tests\Fixtures\Entity';
     const PARENT_CLASS = 'Symfony\Component\Validator\Tests\Fixtures\EntityParent';
@@ -167,6 +168,25 @@ class LazyLoadingMetadataFactoryTest extends \PHPUnit_Framework_TestCase
         $metadata->addConstraint(new Callback(function () {}));
 
         $metadata = $factory->getMetadataFor(self::CLASS_NAME);
+    }
+
+    public function testGroupsFromParent()
+    {
+        $reader = new \Symfony\Component\Validator\Mapping\Loader\StaticMethodLoader();
+        $factory = new LazyLoadingMetadataFactory($reader);
+        $metadata = $factory->getMetadataFor('Symfony\Component\Validator\Tests\Fixtures\EntityStaticCarTurbo');
+        $groups = array();
+
+        foreach ($metadata->getPropertyMetadata('wheels') as $propertyMetadata) {
+            $constraints = $propertyMetadata->getConstraints();
+            $groups = array_replace($groups, $constraints[0]->groups);
+        }
+
+        $this->assertCount(4, $groups);
+        $this->assertContains('Default', $groups);
+        $this->assertContains('EntityStaticCarTurbo', $groups);
+        $this->assertContains('EntityStaticCar', $groups);
+        $this->assertContains('EntityStaticVehicle', $groups);
     }
 }
 

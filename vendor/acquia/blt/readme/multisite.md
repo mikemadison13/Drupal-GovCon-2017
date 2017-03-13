@@ -23,7 +23,7 @@ Start by setting `$site_dir` in each site's settings.php, prior to the `blt.sett
 
     $site_dir = 'example.com';
 
-You will also need to define your multisites in `blt/project.yml` by creating a `multisite.name` variable. This allows BLT to run setup and deployment tasks for each site in the codebase.
+You also have the option to define your multisites in `blt/project.yml` by creating a `multisite.name` variable. This allows BLT to run setup and deployment tasks for each site in the codebase. If you don't manually define this variable, BLT will automatically set it based on discovered multisite directories.
 
     multisite:
       name:
@@ -41,3 +41,18 @@ The default Drush site aliases provided by [Acquia Cloud](https://docs.acquia.co
 It's recommended to copy the aliases file provided by Acquia Cloud or Club to create a separate aliases file for each site. Simply modify the `uri` and `parent` keys for the aliases within each file to match the correct database / site.
 
 TODO: Add instructions for integration with BLT development workflows and DrupalVM.
+
+## Multisite tasks
+
+You may override BLT variables on a per-site basis by creating a `site.yml` file in `docroot/sites/[site-name]/`. You may then run BLT with the `multisite.name` variable set at the command line to load the site's properties. 
+
+For instance, if the `drush` aliases for your site in `docroot/sites/mysite` were `@mysite.local` and `@mysite.test`, you could define these in `docroot/sites/mysite/site.yml` as:
+
+```yaml
+drush:
+  aliases:
+    local: mysite.local
+    remote: mysite.test
+```
+
+Then, to refresh your local site, you could run: `blt local:refresh -Dmultisite.name=mysite`.
