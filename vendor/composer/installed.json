@@ -5549,7 +5549,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0-alpha5",
-                "datestamp": "1453656839"
+                "datestamp": "1489190883"
             },
             "patches_applied": {
                 "2674874 - Issue saving Schedule Update Type form": "https://www.drupal.org/files/issues/schedule_updates-save_type-2674874-2.patch",
@@ -5804,7 +5804,7 @@
             },
             "drupal": {
                 "version": "8.x-3.0-beta5",
-                "datestamp": "1475335394"
+                "datestamp": "1488057783"
             },
             "patches_applied": {
                 "2793801 - Allow modules to influence the IPE tempstore ID": "https://www.drupal.org/files/issues/2793801-9.patch"
@@ -5876,7 +5876,7 @@
             },
             "drupal": {
                 "version": "8.x-3.0-beta5",
-                "datestamp": "1475335394"
+                "datestamp": "1488057783"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -6160,7 +6160,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0",
-                "datestamp": "1485901983"
+                "datestamp": "1485902197"
             }
         },
         "installation-source": "dist",
@@ -6732,7 +6732,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/features-8.x-3.5.zip",
-            "reference": null,
+            "reference": "8.x-3.5",
             "shasum": "546b34387018f9adbe742b6992c4d473f9447c41"
         },
         "require": {
@@ -9983,7 +9983,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/honeypot-8.x-1.23.zip",
-            "reference": null,
+            "reference": "8.x-1.23",
             "shasum": "a822b1d1926a85248eb40902ab7027796ce41db1"
         },
         "require": {
@@ -10079,6 +10079,78 @@
         "homepage": "https://www.drupal.org/project/memcache",
         "support": {
             "source": "http://cgit.drupalcode.org/memcache"
+        }
+    },
+    {
+        "name": "drupal/r4032login",
+        "version": "dev-1.x",
+        "version_normalized": "dev-1.x",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/r4032login",
+            "reference": "391f10d69b9b8c466a2fddac2a6b99f1289e7781"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "time": "2017-02-08T04:20:19+00:00",
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.x-dev",
+                "datestamp": "1486245484"
+            }
+        },
+        "installation-source": "source",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Bevan",
+                "homepage": "https://www.drupal.org/user/49989"
+            },
+            {
+                "name": "RobLoach",
+                "homepage": "https://www.drupal.org/user/61114"
+            },
+            {
+                "name": "Sk8erPeter",
+                "homepage": "https://www.drupal.org/user/1441344"
+            },
+            {
+                "name": "bdone",
+                "homepage": "https://www.drupal.org/user/687670"
+            },
+            {
+                "name": "deekayen",
+                "homepage": "https://www.drupal.org/user/972"
+            },
+            {
+                "name": "lotyrin",
+                "homepage": "https://www.drupal.org/user/216580"
+            },
+            {
+                "name": "mikesmullin",
+                "homepage": "https://www.drupal.org/user/108440"
+            },
+            {
+                "name": "pwolanin",
+                "homepage": "https://www.drupal.org/user/49851"
+            },
+            {
+                "name": "shrop",
+                "homepage": "https://www.drupal.org/user/14767"
+            }
+        ],
+        "description": "Redirect anonymous users from 403 Access Denied pages to the /user/login page.",
+        "homepage": "https://www.drupal.org/project/r4032login",
+        "support": {
+            "source": "http://cgit.drupalcode.org/r4032login"
         }
     },
     {
@@ -10283,8 +10355,16 @@
                 "homepage": "https://www.drupal.org/user/229048"
             },
             {
+                "name": "badjava",
+                "homepage": "https://www.drupal.org/user/83372"
+            },
+            {
                 "name": "chx",
                 "homepage": "https://www.drupal.org/user/9446"
+            },
+            {
+                "name": "japerry",
+                "homepage": "https://www.drupal.org/user/45640"
             },
             {
                 "name": "kalman.hosszu",
@@ -10415,7 +10495,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/webform-8.x-5.0-beta9.zip",
-            "reference": null,
+            "reference": "8.x-5.0-beta9",
             "shasum": "cc1a31b22ae3daca5c2cc05ca729092a90f3835d"
         },
         "require": {
