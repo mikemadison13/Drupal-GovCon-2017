@@ -2,6 +2,7 @@
 
 namespace Drupal\acquia_search\EventSubscriber;
 
+use Drupal\acquia_connector\Helper\Storage;
 use Solarium\Core\Client\Response;
 use Solarium\Core\Client\Client;
 use Solarium\Core\Event\Events;
@@ -186,8 +187,8 @@ class SearchSubscriber extends Plugin {
     if (!isset($this->derivedKey[$env_id])) {
       // If we set an explicit environment, check if this needs to overridden.
       // Use the default.
-      $identifier = \Drupal::config('acquia_connector.settings')->get('identifier');
-      $key = \Drupal::config('acquia_connector.settings')->get('key');
+      $identifier = Storage::getIdentifier();
+      $key = Storage::getKey();
 
       // See if we need to overwrite these values.
       // @todo: Implement the derived key per solr environment storage.

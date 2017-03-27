@@ -13,7 +13,7 @@ This theming guide is a reference of various techniques and snippets which are t
 ## Using Web Fonts in Drupal
 
 * [Adding External Web Fonts in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/fonts.md#cdnfonts)
-* [Adding External Web Fonts in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/fonts.md#localfonts)
+* [Adding Local Web Fonts in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/fonts.md#localfonts)
 
 ## Twig for Drupal 8
 

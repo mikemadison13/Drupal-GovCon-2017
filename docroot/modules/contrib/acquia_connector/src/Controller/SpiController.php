@@ -2,6 +2,7 @@
 
 namespace Drupal\acquia_connector\Controller;
 
+use Drupal\acquia_connector\Helper\Storage;
 use Drupal\Core\Database\Database;
 use Drupal\Core\DrupalKernel;
 use Drupal\Component\Utility\Unicode;
@@ -169,22 +170,8 @@ class SpiController extends ControllerBase {
       }
     }
 
-    // Database updates required?
-    // Based on code from system.install.
-    $additional_data['pending_updates'] = FALSE;
-    foreach (\Drupal::moduleHandler()->getModuleList() as $module => $filename) {
-      drupal_static_reset('drupal_get_schema_versions');
-      module_load_install($module);
-
-      $updates = drupal_get_schema_versions($module);
-      if ($updates !== FALSE) {
-        $default = drupal_get_installed_schema_version($module);
-        if (max($updates) > $default) {
-          $additional_data['pending_updates'] = TRUE;
-          break;
-        }
-      }
-    }
+    include_once "core/includes/update.inc";
+    $additional_data['pending_updates'] = (bool) update_get_update_list();
 
     if (!empty($additional_data)) {
       // JSON encode this additional data.
@@ -1232,7 +1219,6 @@ class SpiController extends ControllerBase {
    */
   public function sendFullSpi($method = '') {
     $spi = self::get($method);
-    $config = $this->config('acquia_connector.settings');
 
     if ($this->checkEnvironmentChange()) {
       \Drupal::logger('acquia spi')->error('SPI data not sent, site environment change detected.');
@@ -1242,7 +1228,7 @@ class SpiController extends ControllerBase {
       return FALSE;
     }
 
-    $response = $this->client->sendNspi($config->get('identifier'), $config->get('key'), $spi);
+    $response = $this->client->sendNspi(Storage::getIdentifier(), Storage::getKey(), $spi);
 
     if ($response === FALSE) {
       return FALSE;
@@ -1481,7 +1467,7 @@ class SpiController extends ControllerBase {
    */
   public function sendAccess() {
     $request = \Drupal::request();
-    $acquia_key = $this->config('acquia_connector.settings')->get('key');
+    $acquia_key = Storage::getKey();
     if (!empty($acquia_key) && $request->get('key')) {
       $key = sha1(\Drupal::service('private_key')->get());
       if ($key === $request->get('key')) {

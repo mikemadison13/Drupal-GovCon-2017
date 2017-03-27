@@ -11,7 +11,7 @@ module.exports = function (gulp, plugins, options) {
   gulp.task('watch:js', function () {
     return gulp.watch([
       options.js.files
-    ], ['lint:js']);
+    ], ['lint:js', 'lint:css']);
   });
 
   gulp.task('watch:sass', function () {

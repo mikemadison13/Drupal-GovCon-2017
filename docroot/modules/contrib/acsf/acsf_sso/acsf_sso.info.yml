@@ -6,10 +6,10 @@ package: Acquia Cloud Site Factory
 
 dependencies:
  - acsf
- - samlauth (>= 8.x-2.x)
+ - samlauth (>= 8.x-2.0-alpha1)
 
-# Information added by Drupal.org packaging script on 2016-12-21
-version: '8.x-1.34'
+# Information added by Drupal.org packaging script on 2017-03-16
+version: '8.x-1.35'
 core: '8.x'
 project: 'acsf'
-datestamp: 1482323896
+datestamp: 1489664599

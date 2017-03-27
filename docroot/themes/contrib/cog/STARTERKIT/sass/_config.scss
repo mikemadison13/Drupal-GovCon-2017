@@ -18,34 +18,33 @@ $link: $med-gray;
 // Fonts ///////////////
 $opensans: 'Open Sans';
 $poppins: 'Poppins';
-
 $heading_font: $opensans;
 $body_font: $poppins;
 
 // Susy config ///////////////
 $susy: (
-columns: 12, // The number of columns in your grid
-gutters: 1/4, // The size of a gutter in relation to a single column
+  columns: 12, // The number of columns in your grid
+  gutters: 1/4, // The size of a gutter in relation to a single column
 );
 
 // Breakpoints & MQ's ///////////////
 $screen: "only screen" !default;
 $small-max: 767px !default;
 $medium-max: 1023px !default;
-
-$small:  "#{$screen} and (max-width: #{$small-max})";
-$up-sm:  "#{$screen} and (min-width: #{$small-max + 1})";
-$medium: "#{$screen} and (min-width: #{$small-max + 1}) and (max-width: #{$medium-max})";
-$large:  "#{$screen} and (min-width: #{$medium-max + 1})";
+$small: $screen max-width $small-max;
+$up-sm: $screen $small-max + 1;
+$medium: $screen $small-max + 1 $medium-max;
+$large: $screen $medium-max + 1;
 
 // EXAMPLE FOR MQ REFERENCES =>
+
 /*
 body {
   background: green !important;
-  @media #{$small}  { background: orange !important; }
-  @media #{$medium} { background: teal !important; }
-  @media #{$large}  { background: orchid !important; }
-  @media #{$up-sm}  { background: aliceblue !important; }
+  @include breakpoint($small)  { background: orange !important; }
+  @include breakpoint($medium) { background: teal !important; }
+  @include breakpoint($large)  { background: orchid !important; }
+  @include breakpoint($up-sm)  { background: aliceblue !important; }
 }
 */
 
@@ -54,19 +53,22 @@ body {
   background: rgb($r, $g, $b);
   background: rgba($r, $g, $b, $pertc);
 }
+
 @mixin region-spacer($color, $direction: bottom) {
   border-top: 1px dotted $color;
+
   @if $direction == top {
     padding-top: 25px;
     margin-top: 25px;
-  } @else {
+  }
+
+  @else {
     padding-bottom: 25px;
     margin-bottom: 25px;
   }
 }
-@mixin borderradius($px:5px){
-  -moz-border-radius: $px;
-  -webkit-border-radius: $px;
+
+@mixin borderradius($px: 5px) {
   border-radius: $px;
   // background-clip: padding-box;
 }
@@ -75,26 +77,27 @@ body {
   list-style-type: none;
   padding: 0;
   margin: 0;
+
   > li {
     display: inline-block;
     list-style-type: none;
     margin: 2px;
   }
 }
+
 .tmp-shadow {
-  -webkit-box-shadow: 0 0 2px 0 rgba($med-gray, 1);
-  -moz-box-shadow: 0 0 2px 0 rgba($med-gray, 1);
   box-shadow: 0 0 2px 0 rgba($med-gray, 1);
 }
+
 .tmp-shadow-none {
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
   box-shadow: none;
 }
+
 .blocked-style {
   border: 1px solid $white;
   padding: 12px;
   border-radius: 5px;
   background: $off-white;
+
   @extend .tmp-shadow;
 }

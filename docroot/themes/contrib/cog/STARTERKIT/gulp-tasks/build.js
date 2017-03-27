@@ -12,7 +12,7 @@ module.exports = function (gulp, plugins, options) {
     'compile:styleguide'
   ], function (cb) {
   // Run linting last, otherwise its output gets lost.
-    plugins.runSequence(['lint:js-gulp', 'lint:js-with-fail'], cb);
+    plugins.runSequence(['lint:js-gulp', 'lint:js-with-fail', 'lint:css-with-fail'], cb);
   });
 
   gulp.task('build:dev', [
@@ -21,6 +21,6 @@ module.exports = function (gulp, plugins, options) {
     'compile:styleguide'
   ], function (cb) {
     // Run linting last, otherwise its output gets lost.
-    plugins.runSequence(['lint:js-gulp', 'lint:js'], cb);
+    plugins.runSequence(['lint:js-gulp', 'lint:js', 'lint:css'], cb);
   });
 };

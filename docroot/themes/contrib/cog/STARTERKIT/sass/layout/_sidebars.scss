@@ -10,15 +10,18 @@
 // Sidebar First /////////////////
 //////////////////////////////////
 .body-sidebars-first {
-  @media #{$up-sm}  {
+  @include breakpoint($up-sm) {
     aside.sidebar-first {
       @include span(3 of 12);
+
       > * {
         padding-left: 15px;
       }
     }
+
     section#content {
       @include span(9 of 12 last);
+
       > * {
         padding-right: 25px;
       }
@@ -29,15 +32,18 @@
 // Sidebar Second ////////////////
 //////////////////////////////////
 .body-sidebars-second {
-  @media #{$up-sm}  {
+  @include breakpoint($up-sm) {
     aside.sidebar-second {
       @include span(3 of 12 last);
+
       > * {
         padding-right: 15px;
       }
     }
+
     section#content {
       @include span(9 of 12);
+
       > * {
         padding-left: 25px;
       }
@@ -48,21 +54,26 @@
 // Sidebar Both //////////////////
 //////////////////////////////////
 .body-sidebars-both {
-  @media #{$up-sm}  {
+  @include breakpoint($up-sm) {
     aside.sidebar-first {
       @include span(2 of 12);
+
       > * {
         padding-left: 15px;
       }
     }
+
     section#content {
       @include span(8 of 12);
+
       > * {
         padding-right: 25px;
       }
     }
+
     aside.sidebar-second {
       @include span(2 of 12 last);
+
       > * {
         padding-right: 15px;
       }
@@ -75,6 +86,7 @@
 .body-sidebars-none {
   section#content {
     @include span(12 of 12);
+
     > * {
       padding-left: 15px;
       padding-right: 15px;

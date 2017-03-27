@@ -2,10 +2,9 @@
 
 namespace Drupal\acquia_search\Plugin\SolrConnector;
 
+use Drupal\acquia_connector\Helper\Storage;
 use Drupal\Core\Url;
-use Drupal\search_api_solr\Annotation\SolrConnector;
 use Drupal\search_api_solr\SolrConnector\SolrConnectorPluginBase;
-use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\acquia_search\EventSubscriber\SearchSubscriber;
 use Solarium\Client;
@@ -65,7 +64,7 @@ class SearchApiSolrAcquiaConnector extends SolrConnectorPluginBase {
       $this->solr->createEndpoint($this->configuration + [
           'key' => 'core',
           'host' => acquia_search_get_search_host(),
-          'path' => '/solr/' . \Drupal::config('acquia_connector.settings')->get('identifier'),
+          'path' => '/solr/' . Storage::getIdentifier(),
           'port' => ($this->configuration['scheme'] == 'https') ? 443 : 80,
         ], TRUE);
       $this->attachServerEndpoint();

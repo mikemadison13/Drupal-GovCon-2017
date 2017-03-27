@@ -14,6 +14,7 @@
 //   `gulp compile:sass`
 //   `gulp compile:styleguide`
 //   `gulp lint:js`
+//   `gulp lint:css`
 //   `gulp minify:css`
 //   `gulp serve`
 //   `gulp test:css`
@@ -70,7 +71,8 @@ var plugins = require('gulp-load-plugins')({
     'node-sass-import-once': 'importOnce',
     'gulp-sass-glob': 'sassGlob',
     'run-sequence': 'runSequence',
-    'gulp-clean-css': 'cleanCSS'
+    'gulp-clean-css': 'cleanCSS',
+    'gulp-stylelint': 'stylelint'
   }
 });
 
@@ -162,6 +164,7 @@ require('./gulp-tasks/compile-sass')(gulp, plugins, options);
 require('./gulp-tasks/compile-styleguide')(gulp, plugins, options);
 require('./gulp-tasks/default')(gulp, plugins, options);
 require('./gulp-tasks/lint-js')(gulp, plugins, options);
+require('./gulp-tasks/lint-css')(gulp, plugins, options);
 require('./gulp-tasks/minify-css')(gulp, plugins, options);
 require('./gulp-tasks/test-css')(gulp, plugins, options);
 require('./gulp-tasks/watch')(gulp, plugins, options);

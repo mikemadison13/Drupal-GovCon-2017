@@ -5,6 +5,7 @@ body {
   padding: 0;
   margin: 0;
 }
+
 body {
   font-family: $body_font;
   font-size: 1em;
@@ -15,33 +16,45 @@ body {
 // Markup: headlines.twig
 //
 // Style guide: base.headlines
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: $heading;
   font-weight: 500;
   font-family: $heading_font;
-  padding: 0 0 .3em;
+  padding: 0 0 0.3em;
   margin: 0;
 }
+
 h1 {
   font-size: 250%;
   line-height: 165%;
 }
+
 h2 {
   font-size: 210%;
   line-height: 145%;
 }
+
 h3 {
   font-size: 180%;
   line-height: 145%;
 }
+
 h4 {
   font-size: 170%;
   line-height: 145%;
 }
-h5, h6 {
+
+h5,
+h6 {
   font-size: 140%;
   line-height: 145%;
 }
+
 body .menu-item {
   padding-top: 0;
   margin: 0;
@@ -57,11 +70,13 @@ a:visited {
   text-decoration: none;
   color: $link;
   cursor: inherit;
+
   &:hover {
     color: $dark-gray;
     text-decoration: underline;
   }
 }
+
 body p {
   margin: 3px 0 10px;
 }
@@ -82,13 +97,16 @@ blockquote {
   padding: 0 15px;
   color: $dark-gray;
   border-left: 4px solid $off-white;
+
   &:last-child {
     margin-bottom: 0;
   }
 }
+
 pre {
   white-space: pre-wrap;
   overflow-x: auto;
+
   code {
     border: 1px dotted $dark-gray;
     background: $off-white;
@@ -107,29 +125,36 @@ pre {
 ol {
   padding: 0 0 0 10px;
   margin: 0 0 10px;
+
   li {
     margin: 4px 0;
     padding: 0;
   }
 }
+
 ol ol {
   padding: 0 0 0 22.5px;
 }
+
 ol ol ol {
   padding: 0 0 0 22.5px;
 }
+
 // UL items
 ul {
   padding: 0 0 0 10px;
   margin: 0 0 10px;
+
   li {
     margin: 4px 0;
     padding: 0;
   }
 }
+
 ul ul {
   padding: 0 0 0 22.5px;
 }
+
 ul ul ul {
   padding: 0 0 0 22.5px;
 }
@@ -140,24 +165,29 @@ ul ul ul {
 // Style guide: base.table
 table {
   width: 100%;
+
   th {
     font-weight: 600;
     text-align: left;
     background-color: $off-white;
     padding: 4px 5px;
   }
+
   td {
     border: 0;
     outline: none;
     padding: 4px 5px;
   }
+
   thead {
     border: 1px solid $off-white;
     border-bottom: 0;
   }
+
   tbody {
     border: 1px solid $off-white;
   }
+
   tbody tr:nth-child(even) {
     background-color: $off-white;
     border-top: 1px solid $off-white;
