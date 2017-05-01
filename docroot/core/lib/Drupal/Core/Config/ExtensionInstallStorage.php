@@ -2,8 +2,8 @@
 
 namespace Drupal\Core\Config;
 
-use Drupal\Core\Site\Settings;
 use Drupal\Core\Extension\ExtensionDiscovery;
+use Drupal\Core\Extension\ProfileHandlerInterface;
 
 /**
  * Storage to access configuration and schema in enabled extensions.
@@ -28,6 +28,13 @@ class ExtensionInstallStorage extends InstallStorage {
   protected $includeProfile = TRUE;
 
   /**
+   * The name of the currently active installation profile.
+   *
+   * @var string
+   */
+  protected $installProfile;
+
+  /**
    * Overrides \Drupal\Core\Config\InstallStorage::__construct().
    *
    * @param \Drupal\Core\Config\StorageInterface $config_storage
@@ -42,11 +49,21 @@ class ExtensionInstallStorage extends InstallStorage {
    * @param bool $include_profile
    *   (optional) Whether to include the install profile in extensions to
    *   search and to get overrides from.
+   * @param string $profile
+   *   (optional) The current installation profile. This parameter will be
+   *   mandatory in Drupal 9.0.0. In Drupal 8.3.0 not providing this parameter
+   *   will trigger a silenced deprecation warning.
+   * @param \Drupal\Core\Extension\ProfileHandlerInterface $profile_handler
+   *   (optional) The profile handler.
    */
-  public function __construct(StorageInterface $config_storage, $directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION, $include_profile = TRUE) {
-    parent::__construct($directory, $collection);
+  public function __construct(StorageInterface $config_storage, $directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION, $include_profile = TRUE, $profile = NULL, ProfileHandlerInterface $profile_handler = NULL) {
+    parent::__construct($directory, $collection, $profile_handler);
     $this->configStorage = $config_storage;
     $this->includeProfile = $include_profile;
+    if (is_null($profile)) {
+      @trigger_error('Install profile will be a mandatory parameter in Drupal 9.0.', E_USER_DEPRECATED);
+    }
+    $this->installProfile = $profile ?: \Drupal::installProfile();
   }
 
   /**
@@ -74,28 +91,18 @@ class ExtensionInstallStorage extends InstallStorage {
    */
   protected function getAllFolders() {
     if (!isset($this->folders)) {
-      $this->folders = array();
+      $this->folders = [];
       $this->folders += $this->getCoreNames();
 
-      $install_profile = Settings::get('install_profile');
-      $profile = drupal_get_profile();
       $extensions = $this->configStorage->read('core.extension');
       // @todo Remove this scan as part of https://www.drupal.org/node/2186491
-      $listing = new ExtensionDiscovery(\Drupal::root());
+      $listing = new ExtensionDiscovery(\Drupal::root(), TRUE, NULL, NULL, $this->profileHandler);
       if (!empty($extensions['module'])) {
         $modules = $extensions['module'];
         // Remove the install profile as this is handled later.
-        unset($modules[$install_profile]);
-        $profile_list = $listing->scan('profile');
-        if ($profile && isset($profile_list[$profile])) {
-          // Prime the drupal_get_filename() static cache with the profile info
-          // file location so we can use drupal_get_path() on the active profile
-          // during the module scan.
-          // @todo Remove as part of https://www.drupal.org/node/2186491
-          drupal_get_filename('profile', $profile, $profile_list[$profile]->getPathname());
-        }
+        unset($modules[$this->installProfile]);
         $module_list_scan = $listing->scan('module');
-        $module_list = array();
+        $module_list = [];
         foreach (array_keys($modules) as $module) {
           if (isset($module_list_scan[$module])) {
             $module_list[$module] = $module_list_scan[$module];
@@ -114,18 +121,11 @@ class ExtensionInstallStorage extends InstallStorage {
       }
 
       if ($this->includeProfile) {
-        // The install profile can override module default configuration. We do
-        // this by replacing the config file path from the module/theme with the
-        // install profile version if there are any duplicates.
-        if (isset($profile)) {
-          if (!isset($profile_list)) {
-            $profile_list = $listing->scan('profile');
-          }
-          if (isset($profile_list[$profile])) {
-            $profile_folders = $this->getComponentNames(array($profile_list[$profile]));
-            $this->folders = $profile_folders + $this->folders;
-          }
-        }
+        // The install profile (and any parent profiles) can override module
+        // default configuration. We do this by replacing the config file path
+        // from the module/theme with the install profile version if there are
+        // any duplicates.
+        $this->folders += $this->getComponentNames($this->profileHandler->getProfiles($this->installProfile));
       }
     }
     return $this->folders;

@@ -1,18 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\panelizer\Unit\PanelizerFieldPanelsStorageTest
- */
-
 namespace Drupal\Tests\panelizer\Unit;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\ctools\Context\AutomaticContext;
 use Drupal\panelizer\Exception\PanelizerException;
 use Drupal\panelizer\Panelizer;
 use Drupal\panelizer\Plugin\PanelsStorage\PanelizerFieldPanelsStorage;
@@ -77,7 +72,7 @@ class PanelizerFieldPanelsStorageTest extends UnitTestCase {
    * @covers ::load
    */
   public function testLoad() {
-    $entity_context = $this->prophesize(Context::class);
+    $entity_context = $this->prophesize(AutomaticContext::class);
 
     $panels_display = $this->prophesize(PanelsDisplayVariant::class);
     $panels_display->setContexts([
@@ -102,7 +97,7 @@ class PanelizerFieldPanelsStorageTest extends UnitTestCase {
    * @covers ::load
    */
   public function testLoadRevision() {
-    $entity_context = $this->prophesize(Context::class);
+    $entity_context = $this->prophesize(AutomaticContext::class);
 
     $panels_display = $this->prophesize(PanelsDisplayVariant::class);
     $panels_display->setContexts([

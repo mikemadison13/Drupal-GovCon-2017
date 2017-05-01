@@ -7,7 +7,6 @@
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\field\Entity\FieldConfig;
-use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 
@@ -486,12 +485,13 @@ function lightning_update_8001() {
 }
 
 /**
- * Creates roles for editing content types.
+ * Removed in Lightning 8.x-2.06.
+ *
+ * Formerly created roles for editing content types.
+ *
+ * @deprecated
  */
 function lightning_update_8002() {
-  foreach (NodeType::loadMultiple() as $node_type) {
-    lightning_core_node_type_insert($node_type);
-  }
 }
 
 /**
@@ -510,21 +510,23 @@ function lightning_update_8004() {
 }
 
 /**
- * Installs Contact Storage.
+ * Removed in Lightning 8.x-2.04.
+ *
+ * Formerly installed Contact Storage.
+ *
+ * @deprecated
  */
 function lightning_update_8005() {
-  if (!\Drupal::moduleHandler()->moduleExists('contact_storage')) {
-    \Drupal::service('module_installer')->install(['contact_storage']);
-  }
 }
 
 /**
- * Grants permission to use contact form(s).
+ * Removed in Lightning 8.x-2.04.
+ *
+ * Formerly Granted permission to use contact form(s).
+ *
+ * @deprecated
  */
 function lightning_update_8006() {
-  $permissions = ['access site-wide contact form'];
-  user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, $permissions);
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $permissions);
 }
 
 /**
@@ -532,12 +534,6 @@ function lightning_update_8006() {
  */
 function lightning_update_dependencies() {
   return [
-    'lightning' => [
-      // Lightning 8003 must run before Lightning 8002.
-      8002 => [
-        'lightning' => 8003,
-      ],
-    ],
     'media_entity' => [
       // Lightning 8004 must run before Media Entity 8002.
       8002 => [

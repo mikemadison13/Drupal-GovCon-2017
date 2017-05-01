@@ -5,7 +5,9 @@
  * Contains install and update routines for Lightning Media Image.
  */
 
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\entity_browser\Entity\EntityBrowser;
+use Drupal\lightning_core\ConfigHelper as Config;
 use Drupal\views\Entity\View;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
@@ -18,14 +20,18 @@ function lightning_media_image_install() {
 
   // Grants image browser access to the creator content role and the
   // media_creator and media_manager roles.
-  lightning_media_image_update_8004();
+  if (\Drupal::moduleHandler()->moduleExists('lightning_roles')) {
+    lightning_media_image_modules_installed(['lightning_roles']);
+  }
 }
 
 /**
  * Creates the media_browser form display.
  */
 function lightning_media_image_update_8001() {
-  lightning_core_create_config('entity_form_display', 'media.image.media_browser', 'lightning_media_image');
+  Config::forModule('lightning_media_image')
+    ->getEntity('entity_form_display', 'media.image.media_browser')
+    ->save();
 }
 
 /**
@@ -43,7 +49,9 @@ function lightning_media_image_update_8002() {
     lightning_core_rebuild_container();
   }
 
-  lightning_core_create_config('entity_browser', 'image_browser', 'lightning_media_image');
+  Config::forModule('lightning_media_image')
+    ->getEntity('entity_browser', 'image_browser')
+    ->save();
 }
 
 /**
@@ -556,18 +564,44 @@ function lightning_media_image_update_8003() {
 }
 
 /**
- * Grants image browser access to media_creator role and creator content role.
+ * Removed in Lightning 8.x-2.10.
+ *
+ * Formerly added the 'access image_browser entity browser pages' permission to
+ * the media_creator and media_manager roles, as well as the creator content
+ * role.
+ *
+ * @deprecated
  */
 function lightning_media_image_update_8004() {
-  $permissions = ['access image_browser entity browser pages'];
+}
 
-  // Media creators and managers can always access the image browser.
-  user_role_grant_permissions('media_creator', $permissions);
-  user_role_grant_permissions('media_manager', $permissions);
+/**
+ * Uses the static_image widget on the media_browser form display.
+ */
+function lightning_media_image_update_8005() {
+  $display = EntityFormDisplay::load('media.image.media_browser');
 
-  // Any content creator can as well.
-  \Drupal::service('lightning.content_roles')
-    ->grantPermissions('creator', $permissions);
+  if ($display) {
+    $component = $display->getComponent('image');
+
+    if ($component && $component['type'] == 'image_image') {
+      // Just in case Drupal is under the mistaken impression that the
+      // image_immutable plugin doesn't exist...
+      \Drupal::service('plugin.manager.field.widget')->clearCachedDefinitions();
+
+      $component['type'] = 'image_immutable';
+      $display->setComponent('image', $component)->save();
+    }
+  }
+}
+
+/**
+ * Creates the thumbnail display for images.
+ */
+function lightning_media_image_update_8006() {
+  Config::forModule('lightning_media_image')
+    ->getEntity('entity_view_display', 'media.image.thumbnail')
+    ->save();
 }
 
 /**
@@ -585,6 +619,11 @@ function lightning_media_image_update_dependencies() {
         // 8004 grants access the image_browser entity browser, which is created
         // by Lightning Media Image 8002.
         'lightning_media_image' => 8002,
+      ],
+      // 8006 depends on the thumbnail view mode, which is created by
+      // lightning_media 8015.
+      8006 => [
+        'lightning_media' => 8015,
       ],
     ],
   ];

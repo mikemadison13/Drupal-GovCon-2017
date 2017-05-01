@@ -54,6 +54,71 @@ use. For example, if you are currently running Beta 1 and are trying to update
 to Beta 3, you will need to follow the instructions for updating from Beta 1 to
 Beta 2, then from Beta 2 to Beta 3, in that order.
 
+## 2.1.1 to 2.1.2
+There are no manual update steps for this version.
+
+## 2.1.0 to 2.1.1
+* To allow fields that use the media browser to filter to only the media types
+  accepted by the field, do the following:
+    * Edit the **Browser** display of the **Media** view.
+    * Add the **Bundle** contextual filter, to the current display only, with
+      the following settings:
+      * When the filter value is NOT available, provide a default value:
+        * Type: Entity Browser Context
+        * Context key: ```target_bundles```
+        * Fallback value: ```all```
+        * Multiple values: OR
+      * When the filter value IS available or a default is provided:
+        * Specify validation criteria: Yes
+        * Validator: Media bundle
+        * Multiple arguments: One or more IDs separated by , or +
+        * Action to take if filter value does not validate: Display all results
+          for the specified field
+      * Under the "More" section, "Allow multiple values" should be checked.
+    * If the view has the media bundle as an exposed filter (most likely named
+      "Media: Bundle"), edit it and set the "Yield to argument" select box to
+      the name of the argument you just created (which will probably be "Media:
+      Bundle"). If you don't see the "Yield to argument" select box, clear all
+      caches and try again.
+    * Save the view.
+
+## 2.0.6 to 2.1.0
+There are no manual update steps for this version.
+
+## 2.0.5 to 2.0.6
+There are no manual update steps for this version.
+
+## 2.0.4 to 2.0.5
+There are no manual update steps for this version.
+
+If you previously used the lightning.extend.yml file to customize your
+installation and you have a need to continuously install your application (for
+example, in an Acquia Cloud Site Factory instance) you will need to convert your
+extend file into a sub-profile of Lightning. See the
+[Lightning as a base profile][sub-profile documentation] documentation for more
+information.
+
+## 2.0.3 to 2.0.4
+* Edit the **Scheduled update** field on any content type that has it. Click
+  **Field settings*, set "Allowed number of values" to "Unlimited" and save.
+  Then click **Edit**, rename the field to "Scheduled updates", and save.
+* If you have the Image Browser entity browser available:
+  * Go to *Configuration > Content authoring > Entity browsers* and edit the
+    **Image Browser** entity browser.
+  * Click **Next**.
+  * Empty the "Width of the modal" and "Height of the modal" text fields.
+  * Click **Next**, then proceed through the rest of the wizard without changing
+    anything else. Then click **Finish** to save the entity browser.
+* If you have Lightning Workflow installed, add the *View moderation states*
+  permission to all content reviewer roles.
+* If you have Lightning Workflow installed, Go to *Structure > Views* and edit
+  the **Content** view.
+  * Expand the **Advanced** section and under **Relationships** click on 'latest
+    revision'.
+  * Un-check the "Require this relationship" checkbox and click **Apply (all
+    displays)**.
+  * Save the view.
+
 ## 2.0.2 to 2.0.3
 * If you have the Landing Page content type installed, there are several manual
   update steps (to be performed in order):
@@ -224,3 +289,5 @@ There are no manual update steps for this version.
 * Enable the ```view media``` permission for the ```anonymous``` and
   ```authenticated``` user roles.
 * Install the Lightning Workflow module.
+
+[sub-profile documentation]: https://github.com/acquia/lightning/wiki/Lightning-as-a-Base-Profile "Lightning sub-profile documentation"

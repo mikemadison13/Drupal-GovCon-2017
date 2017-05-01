@@ -4,6 +4,7 @@ namespace Drupal\Core\Config;
 
 use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\Core\Extension\Extension;
+use Drupal\Core\Extension\ProfileHandlerInterface;
 
 /**
  * Storage used by the Drupal installer.
@@ -48,6 +49,13 @@ class InstallStorage extends FileStorage {
   protected $directory;
 
   /**
+   * The profile handler used to find additional folders to scan for config.
+   *
+   * @var \Drupal\Core\Extension\ProfileHandlerInterface
+   */
+  protected $profileHandler;
+
+  /**
    * Constructs an InstallStorage object.
    *
    * @param string $directory
@@ -56,9 +64,12 @@ class InstallStorage extends FileStorage {
    * @param string $collection
    *   (optional) The collection to store configuration in. Defaults to the
    *   default collection.
+   * @param \Drupal\Core\Extension\ProfileHandlerInterface $profile_handler
+   *   (optional) The profile handler.
    */
-  public function __construct($directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function __construct($directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION, ProfileHandlerInterface $profile_handler = NULL) {
     parent::__construct($directory, $collection);
+    $this->profileHandler = $profile_handler ?: \Drupal::service('profile_handler');
   }
 
   /**
@@ -131,7 +142,7 @@ class InstallStorage extends FileStorage {
       return $names;
     }
     else {
-      $return = array();
+      $return = [];
       foreach ($names as $index => $name) {
         if (strpos($name, $prefix) === 0 ) {
           $return[$index] = $names[$index];
@@ -149,23 +160,14 @@ class InstallStorage extends FileStorage {
    */
   protected function getAllFolders() {
     if (!isset($this->folders)) {
-      $this->folders = array();
+      $this->folders = [];
       $this->folders += $this->getCoreNames();
+      // Get dependent profiles and add the extension components.
+      $this->folders += $this->getComponentNames($this->profileHandler->getProfiles());
       // Perform an ExtensionDiscovery scan as we cannot use drupal_get_path()
       // yet because the system module may not yet be enabled during install.
       // @todo Remove as part of https://www.drupal.org/node/2186491
       $listing = new ExtensionDiscovery(\Drupal::root());
-      if ($profile = drupal_get_profile()) {
-        $profile_list = $listing->scan('profile');
-        if (isset($profile_list[$profile])) {
-          // Prime the drupal_get_filename() static cache with the profile info
-          // file location so we can use drupal_get_path() on the active profile
-          // during the module scan.
-          // @todo Remove as part of https://www.drupal.org/node/2186491
-          drupal_get_filename('profile', $profile, $profile_list[$profile]->getPathname());
-          $this->folders += $this->getComponentNames(array($profile_list[$profile]));
-        }
-      }
       // @todo Remove as part of https://www.drupal.org/node/2186491
       $this->folders += $this->getComponentNames($listing->scan('module'));
       $this->folders += $this->getComponentNames($listing->scan('theme'));
@@ -185,7 +187,7 @@ class InstallStorage extends FileStorage {
   public function getComponentNames(array $list) {
     $extension = '.' . $this->getFileExtension();
     $pattern = '/' . preg_quote($extension, '/') . '$/';
-    $folders = array();
+    $folders = [];
     foreach ($list as $extension_object) {
       // We don't have to use ExtensionDiscovery here because our list of
       // extensions was already obtained through an ExtensionDiscovery scan.
@@ -216,7 +218,7 @@ class InstallStorage extends FileStorage {
   public function getCoreNames() {
     $extension = '.' . $this->getFileExtension();
     $pattern = '/' . preg_quote($extension, '/') . '$/';
-    $folders = array();
+    $folders = [];
     $directory = $this->getCoreFolder();
     if (is_dir($directory)) {
       // glob() directly calls into libc glob(), which is not aware of PHP

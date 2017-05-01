@@ -10,13 +10,13 @@ cache:
     - "$HOME/.drush/cache"
     - "$HOME/.npm"
 php:
-  - 5.6
+  - 7.0
 env:
   - VERSION=HEAD
-  - VERSION=2.0.3
-  - VERSION=2.0.2
-  - VERSION=2.0.1
-  - VERSION=2.0.0
+  - VERSION=2.1.2
+  - VERSION=2.1.1
+  - VERSION=2.1.0
+  - VERSION=2.0.6
 
 addons:
   apt:
@@ -77,7 +77,7 @@ install:
   # Install Lightning cleanly so that settings.php will be created properly.
   - phing install -Ddb.database=drupal -Ddb.user=lightning -Ddb.password=lightning -Ddb.host=127.0.0.1
   # Import the fixture, if it exists.
-  - phing remember -Dversion=$VERSION -Ddb.database=drupal -Ddb.user=lightning -Ddb.password=lightning -Ddb.host=127.0.0.1
+  - phing recall -Dversion=$VERSION -Ddb.database=drupal -Ddb.user=lightning -Ddb.password=lightning -Ddb.host=127.0.0.1
   - cd docroot
   # Execute database updates, if there are any.
   - drush updatedb --yes
@@ -89,11 +89,11 @@ before_script:
   - mkdir ../tmp
   - selenium-server-standalone -port 4444 -log ../tmp/selenium2.log &
   - sleep 5
-  - cd ./profiles/lightning
 
 script:
-  - composer validate --no-check-all --ansi
-  - behat --strict --stop-on-failure
+  - composer validate ./profiles/lightning/composer.json --no-check-all --ansi
+  - phpunit --configuration ./core --group lightning
+  - behat --strict --stop-on-failure --config ./sites/default/files/behat.yml
 
 matrix:
   fast_finish: true

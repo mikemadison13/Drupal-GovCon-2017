@@ -108,6 +108,23 @@ abstract class WebTestExtended extends WebTestBase{
   }
 
   /**
+   * Utility function to check that a radio group has only the expected options.
+   *
+   * @param $name
+   * @param $expected_options
+   * @param array $unexpected_options
+   */
+  protected function checkExpectedRadioOptions($name, $expected_options, $unexpected_options = []) {
+    foreach ($expected_options as $expected_option) {
+      $this->assertFieldByName($name,$expected_option);
+
+    }
+    foreach ($unexpected_options as $unexpected_option) {
+      $this->assertNoFieldByName($name, $unexpected_option);
+    }
+  }
+
+  /**
    * Utility Function around drupalGet to avoid call if not needed.
    *
    * @param $path
@@ -129,4 +146,5 @@ abstract class WebTestExtended extends WebTestBase{
     }
     $this->assertText('Access denied', 'Accessed denied on path: ' . $path);
   }
+
 }

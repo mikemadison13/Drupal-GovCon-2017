@@ -11,6 +11,7 @@ use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\scheduled_updates\Plugin\UpdateRunnerInterface;
 use Drupal\simpletest\WebTestBase;
+use Drupal\user\Entity\Role;
 
 /**
  * Define base class for Scheduled Updates Tests
@@ -210,7 +211,7 @@ abstract class ScheduledUpdatesTestBase extends WebTestExtended {
       $expected_runners = $all_runners;
     }
     $unexpected_runners = array_diff($all_runners, $expected_runners);
-    $this->checkExpectedOptions('edit-update-runner-id', $expected_runners, $unexpected_runners);
+    $this->checkExpectedRadioOptions('update_runner[id]', $expected_runners, $unexpected_runners);
   }
 
   /**
@@ -245,5 +246,50 @@ abstract class ScheduledUpdatesTestBase extends WebTestExtended {
     $this->drupalGet('admin/config/workflow/schedule-updates/run');
     $this->drupalPostForm(NULL, [], 'Run Updates');
   }
-  
+
+  /**
+   * Checks that an scheduled update type can be edit via the form.
+   *
+   * @param string $type_id
+   *   The type id.
+   */
+  protected function checkEditType($type_id) {
+    $this->drupalGet("admin/config/workflow/scheduled-update-type/$type_id");
+    // For now just test the saving without changes works.
+    // See https://www.drupal.org/node/2674874
+    $this->drupalPostForm(NULL, [], t('Save'));
+  }
+
+  /**
+   * Grant permissions to a user.
+   *
+   * The permissions are actually added to the users role.
+   * Relies on test users only having 1 non-locked role.
+   *
+   * @param array $permissions
+   */
+  protected function grantPermissionsToUser($permissions) {
+    $roles = $this->adminUser->getRoles(TRUE);
+    $this->assert('debug', "roles =" . implode(',', $roles));
+    $role_id = array_pop($roles);
+    $this->grantPermissions(Role::load($role_id), $permissions);
+  }
+
+  /**
+   * Grant permissions to a user.
+   *
+   * The permissions are actually added to the users role.
+   * Relies on test users only having 1 non-locked role.
+   *
+   * @param array $permissions
+   */
+  protected function revokePermissionsFromUser($permissions) {
+    $roles = $this->adminUser->getRoles(TRUE);
+
+    $role_id = array_pop($roles);
+    foreach ($permissions as $permission) {
+      Role::load($role_id)->revokePermission($permission);
+    }
+  }
+
 }

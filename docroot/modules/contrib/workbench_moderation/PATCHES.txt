@@ -9,3 +9,7 @@ Source: https://www.drupal.org/files/issues/2668006-2.patch
 Source: https://www.drupal.org/files/issues/2847078-6.patch
 
 
+2749503 - Add basic support for Quick Edit
+Source: https://www.drupal.org/files/issues/workbench_moderation-quickedit-support-2749503-6.patch
+
+

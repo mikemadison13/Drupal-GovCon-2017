@@ -7,28 +7,30 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\panels\Plugin\DisplayVariant\PanelsDisplayVariant;
 use Drupal\panels\Storage\PanelsStorageManagerInterface;
 use Drupal\panels_ipe\Exception\EmptyRequestContentException;
-use Drupal\panels_ipe\TempStoreTrait;
 use Drupal\user\SharedTempStore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class RequestHandlerBase implements RequestHandlerInterface {
 
-  use TempStoreTrait;
-
-  /** @var int */
+  /**
+   * @var int */
   private $responseStatusCode = 200;
 
-  /** @var array */
+  /**
+   * @var array */
   private $response = [];
 
-  /** @var \Drupal\user\SharedTempStore */
+  /**
+   * @var \Drupal\user\SharedTempStore */
   private $tempStore;
 
-  /** @var \Drupal\panels\Storage\PanelsStorageManagerInterface */
+  /**
+   * @var \Drupal\panels\Storage\PanelsStorageManagerInterface */
   private $panelsStore;
 
-  /** @var \Drupal\Core\Extension\ModuleHandlerInterface */
+  /**
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface */
   private $moduleHandler;
 
   public function __construct(ModuleHandlerInterface $module_handler, PanelsStorageManagerInterface $panels_store, SharedTempStore $temp_store) {
@@ -107,22 +109,22 @@ abstract class RequestHandlerBase implements RequestHandlerInterface {
    * Saves the given Panels Display to TempStore.
    *
    * @param \Drupal\panels\Plugin\DisplayVariant\PanelsDisplayVariant $panels_display
+   *
    * @throws \Drupal\user\TempStoreException
    */
   protected function savePanelsDisplayToTempStore(PanelsDisplayVariant $panels_display) {
-    $key = $this->getTempStoreId($panels_display);
-    $this->tempStore->set($key, $panels_display->getConfiguration());
+    $this->tempStore->set($panels_display->getTempStoreId(), $panels_display->getConfiguration());
   }
 
   /**
    * Deletes the given Panels Display from TempStore.
    *
    * @param \Drupal\panels\Plugin\DisplayVariant\PanelsDisplayVariant $panels_display
+   *
    * @throws \Drupal\user\TempStoreException
    */
   protected function deletePanelsDisplayTempStore(PanelsDisplayVariant $panels_display) {
-    $key = $this->getTempStoreId($panels_display);
-    $this->tempStore->delete($key);
+    $this->tempStore->delete($panels_display->getTempStoreId());
   }
 
   /**

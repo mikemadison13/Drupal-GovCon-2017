@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Contains client-side code for testing CSS delivered to CKEditor via AJAX.
+ */
+
 (function (Drupal, ckeditor, editorSettings, $) {
 
   'use strict';

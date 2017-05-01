@@ -57,18 +57,11 @@ class ExtensionDiscovery {
   const PHP_FUNCTION_PATTERN = '/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/';
 
   /**
-   * InfoParser instance for parsing .info.yml files.
-   *
-   * @var \Drupal\Core\Extension\InfoParser
-   */
-  protected $infoParser;
-
-  /**
    * Previously discovered files keyed by origin directory and extension type.
    *
    * @var array
    */
-  protected static $files = array();
+  protected static $files = [];
 
   /**
    * List of installation profile directories to additionally scan.
@@ -99,6 +92,15 @@ class ExtensionDiscovery {
   protected $sitePath;
 
   /**
+   * The profile handler.
+   *
+   * Used to determine the directories in which we want to scan for modules.
+   *
+   * @var \Drupal\Core\Extension\ProfileHandlerInterface|null
+   */
+  protected $profileHandler;
+
+  /**
    * Constructs a new ExtensionDiscovery object.
    *
    * @param string $root
@@ -109,12 +111,27 @@ class ExtensionDiscovery {
    *   The available profile directories
    * @param string $site_path
    *   The path to the site.
+   * @param \Drupal\Core\Extension\ProfileHandlerInterface $profile_handler
+   *   (optional) The profile handler.
    */
-  public function __construct($root, $use_file_cache = TRUE, $profile_directories = NULL, $site_path = NULL) {
+  public function __construct($root, $use_file_cache = TRUE, $profile_directories = NULL, $site_path = NULL, ProfileHandlerInterface $profile_handler = NULL) {
     $this->root = $root;
     $this->fileCache = $use_file_cache ? FileCacheFactory::get('extension_discovery') : NULL;
     $this->profileDirectories = $profile_directories;
     $this->sitePath = $site_path;
+
+    // ExtensionDiscovery can be used without a service container
+    // (@drupalKernel::moduleData), so create a fallback profile handler if the
+    // profile_handler service is unavailable.
+    if ($profile_handler) {
+      $this->profileHandler = $profile_handler;
+    }
+    elseif (\Drupal::hasService('profile_handler')) {
+      $this->profileHandler = \Drupal::service('profile_handler');
+    }
+    else {
+      $this->profileHandler = new FallbackProfileHandler($root);
+    }
   }
 
   /**
@@ -205,7 +222,7 @@ class ExtensionDiscovery {
       $include_tests = Settings::get('extension_discovery_scan_tests') || drupal_valid_test_ua();
     }
 
-    $files = array();
+    $files = [];
     foreach ($searchdirs as $dir) {
       // Discover all extensions in the directory, unless we did already.
       if (!isset(static::$files[$this->root][$dir][$include_tests])) {
@@ -234,7 +251,7 @@ class ExtensionDiscovery {
    * @return $this
    */
   public function setProfileDirectoriesFromSettings() {
-    $this->profileDirectories = array();
+    $this->profileDirectories = [];
     $profile = drupal_get_profile();
     // For SimpleTest to be able to test modules packaged together with a
     // distribution we need to include the profile of the parent site (in
@@ -248,7 +265,11 @@ class ExtensionDiscovery {
     // In case both profile directories contain the same extension, the actual
     // profile always has precedence.
     if ($profile) {
-      $this->profileDirectories[] = drupal_get_path('profile', $profile);
+      $profiles = $this->profileHandler->getProfiles($profile);
+      $profile_directories = array_map(function($extension) {
+        return $extension->getPath();
+      }, $profiles);
+      $this->profileDirectories = array_unique(array_merge($profile_directories, $this->profileDirectories));
     }
     return $this;
   }
@@ -281,7 +302,7 @@ class ExtensionDiscovery {
   /**
    * Filters out extensions not belonging to the scanned installation profiles.
    *
-   * @param \Drupal\Core\Extension\Extension[] $all_files.
+   * @param \Drupal\Core\Extension\Extension[] $all_files
    *   The list of all extensions.
    *
    * @return \Drupal\Core\Extension\Extension[]
@@ -314,7 +335,7 @@ class ExtensionDiscovery {
   /**
    * Sorts the discovered extensions.
    *
-   * @param \Drupal\Core\Extension\Extension[] $all_files.
+   * @param \Drupal\Core\Extension\Extension[] $all_files
    *   The list of all extensions.
    * @param array $weights
    *   An array of weights, keyed by originating directory.
@@ -323,8 +344,8 @@ class ExtensionDiscovery {
    *   The sorted list of extensions.
    */
   protected function sort(array $all_files, array $weights) {
-    $origins = array();
-    $profiles = array();
+    $origins = [];
+    $profiles = [];
     foreach ($all_files as $key => $file) {
       // If the extension does not belong to a profile, just apply the weight
       // of the originating directory.
@@ -378,7 +399,7 @@ class ExtensionDiscovery {
    *   The filtered list of extensions, keyed by extension name.
    */
   protected function process(array $all_files) {
-    $files = array();
+    $files = [];
     // Duplicate files found in later search directories take precedence over
     // earlier ones; they replace the extension in the existing $files array.
     foreach ($all_files as $file) {
@@ -404,7 +425,7 @@ class ExtensionDiscovery {
    * @see \Drupal\Core\Extension\Discovery\RecursiveExtensionFilterIterator
    */
   protected function scanDirectory($dir, $include_tests) {
-    $files = array();
+    $files = [];
 
     // In order to scan top-level directories, absolute directory paths have to
     // be used (which also improves performance, since any configured PHP
@@ -501,19 +522,6 @@ class ExtensionDiscovery {
       }
     }
     return $files;
-  }
-
-  /**
-   * Returns a parser for .info.yml files.
-   *
-   * @return \Drupal\Core\Extension\InfoParser
-   *   The InfoParser instance.
-   */
-  protected function getInfoParser() {
-    if (!isset($this->infoParser)) {
-      $this->infoParser = new InfoParser();
-    }
-    return $this->infoParser;
   }
 
 }

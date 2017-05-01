@@ -16,7 +16,7 @@ namespace Drupal\scheduled_updates\Tests;
  *
  * This also contain utility functions dealing with Inline Entity Form.
  */
-class EmbeddedScheduledUpdateTypeTestBase extends ScheduledUpdatesTestBase{
+abstract class EmbeddedScheduledUpdateTypeTestBase extends ScheduledUpdatesTestBase {
   /**
    * Make sure Referenced types do not have a direct add form.
    *
@@ -257,20 +257,27 @@ class EmbeddedScheduledUpdateTypeTestBase extends ScheduledUpdatesTestBase{
    * @param $reference_field_name
    */
   protected function checkAfterTypeCreated($label, $type_id, $reference_field_label, $reference_field_name, $clone_field) {
-    $this->confirmNoAddForm($label, $type_id);
-    $this->checkReferenceCreated('node', 'page', $reference_field_label, $reference_field_name);
-    $this->checkReferenceOnEntityType('node', 'page', $reference_field_label, $reference_field_name);
-    switch ($clone_field) {
-      case 'title':
-        $this->checkRunningTitleUpdates('page', $reference_field_name, $reference_field_label);
-        break;
-      case 'promote':
-        $this->checkRunningPromoteUpdates('page', $reference_field_name, $reference_field_label);
-        break;
+    $permissions = [
+      "create $type_id scheduled updates",
+      'administer scheduled updates',
+    ];
+    // Check both permissions tha will allow the user to create updates.
+    foreach ($permissions as $permission) {
+      // Give permission to create the current update type.
+      $this->grantPermissionsToUser([$permission]);
+      $this->confirmNoAddForm($label, $type_id);
+      $this->checkReferenceCreated('node', 'page', $reference_field_label, $reference_field_name);
+      $this->checkReferenceOnEntityType('node', 'page', $reference_field_label, $reference_field_name);
+      switch ($clone_field) {
+        case 'title':
+          $this->checkRunningTitleUpdates('page', $reference_field_name, $reference_field_label);
+          break;
+        case 'promote':
+          $this->checkRunningPromoteUpdates('page', $reference_field_name, $reference_field_label);
+          break;
+      }
+      $this->revokePermissionsFromUser([$permission]);
     }
-
-
   }
-
 
 }

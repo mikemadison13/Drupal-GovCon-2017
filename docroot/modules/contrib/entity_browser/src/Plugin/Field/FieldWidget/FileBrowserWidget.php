@@ -16,6 +16,7 @@ use Drupal\entity_browser\FieldWidgetDisplayManager;
 use Drupal\image\Entity\ImageStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 
 /**
  * Entity browser file widget.
@@ -62,6 +63,13 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
   protected $displayRepository;
 
   /**
+   * The mime type guesser service.
+   *
+   * @var \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface
+   */
+  protected $mimeTypeGuesser;
+
+  /**
    * Constructs widget plugin.
    *
    * @param string $plugin_id
@@ -86,13 +94,16 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
    *   The entity display repository service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
+   * @param \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface $mime_type_guesser
+   *   The mime type guesser service.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager, ConfigFactoryInterface $config_factory, EntityDisplayRepositoryInterface $display_repository, ModuleHandlerInterface $module_handler) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager, ConfigFactoryInterface $config_factory, EntityDisplayRepositoryInterface $display_repository, ModuleHandlerInterface $module_handler, MimeTypeGuesserInterface $mime_type_guesser) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $entity_type_manager, $event_dispatcher, $field_display_manager, $module_handler);
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldDisplayManager = $field_display_manager;
     $this->configFactory = $config_factory;
     $this->displayRepository = $display_repository;
+    $this->mimeTypeGuesser = $mime_type_guesser;
   }
 
   /**
@@ -110,7 +121,8 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       $container->get('plugin.manager.entity_browser.field_widget_display'),
       $container->get('config.factory'),
       $container->get('entity_display.repository'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('file.mime_type.guesser')
     );
   }
 
@@ -433,22 +445,26 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
    *
    * This is a combination of logic shared between the File and Image widgets.
    *
+   * @param bool $upload
+   *   Whether or not upload-specific validators should be returned.
+   *
    * @return array
    *   An array suitable for passing to file_save_upload() or the file field
    *   element's '#upload_validators' property.
    */
-  public function getFileValidators() {
+  public function getFileValidators($upload = FALSE) {
     $validators = [];
     $settings = $this->fieldDefinition->getSettings();
 
-    // Cap the upload size according to the PHP limit.
-    $max_filesize = Bytes::toInt(file_upload_max_size());
-    if (!empty($settings['max_filesize'])) {
-      $max_filesize = min($max_filesize, Bytes::toInt($settings['max_filesize']));
+    if ($upload) {
+      // Cap the upload size according to the PHP limit.
+      $max_filesize = Bytes::toInt(file_upload_max_size());
+      if (!empty($settings['max_filesize'])) {
+        $max_filesize = min($max_filesize, Bytes::toInt($settings['max_filesize']));
+      }
+      // There is always a file size limit due to the PHP server limit.
+      $validators['file_validate_size'] = [$max_filesize];
     }
-
-    // There is always a file size limit due to the PHP server limit.
-    $validators['file_validate_size'] = [$max_filesize];
 
     // Images have expected defaults for file extensions.
     // See \Drupal\image\Plugin\Field\FieldWidget::formElement() for details.
@@ -463,7 +479,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       $validators['file_validate_extensions'] = [$settings['file_extensions']];
     }
 
-    // Add upload resolution validation.
+    // Add resolution validation.
     if ($settings['max_resolution'] || $settings['min_resolution']) {
       $validators['entity_browser_file_validate_image_resolution'] = [$settings['max_resolution'], $settings['min_resolution']];
     }
@@ -479,9 +495,19 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
     $settings = $this->fieldDefinition->getSettings();
     // Add validators based on our current settings.
     $data['validators']['file'] = ['validators' => $this->getFileValidators()];
-    // Provide context for widgets to enhance their configuration. Currently
-    // we only know that "upload_location" is used.
+    // Provide context for widgets to enhance their configuration.
     $data['widget_context']['upload_location'] = $settings['uri_scheme'] . '://' . $settings['file_directory'];
+    $data['widget_context']['upload_validators'] = $this->getFileValidators(TRUE);
+    // Assemble valid mime types for filtering. This is required if we want to
+    // contextually filter allowed extensions in views, as views arguments can
+    // only filter on exact values. Otherwise we would pass %png or use REGEXP.
+    $mimetypes = [];
+    foreach (explode(' ', $settings['file_extensions']) as $extension) {
+      if ($guess = $this->mimeTypeGuesser->guess('file.' . $extension)) {
+        $mimetypes[] = $guess;
+      }
+    }
+    $data['widget_context']['target_file_mimetypes'] = $mimetypes;
     return $data;
   }
 

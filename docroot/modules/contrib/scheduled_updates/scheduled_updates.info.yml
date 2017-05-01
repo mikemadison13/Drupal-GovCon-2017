@@ -7,8 +7,8 @@ dependencies:
   - options
   - inline_entity_form
 
-# Information added by Drupal.org packaging script on 2016-01-24
-version: '8.x-1.0-alpha5'
+# Information added by Drupal.org packaging script on 2017-03-11
+version: '8.x-1.0-alpha6'
 core: '8.x'
 project: 'scheduled_updates'
-datestamp: 1453656840
+datestamp: 1489190885

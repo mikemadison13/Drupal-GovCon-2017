@@ -6,15 +6,14 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\AppendCommand;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Layout\LayoutPluginManagerInterface;
 use Drupal\Core\Plugin\Context\ContextHandlerInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\layout_plugin\Plugin\Layout\LayoutPluginManagerInterface;
 use Drupal\panels\Storage\PanelsStorageManagerInterface;
 use Drupal\panels_ipe\Helpers\RemoveBlockRequestHandler;
 use Drupal\panels_ipe\Helpers\UpdateLayoutRequestHandler;
 use Drupal\panels_ipe\PanelsIPEBlockRendererTrait;
-use Drupal\panels_ipe\TempStoreTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +28,6 @@ use Drupal\user\SharedTempStoreFactory;
 class PanelsIPEPageController extends ControllerBase {
 
   use PanelsIPEBlockRendererTrait;
-  use TempStoreTrait;
 
   /**
    * @var \Drupal\Core\Block\BlockManagerInterface
@@ -42,7 +40,7 @@ class PanelsIPEPageController extends ControllerBase {
   protected $renderer;
 
   /**
-   * @var \Drupal\layout_plugin\Plugin\Layout\LayoutPluginManagerInterface
+   * @var \Drupal\Core\Layout\LayoutPluginManagerInterface
    */
   protected $layoutPluginManager;
 
@@ -73,7 +71,7 @@ class PanelsIPEPageController extends ControllerBase {
    *
    * @param \Drupal\Core\Block\BlockManagerInterface $block_manager
    * @param \Drupal\Core\Render\RendererInterface $renderer
-   * @param \Drupal\layout_plugin\Plugin\Layout\LayoutPluginManagerInterface $layout_plugin_manager
+   * @param \Drupal\Core\Layout\LayoutPluginManagerInterface $layout_plugin_manager
    * @param \Drupal\panels\Storage\PanelsStorageManagerInterface $panels_storage_manager
    * @param \Drupal\user\SharedTempStoreFactory $temp_store_factory
    * @param \Drupal\Core\Plugin\Context\ContextHandlerInterface $context_handler
@@ -96,7 +94,7 @@ class PanelsIPEPageController extends ControllerBase {
     return new static(
       $container->get('plugin.manager.block'),
       $container->get('renderer'),
-      $container->get('plugin.manager.layout_plugin'),
+      $container->get('plugin.manager.core.layout'),
       $container->get('panels.storage_manager'),
       $container->get('user.shared_tempstore'),
       $container->get('context.handler')
@@ -119,8 +117,7 @@ class PanelsIPEPageController extends ControllerBase {
     $panels_display = $this->panelsStorage->load($panels_storage_type, $panels_storage_id);
 
     // If a temporary configuration for this variant exists, use it.
-    $key = $this->getTempStoreId($panels_display);
-    if ($variant_config = $this->tempStore->get($key)) {
+    if ($variant_config = $this->tempStore->get($panels_display->getTempStoreId())) {
       $panels_display->setConfiguration($variant_config);
     }
 
@@ -143,7 +140,7 @@ class PanelsIPEPageController extends ControllerBase {
     $panels_display = $this->loadPanelsDisplay($panels_storage_type, $panels_storage_id);
 
     // If a temporary configuration for this variant exists, use it.
-    $temp_store_key = $this->getTempStoreId($panels_display);
+    $temp_store_key = $panels_display->getTempStoreId();
     if ($variant_config = $this->tempStore->get($temp_store_key)) {
       $this->tempStore->delete($temp_store_key);
     }
@@ -173,13 +170,13 @@ class PanelsIPEPageController extends ControllerBase {
     $base_path = base_path();
     $data = [];
     foreach ($layouts as $id => $layout) {
-      $icon = !empty($layout['icon']) ? $layout['icon'] : drupal_get_path('module', 'panels') . '/images/no-layout-preview.png';
+      $icon = $layout->getIconPath() ?: drupal_get_path('module', 'panels') . '/layouts/no-layout-preview.png';
       $data[] = [
         'id' => $id,
-        'label' => $layout['label'],
+        'label' => $layout->getLabel(),
         'icon' => $base_path . $icon,
         'current' => $id == $current_layout_id,
-        'category' => $layout['category']
+        'category' => $layout->getCategory(),
       ];
     }
 
@@ -300,13 +297,13 @@ class PanelsIPEPageController extends ControllerBase {
     $definitions = $this->blockManager->getDefinitionsForContexts($panels_display->getContexts());
 
     // Assemble our relevant data.
-    $data = [];
+    $blocks = [];
     foreach ($definitions as $plugin_id => $definition) {
       // Don't add broken Blocks.
       if ($plugin_id == 'broken') {
         continue;
       }
-      $data[] = [
+      $blocks[] = [
         'plugin_id' => $plugin_id,
         'label' => $definition['admin_label'],
         'category' => $definition['category'],
@@ -315,8 +312,14 @@ class PanelsIPEPageController extends ControllerBase {
       ];
     }
 
+    // Trigger hook_panels_ipe_blocks_alter(). Allows other modules to change
+    // the list of blocks that are visible.
+    \Drupal::moduleHandler()->alter('panels_ipe_blocks', $blocks);
+    // We need to re-index our return value, in case a hook unset a block.
+    $blocks = array_values($blocks);
+
     // Return a structured JSON response for our Backbone App.
-    return new JsonResponse($data);
+    return new JsonResponse($blocks);
   }
 
   /**
@@ -411,7 +414,7 @@ class PanelsIPEPageController extends ControllerBase {
     }
     else {
       $block = $storage->create([
-        'type' => $type
+        'type' => $type,
       ]);
 
       $operation = 'create';

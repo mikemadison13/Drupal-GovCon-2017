@@ -9,7 +9,7 @@ use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
 /**
  * Tests that a Panelized Node can be Quick-Edited.
  *
- * @group panelizer_quickedit
+ * @group panelizer
  */
 class PanelizerQuickEditTest extends JavascriptTestBase {
 
@@ -24,7 +24,7 @@ class PanelizerQuickEditTest extends JavascriptTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
+    $this->drupalCreateContentType(['type' => 'page', 'name' => 'Page']);
 
     // Add a plain text field for this content type.
     FieldStorageConfig::create([
@@ -37,7 +37,7 @@ class PanelizerQuickEditTest extends JavascriptTestBase {
       'field_name' => 'test_field',
       'label' => 'Test Field',
       'entity_type' => 'node',
-      'bundle' => 'article',
+      'bundle' => 'page',
       'required' => FALSE,
       'settings' => [],
       'description' => '',
@@ -46,13 +46,13 @@ class PanelizerQuickEditTest extends JavascriptTestBase {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $entity_form_display */
     $entity_form_display = \Drupal::entityTypeManager()
       ->getStorage('entity_form_display')
-      ->load('node.article.default');
+      ->load('node.page.default');
     $entity_form_display->setComponent('test_field')->save();
 
     /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $entity_display */
     $entity_display = \Drupal::entityTypeManager()
       ->getStorage('entity_view_display')
-      ->load('node.article.default');
+      ->load('node.page.default');
     $entity_display->setComponent('test_field')->save();
 
     // Create a privileged user.
@@ -62,15 +62,19 @@ class PanelizerQuickEditTest extends JavascriptTestBase {
       'access content',
       'administer node display',
       'administer panelizer',
-      'create article content',
-      'edit any article content',
+      'create page content',
+      'edit any page content',
     ]);
     $this->drupalLogin($user);
 
     // Enable Panelizer for Articles.
-    $this->drupalPostForm('admin/structure/types/manage/article/display', [
+    $this->drupalGet('admin/structure/types/manage/page/display');
+    $this->assertResponse(200);
+    $edit = [
       'panelizer[enable]' => TRUE,
-    ], 'Save');
+    ];
+    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->assertResponse(200);
   }
 
   /**
@@ -79,7 +83,7 @@ class PanelizerQuickEditTest extends JavascriptTestBase {
   public function testPanelizerQuickEdit() {
     /** @var \Drupal\panelizer\PanelizerInterface $panelizer */
     $panelizer = \Drupal::service('panelizer');
-    $displays = $panelizer->getDefaultPanelsDisplays('node', 'article', 'default');
+    $displays = $panelizer->getDefaultPanelsDisplays('node', 'page', 'default');
     $display = $displays['default'];
 
     // Find the "test_field" block.
@@ -95,14 +99,15 @@ class PanelizerQuickEditTest extends JavascriptTestBase {
 
     // Create an Article.
     $node = $this->drupalCreateNode([
-      'type' => 'article',
+      'type' => 'page',
       'test_field' => [
         'value' => 'Change me',
-      ]
+      ],
     ]);
 
     // Visit the new node.
     $this->drupalGet('node/' . $node->id());
+    $this->assertResponse(200);
 
     // This is the unique ID we append to normal Quick Edit field IDs.
     $panelizer_id = 'panelizer-full-block-id-' . $block_id;
@@ -133,6 +138,7 @@ class PanelizerQuickEditTest extends JavascriptTestBase {
 
     // Re-visit the node to make sure the edit worked.
     $this->drupalGet('node/' . $node->id());
+    $this->assertResponse(200);
     $this->assertSession()->pageTextContains('Hello world');
   }
 

@@ -2,25 +2,21 @@ name: Lightning
 core: 8.x
 type: profile
 description: 'A fast and feature-rich Drupal distribution.'
-version: '8.x-2.03'
+version: '8.x-2.12'
 distribution:
   name: Lightning
-
-# Required modules
 dependencies:
-  # core
   - block_content
   - breakpoint
   - ckeditor
   - config
   - contextual
-  - contact_storage
   - menu_link_content
   - datetime
-  - block_content
   - quickedit
   - editor
   - entity_reference
+  - entity_block
   - help
   - history
   - image
@@ -39,13 +35,22 @@ dependencies:
   - rdf
   - views
   - views_ui
-  # contrib
   - diff
   - metatag
-  - search_api_db
-  # Our own core functionality.
   - lightning_core
-
+  - lightning_layout
+  - lightning_media
+  - lightning_workflow
+  - lightning_contact_form
+  - lightning_page
+  - lightning_roles
+  - lightning_search
+  - lightning_landing_page
+  - lightning_media_document
+  - lightning_media_image
+  - lightning_media_instagram
+  - lightning_media_twitter
+  - lightning_media_video
 themes:
   - bartik
   - seven

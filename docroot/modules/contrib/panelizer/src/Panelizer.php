@@ -1,14 +1,10 @@
 <?php
-/**
- * @file
- * Contains \Drupal\panelizer\Panelizer
- */
 
 namespace Drupal\panelizer;
 
-
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
@@ -167,7 +163,7 @@ class Panelizer implements PanelizerInterface {
     // Check the existence and status of:
     // - the display for the view mode,
     // - the 'default' display.
-    $candidate_ids = array();
+    $candidate_ids = [];
     if ($view_mode != 'default') {
       $candidate_ids[] = $entity_type_id . '.' . $bundle . '.' . $view_mode;
     }
@@ -192,20 +188,20 @@ class Panelizer implements PanelizerInterface {
       $display = $storage->load($load_id);
     }
     else {
-      $display = $storage->create(array(
+      $display = $storage->create([
         'targetEntityType' => $entity_type_id,
         'bundle' => $bundle,
         'mode' => $view_mode,
         'status' => TRUE,
-      ));
+      ]);
     }
 
     // Let modules alter the display.
-    $display_context = array(
+    $display_context = [
       'entity_type' => $entity_type_id,
       'bundle' => $bundle,
       'view_mode' => $view_mode,
-    );
+    ];
     $this->moduleHandler->alter('entity_view_display', $display, $display_context);
 
     return $display;
@@ -315,10 +311,15 @@ class Panelizer implements PanelizerInterface {
       $panelizer_item->default = $default;
 
       // Create a new revision if possible.
-      if ($entity instanceof RevisionableInterface) {
+      if ($entity instanceof RevisionableInterface && $entity->getEntityType()->isRevisionable()) {
         if ($entity->isDefaultRevision()) {
           $entity->setNewRevision(TRUE);
         }
+      }
+
+      // Updates the changed time of the entity, if necessary.
+      if ($entity->getEntityType()->isSubclassOf(EntityChangedInterface::class)) {
+        $entity->setChangedTime(REQUEST_TIME);
       }
 
       $entity->panelizer[$panelizer_item->getName()] = $panelizer_item;
@@ -551,6 +552,7 @@ class Panelizer implements PanelizerInterface {
     return [
       'content' => $this->t('Content'),
       'layout' => $this->t('Layout'),
+      'revert' => $this->t('Revert to default'),
     ];
   }
 
@@ -570,10 +572,10 @@ class Panelizer implements PanelizerInterface {
       $bundles = $this->entityTypeBundleInfo->getBundleInfo($entity_type_id);
       foreach ($bundles as $bundle => $bundle_info) {
         $permissions["administer panelizer $entity_type_id $bundle defaults"] = [
-          'title' => t('%entity_name %bundle_name: Administer Panelizer default panels, allowed content and settings.', array(
+          'title' => t('%entity_name %bundle_name: Administer Panelizer default panels, allowed content and settings.', [
             '%entity_name' => $entity_type->getLabel(),
             '%bundle_name' => $bundle_info['label'],
-          )),
+          ]),
           'description' => t('Users with this permission can fully administer panelizer for this entity bundle.'),
         ];
 
@@ -589,6 +591,7 @@ class Panelizer implements PanelizerInterface {
       }
     }
 
+    ksort($permissions);
     return $permissions;
   }
 
@@ -618,6 +621,8 @@ class Panelizer implements PanelizerInterface {
       case 'change layout':
         return $account->hasPermission("administer panelizer $entity_type_id $bundle layout");
 
+      case 'revert to default':
+        return $account->hasPermission("administer panelizer $entity_type_id $bundle revert");
     }
 
     return FALSE;
@@ -649,10 +654,10 @@ class Panelizer implements PanelizerInterface {
 
     // @todo: check field access too!
 
-    if ($op == 'revert to default') {
-      // We already have enough permissions at this point.
-      return TRUE;
-    }
+    // if ($op == 'revert to default') {
+    //   // We already have enough permissions at this point.
+    //   return TRUE;
+    // }
 
     return $this->hasOperationPermission($op, $entity->getEntityTypeId(), $entity->bundle(), $account);
   }

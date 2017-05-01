@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\scheduled_updates\ScheduledUpdateInterface;
 use Drupal\user\UserInterface;
 
@@ -56,6 +57,7 @@ use Drupal\user\UserInterface;
  */
 class ScheduledUpdate extends ContentEntityBase implements ScheduledUpdateInterface {
   use EntityChangedTrait;
+  use StringTranslationTrait;
 
 
 
@@ -212,7 +214,7 @@ class ScheduledUpdate extends ContentEntityBase implements ScheduledUpdateInterf
 
     $fields['entity_ids'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Entities to Update'))
-      ->setDescription(t('The entities of that will be updated.'))
+      ->setDescription(t('The entities that will be updated.'))
       ->setRequired(TRUE)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayConfigurable('form', TRUE)
@@ -258,9 +260,14 @@ class ScheduledUpdate extends ContentEntityBase implements ScheduledUpdateInterf
     return array();
   }
   public function label() {
-    /** @var \Drupal\Core\Datetime\DateFormatterInterface $formatter */
-    $formatter = \Drupal::service('date.formatter');
-    return $formatter->format($this->get('update_timestamp')->getString());
+    if (!$this->get('update_timestamp')->isEmpty()) {
+      /** @var \Drupal\Core\Datetime\DateFormatterInterface $formatter */
+      $formatter = \Drupal::service('date.formatter');
+      return $formatter->format($this->get('update_timestamp')->getString());
+    }
+    else {
+      return $this->t('No update time specified');
+    }
   }
 
   /**

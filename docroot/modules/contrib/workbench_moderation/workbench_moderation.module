@@ -65,6 +65,34 @@ function workbench_moderation_entity_view_alter(&$build, EntityInterface $entity
 }
 
 /**
+ * Implements hook_node_view_alter().
+ */
+function workbench_moderation_node_view_alter(&$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  /** @var \Drupal\workbench_moderation\ModerationInformationInterface $mod_info */
+  $mod_info = \Drupal::service('workbench_moderation.moderation_information');
+  /** @var \Drupal\Core\Extension\ModuleHandlerInterface $module_handler */
+  $module_handler = \Drupal::service('module_handler');
+  // Show standard node contextual links on node drafts.
+  if ($mod_info->isLatestRevision($entity)) {
+    if (isset($build['#contextual_links']['node_revision'])) {
+      unset($build['#contextual_links']['node_revision']);
+      $build['#contextual_links']['node'] = [
+        'route_parameters' => ['node' => $entity->id()],
+        'metadata' => ['changed' => $entity->getChangedTime()],
+      ];
+    }
+  }
+  // Disable Quick Edit when viewing individual revisions.
+  if ($module_handler->moduleExists('quickedit')) {
+    $route_match = \Drupal::routeMatch();
+    $match = $route_match->getCurrentRouteMatch();
+    if ($match->getRouteName() === 'entity.node.revision') {
+      $build['#attributes']['data-quickedit-disable'] = TRUE;
+    }
+  }
+}
+
+/**
  * Implements hook_entity_type_alter().
  */
 function workbench_moderation_entity_type_alter(array &$entity_types) {

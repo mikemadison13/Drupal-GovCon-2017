@@ -3,7 +3,7 @@ core: 8.x
 type: module
 package: Lightning
 description: 'Shared functionality for the Lightning distribution.'
-version: '8.x-2.03'
+version: '8.x-2.12'
 dependencies:
   - menu_ui
   - metatag
@@ -14,4 +14,5 @@ dependencies:
 components:
   - lightning_contact_form
   - lightning_page
+  - lightning_roles
   - lightning_search

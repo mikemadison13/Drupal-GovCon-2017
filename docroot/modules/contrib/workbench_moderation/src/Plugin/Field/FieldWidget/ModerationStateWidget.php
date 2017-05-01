@@ -4,6 +4,7 @@ namespace Drupal\workbench_moderation\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
@@ -193,6 +194,12 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    * Process callback to alter action buttons.
    */
   public static function processActions($element, FormStateInterface $form_state, array &$form) {
+    $form_object = $form_state->getFormObject();
+
+    // Return early if this isn't an Entity Form (i.e. the QuickEditFieldForm).
+    if (!($form_object instanceof EntityFormInterface)) {
+      return $element;
+    }
 
     // We'll steal most of the button configuration from the default submit button.
     // However, NodeForm also hides that button for admins (as it adds its own,
@@ -204,7 +211,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     // property tells FAPI to cluster them all together into a single widget.
     $options = $element['#options'];
 
-    $entity = $form_state->getFormObject()->getEntity();
+    $entity = $form_object->getEntity();
     $translatable = !$entity->isNew() && $entity->isTranslatable();
     foreach ($options as $id => $label) {
       $button = [

@@ -1,18 +1,11 @@
 <?php
-/**
- * @file
- * Contains \Drupal\scheduled_updates\UpdateUtils.
- */
-
 
 namespace Drupal\scheduled_updates;
-
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeTypeInterface;
 
 /**
@@ -22,16 +15,22 @@ class UpdateUtils implements UpdateUtilsInterface {
   use ClassUtilsTrait;
 
   /**
+   * The entity field manager.
+   *
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected $entityFieldManager;
 
   /**
-   * @var \Drupal\Core\Entity\EntityTypeManager
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * The bundle info service.
+   *
    * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
    */
   protected $bundleInfo;
@@ -40,23 +39,17 @@ class UpdateUtils implements UpdateUtilsInterface {
    * UpdateUtils constructor.
    *
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager
-   * @param \Drupal\Core\Entity\EntityTypeManager $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundleInfo
    */
-  public function __construct(EntityFieldManagerInterface $entityFieldManager, EntityTypeManager $entityTypeManager, EntityTypeBundleInfoInterface $bundleInfo) {
+  public function __construct(EntityFieldManagerInterface $entityFieldManager, EntityTypeManagerInterface $entityTypeManager, EntityTypeBundleInfoInterface $bundleInfo) {
     $this->entityFieldManager = $entityFieldManager;
     $this->entityTypeManager = $entityTypeManager;
     $this->bundleInfo = $bundleInfo;
   }
 
   /**
-   * Determine a scheduled update type supports creating new revisions on update.
-   *
-   * This is determined by the entity type it updates.
-   *
-   * @param \Drupal\scheduled_updates\ScheduledUpdateTypeInterface $scheduledUpdateType
-   *
-   * @return bool
+   * {@inheritdoc}
    */
   public function supportsRevisionUpdates(ScheduledUpdateTypeInterface $scheduledUpdateType) {
     $type_definition = $this->getUpdateTypeDefinition($scheduledUpdateType);
@@ -68,14 +61,7 @@ class UpdateUtils implements UpdateUtilsInterface {
   }
 
   /**
-   * Determine if the entity type being update support default revision setting.
-   *
-   * For now only nodes are supported.
-   *
-   * @param \Drupal\scheduled_updates\ScheduledUpdateTypeInterface $scheduledUpdateType
-   *
-   * @return bool
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * {@inheritdoc}
    */
   public function supportsRevisionBundleDefault(ScheduledUpdateTypeInterface $scheduledUpdateType) {
     if ($type_definition = $this->getUpdateTypeDefinition($scheduledUpdateType)) {
@@ -92,43 +78,35 @@ class UpdateUtils implements UpdateUtilsInterface {
   }
 
   /**
-   * Determines if an update supports revisions
-   *
-   * @param \Drupal\scheduled_updates\ScheduledUpdateInterface $update
-   *
-   * @return bool
+   * {@inheritdoc}
    */
   public function isRevisionableUpdate(ScheduledUpdateInterface $update) {
     return $this->supportsRevisionUpdates($this->getUpdateType($update));
   }
 
   /**
-   * Get the update type for an update.
-   *
-   * @param \Drupal\scheduled_updates\ScheduledUpdateInterface $update
-   *
-   * @return \Drupal\scheduled_updates\Entity\ScheduledUpdateType ;
+   * {@inheritdoc}
    */
   public function getUpdateType(ScheduledUpdateInterface $update) {
     return $this->entityTypeManager->getStorage('scheduled_update_type')->load($update->bundle());
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getUpdateTypeLabel(ScheduledUpdateInterface $update) {
     return $this->getUpdateType($update)->label();
   }
 
   /**
-   * Get whether a new revision should be created by default for this entity.
-   *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity_to_update
-   *
-   * @return bool
+   * {@inheritdoc}
    */
   public function getRevisionDefault(ContentEntityInterface $entity_to_update) {
     $bundle_type_id = $entity_to_update->getEntityType()->getBundleEntityType();
     $bundle = $this->entityTypeManager->getStorage($bundle_type_id)->load($entity_to_update->bundle());
 
-    // This should exist because of previous check in supportsRevisionBundleDefault but just in case.
+    // This should exist because of previous check in
+    // supportsRevisionBundleDefault but just in case.
     if ($bundle instanceof NodeTypeInterface) {
       return $bundle->isNewRevision();
     }
@@ -165,16 +143,12 @@ class UpdateUtils implements UpdateUtilsInterface {
   }
 
   /**
-   * Set revision creation time for entities that support it.
-   *
-   * Currently only nodes and entities that use Entity API are supported.
-   *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   * {@inheritdoc}
    */
   public function setRevisionCreationTime(ContentEntityInterface $entity) {
     $revision_timestamp_interfaces = [
       'Drupal\entity\Revision\EntityRevisionLogInterface',
-      'Drupal\node\NodeInterface'
+      'Drupal\node\NodeInterface',
     ];
     if ($this->implementsInterface($entity, $revision_timestamp_interfaces)) {
       /** @var \Drupal\entity\Revision\EntityRevisionLogInterface|\Drupal\node\NodeInterface $entity */
@@ -183,11 +157,7 @@ class UpdateUtils implements UpdateUtilsInterface {
   }
 
   /**
-   * Determines if entity type being updated supports Revision Ownership.
-   *
-   * @param \Drupal\scheduled_updates\ScheduledUpdateTypeInterface $scheduledUpdateType
-   *
-   * @return bool
+   * {@inheritdoc}
    */
   public function supportsRevisionOwner(ScheduledUpdateTypeInterface $scheduledUpdateType) {
     if ($definition = $this->getUpdateTypeDefinition($scheduledUpdateType)) {
@@ -201,11 +171,7 @@ class UpdateUtils implements UpdateUtilsInterface {
   }
 
   /**
-   * Determines if the entity type being updated supports ownership.
-   *
-   * @param \Drupal\scheduled_updates\ScheduledUpdateTypeInterface $scheduledUpdateType
-   *
-   * @return bool
+   * {@inheritdoc}
    */
   public function supportsOwner(ScheduledUpdateTypeInterface $scheduledUpdateType) {
     if ($type = $this->getUpdateTypeDefinition($scheduledUpdateType)) {
@@ -230,13 +196,7 @@ class UpdateUtils implements UpdateUtilsInterface {
   }
 
   /**
-   * Get the directly previous revision.
-   *
-   * $entity->original will not ALWAYS be the previous revision.
-   *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   *
-   * @return \Drupal\Core\Entity\EntityInterface|null
+   * {@inheritdoc}
    */
   public function getPreviousRevision(ContentEntityInterface $entity) {
     $storage = $this->entityTypeManager->getStorage($entity->getEntityTypeId());

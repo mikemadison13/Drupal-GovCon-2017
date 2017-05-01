@@ -7,6 +7,9 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * A form for testing delivery of CSS to CKEditor via AJAX.
+ */
 class AjaxCssForm extends FormBase {
 
   /**

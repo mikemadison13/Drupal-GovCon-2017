@@ -6,22 +6,28 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-        "drush/drush": "^8.0",
-        "drupal/drupal-extension": "^3.2",
-        "drupal-composer/drupal-scaffold": "^2.0.0",
-        "behat/behat": "^3.0",
-        "drupal/coder": "8.*",
-        "phing/phing": "^2.14",
         "behat/mink": "~1.7",
         "behat/mink-goutte-driver": "~1.2",
         "jcalderonzumba/gastonjs": "~1.0.2",
+        "jcalderonzumba/mink-phantomjs-driver": "~0.3.1",
         "mikey179/vfsStream": "~1.2",
         "phpunit/phpunit": "~4.8",
         "symfony/css-selector": "~2.8",
+        "drush/drush": "8.1.10",
+        "drupal/drupal-extension": "^3.2",
+        "behat/behat": "^3.0",
+        "drupal/coder": "^2.0",
+        "phing/phing": "^2.14",
         "drupal/devel": "^1.0",
         "squizlabs/php_codesniffer": "2.*",
-        "se/selenium-server-standalone": "^2.53"
+        "se/selenium-server-standalone": "^2.53",
+        "drupal/console": "^1.0",
+        "jakoch/phantomjs-installer": "1.9.8",
+        "composer/composer": "^1.4"
     },
+    "bin": [
+      "lightning-subprofile"
+    ],
     "config": {
         "bin-dir": "bin/"
     },
@@ -33,69 +39,44 @@
     ],
     "scripts": {
         "post-install-cmd": [
+            "PhantomInstaller\\Installer::installPhantomJS",
             "@composer drupal-scaffold",
             "./bin/phing push"
         ],
         "post-update-cmd": [
             "./bin/phing push",
-            "./bin/phing package"
+            "@composer package"
         ],
-        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
+        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "package": "Acquia\\Lightning\\Composer\\Package::execute",
+        "release-version": "Acquia\\Lightning\\Composer\\ReleaseVersion::execute"
     },
     "extra": {
-        "packagist.drupal-composer.org": {
-            "discover-make-files": false
-        },
         "installer-paths": {
             "docroot/core": [
                 "type:drupal-core"
             ],
-            "modules/contrib/{$name}": [
+            "docroot/libraries/{$name}": [
+                "type:drupal-library"
+            ],
+            "docroot/profiles/lightning/modules/contrib/{$name}": [
                 "type:drupal-module"
             ]
         },
         "patches": {
-            "drupal/panelizer": {
-                "2793841 - Properly integrate with Panels IPE":
-                "https://www.drupal.org/files/issues/panelizer-panels-ipe-tempstore-id.patch",
-                "2664574 - Add support for Taxonomy Term entities":
-                "https://www.drupal.org/files/issues/2664574-26.patch"
-            },
-            "drupal/panels": {
-                "2793801 - Allow modules to influence the IPE tempstore ID":
-                "https://www.drupal.org/files/issues/2793801-9.patch"
-            },
-            "drupal/scheduled_updates": {
-                "2674874 - Issue saving Schedule Update Type form":
-                "https://www.drupal.org/files/issues/schedule_updates-save_type-2674874-2.patch",
-                "2720169 - Scheduled Update Type entity should not have canonical link template":
-                "https://www.drupal.org/files/issues/scheduled_updates-no-canonical-link-for-update-type.patch"
-            },
             "drupal/workbench_moderation": {
                 "2668006 - Provide logical access control for when IPE should be applied to moderated nodes":
                 "https://www.drupal.org/files/issues/2668006-2.patch",
                 "2847078 - Revision tracker's dynamic table creation can break Views":
-                "https://www.drupal.org/files/issues/2847078-6.patch"
-            },
-            "drupal/multiversion": {
-                "2822915 - Migration source plugin makes bad assumptions that can lead to data loss":
-                "https://www.drupal.org/files/issues/2822915-2.patch",
-                "2825477 - ContentEntityStorageTrait uses current entity as original, which breaks things":
-                "https://www.drupal.org/files/issues/2825477-2.patch",
-                "2844998 - multiversion_views_post_execute() triggers a warning for Search API views":
-                "https://www.drupal.org/files/issues/2844998-2.patch"
-            },
-            "drupal/replication": {
-                "2814055 - Allow modules to react to replication events":
-                "https://www.drupal.org/files/issues/2814055-2.patch",
-                "2820105 - User references are not replicated":
-                "https://www.drupal.org/files/issues/2820105-10.patch"
+                "https://www.drupal.org/files/issues/2847078-6.patch",
+                "2749503 - Add basic support for Quick Edit":
+                "https://www.drupal.org/files/issues/workbench_moderation-quickedit-support-2749503-6.patch"
             },
             "drupal/core": {
                 "2652138 - ImageFormatter does not support SVGs":
-                "https://www.drupal.org/files/issues/2652138-28.patch",
-                "2765525 - Add AJAX command to add style sheets to CKEditor instances":
-                "https://www.drupal.org/files/issues/2765525-30-8.2.x.patch"
+                "https://www.drupal.org/files/issues/2652138-41.patch",
+                "1356276 - Allow profiles to provide a base/parent profile and load them in the correct order":
+                "https://www.drupal.org/files/issues/1356276-303.patch"
             },
             "drupal/entity_embed": {
                 "2832504 - Send the CKEditor instance ID to the embed.preview route":
@@ -106,24 +87,36 @@
                 "https://www.drupal.org/files/issues/entity_block-view-builder-class.patch",
                 "2846004 - Entity Block does not perform any access control":
                 "https://www.drupal.org/files/issues/2846004-2.patch"
+            },
+            "drush/drush": {
+                "2697 - Don't add profile dependencies to required_by array of modules":
+                "https://patch-diff.githubusercontent.com/raw/drush-ops/drush/pull/2697.patch"
+            },
+            "drupal/entity_browser": {
+                "2865928 - The View widget should filter based on field settings":
+                "https://www.drupal.org/files/issues/entity-browser-view-context-2865928-8.patch"
+            },
+            "drupal/dropzonejs": {
+                "2868449 - dropzonejs/integration library is missing a dependency on jquery.once":
+                "https://www.drupal.org/files/issues/2868449-2.patch"
             }
         }
     },
     "require": {
         "cweagans/composer-patches": "^1.5.0",
-        "composer/installers": "^1.0",
-        "drupal/core": "^8.2.0",
+        "composer/installers": "^1.2",
+        "drupal/core": "~8.3.1",
         "drupal/embed": "^1.0",
         "drupal/entity_embed": "1.0.0-beta2",
         "drupal/media_entity": "^1.0",
         "drupal/media_entity_instagram": "^1.0",
         "drupal/media_entity_twitter": "^1.3",
         "drupal/media_entity_image": "^1.0",
-        "drupal/ctools": "3.0.0-alpha27",
-        "drupal/panels": "3.0.0-beta5",
-        "drupal/page_manager": "1.0.0-alpha24",
-        "drupal/panelizer": "3.0.0-alpha3",
-        "drupal/scheduled_updates": "1.0.0-alpha5",
+        "drupal/ctools": "^3.0",
+        "drupal/panels": "^4.0",
+        "drupal/page_manager": "^4.0",
+        "drupal/panelizer": "^4.0",
+        "drupal/scheduled_updates": "1.0.0-alpha6",
         "drupal/workbench_moderation": "1.2.0",
         "drupal/acquia_connector": "^1.1",
         "drupal/config_update": "^1.1",
@@ -133,21 +126,19 @@
         "drupal/token": "^1.0",
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "drupal/pathauto": "^1.0",
-        "drupal/entity_browser": "^1.0",
+        "drupal/entity_browser": "1.0.0",
         "drupal/views_infinite_scroll": "^1.1",
         "drupal/media_entity_document": "^1.0",
         "drupal/video_embed_field": "^1.0",
-        "drupal/multiversion": "1.0.0-alpha12",
-        "drupal/workspace": "1.0.0-alpha4",
-        "drupal/replication": "1.0.0-alpha5",
-        "drupal/key_value": "^1.0",
         "drupal/contact_storage": "^1.0",
         "drupal/diff": "^1.0",
         "drupal/entity_block": "1.0.0-alpha2",
-        "drupal/search_api": "^1.0"
+        "drupal/search_api": "^1.0",
+        "drupal/layout_plugin": "^1.0@alpha"
     },
     "autoload": {
         "psr-4": {
+            "Acquia\\Lightning\\": "src",
             "Acquia\\LightningExtension\\": "src/LightningExtension"
         }
     }

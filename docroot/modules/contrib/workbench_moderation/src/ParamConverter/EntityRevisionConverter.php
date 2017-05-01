@@ -39,7 +39,9 @@ class EntityRevisionConverter extends EntityConverter {
    * {@inheritdoc}
    */
   public function applies($definition, $name, Route $route) {
-    return $this->hasForwardRevisionFlag($definition) || $this->isEditFormPage($route);
+    return $this->hasForwardRevisionFlag($definition)
+      || $this->isEditFormPage($route)
+      || $this->isQuickeditRoute($route);
   }
 
   /**
@@ -78,6 +80,29 @@ class EntityRevisionConverter extends EntityConverter {
       $entity_type = $this->entityManager->getDefinition($entity_type_id);
       return $operation == 'edit' && $entity_type && $entity_type->isRevisionable();
     }
+  }
+
+  /**
+    * Determines if a given route is related to Quickedit.
+    *
+    * @param \Symfony\Component\Routing\Route $route
+    *   The route definition.
+    *
+    * @return bool
+    *   Returns TRUE if the route is related to Quickedit, FALSE otherwise.
+    */
+  protected function isQuickeditRoute(Route $route) {
+    $compatible_routes = [
+      '/quickedit/form/{entity_type}/{entity}/{field_name}/{langcode}/{view_mode_id}',
+      '/quickedit/entity/{entity_type}/{entity}',
+      '/editor/{entity_type}/{entity}/{field_name}/{langcode}/{view_mode_id}',
+      '/quickedit/image/upload/{entity_type}/{entity}/{field_name}/{langcode}/{view_mode_id}',
+      '/quickedit/image/info/{entity_type}/{entity}/{field_name}/{langcode}/{view_mode_id}'
+    ];
+    if (in_array($route->getPath(), $compatible_routes)) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**

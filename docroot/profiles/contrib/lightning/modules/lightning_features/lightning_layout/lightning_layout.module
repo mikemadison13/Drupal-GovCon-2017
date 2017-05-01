@@ -8,10 +8,62 @@
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\lightning_layout\Plugin\Field\FieldWidget\PanelizerWidget as LightningPanelizerWidget;
+use Drupal\lightning_core\ConfigHelper as Config;
+use Drupal\lightning_core\Element;
+use Drupal\lightning_core\OverrideHelper as Override;
+use Drupal\lightning_layout\Plugin\Field\FieldWidget\PanelizerWidget;
+use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeTypeInterface;
-use Drupal\panelizer\Plugin\Field\FieldWidget\PanelizerWidget as BasePanelizerWidget;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_layout_alter().
+ */
+function lightning_layout_layout_alter(array &$definitions) {
+  // TODO: This entire function can be removed when Layout Plugin is no longer
+  // packaged with Lightning.
+  $map = [
+    'onecol' => 'layout_onecol',
+    'threecol_25_50_25' => 'layout_threecol_25_50_25',
+    'threecol_25_50_25_stacked' => 'layout_threecol_25_50_25',
+    'threecol_33_34_33' => 'layout_threecol_33_34_33',
+    'threecol_33_34_33_stacked' => 'layout_threecol_33_34_33',
+    'twocol' => 'layout_twocol',
+    'twocol_bricks' => 'layout_twocol_bricks',
+    'twocol_stacked' => 'layout_twocol',
+  ];
+  foreach ($map as $original_id => $new_id) {
+    if (isset($definitions[$new_id]) && empty($definitions[$original_id])) {
+      $definitions[$original_id] = $definitions[$new_id];
+    }
+  }
+}
+
+/**
+ * Implements hook_modules_installed().
+ */
+function lightning_layout_modules_installed(array $modules) {
+  if (in_array('lightning_roles', $modules)) {
+    \Drupal::service('lightning.content_roles')
+      ->grantPermissions('creator', [
+        'access panels in-place editing',
+        'change layouts in place editing',
+        'administer panelizer node ? content',
+        'administer panelizer node ? layout',
+      ]);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function lightning_layout_user_role_insert(RoleInterface $role) {
+  if ($role->id() == 'layout_manager' && Config::isBundled($role)) {
+    $node_types = NodeType::loadMultiple();
+    array_walk($node_types, 'lightning_layout_node_type_insert');
+  }
+}
 
 /**
  * Implements hook_block_alter().
@@ -32,9 +84,7 @@ function lightning_layout_block_alter(array &$blocks) {
  * Implements hook_field_widget_info_alter().
  */
 function lightning_layout_field_widget_info_alter(array &$info) {
-  if ($info['panelizer']['class'] == BasePanelizerWidget::class) {
-    $info['panelizer']['class'] = LightningPanelizerWidget::class;
-  }
+  Override::pluginClass($info['panelizer'], PanelizerWidget::class);
 }
 
 /**
@@ -99,7 +149,7 @@ function lightning_layout_tweak_panelizer_ui(array $element, FormStateInterface 
     '#prefix' => '<ul class="action-links">',
     '#suffix' => '</ul>',
   ];
-  array_reorder($element['panelizer'], [
+  Element::order($element['panelizer'], [
     'enable',
     'options',
     'add_link',

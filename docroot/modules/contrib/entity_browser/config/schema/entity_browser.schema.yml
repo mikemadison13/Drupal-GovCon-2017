@@ -227,3 +227,17 @@ field.widget.settings.entity_browser_file:
 views.display.entity_browser:
   type: views_display
   label: 'Entity browser display options'
+
+views.argument_default.entity_browser_widget_context:
+  type: mapping
+  label: 'Entity Browser Context'
+  mapping:
+    context_key:
+      type: string
+      label: 'Context key'
+    fallback:
+      type: string
+      label: 'Fallback value'
+    multiple:
+      type: string
+      label: 'Multiple values'

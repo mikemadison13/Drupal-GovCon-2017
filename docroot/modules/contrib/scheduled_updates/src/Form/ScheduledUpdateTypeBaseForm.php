@@ -197,10 +197,13 @@ class ScheduledUpdateTypeBaseForm extends EntityForm{
     $runner_options = [];
     $runner_definitions = $this->getSupportedRunnerDefinitions();
     foreach ($runner_definitions as $definition) {
-      $runner_options[$definition['id']] = $definition['label'];
+      /** @var UpdateRunnerInterface $runner_instance */
+      $runner_instance = $this->runnerManager->createInstance($definition['id']);
+      $runner_options[$definition['id']] = $definition['label']
+        . ' - ' . $runner_instance->getDescription();
     }
     $elements['id'] = [
-      '#type' => 'select',
+      '#type' => 'radios',
       '#title' => $this->t('Update Runner'),
       '#options' => $runner_options,
       '#default_value' => $runner_settings['id'],
