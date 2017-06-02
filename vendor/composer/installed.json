@@ -5871,6 +5871,10 @@
                 "homepage": "https://www.drupal.org/user/214652"
             },
             {
+                "name": "Dave Reid",
+                "homepage": "https://www.drupal.org/user/53892"
+            },
+            {
                 "name": "Drupal Media Team",
                 "homepage": "https://www.drupal.org/user/3260690"
             },
@@ -7270,7 +7274,7 @@
             "url": "https://github.com/drupal-cod/program.git",
             "reference": "master"
         },
-        "time": "2017-03-28T14:43:28+00:00",
+        "time": "2017-05-02T14:33:38+00:00",
         "type": "drupal-module",
         "installation-source": "source"
     },
@@ -8385,6 +8389,10 @@
             {
                 "name": "JohnAlbin",
                 "homepage": "https://www.drupal.org/user/32095"
+            },
+            {
+                "name": "RobLoach",
+                "homepage": "https://www.drupal.org/user/61114"
             }
         ],
         "description": "Registers “component libraries” defined in modules and themes with the Twig system",
@@ -9620,6 +9628,59 @@
         }
     },
     {
+        "name": "drupal/field_permissions",
+        "version": "dev-1.x",
+        "version_normalized": "dev-1.x",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/field_permissions",
+            "reference": "2f81e6dbe209b2a8301628169af8837f4d2fa090"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "time": "2017-05-26T21:59:32+00:00",
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.0-beta2+0-dev",
+                "datestamp": "1495836183"
+            }
+        },
+        "installation-source": "source",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "RobLoach",
+                "homepage": "https://www.drupal.org/user/61114"
+            },
+            {
+                "name": "jhedstrom",
+                "homepage": "https://www.drupal.org/user/208732"
+            },
+            {
+                "name": "mariacha1",
+                "homepage": "https://www.drupal.org/user/2210776"
+            },
+            {
+                "name": "markus_petrux",
+                "homepage": "https://www.drupal.org/user/39593"
+            }
+        ],
+        "description": "The Field Permissions module allows site administrators to set field-level permissions to edit, view and create fields on any entity.",
+        "homepage": "https://www.drupal.org/project/field_permissions",
+        "support": {
+            "source": "http://cgit.drupalcode.org/field_permissions",
+            "issues": "https://www.drupal.org/project/issues/field_permissions"
+        }
+    },
+    {
         "name": "drupal/google_analytics",
         "version": "2.1.0",
         "version_normalized": "2.1.0.0",
@@ -10057,8 +10118,16 @@
                 "homepage": "https://www.drupal.org/user/229048"
             },
             {
+                "name": "badjava",
+                "homepage": "https://www.drupal.org/user/83372"
+            },
+            {
                 "name": "chx",
                 "homepage": "https://www.drupal.org/user/9446"
+            },
+            {
+                "name": "japerry",
+                "homepage": "https://www.drupal.org/user/45640"
             },
             {
                 "name": "kalman.hosszu",
@@ -10189,7 +10258,7 @@
         "dist": {
             "type": "zip",
             "url": "https://ftp.drupal.org/files/projects/views_field_view-8.x-1.0-beta2.zip",
-            "reference": null,
+            "reference": "8.x-1.0-beta2",
             "shasum": "2f9c841f5e1ac8a9f8410b6d62c715edb9987519"
         },
         "require": {
