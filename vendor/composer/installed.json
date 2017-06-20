@@ -4944,7 +4944,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0-rc1",
-                "datestamp": "1483290542"
+                "datestamp": "1493466843"
             }
         },
         "installation-source": "dist",
@@ -5013,7 +5013,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0",
-                "datestamp": "1493201342"
+                "datestamp": "1494413585"
             }
         },
         "installation-source": "dist",
@@ -5178,7 +5178,7 @@
             },
             "drupal": {
                 "version": "8.x-3.0-beta2",
-                "datestamp": "1492545842"
+                "datestamp": "1493401742"
             }
         },
         "installation-source": "dist",
@@ -5267,7 +5267,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0-rc1",
-                "datestamp": "1485702484"
+                "datestamp": "1493468044"
             }
         },
         "installation-source": "dist",
@@ -5328,7 +5328,7 @@
             },
             "drupal": {
                 "version": "8.x-4.0-beta1",
-                "datestamp": "1492546183"
+                "datestamp": "1493402042"
             }
         },
         "installation-source": "dist",
@@ -5397,7 +5397,7 @@
             },
             "drupal": {
                 "version": "8.x-4.0-beta1",
-                "datestamp": "1492546183"
+                "datestamp": "1493402042"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -5463,7 +5463,7 @@
             },
             "drupal": {
                 "version": "8.x-3.0-beta2",
-                "datestamp": "1492545842"
+                "datestamp": "1493401742"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -5547,7 +5547,7 @@
             },
             "drupal": {
                 "version": "8.x-4.0-beta3",
-                "datestamp": "1492545842"
+                "datestamp": "1493405943"
             }
         },
         "installation-source": "dist",
@@ -5619,7 +5619,7 @@
             },
             "drupal": {
                 "version": "8.x-4.0-beta1",
-                "datestamp": "1492546142"
+                "datestamp": "1493410443"
             }
         },
         "installation-source": "dist",
@@ -5684,7 +5684,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0",
-                "datestamp": "1485901983"
+                "datestamp": "1496286243"
             }
         },
         "installation-source": "dist",
@@ -6051,7 +6051,7 @@
             },
             "drupal": {
                 "version": "8.x-1.2",
-                "datestamp": "1470169139"
+                "datestamp": "1494333185"
             }
         },
         "installation-source": "dist",
@@ -6067,6 +6067,10 @@
             {
                 "name": "Primsi",
                 "homepage": "https://www.drupal.org/user/282629"
+            },
+            {
+                "name": "chr.fritsch",
+                "homepage": "https://www.drupal.org/user/2103716"
             },
             {
                 "name": "designesse",
@@ -6960,7 +6964,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0-beta8",
-                "datestamp": "1476400139"
+                "datestamp": "1497478742"
             }
         },
         "installation-source": "dist",
@@ -7024,7 +7028,7 @@
             },
             "drupal": {
                 "version": "8.x-1.8",
-                "datestamp": "1490205485"
+                "datestamp": "1491851344"
             }
         },
         "installation-source": "dist",
@@ -7551,7 +7555,7 @@
         "source": {
             "type": "git",
             "url": "https://git.drupal.org/project/acquia_purge",
-            "reference": "ca326b275a4b34616360f67d137caa1dd31a6b48"
+            "reference": "0dbc1f56a50f24c71044a403fe1c8061a60be028"
         },
         "require": {
             "drupal/core": "*",
@@ -7561,18 +7565,15 @@
             "drupal/purge_processor_lateruntime": "*",
             "drupal/purge_queuer_coretags": "*"
         },
-        "time": "2017-01-24T11:44:49+00:00",
+        "time": "2017-06-01T09:57:07+00:00",
         "type": "drupal-module",
         "extra": {
             "branch-alias": {
                 "dev-1.x": "1.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.0-alpha2+5-dev",
-                "datestamp": "1481828883"
-            },
-            "patches_applied": {
-                "Bypass Acquia purge alpha program check to enable tag based purging.": "patches/purge-bypass-alpha-program.patch"
+                "version": "8.x-1.0-alpha2+8-dev",
+                "datestamp": "1495447683"
             }
         },
         "installation-source": "source",
@@ -7630,7 +7631,7 @@
             },
             "drupal": {
                 "version": "8.x-1.35",
-                "datestamp": "1489664583"
+                "datestamp": "1492787342"
             }
         },
         "installation-source": "dist",
@@ -7707,7 +7708,7 @@
             },
             "drupal": {
                 "version": "8.x-1.35",
-                "datestamp": "1489664583"
+                "datestamp": "1492787342"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -7778,7 +7779,7 @@
             },
             "drupal": {
                 "version": "8.x-1.35",
-                "datestamp": "1489664583"
+                "datestamp": "1492787342"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -7848,7 +7849,7 @@
             },
             "drupal": {
                 "version": "8.x-1.35",
-                "datestamp": "1489664583"
+                "datestamp": "1492787342"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -7928,7 +7929,7 @@
             },
             "drupal": {
                 "version": "8.x-1.18",
-                "datestamp": "1480614184"
+                "datestamp": "1491487683"
             }
         },
         "installation-source": "dist",
@@ -7991,7 +7992,7 @@
             },
             "drupal": {
                 "version": "8.x-1.3",
-                "datestamp": "1468906218"
+                "datestamp": "1493885887"
             }
         },
         "installation-source": "dist",
@@ -8321,7 +8322,7 @@
             },
             "drupal": {
                 "version": "8.x-1.6",
-                "datestamp": "1489502883"
+                "datestamp": "1490994483"
             }
         },
         "installation-source": "dist",
@@ -8335,12 +8336,20 @@
                 "homepage": "https://www.drupal.org/user/277818"
             },
             {
+                "name": "elm45",
+                "homepage": "https://www.drupal.org/user/805178"
+            },
+            {
                 "name": "grasmash",
                 "homepage": "https://www.drupal.org/user/455714"
             },
             {
                 "name": "jenter",
                 "homepage": "https://www.drupal.org/user/186584"
+            },
+            {
+                "name": "littlekope0903",
+                "homepage": "https://www.drupal.org/user/2867321"
             },
             {
                 "name": "sarahjean",
@@ -9701,6 +9710,10 @@
             "drupal": {
                 "version": "8.x-4.0-alpha2+7-dev",
                 "datestamp": "1497044041"
+            },
+            "patches_applied": {
+                "Flag links redirect to /views/ajax when shown in an AJAX-enabled view": "https://www.drupal.org/files/issues/flag-redirect_to_parent_path-2849217-4.patch",
+                "AJAX link not working when used in view": "https://www.drupal.org/files/issues/viewsAjaxLink_2846111_11.patch"
             }
         },
         "installation-source": "source",
@@ -9827,7 +9840,7 @@
             },
             "drupal": {
                 "version": "8.x-1.24",
-                "datestamp": "1490277183"
+                "datestamp": "1494742085"
             }
         },
         "installation-source": "dist",
@@ -10400,7 +10413,7 @@
             },
             "drupal": {
                 "version": "8.x-5.0-beta9",
-                "datestamp": "1488753784"
+                "datestamp": "1491362286"
             }
         },
         "installation-source": "dist",

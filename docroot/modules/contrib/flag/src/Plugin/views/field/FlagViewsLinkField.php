@@ -122,9 +122,7 @@ class FlagViewsLinkField extends FieldPluginBase {
     $flag = $this->getFlag();
     $link_type_plugin = $flag->getLinkTypePlugin();
 
-    $link = $link_type_plugin->getAsLink($flag, $entity);
-
-    $renderable = $link->toRenderable();
+    $renderable = $link_type_plugin->getAsFlagLink($flag, $entity);
 
     if ($link_type_plugin instanceof FormEntryInterface) {
       // Check if form should be in a modal or dialog.

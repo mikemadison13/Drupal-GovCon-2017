@@ -66,7 +66,7 @@ class AlphaProgramCheck extends DiagnosticCheckBase implements DiagnosticCheckIn
   protected $settings;
 
   /**
-   * Constructs a AlphaProgrammeCheck object.
+   * Constructs a AlphaProgramCheck object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
@@ -120,8 +120,8 @@ class AlphaProgramCheck extends DiagnosticCheckBase implements DiagnosticCheckIn
   public function run() {
 
     // Check for the support-provided access key.
-    if (TRUE) {
-      if (TRUE) {
+    if (!is_null($secret = $this->settings->get('acquia_purge_alpha'))) {
+      if (hash('sha256', $secret) == '6f7820107cf8e586a6164802153c9f22d41ebb3aa54c32f17c94be0482c6a0a8') {
 
         // We're enforcing a very strict TTL for statistic gathering. Future
         // stable releases of AP won't have this, but during the alpha program
@@ -165,7 +165,7 @@ class AlphaProgramCheck extends DiagnosticCheckBase implements DiagnosticCheckIn
         return SELF::SEVERITY_OK;
       }
     }
-    $this->recommendation = $this->t("The acquia_purge module isn't ready for prime time yet. If you want join our alpha-testing programme, you will need dedicated load balancers and a access key. Please contact Acquia support!");
+    $this->recommendation = $this->t("Acquia Purge isn't ready for prime time yet. If you like bleeding-edge, you can consider joining our testing program by contacting Acquia Support!");
     return SELF::SEVERITY_ERROR;
   }
 

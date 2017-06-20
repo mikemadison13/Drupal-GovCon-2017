@@ -263,6 +263,7 @@ class AcquiaCloudPurger extends PurgerBase implements PurgerInterface {
 
     // Collect tags and set all states to PROCESSING before we kick off.
     $tags = [];
+    $hashes = [];
     foreach ($invalidations as $invalidation) {
       $expression = $invalidation->getExpression();
 
@@ -291,7 +292,10 @@ class AcquiaCloudPurger extends PurgerBase implements PurgerInterface {
       }
       return;
     }
-    $tags_string = implode(' ', $tags);
+    foreach ($tags as $cache_tag) {
+      $hashes[] = substr(md5($cache_tag), 0, 4);
+    }
+    $tags_string = implode(' ', $hashes);
 
     // Predescribe the requests to make.
     $requests = [];
