@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <testsuites>
   <testsuite name="default" tests="0"/>
-  <testsuite name="Footer" tests="2" failures="0" skipped="0" errors="0" time="3.443">
-    <testcase name="Load a page with Javascript" time="3.301" status="passed"/>
-    <testcase name="Load a page without Javascript" time="0.077" status="passed"/>
+  <testsuite name="Footer" tests="2" failures="0" skipped="0" errors="0" time="3.312">
+    <testcase name="Load a page with Javascript" time="3.181" status="passed"/>
+    <testcase name="Load a page without Javascript" time="0.072" status="passed"/>
   </testsuite>
 </testsuites>
