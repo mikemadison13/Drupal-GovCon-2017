@@ -4954,7 +4954,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0-rc1",
-                "datestamp": "1483290542"
+                "datestamp": "1493466843"
             }
         },
         "installation-source": "dist",
@@ -5023,7 +5023,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0",
-                "datestamp": "1493201342"
+                "datestamp": "1494413585"
             }
         },
         "installation-source": "dist",
@@ -5188,7 +5188,7 @@
             },
             "drupal": {
                 "version": "8.x-3.0-beta2",
-                "datestamp": "1492545842"
+                "datestamp": "1493401742"
             }
         },
         "installation-source": "dist",
@@ -5277,7 +5277,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0-rc1",
-                "datestamp": "1485702484"
+                "datestamp": "1493468044"
             }
         },
         "installation-source": "dist",
@@ -5338,7 +5338,7 @@
             },
             "drupal": {
                 "version": "8.x-4.0-beta1",
-                "datestamp": "1492546183"
+                "datestamp": "1493402042"
             }
         },
         "installation-source": "dist",
@@ -5407,7 +5407,7 @@
             },
             "drupal": {
                 "version": "8.x-4.0-beta1",
-                "datestamp": "1492546183"
+                "datestamp": "1493402042"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -5473,7 +5473,7 @@
             },
             "drupal": {
                 "version": "8.x-3.0-beta2",
-                "datestamp": "1492545842"
+                "datestamp": "1493401742"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -5557,7 +5557,7 @@
             },
             "drupal": {
                 "version": "8.x-4.0-beta3",
-                "datestamp": "1492545842"
+                "datestamp": "1493405943"
             }
         },
         "installation-source": "dist",
@@ -5629,7 +5629,7 @@
             },
             "drupal": {
                 "version": "8.x-4.0-beta1",
-                "datestamp": "1492546142"
+                "datestamp": "1493410443"
             }
         },
         "installation-source": "dist",
@@ -5694,7 +5694,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0",
-                "datestamp": "1485901983"
+                "datestamp": "1496286243"
             }
         },
         "installation-source": "dist",
@@ -6061,7 +6061,7 @@
             },
             "drupal": {
                 "version": "8.x-1.2",
-                "datestamp": "1470169139"
+                "datestamp": "1494333185"
             }
         },
         "installation-source": "dist",
@@ -6077,6 +6077,10 @@
             {
                 "name": "Primsi",
                 "homepage": "https://www.drupal.org/user/282629"
+            },
+            {
+                "name": "chr.fritsch",
+                "homepage": "https://www.drupal.org/user/2103716"
             },
             {
                 "name": "designesse",
@@ -6970,7 +6974,7 @@
             },
             "drupal": {
                 "version": "8.x-1.0-beta8",
-                "datestamp": "1476400139"
+                "datestamp": "1497478742"
             }
         },
         "installation-source": "dist",
@@ -7034,7 +7038,7 @@
             },
             "drupal": {
                 "version": "8.x-1.8",
-                "datestamp": "1490205485"
+                "datestamp": "1491851344"
             }
         },
         "installation-source": "dist",
@@ -7637,7 +7641,7 @@
             },
             "drupal": {
                 "version": "8.x-1.35",
-                "datestamp": "1489664583"
+                "datestamp": "1492787342"
             }
         },
         "installation-source": "dist",
@@ -7714,7 +7718,7 @@
             },
             "drupal": {
                 "version": "8.x-1.35",
-                "datestamp": "1489664583"
+                "datestamp": "1492787342"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -7785,7 +7789,7 @@
             },
             "drupal": {
                 "version": "8.x-1.35",
-                "datestamp": "1489664583"
+                "datestamp": "1492787342"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -7855,7 +7859,7 @@
             },
             "drupal": {
                 "version": "8.x-1.35",
-                "datestamp": "1489664583"
+                "datestamp": "1492787342"
             }
         },
         "notification-url": "https://packages.drupal.org/8/downloads",
@@ -7935,7 +7939,7 @@
             },
             "drupal": {
                 "version": "8.x-1.18",
-                "datestamp": "1480614184"
+                "datestamp": "1491487683"
             }
         },
         "installation-source": "dist",
@@ -7998,7 +8002,7 @@
             },
             "drupal": {
                 "version": "8.x-1.3",
-                "datestamp": "1468906218"
+                "datestamp": "1493885887"
             }
         },
         "installation-source": "dist",
@@ -8017,6 +8021,51 @@
         "support": {
             "source": "http://cgit.drupalcode.org/adminimal_admin_toolbar",
             "issues": "https://www.drupal.org/project/issues/adminimal_admin_toolbar"
+        }
+    },
+    {
+        "name": "drupal/better_exposed_filters",
+        "version": "3.0.0-alpha2",
+        "version_normalized": "3.0.0.0-alpha2",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/better_exposed_filters",
+            "reference": "8.x-3.0-alpha2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/better_exposed_filters-8.x-3.0-alpha2.zip",
+            "reference": "8.x-3.0-alpha2",
+            "shasum": "f1bbe21379a4ac8e28e3edfbdd4964343299caeb"
+        },
+        "require": {
+            "drupal/core": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-3.x": "3.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-3.0-alpha2",
+                "datestamp": "1484626084"
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "mikeker",
+                "homepage": "https://www.drupal.org/user/192273"
+            }
+        ],
+        "description": "Provides advanced options (such as links, checkboxes, or jQueryUI widgets) for exposed Views elements.",
+        "homepage": "https://www.drupal.org/project/better_exposed_filters",
+        "support": {
+            "source": "http://cgit.drupalcode.org/better_exposed_filters"
         }
     },
     {
@@ -8328,7 +8377,7 @@
             },
             "drupal": {
                 "version": "8.x-1.6",
-                "datestamp": "1489502883"
+                "datestamp": "1490994483"
             }
         },
         "installation-source": "dist",
@@ -8342,12 +8391,20 @@
                 "homepage": "https://www.drupal.org/user/277818"
             },
             {
+                "name": "elm45",
+                "homepage": "https://www.drupal.org/user/805178"
+            },
+            {
                 "name": "grasmash",
                 "homepage": "https://www.drupal.org/user/455714"
             },
             {
                 "name": "jenter",
                 "homepage": "https://www.drupal.org/user/186584"
+            },
+            {
+                "name": "littlekope0903",
+                "homepage": "https://www.drupal.org/user/2867321"
             },
             {
                 "name": "sarahjean",
@@ -9838,7 +9895,7 @@
             },
             "drupal": {
                 "version": "8.x-1.24",
-                "datestamp": "1490277183"
+                "datestamp": "1494742085"
             }
         },
         "installation-source": "dist",
@@ -10224,6 +10281,71 @@
         }
     },
     {
+        "name": "drupal/smart_trim",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/smart_trim",
+            "reference": "8.x-1.0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/smart_trim-8.x-1.0.zip",
+            "reference": null,
+            "shasum": "14d8ec333c0c89367ac267eceef691417d537daf"
+        },
+        "require": {
+            "drupal/core": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.0",
+                "datestamp": "1463158739"
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "amarcus",
+                "homepage": "https://www.drupal.org/user/1064036"
+            },
+            {
+                "name": "chrisjlee",
+                "homepage": "https://www.drupal.org/user/760600"
+            },
+            {
+                "name": "drywall",
+                "homepage": "https://www.drupal.org/user/192591"
+            },
+            {
+                "name": "jsenich",
+                "homepage": "https://www.drupal.org/user/58871"
+            },
+            {
+                "name": "markie",
+                "homepage": "https://www.drupal.org/user/206687"
+            },
+            {
+                "name": "newsignature",
+                "homepage": "https://www.drupal.org/user/765518"
+            }
+        ],
+        "description": "Provides a more robust alternative to \"summary or trimmed\" textfield format",
+        "homepage": "https://www.drupal.org/project/smart_trim",
+        "support": {
+            "source": "http://cgit.drupalcode.org/smart_trim"
+        }
+    },
+    {
         "name": "ajgl/breakpoint-twig-extension",
         "version": "0.3.0",
         "version_normalized": "0.3.0.0",
@@ -10411,7 +10533,7 @@
             },
             "drupal": {
                 "version": "8.x-5.0-beta9",
-                "datestamp": "1488753784"
+                "datestamp": "1491362286"
             }
         },
         "installation-source": "dist",
