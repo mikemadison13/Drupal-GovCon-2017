@@ -3,6 +3,8 @@
  * Task: Lint: scss Files.
  */
 
+ /* global module */
+
 module.exports = function (gulp, plugins, options) {
   'use strict';
 
@@ -12,10 +14,10 @@ module.exports = function (gulp, plugins, options) {
       .pipe(plugins.plumber())
       .pipe(plugins.stylelint({
         reporters: [
-            {
-                formatter: 'string',
-                console: true
-            }
+          {
+            formatter: 'string',
+            console: true
+          }
         ]
       }))
       .pipe(plugins.plumber.stop());
@@ -26,12 +28,12 @@ module.exports = function (gulp, plugins, options) {
     return gulp.src(options.sass.files)
       .pipe(plugins.stylelint({
         reporters: [
-            {
-                formatter: 'string',
-                console: true,
-                failAfterError: true
-            }
+          {
+            formatter: 'string',
+            console: true,
+            failAfterError: true
+          }
         ]
-      }))
+      }));
   });
 };

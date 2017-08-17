@@ -12,7 +12,7 @@ use Acquia\Blt\Tests\BltProjectTestBase;
 class GitTasksTest extends BltProjectTestBase {
 
   /**
-   * Tests Phing setup:git-hooks target.
+   * Tests  setup:git-hooks command.
    *
    * @group blt-project
    */
@@ -72,8 +72,9 @@ class GitTasksTest extends BltProjectTestBase {
     $prefix = $this->config['project']['prefix'];
     $command = "./.git/hooks/pre-commit";
     $output = shell_exec($command);
-    $this->assertNotContains('PHP Code Sniffer was not found', $output);
-    $this->assertContains('Sniffing staged files via PHP Code Sniffer.', $output);
+    $this->assertContains('validate:phpcs', $output);
+    $this->assertContains('validate:yaml:files', $output);
+    $this->assertContains('validate:twig:files', $output);
   }
 
   /**

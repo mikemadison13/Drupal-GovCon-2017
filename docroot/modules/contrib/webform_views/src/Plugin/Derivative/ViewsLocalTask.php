@@ -75,7 +75,7 @@ class ViewsLocalTask extends DeriverBase implements ContainerDeriverInterface {
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-    $this->derivatives = array();
+    $this->derivatives = [];
 
     $view_route_names = $this->state->get('views.view_route_names');
     foreach (webform_views_applicable_views() as $trio) {

@@ -32,7 +32,7 @@ Available options for creating your new theme `drush help cog`
 
 ### Setup Local Development
 
-Once you have created a custom sub-theme, you will setup for local compiling. If you would like to review an extension explanation of these steps, read the [full setup readme](_readme/setup-full.md).
+Once you have created a custom sub-theme, you will setup for local compiling. If you would like to review a more detailed explanation of these steps, read the [full setup readme](_readme/setup-full.md).
 
 * Navigate to `themes/custom/mytheme` folder in your terminal
 * Install Node.js with `./install-node.sh 4.4.4` and then point to the proper version with `source ~/.bashrc && nvm use --delete-prefix 4.4.4` 
@@ -40,6 +40,7 @@ Once you have created a custom sub-theme, you will setup for local compiling. If
   * (optional) If you choose to use avn follow the instructions [here](_readme/setup-full.md#avn)
 * Install the [Yarn](https://yarnpkg.com/en/docs/install) package manager globally `npm install -g yarn` 
 * Run the command `yarn install` within your `themes/custom/mytheme` folder
+* Install the [Gulp](http://gulpjs.com/) build tool globally using `npm install -g gulp-cli`.
 * To confirm Gulp and other items are instantiated `npm run build`
 * You can now compile both your Sass and JS with `gulp watch`
 

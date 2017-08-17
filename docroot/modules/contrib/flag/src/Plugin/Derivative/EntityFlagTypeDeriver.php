@@ -23,6 +23,11 @@ class EntityFlagTypeDeriver extends DeriverBase {
       $derivatives[$entity_id] = [
         'title' => $entity_type->getLabel(),
         'entity_type' => $entity_id,
+        'config_dependencies' => [
+          'module' => [
+            $entity_type->getProvider(),
+          ],
+        ],
       ] + $base_plugin_def;
     }
 

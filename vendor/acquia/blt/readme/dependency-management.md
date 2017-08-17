@@ -26,16 +26,25 @@ Make sure to **familiarize yourself** with [basic usage](https://getcomposer.org
 
 ### Contributed projects and third party libraries
 
-All contributed projects hosted on drupal.org, including Drupal core, profiles, modules, and themes, can be found on [Drupal packagist](https://packagist.drupal-composer.org/). Most non-Drupal libraries can be found on [Packagist](http://packagist.com/). For any required packaged not hosted on one of those two sites, you can define your own array of [custom repositories](https://getcomposer.org/doc/05-repositories.md#repository) for Composer to search.
+All contributed projects hosted on drupal.org, including Drupal core, profiles, modules, and themes, can be found on Drupal Packagist, a drupal.org hosted packagist server. You must specify this special URL in your `composer.json` so that Composer is able to discover such packages:
+
+      {
+          "repositories": {
+              "drupal": {
+                  "type": "composer",
+                  "url": "https://packages.drupal.org/7"
+              }
+          }
+      }
+
+Most non-Drupal libraries can be found on [Packagist](http://packagist.com/). For any required packaged not hosted on one of those two sites, you can define your own array of [custom repositories](https://getcomposer.org/doc/05-repositories.md#repository) for Composer to search.
 
 Note that Composer versioning is not identical to drupal.org versioning.
 
 ### Resources
 
 * [Composer Versions](https://getcomposer.org/doc/articles/versions.md) - Read up on how to specify versions.
-* [Drupal packagist site](https://packagist.drupal-composer.org/) - Find packages and their current versions.
-* [Drupal packagist project](https://github.com/drupal-composer/drupal-packagist) - Submit issues and pull requests to the engine that runs Drupal packagist.
-* [Drupal packagist project](https://github.com/drupal-composer/drupal-packagist) - Submit issues and pull requests to the engine that runs Drupal packagist.
+* [Using Composer to Manage Drupal Site Dependencies](https://www.drupal.org/docs/develop/using-composer/using-composer-to-manage-drupal-site-dependencies)
 * [Drupal Composer package naming conventions](https://www.drupal.org/node/2471927)
 * [Packagist](http://packagist.com/) - Find non-drupal libraries and their current versions.
 
@@ -51,7 +60,7 @@ Commit `composer.json` and `composer.lock` afterwards.
 
 To update a single package, run `composer update [vendor/package]`. E.g.,
 
-        composer update drupal/pathauto
+        composer update drupal/pathauto --with-dependencies
 
 To update all packages, run `composer update`.
 
@@ -67,23 +76,45 @@ Commit `composer.json` and `composer.lock` afterwards.
 
 ## Patch a project
 
-Please see [patches/README.md](../template/patches/README.md) for information on patch naming, patch application, and patch contribution guidance.
+Please see [patches/README.md](../template/patches/README.md) for information on patch naming, patch application, patch ignoring, and patch contribution guidance.
 
-## Merging in additional composer.json files
+### Modifying BLT's default Composer values
 
-In situations where you have local projects, e.g. a custom module, that have their own composer.json files, you can merge them in by including the composer-merge-plugin.
+BLT merges default values for composer.json using [wikimedia/composer-merge-plugin](https://github.com/wikimedia/composer-merge-plugin):
 
-    composer require wikimedia/composer-merge-plugin
+        "merge-plugin": {
+            "require": [
+                "vendor/acquia/blt/composer.required.json",
+                "vendor/acquia/blt/composer.suggested.json"
+            ],
+            "include": [
+                "blt/composer.overrides.json"
+            ],
+            "merge-extra": true,
+            "merge-extra-deep": true,
+            "merge-scripts": true,
+            "replace": false,
+            "ignore-duplicates": true
+        },
 
-Reference these additional composer.json files in the `extra` section of your root composer.json file.
+This merges the `require`, `require-dev`, `autoload`, `autoload-dev`, `scripts`, and `extra` keys from BLT's own vendored files. The merged values are split into two groups
 
-    "extra": {
-      "merge-plugin": {
-        "require": [
-          "docroot/modules/custom/example/composer.json"
-        ]
-      }
-    }
+ 1. composer.require.json: These packages are required for BLT to function properly. You may change their versions via comopser.overrides.json, but you should not remove them.
+ 1. composer.suggested.json: You may remove the suggested packages by deleting the `vendor/acquia/blt/composer.suggested.json` line from your composer.json.
+
+If you'd like to override the default version constraint for a package provided by BLT, you may simply define the desired version in your root composer.json file.
+
+### Merging in additional composer.json files
+
+In situations where you have local projects, e.g. a custom module, that have their own composer.json files, you can merge them in by including the composer-merge-plugin. Reference these additional composer.json files in the `extra` section of your root composer.json file.
+
+        "extra": {
+          "merge-plugin": {
+            "require": [
+              "docroot/modules/custom/example/composer.json"
+            ]
+          }
+        }
 
 ## Front end dependencies
 
@@ -91,6 +122,7 @@ Drupal 8 does not have a definitive solution for downloading front end dependenc
 
 * Load the library as an external library. See [Adding stylesheets (CSS) and JavaScript (JS) to a Drupal 8 module](https://www.drupal.org/developing/api/8/assets).
 * Use a front end package manager (e.g., [NPM](https://www.npmjs.com/)) to download your dependencies. Then use BLT's `frontend-build` and `post-deploy-build` target-hooks to trigger building those dependencies. E.g., call `npm install` in your theme directory via these hooks.
+* Commit the library to the repository, typically in `docroot/librares`.
 *  Add the library to composer.json via a [custom repository](https://getcomposer.org/doc/05-repositories.md). Designate the package as a `drupal-library` and define a `installer-paths` path for that package type to ensure that it is installed to `docroot/libraries.` Ensure that it can be discovered in that location. See [example composer.json](https://gist.github.com/mortenson/a5390d99013b5b8c0254081e89bb4d47).
 
 Contributed projects should provide the ability to download and discover the libraries. If you are using a contributed project, it is suggested that you patch the project to support one of these strategies.

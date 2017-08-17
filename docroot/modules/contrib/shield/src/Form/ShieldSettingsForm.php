@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- *   Contains \Drupal\shield\Form\ShieldSettingsForm.
- */
 
 namespace Drupal\shield\Form;
 
@@ -61,7 +57,7 @@ class ShieldSettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('User'),
       '#default_value' => $shield_config->get('user'),
-      '#description' => $this->t('Live it blank to disable authentication.'),
+      '#description' => $this->t('Leave it blank to disable authentication.'),
     );
 
     $form['credentials']['shield_pass'] = array(

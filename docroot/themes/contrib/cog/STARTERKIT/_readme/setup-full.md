@@ -62,7 +62,21 @@ npm run build
 Gulp is already included once `npm run install-tools` has been run, but unless it is installed globally you will need to use the npm scripts such as `npm run build` to call it. You can also install a global version of gulp to run gulp tasks directly:
 
 ```bash
-npm install -g gulp
+npm install -g gulp-cli
 ```
 
 After gulp is installed globally it can be called like `gulp`, `gulp build` or `gulp watch`. The gulpfile documents available tasks outside of the default `gulp` task, which runs a production ready theme build. You can use `gulp --tasks` to get a list of these tasks as well. You can also use `npm run` to see which npm scripts are available and what commands they call.
+
+### Browsersync
+
+[Browsersync](https://www.browsersync.io/) is configured to allow for multi-device testing and to automatically refresh the page when changes are made to your theme's styles and javascript. You can start Browsersync with `npm run serve`, or `gulp serve` if Gulp has been installed globally. The serve task will automatically start the watch task in the background, so there is no need to run them both.
+
+In order to see changes to your styles and javascript immediately, you will need to disable Drupal's CSS and JS preprocessing. Follow the instructions at the bottom of `sites/default/settings.php` to create a `local.settings.php` file. In your local settings file, include the following:
+
+```
+/**
+ * Disable CSS and JS aggregation.
+ */
+$config['system.performance']['css']['preprocess'] = FALSE;
+$config['system.performance']['js']['preprocess'] = FALSE;
+```

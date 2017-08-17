@@ -22,10 +22,6 @@
   font-family: "Open Sans";
 }
 
-.adminimal-admin-toolbar.toolbar-fixed.toolbar-vertical {
-  padding-top: 32px !important;
-}
-
 .adminimal-admin-toolbar .toolbar a {
   transition: all, 0.2s;
 }
@@ -73,14 +69,14 @@
 .adminimal-admin-toolbar .toolbar-tray-horizontal a:hover,
 .adminimal-admin-toolbar .toolbar-tray-horizontal a:active,
 .adminimal-admin-toolbar .toolbar-tray-horizontal a:focus {
-  background: #0074bd;
+  background: #0084d7;
   color: #fff;
   text-decoration: none;
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover > a,
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover > .toolbar-box > a {
-  background: #0074bd;
+  background: #0084d7;
   color: #fff !important;
 }
 
@@ -147,7 +143,7 @@
 }
 
 .adminimal-admin-toolbar .toolbar .toolbar-icon.toolbar-handle:before {
-  background-image: url(../images/787878/chevron-outline-disc-down.svg);
+  background-image: url(../images/acacac/chevron-outline-disc-down.svg);
   transition: .25s;
 }
 
@@ -157,7 +153,7 @@
 }
 
 .adminimal-admin-toolbar .toolbar .toolbar-menu .toolbar-menu .toolbar-icon.toolbar-handle:before {
-  background-image: url(../images/787878/chevron-outline-disc-down.svg);
+  background-image: url(../images/acacac/chevron-outline-disc-down.svg);
   background-size: 100%;
 }
 
@@ -193,6 +189,12 @@
   background: #545454 !important;
 }
 
+/* For WCAG, we are lightening the text on this tier. */
+.adminimal-admin-toolbar .toolbar .level-3 a,
+.adminimal-admin-toolbar .toolbar .level-4 a {
+  color: #d5d5d5 !important;
+}
+
 .adminimal-admin-toolbar .toolbar-handle.open {
   border-top-left-radius: 10px;
 }
@@ -218,7 +220,7 @@
 .adminimal-admin-toolbar .toolbar .toolbar-tray-vertical .toolbar-menu a:hover,
 .adminimal-admin-toolbar .toolbar .toolbar-tray-vertical .toolbar-menu a:focus {
   color: #fff;
-  background: #0074BD;
+  background: #0084d7;
   text-decoration: none;
 }
 
@@ -241,7 +243,8 @@
 .adminimal-admin-toolbar .toolbar .menu-item--expanded {
   background-color: #333;
 }
-.adminimal-admin-toolbar .toolbar-tray-horizontal ul li.menu-item--expanded ul li.menu-item--expanded {
+.adminimal-admin-toolbar .toolbar-tray-horizontal ul li.menu-item--expanded ul li.menu-item--expanded,
+[dir="rtl"] .adminimal-admin-toolbar .toolbar-tray-horizontal ul li.menu-item--expanded ul li.menu-item--expanded {
   background-image: none;
   position: relative;
 }
@@ -253,22 +256,47 @@
 .adminimal-admin-toolbar .toolbar-tray-horizontal ul li.menu-item--expanded .menu-item:hover ul {
   margin: -39px 0 0 200px;
 }
+[dir="rtl"] .adminimal-admin-toolbar .toolbar-tray-horizontal ul li.menu-item--expanded .menu-item:hover ul {
+  margin: -39px 200px 0 0;
+}
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal ul li.menu-item--expanded ul li.menu-item--expanded:after {
   color: #8eacc0;
-  content: url(../images/0074bd/chevron-right.svg);
+  content: url(../images/0084d7/chevron-right.svg);
   font-size: 16px;
   pointer-events: none;
   position: absolute;
   right: 5px;
   top: 50%;
   transform: translateY(-8px);
-  transition: all .2s
+  transition: all .2s;
+}
+
+[dir="rtl"] .adminimal-admin-toolbar .toolbar-tray-horizontal ul li.menu-item--expanded ul li.menu-item--expanded:after {
+  right: auto;
+  left: 5px;
+  top: 30%;
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  filter: FlipH;
+  -ms-filter: "FlipH";
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal ul li.menu-item--expanded ul li.menu-item--expanded:hover:after {
   content: url(../images/ffffff/chevron-right.svg);
   transform: translate(6px, -8px);
+}
+
+[dir="rtl"] .adminimal-admin-toolbar .toolbar-tray-horizontal ul li.menu-item--expanded ul li.menu-item--expanded:hover:after {
+  transform-origin: 40% top;
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  filter: FlipH;
+  -ms-filter: "FlipH";
 }
 
 .adminimal-admin-toolbar .toolbar .toolbar-menu .toolbar-menu a {
@@ -292,7 +320,7 @@
 }
 
 .adminimal-admin-toolbar .toolbar .toolbar-tray-horizontal ul  ul li.menu-item:first-child {
-  border-top: 1px solid #0074bd;
+  border-top: 1px solid #0084d7;
 }
 
 /* Removes border top on next consecutive lists after first */
@@ -302,7 +330,7 @@
 
 /* Main menu icons. */
 .adminimal-admin-toolbar .toolbar-icon-admin-toolbar-tools-help:before {
-  background-image: url(../images/787878/drupal-8.svg);
+  background-image: url(../images/acacac/drupal-8.svg);
   margin-left: 7px;
   padding: 0px;
 }
@@ -311,88 +339,98 @@
   margin-left: 0;
 }
 
-.adminimal-admin-toolbar .toolbar-icon-system-admin-content:active:before,
-.adminimal-admin-toolbar .toolbar-icon-system-admin-content.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/file.svg);
+.adminimal-admin-toolbar .toolbar-icon-system-admin-content:before {
+  background-image: url(../images/acacac/file.svg);
 }
 
-.adminimal-admin-toolbar .toolbar-icon-system-admin-structure:active:before,
-.adminimal-admin-toolbar .toolbar-icon-system-admin-structure.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/orgchart.svg);
+.adminimal-admin-toolbar .toolbar-icon-system-admin-structure:before {
+  background-image: url(../images/acacac/orgchart.svg);
 }
 
-.adminimal-admin-toolbar .toolbar-icon-system-themes-page:active:before,
-.adminimal-admin-toolbar .toolbar-icon-system-themes-page.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/paintbrush.svg);
+.adminimal-admin-toolbar .toolbar-icon-system-themes-page:before {
+  background-image: url(../images/acacac/paintbrush.svg);
 }
 
-.adminimal-admin-toolbar .toolbar-icon-entity-user-collection:active:before,
-.adminimal-admin-toolbar .toolbar-icon-entity-user-collection.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/people.svg);
+.adminimal-admin-toolbar .toolbar-icon-entity-user-collection:before {
+  background-image: url(../images/acacac/people.svg);
 }
 
-.adminimal-admin-toolbar .toolbar-icon-system-modules-list:active:before,
-.adminimal-admin-toolbar .toolbar-icon-system-modules-list.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/puzzlepiece.svg);
+.adminimal-admin-toolbar .toolbar-icon-system-modules-list:before {
+  background-image: url(../images/acacac/puzzlepiece.svg);
 }
 
-.adminimal-admin-toolbar .toolbar-icon-system-admin-config:active:before,
-.adminimal-admin-toolbar .toolbar-icon-system-admin-config.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/wrench.svg);
+.adminimal-admin-toolbar .toolbar-icon-system-admin-config:before {
+  background-image: url(../images/acacac/wrench.svg);
 }
 
-.adminimal-admin-toolbar .toolbar-icon-system-admin-reports:active:before,
-.adminimal-admin-toolbar .toolbar-icon-system-admin-reports.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/barchart.svg);
+.adminimal-admin-toolbar .toolbar-icon-system-admin-reports:before {
+  background-image: url(../images/acacac/barchart.svg);
 }
 
-.adminimal-admin-toolbar .toolbar-icon-help-main:active:before,
-.adminimal-admin-toolbar .toolbar-icon-help-main.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/questionmark-disc.svg);
+.adminimal-admin-toolbar .toolbar-icon-help-main:before {
+  background-image: url(../images/acacac/questionmark-disc.svg);
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover .toolbar-icon-admin-toolbar-tools-help:before,
-.adminimal-admin-toolbar .toolbar-icon-admin-toolbar-tools-help:hover:before {
+.adminimal-admin-toolbar .toolbar-icon-admin-toolbar-tools-help:hover:before,
+.adminimal-admin-toolbar .toolbar-icon-admin-toolbar-tools-help:active:before,
+.adminimal-admin-toolbar .toolbar-icon-admin-toolbar-tools-help.is-active:before {
   background-image: url(../images/ffffff/drupal-8.svg);
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover .toolbar-icon-system-admin-content:before,
-.adminimal-admin-toolbar .toolbar-icon-system-admin-content:hover:before {
+.adminimal-admin-toolbar .toolbar-icon-system-admin-content:hover:before,
+.adminimal-admin-toolbar .toolbar-icon-system-admin-content:active:before,
+.adminimal-admin-toolbar .toolbar-icon-system-admin-content.is-active:before {
   background-image: url(../images/ffffff/file.svg);
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover .toolbar-icon-system-admin-structure:before,
-.adminimal-admin-toolbar .toolbar-icon-system-admin-structure:hover:before {
+.adminimal-admin-toolbar .toolbar-icon-system-admin-structure:hover:before,
+.adminimal-admin-toolbar .toolbar-icon-system-admin-structure:active:before,
+.adminimal-admin-toolbar .toolbar-icon-system-admin-structure.is-active:before {
   background-image: url(../images/ffffff/orgchart.svg);
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover .toolbar-icon-system-themes-page:before,
-.adminimal-admin-toolbar .toolbar-icon-system-themes-page:hover:before {
+.adminimal-admin-toolbar .toolbar-icon-system-themes-page:hover:before,
+.adminimal-admin-toolbar .toolbar-icon-system-themes-page:active:before,
+.adminimal-admin-toolbar .toolbar-icon-system-themes-page.is-active:before {
   background-image: url(../images/ffffff/paintbrush.svg);
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover .toolbar-icon-entity-user-collection:before,
-.adminimal-admin-toolbar .toolbar-icon-entity-user-collection:hover:before {
+.adminimal-admin-toolbar .toolbar-icon-entity-user-collection:hover:before,
+.adminimal-admin-toolbar .toolbar-icon-entity-user-collection:active:before,
+.adminimal-admin-toolbar .toolbar-icon-entity-user-collection.is-active:before {
   background-image: url(../images/ffffff/people.svg);
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover .toolbar-icon-system-modules-list:before,
-.adminimal-admin-toolbar .toolbar-icon-system-modules-list:hover:before {
+.adminimal-admin-toolbar .toolbar-icon-system-modules-list:hover:before,
+.adminimal-admin-toolbar .toolbar-icon-system-modules-list:active:before,
+.adminimal-admin-toolbar .toolbar-icon-system-modules-list.is-active:before {
   background-image: url(../images/ffffff/puzzlepiece.svg);
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover .toolbar-icon-system-admin-config:before,
-.adminimal-admin-toolbar .toolbar-icon-system-admin-config:hover:before {
+.adminimal-admin-toolbar .toolbar-icon-system-admin-config:hover:before,
+.adminimal-admin-toolbar .toolbar-icon-system-admin-config:active:before,
+.adminimal-admin-toolbar .toolbar-icon-system-admin-config.is-active:before {
   background-image: url(../images/ffffff/wrench.svg);
 }
 
 .adminimal-admin-toolbar .toolbar-tray-horizontal .menu-item--expanded:hover .toolbar-icon-system-admin-reports:before,
-.adminimal-admin-toolbar .toolbar-icon-system-admin-reports:hover:before {
+.adminimal-admin-toolbar .toolbar-icon-system-admin-reports:hover:before,
+.adminimal-admin-toolbar .toolbar-icon-system-admin-reports:active:before,
+.adminimal-admin-toolbar .toolbar-icon-system-admin-reports.is-active:before {
   background-image: url(../images/ffffff/barchart.svg);
 }
 
 .adminimal-admin-toolbar .menu-item--expanded:hover .toolbar-icon-help-main:before,
-.adminimal-admin-toolbar .toolbar-icon-help-main:hover:before {
+.adminimal-admin-toolbar .toolbar-icon-help-main:hover:before,
+.adminimal-admin-toolbar .toolbar-icon-help-main:active:before,
+.adminimal-admin-toolbar .toolbar-icon-help-main.is-active:before {
   background-image: url(../images/ffffff/questionmark-disc.svg);
 }
 

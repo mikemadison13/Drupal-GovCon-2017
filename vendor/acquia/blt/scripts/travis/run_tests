@@ -2,7 +2,11 @@
 
 set -ev
 
-source ${BLT_DIR}/scripts/blt/ci/shared/run_tests
-blt ci:build:validate:test -Dcreate_alias=false -Dbehat.run-server=true -Dblt.verbose=true
+#  The local.hostname must be set to 127.0.0.1:8888 because we are using drush runserver to test the site.
+yaml-cli update:value blt/project.yml project.local.hostname '127.0.0.1:8888'
+
+blt validate:all
+blt setup --define drush.alias='${drush.aliases.ci}' --define environment=ci --no-interaction --yes -v
+blt tests:all --define drush.alias='${drush.aliases.ci}' --define tests.run-server=true --yes -v
 
 set +v

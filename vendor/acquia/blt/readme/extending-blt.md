@@ -1,47 +1,37 @@
 # Extending / Overriding BLT
 
-To add or override a Phing target, you may create a custom build file. You must specify the location of your custom build file using the `import` key to your project.yml file, e.g.:
+BLT uses Robo to provide commands.
 
-    import: '${repo.root}/custom.xml'
+## Adding a custom Robo Command
 
-## Adding a custom target
+To create your own Robo PHP command:
 
-      <project name="custom" default="build">
-        <!-- Add custom targets. -->
-      </project>
+1. Create a new file in `blt/src/Commands` named using the pattern `*Command.php`. The file naming convention is required.
+1. You must use the namespace `Acquia\Blt\Custom\Commands` in your command file.
+1. Generate an example command file by executing `blt example:init`. You may use the generated file as a guide for writing your own command.
+1. Follow the [Robo PHP Getting Started guide](http://robo.li/getting-started/#commands) to write a custom command.
 
-## Overriding an existing target
+## Adding a custom Robo Hook
 
-To override an existing target, just give it the same name as the default target provided by BLT. E.g.,
+BLT uses the [Annotated Command](https://github.com/consolidation/annotated-command) library to enable you to hook into BLT commands. This allows you to execute custom code
+in response to various events, typically just before or just after a BLT command is executed.
 
-      <project name="custom" default="build">
-        <target name="local:update" description="Update current database to reflect the state of the Drupal file system; uses local drush alias.">
-          <phingcall target="setup:update">
-            <property name="drush.alias" value="${drush.aliases.local}"/>
-          </phingcall>
-        </target>
-      </project>
+To create a hook:
 
-## Overriding a variable value:
+1. Create a new file in `blt/src/Hooks` named using the pattern `*Hook.php`.
+1. Generate an example hook file by executing `blt example:init`. You may use the generated file as a guide for writing your own command.
 
-You can override the value of any Phing variable used by BLT by either:
+For a list of all available hook types, see [Annotated Command's hook types](https://github.com/consolidation/annotated-command#hooks).
 
-1. Adding the variable to your project.yml file:
+## Replacing/Overriding a Robo Command
 
-        behat.tags: @mytags
+To replace a BLT command with your own custom version, implement the [replace command annotation](https://github.com/consolidation/annotated-command#replace-command-hook) for your custom command.
 
-2. Specifying the variable value in your `blt` command using [Phing](https://www.phing.info/docs/stable/hlhtml/index.html#d5e792) argument syntax `-D[key]=[value]`, e.g.,
+Please note that when you do this, you take responsibility for maintaining your custom command. Your command may break when changes are made to the upstream version of the command in BLT itself.
 
-        blt tests:behat -Dbehat.tags='@mytags'
+## Disabling a command
 
-3. Using a custom build properties file rather than project.yml:
-
-        blt tests:behat -propertyfile mycustomfile.yml -propertyfileoverride
-
-
-## Disabling a target
-
-You may disable any BLT target. This will cause the target to be skipped during the normal build process. To disable a target, add a `disable-targets` key to your project.yml file:
+You may disable any BLT command. This will cause the target to be skipped during the normal build process. To disable a target, add a `disable-targets` key to your project.yml file:
 
       disable-targets:
         validate:
@@ -49,9 +39,56 @@ You may disable any BLT target. This will cause the target to be skipped during 
 
 This snippet would cause the `validate:phpcs` target to be skipped during BLT builds.
 
+## Adding / overriding filesets
+
+1. Generate an example `Filesets.php` file by executing `blt example:init`. You may use the generated file as a guide for writing your own filesite.
+1. Create a public method in the `Filesets` class in the generated file.
+1. Add a Fileset annotation to your public method, specifying its id:
+
+        @fileset(id="files.php.custom.mytheme")
+
+1. Instantiate and return a `Symfony\Component\Finder\Finder` object. The files found by the finder comprise the fileset.
+1. You may use the Fileset id in various configuration values in your `blt/project.yml` file. E.g., modify `validate:phpcs` such that it scans only your custom fileset, you would add the following to `blt/project.yml`:
+
+        phpcs:
+          filesets:
+            - files.php.custom.mytheme
+
 ## Modifying BLT Configuration
 
-BLT configuration can be customized by overriding the value of default variable values. You can find the default value of any BLT variable in [build.yml](https://github.com/acquia/blt/blob/8.x/phing/build.yml).
+BLT configuration can be customized by overriding the value of default variable values. You can find the default value of any BLT variable in [build.yml](https://github.com/acquia/blt/blob/8.x/config/build.yml).
+
+### Overriding a variable value:
+
+Configuration values are loaded, in this order, from the following list of YAML files:
+
+-  blt/project.yml
+-  blt/[environment].yml
+-  blt/project.local.yml
+
+Values loaded from the later files will overwrite values in earlier files.
+
+### Overriding project-wide
+
+You can override any variable value by adding an entry for that variable to your `project.yml` file. This change will be committed to your repository and shared by all developers for the project. For example:
+
+        behat.tags: @mytags
+
+### Overriding locally
+
+You can override a variable value for your local machine by adding an entry for that variable to your `project.local.yml file`.  This change will not be committed to your repository.
+
+### Overriding in specific environments
+
+You may override a variable value for specific environments, such as a the `ci` environment, by adding an entry for that variable to a file named in the pattern [environment].yml. For instance, ci.yml.
+
+At present, only the CI environment is automatically detected.
+
+### Overriding at runtime
+
+You may overwrite a variable value at runtime by specifying the variable value in your `blt` command using argument syntax `-D [key]=[value]`, e.g.,
+
+        blt tests:behat -D behat.tags='@mytags'
 
 Listed below are some of the more commonly customized BLT targets.
 
@@ -61,20 +98,30 @@ Listed below are some of the more commonly customized BLT targets.
 
 To modify the behavior of the `deploy:build` target, you may override BLT's `deploy` configuration:
 
-       deploy:
-         build-dependencies: true
-         dir: ${repo.root}/deploy
-         exclude_file: ${blt.root}/phing/files/deploy-exclude.txt
-         gitignore_file: ${blt.root}/phing/files/.gitignore
+      deploy:
+        # If true, dependencies will be built during deploy. If false, you should commit dependencies directly.
+        build-dependencies: true
+        dir: ${repo.root}/deploy
+        exclude_file: ${blt.root}/scripts/blt/scripts/deploy/deploy-exclude.txt
+        exclude_additions_file: ${repo.root}/blt/deploy-exclude-additions.txt
+        gitignore_file: ${blt.root}/blt/scripts/deploy/.gitignore
+        git:
+          # If true, deploys will fail if there are uncommitted changes.
+          failOnDirty: true
 
 More specifically, you can modify the build artifact in the following key ways:
 
-1. Change which files are rsynced to the artifact by providing your own `deploy.exclude_file` value in project.yml. See [upstream deploy-exclude.txt](https://github.com/acquia/blt/blob/8.x/phing/files/deploy-exclude.txt) for example contents.  E.g.,
+1. Change which files are rsynced to the artifact by providing your own `deploy.exclude_file` value in project.yml. See [upstream deploy-exclude.txt](https://github.com/acquia/blt/blob/8.x/scripts/blt/deploy/deploy-exclude.txt) for example contents.  E.g.,
 
           deploy:
             exclude_file: ${repo.root}/blt/deploy/rsync-exclude.txt
 
-1. Change which files are gitignored in the artifact by providing your own `deploy.gitignore_file` value in project.yml. See [upstream .gitignore](https://github.com/acquia/blt/blob/8.x/phing/files/.gitignore) for example contents. E.g.,
+1. If you'd simply like to add onto the [upstream deploy-exclude.txt](https://github.com/acquia/blt/blob/8.x/scripts/blt/deploy/deploy-exclude.txt) instead of overriding it, you need not define your own `deploy.exclude_file`. Instead, simply leverage the `deploy-exclude-additions.txt` file found under the top-level `blt` directory by adding each file or directory you'd like to exclude on its own line. E.g.,
+
+          /directorytoexclude
+          excludeme.txt
+
+1. Change which files are gitignored in the artifact by providing your own `deploy.gitignore_file` value in project.yml. See [upstream .gitignore](https://github.com/acquia/blt/blob/8.x/scripts/blt/deploy/.gitignore) for example contents. E.g.,
 
           deploy:
             gitignore_file: ${repo.root}/blt/deploy/.gitignore
@@ -108,37 +155,27 @@ In this example, an executable file named `pre-commit` should exist in `${repo.r
 
 #### tests:behat
 
-To modify the behavior of the tests:behat target, you may override BLT's `behat` configuration:
+To modify the behavior of the tests:behat target, you may override BLT's `behat` configuration.
 
         behat:
           config: ${repo.root}/tests/behat/local.yml
           profile: local
-          # If true, `drush runserver` will be used for executing tests.
-          run-server: false
-          # This is used for ad-hoc creation of a server via `drush runserver`.
-          server-url: http://127.0.0.1:8888
-          # If true, PhantomJS GhostDriver will be launched with Behat.
-          launch-phantom: true
+          # The URL of selenium server. Must correspond with setting in behat's yaml config.
+          selenium:
+            port: 4444
+            url: http://127.0.0.1:${behat.selenium.port}/wd/hub
           # An array of paths with behat tests that should be executed.
           paths:
-            - ${docroot}/modules
-            - ${docroot}/profiles
+            # - ${docroot}/modules
+            # - ${docroot}/profiles
             - ${repo.root}/tests/behat
-          tags: '~ajax'
-
+          tags: '~ajax&&~experimental&&~lightningextension'
+          extra: ''
+          # May be selenium or phantomjs.
+          web-driver: selenium
 
 ### validate:*
 
 #### validate:phpcs
 
-To modify the behavior of the validate:phpcs target, you may override BLT's `phpcs` configuration:
-
-        phpcs:
-          filesets:
-            - files.php.custom.modules
-            - files.php.tests
-            - files.frontend.custom.themes
-
-The phpcs.filesets array contains references to Phing `<fileset>`s. You can remove or add your own custom filesets to the phpcs.filesets array.
-
-The default filesets are defined in [filesets.xml](https://github.com/acquia/blt/blob/8.x/phing/tasks/filesets.xml).
+To modify the behavior of the validate:phpcs target, you may copy `phpcs.xml.dist` to `phpcs.xml` in your repository root directory and modify the XML. Please see the [official PHPCS documentation](https://github.com/squizlabs/PHP_CodeSniffer/wiki/Advanced-Usage#using-a-default-configuration-file) for more information.

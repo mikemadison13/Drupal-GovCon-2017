@@ -18,12 +18,12 @@ function STARTERKIT_form_system_theme_settings_alter(&$form, FormStateInterface 
 
   // Create the form using Forms API: http://api.drupal.org/api/7
   /* -- Delete this line if you want to use this setting
-  $form['STARTERKIT_example'] = array(
+  $form['STARTERKIT_example'] = [
   '#type'          => 'checkbox',
   '#title'         => t('STARTERKIT sample setting'),
   '#default_value' => theme_get_setting('STARTERKIT_example'),
   '#description'   => t("This example option doesn't do anything."),
-  );
+  ];
   // */
 
   /* -- Delete this line if you want to remove this base theme setting.

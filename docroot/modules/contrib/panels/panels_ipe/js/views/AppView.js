@@ -173,10 +173,13 @@
 
       // @todo Our backend should inform us of region suggestions.
       regions.each(function (region) {
-        // If a layout with the same name exists, copy our block collection.
-        var new_region = layout.get('regionCollection').get(region.get('name'));
+        var potential_regions = layout.get('regionCollection').filter(function (item) {
+          return item.get('name').match(region.get('name')) || region.get('name').match(item.get('name'));
+        });
+        var new_region = layout.get('regionCollection').get(region.get('name')) || potential_regions[0];
+        // If a layout with a similar name exists, copy our block collection.
         if (new_region) {
-          new_region.set('blockCollection', region.get('blockCollection'));
+          new_region.get('blockCollection').add(region.get('blockCollection').toJSON());
         }
         // Otherwise add these blocks to our generic pool.
         else {

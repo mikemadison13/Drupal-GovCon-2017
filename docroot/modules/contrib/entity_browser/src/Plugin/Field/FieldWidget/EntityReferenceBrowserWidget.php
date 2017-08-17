@@ -481,7 +481,6 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    *   The render array for the current selection.
    */
   protected function displayCurrentSelection($details_id, $field_parents, $entities) {
-
     $field_widget_display = $this->fieldDisplayManager->createInstance(
       $this->getSetting('field_widget_display'),
       $this->getSetting('field_widget_display_settings') + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
@@ -490,6 +489,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     return [
       '#theme_wrappers' => ['container'],
       '#attributes' => ['class' => ['entities-list']],
+      '#prefix' => '<p>' . $this->getCardinalityMessage($entities) . '</p>',
       'items' => array_map(
         function (ContentEntityInterface $entity, $row_id) use ($field_widget_display, $details_id, $field_parents) {
           $display = $field_widget_display->view($entity);
@@ -551,6 +551,42 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         empty($entities) ? [] : range(0, count($entities) - 1)
       ),
     ];
+  }
+
+  /**
+   * Generates a message informing the user how many more items they can choose.
+   *
+   * @param array|int $selected
+   *   The current selections, or how many items are selected.
+   *
+   * @return string
+   *   A message informing the user who many more items they can select.
+   */
+  protected function getCardinalityMessage($selected) {
+    $message = NULL;
+
+    $storage = $this->fieldDefinition->getFieldStorageDefinition();
+    $cardinality = $storage->getCardinality();
+    $target_type = $storage->getSetting('target_type');
+    $target_type = $this->entityTypeManager->getDefinition($target_type);
+
+    if (is_array($selected)) {
+      $selected = count($selected);
+    }
+
+    if ($cardinality === 1 && $selected === 0) {
+      $message = t('You can select one @entity_type.', [
+        '@entity_type' => $target_type->getSingularLabel(),
+      ]);
+    }
+    elseif ($cardinality >= $selected) {
+      $message = t('You can select up to @maximum @entity_type (@remaining left).', [
+        '@maximum' => $cardinality,
+        '@entity_type' => $target_type->getPluralLabel(),
+        '@remaining' => $cardinality - $selected,
+      ]);
+    }
+    return (string) $message;
   }
 
   /**

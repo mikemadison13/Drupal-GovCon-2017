@@ -5,9 +5,11 @@
  * Contains installation and update routines for Lightning Dev.
  */
 
+use Drupal\embed\Entity\EmbedButton;
 use Drupal\entity_browser\Entity\EntityBrowser;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\filter\Entity\FilterFormat;
 use Drupal\lightning_core\ConfigHelper as Config;
 use Drupal\media_entity\Entity\MediaBundle;
 use Drupal\scheduled_updates\Entity\ScheduledUpdateType;
@@ -48,9 +50,6 @@ function lightning_dev_install() {
   $widgets['8b142f33-59d1-47b1-9e3a-4ae85d8376fa']['label'] = 'Create embed';
   $entity_browser->set('widgets', $widgets);
   $entity_browser->save();
-
-  // Set up centralized Behat configuration.
-  lightning_dev_update_8004();
 }
 
 /**
@@ -174,15 +173,13 @@ function lightning_dev_update_8003() {
 }
 
 /**
- * Sets up centralized Behat configuration.
+ * Removed in Lightning 8.x-2.13.
+ *
+ * Formerly set up centralized Behat configuration.
+ *
+ * @deprecated
  */
 function lightning_dev_update_8004() {
-  \Drupal::service('lightning_dev.behat')->generate('http://127.0.0.1:8080');
-
-  // Update the Behat configuration for all installed modules.
-  $modules = \Drupal::moduleHandler()->getModuleList();
-  $modules = array_keys($modules);
-  lightning_dev_modules_installed($modules);
 }
 
 /**
@@ -196,4 +193,21 @@ function lightning_dev_update_8005() {
   $display['display_options']['defaults']['arguments'] = FALSE;
   $display['display_options']['filters']['bundle']['expose']['argument'] = 'bundle';
   $view->save();
+}
+
+/**
+ * Executes manual updates for Lightning 2.1.5 --> 2.1.6.
+ */
+function lightning_dev_update_8006() {
+  \Drupal::service('plugin.manager.embed.type')->clearCachedDefinitions();
+
+  $button = EmbedButton::load('media_browser');
+  $settings = $button->getTypeSettings();
+  $settings['display_plugins'][] = 'media_image';
+  $button->set('type_settings', $settings)->save();
+
+  $format = FilterFormat::load('rich_text');
+  $configuration = $format->filters('filter_html')->getConfiguration();
+  $configuration['settings']['allowed_html'] = str_replace('<drupal-entity data-*>', '<drupal-entity data-* title alt>', $configuration['settings']['allowed_html']);
+  $format->setFilterConfig('filter_html', $configuration)->save();
 }

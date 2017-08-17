@@ -6,12 +6,14 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\IndexedReader;
 use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
-use vierbergenlars\SemVer\version;
 
 /**
  *
@@ -19,12 +21,27 @@ use vierbergenlars\SemVer\version;
 class Updater {
 
   /**
+   * @var \Doctrine\Common\Annotations\IndexedReader
+   */
+  protected $annotationsReader;
+
+  /**
    * @var \Symfony\Component\Console\Output\ConsoleOutput*/
   protected $output;
 
   /**
+   * @var \Symfony\Component\Console\Helper\FormatterHelper
+   */
+  protected $formatter;
+
+  /**
    * @var string*/
   protected $repoRoot;
+
+  /**
+   * @var string
+   */
+  protected $bltRoot;
 
   /**
    * @var \Symfony\Component\Filesystem\Filesystem*/
@@ -34,6 +51,16 @@ class Updater {
    * @var string
    */
   protected $composerJsonFilepath;
+
+  /**
+   * @var string
+   */
+  protected $composerRequiredJsonFilepath;
+
+  /**
+   * @var string
+   */
+  protected $composerSuggestedJsonFilepath;
 
   /**
    * Updater constructor.
@@ -51,8 +78,16 @@ class Updater {
     $this->updateClassName = $update_class;
     $this->fs = new Filesystem();
     $this->setRepoRoot($repo_root);
+    $this->setBltRoot($repo_root . '/vendor/acquia/blt');
     $this->composerJsonFilepath = $this->repoRoot . '/composer.json';
+    $this->composerRequiredJsonFilepath = $this->getBltRoot() . '/composer.required.json';
+    $this->composerSuggestedJsonFilepath = $this->getBltRoot() . '/composer.suggested.json';
+    $this->templateComposerJsonFilepath = $this->getBltRoot() . '/template/composer.json';
     $this->projectYmlFilepath = $this->repoRoot . '/blt/project.yml';
+    $this->formatter = new FormatterHelper();
+
+    // Create "ice" style.
+    $this->getOutput()->getFormatter()->setStyle('ice', new OutputFormatterStyle('white', 'blue'));
   }
 
   /**
@@ -83,10 +118,30 @@ class Updater {
   }
 
   /**
+   * Sets $this->bltRoot.
+   *
+   * @param string $blt_root
+   */
+  public function setBltRoot($blt_root) {
+    $this->bltRoot = $blt_root;
+  }
+
+  public function getBltRoot() {
+    return $this->bltRoot;
+  }
+
+  /**
    * @return ConsoleOutput
    */
   public function getOutput() {
     return $this->output;
+  }
+
+  /**
+   * @return \Symfony\Component\Console\Helper\FormatterHelper
+   */
+  public function getFormatter() {
+    return $this->formatter;
   }
 
   /**
@@ -136,25 +191,22 @@ class Updater {
    * Gets all applicable updates for a given version delta.
    *
    * @param string $starting_version
-   *   The starting version. E.g., 8.5.0.
+   *   The starting version. E.g., 8005000.
    *
    * @param string $ending_version
-   *   The ending version. E.g., 8.5.1.
+   *   The ending version. E.g., 8005001.
    *
    * @return array
    *   An array of applicable update methods, keyed by method name. Each row
    *   contains the metadata from the Update annotation.
    */
-  public function getUpdates($starting_version, $ending_version) {
+  public function getUpdates($starting_version, $ending_version = NULL) {
+    if (!$ending_version) {
+      $ending_version = $this->getLatestUpdateMethodVersion();
+    }
+
     $updates = [];
     $update_methods = $this->getAllUpdateMethods();
-    $include_all_updates = FALSE;
-
-    if (strpos($starting_version, 'dev') !== FALSE
-      || strpos($ending_version, 'dev') !== FALSE) {
-      $this->output->writeln("<comment>You are (or were) using a development branch of BLT. It is assumed that you require all scripted updates.</comment>");
-      $include_all_updates = TRUE;
-    }
 
     /**
      * @var string $method_name
@@ -163,8 +215,7 @@ class Updater {
     foreach ($update_methods as $method_name => $metadata) {
       $version = $metadata->version;
 
-      if ($include_all_updates
-        || (version::gt($version, $starting_version) && version::lte($version, $ending_version))) {
+      if (($version > $starting_version) && $version <= $ending_version) {
         $updates[$method_name] = $metadata;
       }
     }
@@ -179,7 +230,7 @@ class Updater {
    *
    * @see drupal_get_schema_versions()
    */
-  protected function getAllUpdateMethods() {
+  public function getAllUpdateMethods() {
     $update_methods = [];
     $methods = get_class_methods($this->updateClassName);
     foreach ($methods as $method_name) {
@@ -191,6 +242,25 @@ class Updater {
     }
 
     return $update_methods;
+  }
+
+  /**
+   * Gets the latest (highest numbered) update method.
+   *
+   * @return int mixed
+   *   Returns the schema version for the latest update method.
+   */
+  public function getLatestUpdateMethodVersion() {
+    $update_methods = $this->getAllUpdateMethods();
+    $methods_by_number = [];
+    foreach ($update_methods as $update_method) {
+      $methods_by_number[$update_method->version] = $update_method;
+    }
+
+    $versions = array_keys($methods_by_number);
+    $latest_version = max($versions);
+
+    return $latest_version;
   }
 
   /**
@@ -317,19 +387,62 @@ class Updater {
   }
 
   /**
+   * Returns composer.required.json content.
+   *
+   * @return array
+   *   The contents of composer.required.json.
+   */
+  public function getComposerRequiredJson() {
+    $composer_required_json = json_decode(file_get_contents($this->composerRequiredJsonFilepath), TRUE);
+
+    return $composer_required_json;
+  }
+
+  /**
+   * Returns composer.suggested.json content.
+   *
+   * @return array
+   *   The contents of composer.suggested.json.
+   */
+  public function getComposerSuggestedJson() {
+    $composer_suggested_json = json_decode(file_get_contents($this->composerSuggestedJsonFilepath), TRUE);
+
+    return $composer_suggested_json;
+  }
+
+  /**
+   * Returns template/composer.json content.
+   *
+   * @return array
+   *   The contents of template/composer.json.
+   */
+  public function getTemplateComposerJson() {
+    $template_composer_json = json_decode(file_get_contents($this->templateComposerJsonFilepath), TRUE);
+
+    return $template_composer_json;
+  }
+
+  /**
    * Writes an array to composer.json.
    *
    * @param array $contents
    *   The new contents of composer.json.
    */
   public function writeComposerJson($contents) {
+    // Ensure that require and require-dev are objects and not arrays.
+    if (array_key_exists('require', $contents) && is_array($contents['require'])) {
+      $contents['require'] = (object) $contents['require'];
+    }
+    if (array_key_exists('require-dev', $contents)&& is_array($contents['require-dev'])) {
+      $contents['require-dev'] = (object) $contents['require-dev'];
+    }
     file_put_contents($this->composerJsonFilepath, json_encode($contents, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
   }
 
   /**
    * @return mixed
    */
-  public function getProjectConfig() {
+  public function getProjectYml() {
     $project_yml = Yaml::parse(file_get_contents($this->projectYmlFilepath));
 
     return $project_yml;
@@ -338,7 +451,7 @@ class Updater {
   /**
    * @param $contents
    */
-  public function writeProjectConfig($contents) {
+  public function writeProjectYml($contents) {
     file_put_contents($this->projectYmlFilepath, Yaml::dump($contents, 3, 2));
   }
 
@@ -369,6 +482,27 @@ class Updater {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Copies a file from the BLT template to the repository.
+   *
+   * @param string $source
+   *   The filepath, relative to the BLT template directory.
+   */
+  public function syncWithTemplate($filePath, $overwrite = FALSE) {
+    $sourcePath = $this->getBltRoot() . '/template/' . $filePath;
+    $targetPath = $this->getRepoRoot() . '/' . $filePath;
+
+    if ($this->getFileSystem()->exists($sourcePath)) {
+      try {
+        $this->getFileSystem()->copy($sourcePath, $targetPath, $overwrite);
+      }
+      catch (IOException $e) {
+        throw $e;
+      }
+    }
+
   }
 
   /**

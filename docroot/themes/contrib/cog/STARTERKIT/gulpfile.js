@@ -6,6 +6,7 @@
 //
 // Available tasks:
 //   `gulp`
+//   'gulp browser-sync'
 //   `gulp build`
 //   `gulp build:dev`
 //   `gulp clean`
@@ -63,6 +64,8 @@
 // typey                 : A complete framework for working with typography in sass
 // -------------------------------------
 
+/* global require */
+
 var gulp = require('gulp');
 // Setting pattern this way allows non gulp- plugins to be loaded as well.
 var plugins = require('gulp-load-plugins')({
@@ -72,7 +75,8 @@ var plugins = require('gulp-load-plugins')({
     'gulp-sass-glob': 'sassGlob',
     'run-sequence': 'runSequence',
     'gulp-clean-css': 'cleanCSS',
-    'gulp-stylelint': 'stylelint'
+    'gulp-stylelint': 'stylelint',
+    'gulp-babel': 'babel'
   }
 });
 
@@ -85,7 +89,10 @@ var paths = {
     source: 'sass/',
     destination: 'css/'
   },
-  scripts: 'js/',
+  scripts: {
+    source: 'js/src',
+    destination: 'js/dist'
+  },
   images: 'img/',
   styleGuide: 'styleguide'
 };
@@ -93,27 +100,39 @@ var paths = {
 // These are passed to each task.
 var options = {
 
+  // ----- Browsersync ----- //
+
+  browserSync: {
+    // Put your local site URL here to prevent Browsersync
+    // from prompting you to add additional scripts to your page.
+    // proxy: {
+    //   target: 'http://local.example.com'
+    // },
+    open: 'external',
+    xip: true,
+    logConnections: true
+  },
+
   // ----- CSS ----- //
 
   css: {
-    files: paths.styles.destination + '**/*.css',
-    file: paths.styles.destination + '/styles.css',
-    destination: paths.styles.destination
+    files: path.join(paths.styles.destination, '**/*.css'),
+    file: path.join(paths.styles.destination, '/styles.css'),
+    destination: path.join(paths.styles.destination)
   },
 
   // ----- Sass ----- //
 
   sass: {
-    files: paths.styles.source + '**/*.scss',
-    file: paths.styles.source + 'styles.scss',
-    destination: paths.styles.destination
+    files: path.join(paths.styles.source, '**/*.scss'),
+    file: path.join(paths.styles.source, 'styles.scss'),
+    destination: path.join(paths.styles.destination)
   },
 
   // ----- JS ----- //
   js: {
-    files: paths.scripts + '**/*.js',
-    destination: paths.scripts
-
+    files: path.join(paths.scripts.source, '**/*.js'),
+    destination: path.join(paths.scripts.destination)
   },
 
   // ----- Images ----- //
@@ -156,16 +175,19 @@ var options = {
 };
 
 // Tasks
+require('./gulp-tasks/browser-sync')(gulp, plugins, options);
 require('./gulp-tasks/build')(gulp, plugins, options);
 require('./gulp-tasks/clean')(gulp, plugins, options);
 require('./gulp-tasks/clean-css')(gulp, plugins, options);
 require('./gulp-tasks/clean-styleguide')(gulp, plugins, options);
 require('./gulp-tasks/compile-sass')(gulp, plugins, options);
+require('./gulp-tasks/compile-js')(gulp, plugins, options);
 require('./gulp-tasks/compile-styleguide')(gulp, plugins, options);
 require('./gulp-tasks/default')(gulp, plugins, options);
 require('./gulp-tasks/lint-js')(gulp, plugins, options);
 require('./gulp-tasks/lint-css')(gulp, plugins, options);
 require('./gulp-tasks/minify-css')(gulp, plugins, options);
+require('./gulp-tasks/serve')(gulp, plugins, options);
 require('./gulp-tasks/test-css')(gulp, plugins, options);
 require('./gulp-tasks/watch')(gulp, plugins, options);
 

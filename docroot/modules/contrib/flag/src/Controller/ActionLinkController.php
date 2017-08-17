@@ -4,7 +4,6 @@ namespace Drupal\flag\Controller;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
-use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
@@ -19,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Provides a controller to flag and unflag when routed from a normal link.
  */
-class ActionLinkController extends ControllerBase implements ContainerInjectionInterface {
+class ActionLinkController implements ContainerInjectionInterface {
 
   /**
    * The flag service.
@@ -156,7 +155,9 @@ class ActionLinkController extends ControllerBase implements ContainerInjectionI
       // Redirect back to the entity. A passed in destination query parameter
       // will automatically override this.
       $url_info = $entity->toUrl();
-      return $this->redirect($url_info->getRouteName(), $url_info->getRouteParameters());
+      $options['absolute'] = TRUE;
+      $url = Url::fromRoute($url_info->getRouteName(), $url_info->getRouteParameters(), $options);
+      return new RedirectResponse($url->toString());
     }
     else {
       // For entities that don't have a canonical URL (like paragraphs),

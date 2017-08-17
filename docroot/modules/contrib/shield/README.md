@@ -3,8 +3,8 @@ Shield
 
 ### Summary
 
-PHP Authentication shield. It creates a simple shield for the site with Apache
-authentication. It hides the sites, if the user does not know a simple
+PHP Authentication shield. It creates a simple shield for the site with HTTP
+basic authentication. It hides the sites, if the user does not know a simple
 username/password. It handles Drupal as a
 ["walled garden"](http://en.wikipedia.org/wiki/Walled_garden_%28technology%29).
 

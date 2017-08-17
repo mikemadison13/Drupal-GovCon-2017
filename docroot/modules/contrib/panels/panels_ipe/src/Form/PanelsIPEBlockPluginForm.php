@@ -228,6 +228,9 @@ class PanelsIPEBlockPluginForm extends FormBase {
     $block_form_state = (new FormState())->setValues($form_state->getValue('settings'));
     $block_instance->validateConfigurationForm($form, $block_form_state);
     // Update the original form values.
+    foreach ($block_form_state->getErrors() as $name => $error) {
+      $form_state->setErrorByName($name, $error);
+    }
     $form_state->setValue('settings', $block_form_state->getValues());
   }
 

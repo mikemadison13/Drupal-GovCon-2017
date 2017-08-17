@@ -2,4 +2,4 @@ user: ''
 pass: ''
 # For real security, remove [user] and [pass].
 print: 'Hello, user: [user], pass: [pass]!'
-allow_cli: 1
+allow_cli: true

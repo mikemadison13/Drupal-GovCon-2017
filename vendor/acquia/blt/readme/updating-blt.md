@@ -4,56 +4,33 @@
 
 If you are already using BLT via Composer, you can update to the latest version of BLT using composer.
 
-1. Run the following commands:
+1. To update to the latest version of BLT that is compatible with your existing dependencies, run the following commands:
 
-        # update blt and its dependencies
         composer update acquia/blt --with-dependencies
-        # Remove deprecated files.
-        blt cleanup
-        # update all dependencies, in case BLT modified your composer.json during previous update.
-        composer update
-  
-   Rarely, the first command will fail with a version conflict. If this happens, run `composer update` first so that Composer can try to resolve a new set of interoperable dependencies.
 
-1. Check the [release information](https://github.com/acquia/blt/releases) to see if there are special update instructions for the new version. 
+1. Sometimes, the first command will fail to update to the latest version of BLT. This is typically because some other dependency prevents it. If this happens, run:
+
+        rm -rf vendor && composer require acquia/blt:^[latest-version] --no-update && composer update
+
+   Where `[latest-version]` is the latest version of BLT. E.g., `8.7.0`.
+
+   This will cause Composer to update all of your dependencies (in accordance with your version constraints) and permit the latest version of BLT to be installed.
+
+1. Check the [release information](https://github.com/acquia/blt/releases) to see if there are special update instructions for the new version.
 1. Review and commit changes to your project files.
-1. Rarely, you may need to refresh your local environment via `blt local:setup`. This will drop your local database and re-install Drupal.
+1. Rarely, you may need to refresh your local environment via `blt setup`. This will drop your local database and re-install Drupal.
 
 ### Modifying update behavior
 
-By default BLT will modify your project's composer.json to conform with the [upstream composer.json template](https://github.com/acquia/blt/blob/8.x/template/composer.json). If you'd like to prevent a specific package or key in composer.json from being modified, use the `composer-exclude-merge` option:
+By default BLT will modify a handful of files in your project to conform to the [upstream template](https://github.com/acquia/blt/blob/8.x/template). If you'd like to prevent this, set `extra.blt.update` to `false` in `composer.json`:
 
       "extra": {
         "blt": {
-            "update": true,
-            "composer-exclude-merge": {
-                "require": [
-                    "drupal/acsf",
-                    "drupal/acquia_connector",
-                    "drupal/memcache",
-                    "drupal/search_api",
-                    "drupal/search_api_solr"
-                ],
-                "require-dev": "*"
-            }
+            "update": false
         }
       }
 
-This would prevent the merging of any upstream updates to the composer.json configuration for a handful of modules in `require` and all packages in `require-dev`.
-
-A few other examples of valid usage:
-
-      "extra": {
-        "blt": {
-            "update": false,
-        }
-      }
-      "extra": {
-        "blt": {
-            "update": true,
-            "composer-exclude-merge": "*"
-        }
-      }
+Please not that if you choose to do this, it is your responsibility to track upstream changes. This is very likely to cause issues when you upgrade BLT to a new version.
 
 ## Updating from a non-Composer-managed (very old) version
 
@@ -83,7 +60,21 @@ If you are using an older version of BLT that was not installed using Composer, 
 
 1. Upgrade to the latest version of BLT:
 
-        composer require acquia/blt:^8.3 --no-update
+        composer require acquia/blt:^8.6.15 --no-update
         composer update
+
+1. If using Travis CI, re-initialize .travis.yml and re-apply customizations:
+
+        rm .travis.yml && blt ci:travis:init
+
+1. Cleanup deprecated files
+
+        rm -rf .git/hooks && mkdir .git/hooks
+        blt cleanup
+
+1. If using Drupal VM, re-create VM:
+
+        blt vm:nuke
+        blt vm
 
 Review and commit changes to your project files. For customized files like `.travis.yml` or `docroot/sites/default/settings.php` it is recommended that you use `git add -p` to select which specific line changes you'd like to stage and commit.

@@ -2,6 +2,7 @@
 
 namespace Acquia\Blt\Composer;
 
+use Acquia\Blt\Update\Updater;
 use Composer\Script\Event;
 use Composer\Installer\PackageEvent;
 use Composer\Composer;
@@ -57,7 +58,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     $this->composer = $composer;
     $this->io = $io;
     $this->eventDispatcher = $composer->getEventDispatcher();
-    ProcessExecutor::setTimeout(2000);
+    ProcessExecutor::setTimeout(3600);
     $this->executor = new ProcessExecutor($this->io);
   }
 
@@ -68,8 +69,35 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     return array(
       PackageEvents::POST_PACKAGE_INSTALL => "onPostPackageEvent",
       PackageEvents::POST_PACKAGE_UPDATE => "onPostPackageEvent",
+      ScriptEvents::PRE_INSTALL_CMD => 'checkInstallerPaths',
       ScriptEvents::POST_UPDATE_CMD => 'onPostCmdEvent',
     );
+  }
+
+  /**
+   * Verify that composer.json contains correct values for installer-paths.
+   *
+   * Unfortunately, these values cannot be placed in composer.required.json.
+   *
+   * @see https://github.com/wikimedia/composer-merge-plugin/issues/139
+   *
+   * @param \Composer\Script\Event $event
+   */
+  public function checkInstallerPaths(Event $event) {
+    $extra = $this->composer->getPackage()->getExtra();
+    if (empty($extra['installer-paths'])) {
+      $this->io->write('<error>Error: extras.installer-paths is missing from your composer.json file.</error>');
+    }
+    else {
+      $composer_required_json_filename = $this->getVendorPath() . '/acquia/blt/template/composer.json';
+      if (file_exists($composer_required_json_filename)) {
+        $composer_required_json = json_decode(file_get_contents($composer_required_json_filename), TRUE);
+        if ($composer_required_json['extra']['installer-paths'] != $extra['installer-paths']) {
+          $this->io->write('<warning>Warning: The value for extras.installer-paths in composer.json differs from BLT\'s recommended values.</warning>');
+          $this->io->write('<warning>See https://github.com/acquia/blt/blob/8.x/template/composer.json</warning>');
+        }
+      }
+    }
   }
 
   /**
@@ -129,22 +157,19 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
     if ($this->isInitialInstall()) {
       $this->io->write('<info>Creating BLT templated files...</info>');
-      // The BLT command will not work at this point because the .git dir doesn't exist yet.
-      $success = $this->executeCommand($this->getVendorPath() . '/acquia/blt/blt.sh create-project', [], TRUE);
+      if ($this->isNewProject()) {
+        // The BLT command will not work at this point because the .git dir doesn't exist yet.
+        $success = $this->executeCommand($this->getVendorPath() . '/acquia/blt/bin/blt internal:create-project --ansi', [], TRUE);
+      }
+      else {
+        $success = $this->executeCommand($this->getVendorPath() . '/acquia/blt/bin/blt internal:add-to-project --ansi -y', [], TRUE);
+      }
     }
     elseif ($options['blt']['update']) {
       $this->io->write('<info>Updating BLT templated files...</info>');
-
-      // Rsyncs, updates composer.json, project.yml, executes scripted updates for version delta.
-      $pre_composer_json = md5_file($this->getRepoRoot() . DIRECTORY_SEPARATOR . 'composer.json');
-      $success = $this->executeCommand('blt update', [], TRUE);
+      $success = $this->executeCommand('blt update --ansi -y', [], TRUE);
       if (!$success) {
         $this->io->write("<error>BLT update script failed! Run `blt update -verbose` to retry.</error>");
-      }
-      $post_composer_json = md5_file($this->getRepoRoot() . DIRECTORY_SEPARATOR . 'composer.json');
-
-      if ($pre_composer_json != $post_composer_json) {
-        $this->io->write('<error>Your composer.json file was modified by BLT, you MUST run "composer update" to re-process and update dependencies.</error>');
       }
     }
     else {
@@ -155,19 +180,32 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
   /**
    * Determine if BLT is being installed for the first time on this project.
    *
-   * This would execute in the context of `composer create-project`.
-   *
    * @return bool
    *   TRUE if this is the initial install of BLT.
    */
   protected function isInitialInstall() {
     if (!file_exists($this->getRepoRoot() . '/blt/project.yml')
       && !file_exists($this->getRepoRoot() . '/blt/.schema-version')
-      && file_exists($this->getRepoRoot() . '/README.md')
       ) {
       return TRUE;
     }
 
+    return FALSE;
+  }
+
+  /**
+   * Determine if this is a project being newly created.
+   *
+   * This would execute in the context of `composer create-project acquia/blt-project`.
+   *
+   * @return bool
+   *   TRUE if this is a newly create project.
+   */
+  protected function isNewProject() {
+    $composer_json = json_decode(file_get_contents($this->getRepoRoot() . '/composer.json'), TRUE);
+    if (!empty($composer_json['name'] && $composer_json['name'] == 'acquia/blt-project')) {
+      return TRUE;
+    }
     return FALSE;
   }
 
@@ -203,7 +241,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
   protected function getOptions() {
     $defaults = [
       'update' => TRUE,
-      'composer-exclude-merge' => [],
     ];
     $extra = $this->composer->getPackage()->getExtra() + ['blt' => []];
     $extra['blt'] = $extra['blt'] + $defaults;

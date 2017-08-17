@@ -1,7 +1,9 @@
 <?php
 namespace Consolidation\AnnotatedCommand;
 
-use Symfony\Component\Console\Command\Command;
+use Consolidation\AnnotatedCommand\Hooks\Dispatchers\ReplaceCommandHookDispatcher;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -25,8 +27,10 @@ use Consolidation\AnnotatedCommand\Hooks\Dispatchers\ExtracterHookDispatcher;
  * Provide your command processor to the AnnotatedCommandFactory
  * via AnnotatedCommandFactory::setCommandProcessor().
  */
-class CommandProcessor
+class CommandProcessor implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /** var HookManager */
     protected $hookManager;
     /** var FormatterManager */
@@ -35,6 +39,8 @@ class CommandProcessor
     protected $displayErrorFunction;
     /** var PrepareFormatterOptions[] */
     protected $prepareOptionsList = [];
+    /** var boolean */
+    protected $passExceptions;
 
     public function __construct(HookManager $hookManager)
     {
@@ -65,6 +71,32 @@ class CommandProcessor
     {
         $this->displayErrorFunction = $fn;
         return $this;
+    }
+
+    /**
+     * Set a mode to make the annotated command library re-throw
+     * any exception that it catches while processing a command.
+     *
+     * The default behavior in the current (2.x) branch is to catch
+     * the exception and replace it with a CommandError object that
+     * may be processed by the normal output processing passthrough.
+     *
+     * In the 3.x branch, exceptions will never be caught; they will
+     * be passed through, as if setPassExceptions(true) were called.
+     * This is the recommended behavior.
+     */
+    public function setPassExceptions($passExceptions)
+    {
+        $this->passExceptions = $passExceptions;
+        return $this;
+    }
+
+    public function commandErrorForException(\Exception $e)
+    {
+        if ($this->passExceptions) {
+            throw $e;
+        }
+        return new CommandError($e->getMessage(), $e->getCode());
     }
 
     /**
@@ -119,7 +151,7 @@ class CommandProcessor
             );
             return $this->handleResults($output, $names, $result, $commandData);
         } catch (\Exception $e) {
-            $result = new CommandError($e->getMessage(), $e->getCode());
+            $result = $this->commandErrorForException($e);
             return $this->handleResults($output, $names, $result, $commandData);
         }
     }
@@ -135,6 +167,14 @@ class CommandProcessor
         $validated = $validateDispatcher->validate($commandData);
         if (is_object($validated)) {
             return $validated;
+        }
+
+        $replaceDispatcher = new ReplaceCommandHookDispatcher($this->hookManager(), $names);
+        if ($this->logger) {
+            $replaceDispatcher->setLogger($this->logger);
+        }
+        if ($replaceDispatcher->hasReplaceCommandHook()) {
+            $commandCallback = $replaceDispatcher->getReplacementCommand($commandData);
         }
 
         // Run the command, alter the results, and then handle output and status
@@ -194,7 +234,7 @@ class CommandProcessor
             $args = $commandData->getArgsAndOptions();
             $result = call_user_func_array($commandCallback, $args);
         } catch (\Exception $e) {
-            $result = new CommandError($e->getMessage(), $e->getCode());
+            $result = $this->commandErrorForException($e);
         }
         return $result;
     }

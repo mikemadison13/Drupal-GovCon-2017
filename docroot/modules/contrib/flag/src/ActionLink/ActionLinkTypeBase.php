@@ -5,6 +5,7 @@ namespace Drupal\flag\ActionLink;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Link;
+use Drupal\Core\Routing\RedirectDestinationTrait;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -14,8 +15,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\flag\FlagInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
-
 
 /**
  * Provides a base class for all link types.
@@ -34,6 +33,7 @@ abstract class ActionLinkTypeBase extends PluginBase implements ActionLinkTypePl
   protected $currentUser;
 
   use StringTranslationTrait;
+  use RedirectDestinationTrait;
 
   /**
    * Build a new link type instance and sets the configuration.
@@ -154,26 +154,7 @@ abstract class ActionLinkTypeBase extends PluginBase implements ActionLinkTypePl
    *  A string containing a destination URL parameter.
    */
   protected function getDestination() {
-    $current_url = Url::fromRoute('<current>');
-    $current_path = $current_url->getInternalPath();
-    $route_params = $current_url->getRouteParameters();
-
-    if (isset($route_params['destination'])) {
-      return $route_params['destination'];
-    }
-
-    // Attempt to get the parent path if this link is
-    // being built during a views AJAX request.
-    $current_query_params = \Drupal::request()->query->all();
-    if (!empty($current_query_params['ajax_page_state']) && count($current_query_params['ajax_page_state'])) {
-      // If the referrer is an internal path, use that instead.
-      $referrer_request = Request::create(\Drupal::request()->server->get('HTTP_REFERER'));
-      if ($referrer = \Drupal::service('path.validator')->getUrlIfValid($referrer_request->getRequestUri())) {
-        return $referrer->getInternalPath();
-      }
-    }
-
-    return $current_path;
+    return $this->getRedirectDestination()->get();
   }
 
   /**

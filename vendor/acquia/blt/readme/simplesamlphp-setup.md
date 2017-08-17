@@ -40,11 +40,17 @@ Request the remote IdP metadata (XML) from the customer. Note that each environm
                 'database_name' => 'example',
                 'session_store' => array(
                   // Valid values are "memcache" and "database".
-                  'prod' => 'memcache',
-                  'test' => 'memcache',
+                  'prod' => 'database',
+                  'test' => 'database',
                   'dev'  => 'database',
                 ),
               );
+
+      1. Amend the default values for the simplesaml session store if desired.
+         Note, memcache is only supported on PHP < 7 as tagged versions of the
+         simplesaml library only support php-memcache rather than the more
+         mature (and PHP 7 ready) php-memcached. This has been fixed in https://github.com/simplesamlphp/simplesamlphp/pull/395
+         and will likely be included in a future tagged version.
 
       1. Update the following values in the `$config` array:
 
@@ -58,6 +64,20 @@ Request the remote IdP metadata (XML) from the customer. Note that each environm
 
               $config['admin.protectindexpage'] = TRUE;
               $config['admin.protectmetadata'] = TRUE;
+      1. Optionally set the following values to prevent Varnish from interfering with SimpleSAMLphp.
+ 
+       // Prevent Varnish from interfering with SimpleSAMLphp.
+       // SSL terminated at the ELB/balancer so we correctly set the SERVER_PORT
+       // and HTTPS for SimpleSAMLphp baseurl configuration.
+       $protocol = 'http://';
+       $port = ':80';
+       if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+         $_SERVER['SERVER_PORT'] = 443;
+         $_SERVER['HTTPS'] = 'true';
+         $protocol = 'https://';
+         $port = ':' . $_SERVER['SERVER_PORT'];
+       }
+       $config['baseurlpath'] = $protocol . $_SERVER['HTTP_HOST'] . $port . '/simplesaml/';	  
 
 1. Configure IdP Remote Metadata.
 
@@ -67,11 +87,13 @@ Request the remote IdP metadata (XML) from the customer. Note that each environm
 
       1. Navigate to the "XML to SimpleSAMLphp metadata converter" (`/simplesaml/admin/metadata-converter.php`), which can be found on the "Federation" tab under "Tools".
 
-      1. Optionally remove the default metadata from `${project.root}/simplesamlphp/config/authsources.php`.
+      1. Optionally remove the default metadata from `${project.root}/simplesamlphp/config/saml20-idp-remote.php`.
 
-      1. For each metadata (XML) file from the customer, parse it using this tool and copy the converted `saml20-idp-remote` metadata into `${project.root}/simplesamlphp/config/authsources.php`.
+      1. For each metadata (XML) file from the customer, parse it using this tool and copy the converted `saml20-idp-remote` metadata into `${project.root}/simplesamlphp/config/saml20-idp-remote.php`.
 
-      1. Make any additional needed changes to `${project.root}/simplesamlphp/config/authsources.php` using [SimpleSAMLphp Service Provider QuickStart](https://simplesamlphp.org/docs/stable/simplesamlphp-sp) as a guide (except enabling a certificate for your service provider, which should be done according to the instructions below). Note especially the `name` option by which you can give each IdP a human-readable name (e.g., "Dev", "Prod") for use in the administrative UI.
+1. Configure authsources.php
+
+      1. Edit `${project.root}/simplesamlphp/config/authsources.php` using [SimpleSAMLphp Service Provider QuickStart](https://simplesamlphp.org/docs/stable/simplesamlphp-sp) as a guide (except enabling a certificate for your service provider, which should be done according to the instructions below). Note especially the `name` option by which you can give each IdP a human-readable name (e.g., "Dev", "Prod") for use in the administrative UI.
 
       1. If your Identity Provider/Federation requires that your Service Providers hold a certificate...
 
@@ -88,8 +110,6 @@ Request the remote IdP metadata (XML) from the customer. Note that each environm
                     'certificate' => 'saml.crt',
                     'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
                   ),
-
-1. Edit `${project.root}/simplesamlphp/metadata/saml20-idp-remote.php` as described in [IdP remote metadata reference](https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-remote).
 
 1. Review `${project.root}/simplesamlphp/config/config.php` and set any values called for by your project requirements. 
 
@@ -124,3 +144,4 @@ Repeat the following steps for each environment that requires SAML authenticatio
 * [SAML Chrome Panel](https://chrome.google.com/webstore/detail/saml-chrome-panel/paijfdbeoenhembfhkhllainmocckace) extends the Chrome Developer Tools, adding support for SAML Requests and Responses to be displayed in the Developer Tools window.
 
 * [SAML tracer](https://addons.mozilla.org/en-US/firefox/addon/saml-tracer/) for Firefox is a tool for viewing SAML messages sent through the browser during single sign-on and single logout.
+

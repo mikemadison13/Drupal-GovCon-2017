@@ -24,7 +24,7 @@ use Drupal\user\UserInterface;
  *    singular = "@count flagging",
  *    plural = "@count flaggings",
  *  ),
- *  bundle_label = @Translation("Flagging"),
+ *  bundle_label = @Translation("Flag"),
  *  handlers = {
  *    "storage" = "Drupal\flag\Entity\Storage\FlaggingStorage",
  *    "storage_schema" = "Drupal\flag\Entity\Storage\FlaggingStorageSchema",

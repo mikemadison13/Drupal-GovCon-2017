@@ -15,7 +15,11 @@ use Drupal\lightning_media_image\Plugin\MediaEntity\Type\Image;
  * Implements hook_modules_installed().
  */
 function lightning_media_image_modules_installed(array $modules) {
-  if (in_array('lightning_roles', $modules)) {
+  // Don't do anything during config sync.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+  elseif (in_array('lightning_roles', $modules)) {
     $permissions = ['access image_browser entity browser pages'];
 
     // Media creators and managers can always access the image browser.
@@ -34,6 +38,11 @@ function lightning_media_image_modules_installed(array $modules) {
 function lightning_media_image_media_entity_type_info_alter(array &$types) {
   $types['image']['input_match']['field_types'] = ['image'];
   Override::pluginClass($types['image'], Image::class);
+
+  // When a media item that uses the Image plugin is embedded in a text editor,
+  // prefer the media_image display plugin.
+  // @see \Drupal\lightning_media\Form\EntityEmbedDialog::buildEmbedStep()
+  $types['image']['entity_embed_display'] = 'media_image';
 }
 
 /**
@@ -47,6 +56,11 @@ function lightning_media_image_form_entity_browser_image_browser_form_alter(arra
  * Implements hook_ENTITY_TYPE_presave().
  */
 function lightning_media_image_entity_form_display_presave(EntityFormDisplayInterface $display) {
+  // Don't do anything during config sync.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+
   // Since the image browser integrates with the media library, it doesn't make
   // sense to use the image browser when creating or editing an image media
   // entity.
@@ -72,6 +86,7 @@ function lightning_media_image_entity_form_display_presave(EntityFormDisplayInte
         'preview_image_style' => 'thumbnail',
         'open' => TRUE,
       ],
+      'region' => 'content',
     ]);
   }
 }

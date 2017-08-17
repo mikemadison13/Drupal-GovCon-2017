@@ -23,7 +23,7 @@ function recaptcha_help($route_name, RouteMatchInterface $route_match) {
     case 'help.page.recaptcha':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Google <a href=":url">reCAPTCHA</a> is a free service to protect your website from spam and abuse. reCAPTCHA uses an advanced risk analysis engine and adaptive CAPTCHAs to keep automated software from engaging in abusive activities on your site. It does this while letting your valid users pass through with ease.', array(':url' => 'https://www.google.com/recaptcha')) . '</p>';
+      $output .= '<p>' . t('Google <a href=":url">reCAPTCHA</a> is a free service to protect your website from spam and abuse. reCAPTCHA uses an advanced risk analysis engine and adaptive CAPTCHAs to keep automated software from engaging in abusive activities on your site. It does this while letting your valid users pass through with ease.', [':url' => 'https://www.google.com/recaptcha']) . '</p>';
       $output .= '<h3>' . t('Uses') . '</h3>';
       $output .= '<dl>';
       $output .= '<dt>' . t('Protects and defends') . '</dt>';
@@ -33,7 +33,7 @@ function recaptcha_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<ol>';
       $output .= '<li>' . t('Enable reCAPTCHA and CAPTCHA modules in Adminstration > Extend') . '</li>';
       $output .= '<li>' . t('You will now find a reCAPTCHA tab in the CAPTCHA administration page available at: Administration > Configuration > People > CAPTCHA module settings > reCAPTCHA') . '</li>';
-      $output .= '<li>' . t('Register your web site at <a href=":url">https://www.google.com/recaptcha/admin/create</a>', array(':url' => 'https://www.google.com/recaptcha/admin/create')) . '</li>';
+      $output .= '<li>' . t('Register your web site at <a href=":url">https://www.google.com/recaptcha/admin/create</a>', [':url' => 'https://www.google.com/recaptcha/admin/create']) . '</li>';
       $output .= '<li>' . t('Input the site and private keys into the reCAPTCHA settings.') . '</li>';
       $output .= '<li>' . t('Visit the Captcha administration page and set where you want the reCAPTCHA form to be presented: Administration > Configuration > People > CAPTCHA module settings') . '</li>';
       $output .= '</ol>';
@@ -45,14 +45,14 @@ function recaptcha_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_theme().
  */
 function recaptcha_theme() {
-  return array(
-    'recaptcha_widget_noscript' => array(
-      'variables' => array(
+  return [
+    'recaptcha_widget_noscript' => [
+      'variables' => [
         'widget' => NULL,
-      ),
+      ],
       'template' => 'recaptcha-widget-noscript',
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -119,7 +119,7 @@ function recaptcha_captcha($op, $captcha_type = '') {
                       'defer' => TRUE,
                     ],
                   ],
-                  'recaptcha_api'
+                  'recaptcha_api',
                 ],
               ],
             ],

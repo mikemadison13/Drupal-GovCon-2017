@@ -18,33 +18,14 @@ use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 
 /**
- * Implements hook_layout_alter().
- */
-function lightning_layout_layout_alter(array &$definitions) {
-  // TODO: This entire function can be removed when Layout Plugin is no longer
-  // packaged with Lightning.
-  $map = [
-    'onecol' => 'layout_onecol',
-    'threecol_25_50_25' => 'layout_threecol_25_50_25',
-    'threecol_25_50_25_stacked' => 'layout_threecol_25_50_25',
-    'threecol_33_34_33' => 'layout_threecol_33_34_33',
-    'threecol_33_34_33_stacked' => 'layout_threecol_33_34_33',
-    'twocol' => 'layout_twocol',
-    'twocol_bricks' => 'layout_twocol_bricks',
-    'twocol_stacked' => 'layout_twocol',
-  ];
-  foreach ($map as $original_id => $new_id) {
-    if (isset($definitions[$new_id]) && empty($definitions[$original_id])) {
-      $definitions[$original_id] = $definitions[$new_id];
-    }
-  }
-}
-
-/**
  * Implements hook_modules_installed().
  */
 function lightning_layout_modules_installed(array $modules) {
-  if (in_array('lightning_roles', $modules)) {
+  // Don't do anything during config sync.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+  elseif (in_array('lightning_roles', $modules)) {
     \Drupal::service('lightning.content_roles')
       ->grantPermissions('creator', [
         'access panels in-place editing',
@@ -59,7 +40,11 @@ function lightning_layout_modules_installed(array $modules) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function lightning_layout_user_role_insert(RoleInterface $role) {
-  if ($role->id() == 'layout_manager' && Config::isBundled($role)) {
+  // Don't do anything during config sync.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+  elseif ($role->id() == 'layout_manager' && Config::isBundled($role)) {
     $node_types = NodeType::loadMultiple();
     array_walk($node_types, 'lightning_layout_node_type_insert');
   }
@@ -174,6 +159,11 @@ function lightning_layout_menu_local_actions_alter(array &$local_actions) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function lightning_layout_node_type_insert(NodeTypeInterface $node_type) {
+  // Don't do anything during config sync.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+
   user_role_grant_permissions('layout_manager', [
     'administer panelizer node ' . $node_type->id() . ' defaults',
   ]);
@@ -183,11 +173,29 @@ function lightning_layout_node_type_insert(NodeTypeInterface $node_type) {
  * Implements hook_ENTITY_TYPE_delete().
  */
 function lightning_layout_node_type_delete(NodeTypeInterface $node_type) {
+  // Don't do anything during config sync.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+
   /** @var \Drupal\user\RoleInterface $role */
   $role = Role::load('layout_manager');
   if ($role) {
     user_role_revoke_permissions($role->id(), [
       'administer panelizer node ' . $node_type->id() . ' defaults',
     ]);
+  }
+}
+
+/**
+ * Implements hook_panels_ipe_blocks_alter().
+ */
+function lightning_layout_panels_ipe_blocks_alter(array &$blocks = []) {
+  // Lightning includes the Entity Block module, which renders CTools'
+  // entity_view block unnecessary. So don't show it in Panels IPE.
+  foreach ($blocks as $i => $block) {
+    if ($block['provider'] == 'ctools' && strpos($block['plugin_id'], 'entity_view:') === 0) {
+      unset($blocks[$i]);
+    }
   }
 }

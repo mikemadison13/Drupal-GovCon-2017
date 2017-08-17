@@ -225,6 +225,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
     $current = [
       '#type' => 'table',
       '#empty' => $this->t('No files yet'),
+      '#prefix' => '<p>' . $this->getCardinalityMessage($entities) . '</p>',
       '#attributes' => ['class' => ['entities-list']],
       '#tabledrag' => [
         [

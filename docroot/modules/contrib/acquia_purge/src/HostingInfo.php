@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\Site\Settings;
 use Drupal\acquia_purge\HostingInfoInterface;
+use Drupal\acquia_purge\Hash;
 
 /**
  * Provides technical information accessors for the Acquia Cloud environment.
@@ -133,7 +134,10 @@ class HostingInfo implements HostingInfoInterface {
     }
 
     // Use the sitename and site path directory as site identifier.
-    $this->siteIdentifier = $this->siteName . basename($this->sitePath);
+    $this->siteIdentifier = Hash::siteIdentifier(
+      $this->siteName,
+      $this->sitePath
+    );
 
     // Test the gathered information to determine if this is/isn't Acquia Cloud.
     $this->isThisAcquiaCloud =

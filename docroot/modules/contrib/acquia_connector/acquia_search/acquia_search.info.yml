@@ -9,8 +9,8 @@ dependencies:
  - search_api_solr
  - views
 
-# Information added by Drupal.org packaging script on 2017-03-22
-version: '8.x-1.8'
+# Information added by Drupal.org packaging script on 2017-06-08
+version: '8.x-1.12'
 core: '8.x'
 project: 'acquia_connector'
-datestamp: 1490205488
+datestamp: 1496931850

@@ -1,9 +1,11 @@
+
 # Local Development
 
 Acquia currently recommends the use of either:
 
   * [Drupal VM](#using-drupal-vm-for-blt-generated-projects): An isolated virtual machine, built with Vagrant and Ansible.
-  * [Acquia Dev Desktop](#acquia-dev-desktop): A turn-key LAMP stack tailored specifically for Acquia-hosted Drupal sites.
+  * [Acquia Dev Desktop](#using-acquia-dev-desktop-for-blt-generated-projects): A turn-key LAMP stack tailored specifically for Acquia-hosted Drupal sites.
+  * [Alternative local development environments](http://blt.readthedocs.io/en/8.x/readme/local-development/#alternative-local-development-environments)
 
 No matter what local environment you choose to use, the following guidelines should be followed:
 
@@ -25,7 +27,7 @@ To use [Drupal VM](http://www.drupalvm.com/) with a Drupal project that is gener
 1. Create & boot the VM, install Drupal.
 
         blt vm
-        blt local:setup
+        blt setup
 
 1. Login to Drupal `drush @[project.machine_name].local uli`, where [project.machine_name] is the value that you set in project.yml.
 
@@ -49,7 +51,7 @@ Alternatively, you may choose to write only behat tests that utilize the Drupal 
 ### Project creation and installation changes
 
 1. Add a new site in [Dev Desktop](https://www.acquia.com/products-services/dev-desktop) by selecting _Import local Drupal site_. Point it at the `docroot` folder inside your new code base. Your `/sites/default/settings.php` file will be modified automatically to include the Dev Desktop database connection information.
-1. Follow the normal setup process by executing `blt local:setup`.
+1. Follow the normal setup process by executing `blt setup`.
 
 ### Drush support
 
@@ -64,7 +66,8 @@ In order to use a custom version of Drush (required by BLT) with Dev Desktop, yo
 
         export PATH=/Applications/DevDesktop/php7_0/bin:$PATH
 
-   The exact line will depend upon the version of PHP that you intend to use. You can check the effect of this value via `which php`.
+    The exact line will depend upon the version of PHP that you intend to use. You can check the effect of this value via `which php`.
+
 1. Enable the usage of environmental variables by adding the following line to `php.ini`, which you can locate with `php --ini`:
 
         variables_order = "EGPCS"

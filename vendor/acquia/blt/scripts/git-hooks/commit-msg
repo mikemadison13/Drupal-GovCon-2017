@@ -1,33 +1,17 @@
-#!/usr/bin/env bash
-#
-# To enable this hook, developers should place it in .git/hooks/.
-#
-# You may adapt the message length check. Currently checking it's longer than
-# 15 characters.
+#!/usr/bin/env php
+<?php
+echo "Executing .git/hooks/commit-msg...\n";
+$repo_root = getcwd();
 
-ROOT_DIR="$(pwd)"
-COMMAND="$ROOT_DIR/vendor/bin/yaml-cli get:value $ROOT_DIR/blt/project.yml project.prefix"
-ERROR=$($COMMAND 2>&1 > /dev/null)
-PREFIX=$($COMMAND)
-RED='\033[0;31m'
-NO_COLOR='\033[0m'
+$original_argv = $_SERVER['argv'];
+$commit_msg = rtrim(file_get_contents($original_argv[1]), "\n");
 
-# Make sure there are no errors while running drupal console command
-# todo: It would have been easy, just by discarding the std error, but for some
-# reason the error message is repeated on std out - which messes up everything.
-if [ -n "$ERROR" ]; then
-  printf "${RED}Error: could not get project prefix!${NO_COLOR} Please check:\n"
-  echo "* Project prefix is set properly in project.yml."
-  exit 1;
-fi
+// Construct pseudo `blt commit-msg $commit_msg` call.
+$_SERVER['argv'] = [
+  $repo_root . '/bin/blt',
+  'git:commit-msg',
+  $commit_msg,
+];
+$_SERVER['argc'] = count($_SERVER['argv']);
 
-# Validate the commit message.
-regex="^${PREFIX}-[0-9]+(: )[^ ].{15,}\."
-if ! grep -iqE "$regex" "$1"; then
-  printf "${RED}Error: invalid commit message!${NO_COLOR} Commit messages must:\n"
-  echo "* Contain the project prefix followed by a hyphen"
-  echo "* Contain a ticket number followed by a colon and a space"
-  echo "* Be at least 15 characters long and end with a period."
-  echo "Valid example: $PREFIX-135: Added the new picture field to the article feature."
-  exit 1;
-fi
+require __DIR__ . '/../../bin/blt-robo.php';

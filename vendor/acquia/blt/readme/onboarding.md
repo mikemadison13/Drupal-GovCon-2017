@@ -2,17 +2,13 @@
 
 Here is a quick-start guide to getting your local development environment set up and getting oriented with the project standards and workflows.
 
-## Required SAAS Access:
-
-Please ask the project's engagement manager for access to the following SaaS services:
-
-* JIRA
-* GitHub repository
-* Acquia Cloud subscription
-
 ## System Requirements
 
 Verify that your system meets [System requirements](../INSTALL.md)
+
+## Technology Knolwedge Requirements / Recommendations
+
+Verify that you have the necessary [skillset(s)](skills.md) to interact with BLT.
 
 ### Networking considerations
 
@@ -31,19 +27,19 @@ If you need to make requests via a proxy server, please [configure git to use a 
 
 1. If your project uses separate `master` and `develop` branches, checkout the `develop` branch: `git checkout develop`
 1. Run `composer install` (you must already have Composer installed).
-1. Install `blt` alias: `composer blt-alias`
+1. Install `blt` alias: `composer run-script blt-alias`
 
 If your project uses a virtual development environment such as DrupalVM:
 
 1. Make sure you have installed any prerequisites. For DrupalVM, see the [quick start guide](https://github.com/geerlingguy/drupal-vm#quick-start-guide).
 1. Start your virtual machine: `blt vm`
-1. Build and install the Drupal installation: `blt local:setup`
+1. Build and install the Drupal installation: `blt setup`
 
 If your project does not use a virtual development environment:
 
 1. Setup your local LAMP stack with the webroot pointing at you project's `docroot` directory.
 1. Run `blt setup:settings` This will generate `docroot/sites/default/settings/local.settings.php` and `docroot/sites/default/local.drushrc.php`. Update these with your local database credentials and your local site URL.
-1. Run `blt local:setup`. This will build all project dependencies and install drupal.
+1. Run `blt setup`. This will build all project dependencies and install drupal.
 1. Create and edit your local drush alias file. Copy `drush/site-aliases/example.local.aliases.drushrc.php` to `drush/site-aliases/local.aliases.drushrc.php`. Edit the new alias file with your local path.
 
 Please see [Local Development](local-development.md) for more information on setting up a local \*AMP stack or virtual development environment.
@@ -52,10 +48,10 @@ Please see [Local Development](local-development.md) for more information on set
 
 As development progresses, you can use the following commands to keep your local environment up to date:
 
-- Run `blt local:setup` to rebuild the codebase and reinstall your Drupal site (most commonly used early in development).
-- Run `blt local:refresh` to rebuild the codebase, import a fresh DB from a remote environment, and run schema/configuration updates (most commonly used later in development).
+- Run `blt setup` to rebuild the codebase and reinstall your Drupal site (most commonly used early in development).
+- Run `blt sync:refresh` to rebuild the codebase, import a fresh DB from a remote environment, and run schema/configuration updates (most commonly used later in development).
 
-Each of these commands is simply a wrapper for a number of more granular commands that can be run individually if desired (for instance, `blt local:update` just runs database updates and imports configuration changes). For a full list of available project tasks, run `blt -l`. See [Project Tasks](project-tasks.md) for more information.
+Each of these commands is simply a wrapper for a number of more granular commands that can be run individually if desired (for instance, `blt setup:update` just runs database updates and imports configuration changes). For a full list of available project tasks, run `blt -l`. See [Project Tasks](project-tasks.md) for more information.
 
 ### Local Git Configuration
 

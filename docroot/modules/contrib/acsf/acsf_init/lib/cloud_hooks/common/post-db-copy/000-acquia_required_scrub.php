@@ -9,8 +9,9 @@
  */
 
 use Drupal\Component\FileCache\FileCacheFactory;
-use Drupal\Core\Site\Settings;
+use Drupal\Core\Database\Database;
 use Drupal\Core\Extension\ExtensionDiscovery;
+use Drupal\Core\Site\Settings;
 
 if (empty($argv[3])) {
   echo "Error: Not enough arguments.\n";
@@ -46,21 +47,9 @@ fwrite(STDERR, "Site name: $site_name;\n");
 
 mysql_close($link);
 
-// Discover module locations using standard class, but without fully
-// bootstrapping Drupal.
-require "$docroot/autoload.php";
-require_once "$docroot/core/includes/bootstrap.inc";
-// ExtensionDiscovery needs a FileCacheFactory with a nonempty prefix set,
-// otherwise it throws a fatal error. Below is the usual D8 code, even though it
-// probably doesn't matter which prefix we set.
-FileCacheFactory::setPrefix(Settings::getApcuPrefix('file_cache', $docroot));
-$discovery = new ExtensionDiscovery($docroot);
-$module_data = $discovery->scan('module', FALSE);
-if (empty($module_data['acsf'])) {
-  // getModule() will throw an exception if not found. We know the message.
-  error('Could not locate the ACSF module.');
-}
-$acsf_location = "$docroot/" . $module_data['acsf']->getPath();
+// Find the location of the ACSF module.
+$profile_name = _acsf_scrub_boot_and_get_install_profile($docroot, $site, $env, $db_role);
+$acsf_location = _acsf_scrub_get_acsf_module_location($docroot, $profile_name);
 fwrite(STDERR, "ACSF location: $acsf_location;\n");
 
 // Get the Factory creds using acsf-get-factory-creds.
@@ -116,4 +105,86 @@ function database_query_result($query) {
     error('Query failed: ' . $query);
   }
   return mysql_result($result, 0);
+}
+
+/**
+ * Get the Drupal install profile.
+ */
+function _acsf_scrub_boot_and_get_install_profile($docroot, $site, $env, $db_role) {
+  // Boot just enough DrupalKernel. Two reasons why we can't just call
+  // $kernel->handle($request) like web requests do:
+  // - we don't have a request object
+  // - $kernel->initializeSettings() -> Settings::initialize() includes
+  //   settings.php in a way that we cannot get around. We don't want to include
+  //   the Acquia Hosting settings.php because it has a lot of dependencies
+  //   (a.o. on $_REQUEST variables).
+  require_once "$docroot/autoload.php";
+  require_once "$docroot/core/includes/bootstrap.inc";
+
+  // drupal_get_profile() needs database settings initialized (as of D8.3.0).
+  // Get credentials from creds.json instead of settings.php.
+  $cred_file = "/var/www/site-php/{$site}.{$env}/creds.json";
+  if (file_exists($cred_file) && is_readable($cred_file)) {
+    $json = file_get_contents($cred_file);
+    $cred_decoded = json_decode($json, TRUE);
+    if (isset($cred_decoded['databases'][$db_role]['db_url_ha']) && is_array($cred_decoded['databases'][$db_role]['db_url_ha'])) {
+      $db_uri = reset($cred_decoded['databases'][$db_role]['db_url_ha']);
+      $db_array = Database::convertDbUrlToConnectionInfo($db_uri, $docroot);
+      // Hosting stores the connection data in the "old" style, like mysqli://...
+      // which isn't available in D8.
+      if ($db_array['driver'] === 'mysqli') {
+        $db_array['driver'] = 'mysql';
+      }
+      $databases = ['default' => ['default' => $db_array]];
+      Database::setMultipleConnectionInfo($databases);
+    }
+    else {
+      error('Could not find the database settings.');
+    }
+  }
+  else {
+    error('Could not read the credential file.');
+  }
+  // Free up memory.
+  unset($json);
+  unset($cred_decoded);
+
+  // drupal_get_profile() should keep being used for as long as its backward
+  // compatibility layer (a.k.a. the code from 8.2.x) is still used.
+  return drupal_get_profile();
+}
+
+/**
+ * Find the location of the ACSF module.
+ */
+function _acsf_scrub_get_acsf_module_location($docroot, $profile_name) {
+  // For discovering where a module is, we need ExtensionDiscovery, which also
+  // needs a FileCacheFactory with a nonempty prefix set, otherwise it throws a
+  // fatal error. Below is the usual D8 code, even though it probably doesn't
+  // matter which prefix we set.
+  FileCacheFactory::setPrefix(Settings::getApcuPrefix('file_cache', $docroot));
+
+  $listing = new ExtensionDiscovery($docroot);
+  // We need a two-stage scan (gleaned from DrupalKernel::moduleData()):
+  if ($profile_name) {
+    // The module could be inside the profile subtree, so we need to locate the
+    // profile directory. (We can't use drupal_get_path() for this because:
+    // - we don't have the container booted so drupal_get_filename() will return
+    //   an empty string;
+    // - besides, we should not ask another cache -which could be empty- for a
+    //   file location. WE are the discovery method so WE should find the path.)
+    $listing->setProfileDirectories([]);
+    $profiles = $listing->scan('profile', FALSE);
+    if (isset($profiles[$profile_name])) {
+      // Scan this one profile directory in addition to other module dirs.
+      $listing->setProfileDirectories([$profiles[$profile_name]->getPath()]);
+    }
+  }
+  // Now find modules.
+  $module_data = $listing->scan('module', FALSE);
+  if (empty($module_data['acsf'])) {
+    error('Could not locate the ACSF module.');
+  }
+
+  return "$docroot/" . $module_data['acsf']->getPath();
 }

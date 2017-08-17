@@ -34,9 +34,9 @@ function EXAMPLE_preprocess_node(&$variables) {
       '#height' => $image->getHeight(),
       '#alt' => 'alt text',
       '#title' => 'title text',
-      '#attributes' => array(
+      '#attributes' => [
         'class' => 'my-img-class'
-      )
+      ]
     ];
   }
 
@@ -87,10 +87,10 @@ function EXAMPLE_preprocess_node(&$variables) {
       '#height' => $image->getHeight(),
       '#alt' => 'alt text',
       '#title' => 'title text',
-      '#attributes' => array(
+      '#attributes' => [
         'id' => 'my-thumb-id',
         'class' => 'my-thumb-class'
-      )
+      ]
     ];
   }
 

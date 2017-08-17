@@ -45,6 +45,8 @@
 - [\Consolidation\OutputFormatters\Transformations\SimplifyToArrayInterface (interface)](#interface-consolidationoutputformatterstransformationssimplifytoarrayinterface)
 - [\Consolidation\OutputFormatters\Transformations\TableTransformation](#class-consolidationoutputformatterstransformationstabletransformation)
 - [\Consolidation\OutputFormatters\Transformations\WordWrapper](#class-consolidationoutputformatterstransformationswordwrapper)
+- [\Consolidation\OutputFormatters\Transformations\Wrap\CalculateWidths](#class-consolidationoutputformatterstransformationswrapcalculatewidths)
+- [\Consolidation\OutputFormatters\Transformations\Wrap\ColumnWidths](#class-consolidationoutputformatterstransformationswrapcolumnwidths)
 - [\Consolidation\OutputFormatters\Validate\ValidationInterface (interface)](#interface-consolidationoutputformattersvalidatevalidationinterface)
 - [\Consolidation\OutputFormatters\Validate\ValidDataTypesInterface (interface)](#interface-consolidationoutputformattersvalidatevaliddatatypesinterface)
 
@@ -640,14 +642,57 @@
 | Visibility | Function |
 |:-----------|:---------|
 | public | <strong>__construct(</strong><em>mixed</em> <strong>$width</strong>)</strong> : <em>void</em> |
+| public | <strong>minimumWidth(</strong><em>mixed</em> <strong>$colkey</strong>, <em>mixed</em> <strong>$width</strong>)</strong> : <em>void</em><br /><em>Set the minimum width of just one column</em> |
 | public | <strong>setMinimumWidths(</strong><em>array</em> <strong>$minimumWidths</strong>)</strong> : <em>void</em><br /><em>If columns have minimum widths, then set them here.</em> |
 | public | <strong>setPaddingFromStyle(</strong><em>\Symfony\Component\Console\Helper\TableStyle</em> <strong>$style</strong>)</strong> : <em>void</em><br /><em>Calculate our padding widths from the specified table style.</em> |
 | public | <strong>wrap(</strong><em>array</em> <strong>$rows</strong>, <em>array</em> <strong>$widths=array()</strong>)</strong> : <em>array</em><br /><em>Wrap the cells in each part of the provided data table</em> |
-| protected | <strong>columnAutowidth(</strong><em>array</em> <strong>$rows</strong>, <em>array</em> <strong>$widths</strong>)</strong> : <em>void</em><br /><em>Determine the best fit for column widths. Ported from Drush. (in characters) - these will be left as is.</em> |
-| protected static | <strong>longestWordLength(</strong><em>string</em> <strong>$str</strong>)</strong> : <em>int</em><br /><em>Return the length of the longest word in the string.</em> |
-| protected | <strong>selectColumnToReduce(</strong><em>mixed</em> <strong>$col_dist</strong>, <em>mixed</em> <strong>$auto_widths</strong>, <em>mixed</em> <strong>$max_word_lens</strong>)</strong> : <em>void</em> |
-| protected | <strong>shouldSelectThisColumn(</strong><em>mixed</em> <strong>$count</strong>, <em>mixed</em> <strong>$counts</strong>, <em>mixed</em> <strong>$width</strong>)</strong> : <em>bool</em> |
+| protected | <strong>calculateWidths(</strong><em>mixed</em> <strong>$rows</strong>, <em>array</em> <strong>$widths=array()</strong>)</strong> : <em>void</em><br /><em>Determine what widths we'll use for wrapping.</em> |
 | protected | <strong>wrapCell(</strong><em>mixed</em> <strong>$cell</strong>, <em>string</em> <strong>$cellWidth</strong>)</strong> : <em>mixed</em><br /><em>Wrap one cell.  Guard against modifying non-strings and then call through to wordwrap().</em> |
+
+<hr /> 
+### Class: \Consolidation\OutputFormatters\Transformations\Wrap\CalculateWidths
+
+> Calculate column widths for table cells. Influenced by Drush and webmozart/console.
+
+| Visibility | Function |
+|:-----------|:---------|
+| public | <strong>__construct()</strong> : <em>void</em> |
+| public | <strong>calculate(</strong><em>mixed</em> <strong>$availableWidth</strong>, <em>[\Consolidation\OutputFormatters\Transformations\Wrap\ColumnWidths](#class-consolidationoutputformatterstransformationswrapcolumnwidths)</em> <strong>$dataWidths</strong>, <em>[\Consolidation\OutputFormatters\Transformations\Wrap\ColumnWidths](#class-consolidationoutputformatterstransformationswrapcolumnwidths)</em> <strong>$minimumWidths</strong>)</strong> : <em>void</em><br /><em>Given the total amount of available space, and the width of the columns to place, calculate the optimum column widths to use.</em> |
+| public | <strong>calculateLongestCell(</strong><em>mixed</em> <strong>$rows</strong>)</strong> : <em>void</em><br /><em>Calculate the longest cell data from any row of each of the cells.</em> |
+| public | <strong>calculateLongestWord(</strong><em>mixed</em> <strong>$rows</strong>)</strong> : <em>void</em><br /><em>Calculate the longest word and longest line in the provided data.</em> |
+| public | <strong>distributeLongColumns(</strong><em>mixed</em> <strong>$availableWidth</strong>, <em>[\Consolidation\OutputFormatters\Transformations\Wrap\ColumnWidths](#class-consolidationoutputformatterstransformationswrapcolumnwidths)</em> <strong>$dataWidths</strong>, <em>[\Consolidation\OutputFormatters\Transformations\Wrap\ColumnWidths](#class-consolidationoutputformatterstransformationswrapcolumnwidths)</em> <strong>$minimumWidths</strong>)</strong> : <em>void</em><br /><em>Distribute the remainig space among the columns that were not included in the list of "short" columns.</em> |
+| public | <strong>getShortColumns(</strong><em>mixed</em> <strong>$availableWidth</strong>, <em>[\Consolidation\OutputFormatters\Transformations\Wrap\ColumnWidths](#class-consolidationoutputformatterstransformationswrapcolumnwidths)</em> <strong>$dataWidths</strong>, <em>[\Consolidation\OutputFormatters\Transformations\Wrap\ColumnWidths](#class-consolidationoutputformatterstransformationswrapcolumnwidths)</em> <strong>$minimumWidths</strong>)</strong> : <em>mixed</em><br /><em>Return all of the columns whose longest line length is less than or equal to the average width.</em> |
+| protected | <strong>calculateColumnWidths(</strong><em>mixed</em> <strong>$rows</strong>, <em>\callable</em> <strong>$fn</strong>)</strong> : <em>void</em> |
+| protected static | <strong>longestWordLength(</strong><em>string</em> <strong>$str</strong>)</strong> : <em>int</em><br /><em>Return the length of the longest word in the string.</em> |
+
+<hr /> 
+### Class: \Consolidation\OutputFormatters\Transformations\Wrap\ColumnWidths
+
+> Calculate the width of data in table cells in preparation for word wrapping.
+
+| Visibility | Function |
+|:-----------|:---------|
+| public | <strong>__construct(</strong><em>array</em> <strong>$widths=array()</strong>)</strong> : <em>void</em> |
+| public | <strong>adjustMinimumWidths(</strong><em>mixed</em> <strong>$availableWidth</strong>, <em>mixed</em> <strong>$dataCellWidths</strong>)</strong> : <em>void</em><br /><em>If the widths specified by this object do not fit within the provided avaiable width, then reduce them all proportionally.</em> |
+| public | <strong>averageWidth(</strong><em>mixed</em> <strong>$availableWidth</strong>)</strong> : <em>void</em><br /><em>Calculate how much space is available on average for all columns.</em> |
+| public | <strong>combine(</strong><em>[\Consolidation\OutputFormatters\Transformations\Wrap\ColumnWidths](#class-consolidationoutputformatterstransformationswrapcolumnwidths)</em> <strong>$combineWith</strong>)</strong> : <em>void</em><br /><em>Combine this set of widths with another set, and return a new set that contains the entries from both.</em> |
+| public | <strong>count()</strong> : <em>void</em><br /><em>Return the number of columns.</em> |
+| public | <strong>distribute(</strong><em>mixed</em> <strong>$availableWidth</strong>)</strong> : <em>void</em><br /><em>Return proportional weights</em> |
+| public | <strong>enforceMinimums(</strong><em>mixed</em> <strong>$minimumWidths</strong>)</strong> : <em>void</em><br /><em>Ensure that every item in $widths that has a corresponding entry in $minimumWidths is as least as large as the minimum value held there.</em> |
+| public | <strong>findShortColumns(</strong><em>mixed</em> <strong>$thresholdWidth</strong>)</strong> : <em>mixed</em><br /><em>Find all of the columns that are shorter than the specified threshold.</em> |
+| public | <strong>findUndersizedColumns(</strong><em>mixed</em> <strong>$minimumWidths</strong>)</strong> : <em>mixed</em><br /><em>Find all of the columns that are shorter than the corresponding minimum widths.</em> |
+| public | <strong>isEmpty()</strong> : <em>bool</em><br /><em>Return true if there is no data in this object</em> |
+| public | <strong>keys()</strong> : <em>void</em><br /><em>Return the available keys (column identifiers) from the calculated data set.</em> |
+| public | <strong>lastColumn()</strong> : <em>void</em> |
+| public | <strong>paddingSpace(</strong><em>mixed</em> <strong>$paddingInEachCell</strong>, <em>mixed</em> <strong>$extraPaddingAtEndOfLine</strong>, <em>mixed</em> <strong>$extraPaddingAtBeginningOfLine</strong>)</strong> : <em>void</em> |
+| public | <strong>removeColumns(</strong><em>mixed</em> <strong>$columnKeys</strong>)</strong> : <em>void</em><br /><em>Remove all of the specified columns from this data structure.</em> |
+| public | <strong>selectColumns(</strong><em>mixed</em> <strong>$columnKeys</strong>)</strong> : <em>void</em><br /><em>Select all columns that exist in the provided list of keys.</em> |
+| public | <strong>setWidth(</strong><em>mixed</em> <strong>$key</strong>, <em>mixed</em> <strong>$width</strong>)</strong> : <em>void</em><br /><em>Set the length of the specified column.</em> |
+| public static | <strong>sumWidth(</strong><em>mixed</em> <strong>$widths</strong>)</strong> : <em>void</em><br /><em>Return the sum of the lengths of the provided widths.</em> |
+| public | <strong>totalWidth()</strong> : <em>void</em><br /><em>Return the sum of the lengths of the provided widths.</em> |
+| public | <strong>width(</strong><em>mixed</em> <strong>$key</strong>)</strong> : <em>void</em><br /><em>Return the length of the specified column.</em> |
+| public | <strong>widths()</strong> : <em>void</em><br /><em>Return all of the lengths</em> |
+| protected | <strong>findColumnsUnderThreshold(</strong><em>array</em> <strong>$thresholdWidths</strong>)</strong> : <em>mixed</em> |
 
 <hr /> 
 ### Interface: \Consolidation\OutputFormatters\Validate\ValidationInterface

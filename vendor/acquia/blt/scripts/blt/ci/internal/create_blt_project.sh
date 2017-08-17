@@ -27,18 +27,35 @@ yaml-cli update:value blt/project.yml project.local.hostname '127.0.0.1:8888'
 # Define BLT's deployment endpoints.
 yaml-cli update:value blt/project.yml git.remotes.0 bolt8@svn-5223.devcloud.hosting.acquia.com:bolt8.git
 yaml-cli update:value blt/project.yml git.remotes.1 git@github.com:acquia-pso/blted8.git
-# Execute all updates with fake "dev" => "dev" version specs. This must be done manually since BLT was not installed prior to this.
-blt-console blt:update dev dev $(pwd) --yes
-# BLT added new dependencies for us, so we must update.
-composer update
+# Set cm.core.deploy-key to sync since we are not executing this on Acquia Cloud.
+touch blt/project.local.yml
+yaml-cli update:value blt/project.local.yml cm.core.deploy-key sync
+
 git add -A
 git commit -m 'Adding new dependencies from BLT update.' -n
 # Create a .travis.yml, just to make sure it works. It won't be executed.
 blt ci:travis:init
+# Remove call to exit_early script.
+yaml-cli update:value .travis.yml before_install.4 ''
+
 blt ci:pipelines:init
 git add -A
 git commit -m 'Initializing Travis CI and Acquia Pipelines.' -n
 # Disable Lightning tests on pull requests.
 # 'if [ "$PULL_REQUEST" != "false" ]; then printf "behat.paths: [ \${repo.root}/tests/behat ]" >> blt/project.yml; fi'
+
+# Initialize ACSF config.
+blt acsf:init -y
+# Initialize Acquia Cloud hooks.
+blt setup:cloud-hooks
+# Change cloud hooks to re-install Drupal on deployments.
+sed -i "s:deploy_updates:deploy_install:g" hooks/common/post-code-deploy/post-code-deploy.sh
+sed -i "s:deploy_updates:deploy_install:g" hooks/common/post-code-update/post-code-update.sh
+
+# Create example command and hook files.
+blt examples:init
+
+# Dump all config values.
+blt config:dump
 
 set +v

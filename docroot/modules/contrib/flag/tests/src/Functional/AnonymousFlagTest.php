@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\flag\Functional;
 
-use Behat\Mink\Session;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\flag\Entity\Flag;
 use Drupal\flag\Entity\Flagging;

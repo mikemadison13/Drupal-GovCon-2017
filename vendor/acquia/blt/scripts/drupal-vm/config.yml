@@ -3,10 +3,10 @@ vagrant_hostname: ${project.local.hostname}
 vagrant_machine_name: ${project.machine_name}
 
 # Set the IP address so it doesn't conflict with other Drupal VM instances.
-vagrant_ip: 192.168.25.8
+vagrant_ip: ${random.ip}
 
-# Use Ubuntu 14.04 LTS to more closely match Acquia Cloud environment.
-vagrant_box: geerlingguy/ubuntu1404
+# Use Ubuntu 16.04 LTS to match Acquia Cloud environments.
+vagrant_box: geerlingguy/ubuntu1604
 
 # Set drupal_site_name to the project's human-readable name.
 drupal_site_name: "${project.human_name}"
@@ -25,7 +25,8 @@ drupal_build_composer_project: false
 drupal_build_composer: false
 drupal_composer_path: false
 drupal_composer_install_dir: "/var/www/${project.machine_name}"
-drupal_core_path: "{{ drupal_composer_install_dir }}/docroot"
+drupal_core_path: "/var/www/${project.machine_name}/docroot"
+ssh_home: /var/www/${project.machine_name}
 
 drupal_db_user: drupal
 drupal_db_password: drupal
@@ -54,7 +55,7 @@ installed_extras:
   - selenium
   - xdebug
 
-# Use PHP 5.6.
+# PHP 5.6 (PHP 7.1 is being tested, see: https://docs.acquia.com/node/25726).
 php_version: "5.6"
 php_packages_extra:
   - "php{{ php_version }}-bz2"
@@ -73,7 +74,7 @@ php_xdebug_remote_connect_back: 1
 php_xdebug_idekey: PHPSTORM
 php_xdebug_max_nesting_level: 256
 php_xdebug_remote_port: "9000"
+php_memory_limit: "512M"
 
-post_provision_tasks_dir: "../../../acquia/blt/scripts/drupal-vm/post-provision.yml"
 post_provision_scripts:
   - "../../../acquia/blt/scripts/drupal-vm/post-provision.sh"

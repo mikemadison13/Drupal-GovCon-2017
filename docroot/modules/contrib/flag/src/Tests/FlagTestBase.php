@@ -3,11 +3,8 @@
 namespace Drupal\flag\Tests;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\flag\FlagInterface;
 use Drupal\simpletest\WebTestBase;
 use Drupal\flag\Entity\Flag;
-use Drupal\user\RoleInterface;
-use Drupal\user\Entity\Role;
 use Drupal\Core\Template\Attribute;
 
 /**
@@ -16,6 +13,7 @@ use Drupal\Core\Template\Attribute;
 abstract class FlagTestBase extends WebTestBase {
 
   use FlagCreateTrait;
+  use FlagPermissionsTrait;
   use StringTranslationTrait;
 
   /**
@@ -141,42 +139,6 @@ abstract class FlagTestBase extends WebTestBase {
 
     // Return the flag.
     return $flag;
-  }
-
-  /**
-   * Grants flag and unflag permission to the given flag.
-   *
-   * @param \Drupal\flag\FlagInterface $flag
-   *   The flag on which to grant permissions.
-   * @param array|string $role_id
-   *   (optional) The ID of the role to grant permissions. If omitted, the
-   *   authenticated role is assumed.
-   * @param bool $can_flag
-   *   (optional) TRUE to grant the role flagging permission, FALSE to not grant
-   *   flagging permission to the role. If omitted, TRUE is assumed.
-   * @param bool $can_unflag
-   *   Optional TRUE to grant the role unflagging permission, FALSE to not grant
-   *   unflagging permission to the role. If omitted, TRUE is assumed.
-   */
-  protected function grantFlagPermissions(FlagInterface $flag,
-                                      $role_id = RoleInterface::AUTHENTICATED_ID,
-                                      $can_flag = TRUE,
-                                      $can_unflag = TRUE) {
-
-    // Grant the flag permissions to the authenticated role, so that both
-    // users have the same roles and share the render cache.
-    $role = Role::load($role_id);
-    if ($can_flag) {
-      $role->grantPermission('flag ' . $flag->id());
-    }
-
-    if ($can_unflag) {
-      $role->grantPermission('unflag ' . $flag->id());
-    }
-
-    $role->grantPermission('access contextual links');
-
-    $role->save();
   }
 
   /**

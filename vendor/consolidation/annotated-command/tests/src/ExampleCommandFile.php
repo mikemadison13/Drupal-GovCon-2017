@@ -142,6 +142,8 @@ class ExampleCommandFile
      * @usage 2 2 --negate
      *   Add two plus two and then negate.
      * @custom
+     * @dup one
+     * @dup two
      */
     public function testArithmatic($one, $two = 2, $options = ['negate' => false, 'unused' => 'bob'])
     {
@@ -253,6 +255,22 @@ class ExampleCommandFile
     public function alterMeToo()
     {
         return "fantabulous";
+    }
+
+    /**
+     * @command test:replace-command
+     */
+    public function testReplaceCommand($value)
+    {
+        $this->output->writeln($value);
+    }
+
+    /**
+     * @hook replace-command test:replace-command
+     */
+    public function hookTestReplaceCommandHook($value)
+    {
+        $this->output->writeln("bar");
     }
 
     /**

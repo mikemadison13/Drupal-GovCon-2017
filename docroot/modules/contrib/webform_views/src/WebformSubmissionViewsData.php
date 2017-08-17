@@ -3,13 +3,14 @@
 namespace Drupal\webform_views;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\webform\WebformElementManagerInterface;
+use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionViewsData as WebformSubmissionViewsDataBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -59,6 +60,43 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
    */
   public function getViewsData() {
     $data = parent::getViewsData();
+
+    $base_table = $this->entityType->getBaseTable() ?: $this->entityType->id();
+
+    // Reverse relationship on the "entity_type" and "entity_id" columns, i.e.
+    // from an arbitrary entity to webform submissions that have been submitted
+    // to it.
+    foreach ($this->entityManager->getDefinitions() as $definition) {
+      if ($definition instanceof ContentEntityTypeInterface) {
+        $relationship = [
+          'base' => $base_table,
+          'field' => $definition->getKey('id'),
+          'base field' => 'entity_id',
+          'id' => 'standard',
+          'extra' => [
+            ['field' => 'entity_type', 'value' => $definition->id()],
+          ],
+        ];
+
+        // Depending on whether the foreign entity has data table we join on its
+        // data table or on its base table. Additionally, if it we join on the
+        // data table, then we also must join on langcode column.
+        if ($definition->getDataTable()) {
+          $foreign_table = $definition->getDataTable();
+          $relationship['extra'][] = ['field' => 'langcode', 'left_field' => 'langcode'];
+        }
+        else {
+          $foreign_table = $definition->getBaseTable();
+        }
+
+        $data[$foreign_table]['webform_submission'] = [
+          'title' => $this->t('Webform submissions'),
+          'help' => $this->t('Webform submissions submitted to an entity.'),
+        ];
+
+        $data[$foreign_table]['webform_submission']['relationship'] = $relationship;
+      }
+    }
 
     foreach ($this->webformStorage->loadMultiple() as $webform) {
       foreach ($webform->getElementsInitializedAndFlattened() as $element) {

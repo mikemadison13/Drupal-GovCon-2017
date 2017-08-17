@@ -61,6 +61,18 @@ function webform_views_webform_element_info_alter(array &$elements) {
         $views_handler = \Drupal\webform_views\WebformElementViews\WebformSelectViews::class;
         break;
 
+      case 'checkbox':
+        $views_handler = \Drupal\webform_views\WebformElementViews\WebformCheckboxViews::class;
+        break;
+
+      case 'date':
+        $views_handler = \Drupal\webform_views\WebformElementViews\WebformDateViews::class;
+        break;
+
+      case 'number':
+        $views_handler = \Drupal\webform_views\WebformElementViews\WebformNumericViews::class;
+        break;
+
       default:
         if (!$views_handler) {
           $views_handler = \Drupal\webform_views\WebformElementViews\WebformDefaultViews::class;
@@ -113,14 +125,14 @@ function webform_views_menu_local_tasks_alter(&$data, $route_name) {
  *   this view is available as a page)
  *
  * @code
- * array(
- *   array($view, $display_id, $path),
- *   array($view, $display_id, $path),
- * );
+ * [
+ *   [$view, $display_id, $path],
+ *   [$view, $display_id, $path],
+ * ];
  * @endcode
  */
 function webform_views_applicable_views() {
-  $return = array();
+  $return = [];
   foreach (\Drupal\views\Views::getApplicableViews('uses_menu_links') as $pair) {
     list($view_id, $display_id) = $pair;
     /** @var $executable \Drupal\views\ViewExecutable */
@@ -134,7 +146,7 @@ function webform_views_applicable_views() {
     // relationships are used and thus webform submission is introduced into the
     // view while the base entity type may be different. Though hardly we will
     // see such use cases in real world practice.
-    if ($executable->getBaseEntityType() && $executable->getBaseEntityType()->id() == 'webform_submission' && in_array($menu['type'], array('tab', 'default tab'))) {
+    if ($executable->getBaseEntityType() && $executable->getBaseEntityType()->id() == 'webform_submission' && in_array($menu['type'], ['tab', 'default tab'])) {
       $return[] = [$view_id, $display_id, $executable->display_handler->getPath()];
     }
   }

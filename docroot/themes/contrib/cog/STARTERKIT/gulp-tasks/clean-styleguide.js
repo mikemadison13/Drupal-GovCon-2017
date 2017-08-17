@@ -3,6 +3,8 @@
  * Task: Clean:Styleguide.
  */
 
+ /* global module */
+
 module.exports = function (gulp, plugins, options) {
   'use strict';
 

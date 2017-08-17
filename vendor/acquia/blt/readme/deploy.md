@@ -37,26 +37,32 @@ After the artifact is created, you can inspect it or even run it as a website lo
 
 To both create and deploy the build artifact in a single command, run the following command
 
-    blt deploy -Ddeploy.branch=develop-build -Ddeploy.commitMsg='BLT-123: The commit message.'
+    blt deploy --commit-msg "BLT-000: Example deploy to branch" --branch "develop-build" --no-interaction
 
 This command will commit the artifact to the `develop-build` branch with the specified commit message and push it to the remotes defined in project.yml.
+
+To create a new git tag for the artifact (rather than committing to a branch) run:
+
+    blt blt deploy --commit-msg "Creating release 1.0.0." --tag "1.0.0"
+
+This will generate the artifact, tag it with `1.0.0`, and push it to the remotes defined in project.yml.
 
 ## Modifying the artifact
 
 The artifact is built by running the `deploy:build` target, which does the following:
 
-* Rsyncing files from the repository root
-* Re-building dependencies directly in the deploy directory. E.g., `composer install`
+* Rsyncs files from the repository root
+* Re-builds dependencies directly in the deploy directory. E.g., `composer install`
 
-The rsync and re-build processes can be configured using the `deploy` Phing variable.
+The rsync and re-build processes can be configured by modifying the values of variables under the top-level `deploy` key in your project.yml file.
 
-See [Extending BLT](extending-blt.md) for more information on overriding Phing variables.
+See [Extending BLT](extending-blt.md) for more information on overriding default configuration.
 
 ### Debugging deployment artifacts
 
 If you would like to create, commit, but _not push_ the artifact, you may do a dry run:
 
-    blt deploy -Ddeploy.branch=develop-build -Ddeploy.commitMsg='BLT-123: The commit message.' -Ddeploy.dryRun=true
+    blt deploy -D deploy.dryRun=true
 
 This is helpful for debugging deployment artifacts.
 
@@ -67,6 +73,20 @@ Instead of performing these deployments manually, you can enlist the help of a C
 ## Cloud Hooks
 
 On Acquia Cloud, [Cloud Hooks](https://docs.acquia.com/cloud/manage/cloud-hooks) are the preferred method to run database updates and configuration imports on each deploy. BLT provides a post-code-deploy hook that will conveniently run these updates automatically and fail the deployment task in Insight if anything goes wrong.
+
+To install Acquia Cloud hooks for your BLT project:
+
+1. Initialize Acquia Cloud hooks
+
+        blt setup:cloud-hooks
+
+    This will add a hooks directory in your project root based on [BLT's default Acquia Cloud hooks](https://github.com/acquia/blt/tree/8.x/scripts/cloud-hooks/hooks).
+
+1. Commit the new directory and push it to your Acquia git remote. Example commands:
+
+        git add hooks
+        git commit -m 'Initializing Acquia Cloud hooks.'
+        git push origin
 
 For consistency and reliability, you should run the same updates on deployment as you would run locally or in CI testing. BLT provides aliases for the `setup:update` task to support this, such as `local:update` and `deploy:update`. These aliases all run the same updates, but with the appropriate aliases and configuration directories for each environment.
 

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 namespace Drupal\acquia_search\Tests;
 
 use Drupal\simpletest\WebTestBase;

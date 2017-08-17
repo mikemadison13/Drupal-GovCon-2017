@@ -71,7 +71,7 @@ use Drupal\Component\Utility\Html;
 
 function mytheme_preprocess_region(&$variables) {
   $elements = $variables['elements'];
-  $variables['content'] = array();
+  $variables['content'] = [];
   $region_children = Element::children($elements);
   $variables['region'] = $elements['#region'];
   // Utility regional classes for $content.

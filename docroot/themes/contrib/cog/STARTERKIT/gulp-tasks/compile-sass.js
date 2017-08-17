@@ -3,6 +3,8 @@
  * Task: Compile: Sass.
  */
 
+ /* global module */
+
 module.exports = function (gulp, plugins, options) {
   'use strict';
 
@@ -10,12 +12,6 @@ module.exports = function (gulp, plugins, options) {
     return gulp.src([
       options.sass.files
     ])
-      .pipe(plugins.plumber({
-        errorHandler: function(e) {
-          console.log(e.messageFormatted);
-          this.emit('end');
-        }
-      }))
       .pipe(plugins.sourcemaps.init())
       .pipe(plugins.sassGlob())
       .pipe(plugins.sass({
@@ -27,7 +23,6 @@ module.exports = function (gulp, plugins, options) {
         cascade: false
       }))
       .pipe(plugins.sourcemaps.write())
-      .pipe(plugins.plumber.stop())
       .pipe(gulp.dest(options.sass.destination));
   });
 };

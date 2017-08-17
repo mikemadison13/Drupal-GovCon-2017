@@ -3,7 +3,7 @@
 namespace Drupal\flag\Plugin\views\field;
 
 use Drupal\Component\Serialization\Json;
-use Drupal\Core\Link;
+use Drupal\flag\FlaggingInterface;
 use Drupal\flag\Plugin\ActionLink\FormEntryInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
@@ -21,16 +21,33 @@ use Drupal\Core\Entity\EntityInterface;
 class FlagViewsLinkField extends FieldPluginBase {
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The flag for this row.
+   *
+   * @var \Drupal\flag\FlagInterface
+   */
+  protected $flag;
+
+  /**
    * A helper method to retrieve the flag entity from the views relationship.
    *
-   * @return FlagInterface|null
+   * @return \Drupal\flag\FlagInterface|null
    *   The flag selected by the views relationship.
    */
   public function getFlag() {
+    if ($this->flag) {
+      return $this->flag;
+    }
     // When editing a view it's possible to delete the relationship (either by
     // error or to later recreate it), so we have to guard against a missing
     // one.
-    if (isset($this->view->relationship[$this->options['relationship']])) {
+    elseif (isset($this->view->relationship[$this->options['relationship']])) {
       return $this->view->relationship[$this->options['relationship']]->getFlag();
     }
 
@@ -72,7 +89,19 @@ class FlagViewsLinkField extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    $entity = $this->getParentRelationshipEntity($values);
+    // If the flagging is the base for the view, there wouldn't be a
+    // relationship involved.
+    if ($values->_entity instanceof FlaggingInterface) {
+      $entity_type = $values->_entity->getFlaggableType();
+      $entity_id = $values->_entity->getFlaggableId();
+      $entity = $this->getEntityTypeManager()
+        ->getStorage($entity_type)
+        ->load($entity_id);
+      $this->flag = $values->_entity->getFlag();
+    }
+    else {
+      $entity = $this->getParentRelationshipEntity($values);
+    }
     return $this->renderLink($entity, $values);
   }
 
@@ -86,6 +115,7 @@ class FlagViewsLinkField extends FieldPluginBase {
    *   The current result row.
    *
    * @return \Drupal\Core\Entity\EntityInterface
+   *   The parent entity.
    */
   protected function getParentRelationshipEntity(ResultRow $values) {
     $relationship_id = $this->options['relationship'];
@@ -138,6 +168,20 @@ class FlagViewsLinkField extends FieldPluginBase {
     }
 
     return $renderable;
+  }
+
+  /**
+   * Returns the entity type manager.
+   *
+   * @return \Drupal\Core\Entity\EntityTypeManagerInterface
+   *   The entity type manager service.
+   */
+  protected function getEntityTypeManager() {
+    if (!isset($this->entityTypeManager)) {
+      $this->entityTypeManager = \Drupal::service('entity_type.manager');
+    }
+
+    return $this->entityTypeManager;
   }
 
 }

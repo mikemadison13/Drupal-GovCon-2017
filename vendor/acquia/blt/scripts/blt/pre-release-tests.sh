@@ -15,23 +15,27 @@ set -x
 cd $SCRIPT_DIR/../../../
 export COMPOSER_PROCESS_TIMEOUT=2000
 # @todo prompt to delete if exists
+if [ -d ./blted8/.vagrant ]; then
+  cd blted8
+  vagrant destroy
+  cd ..
+fi
 rm -rf blted8
 composer create-project acquia/blt-project:8.x-dev blted8 --no-interaction
 cd blted8
 # Overwrite MySQL creds for your local machine, if necessary.
 # echo '$databases["default"]["default"]["username"] = "drupal";' >> docroot/sites/default/settings/local.settings.php
 # echo '$databases["default"]["default"]["password"] = "drupal";' >> docroot/sites/default/settings/local.settings.php
-./vendor/bin/blt local:setup
-cd docroot
-cd ..
+./vendor/bin/blt setup
 ./vendor/bin/blt validate
-./vendor/bin/blt tests
-read -p "Press any key to continue. This will create a VM and re-run tests there."
-./vendor/bin/blt vm -Dvm.boot=y
-./vendor/bin/blt local:setup
-drush @blted8.local ssh blt tests:behat
+./vendor/bin/blt examples:init
+./vendor/bin/blt tests:all
+read -p "Press any key to continue. This will create a VM and re-run tests there. SHUT DOWN MAMP."
+./vendor/bin/blt vm --yes
+./vendor/bin/blt setup
+blt tests:behat --yes
 read -p "Press any key to continue. This will destroy the VM and attempt to perform a Pipelines build."
-vagrant destroy
+blt vm:nuke
 
 ./vendor/bin/yaml-cli update:value blt/project.yml git.remotes.0 bolt8pipeline@svn-2420.devcloud.hosting.acquia.com:bolt8pipeline.git
 ./vendor/bin/blt ci:pipelines:init

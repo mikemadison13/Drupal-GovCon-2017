@@ -2,15 +2,10 @@
 
 namespace Drupal\Tests\flag\Functional;
 
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
 use Drupal\flag\Entity\Flag;
-use Drupal\flag\Entity\Flagging;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Tests\BrowserTestBase;
-use Drupal\user\RoleInterface;
-use Drupal\user\Entity\Role;
 
 /**
  * Tests the entity form checkbox output respects flag access control.

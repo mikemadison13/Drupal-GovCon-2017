@@ -6,8 +6,8 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\webform\WebformElementInterface;
-use Drupal\webform\WebformElementManagerInterface;
+use Drupal\webform\Plugin\WebformElementInterface;
+use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -76,10 +76,10 @@ abstract class WebformElementViewsAbstract implements WebformElementViewsInterfa
 
     $data[$table_alias]['webform_submission_value'] = [
       'title' => Html::escape($element_title),
-      'help' => $this->t('Value of the field %field in webform %webform submission.', array(
+      'help' => $this->t('Value of the field %field in webform %webform submission.', [
         '%field' => $element_title,
         '%webform' => $webform->label(),
-      )),
+      ]),
     ];
 
     foreach ($this->getElementViewsData($element_plugin, $element) as $k => $v) {

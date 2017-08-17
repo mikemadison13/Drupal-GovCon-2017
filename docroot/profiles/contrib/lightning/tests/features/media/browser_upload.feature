@@ -1,7 +1,7 @@
 @lightning @media @api @javascript @errors
 Feature: Uploading media assets through the media browser
 
-  @image @document @test_module @1f81e59b
+  @image @document @with-module:lightning_test @1f81e59b
   Scenario Outline: Uploading a file from within the media browser
     Given I am logged in as a user with the media_creator role
     When I visit "/entity-browser/iframe/media_browser"
@@ -24,7 +24,7 @@ Feature: Uploading media assets through the media browser
     And I press "Place"
     Then I should see the error message "You must upload a file."
 
-  @image @test_module @2f72f4a4
+  @image @with-module:lightning_test @2f72f4a4
   Scenario: The upload widget validates file size
     Given I am logged in as a user with the media_creator,page_creator roles
     When I visit "/node/add/page"
@@ -54,3 +54,14 @@ Feature: Uploading media assets through the media browser
     And I attach the file "test.php" to "input_file"
     And I wait for AJAX to finish
     Then the "#entity" element should be empty
+
+  @with-module:upload_bundles_test @ced013a5
+  Scenario: The upload widget should respect media bundles allowed by the field
+    Given I am logged in as a user with the "page_creator,media_creator,media_manager" roles
+    When I visit "/node/add/page"
+    And I switch to the "entity_browser_iframe_media_browser" frame
+    And I upload "test.jpg"
+    And I enter "Z Image Test" for "Media name"
+    And I submit the entity browser
+    Then there should be 1 z_image media entity
+    And there should be 0 image media entities

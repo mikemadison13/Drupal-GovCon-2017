@@ -69,7 +69,7 @@ trait FormTrait
                 $input_machine_name = $this->stringConverter->createMachineName($input_label);
 
                 $input_name = $io->ask(
-                    $this->trans('commands.common.questions.inputs.machine_name'),
+                    $this->trans('commands.common.questions.inputs.machine-name'),
                     $input_machine_name
                 );
 
@@ -93,19 +93,19 @@ trait FormTrait
                 $size = null;
                 if (in_array($input_type, ['textfield', 'password', 'password_confirm'])) {
                     $maxlength = $io->ask(
-                        'Maximum amount of characters',
+                        $this->trans('commands.generate.form.questions.max-amount-characters'),
                         '64'
                     );
 
                     $size = $io->ask(
-                        'Width of the textfield (in characters)',
+                        $this->trans('commands.generate.form.questions.textfield-width-in-chars'),
                         '64'
                     );
                 }
 
                 if ($input_type == 'select') {
                     $size = $io->ask(
-                        'Size of multiselect box (in lines)',
+                        $this->trans('commands.generate.form.questions.multiselect-size-in-lines'),
                         '5'
                     );
                 }
@@ -113,7 +113,7 @@ trait FormTrait
                 $input_options = '';
                 if (in_array($input_type, ['checkboxes', 'radios', 'select'])) {
                     $input_options = $io->ask(
-                        'Input options separated by comma'
+                        $this->trans('commands.generate.form.questions.input-options')
                     );
                 }
 
@@ -126,7 +126,7 @@ trait FormTrait
                         $input_options_output[$key] = "'$value' => \$this->t('".$value."')";
                     }
 
-                    $input_options = 'array('.implode(', ', $input_options_output).')';
+                    $input_options = '['.implode(', ', $input_options_output).']';
                 }
 
                 // Description for input

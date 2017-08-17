@@ -54,6 +54,55 @@ use. For example, if you are currently running Beta 1 and are trying to update
 to Beta 3, you will need to follow the instructions for updating from Beta 1 to
 Beta 2, then from Beta 2 to Beta 3, in that order.
 
+## 2.1.5 to 2.1.6
+This version of Lightning adds the ability to choose an image style, alt text,
+and other settings each time you embed an image in a WYSIWYG editor, rather
+that needing to rely on view modes. To enable this functionality:
+
+1. As always, visit ```update.php``` or run ```drush updatedb``` to perform
+   database updates.
+1. Clear all caches.
+1. Under *Configuration > Content Authoring > Text formats and editors*,
+   configure the **Rich Text** filter format. Under "Filter settings", open the
+   tab labeled "Limit allowed HTML tags and correct faulty HTML".
+1. In the "Allowed HTML tags" text field, you should see a tag like
+   `<drupal-entity data-*>`. Change it to `<drupal-entity data-* alt title>`.
+1. Save the filter format.
+1. Under *Configuration > Content Authoring > Text editor embed buttons*,  edit
+   the "Media browser" embed button.
+1. Under "Allowed Entity Embed Display plugins", ensure that the "Media Image"
+   checkbox is checked.
+1. Save the embed button.
+1. If you would like to allow authors to choose how embedded media should be
+   displayed, go to *Configuration > System > Lightning > Media*, ensure that
+   the box labeled "Allow users to choose how to display embedded media" is
+   checked, then submit the form. If the box is not checked, Lightning will
+   automatically choose a preferred display method (the recommended, default
+   behavior).
+
+## 2.1.4 to 2.1.5
+There are no manual update steps for this version.
+
+## 2.1.3 to 2.1.4
+There are no manual update steps for this version.
+
+**Note:**  
+There is a known issue with Metatag version 8.x-1.1 where you might need to
+clear your site's cache after updating. See [Metatag 8.x-1.1 Release notes][metatag8.x-1.1]
+and this [related issue][2882954].
+
+As per our Dependency Constraint Policy, Lightning doesn't pin to a specific
+version of Metatag, so depending on your your setup, Metatag is likely to be
+updated when you update to Lightning 2.1.4. For Composer users, we recommend
+pinning to Metatag version 1.0.0. Alternatively, you can be prepared to clear
+your site's cache immediately after running `update.php`.
+
+[metatag8.x-1.1]: https://www.drupal.org/project/metatag/releases/8.x-1.1 "Metatag 8.x-1.1 Release notes"
+[2882954]: https://www.drupal.org/node/2882954 "Error when updating to 8.x-1.1"
+
+## 2.1.2 to 2.1.3
+There are no manual update steps for this version.
+
 ## 2.1.1 to 2.1.2
 There are no manual update steps for this version.
 

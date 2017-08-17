@@ -17,6 +17,13 @@ class WebformSubmissionSelectFilter extends InOperator {
 
   use WebformSubmissionTrait;
 
+  /**
+   * Denote the option of "all" options.
+   *
+   * @var string
+   */
+  const ALL = 'all';
+
   protected $valueFormType = 'select';
 
   /**
@@ -45,7 +52,16 @@ class WebformSubmissionSelectFilter extends InOperator {
    */
   public function valueForm(&$form, FormStateInterface $form_state) {
     parent::valueForm($form, $form_state);
-    unset($form['value']['#options']['all']);
+    $form['value']['#required'] = FALSE;
+    unset($form['value']['#options'][self::ALL]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function showValueForm(&$form, FormStateInterface $form_state) {
+    parent::showValueForm($form, $form_state);
+    $form['value']['#options'] = [self::ALL => $this->valueOptions[self::ALL]] + $form['value']['#options'];
   }
 
   /**
@@ -56,9 +72,26 @@ class WebformSubmissionSelectFilter extends InOperator {
       $webform = $this->entityTypeManager->getStorage('webform')->load($this->definition['webform_id']);
       $element = $webform->getElementInitialized($this->definition['webform_submission_field']);
 
-      $this->valueOptions = $element['#options'];
+      // We need this explicit "all" option because otherwise
+      // InOperator::validate() rises validation errors when we are an exposed
+      // required filter without default value nor without submitted exposed
+      // input.
+      $this->valueOptions = [self::ALL => $this->t('All')];
+      $this->valueOptions += $element['#options'];
     }
     return $this->valueOptions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function acceptExposedInput($input) {
+    $accept = parent::acceptExposedInput($input);
+    $identifier = $this->options['expose']['identifier'];
+    if ($input[$identifier] == self::ALL) {
+      return FALSE;
+    }
+    return $accept;
   }
 
 }

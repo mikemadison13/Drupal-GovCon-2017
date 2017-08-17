@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains Drupal\Tests\acquia_search\Unit\AcquiaSearchTest.
+ */
+
 namespace Drupal\Tests\acquia_search\Unit;
 
 use Drupal\acquia_search\EventSubscriber\SearchSubscriber;

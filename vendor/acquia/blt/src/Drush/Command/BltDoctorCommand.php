@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 use Drupal\Core\Installer\Exception\AlreadyInstalledException;
 
 /**
- *
+ * Provides drush `blt-doctor` command.
  */
 class BltDoctor {
 
@@ -88,7 +88,8 @@ class BltDoctor {
     $this->setComposerLock();
     $this->setBltVersion();
     $this->statusTable['blt-version'] = $this->bltVersion;
-    $status_table['php-mysql'] = ini_get('pdo_mysql.default_socket');
+    $this->statusTable['php-mysql'] = ini_get('pdo_mysql.default_socket');
+    $this->statusTable['shell'] = $_ENV['SHELL'];
 
     $this->setProjectConfig();
     $this->setCiEnabled();
@@ -197,12 +198,13 @@ class BltDoctor {
     if (strstr($file_contents, 'DDSETTINGS')) {
       $this->devDesktopEnabled = TRUE;
     }
+    $this->statusTable['dev-desktop-enabled'] = $this->devDesktopEnabled;
 
-    if (file_exists($this->repoRoot . '/Vagrantfile')
-      && file_exists($this->repoRoot . '/project.local.yml')
-      && $this->config['drush']['aliases']['local'] != 'self') {
+    if (file_exists($this->repoRoot . '/Vagrantfile')) {
       $this->drupalVmEnabled = TRUE;
     }
+
+    $this->statusTable['drupal-vm-enabled'] = $this->drupalVmEnabled;
   }
 
   /**
@@ -257,7 +259,6 @@ class BltDoctor {
     $this->checkDrupalBootstrapped();
     $this->checkDrupalInstalled();
     $this->checkCaching();
-    $this->checkNvmExists();
     $this->checkDevDesktop();
     $this->checkCiConfig();
     $this->checkComposer();
@@ -318,6 +319,14 @@ class BltDoctor {
           }
         }
         else {
+          if (is_bool($value)) {
+            if ($value) {
+              $value = 'true';
+            }
+            else {
+              $value = 'false';
+            }
+          }
           $contents = wordwrap($value, $max_line_length, "\n", TRUE);
           $rows[] = [$key, $contents];
         }
@@ -520,12 +529,13 @@ class BltDoctor {
       $outcome[] = "";
     }
 
+    $php_conf = is_array($this->statusTable['php-conf']) ? implode(', ', $this->statusTable['php-conf']) : $this->statusTable['php-conf'];
     $outcome = array_merge($outcome, [
       'Are you using the correct PHP binary?',
       'Is PHP using the correct MySQL socket?',
       "  php-os: {$this->statusTable['php-os']}",
       "  php-bin: {$this->statusTable['php-bin']}",
-      "  php-conf: {$this->statusTable['php-conf']}",
+      "  php-conf: $php_conf",
       "  php-mysql: {$this->statusTable['php-mysql']}",
       '',
       'Are you using the correct site and settings.php file?',
@@ -537,28 +547,6 @@ class BltDoctor {
     ]);
 
     $this->logOutcome(__FUNCTION__, $outcome, 'error');
-  }
-
-  /**
-   * Checks that NVM exists.
-   *
-   * Note that this does not check if `nvm use` has been invoked for the correct
-   * node version.
-   */
-  protected function checkNvmExists() {
-    $home = getenv("HOME");
-    if (!file_exists("$home/.nvm")) {
-      $this->logOutcome(__FUNCTION__, [
-        'NVM does not exist.',
-        '',
-        'It is recommended that you use NVM to manage multiple versions of NodeJS on one machine.',
-        'Instructions for installing NVM can be found at:',
-        '  https://github.com/creationix/nvm#installation',
-      ], 'error');
-    }
-    else {
-      $this->logOutcome(__FUNCTION__, "NVM exists.", 'info');
-    }
   }
 
   /**
@@ -732,8 +720,9 @@ class BltDoctor {
   protected function checkDrupalVm() {
     if ($this->drupalVmEnabled) {
       $passed = TRUE;
-      if (!file_exists($this->repoRoot . '/box/config.yml')) {
-        $this->logOutcome(__FUNCTION__ . ':init', "You have DrupalVM initialized, but box/config.yml is missing.", 'error');
+      $drupal_vm_config = $this->getDrupalVmConfigFile();
+      if (!file_exists($this->repoRoot . '/' . $drupal_vm_config)) {
+        $this->logOutcome(__FUNCTION__ . ':init', "You have DrupalVM initialized, but $drupal_vm_config is missing.", 'error');
 
         $passed = FALSE;
       }
@@ -754,7 +743,7 @@ class BltDoctor {
           else {
             $this->logOutcome(__FUNCTION__ . ':alias', "drush.aliases.local exists your drush aliases file.", 'info');
             $local_alias = $this->drushAliases[$local_alias_id];
-            if ($local_alias['remote-host'] != $this->drupalVmConfig['vagrant_hostname']) {
+            if ('vagrant' != $_SERVER['USER'] && $local_alias['remote-host'] != $this->drupalVmConfig['vagrant_hostname']) {
               $this->logOutcome(__FUNCTION__ . ":remote-host", [
                 "remote-host for @$local_alias_id drush alias does not match vagrant_hostname for DrupalVM.",
                 "  remote-host is set to {$local_alias['remote-host']} for @$local_alias_id",
@@ -793,10 +782,21 @@ class BltDoctor {
   }
 
   /**
+   * @return string
+   */
+  protected function getDrupalVmConfigFile() {
+    // This is the only non-config "box/config.yml" entry.
+    $drupal_vm_config = isset($this->config['vm']['config']) ? $this->config['vm']['config'] : 'box/config.yml';
+    // Is there a way to calculate this "${repo.root}"? Removing for now.
+    $drupal_vm_config = str_replace('${repo.root}', "", $drupal_vm_config);
+    return $drupal_vm_config;
+  }
+
+  /**
    * @return array|mixed
    */
   protected function setDrupalVmConfig() {
-    $this->drupalVmConfig = Yaml::parse(file_get_contents($this->repoRoot . '/box/config.yml'));
+    $this->drupalVmConfig = Yaml::parse(file_get_contents($this->repoRoot . '/' . $this->getDrupalVmConfigFile()));
 
     return $this->drupalVmConfig;
   }
@@ -851,7 +851,7 @@ class BltDoctor {
         $this->logOutcome(__FUNCTION__ . ':root', [
           "You have DrupalVM initialized, but drupal_root in tests/behat/local.yml does not reference the DrupalVM docroot.",
           "  Behat drupal_root is $behat_drupal_root.",
-          "  To resolve, remove tests/behat/local.yml, ssh into the VM, and run blt setup:behat.",
+          "  To resolve, run blt setup:behat.",
         ], 'error');
       }
       else {
@@ -914,18 +914,20 @@ class BltDoctor {
       ], 'info');
     }
 
-    $prestissimo_intalled = drush_shell_exec("composer global show | grep hirak/prestissimo");
-    if (!$prestissimo_intalled) {
-      $this->logOutcome(__FUNCTION__ . ":plugins", [
-        "hirak/prestissimo plugin for composer is not installed.",
-        "  Run `composer global require hirak/prestissimo:^0.3` to install it.",
-        "  This will improve composer install/update performance by parallelizing the download of dependency information.",
-      ], 'comment');
-    }
-    else {
-      $this->logOutcome(__FUNCTION__ . ':plugins', [
-        "hirak/prestissimo plugin for composer is installed.",
-      ], 'info');
+    if ('vagrant' != $_SERVER['USER']) {
+      $prestissimo_intalled = drush_shell_exec("composer global show | grep hirak/prestissimo");
+      if (!$prestissimo_intalled) {
+        $this->logOutcome(__FUNCTION__ . ":plugins", [
+          "hirak/prestissimo plugin for composer is not installed.",
+          "  Run `composer global require hirak/prestissimo:^0.3` to install it.",
+          "  This will improve composer install/update performance by parallelizing the download of dependency information.",
+        ], 'comment');
+      }
+      else {
+        $this->logOutcome(__FUNCTION__ . ':plugins', [
+          "hirak/prestissimo plugin for composer is installed.",
+        ], 'info');
+      }
     }
   }
 

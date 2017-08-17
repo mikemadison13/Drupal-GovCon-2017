@@ -19,6 +19,18 @@ use Drupal\lightning_core\Plugin\views\filter\Bundle;
 use Drupal\path\Plugin\Field\FieldType\PathFieldItemList;
 
 /**
+ * Implements hook_config_schema_info_alter().
+ */
+function lightning_core_config_schema_info_alter(array &$definitions) {
+  if (isset($definitions['views_filter'])) {
+    $definitions['views_filter']['mapping']['expose']['mapping']['argument'] = [
+      'type' => 'string',
+      'label' => 'Yield to argument',
+    ];
+  }
+}
+
+/**
  * Implements hook_views_plugins_filter_alter().
  */
 function lightning_core_views_plugins_filter_alter(array &$plugins) {
@@ -91,7 +103,11 @@ function lightning_core_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_modules_installed().
  */
 function lightning_core_modules_installed(array $modules) {
-  if (in_array('token', $modules)) {
+  // Don't do anything during config sync.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+  elseif (in_array('token', $modules)) {
     $view_modes = [];
     foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type) {
       $view_modes[] = $entity_type->id() . '.token';

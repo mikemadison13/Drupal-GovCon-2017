@@ -1,14 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/env php
+<?php
+/**
+ * @file This file is a simply shell wrapper for running BLT Robo commands.
+ *
+ * Having a wrapper permits other non-shell files to directly require
+ * blt-robo.php.
+ */
 
-if [ "`git rev-parse --show-cdup 2> /dev/null`" != "" ]; then
-  GIT_ROOT=$(git rev-parse --show-cdup)
-else
-  GIT_ROOT="."
-fi
-
-if [ -f "$GIT_ROOT/vendor/acquia/blt/bin/blt" ]; then
-  cd $GIT_ROOT
-  ./vendor/phing/phing/bin/phing -f "./vendor/acquia/blt/phing/build.xml" -logger vendor.acquia.blt.phing.phingcludes.BltLogger "$@"
-else
-  echo "Error: You must run this command from within a BLT-generated project repository!"
-fi
+// Shell wrapper for BLT robo app.
+require_once __DIR__ . '/blt-robo.php';

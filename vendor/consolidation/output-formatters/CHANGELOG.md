@@ -1,5 +1,21 @@
 # Change Log
 
+### 3.1.10 - 6 June 2017
+
+- Typo in CalculateWidths::distributeLongColumns causes failure for some column width distributions
+
+### 3.1.9 - 8 May 2017
+
+- Improve wrapping algorithm
+
+### 3.1.7 - 20 Jan 2017
+
+- Add Windows testing
+
+### 3.1.6 - 8 Jan 2017
+
+- Move victorjonsson/markdowndocs to require-dev
+
 ### 3.1.5 - 23 November 2016
 
 - When converting from XML to an array, use the 'id' or 'name' element as the array key value.

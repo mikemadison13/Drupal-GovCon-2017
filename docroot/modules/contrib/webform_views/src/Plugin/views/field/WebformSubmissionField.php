@@ -2,13 +2,11 @@
 
 namespace Drupal\webform_views\Plugin\views\field;
 
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\views\Plugin\views\argument_validator\Entity;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
-use Drupal\webform\WebformElementManagerInterface;
+use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -68,13 +66,13 @@ class WebformSubmissionField extends FieldPluginBase {
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
 
-    $form['webform_element_format'] = array(
+    $form['webform_element_format'] = [
       '#type' => 'select',
       '#title' => $this->t('Format'),
       '#description' => $this->t('Specify how to format this value.'),
       '#options' => $this->getWebformElementPlugin()->getItemFormats(),
       '#default_value' => $this->options['webform_element_format'] ?: $this->getWebformElementPlugin()->getItemDefaultFormat(),
-    );
+    ];
 
     $form['webform_element_format']['#access'] = !empty($form['webform_element_format']['#options']);
   }
@@ -86,8 +84,9 @@ class WebformSubmissionField extends FieldPluginBase {
     if ($values->_entity->access('view')) {
       $view_builder = $this->entityTypeManager->getViewBuilder('webform_submission');
 
-      $webform = $values->_entity->getWebform();
-      $data = $values->_entity->getData();
+      /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
+      $webform_submission = $values->_entity;
+      $webform = $webform_submission->getWebform();
       $elements = $webform->getElementsInitialized();
       if (!isset($elements[$this->definition['webform_submission_field']])) {
         $elements = $webform->getElementsInitializedAndFlattened();
@@ -100,7 +99,7 @@ class WebformSubmissionField extends FieldPluginBase {
       $elements[$this->definition['webform_submission_field']]['#title_display'] = 'invisible';
       $elements[$this->definition['webform_submission_field']]['#format'] = $this->options['webform_element_format'];
 
-      return $view_builder->buildElements($elements, $data, [
+      return $view_builder->buildElements($elements, $webform_submission, [
         'excluded_elements' => $excluded_elements,
       ]);
     }
@@ -121,14 +120,14 @@ class WebformSubmissionField extends FieldPluginBase {
    */
   public function clickSort($order) {
     $webform_submission_data_alias = $this->ensureMyTable();
-    $params = $this->options['group_type'] != 'group' ? array('function' => $this->options['group_type']) : array();
+    $params = $this->options['group_type'] != 'group' ? ['function' => $this->options['group_type']] : [];
     $this->query->addOrderBy($webform_submission_data_alias, 'value', $order, '', $params);
   }
 
   /**
    * Retrieve webform element plugin instance.
    *
-   * @return \Drupal\webform\WebformElementInterface
+   * @return \Drupal\webform\Plugin\WebformElementInterface
    *   Webform element plugin instance that corresponds to the webform element
    *   of this view field
    */
