@@ -12,11 +12,10 @@
 
   Drupal.behaviors.environmentIndicatorToolbar = {
     attach: function (context, settings) {
-      if (typeof drupalSettings.environment_indicator != 'undefined') {
-        return;
+      if (typeof(settings.environmentIndicator) != 'undefined') {
+        $('#toolbar-bar', context).css('background-color', settings.environmentIndicator.bgColor);
+        $('#toolbar-bar .toolbar-item, #toolbar-bar .toolbar-item a', context).css('color', settings.environmentIndicator.fgColor);
       }
-      $('#toolbar-bar', context).css('background-color', settings.environmentIndicator.bgColor);
-      $('#toolbar-bar .toolbar-item, #toolbar-bar .toolbar-item a', context).css('color', settings.environmentIndicator.fgColor);
     }
   };
 

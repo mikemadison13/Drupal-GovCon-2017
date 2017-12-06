@@ -136,6 +136,10 @@ class ModuleInstaller implements ModuleInstallerInterface {
           throw new ExtensionNameLengthException("Module name '$module' is over the maximum allowed length of " . DRUPAL_EXTENSION_NAME_MAX_LENGTH . ' characters');
         }
 
+        // Load a new config object for each iteration, otherwise changes made
+        // in hook_install() are not reflected in $extension_config.
+        $extension_config = \Drupal::configFactory()->getEditable('core.extension');
+
         // Check the validity of the default configuration. This will throw
         // exceptions if the configuration is not valid.
         $config_installer->checkConfigurationToInstall('module', $module);
@@ -330,7 +334,7 @@ class ModuleInstaller implements ModuleInstallerInterface {
     if ($uninstall_dependents) {
       // Add dependent modules to the list. The new modules will be processed as
       // the while loop continues.
-      $profiles = \Drupal::service('profile_handler')->getProfiles();
+      $profiles = \Drupal::service('profile_handler')->getProfileInheritance();
       while (list($module) = each($module_list)) {
         foreach (array_keys($module_data[$module]->required_by) as $dependent) {
           if (!isset($module_data[$dependent])) {

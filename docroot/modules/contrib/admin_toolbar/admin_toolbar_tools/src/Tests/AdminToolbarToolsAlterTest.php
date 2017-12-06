@@ -34,6 +34,7 @@ class AdminToolbarToolsAlterTest extends WebTestBase {
     $this->adminUser = $this->drupalCreateUser([
       'access toolbar',
       'access administration pages',
+      'administer site configuration',
     ]);
     $this->drupalLogin($this->adminUser);
   }
@@ -43,7 +44,7 @@ class AdminToolbarToolsAlterTest extends WebTestBase {
    */
   public function testAdminToolbarTools() {
     // Assert that special menu items are present in the HTML.
-    $this->assertRaw('class="toolbar-icon toolbar-icon-admin-toolbar-tools-flush"');
+    $this->assertRaw('class="toolbar-icon toolbar-icon-admin-toolbar-tools-help"');
   }
 
 }

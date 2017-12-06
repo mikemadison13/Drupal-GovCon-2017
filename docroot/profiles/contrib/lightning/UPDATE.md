@@ -12,7 +12,7 @@ cases, Lightning will attempt to safely update configuration that it depends on
 Otherwise, Lightning will leave your configuration alone, respecting the fact
 that your site owns it. So, to bring your site fully up-to-date with the latest
 default configuration, you must follow the appropriate set(s) of instructions in
-the "Manual update steps" section of this file.
+the "Configuration updates" section of this file.
 
 ## Updating Lightning
 
@@ -21,8 +21,10 @@ If you've installed Lightning using our [Composer-based project template](https:
 
 * ```cd /path/to/YOUR_PROJECT```
 * ```composer update```
-* Run ```drush updatedb``` or visit ```update.php``` to perform automatic database updates.
-* Perform any necessary manual updates (see below).
+* Run ```drush updatedb && drush cache-rebuild```, or visit ```update.php```,
+  to perform automatic database updates. You can also use Drupal Console's
+  ```update:execute``` command.
+* Perform any necessary configuration updates (see below).
 
 ### Tarball
 **Do not use ```drush pm-update``` or ```drush up``` to update Lightning!**
@@ -40,21 +42,167 @@ To update Lightning safely:
    Lightning.
 4. Visit ```update.php``` or run ```drush updatedb``` to perform any necessary
    database updates.
-5. Perform any necessary manual updates (see below).
+5. Perform any necessary configuration updates (see below).
 
-## Manual update steps
+## Configuration updates
 
 These instructions describe how to update your site's configuration to bring
-it in line with a newer version of Lightning. These changes are never made
-automatically by Lightning because they have the potential to change the way
-your site works.
+it in line with a newer version of Lightning. Lightning does not make these
+changes automatically, because they may change the way your site works.
 
-Follow the instructions starting from the version of Lightning you currently
-use. For example, if you are currently running Beta 1 and are trying to update
-to Beta 3, you will need to follow the instructions for updating from Beta 1 to
-Beta 2, then from Beta 2 to Beta 3, in that order.
+However, as of version 2.1.8, Lightning provides a Drupal Console command which
+*can* perform these updates automatically, confirming each change interactively
+as it goes. If you intend to perform all the configuration updates documented
+here, this can save quite a bit of time!
 
-## 2.1.5 to 2.1.6
+### Automatic configuration updates
+
+Ensure Drupal Console is installed, then switch into the web root of your
+Lightning installation and run:
+
+```
+$ drupal update:lightning
+```
+
+To run all available configuration updates without any prompting, use:
+
+```
+$ drupal update:lightning --no-interaction
+```
+
+If you'd rather do the updates manually, follow the instructions below,
+starting from the version of Lightning you currently use. For example, if you
+are currently running Beta 1 and are trying to update to Beta 3, you will need
+to follow the instructions for updating from Beta 1 to Beta 2, then from Beta 2
+to Beta 3, in that order.
+
+### 2.2.2 to 2.2.3
+There are no manual update steps for thus version.
+
+### 2.2.1 to 2.2.2
+There are no manual update steps for this version.
+ 
+This release fixes some requirements problems with the 2.2.1 media migration.
+You *can* update directly from 2.2.0 to 2.2.2. When doing so, follow the
+"Special instructions for media entity migration" steps below.
+
+### 2.2.0 to 2.2.1
+
+##### Special instructions for media entity migration
+This release will migrate your existing media entities to the core media module.
+Prior to running the database updates, you must:
+
+1. Ensure Composer properly downloaded and patched all dependencies.
+1. Rebuild Drupal's caches.
+
+This release changes the set of patches that are applied to drupal/core without
+actually updating core, which exposes [this bug in the composer-patches plugin](https://github.com/cweagans/composer-patches/issues/71).
+As a result, you will likely need to run composer update twice. Specifically:
+
+```
+composer update acquia/lightning --with-dependencies
+composer update drupal/core
+```
+ 
+Alternatively, you can delete your "/docroot/core" and "/docroot/modules"
+folders and your composer.lock file before running `composer update`. If you use
+[BLT](http://blt.readthedocs.io/en/8.x/), the provided `composer nuke` command
+will do that for you.
+
+Once you have confirmed that your codebase has been update properly, you must
+rebuild your site's caches *before* running the database updates.
+
+```
+drush cache-rebuild
+```
+
+If your codebase has been updated properly, you should see the following four
+pending database updates when you run `drush updatedb`:
+
+```
+lightning_api module : 
+  8002 -   Installs the Consumers module. 
+
+lightning_media module : 
+  8018 -   Updates the media browser's argument validation. 
+
+media_entity module : 
+  8200 -   Clears the module handler's hook implementation cache. 
+  8201 -   Replace Media Entity with Media. 
+```
+
+
+##### Configuration updates
+* Visit *Structure > Content types*. For each moderated content type, click
+  "Manage form display", then drag the "Publishing status" field into the
+  "Disabled" section and press "Save".
+
+### 2.1.8 to 2.2.0
+There are no manual update steps for this version. 
+
+### 2.1.7 to 2.1.8
+* Lightning now ships with support for image cropping, using the Image Widget
+  Crop module. To use it for the Image media bundle (the default behavior in
+  new Lightning sites), do the following:
+  * Install the Image Widget Crop module.
+  * Visit *Structure > Media bundles*. For the Image media bundle, choose
+    "Manage form display".
+  * If the Image field is enabled, set its widget type to "ImageWidget crop",
+    and configure it like so:
+    * Only "Freeform" should be selected for "Crop Type".
+    * "Always expand crop area" should be checked.
+    * "Show links to uploaded files" should be checked.
+    * "Show Remove button" should be checked.
+  * Press "Update", then "Save".
+  * Go to the "Media browser" tab. If the Image field is enabled, set its
+    widget type to "ImageWidget crop" and configure it like so:
+    * Only "Freeform" should be selected for "Crop Type".
+    * "Always expand crop area" should be checked.
+    * "Show links to uploaded files" should NOT be checked.
+    * "Show Remove button" should NOT be checked.
+  * Press "Update", then "Save".
+  * By default, Image Widget Crop uses a CDN-hosted copy of the Cropper
+    JavaScript library. Lightning includes a copy of Cropper as well, which
+    you can use instead of the CDN-hosted version if you prefer to. To use
+    Lightning's included copy of the library, visit *Configuration > Media >
+    ImageWidgetCrop settings* and make the following changes under "Cropper
+    library settings":
+    * Set "Custom Cropper library" to
+    ```libraries/cropper/dist/cropper.min.js```.
+    * Set "Custom Cropper CSS file" to
+   ```libraries/cropper/dist/cropper.min.css```.
+* Lightning now has support for bulk uploading media assets. To enable this
+  feature, install the Bulk Media Upload module from the Lightning Package.
+* New installs of Lightning that include the Workflow component will now place
+  the Operations drop-button as the last column of the /admin/content view.
+  To make this change in your existing Lightning installation, edit the
+  **content** view, move the Operations field to the end of the list of fields,
+  and save the changes.
+
+### 2.1.6. to 2.1.7
+* **IMPORTANT!** Page Manager is no longer a dependency of Lightning Layout,
+  and it will no longer ship with Lightning as of the next release. Therefore,
+  if you are actively using Page Manager, you must add it to your project as an
+  explicit dependency in order to continue to using it. Otherwise, **you must
+  uninstall it before updating to the next version of Lightning, or your site
+  may break.**
+* **IMPORTANT!** Lightning has added support for pulling front-end JavaScript
+  libraries into your project using Composer, via [Asset Packagist](https://asset-packagist.org).
+  This requires a few simple, one-time changes to your project's root
+  composer.json. Note that, **without these changes, some functionality in
+  future Lightning releases will not work.** The required changes, and
+  instructions on how to make them (either manually, or automatically using a
+  Lightning-provided script) are [documented here](http://lightning.acquia.com/blog/round-your-front-end-javascript-libraries-composer).
+* Lightning now supports exposing all Drupal entities as JSON, in the standard
+  JSON API format. To enable this feature, install the Content API module from
+  the Lightning package.
+* If Lightning's content role functionality is available, grant all "creator"
+  content roles the following permissions, as desired:
+  * **Toolbar**: Use the administration toolbar
+  * **Quick Edit**: Access in-place editing
+  * **Contextual Links**: Use contextual links
+
+### 2.1.5 to 2.1.6
 This version of Lightning adds the ability to choose an image style, alt text,
 and other settings each time you embed an image in a WYSIWYG editor, rather
 that needing to rely on view modes. To enable this functionality:
@@ -80,10 +228,10 @@ that needing to rely on view modes. To enable this functionality:
    automatically choose a preferred display method (the recommended, default
    behavior).
 
-## 2.1.4 to 2.1.5
+### 2.1.4 to 2.1.5
 There are no manual update steps for this version.
 
-## 2.1.3 to 2.1.4
+### 2.1.3 to 2.1.4
 There are no manual update steps for this version.
 
 **Note:**  
@@ -100,13 +248,13 @@ your site's cache immediately after running `update.php`.
 [metatag8.x-1.1]: https://www.drupal.org/project/metatag/releases/8.x-1.1 "Metatag 8.x-1.1 Release notes"
 [2882954]: https://www.drupal.org/node/2882954 "Error when updating to 8.x-1.1"
 
-## 2.1.2 to 2.1.3
+### 2.1.2 to 2.1.3
 There are no manual update steps for this version.
 
-## 2.1.1 to 2.1.2
+### 2.1.1 to 2.1.2
 There are no manual update steps for this version.
 
-## 2.1.0 to 2.1.1
+### 2.1.0 to 2.1.1
 * To allow fields that use the media browser to filter to only the media types
   accepted by the field, do the following:
     * Edit the **Browser** display of the **Media** view.
@@ -131,13 +279,13 @@ There are no manual update steps for this version.
       caches and try again.
     * Save the view.
 
-## 2.0.6 to 2.1.0
+### 2.0.6 to 2.1.0
 There are no manual update steps for this version.
 
-## 2.0.5 to 2.0.6
+### 2.0.5 to 2.0.6
 There are no manual update steps for this version.
 
-## 2.0.4 to 2.0.5
+### 2.0.4 to 2.0.5
 There are no manual update steps for this version.
 
 If you previously used the lightning.extend.yml file to customize your
@@ -147,7 +295,7 @@ extend file into a sub-profile of Lightning. See the
 [Lightning as a base profile][sub-profile documentation] documentation for more
 information.
 
-## 2.0.3 to 2.0.4
+### 2.0.3 to 2.0.4
 * Edit the **Scheduled update** field on any content type that has it. Click
   **Field settings*, set "Allowed number of values" to "Unlimited" and save.
   Then click **Edit**, rename the field to "Scheduled updates", and save.
@@ -168,7 +316,7 @@ information.
     displays)**.
   * Save the view.
 
-## 2.0.2 to 2.0.3
+### 2.0.2 to 2.0.3
 * If you have the Landing Page content type installed, there are several manual
   update steps (to be performed in order):
   * Create a formatted text field on the Landing Page content type. You can
@@ -193,7 +341,7 @@ information.
   * The **Forward revision(s) exist** filter. For parity with a clean Lightning
     installation, label it "Has unpublished edit(s)".
 
-## 2.0.1 to 2.0.2
+### 2.0.1 to 2.0.2
 * Install the Diff module.
 * If you would like to use Lightning's simple contact form, install the
   Contact Form feature from the Lightning package. Alternatively, if you'd like
@@ -201,14 +349,14 @@ information.
   not Lightning's default configuration, simply install the Contact and
   Contact Storage modules.
 
-## 2.0.0 to 2.0.1
+### 2.0.0 to 2.0.1
 There are no manual update steps for this version.
 
-## 1.14 to 2.0.0
+### 1.14 to 2.0.0
 Once you have followed the instructions contained in 1.14 to update to 2.0.0,
 there are no further manual update steps.
 
-## 1.13 to 1.14
+### 1.13 to 1.14
 There are no manual update steps for this version. However, Lightning 1.14
 contains a script which will modify your root project's composer.json file in
 order to switch your project to the official Drupal.org Packagist and up date
@@ -217,16 +365,16 @@ you to Lightning 2.0.0.
 If you use the tarball to manage your codebase, you can update directly to the
 2.x branch with no manual update steps.
 
-## 1.12 to 1.13
+### 1.12 to 1.13
 There are no manual update steps for this version.
 
-## 1.11 to 1.12
+### 1.11 to 1.12
 There are no manual update steps for this version.
 
-## 1.10 to 1.11
+### 1.10 to 1.11
 There are no manual update steps for this version.
 
-## 1.06 to 1.10
+### 1.06 to 1.10
 There are no manual update steps for this version.
 
 If you would like to test the new Lightning Preview module and Workspace Preview
@@ -234,7 +382,7 @@ System in a development environment, enable the Lightning Preview module from
 module listing page. Note that Lightning Preview and WPS are not yet ready for
 production environments.
 
-## 1.05 to 1.06
+### 1.05 to 1.06
 There are no manual update steps for this version.
 
 ### 1.04 to 1.05

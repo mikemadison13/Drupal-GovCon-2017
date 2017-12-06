@@ -196,7 +196,7 @@ class ConfigInstaller implements ConfigInstallerInterface {
     $existing_config = $this->getActiveStorages()->listAll();
 
     $list = array_unique(array_merge($storage->listAll(), $optional_profile_config));
-    $list = array_filter($list, function($config_name) use ($existing_config) {
+    $list = array_filter($list, function ($config_name) use ($existing_config) {
       // Only list configuration that:
       // - does not already exist
       // - is a configuration entity (this also excludes config that has an
@@ -482,7 +482,7 @@ class ConfigInstaller implements ConfigInstallerInterface {
 
     // Install profiles can not have config clashes. Configuration that
     // has the same name as a module's configuration will be used instead.
-    $profiles = $this->profileHandler->getProfiles();
+    $profiles = $this->profileHandler->getProfileInheritance();
     if (!isset($profiles[$name])) {
       // Throw an exception if the module being installed contains configuration
       // that already exists. Additionally, can not continue installing more

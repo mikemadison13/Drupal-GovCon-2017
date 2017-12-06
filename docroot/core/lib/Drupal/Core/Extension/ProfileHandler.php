@@ -151,6 +151,7 @@ class ProfileHandler implements ProfileHandlerInterface {
 
         // Ensure all dependencies are cleanly merged.
         $info['dependencies'] = array_merge($info['dependencies'], $base_info['dependencies']);
+
         if (isset($info['base profile']['excluded_dependencies'])) {
           // Apply excluded dependencies.
           $info['dependencies'] = array_diff($info['dependencies'], $info['base profile']['excluded_dependencies']);
@@ -198,7 +199,7 @@ class ProfileHandler implements ProfileHandlerInterface {
   /**
    * {@inheritdoc}
    */
-  public function clearProfileCache() {
+  public function clearCache() {
     $this->profilesWithParentsCache = [];
     $this->infoCache = [];
   }
@@ -238,8 +239,8 @@ class ProfileHandler implements ProfileHandlerInterface {
    *
    * @return string[]
    *   An associative array of profile names, keyed by profile name
-   *   in descending order of their dependencies.
-   *   (parent profiles first, main profile last)
+   *   in descending order of their dependencies (parent profiles first, main
+   *   profile last).
    */
   protected function getProfileList($profile) {
     $profile_info = $this->getProfileInfo($profile);
@@ -249,7 +250,7 @@ class ProfileHandler implements ProfileHandlerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getProfiles($profile = NULL) {
+  public function getProfileInheritance($profile = NULL) {
     if (empty($profile)) {
       $profile = drupal_get_profile();
     }
@@ -280,7 +281,7 @@ class ProfileHandler implements ProfileHandlerInterface {
    * {@inheritdoc}
    */
   public function selectDistribution(array $profile_list) {
-    // First, find all profiles marked as distributions
+    // First, find all profiles marked as distributions.
     $distributions = [];
     foreach ($profile_list as $profile_name) {
       $profile_info = $this->getProfileInfo($profile_name);

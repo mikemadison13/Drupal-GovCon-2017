@@ -114,7 +114,7 @@ class ModulesUninstallForm extends FormBase {
       return $form;
     }
 
-    $profiles = \Drupal::service('profile_handler')->getProfiles();
+    $profiles = \Drupal::service('profile_handler')->getProfileInheritance();
 
     // Sort all modules by their name.
     uasort($uninstallable, 'system_sort_modules_by_info_name');

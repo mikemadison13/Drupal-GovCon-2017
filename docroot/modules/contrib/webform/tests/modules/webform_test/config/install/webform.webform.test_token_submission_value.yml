@@ -102,10 +102,22 @@ elements: |
         state_province: Alabama
         postal_code: 12345
         country: 'United States'
+  fieldset:
+    '#type': fieldset
+    '#title': fieldset
+    first_name:
+      '#type': textfield
+      '#title': first_name
+      '#default_value': John
+    last_name:
+      '#type': textfield
+      '#title': last_name
+      '#default_value': Smith
 css: ''
 javascript: ''
 settings:
   ajax: false
+  ajax_scroll_top: form
   page: true
   page_submit_path: ''
   page_confirm_path: ''
@@ -121,6 +133,7 @@ settings:
   form_prepopulate_source_entity: false
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
+  form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_unsaved: false
@@ -134,14 +147,15 @@ settings:
   wizard_progress_pages: false
   wizard_progress_percentage: false
   wizard_start_label: ''
-  wizard_complete: true
-  wizard_complete_label: ''
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
   preview: 0
   preview_label: ''
   preview_title: ''
   preview_message: ''
   preview_attributes: {  }
   preview_excluded_elements: {  }
+  preview_exclude_empty: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -203,7 +217,16 @@ settings:
     <tr><th width="50%">webform_submission:values:contacts:0:email:html</th><td width="50%">[webform_submission:values:contacts:0:email:html]</td></tr>
     <tr><th width="50%">webform_submission:values:contacts:1:email:raw:html</th><td width="50%">[webform_submission:values:contacts:1:email:raw:html]</td></tr>
     </table>
-
+    
+    <h3>container</h3>
+    <table class="table">
+    <tr><th width="50%">webform_submission:values:fieldset</th><td width="50%"><pre>[webform_submission:values:fieldset]</pre></td></tr>
+    <tr><th width="50%">webform_submission:values:fieldset:html</th><td width="50%">[webform_submission:values:fieldset:html]</td></tr>
+    <tr><th width="50%">webform_submission:values:fieldset:header:html</th><td width="50%">[webform_submission:values:fieldset:header:html]</td></tr>
+    <tr><th width="50%">webform_submission:values:fieldset:details:html</th><td width="50%">[webform_submission:values:fieldset:details:html]</td></tr>
+    <tr><th width="50%">webform_submission:values:fieldset:fieldset:html</th><td width="50%">[webform_submission:values:fieldset:fieldset:html]</td></tr>
+    </table>
+    
     <h3>submission limits</h3>
     <table class="table">
     <tr><th width="50%">webform_submission:limit:webform</th><td width="50%">[webform_submission:limit:webform]</td></tr>
@@ -216,6 +239,11 @@ settings:
     <tr><th width="50%">webform_submission:total:user:source_entity</th><td width="50%">[webform_submission:total:user:source_entity]</td></tr>
     </table>
 
+    <h3>removed and ignored</h3>
+    <table class="table">
+    <tr><th width="50%">webform:removed:token</th><td width="50%">[webform:removed:token]</td></tr>
+    <tr><th width="50%">ignored:token</th><td width="50%">[ignored:token]</td></tr>
+    </table>
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: true
@@ -238,25 +266,33 @@ access:
       - anonymous
       - authenticated
     users: {  }
+    permissions: {  }
   view_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   purge_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   view_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_own:
     roles: {  }
     users: {  }
+    permissions: {  }
 handlers: {  }

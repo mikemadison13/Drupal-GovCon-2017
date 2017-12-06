@@ -71,7 +71,7 @@ class FieldPermissionsCommentTest extends FieldPermissionsTestBase {
    * Configure a comment field on the article node type.
    */
   protected function addCommentField() {
-    $entity_manager = \Drupal::entityManager();
+    $entity_manager = \Drupal::entityTypeManager();
     $bundle = 'article';
     $comment_type_storage = $entity_manager->getStorage('comment_type');
 
@@ -85,8 +85,6 @@ class FieldPermissionsCommentTest extends FieldPermissionsTestBase {
       'target_entity_type_id' => $entity_type,
       'description' => 'Default comment field',
     ])->save();
-
-    $comment_type = $comment_type_storage->load($comment_type_id);
 
     $entity_manager->getStorage('field_storage_config')->create([
       'entity_type' => $entity_type,

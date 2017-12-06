@@ -24,6 +24,17 @@ function purge_drush_drush_help($command) {
  */
 function purge_drush_drush_command() {
   $items = [];
+  $items['cache-rebuild-external'] = [
+    '_purge_drush_inherit_context' => 'p-invalidate',
+    'description' => "Invalidate 'everything' using the Purge framework.",
+    'callback' => 'purge_drush_callback_router',
+    'aliases' => ['cre'],
+    'options' => [
+      'type' => [
+        '_default' => 'everything',
+      ],
+    ],
+  ];
   $items['p-debug-dis'] = [
     'description' => "Disable debugging for all of Purge's log channels.",
     'callback' => 'purge_drush_callback_router',
@@ -121,7 +132,27 @@ function purge_drush_drush_command() {
     'aliases' => ['pinv'],
     'core' => ['8+'],
   ];
-  $items['p-procsr-ls'] = [
+  $items['p-processor-add'] = [
+    'description' => 'Add a new processor.',
+    'callback' => 'purge_drush_callback_router',
+    'callback services' => ['purge.processors'],
+    'arguments' => [
+      'id' => 'The plugin ID of the processor to add.',
+    ],
+    'required-arguments' => 1,
+    'options' => [],
+    'examples' => [
+      'drush p-processor-add ID' => 'Add a processor of type ID.',
+    ],
+    '_outputformats' => ['string', 'yaml', 'json'],
+    'outputformat' => [
+      'default' => 'string',
+      'pipe-format' => 'yaml',
+    ],
+    'aliases' => ['pradd'],
+    'core' => ['8+'],
+  ];
+  $items['p-processor-ls'] = [
     'description' => 'List all enabled processors.',
     'callback' => 'purge_drush_callback_router',
     'callback services' => ['purge.processors',],
@@ -129,9 +160,9 @@ function purge_drush_drush_command() {
     'required-arguments' => FALSE,
     'options' => [],
     'examples' => [
-      'drush p-procsr-ls' => 'List all processors in a table.',
-      'drush p-procsr-ls --table=json' => 'Export all processors in JSON.',
-      'drush p-procsr-ls --table=yaml' => 'Export all processors in YAML.',
+      'drush p-processor-ls' => 'List all processors in a table.',
+      'drush p-processor-ls --table=json' => 'Export all processors in JSON.',
+      'drush p-processor-ls --table=yaml' => 'Export all processors in YAML.',
     ],
     '_outputformats' => ['table', 'yaml', 'json', 'list'],
     'outputformat' => [
@@ -143,7 +174,52 @@ function purge_drush_drush_command() {
         'description' => 'Description',
       ],
     ],
-    'aliases' => ['prols'],
+    'aliases' => ['prls'],
+    'core' => ['8+'],
+  ];
+  $items['p-processor-lsa'] = [
+    'description' => 'List available processor plugin IDs that can be added.',
+    'callback' => 'purge_drush_callback_router',
+    'callback services' => ['purge.processors'],
+    'arguments' => [],
+    'required-arguments' => 0,
+    'options' => [],
+    'examples' => [
+      'drush p-processor-lsa' => 'List available plugin IDs for which processors can be created.',
+      'drush p-processor-lsa --format=json' => 'Export as JSON.',
+      'drush p-processor-lsa --format=yaml' => 'Export as YAML.',
+    ],
+    '_outputformats' => ['table', 'yaml', 'json', 'list'],
+    'outputformat' => [
+      'default' => 'table',
+      'pipe-format' => 'list',
+      'field-labels' => [
+        'plugin_id' => 'Plugin',
+        'label' => 'Label',
+        'description' => 'Description',
+      ],
+    ],
+    'aliases' => ['prlsa'],
+    'core' => ['8+'],
+  ];
+  $items['p-processor-rm'] = [
+    'description' => 'Remove a processor.',
+    'callback' => 'purge_drush_callback_router',
+    'callback services' => ['purge.processors'],
+    'arguments' => [
+      'id' => 'The plugin ID of the processor to remove.',
+    ],
+    'required-arguments' => 1,
+    'options' => [],
+    'examples' => [
+      'drush p-processor-rm ID' => 'Remove the given processor.',
+    ],
+    '_outputformats' => ['string', 'yaml', 'json'],
+    'outputformat' => [
+      'default' => 'string',
+      'pipe-format' => 'yaml',
+    ],
+    'aliases' => ['prrm'],
     'core' => ['8+'],
   ];
   $items['p-purger-add'] = [
@@ -222,6 +298,46 @@ function purge_drush_drush_command() {
       ],
     ],
     'aliases' => ['pplsa'],
+    'core' => ['8+'],
+  ];
+  $items['p-purger-mvd'] = [
+    'description' => 'Move the given purger DOWN in the execution order.',
+    'callback' => 'purge_drush_callback_router',
+    'callback services' => ['purge.purgers'],
+    'arguments' => [
+      'id' => 'The instance ID of the purger to move down.',
+    ],
+    'required-arguments' => 1,
+    'options' => [],
+    'examples' => [
+      'drush p-purger-mv-down ID' => 'Move this purger down.',
+    ],
+    '_outputformats' => ['string', 'yaml', 'json'],
+    'outputformat' => [
+      'default' => 'string',
+      'pipe-format' => 'yaml',
+    ],
+    'aliases' => ['ppmvd'],
+    'core' => ['8+'],
+  ];
+  $items['p-purger-mvu'] = [
+    'description' => 'Move the given purger UP in the execution order.',
+    'callback' => 'purge_drush_callback_router',
+    'callback services' => ['purge.purgers'],
+    'arguments' => [
+      'id' => 'The instance ID of the purger to move up.',
+    ],
+    'required-arguments' => 1,
+    'options' => [],
+    'examples' => [
+      'drush p-purger-mv-down ID' => 'Move this purger up.',
+    ],
+    '_outputformats' => ['string', 'yaml', 'json'],
+    'outputformat' => [
+      'default' => 'string',
+      'pipe-format' => 'yaml',
+    ],
+    'aliases' => ['ppmvu'],
     'core' => ['8+'],
   ];
   $items['p-purger-rm'] = [
@@ -310,14 +426,14 @@ function purge_drush_drush_command() {
     'core' => ['8+'],
   ];
   $items['p-queue-empty'] = [
-    'description' => 'Clear the queue and reset all statistics.',
+    'description' => 'Empty the entire queue.',
     'callback' => 'purge_drush_callback_router',
     'callback services' => ['purge.queue.stats', 'purge.queue',],
     'arguments' => [],
     'required-arguments' => FALSE,
     'options' => [],
     'examples' => [
-      'drush p-queue-empty' => 'Clear the queue and reset all statistics.',
+      'drush p-queue-empty' => 'Empty the entire queue.',
     ],
     '_outputformats' => ['string', 'yaml', 'json'],
     'outputformat' => [
@@ -333,9 +449,16 @@ function purge_drush_drush_command() {
     'callback services' => ['purge.queue.stats',],
     'arguments' => [],
     'required-arguments' => FALSE,
-    'options' => [],
+    'options' => [
+      'reset-totals' => [
+        'description' => "Wipe the TOTAL statistical counters.",
+        'value' => FALSE,
+        '_default' => FALSE,
+      ],
+    ],
     'examples' => [
       'drush p-queue-stats' => 'Retrieve the queue statistics.',
+      'drush p-queue-stats --reset-totals' => 'Wipe the TOTAL statistical counters.',
       'drush p-queue-stats --format=json' => 'Fetch the data as JSON.',
       'drush p-queue-stats --format=yaml' => 'Fetch the data as YAML.',
     ],
@@ -344,14 +467,12 @@ function purge_drush_drush_command() {
       'default' => 'table',
       'pipe-format' => 'yaml',
       'field-labels' => [
-        'title' => '',
-        'description' => 'Description',
-        'value' => 'Value',
+        'left' => '',
+        'right' => '',
       ],
       'column-widths' => [
-        'title' => 15,
-        'value' => 10,
-        'description' => 40,
+        'left' => 20,
+        'right' => 60,
       ],
     ],
     'aliases' => ['pqs'],
@@ -401,6 +522,26 @@ function purge_drush_drush_command() {
     'aliases' => ['pqw'],
     'core' => ['8+'],
   ];
+  $items['p-queuer-add'] = [
+    'description' => 'Add a new queuer.',
+    'callback' => 'purge_drush_callback_router',
+    'callback services' => ['purge.queuers'],
+    'arguments' => [
+      'id' => 'The plugin ID of the queuer to add.',
+    ],
+    'required-arguments' => 1,
+    'options' => [],
+    'examples' => [
+      'drush p-queuer-add ID' => 'Add a queuer of type ID.',
+    ],
+    '_outputformats' => ['string', 'yaml', 'json'],
+    'outputformat' => [
+      'default' => 'string',
+      'pipe-format' => 'yaml',
+    ],
+    'aliases' => ['puadd'],
+    'core' => ['8+'],
+  ];
   $items['p-queuer-ls'] = [
     'description' => 'List all enabled queuers.',
     'callback' => 'purge_drush_callback_router',
@@ -417,8 +558,58 @@ function purge_drush_drush_command() {
     'outputformat' => [
       'default' => 'table',
       'pipe-format' => 'list',
+      'field-labels' => [
+        'id' => 'Id',
+        'label' => 'Label',
+        'description' => 'Description',
+      ],
     ],
-    'aliases' => ['pquls'],
+    'aliases' => ['puls'],
+    'core' => ['8+'],
+  ];
+  $items['p-queuer-lsa'] = [
+    'description' => 'List available queuer plugin IDs that can be added.',
+    'callback' => 'purge_drush_callback_router',
+    'callback services' => ['purge.queuers'],
+    'arguments' => [],
+    'required-arguments' => 0,
+    'options' => [],
+    'examples' => [
+      'drush p-queuer-lsa' => 'List available plugin IDs for which queuers can be created.',
+      'drush p-queuer-lsa --format=json' => 'Export as JSON.',
+      'drush p-queuer-lsa --format=yaml' => 'Export as YAML.',
+    ],
+    '_outputformats' => ['table', 'yaml', 'json', 'list'],
+    'outputformat' => [
+      'default' => 'table',
+      'pipe-format' => 'list',
+      'field-labels' => [
+        'plugin_id' => 'Plugin',
+        'label' => 'Label',
+        'description' => 'Description',
+      ],
+    ],
+    'aliases' => ['pulsa'],
+    'core' => ['8+'],
+  ];
+  $items['p-queuer-rm'] = [
+    'description' => 'Remove a queuer.',
+    'callback' => 'purge_drush_callback_router',
+    'callback services' => ['purge.queuers'],
+    'arguments' => [
+      'id' => 'The plugin ID of the queuer to remove.',
+    ],
+    'required-arguments' => 1,
+    'options' => [],
+    'examples' => [
+      'drush p-queuer-rm ID' => 'Remove the given queuer.',
+    ],
+    '_outputformats' => ['string', 'yaml', 'json'],
+    'outputformat' => [
+      'default' => 'string',
+      'pipe-format' => 'yaml',
+    ],
+    'aliases' => ['purm'],
     'core' => ['8+'],
   ];
   $items['p-types'] = [
@@ -476,7 +667,18 @@ function purge_drush_drush_command_alter(&$command) {
  */
 
 function purge_drush_callback_router() {
+
+  // Load the command context and allow a basic form of inheritance.
   $context = drush_get_command();
+  if (isset($context['_purge_drush_inherit_context'])) {
+    $contexts = purge_drush_drush_command();
+    $context_parent = $contexts[$context['_purge_drush_inherit_context']];
+    $context_child = $contexts[$context['command']];
+    $context_child['command'] = $context['_purge_drush_inherit_context'];
+    $context = array_merge($context, $context_parent, $context_child);
+  }
+
+  // Come up with the actual command name.
   $command = str_replace('-', '_', $context['command']);
 
   // Load requested container services in our own 'callback services' field.

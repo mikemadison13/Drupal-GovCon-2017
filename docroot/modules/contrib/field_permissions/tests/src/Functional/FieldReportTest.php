@@ -70,7 +70,7 @@ class FieldReportTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     // Initially, no fields should be private or custom.
-    $this->assertSession()->pageTextContains('Public (Author and administrators can edit, everyone can view.)');
+    $this->assertSession()->pageTextContains('Not set (Field inherits content permissions.)');
     $this->assertSession()->pageTextNotContains('Private (Only author and administrators can edit and view.)');
     $this->assertSession()->pageTextNotContains('Not all users have this permission');
     $this->assertSession()->pageTextNotContains('All users have this permission');
@@ -91,7 +91,7 @@ class FieldReportTest extends BrowserTestBase {
 
     // Grant anonymous and authenticated view permission.
     foreach ([RoleInterface::ANONYMOUS_ID, RoleInterface::AUTHENTICATED_ID] as $role_id) {
-      /** @var RoleInterface $role */
+      /** @var \Drupal\user\RoleInterface $role */
       $role = $this->container->get('entity_type.manager')
         ->getStorage('user_role')
         ->load($role_id);

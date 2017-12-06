@@ -12,4 +12,10 @@ function lightning_dev_modules_installed(array $modules) {
         'view moderation states',
       ]);
   }
+  if (in_array('lightning_api', $modules)) {
+    \Drupal::configFactory()
+      ->getEditable('lightning_api.settings')
+      ->set('entity_json', TRUE)
+      ->save();
+  }
 }

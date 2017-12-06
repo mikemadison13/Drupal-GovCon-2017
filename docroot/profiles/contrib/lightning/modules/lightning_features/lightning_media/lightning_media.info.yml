@@ -2,7 +2,7 @@ name: 'Lightning Media'
 core: 8.x
 type: module
 description: 'Slick media handling for Lightning. So cool you''ll make the A/C jealous.'
-version: '8.x-2.16'
+version: '8.x-2.23'
 package: Lightning
 dependencies:
   - ckeditor
@@ -11,10 +11,11 @@ dependencies:
   - image
   - inline_entity_form
   - lightning_core
-  - media_entity
+  - media
   - user
   - views_infinite_scroll
 components:
+  - lightning_media_bulk_upload
   - lightning_media_document
   - lightning_media_image
   - lightning_media_instagram

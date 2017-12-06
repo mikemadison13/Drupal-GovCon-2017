@@ -2,9 +2,11 @@
 # Lightning and runs its functional tests. Upon success, an artifact is deployed
 # to the lightningnightly (92170259-5e36-4052-a2ad-0dd5ee5b3ec2) sub on Acquia
 # cloud.
-version: 1.0.0
+version: 1.1.0
 services:
   - mysql
+  - php:
+      version: 7.1
 
 events:
   build:
@@ -15,7 +17,7 @@ events:
             # Add Composer's local bin directory to the PATH so that we will be
             # running our installed versions of Drush, PHPCS, Behat, etc.
             - export PATH="$HOME/.composer/vendor/bin:$SOURCE_DIR/bin:$PATH"
-            - composer validate --no-check-all --ansi
+            - composer validate --no-check-all --ansi --no-interaction
             - composer install
       - install:
           type: script
@@ -34,6 +36,8 @@ events:
       - cleanup:
           type: script
           script:
-            # Setup settings file and codebase with minimum required for cloud.
             - cd $SOURCE_DIR
+            # Remove drush so our version doesn't interfere with cloud commands.
+            - composer remove drush/drush --dev
+            # Setup settings file and codebase with minimum required for cloud.
             - phing cloud-settings

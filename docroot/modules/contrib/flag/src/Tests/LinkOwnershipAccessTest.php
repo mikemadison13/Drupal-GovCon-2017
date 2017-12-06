@@ -26,7 +26,7 @@ class LinkOwnershipAccessTest extends FlagTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->entityTypeManager = $this->container->get('entity_type.manager');
+    $this->entityQueryManager = $this->container->get('entity.query');
 
     // Create a node to flag.
     $this->node = $this->drupalCreateNode(['type' => $this->nodeType]);

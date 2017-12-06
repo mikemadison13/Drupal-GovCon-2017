@@ -10,8 +10,7 @@ namespace Drupal\Console\Command\Debug;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
-use Drupal\Console\Core\Command\Shared\CommandTrait;
+use Drupal\Console\Core\Command\Command;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Console\Core\Style\DrupalStyle;
@@ -24,8 +23,6 @@ use Drupal\Console\Utils\DrupalApi;
  */
 class UserCommand extends Command
 {
-    use CommandTrait;
-
     /**
      * @var EntityTypeManagerInterface
      */
@@ -163,11 +160,18 @@ class UserCommand extends Command
         foreach ($users as $userId => $user) {
             $userRoles = [];
             foreach ($user->getRoles() as $userRole) {
-                $userRoles[] = $systemRoles[$userRole];
+                if ($systemRoles[$userRole]) {
+                    $userRoles[] = $systemRoles[$userRole];
+                }
             }
 
             $status = $user->isActive()?$this->trans('commands.common.status.enabled'):$this->trans('commands.common.status.disabled');
-            $tableRows[] = [$userId, $user->getUsername(), implode(', ', $userRoles), $status];
+            $tableRows[] = [
+                $userId,
+                $user->getUsername(),
+                implode(', ', $userRoles),
+                $status
+            ];
         }
 
         $io->table($tableHeader, $tableRows);

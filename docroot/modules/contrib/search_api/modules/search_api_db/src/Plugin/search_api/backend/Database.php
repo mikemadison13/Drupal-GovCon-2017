@@ -30,6 +30,7 @@ use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Utility\DataTypeHelper;
 use Drupal\search_api_autocomplete\Suggestion;
+use Drupal\search_api_autocomplete\Suggestion\SuggestionFactory;
 use Drupal\search_api_db\DatabaseCompatibility\DatabaseCompatibilityHandlerInterface;
 use Drupal\search_api_db\DatabaseCompatibility\GenericDatabase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -712,7 +713,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    *
    * @todo Write a test to ensure a field named "value" doesn't break this.
    */
-  protected function createFieldTable(FieldInterface $field = NULL, $db, $type = 'field') {
+  protected function createFieldTable(FieldInterface $field = NULL, array $db, $type = 'field') {
     $new_table = !$this->database->schema()->tableExists($db['table']);
     if ($new_table) {
       $table = [
@@ -1054,7 +1055,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    * @param string $index_table
    *   The table which stores the denormalized data for this field.
    */
-  protected function removeFieldStorage($name, $field, $index_table) {
+  protected function removeFieldStorage($name, array $field, $index_table) {
     if ($this->getDataTypeHelper()->isTextType($field['type'])) {
       // Remove data from the text table.
       $this->database->delete($field['table'])
@@ -1800,7 +1801,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    * @return array
    *   The processed keywords.
    */
-  protected function eliminateDuplicates($keys, &$words = []) {
+  protected function eliminateDuplicates(array $keys, array &$words = []) {
     foreach ($keys as $i => $word) {
       if (!Element::child($i)) {
         continue;
@@ -2489,6 +2490,10 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     $fields = $this->getFieldInfo($index);
 
     $suggestions = [];
+    $factory = NULL;
+    if (class_exists(SuggestionFactory::class)) {
+      $factory = new SuggestionFactory($user_input);
+    }
     $passes = [];
     $incomplete_like = NULL;
 
@@ -2595,7 +2600,12 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       $incomp_len = strlen($incomplete_key);
       foreach ($db_query->execute() as $row) {
         $suffix = ($pass == 1) ? substr($row->word, $incomp_len) : ' ' . $row->word;
-        $suggestions[] = Suggestion::fromSuggestionSuffix($suffix, $row->results, $user_input);
+        if ($factory) {
+          $suggestions[] = $factory->createFromSuggestionSuffix($suffix, $row->results);
+        }
+        else {
+          $suggestions[] = Suggestion::fromSuggestionSuffix($suffix, $row->results, $user_input);
+        }
       }
     }
 

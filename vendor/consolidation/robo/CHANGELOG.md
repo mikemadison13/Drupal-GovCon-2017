@@ -1,5 +1,26 @@
 # Changelog
 
+### 1.1.5 10/25/2017
+
+* Load option default values from $input for all options defined in the Application's input definition (#642)
+* BUGFIX: Store global options in 'options' namespace rather than at the top level of config.
+
+### 1.1.4 10/16/2017
+
+* Update order of command event hooks so that the option settings are injected prior to configuration being injected, so that dynamic options are available for config injection. (#636)
+* Add shallow clone method to GithubStack task. by Stefan Lange (#633)
+* Make Changelog task more flexible. by Matthew Grasmick(#631)
+* Adding accessToken() to GitHub task. by Matthew Grasmick (#630)
+
+### 1.1.3 09/23/2017
+
+* Add self:update command to update Robo phar distributions to the latest available version on GitHub. by Alexander Menk
+* Fix Robo\Task\Docker\Base to implement CommandInterface. by Alexei Gorobet (#625)
+* Add overwrite argument to Robo\Task\Filesystem\loadShortcuts.php::_rename by Alexei Gorobets (#624)
+* Add failGroup() method for Codeception run command. by Max Gorovenko (#622)
+* Set up composer-lock-updater on cron. (#618)
+* Fix robo.yml loader by exporting processor instead of loader. By thomscode (#612)
+
 ### 1.1.2 07/28/2017
 
 * Inject option default values in help (#607)

@@ -125,7 +125,7 @@ class ExtensionInstallStorage extends InstallStorage {
         // default configuration. We do this by replacing the config file path
         // from the module/theme with the install profile version if there are
         // any duplicates.
-        $this->folders += $this->getComponentNames($this->profileHandler->getProfiles($this->installProfile));
+        $this->folders += $this->getComponentNames($this->profileHandler->getProfileInheritance($this->installProfile));
       }
     }
     return $this->folders;

@@ -14,7 +14,7 @@ Feature: An entity browser for media assets
     And I complete the media browser selection
     And I wait 5 seconds
     And I press "Save"
-    And I click "Edit draft"
+    And I visit the edit form
     And I wait 10 seconds
     And I open the media browser
     And I wait for AJAX to finish
@@ -36,11 +36,9 @@ Feature: An entity browser for media assets
     # behavior. So let's make an otherwise pointless AJAX request here to guard
     # against regressions...
     And I enter "Pastafazoul!" for "Keywords"
-    And I press "Apply"
-    And I wait for AJAX to finish
+    And I apply the exposed filters
     And I clear "Keywords"
-    And I press "Apply"
-    And I wait for AJAX to finish
+    And I apply the exposed filters
     And I select item 1 in the media browser
     And I select item 2 in the media browser
     Then I should see a "[data-selectable].selected" element
@@ -69,3 +67,18 @@ Feature: An entity browser for media assets
     When I visit "/node/add/page"
     And I open the media browser
     Then I should see "Type"
+
+  @6b941640
+  Scenario: Entity browser filters work
+    Given I am logged in as a user with the page_creator,media_creator roles
+    And media entities:
+      | bundle | name          | embed_code                                               | status | field_media_in_library |
+      | tweet  | Code Wisdom 1 | https://twitter.com/CodeWisdom/status/707945860936691714 | 1      | 1                      |
+      | tweet  | Code Wisdom 2 | https://twitter.com/CodeWisdom/status/826500049760821248 | 1      | 1                      |
+      | tweet  | Code Wisdom 3 | https://twitter.com/CodeWisdom/status/826460810121773057 | 1      | 1                      |
+    When I visit "/node/add/page"
+    And I open the media browser
+    And I wait 5 seconds
+    And I enter "Code Wisdom 1" for "Keywords"
+    And I apply the exposed filters
+    Then I should see 1 item in the entity browser

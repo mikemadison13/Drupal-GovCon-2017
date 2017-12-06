@@ -28,13 +28,22 @@ class TextFormat extends WebformElementBase {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    $default_properties = parent::getDefaultProperties() + [
+    $properties = parent::getDefaultProperties() + [
       // Text format settings.
       'allowed_formats' => [],
       'hide_help' => FALSE,
     ];
-    unset($default_properties['disabled']);
-    return $default_properties;
+    unset(
+      $properties['disabled'],
+      $properties['attributes'],
+      $properties['wrapper_attributes'],
+      $properties['title_display'],
+      $properties['description_display'],
+      $properties['field_prefix'],
+      $properties['field_suffix'],
+      $properties['help']
+    );
+    return $properties;
   }
 
   /**
@@ -77,7 +86,7 @@ class TextFormat extends WebformElementBase {
       // Display tips in a modal.
       $element['format']['help']['about']['#attributes']['class'][] = 'use-ajax';
       $element['format']['help']['about']['#attributes'] += [
-        'data-dialog-type' => 'modal',
+        'data-dialog-type' => 'dialog',
         'data-dialog-options' => Json::encode([
           'dialogClass' => 'webform-text-format-help-dialog',
           'width' => 800,
@@ -182,6 +191,13 @@ class TextFormat extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
+  public function preview() {
+    return (\Drupal::moduleHandler()->moduleExists('filter')) ? parent::preview() : [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
@@ -229,4 +245,5 @@ class TextFormat extends WebformElementBase {
     $elements = $this->getCompositeElements();
     return (isset($elements[$key])) ? TRUE : FALSE;
   }
+
 }

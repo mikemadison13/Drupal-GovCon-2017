@@ -21,10 +21,10 @@ class Details extends ContainerBase {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    return parent::getDefaultProperties() + [
-      // Form display.
+    return [
+      'help' => '',
       'open' => FALSE,
-    ];
+    ] + parent::getDefaultProperties();
   }
 
   /**
@@ -36,6 +36,13 @@ class Details extends ContainerBase {
     if (isset($element['#webform_key'])) {
       $element['#attributes']['data-webform-key'] = $element['#webform_key'];
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getItemDefaultFormat() {
+    return 'details';
   }
 
   /**

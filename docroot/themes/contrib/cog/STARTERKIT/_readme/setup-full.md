@@ -11,16 +11,16 @@ This sub theme uses node and npm to manage build tools such as sass. There are n
 Script usage (from generated sub theme directory):
 
 ```bash
-./install-node.sh 4.4.4
+./install-node.sh 6.11.0
 ```
 
 The install script installs nvm and then uses nvm to install the version of node given to it as an argument. It also writes a `.node-version` file into the sub theme directory it was run from that can be picked up by tools such as avn. After running the script it is necessary to do the command it outputs to tell your session you want to use that version of node:
 
 ```bash
-source ~/.bashrc && nvm use --delete-prefix 4.4.4
+source ~/.bashrc && nvm use --delete-prefix 6.11.0
 ```
 
-If you are not using avn or something similar then you will need to repeat `nvm use 4.4.4` if you close and reopen your session.
+If you are not using avn or something similar then you will need to repeat `nvm use 6.11.0` if you close and reopen your session.
 
 <a name="avn"></a>
 ### AVN (Automatic Version Switching for Node)

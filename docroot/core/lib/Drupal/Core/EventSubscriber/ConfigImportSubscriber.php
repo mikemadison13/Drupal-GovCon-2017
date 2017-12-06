@@ -91,12 +91,18 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
       $config_importer->logError($this->t('Unable to install the %module module since it does not exist.', ['%module' => $module]));
     }
 
+    // Get a list of parent profiles and the main profile.
+    /* @var $profiles \Drupal\Core\Extension\Extension[] */
+    $profiles = \Drupal::service('profile_handler')->getProfileInheritance();
+    /* @var $main_profile \Drupal\Core\Extension\Extension */
+    $main_profile = end($profiles);
+
     // Ensure that all modules being installed have their dependencies met.
     $installs = $config_importer->getExtensionChangelist('module', 'install');
     foreach ($installs as $module) {
       $missing_dependencies = [];
       foreach (array_keys($module_data[$module]->requires) as $required_module) {
-        if (!isset($core_extension['module'][$required_module])) {
+        if (!isset($core_extension['module'][$required_module]) && !array_key_exists($module, $profiles)) {
           $missing_dependencies[] = $module_data[$required_module]->info['name'];
         }
       }
@@ -116,38 +122,56 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
     if (isset($current_core_extension['profile'])) {
       // Ensure the active profile is not changing.
       if ($current_core_extension['profile'] !== $core_extension['profile']) {
-        $config_importer->logError($this->t('Cannot change the install profile from %new_profile to %profile once Drupal is installed.', ['%profile' => $install_profile, '%new_profile' => $core_extension['profile']]));
+        $config_importer->logError($this->t('Cannot change the install profile from %new_profile to %profile once Drupal is installed.', ['%profile' => $current_core_extension['profile'], '%new_profile' => $core_extension['profile']]));
       }
     }
-
-    // Get a list of installed profiles.
-    $installed_profiles = \Drupal::service('profile_handler')->getProfiles();
 
     // Ensure that all modules being uninstalled are not required by modules
     // that will be installed after the import.
     $uninstalls = $config_importer->getExtensionChangelist('module', 'uninstall');
     foreach ($uninstalls as $module) {
       foreach (array_keys($module_data[$module]->required_by) as $dependent_module) {
-        if ($module_data[$dependent_module]->status && !in_array($dependent_module, $uninstalls, TRUE) && (!array_key_exists($dependent_module, $installed_profiles))) {
-          $module_name = $module_data[$module]->info['name'];
-          $dependent_module_name = $module_data[$dependent_module]->info['name'];
-          $config_importer->logError($this->t('Unable to uninstall the %module module since the %dependent_module module is installed.', ['%module' => $module_name, '%dependent_module' => $dependent_module_name]));
+        if ($module_data[$dependent_module]->status && !in_array($dependent_module, $uninstalls, TRUE)) {
+          if (!array_key_exists($dependent_module, $profiles)) {
+            $module_name = $module_data[$module]->info['name'];
+            $dependent_module_name = $module_data[$dependent_module]->info['name'];
+            $config_importer->logError($this->t('Unable to uninstall the %module module since the %dependent_module module is installed.', [
+              '%module' => $module_name,
+              '%dependent_module' => $dependent_module_name
+            ]));
+          }
         }
       }
     }
 
-    // Ensure that none of the installed profiles are being uninstalled.
-    if ($profile_uninstalls = array_intersect_key($installed_profiles, array_flip($uninstalls))) {
-      foreach ($profile_uninstalls as $profile) {
-        $profile_names[] = $profile->info['name'];
+    // Don't allow profiles to be uninstalled. It's possible for no profile to
+    // be set yet if the config is being imported during initial site install.
+    if ($main_profile instanceof \Drupal\core\Extension\Extension) {
+      if (in_array($main_profile->getName(), $uninstalls, TRUE)) {
+        // Ensure that the active profile is not being uninstalled.
+        $profile_name = $main_profile->info['name'];
+        $config_importer->logError($this->t('Unable to uninstall the %profile profile since it is the main install profile.', ['%profile' => $profile_name]));
       }
-      $message = $this->formatPlural(count($profile_names),
-        'Unable to uninstall the %profile profile since it is an installed profile.',
-        'Unable to uninstall the %profile profiles since they are installed profiles.',
-        ['%profile' => implode(', ', $profile_names)]
-      );
-      $config_importer->logError($message);
+
+      if ($profile_uninstalls = array_intersect_key($profiles, array_flip($uninstalls))) {
+        // Ensure that none of the parent profiles are being uninstalled.
+        $profile_names = [];
+        foreach ($profile_uninstalls as $profile) {
+          if ($profile->getName() !== $main_profile->getName()) {
+            $profile_names[] = $module_data[$profile->getName()]->info['name'];
+          }
+        }
+        if (!empty($profile_names)) {
+          $message = $this->formatPlural(count($profile_names),
+            'Unable to uninstall the :profile profile since it is a parent of another installed profile.',
+            'Unable to uninstall the :profile profiles since they are parents of another installed profile.',
+            [':profile' => implode(', ', $profile_names)]
+          );
+          $config_importer->logError($message);
+        }
+      }
     }
+
   }
 
   /**

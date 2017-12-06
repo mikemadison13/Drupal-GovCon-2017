@@ -31,9 +31,12 @@ class WebformLikert extends WebformElementBase {
   public function getDefaultProperties() {
     return [
       'title' => '',
-      // General settings.
-      'description' => '',
       'default_value' => [],
+      // Description/Help.
+      'help' => '',
+      'description' => '',
+      'more' => '',
+      'more_title' => '',
       // Form display.
       'title_display' => '',
       'description_display' => '',
@@ -43,6 +46,8 @@ class WebformLikert extends WebformElementBase {
       'required_error' => '',
       // Submission display.
       'format' => $this->getItemDefaultFormat(),
+      'format_html' => '',
+      'format_text' => '',
       // Likert settings.
       'questions' => [],
       'questions_randomize' => FALSE,
@@ -167,11 +172,6 @@ class WebformLikert extends WebformElementBase {
    */
   public function formatTextItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
     $value = $this->getValue($element, $webform_submission, $options);
-
-    // Return empty value.
-    if ($value === '' || $value === NULL || (is_array($value) && empty($value))) {
-      return '';
-    }
 
     $format = $this->getItemFormat($element);
     switch ($format) {
@@ -322,6 +322,24 @@ class WebformLikert extends WebformElementBase {
     else {
       return $this->formatHtml($element, $webform_submission);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preview() {
+    return parent::preview() + [
+      '#questions' => [
+        'q1' => $this->t('Please answer question 1?'),
+        'q2' => $this->t('How about now answering question 2?'),
+        'q3' => $this->t('Finally, here is question 3?'),
+      ],
+      '#answers' => [
+        '1' => '1',
+        '2' => '2',
+        '3' => '3',
+      ],
+    ];
   }
 
   /**

@@ -76,9 +76,14 @@ class ConfigCommand extends BltTasks {
       }
 
       $task->drush("cache-rebuild");
-      $task->run();
+      $result = $task->run();
+      if (!$result->wasSuccessful()) {
+        throw new BltException("Failed to import configuration!");
+      }
 
-      $this->checkFeaturesOverrides();
+      if ($this->getInspector()->getDrushMajorVersion() == 8) {
+        $this->checkFeaturesOverrides();
+      }
       $this->checkConfigOverrides($cm_core_key);
 
       $result = $this->invokeHook('post-config-import');

@@ -1,3 +1,78 @@
+## 2.2.3
+* Updated to and require a minimum of Drupal Core 8.4.1.
+
+## 2.2.2
+* Fixed a bug where certain versions of Drush would erroneously report
+  unfulfilled requirements when running database updates. (Issue #2919204)
+* Removed a duplicate directory that caused problems when downloading via
+  Composer. (GitHub #502)
+* Worked around a bug where some versions of Drush run hooks that are provided
+  by uninstalled modules. (GitHub #496)
+
+## 2.2.1
+* Lightning Media has been updated to use the new Core Media system.
+* Fixed a bug where the "Publishing status" checkbox appeared on content edit
+  forms when it should have been hidden. (GitHub #479)
+
+## 2.2.0
+* Lightning has been updated to run on and now requires Drupal Core 8.4.x.
+
+## 2.1.8
+* Added the ability to easily crop images contained in media entities and use
+  the cropped version when embedding or selecting the media item.
+  (Issue #2690423)
+* Lightning Media now includes a bulk upload form that allows you to create
+  multiple image media entities at once. (#2672038)
+* You can now run Lightning's manual update steps via an interactive Drupal
+  Console command. (GitHub #462)
+* OAuth key pairs:
+  * Lightning will no longer try to guess where keys should be stored and won't
+    generate the keys until an administrator triggers that action. (GitHub #445) 
+  * Key pairs are now generated with 600 permissions. (GitHub #443)
+  * Better error messages are shown if the system encounters an error when
+    generating OAuth key pairs. (GitHub #440)
+* Lightning no longer patches Drush and therefore has no opinion about which
+  version of Drush you use in your project. (GitHub #459) 
+* Page manager is no longer included in the codebase. (GitHub #466)
+* You can now choose to hide the links to API docs shown on entity bundles via a
+  config option. (GitHub #435)
+* Fixed a bug where Entity Browser filters might not work after updating to core
+  8.3.7. (GitHub #441)
+* Operations is now the last column on the admin/content view. (GitHub #429)
+
+## 2.1.7
+* Security updated Drupal core to 8.3.7.
+* Updated Entity Browser to 1.1.
+* Lightning has a new top-level component called Content API. This component is
+  installed by default and exposes all entities in your site in the
+  machine-consumable JSON API format. This makes Lightning friendlier to
+  decoupled applications, and allows it to be used as a backend for such. As
+  part of this feature, Lightning now includes the JSON API, OpenAPI, and
+  Simple OAuth modules, with basic default configuration.
+  (GitHub #423, #421, #424, #433, and Issue #2896267)
+* Lightning now supports bringing in front-end JavaScript libraries with
+  Composer, via Asset Packagist. To take advantage of this in your
+  Composer-based Lightning project, follow the instructions at
+  http://lightning.acquia.com/blog/round-your-front-end-javascript-libraries-composer
+  (GitHub #431)
+* Lightning Core no longer has a hard dependency on the Metatag or Menu UI
+  modules. (GitHub #418, #420 and #427)
+* Lightning no longer has an implicit hard dependency on the Bartik or Seven
+  themes. (Issue #2899017)
+* Page Manager is no longer required by Lightning Layout. It is still shipped
+  with Lightning, but is not a dependency and will be removed from Lightning in
+  the next release. If you are using Page Manager, you must explicitly include
+  it as a dependency of your project. Otherwise, you should uninstall it as
+  soon as possible. (GitHub #410)
+* Quick Edit is no longer visible on published content when Lightning Workflow
+  is enabled, because Quick Edit does not deal properly with forward revisions.
+  In Lightning, you will only be able to use Quick Edit on unpublished drafts.
+  (Issue #2894874)
+* Split scheduled update functionality into a sub-component of Lightning
+  Workflow, installed by default on new Lightning sites. (Issue #2893542)
+* Panels was updated to version 4.2. (GitHub #409)
+* Removed unnecessary lightning_core_entity_load(). (GitHub #406)
+
 ## 2.1.6
 * Lightning now provides a Display Plugin for images embedded via CKEditor that
   allows editors to select an image style, alt text, and other settings each

@@ -38,7 +38,9 @@ class FallbackProfileHandler implements ProfileHandlerInterface {
     if (isset($this->profileInfo[$profile])) {
       return $this->profileInfo[$profile];
     }
-    return [];
+    else {
+      throw new \InvalidArgumentException('The profile name is invalid.');
+    }
   }
 
   /**
@@ -51,14 +53,14 @@ class FallbackProfileHandler implements ProfileHandlerInterface {
   /**
    * {@inheritdoc}
    */
-  public function clearProfileCache() {
+  public function clearCache() {
     unset($this->profileInfo);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getProfiles($profile = NULL) {
+  public function getProfileInheritance($profile = NULL) {
     $profile_path = drupal_get_path('profile', $profile);
     return [
       $profile => new Extension($this->root, 'profile', $profile_path),

@@ -14,6 +14,7 @@ class DbCommand extends BltTasks {
    * Iteratively copies remote db to local db for each multisite.
    *
    * @command sync:db:all
+   *
    */
   public function syncDbAll() {
     $exit_code = 0;
@@ -50,6 +51,7 @@ class DbCommand extends BltTasks {
    * Copies remote db to local db for default site.
    *
    * @command sync:db
+   *
    */
   public function syncDbDefault() {
     $this->invokeCommand('setup:settings');
@@ -69,7 +71,13 @@ class DbCommand extends BltTasks {
       ->assume(TRUE);
 
     if ($this->getConfigValue('drush.sanitize')) {
-      $task->option('sanitize');
+      $drush_version = $this->getInspector()->getDrushMajorVersion();
+      if ($drush_version == 8) {
+        $task->option('sanitize');
+      }
+      else {
+        $task->drush('sql-sanitize');
+      }
     }
 
     $task->drush('cache-clear drush');

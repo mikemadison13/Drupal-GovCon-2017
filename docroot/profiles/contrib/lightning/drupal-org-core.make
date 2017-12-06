@@ -1,10 +1,11 @@
-api = 2
 core = 8.x
+api = 2
 projects[drupal][type] = core
-projects[drupal][version] = 8.3.5
-projects[drupal][patch][] = https://www.drupal.org/files/issues/2652138-41.patch
-projects[drupal][patch][] = https://www.drupal.org/files/issues/1356276-303.patch
+projects[drupal][patch][] = https://www.drupal.org/files/issues/1356276-408--8.4.x.patch
 projects[drupal][patch][] = https://www.drupal.org/files/issues/2880374-remove-experimental-warnings-6.patch
 projects[drupal][patch][] = https://www.drupal.org/files/issues/2880445-remove-config-write-warning-2.patch
 projects[drupal][patch][] = https://www.drupal.org/files/issues/2869592-remove-update-warning-7.patch
 projects[drupal][patch][] = https://www.drupal.org/files/issues/2885441-2.patch
+projects[drupal][patch][] = https://www.drupal.org/files/issues/2883813-27.patch
+projects[drupal][patch][] = https://www.drupal.org/files/issues/2877383-23.patch
+projects[drupal][version] = 8.4.1

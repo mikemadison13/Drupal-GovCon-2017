@@ -7,6 +7,7 @@
 
 namespace Drupal\Console\Command\Generate;
 
+use Drupal\Console\Utils\Validator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,9 +15,8 @@ use Drupal\Console\Command\Shared\ServicesTrait;
 use Drupal\Console\Command\Shared\ModuleTrait;
 use Drupal\Console\Generator\ServiceGenerator;
 use Drupal\Console\Command\Shared\ConfirmationTrait;
-use Symfony\Component\Console\Command\Command;
+use Drupal\Console\Core\Command\ContainerAwareCommand;
 use Drupal\Console\Core\Style\DrupalStyle;
-use Drupal\Console\Core\Command\Shared\ContainerAwareCommandTrait;
 use Drupal\Console\Extension\Manager;
 use Drupal\Console\Core\Utils\ChainQueue;
 use Drupal\Console\Core\Utils\StringConverter;
@@ -26,27 +26,31 @@ use Drupal\Console\Core\Utils\StringConverter;
  *
  * @package Drupal\Console\Command\Generate
  */
-class ServiceCommand extends Command
+class ServiceCommand extends ContainerAwareCommand
 {
     use ServicesTrait;
     use ModuleTrait;
     use ConfirmationTrait;
-    use ContainerAwareCommandTrait;
 
     /**
- * @var Manager
-*/
+     * @var Manager
+     */
     protected $extensionManager;
 
     /**
- * @var ServiceGenerator
-*/
+     * @var ServiceGenerator
+     */
     protected $generator;
 
     /**
      * @var StringConverter
      */
     protected $stringConverter;
+
+    /**
+     * @var Validator
+     */
+    protected $validator;
 
     /**
      * @var ChainQueue
@@ -59,17 +63,20 @@ class ServiceCommand extends Command
      * @param Manager          $extensionManager
      * @param ServiceGenerator $generator
      * @param StringConverter  $stringConverter
+     * @param Validator        $validator
      * @param ChainQueue       $chainQueue
      */
     public function __construct(
         Manager $extensionManager,
         ServiceGenerator $generator,
         StringConverter $stringConverter,
+        Validator $validator,
         ChainQueue $chainQueue
     ) {
         $this->extensionManager = $extensionManager;
         $this->generator = $generator;
         $this->stringConverter = $stringConverter;
+        $this->validator = $validator;
         $this->chainQueue = $chainQueue;
         parent::__construct();
     }
@@ -94,7 +101,7 @@ class ServiceCommand extends Command
                 'name',
                 null,
                 InputOption::VALUE_REQUIRED,
-                $this->trans('commands.generate.service.options.name')
+                $this->trans('commands.generate.service.options.service-name')
             )
             ->addOption(
                 'class',
@@ -106,13 +113,13 @@ class ServiceCommand extends Command
                 'interface',
                 null,
                 InputOption::VALUE_NONE,
-                $this->trans('commands.common.service.options.interface')
+                $this->trans('commands.generate.service.options.interface')
             )
             ->addOption(
                 'interface-name',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                $this->trans('commands.common.service.options.interface-name')
+                $this->trans('commands.generate.service.options.interface-name')
             )
             ->addOption(
                 'services',
@@ -124,7 +131,7 @@ class ServiceCommand extends Command
                 'path-service',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                $this->trans('commands.generate.service.options.path')
+                $this->trans('commands.generate.service.options.path-service')
             )
             ->setAliases(['gs']);
     }
@@ -143,7 +150,7 @@ class ServiceCommand extends Command
 
         $module = $input->getOption('module');
         $name = $input->getOption('name');
-        $class = $input->getOption('class');
+        $class = $this->validator->validateClassName($input->getOption('class'));
         $interface = $input->getOption('interface');
         $interface_name = $input->getOption('interface-name');
         $services = $input->getOption('services');
@@ -199,7 +206,10 @@ class ServiceCommand extends Command
         if (!$class) {
             $class = $io->ask(
                 $this->trans('commands.generate.service.questions.class'),
-                'DefaultService'
+                'DefaultService',
+                function ($class) {
+                    return $this->validator->validateClassName($class);
+                }
             );
             $input->setOption('class', $class);
         }
@@ -235,7 +245,7 @@ class ServiceCommand extends Command
         $path_service = $input->getOption('path-service');
         if (!$path_service) {
             $path_service = $io->ask(
-                $this->trans('commands.generate.service.questions.path'),
+                $this->trans('commands.generate.service.questions.path-service'),
                 '/modules/custom/' . $module . '/src/'
             );
             $input->setOption('path-service', $path_service);

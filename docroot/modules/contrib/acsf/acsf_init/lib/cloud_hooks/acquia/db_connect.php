@@ -31,26 +31,83 @@ function error($message) {
  * @param string $db_role
  *   The 'role' of the AH database.
  *
- * @return resource
- *   The database resource, if the connection was established.
+ * @return mysqli
+ *   mysqli object which represents the connection to a MySQL Server.
  */
 function get_db($site, $env, $db_role) {
-  // Load the drupal settings to get the db connection info. The D6 version is
-  // relatively safe to open outside of a Drupal context as it doesn't call out
-  // to other functions like the D7 version does.
-  $conf['acquia_use_early_cache'] = TRUE;
-  require_once sprintf('/mnt/www/site-php/%s.%s/D6-%s-%s-settings.inc', $site, $env, $env, $db_role);
-
-  // Connection info.
-  $user = $conf['acquia_hosting_site_info']['db']['user'];
-  $pass = $conf['acquia_hosting_site_info']['db']['pass'];
-  $db_name = $conf['acquia_hosting_site_info']['db']['name'];
-  $hosts = array_keys($conf['acquia_hosting_site_info']['db']['db_url_ha']);
-  $host = array_shift($hosts);
-
-  $link = mysql_connect($host, $user, $pass)
-      or error('Could not connect: ' . mysql_error());
-  mysql_select_db($db_name) or error('Could not select database');
-
+  $link = FALSE;
+  $creds_file = "/var/www/site-php/{$site}.{$env}/creds.json";
+  $creds = json_decode(file_get_contents($creds_file), TRUE);
+  if (isset($creds['databases'][$db_role]['db_url_ha']) && is_array($creds['databases'][$db_role]['db_url_ha'])) {
+    $db_uri = reset($creds['databases'][$db_role]['db_url_ha']);
+    $db_info = url_to_connection_info($db_uri);
+    $link = mysqli_connect($db_info['host'], $db_info['username'], $db_info['password'], $db_info['database'])
+      or error('Could not connect: ' . mysqli_connect_error());
+  }
+  else {
+    error('Could not retrieve data from creds.json.');
+  }
   return $link;
+}
+
+/**
+ * Converts a URL to a database connection info array.
+ *
+ * Array keys are gleaned from Database::convertDbUrlToConnectionInfo().
+ *
+ * @param string $url
+ *   The URL.
+ *
+ * @return array
+ *   The database connection info, or empty array if none found.
+ */
+function url_to_connection_info($url) {
+  $info = parse_url($url);
+  if (!isset($info['scheme'], $info['host'], $info['path'])) {
+    return [];
+  }
+  $info += [
+    'user' => '',
+    'pass' => '',
+  ];
+  if ($info['path'][0] === '/') {
+    $info['path'] = substr($info['path'], 1);
+  }
+
+  $database = [
+    'driver' => $info['scheme'],
+    'username' => $info['user'],
+    'password' => $info['pass'],
+    'host' => $info['host'],
+    'database' => $info['path'],
+  ];
+  if (isset($info['port'])) {
+    $database['port'] = $info['port'];
+  }
+  return $database;
+}
+
+/**
+ * Helper function for mysqli query execute.
+ *
+ * @param mysqli $con
+ *   A link identifier returned by mysqli_connect() or mysqli_init().
+ * @param string $query
+ *   An SQL query.
+ *
+ * @return array|bool
+ *   If query was successful, retrieve all the rows into an array,
+ *   otherwise return FALSE.
+ */
+function execute_query($con, $query) {
+  $result = mysqli_query($con, $query);
+  // If query failed, return FALSE.
+  if ($result === FALSE) {
+    return FALSE;
+  }
+  $rows = array();
+  while ($row = mysqli_fetch_assoc($result)) {
+    $rows[] = $row;
+  }
+  return $rows;
 }

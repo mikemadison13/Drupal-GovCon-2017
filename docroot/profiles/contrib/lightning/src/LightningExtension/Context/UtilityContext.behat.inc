@@ -2,19 +2,69 @@
 
 namespace Acquia\LightningExtension\Context;
 
+use Acquia\LightningExtension\AwaitTrait;
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Exception\ExpectationException;
 use Drupal\Component\Utility\Random;
 use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 use Drupal\file\Entity\File;
-use Drupal\media_entity\Entity\Media;
+use Drupal\media\Entity\Media;
 use WebDriver\Exception\NoAlertOpenError;
 
 /**
  * A context with miscellaneous helpers.
  */
 class UtilityContext extends DrupalSubContextBase {
+
+  use AwaitTrait;
+
+  /**
+   * Visits the edit form for a node.
+   *
+   * @see lightning_core_local_tasks_alter()
+   *
+   * @When I visit the edit form
+   */
+  public function editContent() {
+    $this
+      ->assertSession()
+      ->elementExists('named', ['link', 'edit-form'])
+      ->click();
+  }
+
+  /**
+   * Asserts that a select field has a particular option.
+   *
+   * @param string $select
+   *   The select field to check.
+   * @param string $option
+   *   The option to look for.
+   *
+   * @Then the :select field should have a(n) :option option
+   */
+  public function assertSelectOption($select, $option) {
+    $assert = $this->assertSession();
+    $select = $assert->fieldExists($select);
+    $assert->elementExists('named', ['option', $option], $select);
+  }
+
+  /**
+   * Asserts that a select field has a set of options.
+   *
+   * @param string $select
+   *   The select field to check.
+   * @param \Behat\Gherkin\Node\PyStringNode $options
+   *   The options to look for.
+   *
+   * @Then the :select field should have options:
+   */
+  public function assertSelectOptions($select, PyStringNode $options) {
+    foreach ($options->getStrings() as $option) {
+      $this->assertSelectOption($select, $option);
+    }
+  }
 
   /**
    * Asserts that a form field is not present.
@@ -88,29 +138,6 @@ class UtilityContext extends DrupalSubContextBase {
    */
   public function clearField($field, ElementInterface $container = NULL) {
     $this->assertSession()->fieldExists($field, $container)->setValue(FALSE);
-  }
-
-  /**
-   * Finds a collapsible details element by its summary text.
-   *
-   * @param string $summary_text
-   *   The summary text.
-   *
-   * @return \Behat\Mink\Element\NodeElement|null
-   *   The details element, or NULL if it was not found.
-   */
-  public function findCollapsible($summary_text) {
-    /** @var \Behat\Mink\Element\NodeElement[] $elements */
-    $elements = $this
-      ->getSession()
-      ->getPage()
-      ->findAll('css', 'details > summary');
-
-    foreach ($elements as $element) {
-      if ($element->getText() == $summary_text) {
-        return $element->getParent();
-      }
-    }
   }
 
   /**
@@ -220,6 +247,19 @@ class UtilityContext extends DrupalSubContextBase {
   }
 
   /**
+   * Submits exposed Views filters.
+   *
+   * @When I apply the exposed filters
+   */
+  public function applyExposedFilters() {
+    $this->assertSession()
+      ->elementExists('css', '.views-exposed-form .form-actions input[type = "submit"]')
+      ->press();
+
+    $this->awaitAjax();
+  }
+
+  /**
    * Asserts the existence of entities by running a count query.
    *
    * @param string $entity_type
@@ -254,6 +294,15 @@ class UtilityContext extends DrupalSubContextBase {
         $this->getSession()->getDriver()
       );
     }
+  }
+
+  /**
+   * Dumps the entire page contents to standard output.
+   *
+   * @When I dump the page contents
+   */
+  public function dumpPage() {
+    print_r($this->getSession()->getPage()->getContent());
   }
 
 }

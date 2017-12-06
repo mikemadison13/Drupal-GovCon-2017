@@ -16,14 +16,14 @@ abstract class TextBase extends WebformElementBase {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    return parent::getDefaultProperties() + [
+    return [
       'size' => '',
       'minlength' => '',
       'maxlength' => '',
       'placeholder' => '',
       'autocomplete' => 'on',
       'pattern' => '',
-    ];
+    ] + parent::getDefaultProperties();
   }
 
   /**
@@ -101,8 +101,10 @@ abstract class TextBase extends WebformElementBase {
           "'alias': 'vin'" => 'VIN (Vehicle identification number)',
         ],
       ],
-      '#access' => $this->librariesManager->isIncluded('jquery.inputmask'),
     ];
+    if ($this->librariesManager->isExcluded('jquery.inputmask')) {
+      $form['form']['input_mask']['#access'] = FALSE;
+    }
 
     // Pattern.
     $form['validation']['pattern'] = [
@@ -112,7 +114,8 @@ abstract class TextBase extends WebformElementBase {
     ];
 
     // Counter.
-    $form['validation']['counter_type'] = [
+    $form['validation']['counter_container'] = $this->getFormInlineContainer();
+    $form['validation']['counter_container']['counter_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Count'),
       '#description' => $this->t('Limit entered value to a maximum number of characters or words.'),
@@ -121,9 +124,8 @@ abstract class TextBase extends WebformElementBase {
         'character' => $this->t('Characters'),
         'word' => $this->t('Words'),
       ],
-      '#access' => $this->librariesManager->isIncluded('jquery.word-and-character-counter'),
     ];
-    $form['validation']['counter_maximum'] = [
+    $form['validation']['counter_container']['counter_maximum'] = [
       '#type' => 'number',
       '#title' => $this->t('Count maximum'),
       '#min' => 1,
@@ -135,7 +137,6 @@ abstract class TextBase extends WebformElementBase {
           ':input[name="properties[counter_type]"]' => ['value' => ''],
         ],
       ],
-      '#access' => $this->librariesManager->isIncluded('jquery.word-and-character-counter'),
     ];
     $form['validation']['counter_message'] = [
       '#type' => 'textfield',
@@ -146,8 +147,11 @@ abstract class TextBase extends WebformElementBase {
           ':input[name="properties[counter_type]"]' => ['value' => ''],
         ],
       ],
-      '#access' => $this->librariesManager->isIncluded('jquery.word-and-character-counter'),
     ];
+    if ($this->librariesManager->isExcluded('jquery.word-and-character-counter')) {
+      $form['validation']['counter_container']['#access'] = FALSE;
+      $form['validation']['counter_message']['#access'] = FALSE;
+    }
 
     if (isset($form['form']['maxlength'])) {
       $form['form']['maxlength']['#description'] .= ' ' . $this->t('If character counter is enabled, maxlength will automatically be set to the count maximum.');

@@ -59,17 +59,33 @@ class ProfileHandlerTest extends KernelTestBase {
     $this->assertArrayHasKey('excluded_themes', $info['base profile']);
     $this->assertInternalType('array', $info['base profile']['excluded_themes']);
     $this->assertEmpty($info['base profile']['excluded_themes']);
+
+    // Tests three levels profile inheritance.
+    $info = $profile_handler->getProfileInfo('testing_subsubprofile');
+    $this->assertEquals($info['base profile']['name'], 'testing_inherited');
+    $this->assertEquals($info['profile_list'], [
+      'testing' => 'testing',
+      'testing_inherited' => 'testing_inherited',
+      'testing_subsubprofile' => 'testing_subsubprofile',
+    ]);
   }
 
   /**
    * Tests getting profile dependency list.
    *
-   * @covers ::getProfiles
+   * @covers ::getProfileInheritance
    */
-  public function testGetProfiles() {
+  public function testGetProfileInheritance() {
     $profile_handler = $this->container->get('profile_handler');
-    $profiles = $profile_handler->getProfiles('testing_inherited');
+
+    $profiles = $profile_handler->getProfileInheritance('testing');
+    $this->assertCount(1, $profiles);
+
+    $profiles = $profile_handler->getProfileInheritance('testing_inherited');
     $this->assertCount(2, $profiles);
+
+    $profiles = $profile_handler->getProfileInheritance('testing_subsubprofile');
+    $this->assertCount(3, $profiles);
 
     $first_profile = current($profiles);
     $this->assertEquals(get_class($first_profile), 'Drupal\Core\Extension\Extension');
@@ -82,6 +98,12 @@ class ProfileHandlerTest extends KernelTestBase {
     $this->assertEquals($second_profile->getName(), 'testing_inherited');
     $this->assertEquals($second_profile->weight, 1001);
     $this->assertObjectHasAttribute('origin', $second_profile);
+
+    $third_profile = next($profiles);
+    $this->assertEquals(get_class($third_profile), 'Drupal\Core\Extension\Extension');
+    $this->assertEquals($third_profile->getName(), 'testing_subsubprofile');
+    $this->assertEquals($third_profile->weight, 1002);
+    $this->assertObjectHasAttribute('origin', $third_profile);
   }
 
   /**
@@ -95,21 +117,21 @@ class ProfileHandlerTest extends KernelTestBase {
     $base_info = $profile_handler->getProfileInfo('minimal');
     $profile_info = $profile_handler->getProfileInfo('testing_inherited');
 
-    // Neither profile has distribution set
+    // Neither profile has distribution set.
     $distribution = $profile_handler->selectDistribution($profiles);
     $this->assertEmpty($distribution, 'No distribution should be selected');
 
-    // Set base profile distribution
+    // Set base profile distribution.
     $base_info['distribution']['name'] = 'Minimal';
     $profile_handler->setProfileInfo('minimal', $base_info);
-    // Base profile distribution should not be selected
+    // Base profile distribution should not be selected.
     $distribution = $profile_handler->selectDistribution($profiles);
     $this->assertEmpty($distribution, 'Base profile distribution should not be selected');
 
-    // Set main profile distribution
+    // Set main profile distribution.
     $profile_info['distribution']['name'] = 'Testing Inherited';
     $profile_handler->setProfileInfo('testing_inherited', $profile_info);
-    // Main profile distribution should be selected
+    // Main profile distribution should be selected.
     $distribution = $profile_handler->selectDistribution($profiles);
     $this->assertEquals($distribution, 'testing_inherited');
   }

@@ -24,9 +24,11 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
     return [
       // Markup settings.
       'display_on' => static::DISPLAY_ON_BOTH,
-      // General settings.
-      'title' => '',
+      // Description/Help.
+      'help' => '',
       'description' => '',
+      'more' => '',
+      'more_title' => '',
       // Form display.
       'title_display' => '',
       'description_display' => '',
@@ -92,7 +94,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
   public function getValue(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
     if (!empty($element['#store'])) {
       // Get stored value if it is set.
-      $value = $webform_submission->getData($element['#webform_key']);
+      $value = $webform_submission->getElementData($element['#webform_key']);
       if (isset($value)) {
         return $value;
       }
@@ -105,7 +107,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
    * {@inheritdoc}
    */
   protected function formatHtmlItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
-    $value = $this->processValue($element, $webform_submission);
+    $value = $this->getValue($element, $webform_submission);
     if ($this->getMode($element) === WebformComputedBaseElement::MODE_TEXT) {
       return nl2br($value);
     }
@@ -118,7 +120,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
    * {@inheritdoc}
    */
   protected function formatTextItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
-    $value = $this->processValue($element, $webform_submission);
+    $value = $this->getValue($element, $webform_submission);
     if ($this->getMode($element) === WebformComputedBaseElement::MODE_HTML) {
       return MailFormatHelper::htmlToText($value);
     }
@@ -132,6 +134,17 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
    */
   public function getRelatedTypes(array $element) {
     return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preview() {
+    return [
+      '#type' => $this->getTypeName(),
+      '#title' => $this->getPluginLabel(),
+      '#value' => $this->t('This is a @label value.', ['@label' => $this->getPluginLabel()]),
+    ];
   }
 
   /**

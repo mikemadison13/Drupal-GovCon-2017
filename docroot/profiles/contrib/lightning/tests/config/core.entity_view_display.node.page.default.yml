@@ -10,6 +10,7 @@ dependencies:
     - metatag
     - text
     - user
+_core: {  }
 id: node.page.default
 targetEntityType: node
 bundle: page
@@ -24,11 +25,11 @@ content:
     region: content
   field_meta_tags:
     type: metatag_empty_formatter
+    region: content
     weight: 2
     label: above
     settings: {  }
     third_party_settings: {  }
-    region: content
   links:
     weight: 1
     settings: {  }

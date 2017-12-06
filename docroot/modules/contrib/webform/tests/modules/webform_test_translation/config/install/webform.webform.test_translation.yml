@@ -33,6 +33,22 @@ elements: |
     '#title': Details
     markup:
       '#markup': 'This is some HTML markup.'
+  composite:
+    '#type': webform_composite
+    '#title': Composite
+    '#element':
+      first_name:
+        '#type': textfield
+        '#title': 'First name'
+      last_name:
+        '#type': textfield
+        '#title': 'Last name'
+      age:
+        '#type': number
+        '#title': 'Age'
+        '#field_suffix': ' yrs. old'
+        '#max': 1
+        '#max': 125
   actions:
     '#type': webform_actions
     '#title': 'Submit button(s)'
@@ -54,6 +70,9 @@ settings:
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_unsaved: false
@@ -67,13 +86,15 @@ settings:
   wizard_progress_pages: false
   wizard_progress_percentage: false
   wizard_start_label: ''
-  wizard_complete: true
-  wizard_complete_label: ''
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
   preview: 0
   preview_label: ''
   preview_title: ''
   preview_message: ''
   preview_attributes: {  }
+  preview_excluded_elements: {  }
+  preview_exclude_empty: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -104,33 +125,42 @@ access:
       - anonymous
       - authenticated
     users: {  }
+    permissions: {  }
   view_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   purge_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   view_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_own:
     roles: {  }
     users: {  }
+    permissions: {  }
 handlers:
   email_confirmation:
     id: email
     label: 'Email confirmation'
     handler_id: email_confirmation
     status: true
+    conditions: {  }
     weight: 1
     settings:
       to_mail: default
@@ -153,3 +183,6 @@ handlers:
       reply_to: ''
       return_path: ''
       ignore_access: false
+      exclude_empty: true
+      sender_mail: ''
+      sender_name: ''

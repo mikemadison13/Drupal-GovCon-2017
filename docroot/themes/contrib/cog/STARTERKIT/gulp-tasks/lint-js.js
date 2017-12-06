@@ -12,15 +12,15 @@ module.exports = function (gulp, plugins, options) {
   gulp.task('lint:js', function () {
     return gulp.src(options.jsLinting.files.theme)
       .pipe(plugins.plumber())
-      .pipe(plugins.eslint())
-      .pipe(plugins.eslint.format())
+      .pipe(plugins.gulpEslint())
+      .pipe(plugins.gulpEslint.format())
       .pipe(plugins.plumber.stop());
   });
 
   gulp.task('lint:js-gulp', function () {
     return gulp.src(options.jsLinting.files.gulp)
       .pipe(plugins.plumber())
-      .pipe(plugins.eslint({
+      .pipe(plugins.gulpEslint({
         useEslintrc: true,
         ecmaFeatures: {
           modules: true,
@@ -32,15 +32,15 @@ module.exports = function (gulp, plugins, options) {
           es6: true
         }
       }))
-      .pipe(plugins.eslint.format())
+      .pipe(plugins.gulpEslint.format())
       .pipe(plugins.plumber.stop());
   });
 
   // Lint JavaScript and throw an error for a CI to catch.
   gulp.task('lint:js-with-fail', function () {
     return gulp.src(options.jsLinting.files.theme)
-      .pipe(plugins.eslint())
-      .pipe(plugins.eslint.format())
-      .pipe(plugins.eslint.failOnError());
+      .pipe(plugins.gulpEslint())
+      .pipe(plugins.gulpEslint.format())
+      .pipe(plugins.gulpEslint.failOnError());
   });
 };

@@ -10,6 +10,7 @@ use Drupal\webform\WebformSubmissionInterface;
  *
  * @WebformElement(
  *   id = "webform_flexbox",
+ *   default_key = "flexbox",
  *   api = "http://www.w3schools.com/css/css3_flexbox.asp",
  *   label = @Translation("Flexbox layout"),
  *   description = @Translation("Provides a flex(ible) box container used to layout elements in multiple columns."),
@@ -23,10 +24,10 @@ class WebformFlexbox extends Container {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    return parent::getDefaultProperties() + [
+    return [
       // Flexbox.
       'align_items' => 'flex-start',
-    ];
+    ] + parent::getDefaultProperties();
   }
 
   /**
@@ -36,6 +37,13 @@ class WebformFlexbox extends Container {
     /** @var \Drupal\webform\WebformSubmissionViewBuilderInterface $view_builder */
     $view_builder = \Drupal::entityTypeManager()->getViewBuilder('webform_submission');
     return $view_builder->buildElements($element, $webform_submission, $options, $format);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preview() {
+    return [];
   }
 
   /**

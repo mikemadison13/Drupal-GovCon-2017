@@ -4,7 +4,6 @@ namespace Drupal\Tests\image\Kernel;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\Core\Render\Element;
 use Drupal\entity_test\Entity\EntityTest;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;

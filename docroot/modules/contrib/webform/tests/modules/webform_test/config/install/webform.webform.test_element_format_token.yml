@@ -28,6 +28,7 @@ css: ''
 javascript: ''
 settings:
   ajax: false
+  ajax_scroll_top: form
   page: true
   page_submit_path: ''
   page_confirm_path: ''
@@ -43,6 +44,7 @@ settings:
   form_prepopulate_source_entity: false
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
+  form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_unsaved: false
@@ -56,14 +58,15 @@ settings:
   wizard_progress_pages: false
   wizard_progress_percentage: false
   wizard_start_label: ''
-  wizard_complete: true
-  wizard_complete_label: ''
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
   preview: 0
   preview_label: ''
   preview_title: ''
   preview_message: ''
   preview_attributes: {  }
   preview_excluded_elements: {  }
+  preview_exclude_empty: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -94,33 +97,42 @@ access:
       - anonymous
       - authenticated
     users: {  }
+    permissions: {  }
   view_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   purge_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   view_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_own:
     roles: {  }
     users: {  }
+    permissions: {  }
 handlers:
   email_html:
     id: email
     label: 'Email (HTML)'
     handler_id: email_html
     status: false
+    conditions: {  }
     weight: -9
     settings:
       states:
@@ -145,16 +157,20 @@ handlers:
         <h3>raw:</h3>[webform_submission:values:checkboxes:raw]<hr />
       excluded_elements: {  }
       ignore_access: false
+      exclude_empty: true
       html: true
       attachments: false
       debug: true
       reply_to: ''
       return_path: ''
+      sender_mail: ''
+      sender_name: ''
   email_text:
     id: email
     label: 'Email (Text)'
     handler_id: email_text
     status: false
+    conditions: {  }
     weight: -10
     settings:
       states:
@@ -192,8 +208,11 @@ handlers:
         [webform_submission:values:checkboxes:raw]
       excluded_elements: {  }
       ignore_access: false
+      exclude_empty: true
       html: false
       attachments: false
       debug: true
       reply_to: ''
       return_path: ''
+      sender_mail: ''
+      sender_name: ''

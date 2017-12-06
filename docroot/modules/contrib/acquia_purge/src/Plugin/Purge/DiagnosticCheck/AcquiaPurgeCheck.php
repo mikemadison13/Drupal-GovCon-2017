@@ -196,7 +196,7 @@ class AcquiaPurgeCheck extends DiagnosticCheckBase implements DiagnosticCheckInt
         '@version' => $version,
       ]
     );
-    $this->recommendation = '';
+    $this->recommendation = " ";
     return SELF::SEVERITY_OK;
   }
 

@@ -15,6 +15,7 @@ use Drupal\webform\WebformSubmissionInterface;
  *   category = @Translation("Composite elements"),
  *   description = @Translation("Provides a form element to display a telephone number with type and extension."),
  *   composite = TRUE,
+ *   states_wrapper = TRUE,
  * )
  */
 class WebformTelephone extends WebformCompositeBase {
@@ -23,12 +24,12 @@ class WebformTelephone extends WebformCompositeBase {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    $default_properties = parent::getDefaultProperties();
-    $default_properties['title_display'] = '';
-    $default_properties['phone__international'] = TRUE;
-    $default_properties['phone__international_initial_country'] = '';
-    unset($default_properties['flexbox']);
-    return $default_properties;
+    $properties = parent::getDefaultProperties();
+    $properties['title_display'] = '';
+    $properties['phone__international'] = TRUE;
+    $properties['phone__international_initial_country'] = '';
+    unset($properties['flexbox']);
+    return $properties;
   }
 
   /**
@@ -103,7 +104,6 @@ class WebformTelephone extends WebformCompositeBase {
       '#type' => 'checkbox',
       '#description' => $this->t('Enhance the telephone element\'s international support using the jQuery <a href=":href">International Telephone Input</a> plugin.', [':href' => 'http://intl-tel-input.com/']),
       '#return_value' => TRUE,
-      '#access' => $this->librariesManager->isIncluded('jquery.intl-tel-input'),
     ];
     $form['composite']['phone__international_initial_country'] = [
       '#title' => $this->t('Initial country'),
@@ -117,8 +117,12 @@ class WebformTelephone extends WebformCompositeBase {
           ':input[name="properties[phone__international]"]' => ['checked' => TRUE],
         ],
       ],
-      '#access' => $this->librariesManager->isIncluded('jquery.intl-tel-input'),
     ];
+    if ($this->librariesManager->isExcluded('jquery.intl-tel-input')) {
+      $form['composite']['phone__international']['#access'] = FALSE;
+      $form['composite']['phone__international_initial_country']['#access'] = FALSE;
+    }
+
     return $form;
   }
 

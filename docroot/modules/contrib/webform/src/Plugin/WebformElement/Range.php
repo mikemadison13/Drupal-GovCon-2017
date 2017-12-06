@@ -22,7 +22,7 @@ class Range extends NumericBase {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    return parent::getDefaultProperties() + [
+    return [
       // Form validation.
       'min' => '',
       'max' => '',
@@ -31,7 +31,7 @@ class Range extends NumericBase {
       'range__output' => FALSE,
       'range__output_prefix' => '',
       'range__output_suffix' => '',
-    ];
+    ] + parent::getDefaultProperties();
   }
 
   /**
@@ -60,6 +60,20 @@ class Range extends NumericBase {
   /**
    * {@inheritdoc}
    */
+  public function preview() {
+    return parent::preview() + [
+      '#min' => 0,
+      '#max' => 100,
+      '#step' => 1,
+      '#range__output' => TRUE,
+      '#range__output_prefix' => '$',
+      '#range__output_suffix' => '.00',
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
@@ -67,13 +81,13 @@ class Range extends NumericBase {
 
     $form['number']['range__output'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t("Output the range's value."),
+      '#title' => $this->t("Output the range's value"),
       '#return_type' => TRUE,
     ];
     $form['number']['range__output_prefix'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Range output prefix'),
-      '#description' => $this->t('Text or code that is placed directly in front of the output. This can be used to prefix an output with a constant string. Examples: $, #, -.'),
+      '#description' => $this->t('Text or code that is placed directly in front of the output. This can be used to prefix an output with a constant string. Examples=> $, #, -.'),
       '#size' => 10,
       '#states' => [
         'visible' => [
@@ -84,7 +98,7 @@ class Range extends NumericBase {
     $form['number']['range__output_suffix'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Range output suffix'),
-      '#description' => $this->t('Text or code that is placed directly after the output. This can be used to add a unit to an output. Examples: lb, kg, %.'),
+      '#description' => $this->t('Text or code that is placed directly after the output. This can be used to add a unit to an output. Examples=> lb, kg, %.'),
       '#size' => 10,
       '#states' => [
         'visible' => [

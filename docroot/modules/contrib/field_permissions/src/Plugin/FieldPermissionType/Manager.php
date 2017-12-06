@@ -8,6 +8,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\field\FieldStorageConfigInterface;
+use Drupal\field_permissions\Annotation\FieldPermissionType;
+use Drupal\field_permissions\Plugin\FieldPermissionTypeInterface;
 
 /**
  * Field permission type plugin manager.
@@ -26,20 +28,25 @@ class Manager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/FieldPermissionType', $namespaces, $module_handler, 'Drupal\field_permissions\Plugin\FieldPermissionTypeInterface', 'Drupal\field_permissions\Annotation\FieldPermissionType');
+    parent::__construct('Plugin/FieldPermissionType', $namespaces, $module_handler, FieldPermissionTypeInterface::class, FieldPermissionType::class);
     $this->setCacheBackend($cache_backend, 'field_permission_type_plugins');
+    $this->alterInfo('field_permission_type_plugin');
   }
 
   /**
-   * {@inheritdoc}
-   *
    * Allow the field storage to be passed into the plugin.
    *
+   * @param string $plugin_id
+   *   The plugin ID.
+   * @param array $configuration
+   *   The plugin configuration.
    * @param \Drupal\field\FieldStorageConfigInterface $field_storage
    *   The field storage.
    *
    * @return \Drupal\field_permissions\Plugin\FieldPermissionTypeInterface
    *   The field permission type plugin instance.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function createInstance($plugin_id, array $configuration = [], FieldStorageConfigInterface $field_storage = NULL) {
     $plugin_definition = $this->getDefinition($plugin_id);

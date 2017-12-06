@@ -37,7 +37,7 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
   /**
    * The BLT version.
    */
-  const VERSION = '8.9.2';
+  const VERSION = '8.9.10';
 
   /**
    * The Robo task runner.
@@ -159,7 +159,7 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
   /**
    * Add any global arguments or options that apply to all commands.
    *
-   * @param \Symfony\Component\Console\Application $app
+   * @param \Acquia\Blt\Robo\Application $app
    *   The Symfony application.
    */
   private function addDefaultArgumentsAndOptions(Application $app) {

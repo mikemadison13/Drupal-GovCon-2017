@@ -88,7 +88,7 @@ class LinkTypeConfirmFormTest extends FlagTestBase {
     $this->drupalLogin($user_1);
 
     // Get the flag count before the flagging, querying the database directly.
-    $flag_count_pre = \Drupal::database()->query('SELECT count FROM {flag_counts}
+    $flag_count_pre = db_query('SELECT count FROM {flag_counts}
       WHERE flag_id = :flag_id AND entity_type = :entity_type AND entity_id = :entity_id', [
       ':flag_id' => $flag_id,
       ':entity_type' => 'node',
@@ -111,7 +111,7 @@ class LinkTypeConfirmFormTest extends FlagTestBase {
     $this->assertLink($this->flag->getShortText('unflag'));
 
     // Check the flag count was incremented.
-    $flag_count_flagged = \Drupal::database()->query('SELECT count FROM {flag_counts}
+    $flag_count_flagged = db_query('SELECT count FROM {flag_counts}
       WHERE flag_id = :flag_id AND entity_type = :entity_type AND entity_id = :entity_id', [
       ':flag_id' => $flag_id,
       ':entity_type' => 'node',
@@ -134,7 +134,7 @@ class LinkTypeConfirmFormTest extends FlagTestBase {
     $this->assertLink($this->flag->getShortText('flag'));
 
     // Check the flag count was decremented.
-    $flag_count_unflagged = \Drupal::database()->query('SELECT count FROM {flag_counts}
+    $flag_count_unflagged = db_query('SELECT count FROM {flag_counts}
       WHERE flag_id = :flag_id AND entity_type = :entity_type AND entity_id = :entity_id', [
       ':flag_id' => $flag_id,
       ':entity_type' => 'node',

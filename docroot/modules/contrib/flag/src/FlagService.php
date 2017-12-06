@@ -4,6 +4,7 @@ namespace Drupal\flag;
 
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\SessionManagerInterface;
@@ -15,6 +16,13 @@ use Drupal\user\UserInterface;
  *  - Performs flagging and unflaging operations.
  */
 class FlagService implements FlagServiceInterface {
+
+  /**
+   * The entity query manager injected into the service.
+   *
+   * @var \Drupal\Core\Entity\Query\QueryFactory
+   */
+  private $entityQueryManager;
 
   /**
    * The current user injected into the service.
@@ -47,9 +55,11 @@ class FlagService implements FlagServiceInterface {
    * @param Drupal\Core\Session\SessionManagerInterface $session_manager
    *   The session manager.
    */
-  public function __construct(AccountInterface $current_user,
+  public function __construct(QueryFactory $entity_query,
+                              AccountInterface $current_user,
                               EntityTypeManagerInterface $entity_type_manager,
                               SessionManagerInterface $session_manager) {
+    $this->entityQueryManager = $entity_query;
     $this->currentUser = $current_user;
     $this->entityTypeManager = $entity_type_manager;
     $this->sessionManager = $session_manager;
@@ -59,7 +69,7 @@ class FlagService implements FlagServiceInterface {
    * {@inheritdoc}
    */
   public function getAllFlags($entity_type = NULL, $bundle = NULL) {
-    $query = $this->entityTypeManager->getStorage('flag')->getQuery();
+    $query = $this->entityQueryManager->get('flag');
 
     if ($entity_type != NULL) {
       $query->condition('entity_type', $entity_type);
@@ -76,6 +86,23 @@ class FlagService implements FlagServiceInterface {
     }
 
     return $flags;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUsersFlags(AccountInterface $account, $entity_type = NULL, $bundle = NULL) {
+    $flags = $this->getAllFlags($entity_type, $bundle);
+
+    $filtered_flags = [];
+    foreach ($flags as $flag_id => $flag) {
+      if ($flag->actionAccess('flag', $account)->isAllowed() ||
+          $flag->actionAccess('unflag', $account)->isAllowed()) {
+        $filtered_flags[$flag_id] = $flag;
+      }
+    }
+
+    return $filtered_flags;
   }
 
   /**
@@ -126,7 +153,7 @@ class FlagService implements FlagServiceInterface {
    * {@inheritdoc}
    */
   public function getEntityFlaggings(FlagInterface $flag, EntityInterface $entity, AccountInterface $account = NULL, $session_id = NULL) {
-    $query = $this->entityTypeManager->getStorage('flagging')->getQuery();
+    $query = $this->entityQueryManager->get('flagging');
 
     $query->condition('flag_id', $flag->id());
 
@@ -158,15 +185,10 @@ class FlagService implements FlagServiceInterface {
    * {@inheritdoc}
    */
   public function getAllEntityFlaggings(EntityInterface $entity, AccountInterface $account = NULL, $session_id = NULL) {
-    $query = $this->entityTypeManager->getStorage('flagging')->getQuery();
+    $query = $this->entityQueryManager->get('flagging');
 
     if (!empty($account)) {
-      // Use an OR condition group to check that either the account flagged
-      // the entity, or the flag itself is a global flag.
-      $global_or_user = $query->orConditionGroup()
-        ->condition('global', 1)
-        ->condition('uid', $account->id());
-      $query->condition($global_or_user);
+      $query->condition('uid', $account->id());
       if ($account->isAnonymous()) {
         if (empty($session_id)) {
           throw new \LogicException('An anonymous user must be identifed by session ID.');
@@ -203,8 +225,8 @@ class FlagService implements FlagServiceInterface {
    * {@inheritdoc}
    */
   public function getFlaggingUsers(EntityInterface $entity, FlagInterface $flag = NULL) {
-    $query = $this->entityTypeManager->getStorage('flagging')->getQuery();
-    $query->condition('entity_type', $entity->getEntityTypeId())
+    $query = $this->entityQueryManager->get('flagging')
+      ->condition('entity_type', $entity->getEntityTypeId())
       ->condition('entity_id', $entity->id());
 
     if (!empty($flag)) {
@@ -295,7 +317,7 @@ class FlagService implements FlagServiceInterface {
    * {@inheritdoc}
    */
   public function unflagAllByFlag(FlagInterface $flag) {
-    $query = $this->entityTypeManager->getStorage('flagging')->getQuery();
+    $query = $this->entityQueryManager->get('flagging');
 
     $query->condition('flag_id', $flag->id());
 
@@ -310,7 +332,7 @@ class FlagService implements FlagServiceInterface {
    * {@inheritdoc}
    */
   public function unflagAllByEntity(EntityInterface $entity) {
-    $query = $this->entityTypeManager->getStorage('flagging')->getQuery();
+    $query = $this->entityQueryManager->get('flagging');
 
     $query->condition('entity_type', $entity->getEntityTypeId())
       ->condition('entity_id', $entity->id());
@@ -326,8 +348,8 @@ class FlagService implements FlagServiceInterface {
    * {@inheritdoc}
    */
   public function unflagAllByUser(AccountInterface $account, $session_id = NULL) {
-    $query = $this->entityTypeManager->getStorage('flagging')->getQuery();
-    $query->condition('uid', $account->id());
+    $query = $this->entityQueryManager->get('flagging')
+      ->condition('uid', $account->id());
 
     if ($account->isAnonymous()) {
       if (empty($session_id)) {

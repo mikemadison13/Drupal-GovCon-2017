@@ -7,6 +7,7 @@ namespace Drupal\webform\Plugin\WebformElement;
  *
  * @WebformElement(
  *   id = "container",
+ *   default_key = "container",
  *   api = "https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Render!Element!Container.php/class/Container",
  *   label = @Translation("Container"),
  *   description = @Translation("Provides an element that wraps child elements in a container."),
@@ -26,6 +27,10 @@ class Container extends ContainerBase {
       'flex' => 1,
       // Conditional logic.
       'states' => [],
+      // Format.
+      'format' => $this->getItemDefaultFormat(),
+      'format_html' => '',
+      'format_text' => '',
     ];
   }
 

@@ -2,11 +2,10 @@ name: 'Lightning Layout'
 core: 8.x
 type: module
 description: 'Provides the tools to take control of your layout.'
-version: '8.x-2.16'
+version: '8.x-2.23'
 package: Lightning
 dependencies:
   - lightning_core
-  - page_manager
   - panelizer
   - panelizer_quickedit
 components:

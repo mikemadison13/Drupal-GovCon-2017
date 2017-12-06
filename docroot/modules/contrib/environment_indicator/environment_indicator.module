@@ -56,16 +56,26 @@ function environment_indicator_page_top(array &$page_top) {
     return;
   }
   $active_environment = \Drupal::config('environment_indicator.indicator');
+  $title = $active_environment->get('name');
   $page_top['indicator'] = [
     '#type' => 'environment_indicator',
-    '#title' => $active_environment->get('name'),
+    '#title' => $title,
     '#fg_color' => $active_environment->get('fg_color'),
     '#bg_color' => $active_environment->get('bg_color'),
     '#description' => \Drupal::state()->get('environment_indicator.current_release'),
-    '#access' => \Drupal::currentUser()
+    '#access' => !empty($title) && \Drupal::currentUser()
       ->hasPermission('access environment indicator'),
     '#attached' => [
       'library' => ['environment_indicator/drupal.environment_indicator'],
+      'drupalSettings' => [
+        'environmentIndicator' => [
+          'name' => $title ? $title : ' ',
+          'fgColor' => $active_environment->get('fg_color'),
+          'bgColor' => $active_environment->get('bg_color'),
+          'addFavicon' => \Drupal::config('environment_indicator.settings')
+            ->get('favicon'),
+        ],
+      ],
     ],
   ];
 
@@ -168,9 +178,35 @@ function _environment_indicator_parse_style($style) {
  */
 function environment_indicator_toolbar() {
   $active_environment = \Drupal::config('environment_indicator.indicator');
+  $title = $active_environment->get('name');
   $permission = \Drupal::currentUser()
     ->hasPermission('access environment indicator');
   $items['environment_indicator'] = [
+    '#attached' => [
+      'library' => ['environment_indicator/drupal.environment_indicator'],
+      'drupalSettings' => [
+        'environmentIndicator' => [
+          'name' => $title ? $title : ' ',
+          'fgColor' => $active_environment->get('fg_color'),
+          'bgColor' => $active_environment->get('bg_color'),
+          'addFavicon' => \Drupal::config('environment_indicator.settings')
+            ->get('favicon'),
+        ],
+      ],
+    ]
+  ];
+  if (!_environment_indicator_external_integration_is_enabled('toolbar')) {
+    return $items;
+  }
+  $release_info = \Drupal::state()->get('environment_indicator.current_release');
+  if (strlen($release_info)) {
+    $release_info = '(' . $release_info . ')';
+  }
+  $title = implode(' ', array_filter([$release_info, $title]));
+  if (!strlen($title)) {
+    return $items;
+  }
+  $items['environment_indicator'] += [
     // Include the toolbar_tab_wrapper to style the link like a toolbar tab.
     // Exclude the theme wrapper if custom styling is desired.
     '#type' => 'toolbar_item',
@@ -179,14 +215,6 @@ function environment_indicator_toolbar() {
       'tags' => Cache::mergeTags(['config:environment_indicator.settings'], _environment_indicator_switcher_cache_tags()),
     ],
     '#weight' => 125,
-  ];
-  if (!_environment_indicator_external_integration_is_enabled('toolbar')) {
-    return $items;
-  }
-  $title = $active_environment->get('name');
-  $release_info = \Drupal::state()->get('environment_indicator.current_release');
-  $title = empty($release_info) ? $title : $title . ' (' . $release_info . ')';
-  $items['environment_indicator'] += [
     'tab' => [
       '#type' => 'link',
       '#access' => $permission,
@@ -213,18 +241,6 @@ function environment_indicator_toolbar() {
         '#attributes' => [
           'title' => t('Environment switcher configuration'),
           'class' => ['edit-environments'],
-        ],
-      ],
-    ],
-    '#attached' => [
-      'library' => ['environment_indicator/drupal.environment_indicator'],
-      'drupalSettings' => [
-        'environmentIndicator' => [
-          'name' => $active_environment->get('name'),
-          'fgColor' => $active_environment->get('fg_color'),
-          'bgColor' => $active_environment->get('bg_color'),
-          'addFavicon' => \Drupal::config('environment_indicator.settings')
-            ->get('favicon'),
         ],
       ],
     ],

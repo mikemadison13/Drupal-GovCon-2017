@@ -200,7 +200,7 @@ interface ImageStyleInterface extends ConfigEntityInterface {
    * @param string $uri
    *   The URI of the image.
    *
-   * @return boolean
+   * @return bool
    *   TRUE if the image is supported, FALSE otherwise.
    */
   public function supportsUri($uri);

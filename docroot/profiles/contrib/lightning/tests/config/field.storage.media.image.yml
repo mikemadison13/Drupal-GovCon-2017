@@ -4,7 +4,8 @@ dependencies:
   module:
     - file
     - image
-    - media_entity
+    - media
+_core: {  }
 id: media.image
 field_name: image
 entity_type: media

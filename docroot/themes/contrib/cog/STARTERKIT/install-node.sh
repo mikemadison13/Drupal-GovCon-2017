@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ $# -ne 1 ]; then
-    echo $0: usage: install-node.sh 4.4.1
+    echo $0: usage: install-node.sh 6.11.0
     exit 1
 fi
 
@@ -19,7 +19,7 @@ if [[ $(nvm ls $NODE_VERSION | grep "N/A") ]]; then
   nvm install $NODE_VERSION
 fi
 
-# Sets version of node in .node-version so that 
+# Sets version of node in .node-version so that
 # it can be picked up by tools like avn.
 echo $NODE_VERSION > .node-version
 

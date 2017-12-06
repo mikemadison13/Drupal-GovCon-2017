@@ -15,6 +15,7 @@ The preferred way to install Lightning is using our
 [Composer-based project template][template]. It's easy!
 
 ```
+$ composer self-update
 $ composer create-project acquia/lightning-project MY_PROJECT
 ```
 
@@ -45,13 +46,17 @@ The current version of media includes the following functionality:
   * Instagram posts
   * Videos (YouTube and Vimeo supported out of the box)
   * Images
-* Drag-and-drop image uploads
+* Drag-and-drop bulk image uploads.
+* Image cropping.
 * Ability to create new media through the media library (/media/add)
 * Ability to embed tweets, Instagrams, and YouTube/Vimeo videos directly into
   CKEditor by pasting the video URL
 
 #### Extending Lightning Media (Contributed Modules)
-Drupal community members have contributed several modules which integrate Lightning Media with additional third-party media services. These modules are not packaged with Lightning or maintained by Acquia, but they are stable and you can use them in your Lightning site:
+Drupal community members have contributed several modules which integrate
+Lightning Media with additional third-party media services. These modules are
+not packaged with Lightning or maintained by Acquia, but they are stable and you
+can use them in your Lightning site:
 
   * [Facebook](https://www.drupal.org/project/lightning_media_facebook)
   * [Imgur](https://www.drupal.org/project/lightning_media_imgur)
@@ -85,31 +90,22 @@ as many additional states as you like and define transitions between them. It's
 also possible to schedule content (either a single node or many at once) to be
 transitioned between states at a specific future date and time.
 
-### Preview (Experimental)
-The Workspace Preview System (WPS) gives site builders, editors, authors, and
-reviews the ability to send collections of content through an editorial
-workflow and preview that content within the context of the current live site.
-WPS is a collection of contributed Drupal modules with additional configuration
-UX improvements that all just works out of the box.
+### API-First
+Lightning ships with several modules which, together, quickly set up Drupal to
+deliver data to decoupled applications via a standardized API. By default,
+Lightning installs the OpenAPI and JSON API modules, plus the Simple OAuth
+module, as a toolkit for authentication, authorization, and delivery of data
+to API consumers. Currently, Lightning includes no default configuration for
+any of these modules, because it does not make any assumptions about how the
+API data will be consumed, but we might add support for standard use cases as
+they present themselves.
 
-Note that **the Workspace Preview System is experimental** and is not currently
-included in stable releases of Lightning. If you would like to use it, see
-"Experimental Features" below.
+If you have PHP's OpenSSL extension enabled, Lightning can automatically create
+an asymmetric key pair for use with OAuth.
 
 ## Project Roadmap
 We publish sprint plans for each patch release. You can find a link to the
 current one in [this meta-issue][meta_releases] on Drupal.org.
-
-## Experimental Features
-Some components of Lightning (such as the Workspace Preview System) are
-currently experimental until they stabilize. Experimental features should be
-considered bleeding-edge and are **not safe for production environments.**
-
-Experimental features are kept in Lightning's ```8.x-2.x-experimental```
-development branch. To use experimental features, you will need to create your
-Lightning code base from this branch. This can be done only with the Composer-
-based [project template][template] -- check there for more information on how
-to use experimental features.
 
 ## Resources
 You can find general best practices documentation inside the `help` directory of
@@ -142,15 +138,34 @@ your environment, but generally you will not need to do this.
   can set the image's alt text at upload time, but that text will not be
   replicated to the image field. This is due to a limitation of Entity Browser's
   API.
+* Some of the Lightning contributed media module listed above might not yet be
+  compatible with the Core Media entity.
+* The Video Embed Field module, a dependency of Lightning Media, might report
+  that it is unsupported. We're working with the module maintainer to remove
+  this warning.
+* Using the bulk upload feature in environments with a load balancer might
+  result in some images not being saved.
 
 ### Workflow
 * Lightning Workflow is based on Workbench Moderation, which is incompatible
   with the experimental Content Moderation module included with Drupal core
   8.3.0 and later and serves the same purpose as Workbench Moderation. We plan
   to seamlessly migrate Lightning Workflow to Content Moderation once it is
-  stable, most likely in Drupal 8.4.0. But for now, installing Content
-  Moderation alongside Lightning Workflow may have unpredictable and dangerous
-  effects, and is best avoided.
+  ready and an update path exists (see [Issue #2863059](https://www.drupal.org/node/2863059)
+  for more information). But for now, installing Content Moderation alongside
+  Lightning Workflow may have unpredictable and dangerous effects, an is best
+  avoided.
+  
+### Inherited profiles
+Neither Drush nor Drupal Console are aware of the concept of inherited profiles
+and as a result, you will be unable to uninstall dependencies of any parent
+profile using either of those tools. You can still uninstall these dependencies
+via the UI at "/admin/modules/uninstall". We have provided patches [here](https://www.drupal.org/node/2902643)
+for both Drush and Drupal Console which allow you to uninstall dependencies of
+parent profiles.
+
+* [Drupal Console inherited profile dependencies patch](https://www.drupal.org/files/issues/2902643-3-drupalconsole-master.patch).
+* [Drush 9 inherited profile dependencies patch](https://www.drupal.org/files/issues/2902643-2--drush-master.patch).
 
 [issue_queue]: https://www.drupal.org/project/issues/lightning "Lightning Issue Queue"
 [meta_release]: https://www.drupal.org/node/2670686 "Lightning Meta Releases Issue"

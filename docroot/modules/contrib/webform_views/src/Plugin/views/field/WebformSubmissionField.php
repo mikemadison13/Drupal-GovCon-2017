@@ -82,26 +82,29 @@ class WebformSubmissionField extends FieldPluginBase {
    */
   public function render(ResultRow $values) {
     if ($values->_entity->access('view')) {
-      $view_builder = $this->entityTypeManager->getViewBuilder('webform_submission');
+      /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
+      $element_manager = \Drupal::service('plugin.manager.webform.element');
 
       /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
       $webform_submission = $values->_entity;
       $webform = $webform_submission->getWebform();
-      $elements = $webform->getElementsInitialized();
-      if (!isset($elements[$this->definition['webform_submission_field']])) {
-        $elements = $webform->getElementsInitializedAndFlattened();
+
+      // Get format and element key.
+      $format = $this->options['webform_element_format'];
+      $element_key = $this->definition['webform_submission_field'];
+
+      // Get element and element handler plugin.
+      $element = $webform->getElement($element_key,TRUE);
+      if (!$element) {
+        return [];
       }
 
-      $excluded_elements = $elements;
-      unset($excluded_elements[$this->definition['webform_submission_field']]);
+      // Set the format.
+      $element['#format'] = $format;
 
-      // Hiding the title, since it is probably included on the views level.
-      $elements[$this->definition['webform_submission_field']]['#title_display'] = 'invisible';
-      $elements[$this->definition['webform_submission_field']]['#format'] = $this->options['webform_element_format'];
-
-      return $view_builder->buildElements($elements, $webform_submission, [
-        'excluded_elements' => $excluded_elements,
-      ]);
+      // Get element handler and get the element's HTML render array.
+      $element_handler = $element_manager->getElementInstance($element);
+      return $element_handler->formatHtml($element, $webform_submission);
     }
 
     return [];

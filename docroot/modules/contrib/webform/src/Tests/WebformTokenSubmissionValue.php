@@ -113,10 +113,21 @@ john@example.com',
       'webform_submission:total:webform:source_entity' => '',
       'webform_submission:limit:user:source_entity' => '5',
       'webform_submission:total:user:source_entity' => '',
+
+      // removed and ignored.
+      'webform:removed:token' => '',
+      'ignored:token' => '[ignored:token]',
     ];
     foreach ($tokens as $token => $value) {
       $this->assertRaw("<tr><th width=\"50%\">$token</th><td width=\"50%\">$value</td></tr>");
     }
+
+    // containers.
+    $this->assertRaw('<tr><th width="50%">webform_submission:values:fieldset</th><td width="50%"><pre>fieldset');
+    $this->assertRaw('<tr><th width="50%">webform_submission:values:fieldset:html</th><td width="50%"><fieldset class="webform-container webform-container-type-fieldset js-form-item form-item js-form-wrapper form-wrapper" id="test_token_submission_value--fieldset">');
+    $this->assertRaw('<tr><th width="50%">webform_submission:values:fieldset:header:html</th><td width="50%"><section id="test_token_submission_value--fieldset" class="js-form-item form-item js-form-wrapper form-wrapper webform-section">');
+    $this->assertRaw('<tr><th width="50%">webform_submission:values:fieldset:details:html</th><td width="50%"><details data-webform-element-id="test_token_submission_value--fieldset" class="webform-container webform-container-type-details js-form-wrapper form-wrapper" id="test_token_submission_value--fieldset" open="open">');
+    $this->assertRaw('<tr><th width="50%">webform_submission:values:fieldset:fieldset:html</th><td width="50%"><fieldset class="webform-container webform-container-type-fieldset js-form-item form-item js-form-wrapper form-wrapper" id="test_token_submission_value--fieldset">');
   }
 
 }

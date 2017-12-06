@@ -34,18 +34,20 @@ fwrite(STDERR, sprintf("Scrubbing site database: site: %s; env: %s; db_role: %s;
 
 // Get a database connection.
 require dirname(__FILE__) . '/../../acquia/db_connect.php';
-$link = get_db($site, $env, $db_role);
+$con = get_db($site, $env, $db_role);
 
 // Get the site name from the database.
-$result = database_query_result("SELECT value FROM acsf_variables WHERE name = 'acsf_site_info'");
-$site_info = unserialize($result);
-$site_name = $site_info['site_name'];
-if (empty($site_name)) {
+$result = execute_query($con, "SELECT value FROM acsf_variables WHERE name = 'acsf_site_info'");
+if ($result === FALSE || !isset($result[0]['value'])) {
   error('Could not retrieve the site name from the database.');
+}
+else {
+  $site_info = unserialize($result[0]['value']);
+  $site_name = $site_info['site_name'];
 }
 fwrite(STDERR, "Site name: $site_name;\n");
 
-mysql_close($link);
+mysqli_close($con);
 
 // Find the location of the ACSF module.
 $profile_name = _acsf_scrub_boot_and_get_install_profile($docroot, $site, $env, $db_role);
@@ -97,14 +99,6 @@ shell_exec(sprintf('rm -rf %s', escapeshellarg($cache_directory)));
 if ($result) {
   fwrite(STDERR, "Command execution returned status code: $result!\n");
   exit($result);
-}
-
-function database_query_result($query) {
-  $result = mysql_query($query);
-  if (!$result) {
-    error('Query failed: ' . $query);
-  }
-  return mysql_result($result, 0);
 }
 
 /**

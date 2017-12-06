@@ -12,6 +12,7 @@ module.exports = function (gulp, plugins, options) {
     return gulp.src([
       options.sass.files
     ])
+      .pipe(plugins.plumber())
       .pipe(plugins.sourcemaps.init())
       .pipe(plugins.sassGlob())
       .pipe(plugins.sass({

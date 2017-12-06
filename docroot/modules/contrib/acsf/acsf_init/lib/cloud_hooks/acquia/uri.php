@@ -11,13 +11,15 @@ $db_role = $argv[3];
 
 // Get the db connection.
 require dirname(__FILE__) . '/../acquia/db_connect.php';
-$link = get_db($site, $env, $db_role);
-
+$connection = get_db($site, $env, $db_role);
 // Get the site name from the database.
-$result = mysql_query('SELECT value FROM acsf_variables WHERE name = "acsf_site_data"');
-$value = mysql_result($result, 0);
-mysql_close($link);
-$site_data = unserialize($value);
-$standard_domain = $site_data['standard_domain'];
-
-echo "$standard_domain";
+$result = execute_query($connection, 'SELECT value FROM acsf_variables WHERE name = "acsf_site_info"');
+mysqli_close($connection);
+if ($result === FALSE || !isset($result[0]['value'])) {
+  error('Could not retrieve the site standard_domain from the database.');
+}
+else {
+  $site_data = unserialize($result[0]['value']);
+  $standard_domain = $site_data['standard_domain'];
+  echo "$standard_domain";
+}

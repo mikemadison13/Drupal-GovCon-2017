@@ -4,18 +4,20 @@ module:
   breakpoint: 0
   ckeditor: 0
   config: 0
+  consumers: 0
   contact: 0
   contact_storage: 0
   contextual: 0
+  crop: 0
   ctools: 0
   ctools_block: 0
   datetime: 0
   dblog: 0
   devel_generate: 0
   diff: 0
+  dropzonejs: 0
   editor: 0
   embed: 0
-  entity: 0
   entity_block: 0
   entity_browser: 0
   entity_embed: 0
@@ -27,14 +29,18 @@ module:
   help: 0
   history: 0
   image: 0
+  image_widget_crop: 0
   inline_entity_form: 0
+  jsonapi: 0
   layout_discovery: 0
+  lightning_api: 0
   lightning_contact_form: 0
   lightning_core: 0
   lightning_dev: 0
   lightning_landing_page: 0
   lightning_layout: 0
   lightning_media: 0
+  lightning_media_bulk_upload: 0
   lightning_media_document: 0
   lightning_media_image: 0
   lightning_media_instagram: 0
@@ -42,20 +48,20 @@ module:
   lightning_media_video: 0
   lightning_page: 0
   lightning_roles: 0
+  lightning_scheduled_updates: 0
   lightning_search: 0
   lightning_workflow: 0
   link: 0
-  media_entity: 0
-  media_entity_document: 0
-  media_entity_image: 0
+  media: 0
   media_entity_instagram: 0
   media_entity_twitter: 0
   menu_ui: 0
   metatag: 0
   node: 0
+  openapi: 0
+  openapi_redoc: 0
   options: 0
   page_cache: 0
-  page_manager: 0
   panelizer: 0
   panelizer_quickedit: 0
   panels: 0
@@ -64,9 +70,14 @@ module:
   quickedit: 0
   rdf: 0
   scheduled_updates: 0
+  schemata: 0
+  schemata_json_schema: 0
   search_api: 0
   search_api_db: 0
+  serialization: 0
   shortcut: 0
+  simple_oauth: 0
+  simple_oauth_extras: 0
   system: 0
   taxonomy: 0
   text: 0
@@ -88,3 +99,4 @@ theme:
   bartik: 0
   seven: 0
 profile: lightning
+_core: {  }

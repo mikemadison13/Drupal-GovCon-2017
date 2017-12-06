@@ -15,8 +15,8 @@ regions:
   post_content: Post content
   footer: Footer
 
-# Information added by Drupal.org packaging script on 2017-06-09
-version: '8.x-1.8'
+# Information added by Drupal.org packaging script on 2017-09-29
+version: '8.x-1.10'
 core: '8.x'
 project: 'cog'
-datestamp: 1497039845
+datestamp: 1506720858

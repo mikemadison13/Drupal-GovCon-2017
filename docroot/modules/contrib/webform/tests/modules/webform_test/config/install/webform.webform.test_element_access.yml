@@ -33,8 +33,16 @@ elements: |
       '#type': textfield
       '#title': 'access_create_users (USER:1)'
       '#default_value': '{value}'
+      '#access_create_roles': { }
       '#access_create_users':
         - 1
+    access_create_permissions:
+      '#type': textfield
+      '#title': 'access_create_permissions (access user profiles)'
+      '#default_value': '{value}'
+      '#access_create_roles': { }
+      '#access_create_permissions':
+        - 'access user profiles'
   access_update:
     '#type': details
     '#title': access_update
@@ -55,8 +63,16 @@ elements: |
       '#type': textfield
       '#title': 'access_update_users (USER:1)'
       '#default_value': '{value}'
-      '#access_view_users':
+      '#access_update_roles': { }
+      '#access_update_users':
         - 1
+    access_update_permissions:
+      '#type': textfield
+      '#title': 'access_update_permissions (access user profiles)'
+      '#default_value': '{value}'
+      '#access_update_roles': { }
+      '#access_update_permissions':
+        - 'access user profiles'
   access_view:
     '#type': details
     '#title': access_view
@@ -77,12 +93,21 @@ elements: |
       '#type': textfield
       '#title': 'access_view_users (USER:1)'
       '#default_value': '{value}'
+      '#access_view_roles': { }
       '#access_view_users':
         - 1
+    access_view_permissions:
+      '#type': textfield
+      '#title': 'access_view_permissions (access user profiles)'
+      '#default_value': '{value}'
+      '#access_view_roles': { }
+      '#access_view_permissions':
+        - 'access user profiles'
 css: ''
 javascript: ''
 settings:
   ajax: false
+  ajax_scroll_top: form
   page: true
   page_submit_path: ''
   page_confirm_path: ''
@@ -98,6 +123,7 @@ settings:
   form_prepopulate_source_entity: false
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
+  form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_unsaved: false
@@ -111,14 +137,15 @@ settings:
   wizard_progress_pages: false
   wizard_progress_percentage: false
   wizard_start_label: ''
-  wizard_complete: true
-  wizard_complete_label: ''
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
   preview: 0
   preview_label: ''
   preview_title: ''
   preview_message: ''
   preview_attributes: {  }
   preview_excluded_elements: {  }
+  preview_exclude_empty: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -149,29 +176,37 @@ access:
       - anonymous
       - authenticated
     users: {  }
+    permissions: {  }
   view_any:
     roles:
       - anonymous
       - authenticated
     users: {  }
+    permissions: {  }
   update_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   purge_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   view_own:
     roles:
       - authenticated
     users: {  }
+    permissions: {  }
   update_own:
     roles:
       - authenticated
     users: {  }
+    permissions: {  }
   delete_own:
     roles: {  }
     users: {  }
+    permissions: {  }
 handlers: {  }

@@ -119,53 +119,44 @@ class BetaProgramCheck extends DiagnosticCheckBase implements DiagnosticCheckInt
    */
   public function run() {
 
-    // Check if the alpha and/or beta access token has been passed.
-    $program_token_passed = FALSE;
-    if (!is_null($secret = $this->settings->get('acquia_purge_alpha'))) {
-      if (hash('sha256', $secret) == '6f7820107cf8e586a6164802153c9f22d41ebb3aa54c32f17c94be0482c6a0a8') {
-        $program_token_passed = TRUE;
-      }
-    }
-    if (!is_null($secret = $this->settings->get('acquia_purge_beta'))) {
-      if (hash('sha256', $secret) == '3c49ba8ed87d547ed04b7e1a7abedbf35efb5258ab356f722650c1c68166f944') {
-        $program_token_passed = TRUE;
-      }
-    }
-
-    // If not passed, users will have to wait or participate our program.
-    if (!$program_token_passed) {
-      $this->recommendation = $this->t("Acquia Purge isn't ready for prime time yet. If you like bleeding-edge, you can consider joining our testing program by contacting Acquia Support!");
-    return SELF::SEVERITY_ERROR;
+    // Check if the old alpha and/or beta access tokens are still in settings.php.
+    if ($this->settings->get('acquia_purge_alpha') || $this->settings->get('acquia_purge_beta')) {
+      $this->recommendation = $this->t("You still have an access code for the Acquia Purge module configured, this is no longer needed!");
+      return SELF::SEVERITY_WARNING;
     }
 
     // We're enforcing a very strict TTL for statistic gathering. Future
     // stable releases of AP won't have this, but during the beta program
     // it is vital to be able to see the effects in Varnish statistics.
     if ($this->config->get('cache.page.max_age') < 2764800) {
-      $this->recommendation = $this->t("Program participants must configure Drupal's page cache maximum age to be one month at mininum!");
-      return SELF::SEVERITY_ERROR;
+      $this->recommendation = $this->t("Drupal's page cache maximum age is less then a month. In order to make effective use of tags-based cache invalidation, its best if you cache longer!");
+      return SELF::SEVERITY_WARNING;
     }
 
     // Test for various modules that we need present (for science baby!).
     if (!$this->moduleHandler->moduleExists('page_cache')) {
-      $this->recommendation = $this->t("Program participants must enable the page_cache module in order for Acquia to be able to measure the full effects on its systems.");
+      $this->recommendation = $this->t("Beta testers must enable the page_cache module in order for Acquia to be able to measure the full effects on its systems.");
+      return SELF::SEVERITY_ERROR;
+    }
+    if (!$this->moduleHandler->moduleExists('dynamic_page_cache')) {
+      $this->recommendation = $this->t("Beta testers must enable the dynamic_page_cache module in order for Acquia to be able to measure the full effects on its systems.");
       return SELF::SEVERITY_ERROR;
     }
     if ($this->moduleHandler->moduleExists('purge_queuer_url')) {
-      $this->recommendation = $this->t("Program participants must not enable the URLs queuer (and module).");
+      $this->recommendation = $this->t("Beta testers are not recommended to use the URLs queuer (and module).");
       return SELF::SEVERITY_ERROR;
     }
 
     // Test for the existence of the tags queuer, to ensure we're queuing tags!
     if (!$this->purgeQueuers->get('coretags')) {
-      $this->recommendation = $this->t("Program participants must enable the tags queuer.");
+      $this->recommendation = $this->t("Beta testers must enable the tags queuer.");
       return SELF::SEVERITY_ERROR;
     }
 
     // Test for the existence of the cron processor, so that its guaranteed that
     // there's a periodic check-in of the queue and no real queues stalling.
     if (!$this->purgeProcessors->get('cron')) {
-      $this->recommendation = $this->t("Program participants must enable the cron processor.");
+      $this->recommendation = $this->t("Beta testers must enable the cron processor.");
       return SELF::SEVERITY_ERROR;
     }
 
@@ -177,13 +168,13 @@ class BetaProgramCheck extends DiagnosticCheckBase implements DiagnosticCheckInt
     // most client participates, we'll likely require it by default and by doing
     // so, create a really smooth experience.
     if (!$this->purgeProcessors->get('lateruntime')) {
-      $this->recommendation = $this->t("Program participants must enable the late runtime processor.");
+      $this->recommendation = $this->t("Beta testers must enable the late runtime processor.");
       return SELF::SEVERITY_ERROR;
     }
 
     // Enforce the database queue during the beta program.
     if (!in_array('database', $this->purgeQueue->getPluginsEnabled())) {
-      $this->recommendation = $this->t("Program participants must use the database queue.");
+      $this->recommendation = $this->t("Beta testers must use the database queue.");
       return SELF::SEVERITY_ERROR;
     }
 

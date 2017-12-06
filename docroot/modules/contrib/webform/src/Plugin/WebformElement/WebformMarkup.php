@@ -11,6 +11,7 @@ use Drupal\webform\WebformSubmissionInterface;
  *
  * @WebformElement(
  *   id = "webform_markup",
+ *   default_key = "markup",
  *   label = @Translation("Basic HTML"),
  *   description = @Translation("Provides an element to render basic HTML markup."),
  *   category = @Translation("Markup elements"),
@@ -23,10 +24,11 @@ class WebformMarkup extends WebformMarkupBase {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    return parent::getDefaultProperties() + [
+    return [
+      'wrapper_attributes' => [],
       // Markup settings.
       'markup' => '',
-    ];
+    ] + parent::getDefaultProperties();
   }
 
   /**

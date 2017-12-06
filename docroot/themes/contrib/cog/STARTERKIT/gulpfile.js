@@ -76,7 +76,9 @@ var plugins = require('gulp-load-plugins')({
     'run-sequence': 'runSequence',
     'gulp-clean-css': 'cleanCSS',
     'gulp-stylelint': 'stylelint',
-    'gulp-babel': 'babel'
+    'gulp-eslint': 'gulpEslint',
+    'gulp-babel': 'babel',
+    'gulp-util': 'gutil'
   }
 });
 
@@ -170,6 +172,36 @@ var options = {
     js: [],
     homepage: 'style-guide-only/homepage.md',
     title: 'Living Style Guide'
+  },
+
+  // ------ pa11y ----- //
+  pa11y: {
+    urls: [ // An array of urls to test.
+      // For testing in a travis environment:
+      // 'http://127.0.0.1:8888',
+      // 'http://127.0.0.1:8888/themes/custom/yourtheme/styleguide'
+    ],
+    failOnError: true, // fail the build on error
+    showFailedOnly: true, // show errors only and override reporter
+    reporter: 'console',
+    log: {
+      debug: console.log.bind(console),
+      error: console.error.bind(console),
+      info: console.info.bind(console)
+    },
+    standard: 'WCAG2AA', // choose from Section508, WCAG2A, WCAG2AA, and WCAG2AAA
+    page: {
+      settings: {
+        loadImages: false,
+        userName: '', // .htacess username
+        password: '' // .htaccess password
+      }
+    },
+    threshold: { // Set to -1 for no threshold.
+      errors: 10,
+      warnings: 10,
+      notices: 20
+    }
   }
 
 };
@@ -190,6 +222,7 @@ require('./gulp-tasks/minify-css')(gulp, plugins, options);
 require('./gulp-tasks/serve')(gulp, plugins, options);
 require('./gulp-tasks/test-css')(gulp, plugins, options);
 require('./gulp-tasks/watch')(gulp, plugins, options);
+require('./gulp-tasks/pa11y')(gulp, plugins, options);
 
 // Credits:
 //

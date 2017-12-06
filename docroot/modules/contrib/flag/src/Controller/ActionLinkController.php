@@ -4,21 +4,20 @@ namespace Drupal\flag\Controller;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagServiceInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Provides a controller to flag and unflag when routed from a normal link.
  */
-class ActionLinkController implements ContainerInjectionInterface {
+class ActionLinkController extends ControllerBase implements ContainerInjectionInterface {
 
   /**
    * The flag service.
@@ -151,19 +150,11 @@ class ActionLinkController implements ContainerInjectionInterface {
 
       return $response;
     }
-    elseif ($entity->hasLinkTemplate('canonical')) {
+    else {
       // Redirect back to the entity. A passed in destination query parameter
       // will automatically override this.
       $url_info = $entity->toUrl();
-      $options['absolute'] = TRUE;
-      $url = Url::fromRoute($url_info->getRouteName(), $url_info->getRouteParameters(), $options);
-      return new RedirectResponse($url->toString());
-    }
-    else {
-      // For entities that don't have a canonical URL (like paragraphs),
-      // redirect to the front page.
-      $front = Url::fromUri('internal:/');
-      return new RedirectResponse($front);
+      return $this->redirect($url_info->getRouteName(), $url_info->getRouteParameters());
     }
 
   }

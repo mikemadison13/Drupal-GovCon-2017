@@ -69,7 +69,9 @@ class InstallStorage extends FileStorage {
    */
   public function __construct($directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION, ProfileHandlerInterface $profile_handler = NULL) {
     parent::__construct($directory, $collection);
-    $this->profileHandler = $profile_handler ?: \Drupal::service('profile_handler');
+    if (\Drupal::hasService('profile_handler')) {
+      $this->profileHandler = $profile_handler ?: \Drupal::service('profile_handler');
+    }
   }
 
   /**
@@ -144,7 +146,7 @@ class InstallStorage extends FileStorage {
     else {
       $return = [];
       foreach ($names as $index => $name) {
-        if (strpos($name, $prefix) === 0 ) {
+        if (strpos($name, $prefix) === 0) {
           $return[$index] = $names[$index];
         }
       }
@@ -163,7 +165,7 @@ class InstallStorage extends FileStorage {
       $this->folders = [];
       $this->folders += $this->getCoreNames();
       // Get dependent profiles and add the extension components.
-      $this->folders += $this->getComponentNames($this->profileHandler->getProfiles());
+      $this->folders += $this->getComponentNames($this->profileHandler->getProfileInheritance());
       // Perform an ExtensionDiscovery scan as we cannot use drupal_get_path()
       // yet because the system module may not yet be enabled during install.
       // @todo Remove as part of https://www.drupal.org/node/2186491

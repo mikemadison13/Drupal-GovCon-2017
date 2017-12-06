@@ -23,7 +23,8 @@ interface FlagServiceInterface {
    *
    * If all the parameters are omitted, a list of all flags will be returned.
    *
-   * Note that this does not check for any kind of access.
+   * Note that this does not check for any kind of access; see getUsersFlags()
+   * for that.
    *
    * @param string $entity_type
    *   (optional) The type of entity for which to load the flags.
@@ -34,6 +35,29 @@ interface FlagServiceInterface {
    *   An array of flag entities, keyed by the entity IDs.
    */
   public function getAllFlags($entity_type = NULL, $bundle = NULL);
+
+  /**
+   * Lists the flags available to a given user, for an entity type and bundle.
+   *
+   * For example, to list all flags operating on articles:
+   *
+   * @code
+   *   $this->flagService->getUsersFlags($account, 'node', 'article');
+   * @endcode
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user account to filter flags according to access.
+   * @param string $entity_type
+   *   (optional) The entity type ID for which to list flags. If omitted,
+   *   flags for all entity types are returned.
+   * @param string $bundle
+   *   (optional) The bundle name of the given entity type for which to list
+   *   flags. If omitted, flags for all bundles are returned.
+   *
+   * @return \Drupal\flag\FlagInterface[]
+   *   An array of flag entities, keyed by the entity IDs.
+   */
+  public function getUsersFlags(AccountInterface $account, $entity_type = NULL, $bundle = NULL);
 
   /**
    * Get a single flagging for given a flag and  entity.

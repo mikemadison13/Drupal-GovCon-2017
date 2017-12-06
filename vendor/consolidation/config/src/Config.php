@@ -36,12 +36,12 @@ class Config implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function get($key, $defaultOverride = null)
+    public function get($key, $defaultFallback = null)
     {
         if ($this->has($key)) {
             return $this->config->get($key);
         }
-        return $this->getDefault($key, $defaultOverride);
+        return $this->getDefault($key, $defaultFallback);
     }
 
     /**
@@ -58,7 +58,23 @@ class Config implements ConfigInterface
      */
     public function import($data)
     {
+        return $this->replace($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replace($data)
+    {
         $this->config = new Data($data);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function combine($data)
+    {
         if (!empty($data)) {
             $this->config->import($data, true);
         }
@@ -84,9 +100,9 @@ class Config implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getDefault($key, $defaultOverride = null)
+    public function getDefault($key, $defaultFallback = null)
     {
-        return $this->hasDefault($key) ? $this->defaults[$key] : $defaultOverride;
+        return $this->hasDefault($key) ? $this->defaults[$key] : $defaultFallback;
     }
 
     /**

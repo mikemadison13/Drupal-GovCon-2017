@@ -14,23 +14,21 @@ use Drupal\Console\Command\Shared\ServicesTrait;
 use Drupal\Console\Command\Shared\ConfirmationTrait;
 use Drupal\Console\Command\Shared\ModuleTrait;
 use Drupal\Console\Generator\ControllerGenerator;
-use Symfony\Component\Console\Command\Command;
+use Drupal\Console\Core\Command\ContainerAwareCommand;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Utils\StringConverter;
-use Drupal\Console\Core\Command\Shared\ContainerAwareCommandTrait;
 use Drupal\Console\Core\Utils\ChainQueue;
 use Drupal\Console\Core\Command\Shared\InputTrait;
 use Drupal\Console\Extension\Manager;
 use Drupal\Console\Utils\Validator;
 
-class ControllerCommand extends Command
+class ControllerCommand extends ContainerAwareCommand
 {
     use ModuleTrait;
     use ServicesTrait;
     use ConfirmationTrait;
     use InputTrait;
-    use ContainerAwareCommandTrait;
 
     /**
      * @var Manager
@@ -142,7 +140,7 @@ class ControllerCommand extends Command
         }
 
         $module = $input->getOption('module');
-        $class = $input->getOption('class');
+        $class = $this->validator->validateControllerName($input->getOption('class'));
         $routes = $input->getOption('routes');
         $test = $input->getOption('test');
         $services = $input->getOption('services');
@@ -190,7 +188,7 @@ class ControllerCommand extends Command
                 $this->trans('commands.generate.controller.questions.class'),
                 'DefaultController',
                 function ($class) {
-                    return $this->validator->validateClassName($class);
+                    return $this->validator->validateControllerName($class);
                 }
             );
             $input->setOption('class', $class);

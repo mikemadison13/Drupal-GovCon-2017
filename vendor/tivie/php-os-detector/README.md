@@ -1,7 +1,16 @@
 PHP OS Detector
 ===============
 
+[![Build Status](https://travis-ci.org/tivie/php-os-detector.svg?branch=master)](https://travis-ci.org/tivie/php-os-detector)
+[![Latest Stable Version](https://poser.pugx.org/tivie/php-os-detector/v/stable.svg)](https://packagist.org/packages/tivie/php-os-detector)
+[![Total Downloads](https://poser.pugx.org/tivie/php-os-detector/downloads.svg)](https://packagist.org/packages/tivie/php-os-detector)
+[![License](https://poser.pugx.org/tivie/php-os-detector/license.svg)](https://packagist.org/packages/tivie/php-os-detector)
+
 A small PHP utility library that detects the OS the server is running on.
+
+## Compatibility
+
+Although only tested in PHP 7, PHP OS Detector should be compatible with PHP 5.3 or greater
 
 ## Installation
 You can install it by cloning the git repository or using composer.

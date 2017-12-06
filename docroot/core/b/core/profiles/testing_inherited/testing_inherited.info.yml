@@ -15,6 +15,7 @@ base profile:
 dependencies:
   - block
   - config
+  - syslog
 
 themes:
   - stable

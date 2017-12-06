@@ -13,11 +13,11 @@ class AdminUITest extends FlagTestBase {
 
 
   /**
-   * The entity type manager service.
+   * The entity query service.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManager
+   * @var \Drupal\Core\Entity\Query\QueryFactory
    */
-  protected $entityTypeManager;
+  protected $entityQueryManager;
 
   /**
    * The label of the flag to create for the test.
@@ -74,7 +74,7 @@ class AdminUITest extends FlagTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->entityTypeManager = $this->container->get('entity_type.manager');
+    $this->entityQueryManager = $this->container->get('entity.query');
 
     $this->drupalLogin($this->adminUser);
 
@@ -180,11 +180,11 @@ class AdminUITest extends FlagTestBase {
     // Flag the node.
     $this->flagService->flag($this->flag, $this->node, $this->adminUser);
 
-    $query_before = $this->entityTypeManager->getStorage('flagging')->getQuery();
-    $query_before->condition('flag_id', $this->flag->id())
+    $ids_before = $this->entityQueryManager->get('flagging')
+      ->condition('flag_id', $this->flag->id())
       ->condition('entity_type', 'node')
-      ->condition('entity_id', $this->node->id());
-    $ids_before = $query_before->execute();
+      ->condition('entity_id', $this->node->id())
+      ->execute();
 
     $this->assertEqual(count($ids_before), 1, "The flag has one flagging.");
 
@@ -195,11 +195,11 @@ class AdminUITest extends FlagTestBase {
 
     $this->drupalPostForm(NULL, [], $this->t('Reset'));
 
-    $query_after = $this->entityTypeManager->getStorage('flagging')->getQuery();
-    $query_after->condition('flag_id', $this->flag->id())
+    $ids_after = $this->entityQueryManager->get('flagging')
+      ->condition('flag_id', $this->flag->id())
       ->condition('entity_type', 'node')
-      ->condition('entity_id', $this->node->id());
-    $ids_after = $query_after->execute();
+      ->condition('entity_id', $this->node->id())
+      ->execute();
 
     $this->assertEqual(count($ids_after), 0, "The flag has no flaggings after being reset.");
   }

@@ -7,19 +7,18 @@
 
 namespace Drupal\Console\Command\Module;
 
-use Drupal\Console\Core\Command\Shared\CommandTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\ProcessBuilder;
-use Symfony\Component\Console\Command\Command;
+use Drupal\Console\Core\Command\Command;
 use Drupal\Console\Command\Shared\ProjectDownloadTrait;
 use Drupal\Console\Command\Shared\ModuleTrait;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Utils\Site;
 use Drupal\Console\Utils\Validator;
-use Drupal\Core\ProxyClass\Extension\ModuleInstaller;
+use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Console\Utils\DrupalApi;
 use Drupal\Console\Extension\Manager;
 use Drupal\Console\Core\Utils\ChainQueue;
@@ -31,7 +30,6 @@ use Drupal\Console\Core\Utils\ChainQueue;
  */
 class InstallCommand extends Command
 {
-    use CommandTrait;
     use ProjectDownloadTrait;
     use ModuleTrait;
 
@@ -84,7 +82,7 @@ class InstallCommand extends Command
     public function __construct(
         Site $site,
         Validator $validator,
-        ModuleInstaller $moduleInstaller,
+        ModuleInstallerInterface $moduleInstaller,
         DrupalApi $drupalApi,
         Manager $extensionManager,
         $appRoot,

@@ -4,7 +4,6 @@ namespace Drupal\flag\Form;
 
 use Drupal\flag\Form\FlagConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\flag\Plugin\ActionLink\FormEntryInterface;
 
 /**
  * Provides the confirm form page for unflagging an entity.
@@ -38,8 +37,7 @@ class UnflagConfirmForm extends FlagConfirmFormBase {
    * {@inheritdoc}
    */
   public function getConfirmText() {
-    $link_plugin = $this->flag->getLinkTypePlugin();
-    return $link_plugin instanceof FormEntryInterface ? $link_plugin->getDeleteButtonText() : $this->t('Delete flagging');
+    return $this->flag->getLinkTypePlugin()->getDeleteButtonText();
   }
 
   /**

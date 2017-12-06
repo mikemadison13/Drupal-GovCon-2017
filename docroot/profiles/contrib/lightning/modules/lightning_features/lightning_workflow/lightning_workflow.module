@@ -5,17 +5,98 @@
  * Provides workflow enhancements for Drupal.
  */
 
-use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\field\Entity\FieldConfig;
+use Drupal\lightning_core\Element;
 use Drupal\lightning_core\OverrideHelper as Override;
+use Drupal\lightning_core\Routing\RouteSubscriber;
 use Drupal\lightning_workflow\Form\NodeForm;
 use Drupal\lightning_workflow\Plugin\views\field\NodeBulkForm;
-use Drupal\node\NodeTypeInterface;
-use Drupal\scheduled_updates\ScheduledUpdateInterface;
 use Drupal\views\ViewEntityInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\workbench_moderation\Entity\ModerationState;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function lightning_workflow_form_node_type_moderation_form_alter(array &$form, FormStateInterface $form_state) {
+  $form['actions']['submit']['#submit'][] = 'lightning_workflow_submit_node_type_moderation_form';
+}
+
+function lightning_workflow_submit_node_type_moderation_form(array &$form, FormStateInterface $form_state) {
+  $was_moderated = (bool) $form['enable_moderation_state']['#default_value'];
+  $now_moderated = (bool) $form_state->getValue('enable_moderation_state');
+
+  if (!$was_moderated && $now_moderated) {
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+
+    entity_get_form_display('node', $form_object->getEntity()->id(), 'default')
+      ->removeComponent('status')
+      ->save();
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function lightning_workflow_theme_registry_alter(array &$theme_registry) {
+  foreach ($theme_registry as $hook => &$info) {
+    if ($hook == 'field' || (isset($info['base hook']) && $info['base hook'] == 'field')) {
+      // We wrap around Quick Edit's preprocess function, so it should not be
+      // run directly.
+      $info['preprocess functions'] = array_diff($info['preprocess functions'], ['quickedit_preprocess_field']);
+    }
+  }
+}
+
+/**
+ * Implements template_preprocess_field().
+ */
+function lightning_workflow_preprocess_field(array &$variables) {
+  if (\Drupal::moduleHandler()->moduleExists('quickedit')) {
+    quickedit_preprocess_field($variables);
+
+    /** @var \Drupal\Core\Entity\EntityInterface $entity */
+    $entity = $variables['element']['#object'];
+
+    if ($entity instanceof EntityPublishedInterface && $entity->isPublished() && RouteSubscriber::isViewing($entity)) {
+      unset($variables['attributes']['data-quickedit-field-id']);
+    }
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function lightning_workflow_module_implements_alter(array &$implementations, $hook) {
+  // We have to check for hook_node_view_alter() because of absolute insanity
+  // in ModuleHandler::alter() and the way it determines the implementations of
+  // 'secondary' alter hooks. It's weird logic that is pretty close to
+  // inexplicable...but trust me, to wrap around quickedit_entity_view_alter(),
+  // we need to alter the implementations of hook_node_view_alter(). Granted,
+  // this will only work for nodes. If we want to do this for another entity
+  // type, we'll have to check for its entity type-specific view_alter hook as
+  // well.
+  if ($hook == 'node_view_alter') {
+    unset($implementations['quickedit']);
+  }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function lightning_workflow_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  if (\Drupal::moduleHandler()->moduleExists('quickedit')) {
+    quickedit_entity_view_alter($build, $entity, $display);
+
+    if ($entity instanceof EntityPublishedInterface && $entity->isPublished() && RouteSubscriber::isViewing($entity)) {
+      unset($build['#attributes']['data-quickedit-entity-id']);
+    }
+  }
+}
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
@@ -27,21 +108,24 @@ function lightning_workflow_view_presave(ViewEntityInterface $view) {
   }
   elseif ($view->id() == 'content' && $view->isNew()) {
     $display = &$view->getDisplay('default');
+    $display_options = &$display['display_options'];
 
     // Add the moderation state as a field.
-    unset($display['display_options']['fields']['status']);
-    $display['display_options']['fields']['moderation_state'] = unserialize('a:37:{s:2:"id";s:16:"moderation_state";s:5:"table";s:15:"node_field_data";s:5:"field";s:16:"moderation_state";s:12:"relationship";s:4:"none";s:10:"group_type";s:5:"group";s:11:"admin_label";s:0:"";s:5:"label";s:6:"Status";s:7:"exclude";b:0;s:5:"alter";a:26:{s:10:"alter_text";b:0;s:4:"text";s:0:"";s:9:"make_link";b:0;s:4:"path";s:0:"";s:8:"absolute";b:0;s:8:"external";b:0;s:14:"replace_spaces";b:0;s:9:"path_case";s:4:"none";s:15:"trim_whitespace";b:0;s:3:"alt";s:0:"";s:3:"rel";s:0:"";s:10:"link_class";s:0:"";s:6:"prefix";s:0:"";s:6:"suffix";s:0:"";s:6:"target";s:0:"";s:5:"nl2br";b:0;s:10:"max_length";i:0;s:13:"word_boundary";b:1;s:8:"ellipsis";b:1;s:9:"more_link";b:0;s:14:"more_link_text";s:0:"";s:14:"more_link_path";s:0:"";s:10:"strip_tags";b:0;s:4:"trim";b:0;s:13:"preserve_tags";s:0:"";s:4:"html";b:0;}s:12:"element_type";s:0:"";s:13:"element_class";s:0:"";s:18:"element_label_type";s:0:"";s:19:"element_label_class";s:0:"";s:19:"element_label_colon";b:1;s:20:"element_wrapper_type";s:0:"";s:21:"element_wrapper_class";s:0:"";s:23:"element_default_classes";b:1;s:5:"empty";s:0:"";s:10:"hide_empty";b:0;s:10:"empty_zero";b:0;s:16:"hide_alter_empty";b:1;s:17:"click_sort_column";s:9:"target_id";s:4:"type";s:22:"entity_reference_label";s:8:"settings";a:1:{s:4:"link";b:0;}s:12:"group_column";s:9:"target_id";s:13:"group_columns";a:0:{}s:10:"group_rows";b:1;s:11:"delta_limit";i:0;s:12:"delta_offset";i:0;s:14:"delta_reversed";b:0;s:16:"delta_first_last";b:0;s:10:"multi_type";s:9:"separator";s:9:"separator";s:2:", ";s:17:"field_api_classes";b:0;s:11:"entity_type";s:4:"node";s:12:"entity_field";s:16:"moderation_state";s:9:"plugin_id";s:5:"field";}');
+    unset($display_options['fields']['status']);
+    $display_options['fields']['moderation_state'] = unserialize('a:37:{s:2:"id";s:16:"moderation_state";s:5:"table";s:15:"node_field_data";s:5:"field";s:16:"moderation_state";s:12:"relationship";s:4:"none";s:10:"group_type";s:5:"group";s:11:"admin_label";s:0:"";s:5:"label";s:6:"Status";s:7:"exclude";b:0;s:5:"alter";a:26:{s:10:"alter_text";b:0;s:4:"text";s:0:"";s:9:"make_link";b:0;s:4:"path";s:0:"";s:8:"absolute";b:0;s:8:"external";b:0;s:14:"replace_spaces";b:0;s:9:"path_case";s:4:"none";s:15:"trim_whitespace";b:0;s:3:"alt";s:0:"";s:3:"rel";s:0:"";s:10:"link_class";s:0:"";s:6:"prefix";s:0:"";s:6:"suffix";s:0:"";s:6:"target";s:0:"";s:5:"nl2br";b:0;s:10:"max_length";i:0;s:13:"word_boundary";b:1;s:8:"ellipsis";b:1;s:9:"more_link";b:0;s:14:"more_link_text";s:0:"";s:14:"more_link_path";s:0:"";s:10:"strip_tags";b:0;s:4:"trim";b:0;s:13:"preserve_tags";s:0:"";s:4:"html";b:0;}s:12:"element_type";s:0:"";s:13:"element_class";s:0:"";s:18:"element_label_type";s:0:"";s:19:"element_label_class";s:0:"";s:19:"element_label_colon";b:1;s:20:"element_wrapper_type";s:0:"";s:21:"element_wrapper_class";s:0:"";s:23:"element_default_classes";b:1;s:5:"empty";s:0:"";s:10:"hide_empty";b:0;s:10:"empty_zero";b:0;s:16:"hide_alter_empty";b:1;s:17:"click_sort_column";s:9:"target_id";s:4:"type";s:22:"entity_reference_label";s:8:"settings";a:1:{s:4:"link";b:0;}s:12:"group_column";s:9:"target_id";s:13:"group_columns";a:0:{}s:10:"group_rows";b:1;s:11:"delta_limit";i:0;s:12:"delta_offset";i:0;s:14:"delta_reversed";b:0;s:16:"delta_first_last";b:0;s:10:"multi_type";s:9:"separator";s:9:"separator";s:2:", ";s:17:"field_api_classes";b:0;s:11:"entity_type";s:4:"node";s:12:"entity_field";s:16:"moderation_state";s:9:"plugin_id";s:5:"field";}');
 
     // Filter by moderation state instead of status.
-    unset($display['display_options']['filters']['status']);
-    unset($display['display_options']['filters']['status_extra']);
+    unset($display_options['filters']['status']);
+    unset($display_options['filters']['status_extra']);
     $display['display_options']['filters']['moderation_state'] = unserialize('a:16:{s:2:"id";s:16:"moderation_state";s:5:"table";s:15:"node_field_data";s:5:"field";s:16:"moderation_state";s:12:"relationship";s:4:"none";s:10:"group_type";s:5:"group";s:11:"admin_label";s:0:"";s:8:"operator";s:1:"=";s:5:"value";s:0:"";s:5:"group";i:1;s:7:"exposed";b:1;s:6:"expose";a:10:{s:11:"operator_id";s:19:"moderation_state_op";s:5:"label";s:6:"Status";s:11:"description";s:0:"";s:12:"use_operator";b:0;s:8:"operator";s:19:"moderation_state_op";s:10:"identifier";s:16:"moderation_state";s:8:"required";b:0;s:8:"remember";b:0;s:8:"multiple";b:0;s:14:"remember_roles";a:3:{s:13:"authenticated";s:13:"authenticated";s:9:"anonymous";s:1:"0";s:13:"administrator";s:1:"0";}}s:10:"is_grouped";b:0;s:10:"group_info";a:10:{s:5:"label";s:0:"";s:11:"description";s:0:"";s:10:"identifier";s:0:"";s:8:"optional";b:1;s:6:"widget";s:6:"select";s:8:"multiple";b:0;s:8:"remember";b:0;s:13:"default_group";s:3:"All";s:22:"default_group_multiple";a:0:{}s:11:"group_items";a:0:{}}s:11:"entity_type";s:4:"node";s:12:"entity_field";s:16:"moderation_state";s:9:"plugin_id";s:6:"string";}');
 
     // Add a relationship to the latest revision.
-    $display['display_options']['relationships']['latest_revision__node'] = unserialize('a:8:{s:2:"id";s:21:"latest_revision__node";s:5:"table";s:26:"workbench_revision_tracker";s:5:"field";s:21:"latest_revision__node";s:12:"relationship";s:4:"none";s:10:"group_type";s:5:"group";s:11:"admin_label";s:15:"latest revision";s:8:"required";b:0;s:9:"plugin_id";s:8:"standard";}');
+    $display_options['relationships']['latest_revision__node'] = unserialize('a:8:{s:2:"id";s:21:"latest_revision__node";s:5:"table";s:26:"workbench_revision_tracker";s:5:"field";s:21:"latest_revision__node";s:12:"relationship";s:4:"none";s:10:"group_type";s:5:"group";s:11:"admin_label";s:15:"latest revision";s:8:"required";b:0;s:9:"plugin_id";s:8:"standard";}');
 
     // Add the forward revision indicator.
-    $display['display_options']['fields']['forward_revision_exists'] = unserialize('a:23:{s:2:"id";s:23:"forward_revision_exists";s:5:"table";s:15:"node_field_data";s:5:"field";s:23:"forward_revision_exists";s:12:"relationship";s:4:"none";s:10:"group_type";s:5:"group";s:11:"admin_label";s:0:"";s:5:"label";s:21:"Has unpublished edits";s:7:"exclude";b:0;s:5:"alter";a:26:{s:10:"alter_text";b:0;s:4:"text";s:0:"";s:9:"make_link";b:0;s:4:"path";s:0:"";s:8:"absolute";b:0;s:8:"external";b:0;s:14:"replace_spaces";b:0;s:9:"path_case";s:4:"none";s:15:"trim_whitespace";b:0;s:3:"alt";s:0:"";s:3:"rel";s:0:"";s:10:"link_class";s:0:"";s:6:"prefix";s:0:"";s:6:"suffix";s:0:"";s:6:"target";s:0:"";s:5:"nl2br";b:0;s:10:"max_length";i:0;s:13:"word_boundary";b:1;s:8:"ellipsis";b:1;s:9:"more_link";b:0;s:14:"more_link_text";s:0:"";s:14:"more_link_path";s:0:"";s:10:"strip_tags";b:0;s:4:"trim";b:0;s:13:"preserve_tags";s:0:"";s:4:"html";b:0;}s:12:"element_type";s:0:"";s:13:"element_class";s:0:"";s:18:"element_label_type";s:0:"";s:19:"element_label_class";s:0:"";s:19:"element_label_colon";b:1;s:20:"element_wrapper_type";s:0:"";s:21:"element_wrapper_class";s:0:"";s:23:"element_default_classes";b:1;s:5:"empty";s:0:"";s:10:"hide_empty";b:0;s:10:"empty_zero";b:0;s:16:"hide_alter_empty";b:1;s:11:"entity_type";s:4:"node";s:9:"plugin_id";s:23:"forward_revision_exists";}');
+    $display_options['fields']['forward_revision_exists'] = unserialize('a:23:{s:2:"id";s:23:"forward_revision_exists";s:5:"table";s:15:"node_field_data";s:5:"field";s:23:"forward_revision_exists";s:12:"relationship";s:4:"none";s:10:"group_type";s:5:"group";s:11:"admin_label";s:0:"";s:5:"label";s:21:"Has unpublished edits";s:7:"exclude";b:0;s:5:"alter";a:26:{s:10:"alter_text";b:0;s:4:"text";s:0:"";s:9:"make_link";b:0;s:4:"path";s:0:"";s:8:"absolute";b:0;s:8:"external";b:0;s:14:"replace_spaces";b:0;s:9:"path_case";s:4:"none";s:15:"trim_whitespace";b:0;s:3:"alt";s:0:"";s:3:"rel";s:0:"";s:10:"link_class";s:0:"";s:6:"prefix";s:0:"";s:6:"suffix";s:0:"";s:6:"target";s:0:"";s:5:"nl2br";b:0;s:10:"max_length";i:0;s:13:"word_boundary";b:1;s:8:"ellipsis";b:1;s:9:"more_link";b:0;s:14:"more_link_text";s:0:"";s:14:"more_link_path";s:0:"";s:10:"strip_tags";b:0;s:4:"trim";b:0;s:13:"preserve_tags";s:0:"";s:4:"html";b:0;}s:12:"element_type";s:0:"";s:13:"element_class";s:0:"";s:18:"element_label_type";s:0:"";s:19:"element_label_class";s:0:"";s:19:"element_label_colon";b:1;s:20:"element_wrapper_type";s:0:"";s:21:"element_wrapper_class";s:0:"";s:23:"element_default_classes";b:1;s:5:"empty";s:0:"";s:10:"hide_empty";b:0;s:10:"empty_zero";b:0;s:16:"hide_alter_empty";b:1;s:11:"entity_type";s:4:"node";s:9:"plugin_id";s:23:"forward_revision_exists";}');
+
+    Element::toTail($display_options['fields'], 'operations');
   }
 }
 
@@ -51,43 +135,6 @@ function lightning_workflow_view_presave(ViewEntityInterface $view) {
 function lightning_workflow_entity_type_alter(array &$entity_types) {
   Override::entityForm($entity_types['node'], NodeForm::class);
   Override::entityForm($entity_types['node'], NodeForm::class, 'edit');
-}
-
-/**
- * Implements hook_inline_entity_form_table_fields_alter().
- */
-function lightning_workflow_inline_entity_form_table_fields_alter(array &$fields, array $context) {
-  if ($context['entity_type'] == 'scheduled_update') {
-    $fields['label']['type'] = 'callback';
-    $fields['label']['callback'] = 'lightning_workflow_scheduled_update_ief_label';
-    // We're generating a pretty, informative label...so there's no need to use
-    // the spartan, default column label.
-    $fields['label']['label'] = NULL;
-  }
-}
-
-/**
- * Generates pretty labels for scheduled updates in an IEF.
- *
- * @param ScheduledUpdateInterface $entity
- *   The scheduled update entity.
- *
- * @return array
- *   The entity label, as a renderable array.
- */
-function lightning_workflow_scheduled_update_ief_label(ScheduledUpdateInterface $entity) {
-  $label = $entity->label();
-
-  if ($entity->bundle() == 'node_embargo') {
-    $when = DrupalDateTime::createFromTimestamp($entity->update_timestamp->value);
-
-    $label = t('Move to <strong>@moderation_state</strong> state on @date at @time', [
-      '@moderation_state' => $entity->field_moderation_state->entity->label(),
-      '@date' => $when->format('F j, Y'),
-      '@time' => $when->format('g:i:s A'),
-    ]);
-  }
-  return ['#markup' => $label];
 }
 
 /**
@@ -115,46 +162,6 @@ function lightning_workflow_modules_installed(array $modules) {
         'use published_archived transition',
         'view moderation states',
       ]);
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_insert().
- */
-function lightning_workflow_node_type_insert(NodeTypeInterface $node_type) {
-  $id = $node_type->id();
-
-  // Don't do anything during config sync.
-  if (\Drupal::isConfigSyncing()) {
-    return;
-  }
-  elseif ($node_type->getThirdPartySetting('lightning_workflow', 'embargo')) {
-    FieldConfig::create([
-      'field_name' => 'scheduled_update',
-      'entity_type' => 'node',
-      'bundle' => $id,
-      'label' => t('Scheduled updates'),
-      'settings' => [
-        'handler' => 'default:scheduled_update',
-        'handler_settings' => [
-          'target_bundles' => ['node_embargo'],
-        ],
-      ],
-    ])->save();
-
-    entity_get_form_display('node', $id, 'default')
-      ->setComponent('scheduled_update', [
-        'type' => 'inline_entity_form_complex',
-        'settings' => [
-          'override_labels' => FALSE,
-          'label_singular' => '',
-          'label_plural' => '',
-          'allow_new' => TRUE,
-          'allow_existing' => FALSE,
-          'match_operator' => 'CONTAINS',
-        ],
-      ])
-      ->save();
   }
 }
 

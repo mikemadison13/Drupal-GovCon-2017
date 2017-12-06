@@ -24,20 +24,20 @@ class WebformImageSelect extends Select {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    $default_properties = parent::getDefaultProperties();
+    $properties = parent::getDefaultProperties();
     unset(
-      $default_properties['options'],
-      $default_properties['options_randomize'],
-      $default_properties['field_prefix'],
-      $default_properties['field_suffix'],
-      $default_properties['disabled'],
-      $default_properties['select2']
+      $properties['options'],
+      $properties['options_randomize'],
+      $properties['field_prefix'],
+      $properties['field_suffix'],
+      $properties['disabled'],
+      $properties['select2']
     );
 
-    $default_properties['images'] = [];
-    $default_properties['images_randomize'] = FALSE;
-    $default_properties['show_label'] = FALSE;
-    return $default_properties;
+    $properties['images'] = [];
+    $properties['images_randomize'] = FALSE;
+    $properties['show_label'] = FALSE;
+    return $properties;
   }
 
   /**
@@ -169,6 +169,29 @@ class WebformImageSelect extends Select {
   /**
    * {@inheritdoc}
    */
+  public function preview() {
+    return parent::preview() + [
+      '#show_label' => TRUE,
+      '#images' => [
+        'bear_1' => [
+          'text' => 'Bear 1',
+          'src' => 'https://www.placebear.com/80/100',
+        ],
+        'bear_2' => [
+          'text' => 'Bear 2',
+          'src' => 'https://www.placebear.com/100/100',
+        ],
+        'bear_3' => [
+          'text' => 'Bear 3',
+          'src' => 'https://www.placebear.com/120/100',
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $form['options']['#title'] = $this->t('Image options');
@@ -205,7 +228,7 @@ class WebformImageSelect extends Select {
     $form['options']['images_randomize'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Randomize images'),
-      '#description' => $this->t('Randomizes the order of the images when they are displayed in the webform.'),
+      '#description' => $this->t('Randomizes the order of the images when they are displayed in the webform'),
       '#return_value' => TRUE,
     ];
     $form['options']['show_label'] = [
@@ -216,7 +239,7 @@ class WebformImageSelect extends Select {
     ];
 
     if (function_exists('imce_process_url_element')) {
-      $src_element =& $form['options']['images']['#element']['src'];
+      $src_element = &$form['options']['images']['#element']['src'];
       imce_process_url_element($src_element, 'link');
       $form['#attached']['library'][] = 'webform/imce.input';
     }

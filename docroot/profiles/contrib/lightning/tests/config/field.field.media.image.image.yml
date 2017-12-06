@@ -3,9 +3,10 @@ status: true
 dependencies:
   config:
     - field.storage.media.image
-    - media_entity.bundle.image
+    - media.type.image
   module:
     - image
+_core: {  }
 id: media.image.image
 field_name: image
 entity_type: media

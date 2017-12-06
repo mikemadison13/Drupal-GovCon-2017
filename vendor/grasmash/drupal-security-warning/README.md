@@ -1,8 +1,14 @@
 [![Build Status](https://travis-ci.org/grasmash/drupal-security-warning.svg?branch=master)](https://travis-ci.org/grasmash/drupal-security-warning)
 
-This Composer plugin will display a warning when users install Drupal packages that are not supported by [Drupal's Security Team policy](https://www.drupal.org/security-advisory-policy).
+This Composer plugin will display a warning when users install or update Drupal packages that are not supported by the Drupal Security team, as per the [Security Advisory Policy](https://www.drupal.org/security-advisory-policy).
 
-The relevant portion of the policy reads:
-> Security advisories are only made for issues affecting stable releases (Y.x-Z.0 or higher) in the supported major version branches (at the time of writing Drupal 7.x and Drupal 8.x). That means no security advisories for development releases (-dev), ALPHAs, BETAs or RCs.
+Installing or updating a "non-covered" Drupal package will displayed:
 
-Installing or updating a Drupal package with a dev, alpha, beta, or rc release will cause this warning to be displayed.
+    You are using Drupal packages that are not supported by the Drupal Security Team!
+      - drupal/consumers:1.0.0.0-beta1: Project has not opted into security advisory coverage!
+      - drupal/inline_entity_form:1.0.0.0-beta1: Beta releases are not covered by Drupal security advisories.
+      - drupal/scheduled_updates:1.0.0.0-alpha6: Project has not opted into security advisory coverage!
+      - drupal/diff:1.0.0.0-RC1: RC releases are not covered by Drupal security advisories.
+      - drupal/seckit:1.0.0.0-alpha2: Alpha releases are not covered by Drupal security advisories.
+      - drupal/security_review:dev-1.x: Dev releases are not covered by Drupal security advisories.
+    See https://www.drupal.org/security-advisory-policy for more information.

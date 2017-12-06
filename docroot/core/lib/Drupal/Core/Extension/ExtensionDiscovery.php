@@ -265,7 +265,7 @@ class ExtensionDiscovery {
     // In case both profile directories contain the same extension, the actual
     // profile always has precedence.
     if ($profile) {
-      $profiles = $this->profileHandler->getProfiles($profile);
+      $profiles = $this->profileHandler->getProfileInheritance($profile);
       $profile_directories = array_map(function($extension) {
         return $extension->getPath();
       }, $profiles);

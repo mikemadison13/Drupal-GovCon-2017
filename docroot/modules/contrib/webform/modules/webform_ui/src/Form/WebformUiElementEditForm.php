@@ -2,9 +2,9 @@
 
 namespace Drupal\webform_ui\Form;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\WebformInterface;
@@ -26,7 +26,7 @@ class WebformUiElementEditForm extends WebformUiElementFormBase {
 
     // Handler changing element type.
     if ($type = $this->getRequest()->get('type')) {
-      $webform_element = $this->getWebformElement();
+      $webform_element = $this->getWebformElementPlugin();
       $related_types = $webform_element->getRelatedTypes($this->element);
       if (!isset($related_types[$type])) {
         throw new NotFoundHttpException();
@@ -38,7 +38,7 @@ class WebformUiElementEditForm extends WebformUiElementFormBase {
     // Issue: #title is display as modal dialog's title and can't be escaped.
     // Workaround: Filter and define @title as safe markup.
     $form['#title'] = $this->t('Edit @title element', [
-      '@title' => (!empty($this->element['#title'])) ? new FormattableMarkup(Xss::filterAdmin($this->element['#title']), []) : $key,
+      '@title' => (!empty($this->element['#title'])) ? Markup::create(Xss::filterAdmin($this->element['#title'])) : $key,
     ]);
 
     $this->action = $this->t('updated');
@@ -68,7 +68,7 @@ class WebformUiElementEditForm extends WebformUiElementFormBase {
     */
 
     // WORKAROUND:
-    // Create a hidden link that is click using jQuery.
+    // Create a hidden link that is clicked using jQuery.
     if ($this->isDialog()) {
       $form['delete'] = [
         '#type' => 'link',

@@ -1,8 +1,5 @@
 langcode: en
 status: true
-dependencies:
-  module:
-    - menu_ui
 third_party_settings:
   menu_ui:
     available_menus:
@@ -16,7 +13,7 @@ third_party_settings:
       - needs_review
       - published
     default_moderation_state: draft
-  lightning_workflow:
+  lightning_scheduled_updates:
     embargo: true
 name: 'Basic page'
 type: page

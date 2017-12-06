@@ -56,7 +56,16 @@ if (function_exists('acsf_hooks_includes')) {
  * - $config['system.performance']['fast_404']['html']: The html to return for
  *   simple 404 pages.
  *
- * Remove the leading hash signs if you would like to alter this functionality.
+ * Acquia Cloud Site Factory compatibility notes:
+ *
+ * The Drupal 7 version of the ACSF module hardcodes these configuration values;
+ * for Drupal 8 it is left up to the specific installation to override these,
+ * e.g. in a post-settings-php hook, or by including these settings in .yml
+ * configuration files according to the customer's own workflow.
+ *
+ * There is currently one difference of the default 'paths' value for Drupal 8
+ * compared to the hardcoded value in the ACSF module for Drupal 7: svg files
+ * are not included here.
  */
 # $config['system.performance']['fast_404']['exclude_paths'] = '/\/(?:styles)|(?:system\/files)\//';
 # $config['system.performance']['fast_404']['paths'] = '/\.(?:txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i';

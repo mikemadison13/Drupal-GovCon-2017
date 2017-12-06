@@ -3,9 +3,10 @@ status: true
 dependencies:
   config:
     - field.storage.media.field_document
-    - media_entity.bundle.document
+    - media.type.document
   module:
     - file
+_core: {  }
 id: media.document.field_document
 field_name: field_document
 entity_type: media

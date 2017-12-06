@@ -32,7 +32,7 @@ class WebformElementFormatTest extends WebformTestBase {
   /**
    * Tests element format.
    */
-  public function testElementFormat() {
+  public function testFormat() {
 
     /**************************************************************************/
     /* Format (single) element as HTML and text */
@@ -54,7 +54,7 @@ class WebformElementFormatTest extends WebformTestBase {
       'Signature (Status)' => '[signed]',
       'Signature (Image)' => '[signed]',
       'Telephone (Link)' => '<a href="tel:+1 212-333-4444">+1 212-333-4444</a>',
-      'Toggle (Value)' => 'No',
+      'Toggle (Value)' => 'Yes',
       'URL (Link)' => '<a href="http://example.com">http://example.com</a>',
       'Date (Raw value)' => '1942-06-18',
       'Date (Fallback date format)' => 'Thu, 06/18/1942 - 00:00',
@@ -90,7 +90,7 @@ class WebformElementFormatTest extends WebformTestBase {
       'Color (Color swatch): #ffffcc',
       'Email (Link): example@example.com',
       'Email multiple (Link): example@example.com, test@test.com, random@random.com',
-      'Toggle (Value): No',
+      'Toggle (Value): Yes',
       'URL (Link): http://example.com',
       'Date (Raw value): 1942-06-18',
       'Date (Fallback date format): Thu, 06/18/1942 - 00:00',
@@ -248,10 +248,17 @@ Finally, here is question 3?: 1',
 
     // Check composite elements item formatted as HTML.
     $body = $this->getMessageBody($submission, 'email_html');
+
+    // Remove all spaces between tags to that we can easily check the output.
+    $body = preg_replace('/>\s+</ims', '><', $body);
+    $body = str_replace('<b>', PHP_EOL . '<b>', $body);
+    $this->debug($body);
+
     $elements = [
       'Address (Ordered list)' => '<div class="item-list"><ol><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. Loremipsum<br />Afghanistan<br /></li><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. Loremipsum<br />Afghanistan<br /></li><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. Loremipsum<br />Afghanistan<br /></li></ol></div>',
       'Address (Unordered list)' => '<div class="item-list"><ul><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. Loremipsum<br />Afghanistan<br /></li><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. Loremipsum<br />Afghanistan<br /></li><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. Loremipsum<br />Afghanistan<br /></li></ul></div>',
       'Address (Horizontal rule)' => '10 Main Street<br />10 Main Street<br />Springfield, Alabama. Loremipsum<br />Afghanistan<br /><hr class="webform-horizontal-rule" />10 Main Street<br />10 Main Street<br />Springfield, Alabama. Loremipsum<br />Afghanistan<br /><hr class="webform-horizontal-rule" />10 Main Street<br />10 Main Street<br />Springfield, Alabama. Loremipsum<br />Afghanistan<br />',
+      'Address (Table)' => '<table class="responsive-enabled" data-striping="1"><thead><tr><th>Address</th><th>Address 2</th><th>City/Town</th><th>State/Province</th><th>Zip/Postal Code</th><th>Country</th></tr></thead><tbody><tr class="odd"><td>10 Main Street</td><td>10 Main Street</td><td>Springfield</td><td>Alabama</td><td>Loremipsum</td><td>Afghanistan</td></tr><tr class="even"><td>10 Main Street</td><td>10 Main Street</td><td>Springfield</td><td>Alabama</td><td>Loremipsum</td><td>Afghanistan</td></tr><tr class="odd"><td>10 Main Street</td><td>10 Main Street</td><td>Springfield</td><td>Alabama</td><td>Loremipsum</td><td>Afghanistan</td></tr></tbody></table>',
     ];
     foreach ($elements as $label => $value) {
       $this->assertContains($body, '<b>' . $label . '</b><br />' . $value, new FormattableMarkup('Found @label: @value', ['@label' => $label, '@value' => $value]));

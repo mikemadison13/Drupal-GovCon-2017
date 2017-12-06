@@ -2,7 +2,6 @@
 
 namespace Drupal\flag\Tests;
 
-use Drupal\Core\Url;
 use Drupal\field_ui\Tests\FieldUiTestTrait;
 
 /**
@@ -152,11 +151,9 @@ class LinkTypeFieldEntryTest extends FlagTestBase {
 
     // Get the details form.
     $this->clickLink($this->flag->getShortText('unflag'));
-
-    $node_url = Url::fromRoute('entity.node.canonical', ['node' => $this->nodeId]);
     $this->assertUrl('flag/details/edit/' . $flag_id . '/' . $this->nodeId, [
       'query' => [
-        'destination' => $node_url->toString(),
+        'destination' => 'node/' . $this->nodeId,
       ],
     ]);
 

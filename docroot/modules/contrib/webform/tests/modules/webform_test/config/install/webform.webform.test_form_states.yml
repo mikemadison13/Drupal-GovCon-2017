@@ -22,8 +22,6 @@ elements: |
     visible_processed_text:
       '#type': processed_text
       '#title': 'Advanced HTML/Text'
-      visible_processed_text_content:
-        '#markup': 'This is a Advanced HTML/Text container.'
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -35,18 +33,6 @@ elements: |
       '#type': webform_markup
       '#title': 'Basic HTML'
       '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2700667">Issue #2700667: Notice: Undefined index: #type in drupal_process_states()</a>'
-      visible_webform_markup_content:
-        '#markup': 'This is a Basic HTML container.'
-      '#states':
-        visible:
-          ':input[name="visible_trigger"]':
-            checked: true
-        required:
-          ':input[name="visible_trigger"]':
-            checked: true
-    visible_captcha:
-      '#type': captcha
-      '#title': CAPTCHA
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -57,8 +43,6 @@ elements: |
     visible_container:
       '#type': container
       '#title': Container
-      visible_container_content:
-        '#markup': 'This is a Container container.'
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -70,8 +54,6 @@ elements: |
       '#type': details
       '#title': Details
       '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2348851">Issue #2348851: Regression: Allow HTML tags inside detail summary</a>'
-      visible_details_content:
-        '#markup': 'This is a Details container.'
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -82,20 +64,6 @@ elements: |
     visible_fieldset:
       '#type': fieldset
       '#title': Fieldset
-      visible_fieldset_content:
-        '#markup': 'This is a Fieldset container.'
-      '#states':
-        visible:
-          ':input[name="visible_trigger"]':
-            checked: true
-        required:
-          ':input[name="visible_trigger"]':
-            checked: true
-    visible_webform_flexbox:
-      '#type': webform_flexbox
-      '#title': 'Flexbox layout'
-      visible_webform_flexbox_content:
-        '#markup': 'This is a Flexbox layout container.'
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -106,12 +74,10 @@ elements: |
     visible_item:
       '#type': item
       '#title': Item
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/783438">Issue #783438: #states doesn''t work for #type item</a>'
       '#markup': '{markup}'
       '#field_prefix': '{field_prefix}'
       '#field_suffix': '{field_suffix}'
-      visible_item_content:
-        '#markup': 'This is a Item container.'
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/783438">Issue #783438: #states doesn''t work for #type item</a>'
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -122,8 +88,6 @@ elements: |
     visible_label:
       '#type': label
       '#title': Label
-      visible_label_content:
-        '#markup': 'This is a Label container.'
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -134,11 +98,19 @@ elements: |
     visible_webform_message:
       '#type': webform_message
       '#title': Message
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/77245">Issue #77245: A place for JavaScript status messages</a>'
       '#message_type': warning
       '#message_message': 'This is a <strong>warning</strong> message.'
-      visible_webform_message_content:
-        '#markup': 'This is a Message container.'
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/77245">Issue #77245: A place for JavaScript status messages</a>'
+      '#states':
+        visible:
+          ':input[name="visible_trigger"]':
+            checked: true
+        required:
+          ':input[name="visible_trigger"]':
+            checked: true
+    visible_webform_section:
+      '#type': webform_section
+      '#title': Section
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -149,8 +121,6 @@ elements: |
     visible_table:
       '#type': table
       '#title': Table
-      visible_table_content:
-        '#markup': 'This is a Table container.'
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -188,7 +158,6 @@ elements: |
     visible_webform_autocomplete:
       '#type': webform_autocomplete
       '#title': Autocomplete
-      '#autocomplete_items': country_names
       '#default_value': Loremipsum
       '#states':
         visible:
@@ -201,10 +170,10 @@ elements: |
       '#type': webform_buttons
       '#title': Buttons
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#default_value': one
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -216,10 +185,22 @@ elements: |
       '#type': webform_buttons_other
       '#title': 'Buttons other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#default_value': one
+      '#states':
+        visible:
+          ':input[name="visible_trigger"]':
+            checked: true
+        required:
+          ':input[name="visible_trigger"]':
+            checked: true
+    visible_captcha:
+      '#type': captcha
+      '#title': CAPTCHA
+      '#captcha_admin_mode': true
+      '#captcha_type': image_captcha/Image
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -241,15 +222,16 @@ elements: |
     visible_checkboxes:
       '#type': checkboxes
       '#title': Checkboxes
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -261,13 +243,14 @@ elements: |
       '#type': webform_checkboxes_other
       '#title': 'Checkboxes other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -298,11 +281,31 @@ elements: |
         required:
           ':input[name="visible_trigger"]':
             checked: true
-    visible_webform_computed_twig:
-      '#type': webform_computed_twig
-      '#title': 'Computed token'
-      '#markup': 'Computed twig example'
-      '#default_value': Loremipsum
+    visible_webform_composite:
+      '#type': webform_composite
+      '#title': 'Composite custom'
+      '#element':
+        name:
+          '#type': textfield
+          '#title': Name
+          '#title_display': invisible
+        gender:
+          '#type': select
+          '#title': Gender
+          '#title_display': invisible
+          '#options':
+            Male: Male
+            Female: Female
+      '#default_value':
+        -
+          name: Loremipsum
+          gender: Male
+        -
+          name: Loremipsum
+          gender: Male
+        -
+          name: Loremipsum
+          gender: Male
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -313,7 +316,19 @@ elements: |
     visible_webform_computed_token:
       '#type': webform_computed_token
       '#title': 'Computed token'
-      '#markup': 'Computed token example'
+      '#value': 'This is a Computed token value.'
+      '#default_value': Loremipsum
+      '#states':
+        visible:
+          ':input[name="visible_trigger"]':
+            checked: true
+        required:
+          ':input[name="visible_trigger"]':
+            checked: true
+    visible_webform_computed_twig:
+      '#type': webform_computed_twig
+      '#title': 'Computed Twig'
+      '#value': 'This is a Computed Twig value.'
       '#default_value': Loremipsum
       '#states':
         visible:
@@ -453,11 +468,11 @@ elements: |
     visible_entity_autocomplete:
       '#type': entity_autocomplete
       '#title': 'Entity autocomplete'
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2826451">Issue #2826451: TermSelection returning HTML characters in select list</a>'
       '#target_type': user
       '#selection_handler': 'default:user'
       '#selection_settings':
         include_anonymous: true
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2826451">Issue #2826451: TermSelection returning HTML characters in select list</a>'
       '#default_value': 1
       '#states':
         visible:
@@ -469,6 +484,7 @@ elements: |
     visible_webform_entity_checkboxes:
       '#type': webform_entity_checkboxes
       '#title': 'Entity checkboxes'
+      '#options_display': side_by_side
       '#target_type': user
       '#selection_handler': 'default:user'
       '#selection_settings':
@@ -488,6 +504,7 @@ elements: |
     visible_webform_entity_radios:
       '#type': webform_entity_radios
       '#title': 'Entity radios'
+      '#options_display': side_by_side
       '#target_type': user
       '#selection_handler': 'default:user'
       '#selection_settings':
@@ -510,6 +527,9 @@ elements: |
       '#selection_handler': 'default:user'
       '#selection_settings':
         include_anonymous: true
+      '#options':
+        1: Administrator
+        0: Anonymous
       '#default_value': 1
       '#states':
         visible:
@@ -529,10 +549,12 @@ elements: |
         required:
           ':input[name="visible_trigger"]':
             checked: true
-    visible_webform_element:
-      '#type': webform_element
-      '#title': 'Generic element'
-      '#default_value': Loremipsum
+    visible_webform_horizontal_rule:
+      '#type': webform_horizontal_rule
+      '#attributes':
+        class:
+          - webform-horizontal-rule--dotted
+          - webform-horizontal-rule--thick
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -555,15 +577,15 @@ elements: |
       '#title': 'Image select'
       '#show_label': true
       '#images':
-        kitten_1:
-          text: 'Cute Kitten 1'
-          src: 'http://placekitten.com/220/200'
-        kitten_2:
-          text: 'Cute Kitten 2'
-          src: 'http://placekitten.com/180/200'
-        kitten_3:
-          text: 'Cute Kitten 3'
-          src: 'http://placekitten.com/130/200'
+        bear_1:
+          text: 'Bear 1'
+          src: 'https://www.placebear.com/80/100'
+        bear_2:
+          text: 'Bear 2'
+          src: 'https://www.placebear.com/100/100'
+        bear_3:
+          text: 'Bear 3'
+          src: 'https://www.placebear.com/120/100'
       '#default_value': Loremipsum
       '#states':
         visible:
@@ -575,7 +597,6 @@ elements: |
     visible_language_select:
       '#type': language_select
       '#title': 'Language select'
-      '#languages': 3
       '#default_value': en
       '#states':
         visible:
@@ -592,11 +613,9 @@ elements: |
         q2: 'How about now answering question 2?'
         q3: 'Finally, here is question 3?'
       '#answers':
-        1: 1
-        2: 2
-        3: 3
-        4: 4
-        5: 5
+        1: '1'
+        2: '2'
+        3: '3'
       '#default_value':
         q1: 1
         q2: 1
@@ -725,12 +744,13 @@ elements: |
     visible_radios:
       '#type': radios
       '#title': Radios
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2731991">Issue #2731991: Setting required on radios marks all options required</a><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2731991">Issue #2731991: Setting required on radios marks all options required</a><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
+      '#default_value': one
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -742,10 +762,11 @@ elements: |
       '#type': webform_radios_other
       '#title': 'Radios other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
+      '#default_value': one
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -794,12 +815,12 @@ elements: |
     visible_select:
       '#type': select
       '#title': Select
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/1426646">Issue #1426646: "-Select-" option is lost when webform elements uses ''#states''</a><br /><a href="https://www.drupal.org/node/1149078">Issue #1149078: States API doesn''t work with multiple select fields</a><br /><a href="https://www.drupal.org/node/2791741">Issue #2791741: FAPI states: fields aren''t hidden initially when depending on multi-value selection</a>'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/1426646">Issue #1426646: "-Select-" option is lost when webform elements uses ''#states''</a><br /><a href="https://www.drupal.org/node/1149078">Issue #1149078: States API doesn''t work with multiple select fields</a><br /><a href="https://www.drupal.org/node/2791741">Issue #2791741: FAPI states: fields aren''t hidden initially when depending on multi-value selection</a>'
+      '#default_value': one
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -811,10 +832,10 @@ elements: |
       '#type': webform_select_other
       '#title': 'Select other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#default_value': one
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -836,13 +857,13 @@ elements: |
       '#type': tableselect
       '#title': 'Table select'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -854,13 +875,13 @@ elements: |
       '#type': webform_tableselect_sort
       '#title': 'Tableselect sort'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -872,13 +893,13 @@ elements: |
       '#type': webform_table_sort
       '#title': 'Table sort'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -917,9 +938,9 @@ elements: |
       '#title': 'Term checkboxes'
       '#vocabulary': tags
       '#default_value':
-        - Loremipsum
-        - Oratione
-        - Dixisset
+        - 41
+        - 48
+        - 43
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -931,7 +952,21 @@ elements: |
       '#type': webform_term_select
       '#title': 'Term select'
       '#vocabulary': tags
-      '#default_value': Loremipsum
+      '#default_value': 41
+      '#states':
+        visible:
+          ':input[name="visible_trigger"]':
+            checked: true
+        required:
+          ':input[name="visible_trigger"]':
+            checked: true
+    visible_webform_terms_of_service:
+      '#type': webform_terms_of_service
+      '#title': 'I agree to the {terms of service}.'
+      '#required': true
+      '#terms_type': slideout
+      '#terms_content': '<em>These are the terms of service.</em>'
+      '#default_value': true
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -942,6 +977,7 @@ elements: |
     visible_textarea:
       '#type': textarea
       '#title': Textarea
+      '#rows': 2
       '#default_value': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Negat esse eam, inquit, propter se expetendam. Primum Theophrasti, Strato, physicum se voluit; Id mihi magnum videtur. Itaque mihi non satis videmini considerare quod iter sit naturae quaeque progressio. Quare hoc videndum est, possitne nobis hoc ratio philosophorum dare. Est enim tanti philosophi tamque nobilis audacter sua decreta defendere.'
       '#states':
         visible:
@@ -989,7 +1025,7 @@ elements: |
     visible_webform_toggle:
       '#type': webform_toggle
       '#title': Toggle
-      '#default_value': Loremipsum
+      '#default_value': true
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -1001,13 +1037,13 @@ elements: |
       '#type': webform_toggles
       '#title': Toggles
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -1019,16 +1055,6 @@ elements: |
       '#type': url
       '#title': URL
       '#default_value': 'http://example.com'
-      '#states':
-        visible:
-          ':input[name="visible_trigger"]':
-            checked: true
-        required:
-          ':input[name="visible_trigger"]':
-            checked: true
-    visible_value:
-      '#type': value
-      '#title': Value
       '#states':
         visible:
           ':input[name="visible_trigger"]':
@@ -1055,8 +1081,6 @@ elements: |
     invisible_processed_text:
       '#type': processed_text
       '#title': 'Advanced HTML/Text'
-      invisible_processed_text_content:
-        '#markup': 'This is a Advanced HTML/Text container.'
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1065,15 +1089,6 @@ elements: |
       '#type': webform_markup
       '#title': 'Basic HTML'
       '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2700667">Issue #2700667: Notice: Undefined index: #type in drupal_process_states()</a>'
-      invisible_webform_markup_content:
-        '#markup': 'This is a Basic HTML container.'
-      '#states':
-        invisible:
-          ':input[name="invisible_trigger"]':
-            checked: true
-    invisible_captcha:
-      '#type': captcha
-      '#title': CAPTCHA
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1081,8 +1096,6 @@ elements: |
     invisible_container:
       '#type': container
       '#title': Container
-      invisible_container_content:
-        '#markup': 'This is a Container container.'
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1091,8 +1104,6 @@ elements: |
       '#type': details
       '#title': Details
       '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2348851">Issue #2348851: Regression: Allow HTML tags inside detail summary</a>'
-      invisible_details_content:
-        '#markup': 'This is a Details container.'
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1100,17 +1111,6 @@ elements: |
     invisible_fieldset:
       '#type': fieldset
       '#title': Fieldset
-      invisible_fieldset_content:
-        '#markup': 'This is a Fieldset container.'
-      '#states':
-        invisible:
-          ':input[name="invisible_trigger"]':
-            checked: true
-    invisible_webform_flexbox:
-      '#type': webform_flexbox
-      '#title': 'Flexbox layout'
-      invisible_webform_flexbox_content:
-        '#markup': 'This is a Flexbox layout container.'
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1118,12 +1118,10 @@ elements: |
     invisible_item:
       '#type': item
       '#title': Item
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/783438">Issue #783438: #states doesn''t work for #type item</a>'
       '#markup': '{markup}'
       '#field_prefix': '{field_prefix}'
       '#field_suffix': '{field_suffix}'
-      invisible_item_content:
-        '#markup': 'This is a Item container.'
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/783438">Issue #783438: #states doesn''t work for #type item</a>'
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1131,8 +1129,6 @@ elements: |
     invisible_label:
       '#type': label
       '#title': Label
-      invisible_label_content:
-        '#markup': 'This is a Label container.'
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1140,11 +1136,16 @@ elements: |
     invisible_webform_message:
       '#type': webform_message
       '#title': Message
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/77245">Issue #77245: A place for JavaScript status messages</a>'
       '#message_type': warning
       '#message_message': 'This is a <strong>warning</strong> message.'
-      invisible_webform_message_content:
-        '#markup': 'This is a Message container.'
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/77245">Issue #77245: A place for JavaScript status messages</a>'
+      '#states':
+        invisible:
+          ':input[name="invisible_trigger"]':
+            checked: true
+    invisible_webform_section:
+      '#type': webform_section
+      '#title': Section
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1152,8 +1153,6 @@ elements: |
     invisible_table:
       '#type': table
       '#title': Table
-      invisible_table_content:
-        '#markup': 'This is a Table container.'
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1182,7 +1181,6 @@ elements: |
     invisible_webform_autocomplete:
       '#type': webform_autocomplete
       '#title': Autocomplete
-      '#autocomplete_items': country_names
       '#default_value': Loremipsum
       '#states':
         invisible:
@@ -1192,10 +1190,10 @@ elements: |
       '#type': webform_buttons
       '#title': Buttons
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#default_value': one
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1204,10 +1202,19 @@ elements: |
       '#type': webform_buttons_other
       '#title': 'Buttons other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#default_value': one
+      '#states':
+        invisible:
+          ':input[name="invisible_trigger"]':
+            checked: true
+    invisible_captcha:
+      '#type': captcha
+      '#title': CAPTCHA
+      '#captcha_admin_mode': true
+      '#captcha_type': image_captcha/Image
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1223,15 +1230,16 @@ elements: |
     invisible_checkboxes:
       '#type': checkboxes
       '#title': Checkboxes
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1240,13 +1248,14 @@ elements: |
       '#type': webform_checkboxes_other
       '#title': 'Checkboxes other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1268,11 +1277,31 @@ elements: |
         invisible:
           ':input[name="invisible_trigger"]':
             checked: true
-    invisible_webform_computed_twig:
-      '#type': webform_computed_twig
-      '#title': 'Computed token'
-      '#markup': 'Computed twig example'
-      '#default_value': Loremipsum
+    invisible_webform_composite:
+      '#type': webform_composite
+      '#title': 'Composite custom'
+      '#element':
+        name:
+          '#type': textfield
+          '#title': Name
+          '#title_display': invisible
+        gender:
+          '#type': select
+          '#title': Gender
+          '#title_display': invisible
+          '#options':
+            Male: Male
+            Female: Female
+      '#default_value':
+        -
+          name: Loremipsum
+          gender: Male
+        -
+          name: Loremipsum
+          gender: Male
+        -
+          name: Loremipsum
+          gender: Male
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1280,7 +1309,16 @@ elements: |
     invisible_webform_computed_token:
       '#type': webform_computed_token
       '#title': 'Computed token'
-      '#markup': 'Computed token example'
+      '#value': 'This is a Computed token value.'
+      '#default_value': Loremipsum
+      '#states':
+        invisible:
+          ':input[name="invisible_trigger"]':
+            checked: true
+    invisible_webform_computed_twig:
+      '#type': webform_computed_twig
+      '#title': 'Computed Twig'
+      '#value': 'This is a Computed Twig value.'
       '#default_value': Loremipsum
       '#states':
         invisible:
@@ -1387,11 +1425,11 @@ elements: |
     invisible_entity_autocomplete:
       '#type': entity_autocomplete
       '#title': 'Entity autocomplete'
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2826451">Issue #2826451: TermSelection returning HTML characters in select list</a>'
       '#target_type': user
       '#selection_handler': 'default:user'
       '#selection_settings':
         include_anonymous: true
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2826451">Issue #2826451: TermSelection returning HTML characters in select list</a>'
       '#default_value': 1
       '#states':
         invisible:
@@ -1400,6 +1438,7 @@ elements: |
     invisible_webform_entity_checkboxes:
       '#type': webform_entity_checkboxes
       '#title': 'Entity checkboxes'
+      '#options_display': side_by_side
       '#target_type': user
       '#selection_handler': 'default:user'
       '#selection_settings':
@@ -1416,6 +1455,7 @@ elements: |
     invisible_webform_entity_radios:
       '#type': webform_entity_radios
       '#title': 'Entity radios'
+      '#options_display': side_by_side
       '#target_type': user
       '#selection_handler': 'default:user'
       '#selection_settings':
@@ -1435,6 +1475,9 @@ elements: |
       '#selection_handler': 'default:user'
       '#selection_settings':
         include_anonymous: true
+      '#options':
+        1: Administrator
+        0: Anonymous
       '#default_value': 1
       '#states':
         invisible:
@@ -1448,10 +1491,12 @@ elements: |
         invisible:
           ':input[name="invisible_trigger"]':
             checked: true
-    invisible_webform_element:
-      '#type': webform_element
-      '#title': 'Generic element'
-      '#default_value': Loremipsum
+    invisible_webform_horizontal_rule:
+      '#type': webform_horizontal_rule
+      '#attributes':
+        class:
+          - webform-horizontal-rule--dotted
+          - webform-horizontal-rule--thick
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1468,15 +1513,15 @@ elements: |
       '#title': 'Image select'
       '#show_label': true
       '#images':
-        kitten_1:
-          text: 'Cute Kitten 1'
-          src: 'http://placekitten.com/220/200'
-        kitten_2:
-          text: 'Cute Kitten 2'
-          src: 'http://placekitten.com/180/200'
-        kitten_3:
-          text: 'Cute Kitten 3'
-          src: 'http://placekitten.com/130/200'
+        bear_1:
+          text: 'Bear 1'
+          src: 'https://www.placebear.com/80/100'
+        bear_2:
+          text: 'Bear 2'
+          src: 'https://www.placebear.com/100/100'
+        bear_3:
+          text: 'Bear 3'
+          src: 'https://www.placebear.com/120/100'
       '#default_value': Loremipsum
       '#states':
         invisible:
@@ -1485,7 +1530,6 @@ elements: |
     invisible_language_select:
       '#type': language_select
       '#title': 'Language select'
-      '#languages': 3
       '#default_value': en
       '#states':
         invisible:
@@ -1499,11 +1543,9 @@ elements: |
         q2: 'How about now answering question 2?'
         q3: 'Finally, here is question 3?'
       '#answers':
-        1: 1
-        2: 2
-        3: 3
-        4: 4
-        5: 5
+        1: '1'
+        2: '2'
+        3: '3'
       '#default_value':
         q1: 1
         q2: 1
@@ -1605,12 +1647,13 @@ elements: |
     invisible_radios:
       '#type': radios
       '#title': Radios
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2731991">Issue #2731991: Setting required on radios marks all options required</a><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2731991">Issue #2731991: Setting required on radios marks all options required</a><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
+      '#default_value': one
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1619,10 +1662,11 @@ elements: |
       '#type': webform_radios_other
       '#title': 'Radios other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
+      '#default_value': one
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1659,12 +1703,12 @@ elements: |
     invisible_select:
       '#type': select
       '#title': Select
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/1426646">Issue #1426646: "-Select-" option is lost when webform elements uses ''#states''</a><br /><a href="https://www.drupal.org/node/1149078">Issue #1149078: States API doesn''t work with multiple select fields</a><br /><a href="https://www.drupal.org/node/2791741">Issue #2791741: FAPI states: fields aren''t hidden initially when depending on multi-value selection</a>'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/1426646">Issue #1426646: "-Select-" option is lost when webform elements uses ''#states''</a><br /><a href="https://www.drupal.org/node/1149078">Issue #1149078: States API doesn''t work with multiple select fields</a><br /><a href="https://www.drupal.org/node/2791741">Issue #2791741: FAPI states: fields aren''t hidden initially when depending on multi-value selection</a>'
+      '#default_value': one
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1673,10 +1717,10 @@ elements: |
       '#type': webform_select_other
       '#title': 'Select other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#default_value': one
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1692,13 +1736,13 @@ elements: |
       '#type': tableselect
       '#title': 'Table select'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1707,13 +1751,13 @@ elements: |
       '#type': webform_tableselect_sort
       '#title': 'Tableselect sort'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1722,13 +1766,13 @@ elements: |
       '#type': webform_table_sort
       '#title': 'Table sort'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1758,9 +1802,9 @@ elements: |
       '#title': 'Term checkboxes'
       '#vocabulary': tags
       '#default_value':
-        - Loremipsum
-        - Oratione
-        - Dixisset
+        - 41
+        - 48
+        - 43
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1769,7 +1813,18 @@ elements: |
       '#type': webform_term_select
       '#title': 'Term select'
       '#vocabulary': tags
-      '#default_value': Loremipsum
+      '#default_value': 41
+      '#states':
+        invisible:
+          ':input[name="invisible_trigger"]':
+            checked: true
+    invisible_webform_terms_of_service:
+      '#type': webform_terms_of_service
+      '#title': 'I agree to the {terms of service}.'
+      '#required': true
+      '#terms_type': slideout
+      '#terms_content': '<em>These are the terms of service.</em>'
+      '#default_value': true
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1777,6 +1832,7 @@ elements: |
     invisible_textarea:
       '#type': textarea
       '#title': Textarea
+      '#rows': 2
       '#default_value': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Negat esse eam, inquit, propter se expetendam. Primum Theophrasti, Strato, physicum se voluit; Id mihi magnum videtur. Itaque mihi non satis videmini considerare quod iter sit naturae quaeque progressio. Quare hoc videndum est, possitne nobis hoc ratio philosophorum dare. Est enim tanti philosophi tamque nobilis audacter sua decreta defendere.'
       '#states':
         invisible:
@@ -1812,7 +1868,7 @@ elements: |
     invisible_webform_toggle:
       '#type': webform_toggle
       '#title': Toggle
-      '#default_value': Loremipsum
+      '#default_value': true
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1821,13 +1877,13 @@ elements: |
       '#type': webform_toggles
       '#title': Toggles
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1836,13 +1892,6 @@ elements: |
       '#type': url
       '#title': URL
       '#default_value': 'http://example.com'
-      '#states':
-        invisible:
-          ':input[name="invisible_trigger"]':
-            checked: true
-    invisible_value:
-      '#type': value
-      '#title': Value
       '#states':
         invisible:
           ':input[name="invisible_trigger"]':
@@ -1884,7 +1933,6 @@ elements: |
     disabled_webform_autocomplete:
       '#type': webform_autocomplete
       '#title': Autocomplete
-      '#autocomplete_items': country_names
       '#default_value': Loremipsum
       '#states':
         disabled:
@@ -1894,10 +1942,10 @@ elements: |
       '#type': webform_buttons
       '#title': Buttons
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#default_value': one
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -1906,10 +1954,19 @@ elements: |
       '#type': webform_buttons_other
       '#title': 'Buttons other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#default_value': one
+      '#states':
+        disabled:
+          ':input[name="disabled_trigger"]':
+            checked: true
+    disabled_captcha:
+      '#type': captcha
+      '#title': CAPTCHA
+      '#captcha_admin_mode': true
+      '#captcha_type': image_captcha/Image
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -1925,15 +1982,16 @@ elements: |
     disabled_checkboxes:
       '#type': checkboxes
       '#title': Checkboxes
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -1942,13 +2000,14 @@ elements: |
       '#type': webform_checkboxes_other
       '#title': 'Checkboxes other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -1970,11 +2029,31 @@ elements: |
         disabled:
           ':input[name="disabled_trigger"]':
             checked: true
-    disabled_webform_computed_twig:
-      '#type': webform_computed_twig
-      '#title': 'Computed token'
-      '#markup': 'Computed twig example'
-      '#default_value': Loremipsum
+    disabled_webform_composite:
+      '#type': webform_composite
+      '#title': 'Composite custom'
+      '#element':
+        name:
+          '#type': textfield
+          '#title': Name
+          '#title_display': invisible
+        gender:
+          '#type': select
+          '#title': Gender
+          '#title_display': invisible
+          '#options':
+            Male: Male
+            Female: Female
+      '#default_value':
+        -
+          name: Loremipsum
+          gender: Male
+        -
+          name: Loremipsum
+          gender: Male
+        -
+          name: Loremipsum
+          gender: Male
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -1982,7 +2061,16 @@ elements: |
     disabled_webform_computed_token:
       '#type': webform_computed_token
       '#title': 'Computed token'
-      '#markup': 'Computed token example'
+      '#value': 'This is a Computed token value.'
+      '#default_value': Loremipsum
+      '#states':
+        disabled:
+          ':input[name="disabled_trigger"]':
+            checked: true
+    disabled_webform_computed_twig:
+      '#type': webform_computed_twig
+      '#title': 'Computed Twig'
+      '#value': 'This is a Computed Twig value.'
       '#default_value': Loremipsum
       '#states':
         disabled:
@@ -2089,11 +2177,11 @@ elements: |
     disabled_entity_autocomplete:
       '#type': entity_autocomplete
       '#title': 'Entity autocomplete'
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2826451">Issue #2826451: TermSelection returning HTML characters in select list</a>'
       '#target_type': user
       '#selection_handler': 'default:user'
       '#selection_settings':
         include_anonymous: true
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2826451">Issue #2826451: TermSelection returning HTML characters in select list</a>'
       '#default_value': 1
       '#states':
         disabled:
@@ -2102,6 +2190,7 @@ elements: |
     disabled_webform_entity_checkboxes:
       '#type': webform_entity_checkboxes
       '#title': 'Entity checkboxes'
+      '#options_display': side_by_side
       '#target_type': user
       '#selection_handler': 'default:user'
       '#selection_settings':
@@ -2118,6 +2207,7 @@ elements: |
     disabled_webform_entity_radios:
       '#type': webform_entity_radios
       '#title': 'Entity radios'
+      '#options_display': side_by_side
       '#target_type': user
       '#selection_handler': 'default:user'
       '#selection_settings':
@@ -2137,6 +2227,9 @@ elements: |
       '#selection_handler': 'default:user'
       '#selection_settings':
         include_anonymous: true
+      '#options':
+        1: Administrator
+        0: Anonymous
       '#default_value': 1
       '#states':
         disabled:
@@ -2150,10 +2243,12 @@ elements: |
         disabled:
           ':input[name="disabled_trigger"]':
             checked: true
-    disabled_webform_element:
-      '#type': webform_element
-      '#title': 'Generic element'
-      '#default_value': Loremipsum
+    disabled_webform_horizontal_rule:
+      '#type': webform_horizontal_rule
+      '#attributes':
+        class:
+          - webform-horizontal-rule--dotted
+          - webform-horizontal-rule--thick
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2170,15 +2265,15 @@ elements: |
       '#title': 'Image select'
       '#show_label': true
       '#images':
-        kitten_1:
-          text: 'Cute Kitten 1'
-          src: 'http://placekitten.com/220/200'
-        kitten_2:
-          text: 'Cute Kitten 2'
-          src: 'http://placekitten.com/180/200'
-        kitten_3:
-          text: 'Cute Kitten 3'
-          src: 'http://placekitten.com/130/200'
+        bear_1:
+          text: 'Bear 1'
+          src: 'https://www.placebear.com/80/100'
+        bear_2:
+          text: 'Bear 2'
+          src: 'https://www.placebear.com/100/100'
+        bear_3:
+          text: 'Bear 3'
+          src: 'https://www.placebear.com/120/100'
       '#default_value': Loremipsum
       '#states':
         disabled:
@@ -2187,7 +2282,6 @@ elements: |
     disabled_language_select:
       '#type': language_select
       '#title': 'Language select'
-      '#languages': 3
       '#default_value': en
       '#states':
         disabled:
@@ -2201,11 +2295,9 @@ elements: |
         q2: 'How about now answering question 2?'
         q3: 'Finally, here is question 3?'
       '#answers':
-        1: 1
-        2: 2
-        3: 3
-        4: 4
-        5: 5
+        1: '1'
+        2: '2'
+        3: '3'
       '#default_value':
         q1: 1
         q2: 1
@@ -2307,12 +2399,13 @@ elements: |
     disabled_radios:
       '#type': radios
       '#title': Radios
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2731991">Issue #2731991: Setting required on radios marks all options required</a><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/2731991">Issue #2731991: Setting required on radios marks all options required</a><br /><a href="https://www.drupal.org/node/994360">Issue #994360: #states cannot disable/enable radios and checkboxes</a><br /><a href="https://www.drupal.org/node/2836364">Issue #2836364: Wrapper attributes are not supported by composite elements, this includes radios, checkboxes, and buttons.</a>'
+      '#default_value': one
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2321,10 +2414,11 @@ elements: |
       '#type': webform_radios_other
       '#title': 'Radios other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#options_display': side_by_side
+      '#default_value': one
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2361,12 +2455,12 @@ elements: |
     disabled_select:
       '#type': select
       '#title': Select
-      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/1426646">Issue #1426646: "-Select-" option is lost when webform elements uses ''#states''</a><br /><a href="https://www.drupal.org/node/1149078">Issue #1149078: States API doesn''t work with multiple select fields</a><br /><a href="https://www.drupal.org/node/2791741">Issue #2791741: FAPI states: fields aren''t hidden initially when depending on multi-value selection</a>'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/1426646">Issue #1426646: "-Select-" option is lost when webform elements uses ''#states''</a><br /><a href="https://www.drupal.org/node/1149078">Issue #1149078: States API doesn''t work with multiple select fields</a><br /><a href="https://www.drupal.org/node/2791741">Issue #2791741: FAPI states: fields aren''t hidden initially when depending on multi-value selection</a>'
+      '#default_value': one
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2375,10 +2469,10 @@ elements: |
       '#type': webform_select_other
       '#title': 'Select other'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
-      '#default_value': One
+        one: One
+        two: Two
+        three: Three
+      '#default_value': one
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2394,13 +2488,13 @@ elements: |
       '#type': tableselect
       '#title': 'Table select'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2409,13 +2503,13 @@ elements: |
       '#type': webform_tableselect_sort
       '#title': 'Tableselect sort'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2424,13 +2518,13 @@ elements: |
       '#type': webform_table_sort
       '#title': 'Table sort'
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2460,9 +2554,9 @@ elements: |
       '#title': 'Term checkboxes'
       '#vocabulary': tags
       '#default_value':
-        - Loremipsum
-        - Oratione
-        - Dixisset
+        - 41
+        - 48
+        - 43
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2471,7 +2565,18 @@ elements: |
       '#type': webform_term_select
       '#title': 'Term select'
       '#vocabulary': tags
-      '#default_value': Loremipsum
+      '#default_value': 41
+      '#states':
+        disabled:
+          ':input[name="disabled_trigger"]':
+            checked: true
+    disabled_webform_terms_of_service:
+      '#type': webform_terms_of_service
+      '#title': 'I agree to the {terms of service}.'
+      '#required': true
+      '#terms_type': slideout
+      '#terms_content': '<em>These are the terms of service.</em>'
+      '#default_value': true
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2479,6 +2584,7 @@ elements: |
     disabled_textarea:
       '#type': textarea
       '#title': Textarea
+      '#rows': 2
       '#default_value': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Negat esse eam, inquit, propter se expetendam. Primum Theophrasti, Strato, physicum se voluit; Id mihi magnum videtur. Itaque mihi non satis videmini considerare quod iter sit naturae quaeque progressio. Quare hoc videndum est, possitne nobis hoc ratio philosophorum dare. Est enim tanti philosophi tamque nobilis audacter sua decreta defendere.'
       '#states':
         disabled:
@@ -2514,7 +2620,7 @@ elements: |
     disabled_webform_toggle:
       '#type': webform_toggle
       '#title': Toggle
-      '#default_value': Loremipsum
+      '#default_value': true
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2523,13 +2629,13 @@ elements: |
       '#type': webform_toggles
       '#title': Toggles
       '#options':
-        One: One
-        Two: Two
-        Three: Three
+        one: One
+        two: Two
+        three: Three
       '#default_value':
-        - One
-        - Two
-        - Three
+        - one
+        - two
+        - three
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2538,13 +2644,6 @@ elements: |
       '#type': url
       '#title': URL
       '#default_value': 'http://example.com'
-      '#states':
-        disabled:
-          ':input[name="disabled_trigger"]':
-            checked: true
-    disabled_value:
-      '#type': value
-      '#title': Value
       '#states':
         disabled:
           ':input[name="disabled_trigger"]':
@@ -2560,6 +2659,7 @@ css: ''
 javascript: ''
 settings:
   ajax: false
+  ajax_scroll_top: form
   page: true
   page_submit_path: ''
   page_confirm_path: ''
@@ -2575,6 +2675,7 @@ settings:
   form_prepopulate_source_entity: false
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
+  form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_unsaved: false
@@ -2588,14 +2689,15 @@ settings:
   wizard_progress_pages: false
   wizard_progress_percentage: false
   wizard_start_label: ''
-  wizard_complete: true
-  wizard_complete_label: ''
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
   preview: 0
   preview_label: ''
   preview_title: ''
   preview_message: ''
   preview_attributes: {  }
   preview_excluded_elements: {  }
+  preview_exclude_empty: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -2626,25 +2728,33 @@ access:
       - anonymous
       - authenticated
     users: {  }
+    permissions: {  }
   view_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   purge_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   view_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_own:
     roles: {  }
     users: {  }
+    permissions: {  }
 handlers: {  }

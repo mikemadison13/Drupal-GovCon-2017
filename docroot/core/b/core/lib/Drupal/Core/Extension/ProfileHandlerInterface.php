@@ -10,7 +10,7 @@ interface ProfileHandlerInterface {
   /**
    * Retrieve the info array for a profile.
    *
-   * Parse and process the profile info.yml file.
+   * Parses and processes the profile info.yml file.
    * Processing steps:
    *   1) Ensure default keys are set.
    *   2) Recursively collect dependencies from parent profiles.
@@ -24,6 +24,9 @@ interface ProfileHandlerInterface {
    * @return array
    *   The processed $info array.
    *
+   * @throws \InvalidArgumentException
+   *   If the profile name is invalid.
+   *
    * @see install_profile_info()
    */
   public function getProfileInfo($profile);
@@ -32,7 +35,6 @@ interface ProfileHandlerInterface {
    * Stores info data for a profile.
    *
    * This can be used in situations where the info cache needs to be changed
-   * This is used for testing.
    *
    * @param string $profile
    *  The name of profile.
@@ -46,20 +48,21 @@ interface ProfileHandlerInterface {
   /**
    * Clears the profile cache.
    */
-  public function clearProfileCache();
+  public function clearCache();
 
   /**
-   * Returns a list of dependent installation profiles.
+   * Gets a list comprised of the profile, it's parent profile if it has one,
+   * and any further ancestors.
    *
    * @param string $profile
    *   The name of profile. If none is specified, use the current profile.
    *
    * @return \Drupal\Core\Extension\Extension[]
    *   An associative array of Extension objects, keyed by profile name in
-   *   descending order of their dependencies.
-   *   (parent profiles first, main profile last)
+   *   descending order of their dependencies (parent profiles first, main
+   *   profile last).
    */
-  public function getProfiles($profile = NULL);
+  public function getProfileInheritance($profile = NULL);
 
   /**
    * Select the install distribution from the list of profiles.

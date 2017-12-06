@@ -5,10 +5,12 @@
 
   <!-- Locations of required binaries. -->
   <property name="drush" value="${project.basedir}/bin/drush" />
+  <property name="drupal" value="${project.basedir}/bin/drupal" />
   <property name="composer" value="/usr/local/bin/composer" />
   <property name="rsync" value="/usr/bin/rsync" />
   <property name="bzip2" value="/usr/bin/bzip2" />
   <property name="bunzip2" value="/usr/bin/bunzip2" />
+  <property name="tar" value="/usr/bin/tar" />
   <property name="yaml-cli" value="${project.basedir}/bin/yaml-cli" />
 
   <!-- Database credentials. -->
@@ -42,12 +44,14 @@
     <exec command="which rsync" outputProperty="rsync" />
     <exec command="which bzip2" outputProperty="bzip2" />
     <exec command="which bunzip2" outputProperty="bunzip2" />
+    <exec command="which tar" outputProperty="tar" />
 
     <echo message="Found Drush: ${drush}" />
     <echo message="Found Composer: ${composer}" />
     <echo message="Found rsync: ${rsync}" />
     <echo message="Found bzip2: ${bzip2}" />
     <echo message="Found bunzip2: ${bunzip2}" />
+    <echo message="Found tar: ${tar}" />
   </target>
 
   <!-- Syncs the Lightning profile into the Drupal code base. -->
@@ -92,12 +96,12 @@
 
   <!-- Installs Lightning and sets it up for development. -->
   <target name="install" depends="env">
-    <!-- Use passthru() when executing drush site-install so that we'll know if errors occur. -->
-    <exec command="${drush} site-install lightning --yes --account-pass=admin --db-url=${db.url}" dir="${docroot}" passthru="true" />
+    <!-- Use passthru() when executing drupal site-install so that we'll know if errors occur. -->
+    <exec command="${drupal} site:install lightning --db-type=${db.type} --db-host=${db.host} --db-name=${db.database} --db-user=${db.user} --db-pass=${db.password} --no-interaction --force" passthru="true" />
     <chmod file="${site}" mode="0755" />
 
     <!-- Install Lightning Dev. -->
-    <exec command="${drush} pm-enable lightning_dev --yes" dir="${docroot}" passthru="true" />
+    <exec command="${drupal} module:install lightning_dev --yes" dir="${docroot}" passthru="true" />
 
     <!-- Prepare PHPUnit. -->
     <mkdir dir="${docroot}/modules" />
@@ -120,12 +124,7 @@
 
     <!-- Export configuration for archaeological purposes. -->
     <property name="config_fixture" value="${project.basedir}/tests/config" />
-    <exec command="${drush} config-export --destination=${config_fixture} --yes" dir="${docroot}" />
-    <foreach param="file" absparam="file_path" target="clean-config">
-      <fileset dir="${config_fixture}">
-        <include name="*.yml" />
-      </fileset>
-    </foreach>
+    <exec command="${project.basedir}/bin/drupal config:export --directory=${project.basedir}/tests/config --remove-uuid --remove-config-hash" dir="${docroot}" />
     <!-- Change config values that might, or will, change on every install. -->
     <exec command="${yaml-cli} unset:key ${config_fixture}/embed.button.media_browser.yml dependencies.content" />
     <exec command="${yaml-cli} update:value ${config_fixture}/embed.button.media_browser.yml icon_uuid ''" />
@@ -137,14 +136,6 @@
         <chown file="${site}/files" user="${env.USER}" group="${www.group}" />
       </then>
     </if>
-  </target>
-
-  <!-- Deletes _core and uuid keys from an exported config file. Only used
-  internally by the install target. -->
-  <target name="clean-config">
-    <echo message="${file}" />
-    <exec command="${yaml-cli} unset:key ${file_path} _core" />
-    <exec command="${yaml-cli} unset:key ${file_path} uuid" />
   </target>
 
   <!-- Builds a Lightning code base from legacy Drush make files. -->
@@ -161,9 +152,24 @@
     <exec command="${drush} make drupal-org.make ${docroot} --no-core --yes" />
     <!-- Because legacy builds are not Composer-aware, we need to explicitly
     require dependencies. Eugh. -->
-    <exec command="${composer} require drush/drush drupal/drupal-extension j7mbo/twitter-api-php" dir="${docroot}" />
+    <exec command="${composer} require j7mbo/twitter-api-php league/oauth2-server" dir="${docroot}" />
 
     <phingcall target="push" />
+  </target>
+
+  <!-- Generates a tarball of current docroot and saves it to the current user's
+  home directory. -->
+  <target name="tarball" depends="env">
+    <phingcall target="uninstall" />
+    <exec command="${tar} --exclude='.DS_Store' --exclude='._*' -zcf ~/lightning-${version}.tar.gz -s /^${docroot}/lightning-${version}/ ${docroot}" />
+  </target>
+
+  <!-- Creates a legacy-built tarball with composer dependencies suitable for
+  cloud. -->
+  <target name="cloud-tarball">
+    <exec command="${composer} nuke" />
+    <phingcall target="build-legacy" />
+    <phingcall target="tarball" />
   </target>
 
   <!-- Destroys the Drupal installation, but leaves the code base intact. -->
@@ -183,44 +189,12 @@
     <phingcall target="reset-db" />
   </target>
 
-  <!-- Destroys the installed code base. -->
-  <target name="destroy">
-    <delete failonerror="true" includeemptydirs="true">
-      <fileset dir="." defaultexcludes="false">
-        <include name="bin/**" />
-        <include name="${docroot}/**" />
-        <include name="node_modules/**" />
-        <include name="vendor/**" />
-      </fileset>
-    </delete>
-  </target>
-
   <!-- Generates a database snapshot from the current code base. -->
   <target name="memorize" depends="env">
     <phingcall target="reset-db" />
     <phingcall target="install" />
     <exec command="${drush} sql-dump" dir="${docroot}" output="${fixture}" />
     <exec command="${bzip2} --force ${fixture}" />
-  </target>
-
-  <!-- Imports an existing database snapshot. -->
-  <target name="recall" depends="env">
-    <if>
-      <!-- Check if the fixture exists and exit gracefully if it doesn't. -->
-      <available property="fixture_exists" file="${fixture}.bz2" />
-      <then>
-        <!-- Import the fixture into a clean database to prevent table collisions. -->
-        <phingcall target="reset-db" />
-        <!-- Inflate and execute the fixture. -->
-        <exec command="${bunzip2} --keep ${fixture}.bz2" />
-        <pdosqlexec url="${db.type}:host=${db.host};dbname=${db.database}" userid="${db.user}" password="${db.password}" src="${fixture}" />
-        <!-- Delete the inflated fixture. -->
-        <delete file="${fixture}" />
-      </then>
-      <else>
-        <echo message="${version} fixture does not exist." />
-      </else>
-    </if>
   </target>
 
   <!-- Empties the database by dropping and recreating it. -->

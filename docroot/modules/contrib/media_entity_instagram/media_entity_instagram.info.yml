@@ -4,10 +4,10 @@ type: module
 package: Media
 # core: 8.x
 dependencies:
-  - media_entity:media_entity
+  - drupal:media (>= 8.4.0)
 
-# Information added by Drupal.org packaging script on 2017-05-23
-version: '8.x-1.4'
+# Information added by Drupal.org packaging script on 2017-09-29
+version: '8.x-2.0-alpha1'
 core: '8.x'
 project: 'media_entity_instagram'
-datestamp: 1495556288
+datestamp: 1506671648

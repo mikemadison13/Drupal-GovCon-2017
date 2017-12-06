@@ -7,6 +7,7 @@
 
 namespace Drupal\Console\Command\Generate;
 
+use Drupal\Console\Utils\Validator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,9 +15,8 @@ use Drupal\Console\Command\Shared\ServicesTrait;
 use Drupal\Console\Command\Shared\ModuleTrait;
 use Drupal\Console\Command\Shared\MenuTrait;
 use Drupal\Console\Command\Shared\FormTrait;
-use Symfony\Component\Console\Command\Command;
+use Drupal\Console\Core\Command\ContainerAwareCommand;
 use Drupal\Console\Core\Style\DrupalStyle;
-use Drupal\Console\Core\Command\Shared\ContainerAwareCommandTrait;
 use Drupal\Console\Generator\FormGenerator;
 use Drupal\Console\Extension\Manager;
 use Drupal\Console\Core\Utils\ChainQueue;
@@ -24,9 +24,8 @@ use Drupal\Console\Core\Utils\StringConverter;
 use Drupal\Core\Render\ElementInfoManager;
 use Drupal\Core\Routing\RouteProviderInterface;
 
-abstract class FormCommand extends Command
+abstract class FormCommand extends ContainerAwareCommand
 {
-    use ContainerAwareCommandTrait;
     use ModuleTrait;
     use ServicesTrait;
     use FormTrait;
@@ -56,6 +55,11 @@ abstract class FormCommand extends Command
     protected $stringConverter;
 
     /**
+     * @var Validator
+     */
+    protected $validator;
+
+    /**
      * @var ElementInfoManager
      */
     protected $elementInfoManager;
@@ -73,6 +77,7 @@ abstract class FormCommand extends Command
      * @param FormGenerator          $generator
      * @param ChainQueue             $chainQueue
      * @param StringConverter        $stringConverter
+     * @param Validator              $validator
      * @param ElementInfoManager     $elementInfoManager
      * @param RouteProviderInterface $routeProvider
      */
@@ -81,6 +86,7 @@ abstract class FormCommand extends Command
         FormGenerator $generator,
         ChainQueue $chainQueue,
         StringConverter $stringConverter,
+        Validator $validator,
         ElementInfoManager $elementInfoManager,
         RouteProviderInterface $routeProvider
     ) {
@@ -88,6 +94,7 @@ abstract class FormCommand extends Command
         $this->generator = $generator;
         $this->chainQueue = $chainQueue;
         $this->stringConverter = $stringConverter;
+        $this->validator = $validator;
         $this->elementInfoManager = $elementInfoManager;
         $this->routeProvider = $routeProvider;
         parent::__construct();
@@ -197,7 +204,7 @@ abstract class FormCommand extends Command
         $services = $input->getOption('services');
         $path = $input->getOption('path');
         $config_file = $input->getOption('config-file');
-        $class_name = $input->getOption('class');
+        $class_name = $this->validator->validateClassName($input->getOption('class'));
         $form_id = $input->getOption('form-id');
         $form_type = $this->formType;
         $menu_link_gen = $input->getOption('menu-link-gen');
@@ -236,7 +243,10 @@ abstract class FormCommand extends Command
         if (!$className) {
             $className = $io->ask(
                 $this->trans('commands.generate.form.questions.class'),
-                'DefaultForm'
+                'DefaultForm',
+                function ($className) {
+                    return $this->validator->validateClassName($className);
+                }
             );
             $input->setOption('class', $className);
         }

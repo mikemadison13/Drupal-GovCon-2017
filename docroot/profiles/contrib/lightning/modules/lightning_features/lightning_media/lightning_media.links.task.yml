@@ -1,4 +1,0 @@
-lightning_media.settings:
-  route_name: lightning_media.settings
-  title: 'Media'
-  base_route: lightning_core.settings
