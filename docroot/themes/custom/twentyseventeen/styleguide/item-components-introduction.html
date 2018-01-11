@@ -227,28 +227,57 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-states" class="kss-section kss-section--depth-1">
+          <div id="kssref-components-introduction" class="kss-section kss-section--depth-2">
       <div class="kss-style">
-                <h1 class="kss-title kss-title--level-1">
-          <a class="kss-title__permalink" href="#kssref-states">
+                <h2 class="kss-title kss-title--level-2">
+          <a class="kss-title__permalink" href="#kssref-components-introduction">
             <span class="kss-title__ref">
-              4
+              2.10
               <span class="kss-title__permalink-hash">
-                states
+                components.introduction
               </span>
             </span>
-            States
+            Introduction Typography
           </a>
-        </h1>
+        </h2>
 
                   <div class="kss-description">
-            <p>States are variations that are usually applied via js, such as <code>.is-active</code>.</p>
+            <p>Typographic Styling for Section Introductions</p>
 
           </div>
         
               </div>
 
-      
+              <div class="kss-modifier__wrapper">
+          <div class="kss-modifier__heading kss-style">
+            Example          </div>
+
+          
+          <div class="kss-modifier__example">
+            <div class="introduction">
+	<div class="introduction__dek">
+		<h2>2018 Dates Announced<br/>August 22–24, 2018</h2><h3>National Institutes of Health Campus<br/>Natcher Conference Center • Bethesda, MD</h3><p>Mark your calendars for the leading Drupal-oriented event of the greater Washington, DC area. Featuring prominent figures from around the world, Drupal GovCon is sure to keep you on the cutting edge of the current state of Drupal, and how to leverage your skills to better serve your community.</p>
+	</div> <!-- End Introdek Div -->
+	<div class="introduction__info">
+		<h3>Stay in the Loop</h3><p>Interested in being kept informed on GovCon? Sign up for <a href='mailto:drupal4gov@gmail.com?subject=Contact from Website' title='Contact us'>e-mail</a> updates, and follow us on <a href='https://twitter.com/drupalgovcon'>Twitter</a>. Registration and speaker submissions to be coming soon.</p>
+	</div> <!-- End Info Div -->
+</div>
+
+          </div>
+
+                  </div>
+                  <div class="kss-markup kss-style">
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;introduction&quot;&gt;
+	&lt;div class=&quot;introduction__dek&quot;&gt;
+		{{ dek|raw }}
+	&lt;/div&gt; &lt;!-- End Introdek Div --&gt;
+	&lt;div class=&quot;introduction__info&quot;&gt;
+		{{ info|raw }}
+	&lt;/div&gt; &lt;!-- End Info Div --&gt;
+&lt;/div&gt;
+</code></pre>
+          </div>
+              
           </div>
   </article>
 

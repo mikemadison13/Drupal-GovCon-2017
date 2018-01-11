@@ -354,9 +354,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
               </div>
 
       
-              <div class="kss-source kss-style">
-          Source: <code>styles.scss</code>, line 32
-        </div>
           </div>
           <section id="kssref-components-account-menu" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -403,19 +400,32 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;account-menu&quot;&gt;
   &lt;nav role=&quot;navigation&quot;&gt;
 
-    
-    
-    0
+    {% import _self as menus %}
 
-    
+    {#
+      We call a macro which calls itself to render the full tree.
+      @see http://twig.sensiolabs.org/doc/tags/macro.html
+    #}
+    {{ menus.menu_links(items, attributes, 0) }}
+
+    {% macro menu_links(items, attributes, menu_level) %}
+    {% import _self as menus %}
+    {% if items %}
+    &lt;ul class=&quot;account-menu__items&quot;&gt;
+      {% for item in items %}
+      &lt;li class=&quot;account-menu__item&quot;&gt;
+        {{ link(item.title, item.url) }}
+      &lt;/li&gt;
+      {% endfor %}
+    &lt;/ul&gt;
+    {% endif %}
+    {% endmacro %}
+
   &lt;/nav&gt;
 &lt;/div&gt;
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/account-menu/_account-menu.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-attendeedisplay" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -534,9 +544,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 &lt;/div&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/attendee-display/_attendeedisplay.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-block" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -591,9 +598,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 &lt;/aside&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/_aside_blocks.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-criticalannouncements" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -640,19 +644,16 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;critical-announcements&quot;&gt;
 	&lt;div class=&quot;views-row&quot;&gt;
 		&lt;div class=&quot;views-field-title&quot;&gt;
-			&lt;h2&gt;&lt;/h2&gt;
+			&lt;h2&gt;{{title}}&lt;/h2&gt;
 		&lt;/div&gt;
 		&lt;div class=&quot;views-field-body&quot;&gt;
-			&lt;p&gt;This is a critical announcement. More information can be found &lt;a href=&#039;#&#039;&gt;here&lt;/a&gt;.&lt;/p&gt;
+			&lt;p&gt;{{body}}&lt;/p&gt;
 		&lt;/div&gt;
 	&lt;/div&gt; &lt;!-- End views-row --&gt;
 &lt;/div&gt;
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/critical-annoucements/_criticalannouncements.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-footer" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -728,12 +729,12 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
                   <div class="kss-markup kss-style">
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;footer class=&quot;footer&quot;&gt;
   &lt;div class=&quot;footer__inner&quot;&gt;
-    &lt;div class=&quot;footer__disclaimer&quot;&gt;Drupal GovCon is graciously hosted by the NIH Library and made possible by our generous sponsors and wonderful volunteers.&lt;/div&gt;
+    &lt;div class=&quot;footer__disclaimer&quot;&gt;{{footer_disclaimer}}&lt;/div&gt;
     &lt;ul class=&quot;footer__links&quot;&gt;
-              &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Code of Conduct&lt;/a&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Privacy Policy&lt;/a&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Contact&lt;/a&gt;&lt;/li&gt;
-          &lt;/ul&gt;
+      {% for item in footer_links %}
+        &lt;li&gt;&lt;a href=&quot;{{item.url}}&quot;&gt;{{item.text}}&lt;/a&gt;&lt;/li&gt;
+      {% endfor %}
+    &lt;/ul&gt;
     &lt;ul class=&quot;footer__social&quot;&gt;
       &lt;li&gt;
         &lt;a href=&quot;https://twitter.com/drupalgovcon&quot; title=&quot;Follow GovCon on Twitter&quot;&gt;
@@ -769,9 +770,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/footer/_footer.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-header" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -826,9 +824,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 &lt;/div&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/_header.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-hero" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -874,12 +869,12 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
                   </div>
                   <div class="kss-markup kss-style">
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;hero__wrapper&quot;&gt;
-  &lt;a href=&quot;#&quot;&gt;
-    &lt;svg class=&quot;hero__logo logo-rev&quot; alt=&quot;&quot;&gt;
-      &lt;use xlink:href=&quot;#logo-rev&quot;&gt;&lt;/use&gt;
+  &lt;a href=&quot;{{ url }}&quot;&gt;
+    &lt;svg class=&quot;hero__logo {{logo}}&quot; alt=&quot;&quot;&gt;
+      &lt;use xlink:href=&quot;#{{logo}}&quot;&gt;&lt;/use&gt;
     &lt;/svg&gt;
   &lt;/a&gt;
-  &lt;h1 class=&quot;hero__title&quot;&gt;Drupal GovCon 2017&lt;/h1&gt;
+  &lt;h1 class=&quot;hero__title&quot;&gt;{{ title }}&lt;/h1&gt;
   &lt;div class=&quot;hero__ctas group&quot;&gt;
 	  &lt;a class=&quot;hero__button&quot; href=&quot;/form/registration?destination=/user/register&quot;&gt;Tickets&lt;/a&gt;
   &lt;/div&gt;
@@ -887,9 +882,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/hero/_hero.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-homeannouncements" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -936,19 +928,16 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;home-announcements&quot;&gt;
 	&lt;div class=&quot;views-row&quot;&gt;
 		&lt;div class=&quot;views-field-title&quot;&gt;
-			&lt;h2&gt;This is a Special Announcement&lt;/h2&gt;
+			&lt;h2&gt;{{title}}&lt;/h2&gt;
 		&lt;/div&gt;
 		&lt;div class=&quot;views-field-body&quot;&gt;
-			&lt;p&gt;This is an incredible special announcement, which you will forever regret not taking advantage of. Incredible amounts of good karma will be awarded to those who take advantage. More information can be found &lt;a href=&#039;#&#039;&gt;here&lt;/a&gt;.&lt;/p&gt;
+			&lt;p&gt;{{body}}&lt;/p&gt;
 		&lt;/div&gt;
 	&lt;/div&gt; &lt;!-- End views-row --&gt;
 &lt;/div&gt;
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/home-annoucements/_homeannouncements.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-internalheader" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -990,8 +979,8 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
                   </div>
                   <div class="kss-markup kss-style">
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;internalheader__wrapper&quot;&gt;
-  &lt;a href=&quot;#&quot;&gt;
-    &lt;img class=&quot;header__logo&quot; src=&quot;/themes/custom/twentyseventeen/logo.svg&quot; alt=&quot;NaN&quot; typeof=&quot;foaf:Image&quot;&gt;
+  &lt;a href=&quot;{{ url }}&quot;&gt;
+    &lt;img class=&quot;header__logo&quot; src=&quot;{{ logo }}&quot; alt=&quot;{{alt-text}}&quot; typeof=&quot;foaf:Image&quot;&gt;
   &lt;/a&gt;
  &lt;div class=&quot;internalheader__ctas group&quot;&gt;
  &lt;a class=&quot;hero__button&quot; href=&quot;/form/registration?destination=/user/register&quot;&gt;Tickets&lt;/a&gt;
@@ -999,9 +988,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/internalheader/_internalheader.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-introduction" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1045,18 +1031,15 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
                   <div class="kss-markup kss-style">
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;introduction&quot;&gt;
 	&lt;div class=&quot;introduction__dek&quot;&gt;
-		&lt;h2&gt;2018 Dates Announced&lt;br/&gt;August 22–24, 2018&lt;/h2&gt;&lt;h3&gt;National Institutes of Health Campus&lt;br/&gt;Natcher Conference Center • Bethesda, MD&lt;/h3&gt;&lt;p&gt;Mark your calendars for the leading Drupal-oriented event of the greater Washington, DC area. Featuring prominent figures from around the world, Drupal GovCon is sure to keep you on the cutting edge of the current state of Drupal, and how to leverage your skills to better serve your community.&lt;/p&gt;
+		{{ dek|raw }}
 	&lt;/div&gt; &lt;!-- End Introdek Div --&gt;
 	&lt;div class=&quot;introduction__info&quot;&gt;
-		&lt;h3&gt;Stay in the Loop&lt;/h3&gt;&lt;p&gt;Interested in being kept informed on GovCon? Sign up for &lt;a href=&#039;mailto:drupal4gov@gmail.com?subject=Contact from Website&#039; title=&#039;Contact us&#039;&gt;e-mail&lt;/a&gt; updates, and follow us on &lt;a href=&#039;https://twitter.com/drupalgovcon&#039;&gt;Twitter&lt;/a&gt;. Registration and speaker submissions to be coming soon.&lt;/p&gt;
+		{{ info|raw }}
 	&lt;/div&gt; &lt;!-- End Info Div --&gt;
 &lt;/div&gt;
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/introduction/_introduction.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-nav" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1133,19 +1116,51 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
   &lt;/label&gt;
   &lt;nav role=&quot;navigation&quot; class=&quot;nav&quot;&gt;
 
-    
-    
-    0
+    {% import _self as menus %}
 
-    
+    {#
+      We call a macro which calls itself to render the full tree.
+      @see http://twig.sensiolabs.org/doc/tags/macro.html
+    #}
+    {{ menus.menu_links(items, attributes, 0) }}
+
+    {% macro menu_links(items, attributes, menu_level) %}
+    {% import _self as menus %}
+    {% if items %}
+      {% if menu_level == 0 %}
+      &lt;ul class=&quot;nav__items nav__items--first-level&quot;&gt;
+      {% elseif menu_level == 1 %}
+      &lt;ul class=&quot;nav__items nav__items--second-level&quot;&gt;
+      {% elseif menu_level == 2 %}
+      &lt;ul class=&quot;nav__items nav__items--third-level&quot;&gt;
+      {% else %}
+      &lt;ul class=&quot;nav__items&quot;&gt;
+      {% endif %}
+        {% for item in items %}
+          {% if menu_level == 0 %}
+          &lt;li class=&quot;nav__item nav__item--first-level&quot;&gt;
+          {% elseif menu_level == 1 %}
+          &lt;li class=&quot;nav__item nav__item--second-level&quot;&gt;
+          {% elseif menu_level == 2 %}
+          &lt;li class=&quot;nav__item nav__item--third-level&quot;&gt;
+          {% else %}
+          &lt;li class=&quot;nav__item&quot;&gt;
+          {% endif %}
+            {{ link(item.title, item.url) }}
+            {% if item.below %}
+              {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+            {% endif %}
+          &lt;/li&gt;
+        {% endfor %}
+      &lt;/ul&gt;
+    {% endif %}
+    {% endmacro %}
+
   &lt;/nav&gt;
 &lt;/div&gt;
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/nav/_nav.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-schedule" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1264,9 +1279,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 &lt;/div&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/schedule/_schedule.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-secondarybanner" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1308,18 +1320,15 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
                   </div>
                   <div class="kss-markup kss-style">
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;secondarybanner&quot;&gt;
-  &lt;img src=&quot;/themes/custom/twentyseventeen/images/GovCon2017_Connect_CTA_Image.jpg&quot; alt=&quot;Sponsor at GovCon 2017&quot;&gt;
+  &lt;img src=&quot;{{ image.source }}&quot; alt=&quot;{{ image.alt }}&quot;&gt;
   &lt;div class=&quot;secondarybanner__text&quot;&gt;
-    &lt;h3&gt;Connect&lt;/h3&gt;
-    &lt;p&gt;&lt;a href=&quot;/sponsor&quot;&gt;Interested in sponsoring or exhibiting?&lt;/a&gt;&lt;/p&gt;
+    &lt;h3&gt;{{ title }}&lt;/h3&gt;
+    &lt;p&gt;&lt;a href=&quot;{{ url }}&quot;&gt;{{ text }}&lt;/a&gt;&lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/secondarybanner/_secondarybanner.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-secondarybanner-secondarybanner" class="kss-section kss-section--depth-3">
       <div class="kss-style">
@@ -1370,27 +1379,28 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
                   </div>
                   <div class="kss-markup kss-style">
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;secondarybanners&quot;&gt;
-	&lt;div class=&quot;secondarybanner&quot;&gt;
-  &lt;img src=&quot;/themes/custom/twentyseventeen/images/GovCon2017_Connect_CTA_Image.jpg&quot; alt=&quot;Sponsor at GovCon 2017&quot;&gt;
-  &lt;div class=&quot;secondarybanner__text&quot;&gt;
-    &lt;h3&gt;Connect&lt;/h3&gt;
-    &lt;p&gt;&lt;a href=&quot;/sponsor&quot;&gt;Interested in sponsoring or exhibiting?&lt;/a&gt;&lt;/p&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-	&lt;div class=&quot;secondarybanner&quot;&gt;
-  &lt;img src=&quot;/themes/custom/twentyseventeen/images/GovCon2017_Present_CTA_Image.jpg&quot; alt=&quot;Present at GovCon 2017&quot;&gt;
-  &lt;div class=&quot;secondarybanner__text&quot;&gt;
-    &lt;h3&gt;Present&lt;/h3&gt;
-    &lt;p&gt;&lt;a href=&quot;/present&quot;&gt;Share your knowledge with the community&lt;/a&gt;&lt;/p&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
+	{% include &quot;secondarybanner.twig&quot; with {
+  &quot;title&quot;: &quot;Connect&quot;,
+  &quot;image&quot;: {
+    &quot;source&quot;:&quot;/themes/custom/twentyseventeen/images/GovCon2017_Connect_CTA_Image.jpg&quot;,
+    &quot;alt&quot;:&quot;Sponsor at GovCon 2017&quot;
+  },
+  &quot;url&quot;: &quot;/sponsor&quot;,
+  &quot;text&quot;: &quot;Interested in sponsoring or exhibiting?&quot;
+	}%}
+	{% include &quot;secondarybanner.twig&quot; with {
+  &quot;title&quot;: &quot;Present&quot;,
+  &quot;image&quot;: {
+    &quot;source&quot;: &quot;/themes/custom/twentyseventeen/images/GovCon2017_Present_CTA_Image.jpg&quot;,
+    &quot;alt&quot;: &quot;Present at GovCon 2017&quot;
+  },
+  &quot;url&quot;: &quot;/present&quot;,
+  &quot;text&quot;: &quot;Share your knowledge with the community&quot;
+  }%}
 &lt;/div&gt;
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/secondarybanner/_secondarybanner.scss</code>, line 53
-        </div>
           </section>
           <section id="kssref-components-sponsor-listing" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1462,32 +1472,32 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 &lt;h3&gt;Thanks to our Core Sponsors&lt;/h3&gt;
 &lt;ul class=&quot;sponsor-listing&quot;&gt;
     &lt;li class=&quot;sponsor&quot;&gt;
-        &lt;a href=&quot;https://www.acquia.com&quot;&gt;
-            &lt;img src=&quot;https://www.acquia.com/sites/all/themes/acquia_com/images/logo/acquia-logo-think-ahead-black-small.svg&quot; alt=&quot;NaN&quot; typeof=&quot;foaf:Image&quot;&gt;
+        &lt;a href=&quot;{{url}}&quot;&gt;
+            &lt;img src=&quot;{{logo}}&quot; alt=&quot;{{alt-text}}&quot; typeof=&quot;foaf:Image&quot;&gt;
         &lt;/a&gt;
     &lt;/li&gt;
 
     &lt;li class=&quot;sponsor&quot;&gt;
-        &lt;a href=&quot;#&quot;&gt;
-            &lt;img src=&quot;/themes/custom/twentyseventeen/images/Sponsor-CompanyB_logo.png&quot; alt=&quot;NaN&quot; typeof=&quot;foaf:Image&quot;&gt;
+        &lt;a href=&quot;{{url2}}&quot;&gt;
+            &lt;img src=&quot;{{logo2}}&quot; alt=&quot;{{alt-text2}}&quot; typeof=&quot;foaf:Image&quot;&gt;
         &lt;/a&gt;
     &lt;/li&gt;
 
     &lt;li class=&quot;sponsor&quot;&gt;
-        &lt;a href=&quot;https://www.acquia.com&quot;&gt;
-            &lt;img src=&quot;https://www.acquia.com/sites/all/themes/acquia_com/images/logo/acquia-logo-think-ahead-black-small.svg&quot; alt=&quot;NaN&quot; typeof=&quot;foaf:Image&quot;&gt;
+        &lt;a href=&quot;{{url}}&quot;&gt;
+            &lt;img src=&quot;{{logo}}&quot; alt=&quot;{{alt-text}}&quot; typeof=&quot;foaf:Image&quot;&gt;
         &lt;/a&gt;
     &lt;/li&gt;
 
     &lt;li class=&quot;sponsor&quot;&gt;
-        &lt;a href=&quot;https://www.acquia.com&quot;&gt;
-            &lt;img src=&quot;https://www.acquia.com/sites/all/themes/acquia_com/images/logo/acquia-logo-think-ahead-black-small.svg&quot; alt=&quot;NaN&quot; typeof=&quot;foaf:Image&quot;&gt;
+        &lt;a href=&quot;{{url}}&quot;&gt;
+            &lt;img src=&quot;{{logo}}&quot; alt=&quot;{{alt-text}}&quot; typeof=&quot;foaf:Image&quot;&gt;
         &lt;/a&gt;
     &lt;/li&gt;
 
     &lt;li class=&quot;sponsor&quot;&gt;
-        &lt;a href=&quot;#&quot;&gt;
-            &lt;img src=&quot;/themes/custom/twentyseventeen/images/Sponsor-CompanyC_logo.png&quot; alt=&quot;NaN&quot; typeof=&quot;foaf:Image&quot;&gt;
+        &lt;a href=&quot;{{url3}}&quot;&gt;
+            &lt;img src=&quot;{{logo3}}&quot; alt=&quot;{{alt-text3}}&quot; typeof=&quot;foaf:Image&quot;&gt;
         &lt;/a&gt;
     &lt;/li&gt;    
 &lt;/ul&gt;
@@ -1495,9 +1505,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 &lt;/div&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/sponsor-listing/_sponsor-listing.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-tabs" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1548,9 +1555,6 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/_tabs.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-components-userprofile" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1613,37 +1617,34 @@ class names specified in the component. Also known as design &#39;modules&#39;.<
                   <div class="kss-markup kss-style">
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;user_profile_page&quot;&gt;
 	&lt;div class=&quot;bio_photo&quot;&gt;
-  &lt;img src=&quot;/themes/custom/twentyseventeen/images/GovCon2017_UserProfileImage.png&quot; alt=&quot;Default user profile image&quot;&gt;
+  &lt;img src=&quot;{{ image.source }}&quot; alt=&quot;{{ image.alt }}&quot;&gt;
   &lt;/div&gt;
   &lt;div class=&quot;bio_name&quot;&gt;
-    &lt;h2&gt;First Name Last Name&lt;/h2&gt;
+    &lt;h2&gt;{{ firstname }} {{ lastname }}&lt;/h2&gt;
    &lt;/div&gt;
    &lt;div class=&quot;bio_organization&quot;&gt;
-   &lt;p&gt;Organization&lt;/p&gt;
+   &lt;p&gt;{{ organization }}&lt;/p&gt;
    &lt;/div&gt;
    &lt;div class=&quot;bio_title&quot;&gt;
-   &lt;p&gt;Title&lt;/p&gt;
+   &lt;p&gt;{{ jobtitle }}&lt;/p&gt;
    &lt;/div&gt;
    &lt;div class=&quot;bio_contact&quot;&gt;
-   &lt;p class=&quot;sm_icons&quot;&gt;&lt;a href=&quot;#&quot;&gt;&lt;span class=&#039;icon-drupalicon&#039;&gt;&lt;/a&gt;&lt;a href=&quot;#&quot;&gt;&lt;span class=&#039;icon-twitter&#039;&gt;&lt;/a&gt;&lt;a href=&quot;&quot;&gt;&lt;span class=&#039;icon-website&#039;&gt;&lt;/a&gt;&lt;a href=&quot;#&quot;&gt;&lt;span class=&#039;icon-email&#039;&gt;&lt;/a&gt;&lt;/p&gt;
+   &lt;p class=&quot;sm_icons&quot;&gt;&lt;a href=&quot;{{ smdrupallink }}&quot;&gt;{{ smdrupal }}&lt;/a&gt;&lt;a href=&quot;{{ smtwitterlink }}&quot;&gt;{{ smtwitter }}&lt;/a&gt;&lt;a href=&quot;{{ smtwebsitelink }}&quot;&gt;{{ smwebsite }}&lt;/a&gt;&lt;a href=&quot;{{ smemaillink }}&quot;&gt;{{ smemail }}&lt;/a&gt;&lt;/p&gt;
    &lt;/div&gt;
    &lt;div class=&quot;bio_biography&quot;&gt;
-   &lt;p&gt;I live, breathe and sleep Drupal! Know this often to the consternation of friends and family, but I can&#039;t help it—invariably, ANY conversation will drift back to hooks nodes, and related. Drupal GovCon is my favorite event of the year, and nothing, not even a death in family, will make me alter my attendance plans.&lt;/p&gt;
+   &lt;p&gt;{{ bio }}&lt;/p&gt;
    &lt;/div&gt;
     
   &lt;/div&gt;
   &lt;div class=&quot;user_presentations&quot;&gt;
   &lt;h3&gt;Sessions Presenting&lt;/h3&gt;
-  &lt;p&gt;&lt;a href=&quot;#&quot;&gt;Merchant of Venice&lt;/a&gt;&lt;/p&gt;
-  &lt;p&gt;&lt;a href=&quot;#&quot;&gt;A Midsummer Night&#039;s Dream&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;a href=&quot;{{ urlpreso1 }}&quot;&gt;{{ presentationone }}&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;a href=&quot;{{ urlpreso2 }}&quot;&gt;{{ presentationtwo }}&lt;/a&gt;&lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>components/userprofile/_userprofile.scss</code>, line 1
-        </div>
           </section>
   </article>
 

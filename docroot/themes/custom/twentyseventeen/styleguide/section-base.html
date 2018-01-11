@@ -307,9 +307,6 @@ to an HTML element, these styles will be the ones displayed.</p>
               </div>
 
       
-              <div class="kss-source kss-style">
-          Source: <code>styles.scss</code>, line 14
-        </div>
           </div>
           <section id="kssref-base-blockquote" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -352,9 +349,6 @@ to an HTML element, these styles will be the ones displayed.</p>
 &lt;/blockquote&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>base/elements/_elements.scss</code>, line 84
-        </div>
           </section>
           <section id="kssref-base-forms" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -565,9 +559,6 @@ to an HTML element, these styles will be the ones displayed.</p>
 &lt;/form&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>base/form/_form.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-base-forms" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -774,9 +765,6 @@ to an HTML element, these styles will be the ones displayed.</p>
 &lt;/form&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>base/form/_form.scss</code>, line 166
-        </div>
           </section>
           <section id="kssref-base-headlines" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -821,9 +809,6 @@ to an HTML element, these styles will be the ones displayed.</p>
 &lt;h4&gt;I am a H4 tag&lt;/h4&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>base/elements/_elements.scss</code>, line 27
-        </div>
           </section>
           <section id="kssref-base-icons" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -925,76 +910,32 @@ to an HTML element, these styles will be the ones displayed.</p>
                   <div class="kss-markup kss-style">
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;h2&gt;Icon links with no text&lt;/h2&gt;
 &lt;ul class=&quot;list-style-none&quot;&gt;
-    &lt;li&gt;
-    &lt;a href=&quot;#&quot; aria-label=&quot;Follow GovCon on Twitter&quot;&gt;
-      &lt;svg class=&quot;icon twitter&quot;&gt;
-        &lt;use xlink:href=&quot;#twitter&quot;&gt;&lt;/use&gt;
+  {% for item in icons %}
+  &lt;li&gt;
+    &lt;a href=&quot;#&quot; aria-label=&quot;{{item.title}}&quot;&gt;
+      &lt;svg class=&quot;icon {{item.icon}}&quot;&gt;
+        &lt;use xlink:href=&quot;#{{item.icon}}&quot;&gt;&lt;/use&gt;
       &lt;/svg&gt;
     &lt;/a&gt;
   &lt;/li&gt;
-    &lt;li&gt;
-    &lt;a href=&quot;#&quot; aria-label=&quot;Follow GovCon on Facebook&quot;&gt;
-      &lt;svg class=&quot;icon facebook&quot;&gt;
-        &lt;use xlink:href=&quot;#facebook&quot;&gt;&lt;/use&gt;
-      &lt;/svg&gt;
-    &lt;/a&gt;
-  &lt;/li&gt;
-    &lt;li&gt;
-    &lt;a href=&quot;#&quot; aria-label=&quot;Follow GovCon on Instagram&quot;&gt;
-      &lt;svg class=&quot;icon instagram&quot;&gt;
-        &lt;use xlink:href=&quot;#instagram&quot;&gt;&lt;/use&gt;
-      &lt;/svg&gt;
-    &lt;/a&gt;
-  &lt;/li&gt;
-    &lt;li&gt;
-    &lt;a href=&quot;#&quot; aria-label=&quot;Contact us&quot;&gt;
-      &lt;svg class=&quot;icon email&quot;&gt;
-        &lt;use xlink:href=&quot;#email&quot;&gt;&lt;/use&gt;
-      &lt;/svg&gt;
-    &lt;/a&gt;
-  &lt;/li&gt;
-  &lt;/ul&gt;
+  {% endfor %}
+&lt;/ul&gt;
 
 &lt;h2&gt;Icon links with text&lt;/h2&gt;
 &lt;ul class=&quot;list-style-none&quot;&gt;
-    &lt;li&gt;
-    &lt;a href=&quot;#&quot; aria-label=&quot;Follow GovCon on Twitter&quot;&gt;
-      &lt;svg class=&quot;icon twitter&quot;&gt;
-        &lt;use xlink:href=&quot;#twitter&quot;&gt;&lt;/use&gt;
+  {% for item in icons %}
+  &lt;li&gt;
+    &lt;a href=&quot;#&quot; aria-label=&quot;{{item.title}}&quot;&gt;
+      &lt;svg class=&quot;icon {{item.icon}}&quot;&gt;
+        &lt;use xlink:href=&quot;#{{item.icon}}&quot;&gt;&lt;/use&gt;
       &lt;/svg&gt;
-      Twitter
+      {{item.label}}
     &lt;/a&gt;
   &lt;/li&gt;
-    &lt;li&gt;
-    &lt;a href=&quot;#&quot; aria-label=&quot;Follow GovCon on Facebook&quot;&gt;
-      &lt;svg class=&quot;icon facebook&quot;&gt;
-        &lt;use xlink:href=&quot;#facebook&quot;&gt;&lt;/use&gt;
-      &lt;/svg&gt;
-      Facebook
-    &lt;/a&gt;
-  &lt;/li&gt;
-    &lt;li&gt;
-    &lt;a href=&quot;#&quot; aria-label=&quot;Follow GovCon on Instagram&quot;&gt;
-      &lt;svg class=&quot;icon instagram&quot;&gt;
-        &lt;use xlink:href=&quot;#instagram&quot;&gt;&lt;/use&gt;
-      &lt;/svg&gt;
-      Instagram
-    &lt;/a&gt;
-  &lt;/li&gt;
-    &lt;li&gt;
-    &lt;a href=&quot;#&quot; aria-label=&quot;Contact us&quot;&gt;
-      &lt;svg class=&quot;icon email&quot;&gt;
-        &lt;use xlink:href=&quot;#email&quot;&gt;&lt;/use&gt;
-      &lt;/svg&gt;
-      Contact us
-    &lt;/a&gt;
-  &lt;/li&gt;
-  &lt;/ul&gt;</code></pre>
+  {% endfor %}
+&lt;/ul&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>base/icons/_icons.scss</code>, line 1
-        </div>
           </section>
           <section id="kssref-base-lists" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1101,9 +1042,6 @@ to an HTML element, these styles will be the ones displayed.</p>
 </code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>base/elements/_elements.scss</code>, line 100
-        </div>
           </section>
           <section id="kssref-base-table" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1186,9 +1124,6 @@ to an HTML element, these styles will be the ones displayed.</p>
 &lt;/table&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>base/elements/_elements.scss</code>, line 136
-        </div>
           </section>
           <section id="kssref-base-text" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1239,9 +1174,6 @@ to an HTML element, these styles will be the ones displayed.</p>
   jelly apple pie cookie. Wafer chupa chups powder wafer. Danish cake candy &lt;/p&gt;</code></pre>
           </div>
               
-              <div class="kss-source kss-style">
-          Source: <code>base/elements/_elements.scss</code>, line 65
-        </div>
           </section>
           <section id="kssref-base-utility" class="kss-section kss-section--depth-2">
       <div class="kss-style">
@@ -1270,9 +1202,6 @@ to an HTML element, these styles will be the ones displayed.</p>
                         </div>
 
       
-              <div class="kss-source kss-style">
-          Source: <code>base/utility/_utility.scss</code>, line 1
-        </div>
           </section>
   </article>
 

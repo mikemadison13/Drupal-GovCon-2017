@@ -227,28 +227,132 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-states" class="kss-section kss-section--depth-1">
+          <div id="kssref-base-icons" class="kss-section kss-section--depth-2">
       <div class="kss-style">
-                <h1 class="kss-title kss-title--level-1">
-          <a class="kss-title__permalink" href="#kssref-states">
+                <h2 class="kss-title kss-title--level-2">
+          <a class="kss-title__permalink" href="#kssref-base-icons">
             <span class="kss-title__ref">
-              4
+              1.4
               <span class="kss-title__permalink-hash">
-                states
+                base.icons
               </span>
             </span>
-            States
+            Icons
           </a>
-        </h1>
+        </h2>
 
                   <div class="kss-description">
-            <p>States are variations that are usually applied via js, such as <code>.is-active</code>.</p>
+            <p>SVG Icons from a sprite</p>
 
           </div>
         
               </div>
 
-      
+              <div class="kss-modifier__wrapper">
+          <div class="kss-modifier__heading kss-style">
+            Example          </div>
+
+          
+          <div class="kss-modifier__example">
+            <h2>Icon links with no text</h2>
+<ul class="list-style-none">
+    <li>
+    <a href="#" aria-label="Follow GovCon on Twitter">
+      <svg class="icon twitter">
+        <use xlink:href="#twitter"></use>
+      </svg>
+    </a>
+  </li>
+    <li>
+    <a href="#" aria-label="Follow GovCon on Facebook">
+      <svg class="icon facebook">
+        <use xlink:href="#facebook"></use>
+      </svg>
+    </a>
+  </li>
+    <li>
+    <a href="#" aria-label="Follow GovCon on Instagram">
+      <svg class="icon instagram">
+        <use xlink:href="#instagram"></use>
+      </svg>
+    </a>
+  </li>
+    <li>
+    <a href="#" aria-label="Contact us">
+      <svg class="icon email">
+        <use xlink:href="#email"></use>
+      </svg>
+    </a>
+  </li>
+  </ul>
+
+<h2>Icon links with text</h2>
+<ul class="list-style-none">
+    <li>
+    <a href="#" aria-label="Follow GovCon on Twitter">
+      <svg class="icon twitter">
+        <use xlink:href="#twitter"></use>
+      </svg>
+      Twitter
+    </a>
+  </li>
+    <li>
+    <a href="#" aria-label="Follow GovCon on Facebook">
+      <svg class="icon facebook">
+        <use xlink:href="#facebook"></use>
+      </svg>
+      Facebook
+    </a>
+  </li>
+    <li>
+    <a href="#" aria-label="Follow GovCon on Instagram">
+      <svg class="icon instagram">
+        <use xlink:href="#instagram"></use>
+      </svg>
+      Instagram
+    </a>
+  </li>
+    <li>
+    <a href="#" aria-label="Contact us">
+      <svg class="icon email">
+        <use xlink:href="#email"></use>
+      </svg>
+      Contact us
+    </a>
+  </li>
+  </ul>
+          </div>
+
+                  </div>
+                  <div class="kss-markup kss-style">
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;h2&gt;Icon links with no text&lt;/h2&gt;
+&lt;ul class=&quot;list-style-none&quot;&gt;
+  {% for item in icons %}
+  &lt;li&gt;
+    &lt;a href=&quot;#&quot; aria-label=&quot;{{item.title}}&quot;&gt;
+      &lt;svg class=&quot;icon {{item.icon}}&quot;&gt;
+        &lt;use xlink:href=&quot;#{{item.icon}}&quot;&gt;&lt;/use&gt;
+      &lt;/svg&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+  {% endfor %}
+&lt;/ul&gt;
+
+&lt;h2&gt;Icon links with text&lt;/h2&gt;
+&lt;ul class=&quot;list-style-none&quot;&gt;
+  {% for item in icons %}
+  &lt;li&gt;
+    &lt;a href=&quot;#&quot; aria-label=&quot;{{item.title}}&quot;&gt;
+      &lt;svg class=&quot;icon {{item.icon}}&quot;&gt;
+        &lt;use xlink:href=&quot;#{{item.icon}}&quot;&gt;&lt;/use&gt;
+      &lt;/svg&gt;
+      {{item.label}}
+    &lt;/a&gt;
+  &lt;/li&gt;
+  {% endfor %}
+&lt;/ul&gt;</code></pre>
+          </div>
+              
           </div>
   </article>
 

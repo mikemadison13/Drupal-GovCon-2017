@@ -227,28 +227,77 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-states" class="kss-section kss-section--depth-1">
+          <div id="kssref-components-secondarybanner-secondarybanner" class="kss-section kss-section--depth-3">
       <div class="kss-style">
-                <h1 class="kss-title kss-title--level-1">
-          <a class="kss-title__permalink" href="#kssref-states">
+                <h3 class="kss-title kss-title--level-3">
+          <a class="kss-title__permalink" href="#kssref-components-secondarybanner-secondarybanner">
             <span class="kss-title__ref">
-              4
+              2.13.1
               <span class="kss-title__permalink-hash">
-                states
+                components.secondarybanner.secondarybanner
               </span>
             </span>
-            States
+            Secondary Banners
           </a>
-        </h1>
+        </h3>
 
                   <div class="kss-description">
-            <p>States are variations that are usually applied via js, such as <code>.is-active</code>.</p>
+            <p>Shows several banners together, for example usage.</p>
 
           </div>
         
               </div>
 
-      
+              <div class="kss-modifier__wrapper">
+          <div class="kss-modifier__heading kss-style">
+            Example          </div>
+
+          
+          <div class="kss-modifier__example">
+            <div class="secondarybanners">
+	<div class="secondarybanner">
+  <img src="/themes/custom/twentyseventeen/images/GovCon2017_Connect_CTA_Image.jpg" alt="Sponsor at GovCon 2017">
+  <div class="secondarybanner__text">
+    <h3>Connect</h3>
+    <p><a href="/sponsor">Interested in sponsoring or exhibiting?</a></p>
+  </div>
+</div>
+	<div class="secondarybanner">
+  <img src="/themes/custom/twentyseventeen/images/GovCon2017_Present_CTA_Image.jpg" alt="Present at GovCon 2017">
+  <div class="secondarybanner__text">
+    <h3>Present</h3>
+    <p><a href="/present">Share your knowledge with the community</a></p>
+  </div>
+</div>
+</div>
+
+          </div>
+
+                  </div>
+                  <div class="kss-markup kss-style">
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;secondarybanners&quot;&gt;
+	{% include &quot;secondarybanner.twig&quot; with {
+  &quot;title&quot;: &quot;Connect&quot;,
+  &quot;image&quot;: {
+    &quot;source&quot;:&quot;/themes/custom/twentyseventeen/images/GovCon2017_Connect_CTA_Image.jpg&quot;,
+    &quot;alt&quot;:&quot;Sponsor at GovCon 2017&quot;
+  },
+  &quot;url&quot;: &quot;/sponsor&quot;,
+  &quot;text&quot;: &quot;Interested in sponsoring or exhibiting?&quot;
+	}%}
+	{% include &quot;secondarybanner.twig&quot; with {
+  &quot;title&quot;: &quot;Present&quot;,
+  &quot;image&quot;: {
+    &quot;source&quot;: &quot;/themes/custom/twentyseventeen/images/GovCon2017_Present_CTA_Image.jpg&quot;,
+    &quot;alt&quot;: &quot;Present at GovCon 2017&quot;
+  },
+  &quot;url&quot;: &quot;/present&quot;,
+  &quot;text&quot;: &quot;Share your knowledge with the community&quot;
+  }%}
+&lt;/div&gt;
+</code></pre>
+          </div>
+              
           </div>
   </article>
 

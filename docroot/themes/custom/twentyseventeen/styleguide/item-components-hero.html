@@ -227,28 +227,63 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-states" class="kss-section kss-section--depth-1">
+          <div id="kssref-components-hero" class="kss-section kss-section--depth-2">
       <div class="kss-style">
-                <h1 class="kss-title kss-title--level-1">
-          <a class="kss-title__permalink" href="#kssref-states">
+                <h2 class="kss-title kss-title--level-2">
+          <a class="kss-title__permalink" href="#kssref-components-hero">
             <span class="kss-title__ref">
-              4
+              2.7
               <span class="kss-title__permalink-hash">
-                states
+                components.hero
               </span>
             </span>
-            States
+            Hero
           </a>
-        </h1>
+        </h2>
 
                   <div class="kss-description">
-            <p>States are variations that are usually applied via js, such as <code>.is-active</code>.</p>
+            <p>Hero styling</p>
 
           </div>
         
               </div>
 
-      
+              <div class="kss-modifier__wrapper">
+          <div class="kss-modifier__heading kss-style">
+            Example          </div>
+
+          
+          <div class="kss-modifier__example">
+            <div class="hero__wrapper">
+  <a href="#">
+    <svg class="hero__logo logo-rev" alt="">
+      <use xlink:href="#logo-rev"></use>
+    </svg>
+  </a>
+  <h1 class="hero__title">Drupal GovCon 2017</h1>
+  <div class="hero__ctas group">
+	  <a class="hero__button" href="/form/registration?destination=/user/register">Tickets</a>
+  </div>
+</div>
+
+          </div>
+
+                  </div>
+                  <div class="kss-markup kss-style">
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;hero__wrapper&quot;&gt;
+  &lt;a href=&quot;{{ url }}&quot;&gt;
+    &lt;svg class=&quot;hero__logo {{logo}}&quot; alt=&quot;&quot;&gt;
+      &lt;use xlink:href=&quot;#{{logo}}&quot;&gt;&lt;/use&gt;
+    &lt;/svg&gt;
+  &lt;/a&gt;
+  &lt;h1 class=&quot;hero__title&quot;&gt;{{ title }}&lt;/h1&gt;
+  &lt;div class=&quot;hero__ctas group&quot;&gt;
+	  &lt;a class=&quot;hero__button&quot; href=&quot;/form/registration?destination=/user/register&quot;&gt;Tickets&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+          </div>
+              
           </div>
   </article>
 

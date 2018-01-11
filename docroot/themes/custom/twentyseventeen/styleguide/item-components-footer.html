@@ -227,28 +227,121 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-states" class="kss-section kss-section--depth-1">
+          <div id="kssref-components-footer" class="kss-section kss-section--depth-2">
       <div class="kss-style">
-                <h1 class="kss-title kss-title--level-1">
-          <a class="kss-title__permalink" href="#kssref-states">
+                <h2 class="kss-title kss-title--level-2">
+          <a class="kss-title__permalink" href="#kssref-components-footer">
             <span class="kss-title__ref">
-              4
+              2.5
               <span class="kss-title__permalink-hash">
-                states
+                components.footer
               </span>
             </span>
-            States
+            Footer
           </a>
-        </h1>
+        </h2>
 
                   <div class="kss-description">
-            <p>States are variations that are usually applied via js, such as <code>.is-active</code>.</p>
+            <p>Secondary links, disclaimers and social links</p>
 
           </div>
         
               </div>
 
-      
+              <div class="kss-modifier__wrapper">
+          <div class="kss-modifier__heading kss-style">
+            Example          </div>
+
+          
+          <div class="kss-modifier__example">
+            <footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__disclaimer">Drupal GovCon is graciously hosted by the NIH Library and made possible by our generous sponsors and wonderful volunteers.</div>
+    <ul class="footer__links">
+              <li><a href="#">Code of Conduct</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Contact</a></li>
+          </ul>
+    <ul class="footer__social">
+      <li>
+        <a href="https://twitter.com/drupalgovcon" title="Follow GovCon on Twitter">
+          <svg class="icon twitter">
+            <use xlink:href="#twitter"></use>
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="https://www.facebook.com/DrupalGovCon" title="Facebook">
+          <svg class="icon facebook">
+            <use xlink:href="#facebook"></use>
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="mailto:drupal4gov@gmail.com?subject=Contact from Website" title="Contact us">
+          <svg class="icon email">
+            <use xlink:href="#email"></use>
+          </svg>
+        </a>
+      </li>
+    </ul>
+    <div class="footer__logo">
+      <a href="/" title="GovCon 2017">
+        <svg class="gc17">
+          <use xlink:href="#gc17"></use>
+        </svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+          </div>
+
+                  </div>
+                  <div class="kss-markup kss-style">
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;footer class=&quot;footer&quot;&gt;
+  &lt;div class=&quot;footer__inner&quot;&gt;
+    &lt;div class=&quot;footer__disclaimer&quot;&gt;{{footer_disclaimer}}&lt;/div&gt;
+    &lt;ul class=&quot;footer__links&quot;&gt;
+      {% for item in footer_links %}
+        &lt;li&gt;&lt;a href=&quot;{{item.url}}&quot;&gt;{{item.text}}&lt;/a&gt;&lt;/li&gt;
+      {% endfor %}
+    &lt;/ul&gt;
+    &lt;ul class=&quot;footer__social&quot;&gt;
+      &lt;li&gt;
+        &lt;a href=&quot;https://twitter.com/drupalgovcon&quot; title=&quot;Follow GovCon on Twitter&quot;&gt;
+          &lt;svg class=&quot;icon twitter&quot;&gt;
+            &lt;use xlink:href=&quot;#twitter&quot;&gt;&lt;/use&gt;
+          &lt;/svg&gt;
+        &lt;/a&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;a href=&quot;https://www.facebook.com/DrupalGovCon&quot; title=&quot;Facebook&quot;&gt;
+          &lt;svg class=&quot;icon facebook&quot;&gt;
+            &lt;use xlink:href=&quot;#facebook&quot;&gt;&lt;/use&gt;
+          &lt;/svg&gt;
+        &lt;/a&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;a href=&quot;mailto:drupal4gov@gmail.com?subject=Contact from Website&quot; title=&quot;Contact us&quot;&gt;
+          &lt;svg class=&quot;icon email&quot;&gt;
+            &lt;use xlink:href=&quot;#email&quot;&gt;&lt;/use&gt;
+          &lt;/svg&gt;
+        &lt;/a&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div class=&quot;footer__logo&quot;&gt;
+      &lt;a href=&quot;/&quot; title=&quot;GovCon 2017&quot;&gt;
+        &lt;svg class=&quot;gc17&quot;&gt;
+          &lt;use xlink:href=&quot;#gc17&quot;&gt;&lt;/use&gt;
+        &lt;/svg&gt;
+      &lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;
+</code></pre>
+          </div>
+              
           </div>
   </article>
 

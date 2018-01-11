@@ -227,28 +227,55 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-states" class="kss-section kss-section--depth-1">
+          <div id="kssref-components-secondarybanner" class="kss-section kss-section--depth-2">
       <div class="kss-style">
-                <h1 class="kss-title kss-title--level-1">
-          <a class="kss-title__permalink" href="#kssref-states">
+                <h2 class="kss-title kss-title--level-2">
+          <a class="kss-title__permalink" href="#kssref-components-secondarybanner">
             <span class="kss-title__ref">
-              4
+              2.13
               <span class="kss-title__permalink-hash">
-                states
+                components.secondarybanner
               </span>
             </span>
-            States
+            Secondary Banner
           </a>
-        </h1>
+        </h2>
 
                   <div class="kss-description">
-            <p>States are variations that are usually applied via js, such as <code>.is-active</code>.</p>
+            <p>A call to action widget for landing pages.</p>
 
           </div>
         
               </div>
 
-      
+              <div class="kss-modifier__wrapper">
+          <div class="kss-modifier__heading kss-style">
+            Example          </div>
+
+          
+          <div class="kss-modifier__example">
+            <div class="secondarybanner">
+  <img src="/themes/custom/twentyseventeen/images/GovCon2017_Connect_CTA_Image.jpg" alt="Sponsor at GovCon 2017">
+  <div class="secondarybanner__text">
+    <h3>Connect</h3>
+    <p><a href="/sponsor">Interested in sponsoring or exhibiting?</a></p>
+  </div>
+</div>
+
+          </div>
+
+                  </div>
+                  <div class="kss-markup kss-style">
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;secondarybanner&quot;&gt;
+  &lt;img src=&quot;{{ image.source }}&quot; alt=&quot;{{ image.alt }}&quot;&gt;
+  &lt;div class=&quot;secondarybanner__text&quot;&gt;
+    &lt;h3&gt;{{ title }}&lt;/h3&gt;
+    &lt;p&gt;&lt;a href=&quot;{{ url }}&quot;&gt;{{ text }}&lt;/a&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+          </div>
+              
           </div>
   </article>
 

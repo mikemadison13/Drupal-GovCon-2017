@@ -227,28 +227,95 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-states" class="kss-section kss-section--depth-1">
+          <div id="kssref-components-userprofile" class="kss-section kss-section--depth-2">
       <div class="kss-style">
-                <h1 class="kss-title kss-title--level-1">
-          <a class="kss-title__permalink" href="#kssref-states">
+                <h2 class="kss-title kss-title--level-2">
+          <a class="kss-title__permalink" href="#kssref-components-userprofile">
             <span class="kss-title__ref">
-              4
+              2.16
               <span class="kss-title__permalink-hash">
-                states
+                components.userprofile
               </span>
             </span>
-            States
+            User Profile
           </a>
-        </h1>
+        </h2>
 
                   <div class="kss-description">
-            <p>States are variations that are usually applied via js, such as <code>.is-active</code>.</p>
+            <p>Display of individual user profiles.</p>
 
           </div>
         
               </div>
 
-      
+              <div class="kss-modifier__wrapper">
+          <div class="kss-modifier__heading kss-style">
+            Example          </div>
+
+          
+          <div class="kss-modifier__example">
+            <div class="user_profile_page">
+	<div class="bio_photo">
+  <img src="/themes/custom/twentyseventeen/images/GovCon2017_UserProfileImage.png" alt="Default user profile image">
+  </div>
+  <div class="bio_name">
+    <h2>First Name Last Name</h2>
+   </div>
+   <div class="bio_organization">
+   <p>Organization</p>
+   </div>
+   <div class="bio_title">
+   <p>Title</p>
+   </div>
+   <div class="bio_contact">
+   <p class="sm_icons"><a href="#"><span class='icon-drupalicon'></a><a href="#"><span class='icon-twitter'></a><a href=""><span class='icon-website'></a><a href="#"><span class='icon-email'></a></p>
+   </div>
+   <div class="bio_biography">
+   <p>I live, breathe and sleep Drupal! Know this often to the consternation of friends and family, but I can't help it—invariably, ANY conversation will drift back to hooks nodes, and related. Drupal GovCon is my favorite event of the year, and nothing, not even a death in family, will make me alter my attendance plans.</p>
+   </div>
+    
+  </div>
+  <div class="user_presentations">
+  <h3>Sessions Presenting</h3>
+  <p><a href="#">Merchant of Venice</a></p>
+  <p><a href="#">A Midsummer Night's Dream</a></p>
+  </div>
+</div>
+
+          </div>
+
+                  </div>
+                  <div class="kss-markup kss-style">
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;user_profile_page&quot;&gt;
+	&lt;div class=&quot;bio_photo&quot;&gt;
+  &lt;img src=&quot;{{ image.source }}&quot; alt=&quot;{{ image.alt }}&quot;&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;bio_name&quot;&gt;
+    &lt;h2&gt;{{ firstname }} {{ lastname }}&lt;/h2&gt;
+   &lt;/div&gt;
+   &lt;div class=&quot;bio_organization&quot;&gt;
+   &lt;p&gt;{{ organization }}&lt;/p&gt;
+   &lt;/div&gt;
+   &lt;div class=&quot;bio_title&quot;&gt;
+   &lt;p&gt;{{ jobtitle }}&lt;/p&gt;
+   &lt;/div&gt;
+   &lt;div class=&quot;bio_contact&quot;&gt;
+   &lt;p class=&quot;sm_icons&quot;&gt;&lt;a href=&quot;{{ smdrupallink }}&quot;&gt;{{ smdrupal }}&lt;/a&gt;&lt;a href=&quot;{{ smtwitterlink }}&quot;&gt;{{ smtwitter }}&lt;/a&gt;&lt;a href=&quot;{{ smtwebsitelink }}&quot;&gt;{{ smwebsite }}&lt;/a&gt;&lt;a href=&quot;{{ smemaillink }}&quot;&gt;{{ smemail }}&lt;/a&gt;&lt;/p&gt;
+   &lt;/div&gt;
+   &lt;div class=&quot;bio_biography&quot;&gt;
+   &lt;p&gt;{{ bio }}&lt;/p&gt;
+   &lt;/div&gt;
+    
+  &lt;/div&gt;
+  &lt;div class=&quot;user_presentations&quot;&gt;
+  &lt;h3&gt;Sessions Presenting&lt;/h3&gt;
+  &lt;p&gt;&lt;a href=&quot;{{ urlpreso1 }}&quot;&gt;{{ presentationone }}&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;a href=&quot;{{ urlpreso2 }}&quot;&gt;{{ presentationtwo }}&lt;/a&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+          </div>
+              
           </div>
   </article>
 
