@@ -58,22 +58,22 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-base-headlines" class="kss-section kss-section--depth-2 is-fullscreen">
+          <div id="kssref-components-main-menu" class="kss-section kss-section--depth-2 is-fullscreen">
       <div class="kss-style">
                 <h2 class="kss-title kss-title--level-2">
-          <a class="kss-title__permalink" href="#kssref-base-headlines">
+          <a class="kss-title__permalink" href="#kssref-components-main-menu">
             <span class="kss-title__ref">
-              1.2
+              2.5
               <span class="kss-title__permalink-hash">
-                base.headlines
+                components.main-menu
               </span>
             </span>
-            Base Headings
+            Main Menu
           </a>
         </h2>
 
                   <p class="kss-toolbar">
-                        <a href="#kssref-base-headlines" data-kss-guides="true">
+                        <a href="#kssref-components-main-menu" data-kss-guides="true">
               <span class="kss-toolbar__tooltip">Toggle example guides</span>
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
@@ -94,7 +94,7 @@
                 <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
               </svg>
             </a>
-            <a href="#kssref-base-headlines" data-kss-markup="true">
+            <a href="#kssref-components-main-menu" data-kss-markup="true">
               <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
@@ -103,6 +103,10 @@
             </a>
           </p>
         
+                  <div class="kss-description">
+            <p>Main Menu Styling</p>
+
+          </div>
         
               </div>
 
@@ -112,32 +116,62 @@
 
           
           <div class="kss-modifier__example">
-            <h1>I am a H1 tag</h1>
-
-<h2>I am a H2 tag</h2>
-
-<h3>I am a H3 tag</h3>
-
-<h4>I am a H4 tag</h4>
+            <nav class="block-system-menublock menu--main">
+  <input type="checkbox" id="show-menu" class="toggle" role="button">
+  <label for="show-menu" class="toggle">
+    <span class="visually-hidden">Show Menu</span>
+    <div class="toggle__icon">
+      <span class="toggle__icon-line"></span>
+      <span class="toggle__icon-line"></span>
+      <span class="toggle__icon-line"></span>
+    </div>
+  </label>
+  <ul class="menu-main">
+    <li class="menu-main__item"><a href="/">Example</a>
+      <ul class="menu-submenu">
+        <li class="menu-submenu__item"><a href="/">Example</a></li>
+        <li class="menu-submenu__item"><a href="/">Example</a></li>
+      </ul>
+    </li>
+    <li class="menu-main__item"><a href="/">Example</a></li>
+    <li class="menu-main__item"><a href="/">Example</a></li>
+    <li class="menu-main__item"><a href="/">Example</a></li>
+  </ul>
+</nav>
             <div class="kss-modifier__example-footer"></div>
           </div>
 
                   </div>
                   <details class="kss-markup kss-style">
             <summary>
-                              Markup: <code>base/headlines.twig</code>
+                              Markup: <code>components/main-menu/main-menu.twig</code>
                           </summary>
-            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;h1&gt;I am a H1 tag&lt;/h1&gt;
-
-&lt;h2&gt;I am a H2 tag&lt;/h2&gt;
-
-&lt;h3&gt;I am a H3 tag&lt;/h3&gt;
-
-&lt;h4&gt;I am a H4 tag&lt;/h4&gt;</code></pre>
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;nav class=&quot;block-system-menublock menu--main&quot;&gt;
+  &lt;input type=&quot;checkbox&quot; id=&quot;show-menu&quot; class=&quot;toggle&quot; role=&quot;button&quot;&gt;
+  &lt;label for=&quot;show-menu&quot; class=&quot;toggle&quot;&gt;
+    &lt;span class=&quot;visually-hidden&quot;&gt;Show Menu&lt;/span&gt;
+    &lt;div class=&quot;toggle__icon&quot;&gt;
+      &lt;span class=&quot;toggle__icon-line&quot;&gt;&lt;/span&gt;
+      &lt;span class=&quot;toggle__icon-line&quot;&gt;&lt;/span&gt;
+      &lt;span class=&quot;toggle__icon-line&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/label&gt;
+  &lt;ul class=&quot;menu-main&quot;&gt;
+    &lt;li class=&quot;menu-main__item&quot;&gt;&lt;a href=&quot;/&quot;&gt;Example&lt;/a&gt;
+      &lt;ul class=&quot;menu-submenu&quot;&gt;
+        &lt;li class=&quot;menu-submenu__item&quot;&gt;&lt;a href=&quot;/&quot;&gt;Example&lt;/a&gt;&lt;/li&gt;
+        &lt;li class=&quot;menu-submenu__item&quot;&gt;&lt;a href=&quot;/&quot;&gt;Example&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+    &lt;li class=&quot;menu-main__item&quot;&gt;&lt;a href=&quot;/&quot;&gt;Example&lt;/a&gt;&lt;/li&gt;
+    &lt;li class=&quot;menu-main__item&quot;&gt;&lt;a href=&quot;/&quot;&gt;Example&lt;/a&gt;&lt;/li&gt;
+    &lt;li class=&quot;menu-main__item&quot;&gt;&lt;a href=&quot;/&quot;&gt;Example&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
           </details>
               
               <div class="kss-source kss-style">
-          Source: <code>base/_base.scss</code>, line 20
+          Source: <code>components/main-menu/_main-menu.scss</code>, line 1
         </div>
           </div>
   </article>
