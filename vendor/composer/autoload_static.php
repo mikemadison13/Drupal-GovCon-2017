@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a
+class ComposerStaticInit2a432c8ff5f5474929d41db94dc7b57a
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -124,6 +124,7 @@ class ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a
             'GuzzleHttp\\' => 11,
             'Grasmash\\YamlExpander\\' => 22,
             'Grasmash\\YamlCli\\' => 17,
+            'Grasmash\\Expander\\' => 18,
         ),
         'D' => 
         array (
@@ -407,6 +408,10 @@ class ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a
         'Grasmash\\YamlCli\\' => 
         array (
             0 => __DIR__ . '/..' . '/grasmash/yaml-cli/src',
+        ),
+        'Grasmash\\Expander\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/grasmash/expander/src',
         ),
         'Drupal\\acsf\\' => 
         array (
@@ -3394,6 +3399,9 @@ class ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a
         'Generic_Sniffs_WhiteSpace_DisallowSpaceIndentSniff' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/CodeSniffer/Standards/Generic/Sniffs/WhiteSpace/DisallowSpaceIndentSniff.php',
         'Generic_Sniffs_WhiteSpace_DisallowTabIndentSniff' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/CodeSniffer/Standards/Generic/Sniffs/WhiteSpace/DisallowTabIndentSniff.php',
         'Generic_Sniffs_WhiteSpace_ScopeIndentSniff' => __DIR__ . '/..' . '/squizlabs/php_codesniffer/CodeSniffer/Standards/Generic/Sniffs/WhiteSpace/ScopeIndentSniff.php',
+        'Grasmash\\Expander\\Expander' => __DIR__ . '/..' . '/grasmash/expander/src/Expander.php',
+        'Grasmash\\Expander\\Stringifier' => __DIR__ . '/..' . '/grasmash/expander/src/Stringifier.php',
+        'Grasmash\\Expander\\StringifierInterface' => __DIR__ . '/..' . '/grasmash/expander/src/StringifierInterface.php',
         'Grasmash\\YamlCli\\Command\\CommandBase' => __DIR__ . '/..' . '/grasmash/yaml-cli/src/Command/CommandBase.php',
         'Grasmash\\YamlCli\\Command\\GetValueCommand' => __DIR__ . '/..' . '/grasmash/yaml-cli/src/Command/GetValueCommand.php',
         'Grasmash\\YamlCli\\Command\\LintCommand' => __DIR__ . '/..' . '/grasmash/yaml-cli/src/Command/LintCommand.php',
@@ -4865,6 +4873,7 @@ class ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a
         'Robo\\Common\\OutputAdapter' => __DIR__ . '/..' . '/consolidation/robo/src/Common/OutputAdapter.php',
         'Robo\\Common\\OutputAwareTrait' => __DIR__ . '/..' . '/consolidation/robo/src/Common/OutputAwareTrait.php',
         'Robo\\Common\\ProcessExecutor' => __DIR__ . '/..' . '/consolidation/robo/src/Common/ProcessExecutor.php',
+        'Robo\\Common\\ProcessUtils' => __DIR__ . '/..' . '/consolidation/robo/src/Common/ProcessUtils.php',
         'Robo\\Common\\ProgressIndicator' => __DIR__ . '/..' . '/consolidation/robo/src/Common/ProgressIndicator.php',
         'Robo\\Common\\ProgressIndicatorAwareTrait' => __DIR__ . '/..' . '/consolidation/robo/src/Common/ProgressIndicatorAwareTrait.php',
         'Robo\\Common\\ResourceExistenceChecker' => __DIR__ . '/..' . '/consolidation/robo/src/Common/ResourceExistenceChecker.php',
@@ -5006,7 +5015,6 @@ class ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a
         'Robo\\Task\\Vcs\\loadShortcuts' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Vcs/loadShortcuts.php',
         'Robo\\Task\\Vcs\\loadTasks' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Vcs/loadTasks.php',
         'Robo\\Tasks' => __DIR__ . '/..' . '/consolidation/robo/src/Tasks.php',
-        'Robo\\composer\\ScriptHandler' => __DIR__ . '/..' . '/consolidation/robo/scripts/composer/ScriptHandler.php',
         'SebastianBergmann\\Comparator\\ArrayComparator' => __DIR__ . '/..' . '/sebastian/comparator/src/ArrayComparator.php',
         'SebastianBergmann\\Comparator\\Comparator' => __DIR__ . '/..' . '/sebastian/comparator/src/Comparator.php',
         'SebastianBergmann\\Comparator\\ComparisonFailure' => __DIR__ . '/..' . '/sebastian/comparator/src/ComparisonFailure.php',
@@ -6836,10 +6844,10 @@ class ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitceef93f86c34d2098f077a60aa44ad4a::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2a432c8ff5f5474929d41db94dc7b57a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2a432c8ff5f5474929d41db94dc7b57a::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2a432c8ff5f5474929d41db94dc7b57a::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit2a432c8ff5f5474929d41db94dc7b57a::$classMap;
 
         }, null, ClassLoader::class);
     }

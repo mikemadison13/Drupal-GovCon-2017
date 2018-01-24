@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ $# -ne 1 ]; then
-    echo $0: usage: install-node.sh 6.11.0
+    echo $0: usage: install-node.sh 8.9.1
     exit 1
 fi
 

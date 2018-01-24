@@ -1,4 +1,4 @@
-name: Cog STARTERKIT
+name: Cog Sub-theme Starter Kit
 type: theme
 description: 'Acquia D8 starter theme'
 # core: 8.x
@@ -18,8 +18,8 @@ regions:
   post_content: 'Post content'
   footer: Footer
 
-# Information added by Drupal.org packaging script on 2017-09-29
-version: '8.x-1.10'
+# Information added by Drupal.org packaging script on 2018-01-18
+version: '8.x-1.13'
 core: '8.x'
 project: 'cog'
-datestamp: 1506720858
+datestamp: 1516296834

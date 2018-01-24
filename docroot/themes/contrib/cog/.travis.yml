@@ -74,8 +74,8 @@ install:
   - cd $COGNIZANT_DIR
 
   - nvm ls-remote
-  - nvm install 6.11.0
-  - nvm use 6.11.0
+  - nvm install 8.9.1
+  - nvm use 8.9.1
   - npm install -g gulp-cli
   - npm install -g npm@latest
   - npm run install-tools

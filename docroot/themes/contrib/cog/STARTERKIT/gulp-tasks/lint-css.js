@@ -12,7 +12,7 @@ module.exports = function (gulp, plugins, options) {
   gulp.task('lint:css', function () {
     return gulp.src(options.sass.files)
       .pipe(plugins.plumber())
-      .pipe(plugins.stylelint({
+      .pipe(plugins.gulpStylelint({
         reporters: [
           {
             formatter: 'string',
@@ -26,7 +26,7 @@ module.exports = function (gulp, plugins, options) {
   // Lint scss files and throw an error for a CI to catch.
   gulp.task('lint:css-with-fail', function () {
     return gulp.src(options.sass.files)
-      .pipe(plugins.stylelint({
+      .pipe(plugins.gulpStylelint({
         reporters: [
           {
             formatter: 'string',

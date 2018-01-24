@@ -11,23 +11,23 @@ This sub theme uses node and npm to manage build tools such as sass. There are n
 Script usage (from generated sub theme directory):
 
 ```bash
-./install-node.sh 6.11.0
+./install-node.sh 8.9.1
 ```
 
 The install script installs nvm and then uses nvm to install the version of node given to it as an argument. It also writes a `.node-version` file into the sub theme directory it was run from that can be picked up by tools such as avn. After running the script it is necessary to do the command it outputs to tell your session you want to use that version of node:
 
 ```bash
-source ~/.bashrc && nvm use --delete-prefix 6.11.0
+source ~/.bashrc && nvm use --delete-prefix 8.9.1
 ```
 
-If you are not using avn or something similar then you will need to repeat `nvm use 6.11.0` if you close and reopen your session.
+If you are not using avn or something similar then you will need to repeat `nvm use 8.9.1` if you close and reopen your session.
 
 <a name="avn"></a>
 ### AVN (Automatic Version Switching for Node)
 
 #### Why would you want to install AVN?
 
-By default, nvm is session based so you will need to run `nvm use 4.4.1` again if you close your terminal and reopen it later. It is recommended to use a tool such as [avn](https://github.com/wbyoung/avn). This will pick up the node version from the `.node-version` file that the provided install script places in the theme directory. When you `cd` to the theme directory avn will use nvm to switch to the appropriate installed node version automatically.
+By default, nvm is session based so you will need to run `nvm use 8.9.1` again if you close your terminal and reopen it later. It is recommended to use a tool such as [avn](https://github.com/wbyoung/avn). This will pick up the node version from the `.node-version` file that the provided install script places in the theme directory. When you `cd` to the theme directory avn will use nvm to switch to the appropriate installed node version automatically.
 
 #### AVN install:
 

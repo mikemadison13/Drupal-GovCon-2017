@@ -33,8 +33,8 @@ The Cog theme is set up to utilize the `base => sub-theme` relationship. The ste
 Once you have created a custom sub-theme, you will setup for local compiling. If you would like to review a more detailed explanation of these steps, read the [full setup readme](_readme/setup-full.md).
 
 * Navigate to `themes/custom/mytheme` folder in your terminal
-* Install Node.js with `./install-node.sh 4.4.4` and then point to the proper version with `source ~/.bashrc && nvm use --delete-prefix 4.4.4` 
-  * (optional) If you are not using avn then run `nvm use 4.4.4` when closing and reopening your session
+* Install Node.js with `./install-node.sh 8.9.1` and then point to the proper version with `source ~/.bashrc && nvm use --delete-prefix 8.9.1` 
+  * (optional) If you are not using avn then run `nvm use 8.9.1` when closing and reopening your session
   * (optional) If you choose to use avn follow the instructions [here](_readme/setup-full.md#avn)
 * Run the command `npm install` within your `themes/custom/mytheme` folder
 * Install the [Gulp](http://gulpjs.com/) build tool globally using `npm install -g gulp-cli`.

@@ -63,19 +63,19 @@
       }
     }
 
-    section#content {
-      @include span(8 of 12);
-
-      > * {
-        padding-right: 25px;
-      }
-    }
-
     aside.sidebar-second {
       @include span(2 of 12 last);
 
       > * {
         padding-right: 15px;
+      }
+    }
+
+    section#content {
+      @include span(8 of 12);
+
+      > * {
+        padding-right: 25px;
       }
     }
   }

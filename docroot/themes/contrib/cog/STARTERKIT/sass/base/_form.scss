@@ -198,21 +198,18 @@ input[type="url"]:focus {
   outline: none;
 }
 
-form input[disabled],
-form button[disabled] {
-  background-color: $light-gray;
-  box-shadow: none;
-
-  &:hover {
-    background-color: $light-gray;
-  }
-}
-// simple transitions ////////////////////
 form button,
 form input {
+  // simple transitions ////////////////////
   transition: all 0.3s ease;
 
   &[disabled] {
+    background-color: $light-gray;
+    box-shadow: none;
     transition: auto;
+  }
+
+  &:hover {
+    background-color: $light-gray;
   }
 }

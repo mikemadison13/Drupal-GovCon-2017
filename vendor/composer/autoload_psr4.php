@@ -66,6 +66,7 @@ return array(
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'Grasmash\\YamlExpander\\' => array($vendorDir . '/grasmash/yaml-expander/src'),
     'Grasmash\\YamlCli\\' => array($vendorDir . '/grasmash/yaml-cli/src'),
+    'Grasmash\\Expander\\' => array($vendorDir . '/grasmash/expander/src'),
     'Drupal\\acsf\\' => array($baseDir . '/docroot/modules/contrib/acsf/src'),
     'Drupal\\Driver\\' => array($baseDir . '/docroot/drivers/lib/Drupal/Driver'),
     'Drupal\\Core\\' => array($baseDir . '/docroot/core/lib/Drupal/Core'),
