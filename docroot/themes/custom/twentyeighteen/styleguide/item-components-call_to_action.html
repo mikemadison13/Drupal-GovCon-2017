@@ -58,22 +58,22 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-components-hero" class="kss-section kss-section--depth-2 is-fullscreen">
+          <div id="kssref-components-call_to_action" class="kss-section kss-section--depth-2 is-fullscreen">
       <div class="kss-style">
                 <h2 class="kss-title kss-title--level-2">
-          <a class="kss-title__permalink" href="#kssref-components-hero">
+          <a class="kss-title__permalink" href="#kssref-components-call_to_action">
             <span class="kss-title__ref">
-              2.6
+              2.2
               <span class="kss-title__permalink-hash">
-                components.hero
+                components.call_to_action
               </span>
             </span>
-            Hero
+            Call to Action Block
           </a>
         </h2>
 
                   <p class="kss-toolbar">
-                        <a href="#kssref-components-hero" data-kss-guides="true">
+                        <a href="#kssref-components-call_to_action" data-kss-guides="true">
               <span class="kss-toolbar__tooltip">Toggle example guides</span>
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
@@ -94,7 +94,7 @@
                 <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
               </svg>
             </a>
-            <a href="#kssref-components-hero" data-kss-markup="true">
+            <a href="#kssref-components-call_to_action" data-kss-markup="true">
               <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
@@ -104,7 +104,7 @@
           </p>
         
                   <div class="kss-description">
-            <p>Hero Styling</p>
+            <p>Styling for three call to action blocks on bottom of homepage</p>
 
           </div>
         
@@ -116,19 +116,15 @@
 
           
           <div class="kss-modifier__example">
-            <div class= "hero">
-  <div class= "hero__background-img">
-    <img src="../images/wide_home-hero.jpg"/>
+            <a class="call-to-action" href="#">
+  <div class= "call-to-action__img">
+    <img src="../images/CTA.png">
   </div>
-  <div class="hero__details">
-    <div class= "hero__details-logo">
-      <a href="https://www.drupalgovcon.org/"> <img src="../images/logo.svg"></a>
-    </div>
-    <div class="hero__details-callout">
-      <a class="hero__details-button">Mark Your Calendars!</a>
-    </div>
+  <div class= "call-to-action__text">
+    <h2 class="call-to-action__text-header">Connect</h2>
+    <p class="call-to-action__text-details">Interested in sponsoring or exhibiting?</p>
   </div>
-</div>
+</a>
 
             <div class="kss-modifier__example-footer"></div>
           </div>
@@ -136,26 +132,22 @@
                   </div>
                   <details class="kss-markup kss-style">
             <summary>
-                              Markup: <code>components/hero/hero.twig</code>
+                              Markup: <code>components/call-to-action/call-to-action.twig</code>
                           </summary>
-            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class= &quot;hero&quot;&gt;
-  &lt;div class= &quot;hero__background-img&quot;&gt;
-    &lt;img src=&quot;../images/wide_home-hero.jpg&quot;/&gt;
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;a class=&quot;call-to-action&quot; href=&quot;#&quot;&gt;
+  &lt;div class= &quot;call-to-action__img&quot;&gt;
+    &lt;img src=&quot;../images/CTA.png&quot;&gt;
   &lt;/div&gt;
-  &lt;div class=&quot;hero__details&quot;&gt;
-    &lt;div class= &quot;hero__details-logo&quot;&gt;
-      &lt;a href=&quot;https://www.drupalgovcon.org/&quot;&gt; &lt;img src=&quot;../images/logo.svg&quot;&gt;&lt;/a&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;hero__details-callout&quot;&gt;
-      &lt;a class=&quot;hero__details-button&quot;&gt;Mark Your Calendars!&lt;/a&gt;
-    &lt;/div&gt;
+  &lt;div class= &quot;call-to-action__text&quot;&gt;
+    &lt;h2 class=&quot;call-to-action__text-header&quot;&gt;Connect&lt;/h2&gt;
+    &lt;p class=&quot;call-to-action__text-details&quot;&gt;Interested in sponsoring or exhibiting?&lt;/p&gt;
   &lt;/div&gt;
-&lt;/div&gt;
+&lt;/a&gt;
 </code></pre>
           </details>
               
               <div class="kss-source kss-style">
-          Source: <code>components/hero/_hero.scss</code>, line 1
+          Source: <code>components/call-to-action/_call-to-action.scss</code>, line 1
         </div>
           </div>
   </article>
