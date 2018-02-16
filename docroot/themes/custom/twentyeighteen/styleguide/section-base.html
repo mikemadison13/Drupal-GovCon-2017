@@ -216,7 +216,7 @@ to an HTML element, these styles will be the ones displayed.</p>
           </details>
               
               <div class="kss-source kss-style">
-          Source: <code>base/_base.scss</code>, line 121
+          Source: <code>base/_base.scss</code>, line 116
         </div>
           </section>
           <section id="kssref-base-headlines" class="kss-section kss-section--depth-2 ">
@@ -293,13 +293,18 @@ to an HTML element, these styles will be the ones displayed.</p>
 
           
           <div class="kss-modifier__example">
-            <h1>I am a H1 tag</h1>
+            <h1>This is Heading 1</h1>
 
-<h2>I am a H2 tag</h2>
+<h2>This is Heading 2</h2>
 
-<h3>I am a H3 tag</h3>
+<h3>This is Heading 3</h3>
 
-<h4>I am a H4 tag</h4>
+<h4>This is Heading 4</h4>
+
+<h5>This is Heading 5</h5>
+
+<h6>This is Heading 6</h6>
+
             <div class="kss-modifier__example-footer"></div>
           </div>
 
@@ -308,17 +313,22 @@ to an HTML element, these styles will be the ones displayed.</p>
             <summary>
                               Markup: <code>base/headlines.twig</code>
                           </summary>
-            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;h1&gt;I am a H1 tag&lt;/h1&gt;
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;h1&gt;This is Heading 1&lt;/h1&gt;
 
-&lt;h2&gt;I am a H2 tag&lt;/h2&gt;
+&lt;h2&gt;This is Heading 2&lt;/h2&gt;
 
-&lt;h3&gt;I am a H3 tag&lt;/h3&gt;
+&lt;h3&gt;This is Heading 3&lt;/h3&gt;
 
-&lt;h4&gt;I am a H4 tag&lt;/h4&gt;</code></pre>
+&lt;h4&gt;This is Heading 4&lt;/h4&gt;
+
+&lt;h5&gt;This is Heading 5&lt;/h5&gt;
+
+&lt;h6&gt;This is Heading 6&lt;/h6&gt;
+</code></pre>
           </details>
               
               <div class="kss-source kss-style">
-          Source: <code>base/_base.scss</code>, line 38
+          Source: <code>base/_base.scss</code>, line 48
         </div>
           </section>
           <section id="kssref-base-lists" class="kss-section kss-section--depth-2 ">
@@ -399,18 +409,7 @@ to an HTML element, these styles will be the ones displayed.</p>
 <ol>
   <li>List Item 1</li>
   <li>List Item 2</li>
-  <li>List Item 3
-    <ol>
-      <li>List Item 3.1</li>
-      <li>List Item 3.2
-        <ol>
-          <li>List Item 3.2.1</li>
-          <li>List Item 3.2 2</li>
-        </ol>
-      </li>
-      <li>List Item 3.3</li>
-    </ol>
-  </li>
+  <li>List Item 3</li>
   <li>List Item 4</li>
 </ol>
 <hr />
@@ -418,18 +417,7 @@ to an HTML element, these styles will be the ones displayed.</p>
 <ul>
   <li>List Item 1</li>
   <li>List Item 2</li>
-  <li>List Item 3
-    <ul>
-      <li>List Item 3.1</li>
-      <li>List Item 3.2
-        <ul>
-          <li>List Item 3.2.1</li>
-          <li>List Item 3.2 2</li>
-        </ul>
-      </li>
-      <li>List Item 3.3</li>
-    </ul>
-  </li>
+  <li>List Item 3</li>
   <li>List Item 4</li>
 </ul>
 
@@ -445,18 +433,7 @@ to an HTML element, these styles will be the ones displayed.</p>
 &lt;ol&gt;
   &lt;li&gt;List Item 1&lt;/li&gt;
   &lt;li&gt;List Item 2&lt;/li&gt;
-  &lt;li&gt;List Item 3
-    &lt;ol&gt;
-      &lt;li&gt;List Item 3.1&lt;/li&gt;
-      &lt;li&gt;List Item 3.2
-        &lt;ol&gt;
-          &lt;li&gt;List Item 3.2.1&lt;/li&gt;
-          &lt;li&gt;List Item 3.2 2&lt;/li&gt;
-        &lt;/ol&gt;
-      &lt;/li&gt;
-      &lt;li&gt;List Item 3.3&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
+  &lt;li&gt;List Item 3&lt;/li&gt;
   &lt;li&gt;List Item 4&lt;/li&gt;
 &lt;/ol&gt;
 &lt;hr /&gt;
@@ -464,25 +441,14 @@ to an HTML element, these styles will be the ones displayed.</p>
 &lt;ul&gt;
   &lt;li&gt;List Item 1&lt;/li&gt;
   &lt;li&gt;List Item 2&lt;/li&gt;
-  &lt;li&gt;List Item 3
-    &lt;ul&gt;
-      &lt;li&gt;List Item 3.1&lt;/li&gt;
-      &lt;li&gt;List Item 3.2
-        &lt;ul&gt;
-          &lt;li&gt;List Item 3.2.1&lt;/li&gt;
-          &lt;li&gt;List Item 3.2 2&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;List Item 3.3&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
+  &lt;li&gt;List Item 3&lt;/li&gt;
   &lt;li&gt;List Item 4&lt;/li&gt;
 &lt;/ul&gt;
 </code></pre>
           </details>
               
               <div class="kss-source kss-style">
-          Source: <code>base/_base.scss</code>, line 148
+          Source: <code>base/_base.scss</code>, line 143
         </div>
           </section>
           <section id="kssref-base-table" class="kss-section kss-section--depth-2 ">
@@ -622,7 +588,7 @@ to an HTML element, these styles will be the ones displayed.</p>
           </details>
               
               <div class="kss-source kss-style">
-          Source: <code>base/_base.scss</code>, line 191
+          Source: <code>base/_base.scss</code>, line 151
         </div>
           </section>
           <section id="kssref-base-text" class="kss-section kss-section--depth-2 ">
@@ -730,7 +696,7 @@ to an HTML element, these styles will be the ones displayed.</p>
           </details>
               
               <div class="kss-source kss-style">
-          Source: <code>base/_base.scss</code>, line 91
+          Source: <code>base/_base.scss</code>, line 90
         </div>
           </section>
   </article>
