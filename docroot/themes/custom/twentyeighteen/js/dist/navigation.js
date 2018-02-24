@@ -129,6 +129,7 @@ if (mainMenu.lastElementChild.querySelector('.menu-submenu') === null) {
 }
 
 var toggleButton = document.getElementById('show-menu');
+var userMenu = document.querySelector('.menu--account');
 
 /**
  * Overrides "checkmark" behavior so that you can use the enter key to toggle the mobile menu.
@@ -139,9 +140,19 @@ toggleButton.addEventListener("keyup", function (event) {
   if (event.keyCode === 13 || event.keyCode === 32) {
     if (toggleButton.checked === false) {
       toggleButton.checked = true;
+      userMenu.classList.add('menu--account--show');
     } else {
       toggleButton.checked = false;
+      userMenu.classList.remove('menu--account--show');
     }
+  }
+});
+
+toggleButton.addEventListener("click", function () {
+  if (toggleButton.checked === true) {
+    userMenu.classList.add('menu--account--show');
+  } else {
+    userMenu.classList.remove('menu--account--show');
   }
 });
 
