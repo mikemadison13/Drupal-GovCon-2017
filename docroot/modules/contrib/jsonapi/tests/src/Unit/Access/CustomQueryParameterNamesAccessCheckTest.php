@@ -8,10 +8,14 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @coversDefaultClass \Drupal\jsonapi\Access\CustomQueryParameterNamesAccessCheck
  * @group jsonapi
+ *
+ * @internal
  */
 class CustomQueryParameterNamesAccessCheckTest extends \PHPUnit_Framework_TestCase {
 
   /**
+   * Ensures that query params are properly validated.
+   *
    * @dataProvider providerTestAccess
    * @covers ::access
    * @covers ::validate
@@ -31,6 +35,9 @@ class CustomQueryParameterNamesAccessCheckTest extends \PHPUnit_Framework_TestCa
     }
   }
 
+  /**
+   * Data provider for testAccess.
+   */
   public function providerTestAccess() {
     $data = [];
 

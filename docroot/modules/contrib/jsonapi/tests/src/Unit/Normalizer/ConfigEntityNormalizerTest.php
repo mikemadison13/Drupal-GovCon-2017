@@ -8,14 +8,14 @@ use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepository;
 use Drupal\jsonapi\Normalizer\ConfigEntityNormalizer;
 use Drupal\jsonapi\LinkManager\LinkManager;
-use Drupal\jsonapi\Normalizer\ScalarNormalizer;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * @coversDefaultClass \Drupal\jsonapi\Normalizer\ConfigEntityNormalizer
  * @group jsonapi
+ *
+ * @internal
  */
 class ConfigEntityNormalizerTest extends UnitTestCase {
 
@@ -41,10 +41,6 @@ class ConfigEntityNormalizerTest extends UnitTestCase {
       $resource_type_repository->reveal(),
       $this->prophesize(EntityTypeManagerInterface::class)->reveal()
     );
-
-    $normalizers = [new ScalarNormalizer()];
-    $serializer = new Serializer($normalizers, []);
-    $this->normalizer->setSerializer($serializer);
   }
 
   /**

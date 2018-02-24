@@ -6,9 +6,10 @@ use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\jsonapi\Context\CurrentContext;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepository;
-use Drupal\jsonapi\Routing\Param\Filter;
-use Drupal\jsonapi\Routing\Param\Sort;
-use Drupal\jsonapi\Routing\Param\OffsetPage;
+use Drupal\jsonapi\Query\EntityConditionGroup;
+use Drupal\jsonapi\Query\Filter;
+use Drupal\jsonapi\Query\Sort;
+use Drupal\jsonapi\Query\OffsetPage;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -20,6 +21,8 @@ use Symfony\Component\Routing\Route;
 /**
  * @coversDefaultClass \Drupal\jsonapi\Context\CurrentContext
  * @group jsonapi
+ *
+ * @internal
  */
 class CurrentContextTest extends UnitTestCase {
 
@@ -38,13 +41,6 @@ class CurrentContextTest extends UnitTestCase {
   protected $resourceTypeRepository;
 
   /**
-   * A mock for the entity field manager.
-   *
-   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
-   */
-  protected $fieldManager;
-
-  /**
    * A request stack.
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
@@ -52,6 +48,8 @@ class CurrentContextTest extends UnitTestCase {
   protected $requestStack;
 
   /**
+   * The route matcher service.
+   *
    * @var \Drupal\Core\Routing\StackedRouteMatchInterface
    */
   protected $routeMatcher;
@@ -79,9 +77,9 @@ class CurrentContextTest extends UnitTestCase {
     $this->requestStack = new RequestStack();
     $this->requestStack->push(new Request([], [], [
       '_json_api_params' => [
-        'filter' => new Filter([], 'node', $this->fieldManager),
+        'filter' => new Filter(new EntityConditionGroup('AND', [])),
         'sort' => new Sort([]),
-        'page' => new OffsetPage([]),
+        'page' => new OffsetPage(OffsetPage::DEFAULT_OFFSET, OffsetPage::SIZE_MAX),
         // 'include' => new IncludeParam([]),
         // 'fields' => new Fields([]),.
       ],
@@ -109,10 +107,9 @@ class CurrentContextTest extends UnitTestCase {
   public function testGetJsonApiParameter() {
     $request_context = new CurrentContext($this->resourceTypeRepository, $this->requestStack, $this->routeMatcher);
 
-    $expected = new Sort([]);
     $actual = $request_context->getJsonApiParameter('sort');
 
-    $this->assertEquals($expected, $actual);
+    $this->assertTrue($actual instanceof Sort);
   }
 
   /**

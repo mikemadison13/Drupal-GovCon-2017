@@ -3,33 +3,37 @@
 namespace Drupal\jsonapi;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\jsonapi\Resource\JsonApiDocumentTopLevel;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
+use Drupal\jsonapi\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * Simplifies the process of generating a JSON API version of an entity.
+ *
+ * @api
  */
 class EntityToJsonApi {
 
   /**
    * The currently logged in user.
    *
-   * @var \Drupal\Core\Session\AccountProxyInterface
+   * @var \Drupal\Core\Session\AccountInterface
    */
   protected $currentUser;
 
   /**
    * Serializer object.
    *
-   * @var \Symfony\Component\Serializer\Serializer
+   * @var \Drupal\jsonapi\Serializer\Serializer
    */
   protected $serializer;
 
   /**
+   * The JSON API resource type repository.
+   *
    * @var \Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface
    */
   protected $resourceTypeRepository;
@@ -37,12 +41,14 @@ class EntityToJsonApi {
   /**
    * EntityToJsonApi constructor.
    *
-   * @param \Symfony\Component\Serializer\Serializer $serializer
+   * @param \Drupal\jsonapi\Serializer\Serializer $serializer
    *   The serializer.
-   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   * @param \Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface $resource_type_repository
+   *   The resource type repository.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The currently logged in user.
    */
-  public function __construct(Serializer $serializer, ResourceTypeRepositoryInterface $resource_type_repository, AccountProxyInterface $current_user) {
+  public function __construct(Serializer $serializer, ResourceTypeRepositoryInterface $resource_type_repository, AccountInterface $current_user) {
     $this->serializer = $serializer;
     $this->resourceTypeRepository = $resource_type_repository;
     $this->currentUser = $current_user;
@@ -92,7 +98,8 @@ class EntityToJsonApi {
    */
   protected function calculateContext(EntityInterface $entity) {
     // TODO: Supporting includes requires adding the 'include' query string.
-    $request = new Request();
+    $path = sprintf('/jsonapi/%s/%s/%s', $entity->getEntityTypeId(), $entity->bundle(), $entity->uuid());
+    $request = Request::create($path, 'GET');
     return [
       'account' => $this->currentUser,
       'cacheable_metadata' => new CacheableMetadata(),

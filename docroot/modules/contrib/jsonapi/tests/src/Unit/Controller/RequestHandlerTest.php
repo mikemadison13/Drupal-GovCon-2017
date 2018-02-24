@@ -16,6 +16,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * @coversDefaultClass \Drupal\jsonapi\Controller\RequestHandler
  * @group jsonapi
+ *
+ * @internal
  */
 class RequestHandlerTest extends UnitTestCase {
 
@@ -30,7 +32,7 @@ class RequestHandlerTest extends UnitTestCase {
     $request = $this->prophesize(Request::class);
     $request->getContentType()->willReturn(NULL);
     $request->getContent()->willReturn('this is not used');
-    $request->isMethodSafe()->willReturn(FALSE);
+    $request->isMethodCacheable()->willReturn(FALSE);
     $request->getMethod()->willReturn(NULL);
     $request->get(Argument::any())->willReturn(NULL);
     $request->getMimeType(Argument::any())->willReturn(NULL);

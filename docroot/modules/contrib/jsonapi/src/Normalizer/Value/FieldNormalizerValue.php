@@ -5,6 +5,8 @@ namespace Drupal\jsonapi\Normalizer\Value;
 use Drupal\Core\Cache\RefinableCacheableDependencyTrait;
 
 /**
+ * Helps normalize fields in compliance with the JSON API spec.
+ *
  * @internal
  */
 class FieldNormalizerValue implements FieldNormalizerValueInterface {
@@ -14,21 +16,21 @@ class FieldNormalizerValue implements FieldNormalizerValueInterface {
   /**
    * The values.
    *
-   * @param array
+   * @var array
    */
   protected $values;
 
   /**
    * The includes.
    *
-   * @param array
+   * @var array
    */
   protected $includes;
 
   /**
    * The field cardinality.
    *
-   * @param integer
+   * @var int
    */
   protected $cardinality;
 
@@ -50,6 +52,9 @@ class FieldNormalizerValue implements FieldNormalizerValueInterface {
   public function __construct(array $values, $cardinality) {
     $this->values = $values;
     $this->includes = array_map(function ($value) {
+      if (!$value instanceof FieldItemNormalizerValue) {
+        return new NullFieldNormalizerValue();
+      }
       return $value->getInclude();
     }, $values);
     $this->includes = array_filter($this->includes);
@@ -63,11 +68,16 @@ class FieldNormalizerValue implements FieldNormalizerValueInterface {
     if (empty($this->values)) {
       return NULL;
     }
-    return $this->cardinality == 1 ?
-      $this->values[0]->rasterizeValue() :
-      array_map(function ($value) {
-        return $value->rasterizeValue();
-      }, $this->values);
+
+    if ($this->cardinality == 1) {
+      assert(count($this->values) === 1);
+      return $this->values[0] instanceof FieldItemNormalizerValue
+        ? $this->values[0]->rasterizeValue() : NULL;
+    }
+
+    return array_map(function ($value) {
+      return $value instanceof FieldItemNormalizerValue ? $value->rasterizeValue() : NULL;
+    }, $this->values);
   }
 
   /**
@@ -103,7 +113,7 @@ class FieldNormalizerValue implements FieldNormalizerValueInterface {
   /**
    * {@inheritdoc}
    */
-  public function setIncludes($includes) {
+  public function setIncludes(array $includes) {
     $this->includes = $includes;
   }
 

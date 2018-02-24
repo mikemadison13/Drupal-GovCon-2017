@@ -8,6 +8,8 @@ use Drupal\Core\Cache\RefinableCacheableDependencyTrait;
 use Drupal\jsonapi\JsonApiSpec;
 
 /**
+ * Helps normalize the top level document in compliance with the JSON API spec.
+ *
  * @internal
  */
 class JsonApiDocumentTopLevelNormalizerValue implements ValueExtractorInterface, RefinableCacheableDependencyInterface {
@@ -17,28 +19,28 @@ class JsonApiDocumentTopLevelNormalizerValue implements ValueExtractorInterface,
   /**
    * The values.
    *
-   * @param array
+   * @var array
    */
   protected $values;
 
   /**
    * The includes.
    *
-   * @param array
+   * @var array
    */
   protected $includes;
 
   /**
    * The resource path.
    *
-   * @param array
+   * @var array
    */
   protected $context;
 
   /**
    * Is collection?
    *
-   * @param bool
+   * @var bool
    */
   protected $isCollection;
 
@@ -64,13 +66,13 @@ class JsonApiDocumentTopLevelNormalizerValue implements ValueExtractorInterface,
    *   collection of entities.
    * @param array $context
    *   The context.
-   * @param bool $is_collection
-   *   TRUE if this is a serialization for a list.
    * @param array $link_context
    *   All the objects and variables needed to generate the links for this
    *   relationship.
+   * @param bool $is_collection
+   *   TRUE if this is a serialization for a list.
    */
-  public function __construct(array $values, array $context, $is_collection = FALSE, array $link_context) {
+  public function __construct(array $values, array $context, array $link_context, $is_collection = FALSE) {
     $this->values = $values;
     array_walk($values, [$this, 'addCacheableDependency']);
     // Make sure that different sparse fieldsets are cached differently.
@@ -102,13 +104,24 @@ class JsonApiDocumentTopLevelNormalizerValue implements ValueExtractorInterface,
    */
   public function rasterizeValue() {
     // Create the array of normalized fields, starting with the URI.
-    $rasterized = ['data' => []];
+    $rasterized = [
+      'data' => [],
+      'jsonapi' => [
+        'version' => JsonApiSpec::SUPPORTED_SPECIFICATION_VERSION,
+        'meta' => [
+          'links' => ['self' => JsonApiSpec::SUPPORTED_SPECIFICATION_PERMALINK],
+        ],
+      ],
+    ];
 
-    foreach ($this->values as $normalizer_value) {
-      if ($normalizer_value instanceof HttpExceptionNormalizerValue) {
+    foreach ($this->values as $index => $normalizer_value) {
+      if ($normalizer_value instanceof EntityAccessDeniedHttpExceptionNormalizerValue) {
         $previous_errors = NestedArray::getValue($rasterized, ['meta', 'errors']) ?: [];
         // Add the errors to the pre-existing errors.
-        $rasterized['meta']['errors'] = array_merge($previous_errors, $normalizer_value->rasterizeValue());
+        $rasterized_value = $normalizer_value->rasterizeValue();
+        $rasterized_value[0]['source']['pointer'] = "/data/{$index}";
+        $rasterized['meta']['errors'] = array_merge($previous_errors, $rasterized_value);
+        $rasterized['data'][] = $normalizer_value->rasterizeResourceIdentifier();
       }
       else {
         $rasterized['data'][] = $normalizer_value->rasterizeValue();
@@ -158,9 +171,7 @@ class JsonApiDocumentTopLevelNormalizerValue implements ValueExtractorInterface,
     return array_values(array_reduce($includes, function ($unique_includes, $include) {
       $rasterized_include = $include->rasterizeValue();
 
-      $unique_key = $rasterized_include['data'] === FALSE ?
-        $rasterized_include['meta']['errors'][0]['detail'] :
-        $rasterized_include['data']['type'] . ':' . $rasterized_include['data']['id'];
+      $unique_key = $rasterized_include['data']['type'] . ':' . $rasterized_include['data']['id'];
       $unique_includes[$unique_key] = $include;
       return $unique_includes;
     }, []));

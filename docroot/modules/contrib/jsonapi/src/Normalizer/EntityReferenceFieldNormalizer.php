@@ -3,6 +3,7 @@
 namespace Drupal\jsonapi\Normalizer;
 
 use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldTypePluginManagerInterface;
@@ -15,6 +16,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Normalizer class specific for entity reference field objects.
+ *
+ * @internal
  */
 class EntityReferenceFieldNormalizer extends FieldNormalizer implements DenormalizerInterface {
 
@@ -26,21 +29,21 @@ class EntityReferenceFieldNormalizer extends FieldNormalizer implements Denormal
   /**
    * The link manager.
    *
-   * @param \Drupal\jsonapi\LinkManager\LinkManager
+   * @var \Drupal\jsonapi\LinkManager\LinkManager
    */
   protected $linkManager;
 
   /**
    * The entity field manager.
    *
-   * @param \Drupal\Core\Entity\EntityFieldManagerInterface
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected $fieldManager;
 
   /**
    * The field plugin manager.
    *
-   * @param \Drupal\Core\Field\FieldTypePluginManagerInterface
+   * @var \Drupal\Core\Field\FieldTypePluginManagerInterface
    */
   protected $pluginManager;
 
@@ -105,11 +108,16 @@ class EntityReferenceFieldNormalizer extends FieldNormalizer implements Denormal
 
       // Get the referenced entity.
       $entity = $item->get('entity')->getValue();
+
+      if ($this->isInternalResourceType($entity)) {
+        continue;
+      }
+
       // And get the translation in the requested language.
       $entity_list[] = $this->entityRepository->getTranslationFromContext($entity);
     }
     $entity_collection = new EntityCollection($entity_list);
-    $relationship = new Relationship($this->resourceTypeRepository, $field->getName(), $cardinality, $entity_collection, $field->getEntity(), $main_property, $entity_list_metadata);
+    $relationship = new Relationship($this->resourceTypeRepository, $field->getName(), $entity_collection, $field->getEntity(), $cardinality, $main_property, $entity_list_metadata);
     return $this->serializer->normalize($relationship, $format, $context);
   }
 
@@ -202,6 +210,22 @@ class EntityReferenceFieldNormalizer extends FieldNormalizer implements Denormal
       $data['data'] = [$data['data']];
     }
     return $data;
+  }
+
+  /**
+   * Determines if the given entity is of an internal resource type.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity for which to check the internal status.
+   *
+   * @return bool
+   *   TRUE if the entity's resource type is internal, FALSE otherwise.
+   */
+  protected function isInternalResourceType(EntityInterface $entity) {
+    return ($resource_type = $this->resourceTypeRepository->get(
+      $entity->getEntityTypeId(),
+      $entity->bundle()
+    )) && $resource_type->isInternal();
   }
 
   /**
