@@ -186,7 +186,18 @@ function gardens_site_data_refresh_domains(array $domains) {
   $json_read_failure = FALSE;
   foreach ($domains as $domain) {
     $domain = trim($domain);
-    // Shell out to grep to find the relevant line of the json file.
+    // Below code expects the JSON file to contain newlines such that
+    // - all data except the 'sites' data and the closing brace are on the first
+    //   line;
+    // - all data for a key/value pair representing one single site, on a single
+    //   line. (See below for example.)
+    // This way we can isolate data for one site by performing a grep command,
+    // which is much quicker than reading all data into one JSON object. The
+    // code is built to keep working if the formatting changes by accident; it
+    // will just be much slower. Also, our grep command does not assume that the
+    // key for a site is included in double quotes (apparently for fear of
+    // having a file in illegal JSON format, which does not double-quote its
+    // object keys...) so we may hit false positives.
     exec(sprintf("grep %s %s --no-filename --color=never --context=0", escapeshellarg($domain), escapeshellarg($location)), $output_array, $exit_code);
     $result = trim(implode("\n", $output_array));
 
@@ -202,15 +213,13 @@ function gardens_site_data_refresh_domains(array $domains) {
     else {
       // $result is in the form of
       // "example.com": {"name": "g123", "flags": {}},
-      // (with or without the trailing comma).  Due to the fact that the above
-      // grep command is quite greedy, we need to be prepared for the fact that
-      // we may get more than 1 line returned from the command.  The "m"
-      // (multiline) modifier is used in the following regular expression
-      // so that the begin and end anchors can match the beginning and end of
-      // any one of those lines, rather than having to match the entire string
-      // from beginning to end (which fails if there is more than 1 line of
-      // results).  More than one line can typically be returned if the
-      // searched-for site domain is a substring of another site domain.
+      // (with or without the trailing comma).  Since we didn't include quotes,
+      // we may have more than 1 line returned from the grep command, typically
+      // if the searched-for site domain is a substring of another site domain.
+      // The "m" (multiline) modifier is used in the regular expression so that
+      // the begin and end anchors can match the beginning and end of any one of
+      // those lines, rather than having to match the entire string from
+      // beginning to end (which fails if there is more than 1 line of results).
       $matches = array();
       $pattern = '@^\s*"' . preg_quote($domain, '@') . '": ({.+}),?$@m';
       if (preg_match($pattern, $result, $matches)) {
@@ -230,7 +239,7 @@ function gardens_site_data_refresh_domains(array $domains) {
         // This will happen if the domain appears in the JSON file, but the
         // format of the file has changed such that the grep-based single-line
         // parsing no longer works.
-        if (class_exists('Drupal') && \Drupal::hasContainer()) {
+        if (class_exists('Drupal') && \Drupal::hasService('logger.factory')) {
           \Drupal::logger('acsf')->alert('Unable to extract site data for site @site from sites.json line "@line".', array('@site' => $domain, '@line' => $result));
         }
         elseif (function_exists('syslog')) {
@@ -241,9 +250,10 @@ function gardens_site_data_refresh_domains(array $domains) {
             $data[$domain] = gardens_site_data_build_data($map['sites'][$domain], $map);
           }
           else {
+            // The domain isn't actually present; apparently $domain is a
+            // substring of the domain(s) matched by grep. (Or, who knows: the
+            // string might appear somewhere else on the line than the 'key'.)
             $data[$domain] = 0;
-            // 'Read failure' is a missing domain; the file as a whole is OK.
-            $json_read_failure = $domain;
           }
         }
         else {
@@ -267,8 +277,7 @@ function gardens_site_data_refresh_domains(array $domains) {
       if (function_exists('drupal_register_shutdown_function')) {
         // Since reporting involves contacting the Site Factory it should be
         // done in a way that does not affect pageload.
-        $reported_domain = $json_read_failure === TRUE ? '' : $json_read_failure;
-        drupal_register_shutdown_function('gardens_site_data_json_alert_flag_set', $reported_domain);
+        drupal_register_shutdown_function('gardens_site_data_json_alert_flag_set');
       }
       // Bail to prevent repeated failures.
       break;
@@ -327,15 +336,11 @@ function gardens_site_data_cache_get($domain) {
  * to doublecheck the exact type of issue / doublecheck for a race condition,
  * after an issue was initially detected outside this function.
  *
- * @param string $domain
- *   Domain name, if the issue was found for one specific domain only. This
- *   implies that the file as a whole could be read/decoded.
- *
  * @return string
  *   Type of issue encountered. Empty string means the sites.json file is OK
  *   (or is missing, which is also OK).
  */
-function gardens_site_data_sites_json_issue_type_get($domain = '') {
+function gardens_site_data_sites_json_issue_type_get() {
   $issue_type = '';
   $sites_json_path = gardens_site_data_get_filepath();
   // If sites.json is missing completely then this script is being executed
@@ -362,12 +367,13 @@ function gardens_site_data_sites_json_issue_type_get($domain = '') {
         $issue_type = 'gluster_split_brain';
       }
     }
-    // Check if the file's contents are invalid JSON. Both 'missing site data'
-    // and 'invalid JSON string' get the same issue type.
+    // Check for invalid JSON data. We treat empty file as invalid too here,
+    // because it doesn't matter much. It's not consistent with the initial
+    // check, though. (An empty file does not cause
+    // gardens_site_data_json_alert_flag_set() to be called.)
     if (!$issue_type) {
       $map = gardens_site_data_load_file();
-      $issue = $domain ? empty($map['sites'][$domain]) : !$map;
-      if ($issue) {
+      if (!$map) {
         $issue_type = 'invalid_json_data';
       }
     }
@@ -388,12 +394,8 @@ function gardens_site_data_sites_json_issue_type_get($domain = '') {
  * written to), the function will always return empty string, and no logging/
  * alerting is done at all. We basically have a choice between this and flooding
  * watchdog/syslog/the factory with alerts.
- *
- * @param string $domain
- *   Domain name, if the issue was found for one specific domain only. This
- *   implies that the file as a whole could be read/decoded.
  */
-function gardens_site_data_json_alert_flag_set($domain = '') {
+function gardens_site_data_json_alert_flag_set() {
   $lock_file = sprintf(GARDENS_SITE_JSON_ALERT_LOCK_TEMPLATE, $_ENV['AH_SITE_GROUP'], $_ENV['AH_SITE_ENVIRONMENT']);
 
   if (!file_exists($lock_file)) {
@@ -411,7 +413,7 @@ function gardens_site_data_json_alert_flag_set($domain = '') {
         // would result in a superfluous alert being sent out at that time. To
         // prevent this, we repeat the check. (We often would need to do this
         // check anyway, somewhere, if we did not know the issue type yet.)
-        $issue_type = gardens_site_data_sites_json_issue_type_get($domain);
+        $issue_type = gardens_site_data_sites_json_issue_type_get();
 
         // Send the alert to the Site Factory.
         $alert_sent = FALSE;

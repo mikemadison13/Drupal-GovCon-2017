@@ -63,6 +63,30 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
+    $form['submission_settings']['default_submission_login_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Default login message when access denied to submission'),
+      '#required' => TRUE,
+      '#default_value' => $settings['default_submission_login_message'],
+    ];
+    $form['submission_settings']['default_submission_exception_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Default exception message'),
+      '#required' => TRUE,
+      '#default_value' => $settings['default_submission_exception_message'],
+    ];
+    $form['submission_settings']['default_submission_locked_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Default locked message'),
+      '#required' => TRUE,
+      '#default_value' => $settings['default_submission_locked_message'],
+    ];
+    $form['submission_settings']['default_autofill_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Default autofill message'),
+      '#description' => $this->t('Leave blank to not display a message when a form is autofilled.'),
+      '#default_value' => $settings['default_autofill_message'],
+    ];
     $form['submission_settings']['default_submission_label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Default submission label'),
@@ -148,5 +172,5 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
 
     parent::submitForm($form, $form_state);
   }
-  
+
 }

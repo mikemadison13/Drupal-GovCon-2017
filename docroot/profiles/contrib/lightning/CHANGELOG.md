@@ -1,3 +1,51 @@
+## 2.2.8
+* Drupal core has been updated to 8.4.5.
+* JSON API has been updated to 1.10.0.
+
+## 2.2.7
+* Drupal Core has been updated to 8.4.4 (Issue #2934239)
+
+## 2.2.6
+* Fixed a problem that caused errors when placing blocks that contained date
+  fields via IPE. (Issue #2825028)
+* Fixed a problem with CKEditor caused by a bug in the new Lightning Scheduler.
+  (Issue #2929997)
+* Lightning and Lightning Project no longer override the default location of
+  Composer's "bin" directory. (Issue #2927504)
+* Made the Moderation History view compatible with Content Moderation.
+  (Issue #2930288)
+* Added a Console command that will return the current version of Lightning in
+  SemVer format. (GitHub #543)
+* Upadated the following modules:
+  * DropzoneJS
+  * Media Entity (Only used by sites that have not migrated to core Media.)
+  * JSON API
+  * Simple OAuth
+  * Video Embed Field
+
+## 2.2.5
+* The `since` option used with the `update:lightning` console command has
+  been converted to an argument and is now required. See
+  "Automated configuration updates" in the UPDATE.md file for more information.
+* Drupal core has been updated to 8.4.3. (Issue #2929035)
+* Security updated Configuration Update Manager module to 8.x-1.5.
+  (SA-CONTRIB-2017-091)
+
+## 2.2.4
+* Lightning Workflow has been updated to use core Workflows and Content
+  moderation modules and existing sites will be migrated. (Issue #2863059)
+* Added a new Scheduled Publications sub-component of Lightning Workflow which
+  replaces Scheduled Updates (which is incompatible with Content Moderation).
+* Fixed a bug where media names appeared in view modes where they had previously
+  been hidden after updating to core Media. (GitHub #521)
+* Crop API was updated to 2.x. (GitHub #519)
+* Media Entity was updated to 2.x. (Issue #2927823)
+* DropzoneJS was updated to 2.x (GitHub #528)
+* Fixed a bug where it was possible that old, irrelevant configuration updates
+  (see UPDATE.md) could be run. (GitHub #531)
+* Fixed a bug where Lightning's media browser enhancements could not be used on
+  any other view, including clones of the media browser. (Issue #2905876)
+
 ## 2.2.3
 * Updated to and require a minimum of Drupal Core 8.4.1.
 

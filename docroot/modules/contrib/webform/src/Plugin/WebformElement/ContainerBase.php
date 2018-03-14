@@ -35,6 +35,15 @@ abstract class ContainerBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
+  protected function getDefaultBaseProperties() {
+    $properties = parent::getDefaultBaseProperties();
+    unset($properties['prepopulate']);
+    return $properties;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isInput(array $element) {
     return FALSE;
   }
@@ -55,7 +64,10 @@ abstract class ContainerBase extends WebformElementBase {
     // Containers can only hide (aka invisible) the title by removing the
     // #title attribute.
     // @see core/modules/system/templates/fieldset.html.twig
-    if (isset($element['#title_display']) && $element['#title_display'] === 'invisible') {
+    // @see core/modules/system/templates/details.html.twig
+    if (isset($element['#title_display'])
+      && $element['#title_display'] === 'invisible'
+      && ($this instanceof Fieldset || $this instanceof Details)) {
       unset($element['#title']);
     }
   }
@@ -236,7 +248,6 @@ abstract class ContainerBase extends WebformElementBase {
     // @see fieldset.html.twig
     // @see webform-section.html.twig
     $form['form']['display_container']['title_display']['#options'] = [
-      '' => '',
       'invisible' => $this->t('Invisible'),
     ];
 

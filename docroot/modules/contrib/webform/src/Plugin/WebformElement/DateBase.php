@@ -9,6 +9,7 @@ use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Plugin\WebformElementBase;
 use Drupal\webform\WebformSubmissionInterface;
+use Drupal\webform\WebformInterface;
 
 /**
  * Provides a base 'date' class.
@@ -92,7 +93,7 @@ abstract class DateBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function formatTextItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+  protected function formatTextItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
     $value = $this->getValue($element, $webform_submission, $options);
 
     $timestamp = strtotime($value);
@@ -100,8 +101,8 @@ abstract class DateBase extends WebformElementBase {
       return $value;
     }
 
-    $format = $this->getItemFormat($element) ?: 'html_' . $this->getDateType($element);
-    if ($format == 'raw') {
+    $format = $this->getItemFormat($element);
+    if ($format === 'raw') {
       return $value;
     }
     elseif (DateFormat::load($format)) {
@@ -109,18 +110,6 @@ abstract class DateBase extends WebformElementBase {
     }
     else {
       return date($format, $timestamp);
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getItemFormat(array $element) {
-    if (isset($element['#format'])) {
-      return $element['#format'];
-    }
-    else {
-      return parent::getItemFormat($element);
     }
   }
 
@@ -347,6 +336,7 @@ abstract class DateBase extends WebformElementBase {
       if (!isset($input['object'])) {
         $input = $date_class::valueCallback($element, $input, $form_state);
         $form_state->setValueForElement($element, $input);
+        $element['#value'] = $input;
       }
     }
   }
@@ -396,7 +386,7 @@ abstract class DateBase extends WebformElementBase {
 
     // Ensure that the input is greater than the #min property, if set.
     if (isset($element['#min'])) {
-      $min = strtotime($element['#min']);
+      $min = strtotime(date('Y-m-d', strtotime($element['#min'])));
       if ($time < $min) {
         $form_state->setError($element, t('%name must be on or after %min.', [
           '%name' => $name,
@@ -407,7 +397,7 @@ abstract class DateBase extends WebformElementBase {
 
     // Ensure that the input is less than the #max property, if set.
     if (isset($element['#max'])) {
-      $max = strtotime($element['#max']);
+      $max = strtotime(date('Y-m-d', strtotime($element['#max'])));
       if ($time > $max) {
         $form_state->setError($element, t('%name must be on or before %max.', [
           '%name' => $name,
@@ -415,6 +405,16 @@ abstract class DateBase extends WebformElementBase {
         ]));
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTestValues(array $element, WebformInterface $webform, array $options = []) {
+    $format = DateFormat::load('html_datetime')->getPattern();
+    $min = !empty($element['#min']) ? strtotime($element['#min']) : strtotime('-10 years');
+    $max = !empty($element['#max']) ? strtotime($element['#max']) : max($min, strtotime('+20 years') ?: PHP_INT_MAX);
+    return date($format, rand($min, $max));
   }
 
 }

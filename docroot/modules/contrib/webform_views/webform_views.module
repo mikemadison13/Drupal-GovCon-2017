@@ -55,6 +55,9 @@ function webform_views_webform_element_info_alter(array &$elements) {
     if (is_subclass_of($v['class'], \Drupal\webform\Plugin\WebformElement\WebformManagedFileBase::class, TRUE)) {
       $views_handler = \Drupal\webform_views\WebformElementViews\WebformManagedFileViews::class;
     }
+    elseif (is_subclass_of($v['class'], \Drupal\webform\Plugin\WebformElement\WebformCompositeBase::class)) {
+      $views_handler = \Drupal\webform_views\WebformElementViews\WebformCompositeViews::class;
+    }
 
     switch ($k) {
       case 'select':
@@ -65,12 +68,20 @@ function webform_views_webform_element_info_alter(array &$elements) {
         $views_handler = \Drupal\webform_views\WebformElementViews\WebformCheckboxViews::class;
         break;
 
+      case 'radios':
+        $views_handler = \Drupal\webform_views\WebformElementViews\WebformRadiosViews::class;
+        break;
+
       case 'date':
         $views_handler = \Drupal\webform_views\WebformElementViews\WebformDateViews::class;
         break;
 
       case 'number':
         $views_handler = \Drupal\webform_views\WebformElementViews\WebformNumericViews::class;
+        break;
+
+      case 'hidden':
+        $views_handler = \Drupal\webform_views\WebformElementViews\WebformHiddenViews::class;
         break;
 
       default:

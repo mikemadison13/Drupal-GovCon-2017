@@ -92,8 +92,18 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     $form['page_settings']['default_page_base_path'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Default base path for webform URLs'),
-      '#required' => TRUE,
+      '#description' => $this->t('Leave blank to display the automatic generation of URL aliases for all webforms.'),
       '#default_value' => $settings['default_page_base_path'],
+    ];
+    $form['page_settings']['default_page_base_path_message'] = [
+      '#type' => 'webform_message',
+      '#message_message' => $this->t('All URL aliases for all webforms have to be manually created.'),
+      '#message_type' => 'warning',
+      '#states' => [
+        'visible' => [
+          ':input[name="page_settings[default_page_base_path]"]' => ['empty' => TRUE],
+        ],
+      ],
     ];
 
     // Form settings.
@@ -126,6 +136,19 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#title' => $this->t('Default confidential message'),
       '#required' => TRUE,
       '#default_value' => $settings['default_form_confidential_message'],
+    ];
+    $form['form_settings']['default_form_login_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Default login message when access denied to webform'),
+      '#required' => TRUE,
+      '#default_value' => $settings['default_form_login_message'],
+    ];
+    $form['form_settings']['default_form_required_label'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Default required indicator label'),
+      '#required' => TRUE,
+      '#size' => 20,
+      '#default_value' => $settings['default_form_required_label'],
     ];
     $form['form_settings']['default_submit_button_label'] = [
       '#type' => 'textfield',
@@ -171,6 +194,10 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
         'title' => $this->t('Disable back button for all webforms'),
         'description' => $this->t("If checked, users will not be allowed to navigate back to the webform using the browser's back button."),
       ],
+      'default_form_submit_back' => [
+        'title' => $this->t('Submit previous page when browser back button is clicked for all webforms'),
+        'description' => $this->t("If checked, the browser back button will submit the previous page and navigate back emulating the behaviour of user clicking a wizard or preview page's back button."),
+      ],
       'default_form_unsaved' => [
         'title' => $this->t('Warn users about unsaved changes for all webforms'),
         'description' => $this->t('If checked, users will be displayed a warning message when they navigate away from a webform with unsaved changes.'),
@@ -178,6 +205,10 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       'default_form_novalidate' => [
         'title' => $this->t('Disable client-side validation for all webforms'),
         'description' => $this->t('If checked, the <a href=":href">novalidate</a> attribute, which disables client-side validation, will be added to all webforms.', [':href' => 'http://www.w3schools.com/tags/att_form_novalidate.asp']),
+      ],
+      'default_form_required' => [
+        'title' => $this->t('Display required indicator on all webforms'),
+        'description' => $this->t('If checked, a required elements indicator will be added to all webforms.'),
       ],
       'default_form_details_toggle' => [
         'title' => $this->t('Display collapse/expand all details link on all webforms'),
@@ -405,4 +436,5 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
 
     parent::submitForm($form, $form_state);
   }
+
 }

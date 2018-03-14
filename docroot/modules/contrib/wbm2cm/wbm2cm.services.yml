@@ -1,0 +1,13 @@
+services:
+  wbm2cm.workflow_collector:
+    class: '\Drupal\wbm2cm\WorkflowCollector'
+    arguments:
+      - '@entity_type.manager'
+      - '@string_translation'
+  wbm2cm.migration_controller:
+    class: '\Drupal\wbm2cm\MigrationController'
+    arguments:
+      - '@plugin.manager.migration'
+      - '@event_dispatcher'
+      - '@entity_type.manager'
+      - '@string_translation'

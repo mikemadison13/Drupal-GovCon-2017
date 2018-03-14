@@ -66,6 +66,12 @@ if (!function_exists('gardens_site_data_load_file')) {
   require_once dirname(__FILE__) . '/g/sites.inc';
 }
 
+// Prevents to run further if the sites.json file doesn't exists.
+// This step also tries to prevent errors on a none acsf environment.
+if (empty($_ENV['AH_SITE_GROUP']) || empty($_ENV['AH_SITE_ENVIRONMENT']) || !function_exists('gardens_site_data_get_filepath') || !file_exists(gardens_site_data_get_filepath())) {
+  return;
+}
+
 // Drush site-install gets confused about the uri when we specify the
 // --sites-subdir option. The HTTP_HOST is set incorrectly and we can't
 // find it in the sites.json. By specifying the --acsf-install-uri option
@@ -89,9 +95,14 @@ else {
 }
 
 $acsf_host = implode('.', array_reverse(explode(':', $host)));
+// Build an array with maximum one path fragment. Since the paths always start
+// with a '/' and we are splitting them by the '/', the array will always start
+// with an empty string.
 $acsf_uri_path_fragments = explode('/', $acsf_uri_path);
 $acsf_uri_path_fragments = array_diff($acsf_uri_path_fragments, array('index.php'));
 $acsf_uri_path_fragments = array_slice($acsf_uri_path_fragments, 0, 2);
+// Check whether we can find site data for the hostname suffixed by one
+// fragment, or for only the hostname.
 $data = NULL;
 for ($i = count($acsf_uri_path_fragments); $i > 0; $i--) {
   $dir = $acsf_host . implode('.', array_slice($acsf_uri_path_fragments, 0, $i));
@@ -103,8 +114,6 @@ for ($i = count($acsf_uri_path_fragments); $i > 0; $i--) {
   }
   elseif (($data = gardens_site_data_cache_get($acsf_uri)) !== 0) {
     if (empty($data)) {
-      // Note - when set to use APC, we never parse the whole file on a web
-      // request, but we do attempt to parse out the one requested.
       $data = gardens_site_data_refresh_one($acsf_uri);
     }
   }

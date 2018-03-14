@@ -16,6 +16,7 @@ use Drupal\user\UserInterface;
 use Drupal\webform\Plugin\WebformElement\WebformActions;
 use Drupal\webform\Plugin\WebformElement\WebformManagedFileBase;
 use Drupal\webform\Plugin\WebformElement\WebformWizardPage;
+use Drupal\webform\Plugin\WebformHandlerMessageInterface;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformReflectionHelper;
 use Drupal\webform\Plugin\WebformHandlerInterface;
@@ -194,6 +195,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   protected $settings = [];
 
   /**
+   * The webform settings original.
+   *
+   * @var string
+   */
+  protected $settingsOriginal;
+
+  /**
    * The webform access controls.
    *
    * @var array
@@ -285,6 +293,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   protected $elementsTranslations;
 
   /**
+   * Track the elements that are prepopulated.
+   *
+   * @var array
+   */
+  protected $elementsPrepopulate = [];
+
+  /**
    * Track the elements that are 'webform_actions' (aka submit buttons).
    *
    * @var array
@@ -334,12 +349,26 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   protected $hasConditions = FALSE;
 
   /**
+   * Track if the webform has required elements.
+   *
+   * @var bool
+   */
+  protected $hasRequired = FALSE;
+
+  /**
    * Track if the webform has translations.
    *
    * @var bool
    */
   protected $hasTranslations;
 
+  /**
+   * Track if the webform has message handler.
+   *
+   * @var bool
+   */
+  protected $hasMessagehandler;
+  
   /**
    * {@inheritdoc}
    */
@@ -578,6 +607,14 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   /**
    * {@inheritdoc}
    */
+  public function hasRequired() {
+    $this->initElements();
+    return $this->hasRequired;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function hasActions() {
     return $this->getNumberOfActions() ? TRUE : FALSE;
   }
@@ -588,6 +625,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   public function getNumberOfActions() {
     $this->initElements();
     return count($this->elementsActions);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasPreview() {
+    return ($this->getSetting('preview') != DRUPAL_DISABLED);
   }
 
   /**
@@ -685,7 +729,9 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
     // Now apply new settings.
     foreach ($settings as $name => $value) {
-      $this->settings[$name] = $value;
+      if (array_key_exists($name, $this->settings)) {
+        $this->settings[$name] = $value;
+      }
     }
 
     return $this;
@@ -713,6 +759,14 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $settings[$key] = $value;
     $this->setSettings($settings);
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function resetSettings() {
+    $this->settings = $this->settingsOriginal;
+    $this->setOverride(FALSE);
   }
 
   /**
@@ -782,13 +836,24 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'form_reset' => FALSE,
       'form_disable_autocomplete' => FALSE,
       'form_novalidate' => FALSE,
+      'form_required' => FALSE,
       'form_unsaved' => FALSE,
       'form_disable_back' => FALSE,
+      'form_submit_back' => FALSE,
       'form_autofocus' => FALSE,
       'form_details_toggle' => FALSE,
+      'form_login' => FALSE,
+      'form_login_message' => '',
       'submission_label' => '',
       'submission_log' => FALSE,
       'submission_user_columns' => [],
+      'submission_login' => FALSE,
+      'submission_login_message' => '',
+      'submission_exception_message' => '',
+      'submission_locked_message' => '',
+      'autofill' => FALSE,
+      'autofill_message' => '',
+      'autofill_excluded_elements' => [],
       'wizard_progress_bar' => TRUE,
       'wizard_progress_pages' => FALSE,
       'wizard_progress_percentage' => FALSE,
@@ -817,13 +882,17 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'confirmation_back_label' => '',
       'confirmation_back_attributes' => [],
       'limit_total' => NULL,
+      'limit_total_interval' => NULL,
       'limit_total_message' => '',
       'limit_user' => NULL,
+      'limit_user_interval' => NULL,
       'limit_user_message' => '',
+      'entity_limit_total' => NULL,
+      'entity_limit_total_interval' => NULL,
+      'entity_limit_user' => NULL,
+      'entity_limit_user_interval' => NULL,
       'purge' => WebformSubmissionStorageInterface::PURGE_NONE,
       'purge_days' => NULL,
-      'entity_limit_total' => NULL,
-      'entity_limit_user' => NULL,
       'results_disabled' => FALSE,
       'results_disabled_ignore' => FALSE,
       'token_update' => FALSE,
@@ -878,6 +947,11 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         'users' => [],
         'permissions' => [],
       ],
+      'administer' => [
+        'roles' => [],
+        'users' => [],
+        'permissions' => [],
+      ],
     ];
   }
 
@@ -885,8 +959,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * {@inheritdoc}
    */
   public function checkAccessRules($operation, AccountInterface $account, WebformSubmissionInterface $webform_submission = NULL) {
-    // Always grant access to user that can administer webforms and submissions
-    if ($account->hasPermission('administer webform') || $account->hasPermission('administer webform submission')) {
+    // Always grant access to user that can administer webforms.
+    if ($account->hasPermission('administer webform')) {
+      return TRUE;
+    }
+
+    // Grant user with administer webform submission access to view all webform submissions.
+    if ($account->hasPermission('administer webform submission') && $operation != 'administer') {
       return TRUE;
     }
 
@@ -904,11 +983,16 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
     $access_rules = $this->getAccessRules() + static::getDefaultAccessRules();
 
-    if (in_array($operation, ['create', 'view_any', 'update_any', 'delete_any', 'purge_any'])
-      && $this->checkAccessRule($access_rules[$operation], $account)) {
+    // Check administer access rule and grant full access to user.
+    if ($this->checkAccessRule($access_rules['administer'], $account)) {
       return TRUE;
     }
 
+    // Check operation specific access rules.
+    if (in_array($operation, ['create', 'view_any', 'update_any', 'delete_any', 'purge_any', 'administer'])
+      && $this->checkAccessRule($access_rules[$operation], $account)) {
+      return TRUE;
+    }
     if (isset($access_rules[$operation . '_any'])
       && $this->checkAccessRule($access_rules[$operation . '_any'], $account)) {
       return TRUE;
@@ -919,7 +1003,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     if (empty($webform_submission)
       && $operation === 'view_own'
       && $this->checkAccessRule($access_rules[$operation], $account)) {
-        return TRUE;
+      return TRUE;
     }
 
     // If webform submission is set then check the webform submission owner.
@@ -993,7 +1077,6 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     return \Drupal::service('entity.form_builder')
       ->getForm($webform_submission, $operation);
   }
-
 
   /**
    * {@inheritdoc}
@@ -1110,6 +1193,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   /**
    * {@inheritdoc}
    */
+  public function getElementsPrepopulate() {
+    return $this->elementsPrepopulate;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setElements(array $elements) {
     $this->elements = Yaml::encode($elements);
     $this->resetElements();
@@ -1124,16 +1214,20 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       return;
     }
 
+    // @see \Drupal\webform\Entity\Webform::resetElements
     $this->hasManagedFile = FALSE;
     $this->hasFlexboxLayout = FALSE;
     $this->hasContainer = FALSE;
     $this->hasConditions = FALSE;
+    $this->hasRequired = FALSE;
+    $this->elementsPrepopulate = [];
     $this->elementsActions = [];
     $this->elementsWizardPages = [];
     $this->elementsDecodedAndFlattened = [];
     $this->elementsInitializedAndFlattened = [];
     $this->elementsInitializedFlattenedAndHasValue = [];
     $this->elementsTranslations = [];
+
     try {
       $config_translation = \Drupal::moduleHandler()->moduleExists('config_translation');
       /** @var \Drupal\webform\WebformTranslationManagerInterface $translation_manager */
@@ -1145,7 +1239,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       // the translation to the elements.
       if ($config_translation && $this->langcode != $language_manager->getCurrentLanguage()->getId()) {
         $elements = $translation_manager->getElements($this);
-        $this->elementsTranslations = Yaml::decode($this->elements);
+        $this->elementsTranslations = $translation_manager->getElements($this, $language_manager->getCurrentLanguage()->getId());
       }
       else {
         $elements = Yaml::decode($this->elements);
@@ -1183,6 +1277,8 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $this->hasFlexboxLayout = NULL;
     $this->hasContainer = NULL;
     $this->hasConditions = NULL;
+    $this->hasRequired = NULL;
+    $this->elementsPrepopulate = [];
     $this->elementsActions = [];
     $this->elementsWizardPages = [];
     $this->elementsDecoded = NULL;
@@ -1234,7 +1330,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       $element['#webform_composite'] = FALSE;
 
       if (!empty($parent)) {
-        $parent_element = $this->elementsInitializedAndFlattened[$parent];
+        $parent_element =& $this->elementsInitializedAndFlattened[$parent];
         // Add element to the parent element's children.
         $parent_element['#webform_children'][$key] = $key;
         // Set #parent_flexbox to TRUE is the parent element is a
@@ -1295,6 +1391,16 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         // Track conditional.
         if (!empty($element['#states'])) {
           $this->hasConditions = TRUE;
+        }
+
+        // Track required.
+        if (!empty($element['#required']) || (!empty($element['#states']) && (!empty($element['#states']['required']) || !empty($element['#states']['optional'])))) {
+          $this->hasRequired = TRUE;
+        }
+
+        // Track prepopulated.
+        if (!empty($element['#prepopulate']) && $element_plugin->hasProperty('prepopulate')) {
+          $this->elementsPrepopulate[$key] = $key;
         }
 
         // Track actions.
@@ -1511,7 +1617,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
     $pages = [];
 
-    // Add webform wizard pages
+    // Add webform wizard pages.
     $elements = $this->getElementsInitialized();
     if (is_array($elements) && !in_array($operation, ['edit_all', 'api'])) {
       foreach ($elements as $key => $element) {
@@ -1579,11 +1685,12 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
     // Update owner to current user.
     $duplicate->setOwnerId(\Drupal::currentUser()->id());
-    
-    // If template, clear the description and remove the template flag.
+
+    // If template, clear description, remove template flag, and publish.
     if ($duplicate->isTemplate()) {
       $duplicate->set('description', '');
       $duplicate->set('template', FALSE);
+      $duplicate->setStatus(TRUE);
     }
 
     // Remove enforce module dependency when a sub-module's webform is
@@ -1631,6 +1738,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   public static function postLoad(EntityStorageInterface $storage, array &$entities) {
     foreach ($entities as $entity) {
       $entity->elementsOriginal = $entity->elements;
+      $entity->settingsOriginal = $entity->settings;
     }
   }
 
@@ -1767,6 +1875,9 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     // Reset elements.
     $this->resetElements();
     $this->elementsOriginal = $this->elements;
+
+    // Reset settings.
+    $this->settingsOriginal = $this->settings;
   }
 
   /**
@@ -1785,8 +1896,15 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       return;
     }
 
-    $submit_base_path = $this->settings['page_submit_path'] ?: trim(\Drupal::config('webform.settings')->get('settings.default_page_base_path'), '/') . '/' . str_replace('_', '-', $this->id());
-    $submit_base_path = '/' . trim($submit_base_path, '/');
+    $page_submit_path = trim($this->settings['page_submit_path'], '/');
+    $default_page_base_path = trim(\Drupal::config('webform.settings')->get('settings.default_page_base_path'), '/');
+
+    // Skip generating paths if submit path and base path are empty.
+    if (empty($page_submit_path) && empty($default_page_base_path)) {
+      return;
+    }
+
+    $submit_base_path = '/' . ($page_submit_path ?: $default_page_base_path . '/' . str_replace('_', '-', $this->id()));
 
     // Update submit path.
     $submit_suffixes = [
@@ -1851,6 +1969,33 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   protected function getWebformHandlerPluginManager() {
     return \Drupal::service('plugin.manager.webform.handler');
+  }
+
+  /**
+   * Reset cached handler settings.
+   */
+  protected function resetHandlers() {
+    $this->hasMessageHandler = NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasMessageHandler() {
+    if (isset($this->hasMessagehandler)) {
+      $this->hasMessagehandler;
+    }
+
+    $this->hasMessagehandler = FALSE;
+    $handlers = $this->getHandlers();
+    foreach ($handlers as $handler) {
+      if ($handler instanceof WebformHandlerMessageInterface) {
+        $this->hasMessagehandler = TRUE;
+        break;
+      }
+    }
+
+    return $this->hasMessagehandler;
   }
 
   /**
@@ -1944,6 +2089,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $configuration = $handler->getConfiguration();
     $this->getHandlers()->addInstanceId($handler_id, $configuration);
     $this->save();
+    $this->resetHandlers();
     $handler->createHandler();
     return $this;
   }
@@ -1957,6 +2103,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $configuration = $handler->getConfiguration();
     $this->getHandlers()->setInstanceConfiguration($handler_id, $configuration);
     $this->save();
+    $this->resetHandlers();
     $handler->updateHandler();
     return $this;
   }
@@ -1969,6 +2116,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     $this->getHandlers()->removeInstanceId($handler->getHandlerId());
     $handler->deleteHandler();
     $this->save();
+    $this->resetHandlers();
     return $this;
   }
 
@@ -1976,8 +2124,6 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * {@inheritdoc}
    */
   public function invokeHandlers($method, &$data, &$context1 = NULL, &$context2 = NULL) {
-    $handlers = $this->getHandlers();
-
     // Get webform submission from arguments for conditions validations.
     $webform_submission = NULL;
     $args = func_get_args();
@@ -1988,18 +2134,36 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       }
     }
 
-    foreach ($handlers as $handler) {
-      // If the handler is disabled never invoke it.
-      if ($handler->isDisabled()) {
-        continue;
+    // If webform submission and alter settings, make sure to completely
+    // reset all settings to their original values.
+    if ($method === 'overrideSettings') {
+      $this->resetSettings();
+      $settings = $this->getSettings();
+      $handlers = $this->getHandlers();
+      foreach ($handlers as $handler) {
+        if ($handler->isEnabled() && $handler->checkConditions($webform_submission)) {
+          $handler->overrideSettings($settings, $webform_submission);
+        }
       }
-
-      // If the arguments contain the webform submission check conditions.
-      if ($webform_submission && !$handler->checkConditions($webform_submission)) {
-        continue;
+      if ($settings != $this->settingsOriginal) {
+        $this->setSettingsOverride($settings);
       }
+    }
+    else {
+      $handlers = $this->getHandlers();
+      foreach ($handlers as $handler) {
+        // If the handler is disabled never invoke it.
+        if ($handler->isDisabled()) {
+          continue;
+        }
 
-      $handler->$method($data, $context1, $context2);
+        // If the arguments contain the webform submission check conditions.
+        if ($webform_submission && !$handler->checkConditions($webform_submission)) {
+          continue;
+        }
+
+        $handler->$method($data, $context1, $context2);
+      }
     }
   }
 
@@ -2150,6 +2314,17 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   public function getIterator() {
     return new \ArrayIterator([]);
+  }
+
+  /**
+   * Define empty to string method.
+   *
+   * See: Issue #2926903: Devel Tokens tab Broken when Webform Embedded in Node.
+   *
+   * @see https://www.drupal.org/project/webform/issues/2926903
+   */
+  public function __toString() {
+    return '';
   }
 
 }

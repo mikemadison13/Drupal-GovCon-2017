@@ -80,6 +80,7 @@ class UpdateCommand extends BltTasks {
    * @return \Robo\Result
    */
   public function addToProject() {
+    $this->updateRootProjectFiles();
     $this->reInstallComposerPackages();
     $this->displayArt();
     $this->yell("BLT has been added to your project.");
@@ -142,7 +143,7 @@ class UpdateCommand extends BltTasks {
    */
   public function initAndCommitRepo() {
     $result = $this->taskExecStack()
-      ->dir("repo.root")
+      ->dir($this->getConfigValue("repo.root"))
       ->exec("git init")
       ->exec('git add -A')
       ->exec("git commit -m 'Initial commit.'")

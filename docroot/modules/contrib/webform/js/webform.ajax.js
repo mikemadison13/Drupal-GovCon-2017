@@ -16,7 +16,7 @@
   /**
    * Provide Webform Ajax link behavior.
    *
-   * Display fullscreen progress indicator instead of throber.
+   * Display fullscreen progress indicator instead of throbber.
    * Copied from: Drupal.behaviors.AJAX
    *
    * @type {Drupal~behavior}
@@ -38,6 +38,7 @@
           element_settings.event = 'click';
         }
         element_settings.dialogType = $(this).data('dialog-type');
+        element_settings.dialogRenderer = $(this).data('dialog-renderer');
         element_settings.dialog = $(this).data('dialog-options');
         element_settings.base = $(this).attr('id');
         element_settings.element = this;
@@ -51,6 +52,13 @@
         if (hash) {
           $(this).on('click', function() {
             location.hash = $(this).data('hash');
+          });
+        }
+
+        // Close all open modal dialogs when opening off-canvas dialog.
+        if (element_settings.dialogRenderer === 'off_canvas') {
+          $(this).on('click', function() {
+            $(".ui-dialog.webform-modal:visible").find('.ui-dialog-content').dialog('close');
           });
         }
       });

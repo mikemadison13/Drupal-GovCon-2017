@@ -84,6 +84,15 @@ class VideoEmbedField extends MediaSourceBase {
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    return [
+      'source_field' => 'field_media_video_embed_field',
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getMetadata(MediaInterface $media, $attribute_name) {
     $url = $this->getVideoUrl($media);
 
@@ -167,6 +176,24 @@ class VideoEmbedField extends MediaSourceBase {
    */
   public function createSourceField(MediaTypeInterface $type) {
     return parent::createSourceField($type)->set('label', 'Video Url');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSourceFieldDefinition(MediaTypeInterface $type) {
+    // video_embed_media has not historically had a value in
+    // $this->configuration['source_field'], instead just creating
+    // field_media_video_embed_field on install and treating that as the source.
+    // Here we privilege the standard way, but also allow the old VEM way, of
+    // getting the source field's name.
+    $field = !empty($this->configuration['source_field']) ? $this->configuration['source_field'] : 'field_media_video_embed_field';
+    if ($field) {
+      // Be sure that the suggested source field actually exists.
+      $fields = $this->entityFieldManager->getFieldDefinitions('media', $type->id());
+      return isset($fields[$field]) ? $fields[$field] : NULL;
+    }
+    return NULL;
   }
 
 }

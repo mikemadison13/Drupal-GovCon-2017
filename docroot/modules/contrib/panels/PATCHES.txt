@@ -17,3 +17,7 @@ Source: https://www.drupal.org/files/issues/2908897-2.patch
 Source: https://www.drupal.org/files/issues/2913353-2.patch
 
 
+2825028 - AJAX error creating and placing blocks with date fields in IPE
+Source: https://www.drupal.org/files/issues/panels-ipe-date-field-2825028-10.patch
+
+

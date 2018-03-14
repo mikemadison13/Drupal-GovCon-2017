@@ -17,6 +17,7 @@ abstract class TextBase extends WebformElementBase {
    */
   public function getDefaultProperties() {
     return [
+      'readonly' => FALSE,
       'size' => '',
       'minlength' => '',
       'maxlength' => '',
@@ -24,6 +25,13 @@ abstract class TextBase extends WebformElementBase {
       'autocomplete' => 'on',
       'pattern' => '',
     ] + parent::getDefaultProperties();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTranslatableProperties() {
+    return array_merge(parent::getTranslatableProperties(), ['counter_message']);
   }
 
   /**
@@ -83,8 +91,8 @@ abstract class TextBase extends WebformElementBase {
       '#other__option_label' => $this->t('Custom...'),
       '#other__placeholder' => $this->t('Enter input mask...'),
       '#other__description' => $this->t('(9 = numeric; a = alphabetical; * = alphanumeric)'),
+      '#empty_option' => $this->t('- None -'),
       '#options' => [
-        '' => '',
         'Basic' => [
           "'alias': 'currency'" => $this->t('Currency - @format', ['@format' => '$ 9.99']),
           "'alias': 'mm/dd/yyyy'" => $this->t('Date - @format', ['@format' => 'mm/dd/yyyy']),
@@ -108,9 +116,10 @@ abstract class TextBase extends WebformElementBase {
 
     // Pattern.
     $form['validation']['pattern'] = [
-      '#type' => 'textfield',
+      '#type' => 'webform_checkbox_value',
       '#title' => $this->t('Pattern'),
       '#description' => $this->t('A <a href=":href">regular expression</a> that the element\'s value is checked against.', [':href' => 'http://www.w3schools.com/js/js_regexp.asp']),
+      '#value__title' => $this->t('Pattern regular expression'),
     ];
 
     // Counter.
@@ -119,8 +128,8 @@ abstract class TextBase extends WebformElementBase {
       '#type' => 'select',
       '#title' => $this->t('Count'),
       '#description' => $this->t('Limit entered value to a maximum number of characters or words.'),
+      '#empty_option' => $this->t('- None -'),
       '#options' => [
-        '' => '',
         'character' => $this->t('Characters'),
         'word' => $this->t('Words'),
       ],

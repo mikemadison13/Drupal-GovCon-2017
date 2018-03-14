@@ -10,6 +10,7 @@ namespace Drupal\Console\Core\Generator;
 use Drupal\Console\Core\Utils\TwigRenderer;
 use Drupal\Console\Core\Utils\FileQueue;
 use Drupal\Console\Core\Utils\CountCodeLines;
+use Drupal\Console\Core\Utils\DrupalFinder;
 
 /**
  * Class Generator
@@ -32,6 +33,11 @@ abstract class Generator
      * @var CountCodeLines
      */
     protected $countCodeLines;
+
+    /**
+     * @var DrupalFinder
+     */
+    protected $drupalFinder;
 
     /**
      * @param $renderer
@@ -58,6 +64,14 @@ abstract class Generator
     }
 
     /**
+     * @param DrupalFinder $drupalFinder
+     */
+    public function setDrupalFinder($drupalFinder)
+    {
+        $this->drupalFinder = $drupalFinder;
+    }
+
+    /**
      * @param string $template
      * @param string $target
      * @param array  $parameters
@@ -72,7 +86,14 @@ abstract class Generator
         $flag = null
     ) {
         if (!is_dir(dirname($target))) {
-            mkdir(dirname($target), 0777, true);
+            if (!mkdir(dirname($target), 0777, true)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Path "%s" is invalid. You need to provide a valid path.',
+                        dirname($target)
+                    )
+                );
+            }
         }
 
         $currentLine = 0;

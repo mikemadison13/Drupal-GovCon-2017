@@ -131,6 +131,7 @@ class WebformSubmissionFieldFilter extends StringFilter {
     // Swap the type of value if the current operator dictates doing so.
     if (isset($operator_definition['webform_views_element_type']) && $operator_definition['webform_views_element_type'] != self::ELEMENT_TYPE) {
       $element['#type'] = $operator_definition['webform_views_element_type'];
+      unset($element['#options']);
     }
 
     // Wrap the value with a container that will be used for AJAX.

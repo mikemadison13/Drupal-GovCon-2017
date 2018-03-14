@@ -23,7 +23,7 @@ class WebformEntityElementsValidationTest extends KernelTestBase {
   /**
    * The webform elements validator.
    *
-   * @var \Drupal\webform\WebformEntityElementsValidator
+   * @var \Drupal\webform\WebformEntityElementsValidatorInterface
    */
   protected $validator;
 
@@ -32,7 +32,7 @@ class WebformEntityElementsValidationTest extends KernelTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->validator = new WebformEntityElementsValidator();
+    $this->validator = \Drupal::service('webform.elements_validator');
   }
 
   /**
@@ -73,7 +73,7 @@ duplicate:
   name:
     '#type': textfield",
         'messages' => [
-          'Elements contain a duplicate element name <em class="placeholder">name</em> found on lines 1 and 4.',
+          'Elements contain a duplicate element key <em class="placeholder">name</em> found on lines 1 and 4.',
         ],
       ],
 
@@ -85,7 +85,7 @@ duplicate:
   name:
     '#type': textfield",
         'messages' => [
-          'Elements contain a duplicate element name <em class="placeholder">name</em> found on lines 1 and 4.',
+          'Elements contain a duplicate element key <em class="placeholder">name</em> found on lines 1 and 4.',
         ],
       ],
 
@@ -192,7 +192,7 @@ duplicate:
       /** @var \Drupal\webform\WebformInterface $webform */
       $webform = $this->getMock('\Drupal\webform\WebformInterface');
       $methods = $test;
-      unset($methods['message']);
+      unset($methods['messages']);
       foreach ($methods as $method => $returnValue) {
         $webform->expects($this->any())
           ->method($method)

@@ -50,7 +50,7 @@ class WebformSubmissionSelectFilter extends InOperator {
   /**
    * {@inheritdoc}
    */
-  public function valueForm(&$form, FormStateInterface $form_state) {
+  protected function valueForm(&$form, FormStateInterface $form_state) {
     parent::valueForm($form, $form_state);
     $form['value']['#required'] = FALSE;
     unset($form['value']['#options'][self::ALL]);

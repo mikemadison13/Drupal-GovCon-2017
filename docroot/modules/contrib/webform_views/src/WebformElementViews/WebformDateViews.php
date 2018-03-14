@@ -16,9 +16,8 @@ class WebformDateViews extends WebformDefaultViews {
     $views_data = parent::getElementViewsData($element_plugin, $element);
 
     $views_data['filter'] = [
-      'id' => 'webform_submission_numeric_filter',
+      'id' => 'webform_submission_date_filter',
       'real field' => 'value',
-      'explicit_cast' => FALSE,
     ];
 
     return $views_data;

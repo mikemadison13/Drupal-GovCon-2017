@@ -36,7 +36,6 @@ services:
     arguments:
       - '@class_resolver'
       - '@container.namespaces'
-      - '@config.factory'
     tags:
       - { name: drupal.command }
 
@@ -45,3 +44,10 @@ services:
     arguments: []
     tags:
       - { name: drupal.generator }
+
+  lightning.version_command:
+    class: 'Drupal\lightning\Command\VersionCommand'
+    arguments:
+      - '@app.root'
+    tags:
+      - { name: drupal.command }

@@ -81,12 +81,10 @@ class WebformSubmissionField extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    if ($values->_entity->access('view')) {
-      /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
-      $element_manager = \Drupal::service('plugin.manager.webform.element');
+    /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
+    $webform_submission = $this->getEntity($values);
 
-      /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
-      $webform_submission = $values->_entity;
+    if ($webform_submission->access('view')) {
       $webform = $webform_submission->getWebform();
 
       // Get format and element key.
@@ -103,7 +101,7 @@ class WebformSubmissionField extends FieldPluginBase {
       $element['#format'] = $format;
 
       // Get element handler and get the element's HTML render array.
-      $element_handler = $element_manager->getElementInstance($element);
+      $element_handler = $this->webformElementManager->getElementInstance($element);
       return $element_handler->formatHtml($element, $webform_submission);
     }
 

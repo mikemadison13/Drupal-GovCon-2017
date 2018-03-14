@@ -2,6 +2,7 @@
 
 namespace Drupal\webform;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -114,6 +115,13 @@ class WebformSubmissionGenerate implements WebformSubmissionGenerateInterface {
       $values = [$values];
     }
 
+    // Apply #maxlength to values.
+    if (!empty($element['#maxlength'])) {
+      foreach ($values as $index => $value) {
+        $values[$index] = Unicode::substr($value, 0, $element['#maxlength']);
+      }
+    }
+
     // $values = $this->tokenManager->replace($values, $webform);.
     // Elements that use multiple values require an array as the
     // default value.
@@ -124,13 +132,13 @@ class WebformSubmissionGenerate implements WebformSubmissionGenerateInterface {
 
       $limit = 3;
       if (isset($element['#multiple'])) {
-        // #multiple: FALSE is only applicable to webform_composite element.
+        // #multiple: FALSE is only applicable to webform_custom_composite element.
         // @see \Drupal\webform\Plugin\WebformElement\WebformComposite
         if ($element['#multiple'] === FALSE) {
           $limit = 1;
         }
         elseif ($element['#multiple'] > 1 && $element['#multiple'] < 3) {
-          $limit =  $element['#multiple'];
+          $limit = $element['#multiple'];
         }
       }
 

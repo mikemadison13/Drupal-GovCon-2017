@@ -854,6 +854,20 @@ class TokenAuthUser implements TokenAuthUserInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function isLatestRevision() {
+    return $this->subject->isLatestRevision();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLatestRevisionId() {
+    return $this->subject->getLatestRevisionId();
+  }
+
+  /**
    * Returns the role storage object.
    *
    * @return \Drupal\user\RoleStorageInterface

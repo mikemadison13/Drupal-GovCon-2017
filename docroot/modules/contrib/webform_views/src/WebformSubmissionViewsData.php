@@ -63,6 +63,22 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
 
     $base_table = $this->entityType->getBaseTable() ?: $this->entityType->id();
 
+    $data['webform_submission']['source_entity_label'] = [
+      'title' => $this->t('Submitted to: Entity label'),
+      'help' => $this->t('The label of entity to which this submission was submitted to.'),
+      'field' => [
+        'id' => 'webform_submission_submitted_to_label',
+      ],
+    ];
+
+    $data['webform_submission']['source_entity_rendered_entity'] = [
+      'title' => $this->t('Submitted to: Rendered entity'),
+      'help' => $this->t('Rendered entity to which this submission was submitted to.'),
+      'field' => [
+        'id' => 'webform_submission_submitted_to_rendered_entity',
+      ],
+    ];
+
     // Reverse relationship on the "entity_type" and "entity_id" columns, i.e.
     // from an arbitrary entity to webform submissions that have been submitted
     // to it.
@@ -79,8 +95,8 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
         ];
 
         // Depending on whether the foreign entity has data table we join on its
-        // data table or on its base table. Additionally, if it we join on the
-        // data table, then we also must join on langcode column.
+        // data table or on its base table. Additionally, if we join on the data
+        // table, then we also must join on langcode column.
         if ($definition->getDataTable()) {
           $foreign_table = $definition->getDataTable();
           $relationship['extra'][] = ['field' => 'langcode', 'left_field' => 'langcode'];
@@ -97,6 +113,27 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
         $data[$foreign_table]['webform_submission']['relationship'] = $relationship;
       }
     }
+
+    // Add non-admin "view" and "edit" links.
+    $data[$base_table]['webform_submission_user_submission_view'] = [
+      'title' => $this->t('Non-admin view link'),
+      'help' => $this->t('Link to view a webform submission for non-admin users.'),
+      'field' => [
+        'id' => 'webform_submission_user_submission_view_field',
+        'real field' => $this->entityType->getKey('id'),
+        'click sortable' => FALSE,
+      ],
+    ];
+
+    $data[$base_table]['webform_submission_user_submission_edit'] = [
+      'title' => $this->t('Non-admin edit link'),
+      'help' => $this->t('Link to edit a webform submission for non-admin users.'),
+      'field' => [
+        'id' => 'webform_submission_user_submission_edit_field',
+        'real field' => $this->entityType->getKey('id'),
+        'click sortable' => FALSE,
+      ],
+    ];
 
     foreach ($this->webformStorage->loadMultiple() as $webform) {
       foreach ($webform->getElementsInitializedAndFlattened() as $element) {
