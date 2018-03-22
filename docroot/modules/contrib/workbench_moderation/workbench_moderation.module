@@ -10,6 +10,8 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Action\Plugin\Action\PublishAction;
+use Drupal\Core\Action\Plugin\Action\UnpublishAction;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -62,34 +64,6 @@ function workbench_moderation_entity_view_alter(&$build, EntityInterface $entity
   /** @var \Drupal\workbench_moderation\InlineEditingDisabler $inline_editing_disabler */
   $inline_editing_disabler = \Drupal::service('workbench_moderation.inline_editing_disabler');
   $inline_editing_disabler->entityViewAlter($build, $entity, $display);
-}
-
-/**
- * Implements hook_node_view_alter().
- */
-function workbench_moderation_node_view_alter(&$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
-  /** @var \Drupal\workbench_moderation\ModerationInformationInterface $mod_info */
-  $mod_info = \Drupal::service('workbench_moderation.moderation_information');
-  /** @var \Drupal\Core\Extension\ModuleHandlerInterface $module_handler */
-  $module_handler = \Drupal::service('module_handler');
-  // Show standard node contextual links on node drafts.
-  if ($mod_info->isLatestRevision($entity)) {
-    if (isset($build['#contextual_links']['node_revision'])) {
-      unset($build['#contextual_links']['node_revision']);
-      $build['#contextual_links']['node'] = [
-        'route_parameters' => ['node' => $entity->id()],
-        'metadata' => ['changed' => $entity->getChangedTime()],
-      ];
-    }
-  }
-  // Disable Quick Edit when viewing individual revisions.
-  if ($module_handler->moduleExists('quickedit')) {
-    $route_match = \Drupal::routeMatch();
-    $match = $route_match->getCurrentRouteMatch();
-    if ($match->getRouteName() === 'entity.node.revision') {
-      $build['#attributes']['data-quickedit-disable'] = TRUE;
-    }
-  }
 }
 
 /**
@@ -239,6 +213,12 @@ function workbench_moderation_action_info_alter(&$definitions) {
   }
   if (isset($definitions['node_unpublish_action']['class']) && $definitions['node_unpublish_action']['class'] == UnpublishNode::class) {
     $definitions['node_unpublish_action']['class'] = ModerationOptOutUnpublishNode::class;
+  }
+  if (isset($definitions['entity:publish_action:node']['class']) && $definitions['entity:publish_action:node']['class'] == PublishAction::class) {
+    $definitions['entity:publish_action:node']['class'] = ModerationOptOutPublishNode::class;
+  }
+  if (isset($definitions['entity:unpublish_action:node']['class']) && $definitions['entity:unpublish_action:node']['class'] == UnpublishAction::class) {
+    $definitions['entity:publish_action:node']['class'] = ModerationOptOutUnpublishNode::class;
   }
 }
 

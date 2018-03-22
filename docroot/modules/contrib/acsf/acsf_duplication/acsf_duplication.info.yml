@@ -5,8 +5,8 @@ package: Acquia Cloud Site Factory
 # version: VERSION
 # core: 8.x
 
-# Information added by Drupal.org packaging script on 2018-02-21
-version: '8.x-1.44'
+# Information added by Drupal.org packaging script on 2018-03-14
+version: '8.x-1.45'
 core: '8.x'
 project: 'acsf'
-datestamp: 1519216121
+datestamp: 1521024496

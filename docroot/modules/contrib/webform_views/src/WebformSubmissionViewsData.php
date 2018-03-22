@@ -65,7 +65,7 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
 
     $data['webform_submission']['source_entity_label'] = [
       'title' => $this->t('Submitted to: Entity label'),
-      'help' => $this->t('The label of entity to which this submission was submitted to.'),
+      'help' => $this->t('The label of entity to which this submission was submitted.'),
       'field' => [
         'id' => 'webform_submission_submitted_to_label',
       ],
@@ -73,7 +73,7 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
 
     $data['webform_submission']['source_entity_rendered_entity'] = [
       'title' => $this->t('Submitted to: Rendered entity'),
-      'help' => $this->t('Rendered entity to which this submission was submitted to.'),
+      'help' => $this->t('Rendered entity to which this submission was submitted.'),
       'field' => [
         'id' => 'webform_submission_submitted_to_rendered_entity',
       ],
@@ -132,6 +132,25 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
         'id' => 'webform_submission_user_submission_edit_field',
         'real field' => $this->entityType->getKey('id'),
         'click sortable' => FALSE,
+      ],
+    ];
+
+    // There is no general way to add a relationship to an entity where webform
+    // submission has been submitted to, so we just cover the most common case here -
+    // the case when the source is a node.
+    $node_definition = $this->entityManager->getDefinition('node');
+
+    $data[$base_table]['entity_id'] = [
+      'title' => $this->t('Submitted to: Content'),
+      'help' => $this->t('Content (node) which webform submission is submitted to.'),
+      'relationship' => [
+        'base' => $node_definition->getDataTable(),
+        'base field' => $node_definition->getKey('id'),
+        'id' => 'standard',
+        'label' => t('Submitted to: Content'),
+        'extra' => [
+          ['left_field' => 'entity_type', 'value' => 'node'],
+        ],
       ],
     ];
 

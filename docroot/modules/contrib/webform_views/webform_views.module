@@ -58,6 +58,9 @@ function webform_views_webform_element_info_alter(array &$elements) {
     elseif (is_subclass_of($v['class'], \Drupal\webform\Plugin\WebformElement\WebformCompositeBase::class)) {
       $views_handler = \Drupal\webform_views\WebformElementViews\WebformCompositeViews::class;
     }
+    elseif (is_subclass_of($v['class'], \Drupal\webform\Plugin\WebformElementEntityReferenceInterface::class)) {
+      $views_handler = \Drupal\webform_views\WebformElementViews\WebformEntityReferenceViews::class;
+    }
 
     switch ($k) {
       case 'select':

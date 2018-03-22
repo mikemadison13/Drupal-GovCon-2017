@@ -112,27 +112,38 @@ for ($i = count($acsf_uri_path_fragments); $i > 0; $i--) {
     // the file at all and a single line parse fails.
     $data = gardens_site_data_refresh_one($acsf_uri);
   }
-  elseif (($data = gardens_site_data_cache_get($acsf_uri)) !== 0) {
-    if (empty($data)) {
+  else {
+    // Check for data in APC: FALSE means no; 0 means "not found" cached in APC;
+    // NULL means "sites.json read failure" cached in APC.
+    $data = gardens_site_data_cache_get($acsf_uri);
+    if ($data === FALSE) {
       $data = gardens_site_data_refresh_one($acsf_uri);
     }
   }
-  if ($data) {
+  // Check again for a hostname with less fragments if we got a "not found";
+  // stop if we got a read failure or found data.
+  if ($data || $data === NULL) {
     break;
   }
 }
 
-// A value of zero either from the cache or when attempting to refresh indicates
-// that the host is known to not exist and was cached as such - we don't need to
-// refresh, just fail.
-if ($data === 0) {
+// If either "not found" or "read failure" (from either the cache or the
+// sites.json file): don't set $sites and fall through (to, probably, reading
+// sites/default/settings.php for settings).
+if (empty($data)) {
+  if ($data === NULL) {
+    // If we encountered a read error, indicate that we want the same (short)
+    // cache time for the page, as we have for the data in APC.
+    $GLOBALS['gardens_site_settings']['page_ttl'] = GARDENS_SITE_DATA_READ_FAILURE_TTL;
+  }
   return;
 }
 
 $GLOBALS['gardens_site_settings'] = $data['gardens_site_settings'];
 $sites[$dir] = $data['dir'];
 
-// Include custom sites.php code from factory-hooks/pre-sites-php.
+// Include custom sites.php code from factory-hooks/post-sites-php, only when
+// a domain was found.
 foreach (acsf_hooks_includes('post-sites-php') as $post_hook) {
   include $post_hook;
 }

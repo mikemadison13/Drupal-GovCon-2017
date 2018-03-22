@@ -6,6 +6,7 @@ use Acquia\Blt\Robo\BltTasks;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * This class defines hooks that provide user interaction.
@@ -52,19 +53,16 @@ class CommandEventHook extends BltTasks {
       if ($annotation_data->has('executeInDrupalVm') && $this->shouldExecuteInDrupalVm()) {
         $event->disableCommand();
         $command = $event->getCommand();
-        $new_input = $this->createCommandInputFromCurrentParams($command);
+        $new_input = $this->createCommandInputFromCurrentParams($command, $event->getInput());
         $defines = $new_input->getOption('define');
         $defines[] = 'drush.alias=self';
         $new_input->setOption('define', $defines);
-
         // We cannot return an exit code directly, because disabled commands
         // always return ConsoleCommandEvent::RETURN_CODE_DISABLED.
         $command_string = $this->convertInputToCommandString($new_input, $command);
         $result = $this->executeCommandInDrupalVm($command_string);
       }
     }
-
-    // @todo Transmit analytics on command execution. Do the same in status hook.
   }
 
   /**
@@ -92,8 +90,13 @@ class CommandEventHook extends BltTasks {
     foreach ($new_input->getOptions() as $name => $value) {
       if ($new_input->getOption($name)) {
         if ($command_definition->getOption($name)->acceptValue()) {
-          foreach ($value as $sub_value) {
-            $command_string .= " --$name=$sub_value";
+          if (gettype($value) === 'string') {
+            $command_string .= " --$name=$value";
+          }
+          else {
+            foreach ($value as $sub_value) {
+              $command_string .= " --$name=$sub_value";
+            }
           }
         }
         else {
@@ -109,30 +112,32 @@ class CommandEventHook extends BltTasks {
    *
    * @param \Symfony\Component\Console\Command\Command $command
    *   The command.
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   The command input from the ConsoleCommandEvent.
    *
    * @return \Symfony\Component\Console\Input\ArrayInput
    */
-  protected function createCommandInputFromCurrentParams(Command $command) {
+  protected function createCommandInputFromCurrentParams(Command $command, InputInterface $input) {
     $command_definition = $command->getDefinition();
     $command_name = $command->getName();
     $options = $this->input->getOptions();
     $args = $this->input->getArguments();
     unset($args['command']);
-    $new_input = new ArrayInput(['blt', 'command' => $command_name],
-      $command_definition);
-
+    // Filter out any invalid arguments.
     foreach ($args as $name => $value) {
-      if ($command_definition->hasArgument($name)) {
-        $new_input->setArgument($name, $value);
+      if (is_null($value) || !$command_definition->hasArgument($name)) {
+        unset($args[$name]);
       }
     }
-
+    // Pass in all the arguments so that ArrayInput constructor will not be
+    // missing necessary arguments in validation.
+    $new_input = new ArrayInput(array_merge(['blt', 'command' => $command_name], $args),
+      $command_definition);
     foreach ($options as $name => $value) {
       if ($command_definition->hasOption($name)) {
         $new_input->setOption($name, $value);
       }
     }
-
     return $new_input;
   }
 

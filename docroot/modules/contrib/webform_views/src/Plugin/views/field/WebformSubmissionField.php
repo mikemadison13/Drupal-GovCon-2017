@@ -56,6 +56,8 @@ class WebformSubmissionField extends FieldPluginBase {
     $options = parent::defineOptions();
 
     $options['webform_element_format'] = ['default' => ''];
+    $options['webform_multiple_value'] = ['default' => TRUE];
+    $options['webform_multiple_delta'] = ['default' => 0];
 
     return $options;
   }
@@ -65,6 +67,32 @@ class WebformSubmissionField extends FieldPluginBase {
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
+
+    $form['webform_multiple_value'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('In this field show'),
+      '#options' => [
+        1 => $this->t('All multiple values'),
+        0 => $this->t('A value that corresponds to specific delta'),
+      ],
+      '#default_value' => $this->options['webform_multiple_value'],
+      '#required' => TRUE,
+      '#access' => $this->definition['multiple'],
+    ];
+
+    $form['webform_multiple_delta'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Delta'),
+      '#description' => $this->t('Specify which delta to use for this field.'),
+      '#required' => TRUE,
+      '#default_value' => $this->options['webform_multiple_delta'],
+      '#access' => $this->definition['multiple'],
+      '#states' => [
+        'visible' => [
+          ':input[name$="[webform_multiple_value]"]' => ['value' => 0],
+        ],
+      ],
+    ];
 
     $form['webform_element_format'] = [
       '#type' => 'select',
@@ -102,7 +130,13 @@ class WebformSubmissionField extends FieldPluginBase {
 
       // Get element handler and get the element's HTML render array.
       $element_handler = $this->webformElementManager->getElementInstance($element);
-      return $element_handler->formatHtml($element, $webform_submission);
+
+      $options = [];
+      if (!$this->options['webform_multiple_value']) {
+        $options['delta'] = $this->options['webform_multiple_delta'];
+      }
+
+      return $element_handler->formatHtml($element, $webform_submission, $options);
     }
 
     return [];
