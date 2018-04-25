@@ -45,7 +45,7 @@ class CaptchaTestCase extends CaptchaBaseWebTestCase {
 
     // Try to log in, which should fail.
     $edit = [
-      'name' => $user->getUsername(),
+      'name' => $user->getDisplayName(),
       'pass' => $user->pass_raw,
       'captcha_response' => '?',
     ];
@@ -241,12 +241,12 @@ class CaptchaTestCase extends CaptchaBaseWebTestCase {
 
     $entity_form_display = EntityFormDisplay::load('user.user.default');
     if (!$entity_form_display) {
-      $entity_form_display = EntityFormDisplay::create(array(
+      $entity_form_display = EntityFormDisplay::create([
         'targetEntityType' => 'user',
         'bundle' => 'user',
         'mode' => 'default',
         'status' => TRUE,
-      ));
+      ]);
     }
 
     $entity_form_display

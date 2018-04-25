@@ -3,11 +3,11 @@
 namespace Drupal\Tests\jsonapi\Kernel\Controller;
 
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Config\ConfigException;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\jsonapi\Exception\EntityAccessDeniedHttpException;
 use Drupal\jsonapi\ResourceType\ResourceType;
-use Drupal\jsonapi\Context\CurrentContext;
 use Drupal\jsonapi\Controller\EntityResource;
 use Drupal\jsonapi\Resource\EntityCollection;
 use Drupal\jsonapi\Resource\JsonApiDocumentTopLevel;
@@ -172,13 +172,13 @@ class EntityResourceTest extends JsonapiKernelTestBase {
 
   /**
    * @covers ::getIndividual
-   * @expectedException \Drupal\jsonapi\Exception\EntityAccessDeniedHttpException
    */
   public function testGetIndividualDenied() {
     $role = Role::load(RoleInterface::ANONYMOUS_ID);
     $role->revokePermission('access content');
     $role->save();
     $entity_resource = $this->buildEntityResource('node', 'article');
+    $this->setExpectedException(EntityAccessDeniedHttpException::class);
     $entity_resource->getIndividual($this->node, new Request());
   }
 
@@ -233,19 +233,11 @@ class EntityResourceTest extends JsonapiKernelTestBase {
     ]);
     $request_stack = new RequestStack();
     $request_stack->push($request);
-    // Get the entity resource.
-    $current_context = new CurrentContext(
-      $this->container->get('jsonapi.resource_type.repository'),
-      $request_stack,
-      new CurrentRouteMatch($request_stack)
-    );
-    $this->container->set('jsonapi.current_context', $current_context);
 
     $entity_resource = new EntityResource(
       $this->container->get('jsonapi.resource_type.repository')->get('node_type', 'node_type'),
       $this->container->get('entity_type.manager'),
       $field_manager,
-      $current_context,
       $this->container->get('plugin.manager.field.field_type'),
       $this->container->get('jsonapi.link_manager'),
       $this->container->get('jsonapi.resource_type.repository')
@@ -287,19 +279,11 @@ class EntityResourceTest extends JsonapiKernelTestBase {
     ]);
     $request_stack = new RequestStack();
     $request_stack->push($request);
-    // Get the entity resource.
-    $current_context = new CurrentContext(
-      $this->container->get('jsonapi.resource_type.repository'),
-      $request_stack,
-      new CurrentRouteMatch($request_stack)
-    );
-    $this->container->set('jsonapi.current_context', $current_context);
 
     $entity_resource = new EntityResource(
       $this->container->get('jsonapi.resource_type.repository')->get('node_type', 'node_type'),
       $this->container->get('entity_type.manager'),
       $field_manager,
-      $current_context,
       $this->container->get('plugin.manager.field.field_type'),
       $this->container->get('jsonapi.link_manager'),
       $this->container->get('jsonapi.resource_type.repository')
@@ -342,19 +326,11 @@ class EntityResourceTest extends JsonapiKernelTestBase {
     ]);
     $request_stack = new RequestStack();
     $request_stack->push($request);
-    // Get the entity resource.
-    $current_context = new CurrentContext(
-      $this->container->get('jsonapi.resource_type.repository'),
-      $request_stack,
-      new CurrentRouteMatch($request_stack)
-    );
-    $this->container->set('jsonapi.current_context', $current_context);
 
     $entity_resource = new EntityResource(
       $this->container->get('jsonapi.resource_type.repository')->get('node', 'article'),
       $this->container->get('entity_type.manager'),
       $field_manager,
-      $current_context,
       $this->container->get('plugin.manager.field.field_type'),
       $this->container->get('jsonapi.link_manager'),
       $this->container->get('jsonapi.resource_type.repository')
@@ -650,9 +626,9 @@ class EntityResourceTest extends JsonapiKernelTestBase {
   /**
    * @covers ::patchIndividual
    * @dataProvider patchIndividualConfigFailedProvider
-   * @expectedException \Drupal\Core\Config\ConfigException
    */
   public function testPatchIndividualFailedConfig($values) {
+    $this->setExpectedException(ConfigException::class);
     $this->testPatchIndividualConfig($values);
   }
 
@@ -948,13 +924,6 @@ class EntityResourceTest extends JsonapiKernelTestBase {
     $request_stack = new RequestStack();
     $request_stack->push($request);
     // Get the entity resource.
-    $current_context = new CurrentContext(
-      $this->container->get('jsonapi.resource_type.repository'),
-      $request_stack,
-      new CurrentRouteMatch($request_stack)
-    );
-    $this->container->set('jsonapi.current_context', $current_context);
-
     $resource_type = new ResourceType($entity_type_id, $bundle, NULL, $internal);
     $resource_type->setRelatableResourceTypes($relatable_resource_types);
 
@@ -962,7 +931,6 @@ class EntityResourceTest extends JsonapiKernelTestBase {
       $resource_type,
       $this->container->get('entity_type.manager'),
       $this->container->get('entity_field.manager'),
-      $current_context,
       $this->container->get('plugin.manager.field.field_type'),
       $this->container->get('jsonapi.link_manager'),
       $this->container->get('jsonapi.resource_type.repository')

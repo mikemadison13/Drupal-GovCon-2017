@@ -56,7 +56,7 @@ function _image_captcha_get_enabled_fonts() {
  * @return array
  *   List($readable_fonts, $problem_fonts).
  */
-function _image_captcha_check_fonts($fonts) {
+function _image_captcha_check_fonts(array $fonts) {
   $readable_fonts = [];
   $problem_fonts = [];
 
@@ -212,8 +212,8 @@ function image_captcha_captcha($op, $captcha_type = '', $captcha_sid = NULL) {
         // the request for the image itself won't succeed (only ?q=user
         // is permitted for unauthenticated users). We fall back to the
         // Math CAPTCHA in that case.
-        if (defined('MAINTENANCE_MODE') && \Drupal::currentUser()
-            ->isAnonymous()
+        if (\Drupal::state()->get('system.maintenance_mode')
+        && \Drupal::currentUser()->isAnonymous()
         ) {
           return captcha_captcha('generate', 'Math');
         }
@@ -238,7 +238,7 @@ function image_captcha_captcha($op, $captcha_type = '', $captcha_sid = NULL) {
           '#theme' => 'image',
           '#uri' => Url::fromRoute('image_captcha.generator', [
             'session_id' => $captcha_sid,
-            'timestamp' => REQUEST_TIME,
+            'timestamp' => \Drupal::time()->getRequestTime(),
           ])->toString(),
           '#width' => $width,
           '#height' => $height,

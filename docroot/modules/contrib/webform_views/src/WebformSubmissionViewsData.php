@@ -63,7 +63,7 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
 
     $base_table = $this->entityType->getBaseTable() ?: $this->entityType->id();
 
-    $data['webform_submission']['source_entity_label'] = [
+    $data[$base_table]['source_entity_label'] = [
       'title' => $this->t('Submitted to: Entity label'),
       'help' => $this->t('The label of entity to which this submission was submitted.'),
       'field' => [
@@ -71,7 +71,7 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
       ],
     ];
 
-    $data['webform_submission']['source_entity_rendered_entity'] = [
+    $data[$base_table]['source_entity_rendered_entity'] = [
       'title' => $this->t('Submitted to: Rendered entity'),
       'help' => $this->t('Rendered entity to which this submission was submitted.'),
       'field' => [
@@ -135,6 +135,15 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
       ],
     ];
 
+    $data[$base_table]['webform_category'] = [
+      'title' => $this->t('Webform category'),
+      'help' => $this->t('Webform category of webform submission.'),
+      'filter' => [
+        'id' => 'webform_views_webform_category',
+        'real field' => $this->entityType->getKey('bundle'),
+      ],
+    ];
+
     // There is no general way to add a relationship to an entity where webform
     // submission has been submitted to, so we just cover the most common case here -
     // the case when the source is a node.
@@ -147,12 +156,28 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
         'base' => $node_definition->getDataTable(),
         'base field' => $node_definition->getKey('id'),
         'id' => 'standard',
-        'label' => t('Submitted to: Content'),
+        'label' => $this->t('Submitted to: Content'),
         'extra' => [
           ['left_field' => 'entity_type', 'value' => 'node'],
         ],
       ],
     ];
+
+    // Add relationship from user to webform submissions he has submitted.
+    $user_definition = $this->entityManager->getDefinition('user');
+    if ($user_definition->getDataTable()) {
+      $data[$user_definition->getDataTable()]['webform_submission'] = [
+        'title' => $this->t('Webform submission'),
+        'help' => $this->t('Webform submission(-s) the user has submitted.'),
+        'relationship' => [
+          'relationship field' => $user_definition->getKey('id'),
+          'base' => $base_table,
+          'base field' => 'uid',
+          'id' => 'standard',
+          'label' => $this->t('Webform submission'),
+        ],
+      ];
+    }
 
     foreach ($this->webformStorage->loadMultiple() as $webform) {
       foreach ($webform->getElementsInitializedAndFlattened() as $element) {

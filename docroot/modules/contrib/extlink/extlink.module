@@ -9,6 +9,9 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 
+/**
+ * Implements hook_modules_installed().
+ */
 function extlink_modules_installed($modules) {
   if (in_array('extlink', $modules)) {
     // Be friendly to your users: what to do after install?
@@ -39,19 +42,26 @@ function extlink_page_attachments(array &$attachments) {
   $config = \Drupal::config('extlink.settings');
   $attachments['#attached']['library'][] = 'extlink/drupal.extlink';
 
-  $attachments['#attached']['drupalSettings']['data']['extlink'] = array(
-    'extTarget'      => $config->get('extlink_target', 0),
-    'extClass'       => $config->get('extlink_class', 'ext'),
-    'extLabel'       => Html::escape($config->get('extlink_label', t('(link is external)'))),
-    'extImgClass'    => $config->get('extlink_img_class', 0),
-    'extSubdomains'  => $config->get('extlink_subdomains', 1),
-    'extExclude'     => $config->get('extlink_exclude', ''),
-    'extInclude'     => $config->get('extlink_include', ''),
-    'extCssExclude'  => $config->get('extlink_css_exclude', ''),
-    'extCssExplicit' => $config->get('extlink_css_explicit', ''),
-    'extAlert'       => $config->get('extlink_alert', 0),
-    'extAlertText'   => $config->get('extlink_alert_text', t('This link will take you to an external web site. We are not responsible for their content.')),
-    'mailtoClass'    => $config->get('extlink_mailto_class', 'mailto'),
-    'mailtoLabel'    => Html::escape($config->get('extlink_mailto_label', t('(link sends e-mail)'))),
-  );
+  // Allow other modules to alter the excluded CSS selector settings.
+  $cssExclude = $config->get('extlink_css_exclude');
+  \Drupal::moduleHandler()->alter('extlink_css_exclude', $cssExclude);
+
+  $attachments['#attached']['drupalSettings']['data']['extlink'] = [
+    'extTarget'           => $config->get('extlink_target'),
+    'extTargetNoOverride' => $config->get('extlink_target_no_override'),
+    'extNofollow'         => $config->get('extlink_nofollow', 0),
+    'extFollowNoOverride' => $config->get('extlink_follow_no_override', 0),
+    'extClass'            => $config->get('extlink_class'),
+    'extLabel'            => Html::escape($config->get('extlink_label')),
+    'extImgClass'         => $config->get('extlink_img_class'),
+    'extSubdomains'       => $config->get('extlink_subdomains'),
+    'extExclude'          => $config->get('extlink_exclude'),
+    'extInclude'          => $config->get('extlink_include'),
+    'extCssExclude'       => $cssExclude,
+    'extCssExplicit'      => $config->get('extlink_css_explicit'),
+    'extAlert'            => $config->get('extlink_alert'),
+    'extAlertText'        => $config->get('extlink_alert_text'),
+    'mailtoClass'         => $config->get('extlink_mailto_class'),
+    'mailtoLabel'         => Html::escape($config->get('extlink_mailto_label')),
+  ];
 }

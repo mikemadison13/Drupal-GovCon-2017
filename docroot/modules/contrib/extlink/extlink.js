@@ -15,8 +15,8 @@
 
     // Strip the host name down, removing ports, subdomains, or www.
     var pattern = /^(([^\/:]+?\.)*)([^\.:]{1,})((\.[a-z0-9]{1,253})*)(:[0-9]{1,5})?$/;
-    var host = window.location.host.replace(pattern, '$3$4');
-    var subdomain = window.location.host.replace(pattern, '$1');
+    var host = window.location.host.replace(pattern, '$2$3');
+    var subdomain = window.location.host.replace(host, '');
 
     // Determine what subdomains are considered internal.
     var subdomains;
@@ -76,7 +76,8 @@
           url = this.href.baseVal;
         }
         if (url.indexOf('http') === 0
-          && ((!url.match(internal_link) && !(extExclude && url.match(extExclude))) || (extInclude && url.match(extInclude)))
+          && ((!internal_link.test(url) && !(extExclude && extExclude.test(url))) || (extInclude && extInclude.test(url)))
+          && !(extCssExclude && $(this).is(extCssExclude))
           && !(extCssExclude && $(this).parents(extCssExclude).length > 0)
           && !(extCssExplicit && $(this).parents(extCssExplicit).length < 1)) {
           external_links.push(this);
@@ -90,50 +91,71 @@
           mailto_links.push(this);
         }
       }
-        // IE7 throws errors often when dealing with irregular links, such as:
-        // <a href="node/10"></a> Empty tags.
-        // <a href="http://user:pass@example.com">example</a> User:pass syntax.
+      // IE7 throws errors often when dealing with irregular links, such as:
+      // <a href="node/10"></a> Empty tags.
+      // <a href="http://user:pass@example.com">example</a> User:pass syntax.
       catch (error) {
         return false;
       }
     });
 
-    if (drupalSettings.data.extlink.extClass) {
+    if (drupalSettings.data.extlink.extClass !== '0' && drupalSettings.data.extlink.extClass !== '') {
       Drupal.extlink.applyClassAndSpan(external_links, drupalSettings.data.extlink.extClass);
     }
 
-    if (drupalSettings.data.extlink.mailtoClass) {
+    if (drupalSettings.data.extlink.mailtoClass !== '0' && drupalSettings.data.extlink.mailtoClass !== '') {
       Drupal.extlink.applyClassAndSpan(mailto_links, drupalSettings.data.extlink.mailtoClass);
     }
 
     if (drupalSettings.data.extlink.extTarget) {
       // Apply the target attribute to all links.
-      if (drupalSettings.data.extlink.extTarget) {
-        $(external_links).attr({target:'_blank', rel:'nofollow'});
-        $(external_links).attr('rel', function (i, val) {
-          // If no rel attribute is present, create one with the values noopener and noreferrer.
-          if (val === null) {
-            return 'noopener nofererer';
+      $(external_links).filter(function () {
+        // Filter out links with target set if option specified.
+        return !(drupalSettings.data.extlink.extTargetNoOverride && $(this).is('a[target]'));
+      }).attr({ target: '_blank' });
+
+      // Add noopener and noreferrer rel attributes to combat phishing.
+      $(external_links).attr('rel', function (i, val) {
+        // If no rel attribute is present, create one with the values noopener and noreferrer.
+        if (val === null || typeof val === 'undefined') {
+          return 'noopener noreferrer';
+        }
+        // Check to see if rel contains noopener or noreferrer. Add what doesn't exist.
+        if (val.indexOf('noopener') > -1 || val.indexOf('noreferrer') > -1) {
+          if (val.indexOf('noopener') === -1) {
+            return val + ' noopener';
           }
-          // Check to see if rel contains noopener or noreferrer. Add what doesn't exist.
-          if (val.indexOf('noopener') > -1 || val.indexOf('noreferrer') > -1) {
-            if (val.indexOf('noopener') === -1) {
-              return val + ' noopener';
-            }
-            if (val.indexOf('noreferrer') === -1) {
-              return val + ' noreferrer';
-            }
-            // Both noopener and noreferrer exist. Nothing needs to be added.
-            else {
-              return val;
-            }
+          if (val.indexOf('noreferrer') === -1) {
+            return val + ' noreferrer';
           }
-          // Else, append noopener and noreferrer to val.
+          // Both noopener and noreferrer exist. Nothing needs to be added.
           else {
-            return val + ' noopener nofererer';
+            return val;
           }
-        });
-      }
+        }
+        // Else, append noopener and noreferrer to val.
+        else {
+          return val + ' noopener noreferrer';
+        }
+      });
+    }
+
+    if (drupalSettings.data.extlink.extNofollow) {
+      $(external_links).attr('rel', function (i, val) {
+        // when the link does not have a rel attribute set it to 'nofollow'.
+        if (val === null || typeof val === 'undefined') {
+          return 'nofollow';
+        }
+        var target = 'nofollow';
+        // Change the target, if not overriding follow.
+        if (drupalSettings.data.extlink.extFollowNoOverride) {
+          target = 'follow';
+        }
+        if (val.indexOf(target) === -1) {
+          return val + ' nofollow';
+        }
+        return val;
+      });
     }
 
     Drupal.extlink = Drupal.extlink || {};
@@ -168,18 +190,18 @@
       var links_with_images = $(links).find('img').parents('a');
       $links_to_process = $(links).not(links_with_images);
     }
-    $links_to_process.addClass(class_name);
+    if (class_name !== '0') {
+      $links_to_process.addClass(class_name);
+    }
     var i;
     var length = $links_to_process.length;
     for (i = 0; i < length; i++) {
       var $link = $($links_to_process[i]);
-      if ($link.css('display') === 'inline' || $link.css('display') === 'inline-block' || $link.css('display') === 'block') {
-        if (class_name === drupalSettings.data.extlink.mailtoClass) {
-          $link.append('<span class="' + class_name + '"><span class="element-invisible"> ' + drupalSettings.data.extlink.mailtoLabel + '</span></span>');
-        }
-        else {
-          $link.append('<span class="' + class_name + '"><span class="element-invisible"> ' + drupalSettings.data.extlink.extLabel + '</span></span>');
-        }
+      if (class_name === drupalSettings.data.extlink.mailtoClass) {
+        $link.append('<span class="' + class_name + '" aria-label="' + drupalSettings.data.extlink.mailtoLabel + '"></span>');
+      }
+      else {
+        $link.append('<span class="' + class_name + '" aria-label="' + drupalSettings.data.extlink.extLabel + '"></span>');
       }
     }
   };

@@ -1,7 +1,7 @@
 drupal.extlink:
   version: VERSION
   js:
-    extlink.min.js: {}
+    extlink.js: {}
   css:
     theme:
       extlink.css: { every_page: 1 }

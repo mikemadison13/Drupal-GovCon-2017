@@ -1,3 +1,6 @@
+## 2.2.0
+* Security updated JSON API to 1.16 (SA-CONTRIB-2018-021)
+
 ## 2.1.0
 * Security updated JSON API to 1.14 (Issue #2955026 and SA-CONTRIB-2018-016)
 

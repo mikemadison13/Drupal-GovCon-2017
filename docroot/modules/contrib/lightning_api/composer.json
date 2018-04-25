@@ -15,19 +15,20 @@
             "url": "https://asset-packagist.org"
         },
         "dev": {
-            "type": "vcs",
-            "url": "https://github.com/acquia/lightning-dev"
+            "type": "github",
+            "url": "https://github.com/acquia/lightning-dev",
+            "no-api": true
         }
     },
     "require-dev": {
         "acquia/lightning_dev": "dev-8.x-1.x"
     },
     "require": {
-        "drupal/lightning_core": "^2.1",
+        "drupal/lightning_core": "^2.5",
         "cweagans/composer-patches": "^1.6.4",
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "oomphinc/composer-installers-extender": "^1.1",
-        "drupal/jsonapi": "1.14",
+        "drupal/jsonapi": "1.16",
         "drupal/openapi": "1.0-alpha1",
         "drupal/simple_oauth": "3.5.0"
     },
