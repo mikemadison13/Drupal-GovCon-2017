@@ -1,0 +1,20 @@
+{
+    "name": "acquia/acsf",
+    "type": "drupal-module",
+    "description": "Connects a site with Acquia Cloud Site Factory.",
+    "require-dev": {
+        "phpunit/phpunit": "~5.3",
+        "mockery/mockery": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Drupal\\acsf\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Acquia",
+            "email": "support@acquia.com"
+        }
+    ]
+}
