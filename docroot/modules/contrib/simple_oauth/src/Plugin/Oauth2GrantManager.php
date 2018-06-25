@@ -16,6 +16,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 
 /**
  * Provides the OAuth2 Grant plugin manager.
@@ -43,6 +44,11 @@ class Oauth2GrantManager extends DefaultPluginManager implements Oauth2GrantMana
   protected $refreshTokenRepository;
 
   /**
+   * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+   */
+  protected $responseType;
+
+  /**
    * @var string
    */
   protected $privateKeyPath;
@@ -67,6 +73,20 @@ class Oauth2GrantManager extends DefaultPluginManager implements Oauth2GrantMana
    *   Cache backend instance to use.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
+   * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface $client_repository
+   *   The client repository.
+   * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface $scope_repository
+   *   The scope repository.
+   * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $access_token_repository
+   *   The access token repository.
+   * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refresh_token_repository
+   *   The refresh token repository.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $response_type
+   *   The authorization server response type.
+   *
+   * @throws \Exception
    */
   public function __construct(
     \Traversable $namespaces,
@@ -76,7 +96,8 @@ class Oauth2GrantManager extends DefaultPluginManager implements Oauth2GrantMana
     ScopeRepositoryInterface $scope_repository,
     AccessTokenRepositoryInterface $access_token_repository,
     RefreshTokenRepositoryInterface $refresh_token_repository,
-    ConfigFactoryInterface $config_factory
+    ConfigFactoryInterface $config_factory,
+    ResponseTypeInterface $response_type = NULL
   ) {
     parent::__construct('Plugin/Oauth2Grant', $namespaces, $module_handler, 'Drupal\simple_oauth\Plugin\Oauth2GrantInterface', 'Drupal\simple_oauth\Annotation\Oauth2Grant');
 
@@ -87,6 +108,7 @@ class Oauth2GrantManager extends DefaultPluginManager implements Oauth2GrantMana
     $this->scopeRepository = $scope_repository;
     $this->accessTokenRepository = $access_token_repository;
     $this->refreshTokenRepository = $refresh_token_repository;
+    $this->responseType = $response_type;
     $settings = $config_factory->get('simple_oauth.settings');
     $this->setKeyPaths($settings);
     $this->expiration = new \DateInterval(sprintf('PT%dS', $settings->get('access_token_expiration')));
@@ -106,12 +128,19 @@ class Oauth2GrantManager extends DefaultPluginManager implements Oauth2GrantMana
 
     $this->checkKeyPaths();
     $salt = Settings::getHashSalt();
+
+    // The hash salt must be at least 32 characters long.
+    if (Core::ourStrlen($salt) < 32) {
+      throw OAuthServerException::serverError('Hash salt must be at least 32 characters long.');
+    }
+
     $server = new AuthorizationServer(
       $this->clientRepository,
       $this->accessTokenRepository,
       $this->scopeRepository,
       realpath($this->privateKeyPath),
-      Core::ourSubstr($salt, 0, 32)
+      Core::ourSubstr($salt, 0, 32),
+      $this->responseType
     );
     // Enable the password grant on the server with a token TTL of X hours.
     $server->enableGrantType(

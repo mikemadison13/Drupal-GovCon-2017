@@ -118,7 +118,7 @@ class QuickEditIntegrationLoadingTest extends WebTestBase {
     $this->testNode->save();
     // Ensure the content from the latest revision is loaded from the quickedit
     // editor route.
-    $response = $this->drupalPost('editor/' . 'node/1/body/en/full', '', [], ['query' => [MainContentViewSubscriber::WRAPPER_FORMAT => 'drupal_ajax']]);
+    $response = $this->drupalPost("editor/node/{$this->testNode->id()}/body/en/full", '', [], ['query' => [MainContentViewSubscriber::WRAPPER_FORMAT => 'drupal_ajax']]);
     $this->setRawContent($response);
     $this->assertRaw('Content in a pending revision.');
   }

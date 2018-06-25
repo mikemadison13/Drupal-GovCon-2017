@@ -89,4 +89,42 @@ class ImplicitFunctionalTest extends TokenBearerFunctionalTestBase {
     $assert_session->addressMatches('/\/oauth\/test#access_token=.*&token_type=Bearer&expires_in=\d*/');
   }
 
+  /**
+   * Test the valid Implicit grant if the client is non 3rd party
+   */
+  public function testValidClientImplicitGrant() {
+    $this->client->set('third_party', FALSE);
+    $this->client->save();
+    $valid_params = [
+      'response_type' => 'token',
+      'client_id' => $this->client->uuid(),
+      'client_secret' => $this->clientSecret,
+    ];
+    // 1. Anonymous request invites the user to log in.
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+    $assert_session = $this->assertSession();
+    $assert_session->buttonExists(t('Login'));
+    $assert_session->responseContains(t('An external client application is requesting access'));
+
+    // 2. Log the user in and try again.
+    $this->drupalLogin($this->user);
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+    $assert_session = $this->assertSession();
+    $assert_session->responseContains('Fatal error. Unable to get the authorization server.');
+    $this
+      ->config('simple_oauth_extras.settings')
+      ->set('use_implicit', TRUE)
+      ->save();
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+    $assert_session = $this->assertSession();
+    $assert_session->statusCodeEquals(200);
+    $assert_session->addressMatches('/\/oauth\/test#access_token=.*&token_type=Bearer&expires_in=\d*/');
+  }
+
 }

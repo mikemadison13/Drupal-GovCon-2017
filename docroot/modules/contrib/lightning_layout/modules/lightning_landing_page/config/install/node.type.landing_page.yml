@@ -1,12 +1,6 @@
 langcode: en
 status: true
-third_party_settings:
-  menu_ui:
-    available_menus:
-      - main
-    parent: 'main:'
-  lightning_workflow:
-    workflow: editorial
+third_party_settings: {  }
 name: 'Landing page'
 type: landing_page
 description: 'A special page with its own one-off layout and content.'

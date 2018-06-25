@@ -1,3 +1,6 @@
+## 1.2.0
+* Updated to Panelizer 4.1 and Panels 4.3.
+
 ## 1.1.0
 * Entity Blocks was updated to its latest stable release and is no longer
   patched by Lightning Layout.

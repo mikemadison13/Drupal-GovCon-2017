@@ -12,6 +12,11 @@ use Drupal\user\EntityOwnerInterface;
 
 /**
  * Contains miscellaneous step definitions for working with Drupal entities.
+ *
+ * @internal
+ * This class is part of Lightning's internal testing code. It is not an API and
+ * should not be extended. This class will be marked final, and all protected
+ * members will be made private, in Lightning Core 3.x.
  */
 class EntityContext extends DrupalSubContextBase {
 
@@ -88,8 +93,8 @@ class EntityContext extends DrupalSubContextBase {
    *
    * @throws \Exception if there are no entities to visit.
    *
-   * @When I visit a(n) :entity_type
-   * @When I visit a(n) :bundle :entity_type
+   * @When I visit (?:a|an) :entity_type
+   * @When I visit (?:a|an) :bundle :entity_type
    */
   public function visitEntity($entity_type, $bundle = NULL) {
     $storage = \Drupal::entityTypeManager()->getStorage($entity_type);

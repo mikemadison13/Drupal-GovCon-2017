@@ -363,7 +363,7 @@ class QuickEditLoadingTest extends WebTestBase {
     $this->testNode->title = 'latest revision title';
     $this->testNode->save();
 
-    $response = $this->drupalPost('quickedit/form/node/1/title/en/full', '', [], ['query' => [MainContentViewSubscriber::WRAPPER_FORMAT => 'drupal_ajax']]);
+    $response = $this->drupalPost("quickedit/form/node/{$this->testNode->id()}/title/en/full", '', [], ['query' => [MainContentViewSubscriber::WRAPPER_FORMAT => 'drupal_ajax']]);
     $this->setRawContent($response);
     $this->assertRaw('latest revision title');
   }

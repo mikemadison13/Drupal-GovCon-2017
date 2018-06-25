@@ -53,9 +53,10 @@ final class Update200 implements ContainerInjectionInterface {
    *
    * @update
    *
-   * @ask Do you want to rename the exposed "Source" filter on the Media
+   * @ask Do you want to rename the "Media Type" filter label on the Media
    * overview page to "Type"? This will also change the filter's URL identifier
-   * to 'type'.
+   * to 'type' and will make the label and URL identifier consistent with new
+   * installs of Lightning.
    */
   public function renameMediaOverviewTypeFilter() {
     $view = $this->configFactory->getEditable('views.view.media');

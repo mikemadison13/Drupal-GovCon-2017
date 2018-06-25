@@ -10,6 +10,11 @@ use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
  * Allows test modules to be installed during a scenario and uninstalled after.
+ *
+ * @internal
+ * This class is part of Lightning's internal testing code. It is not an API and
+ * should not be extended. This class will be marked final, and all protected
+ * members will be made private, in Lightning Core 3.x.
  */
 class TestModuleContext extends DrupalSubContextBase {
 

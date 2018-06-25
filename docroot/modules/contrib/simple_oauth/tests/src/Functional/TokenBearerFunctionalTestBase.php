@@ -113,6 +113,7 @@ abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
       'label' => $this->getRandomGenerator()->name(),
       'secret' => $this->clientSecret,
       'confidential' => TRUE,
+      'third_party' => TRUE,
       'roles' => [['target_id' => $client_role->id()]],
     ]);
     $this->client->save();

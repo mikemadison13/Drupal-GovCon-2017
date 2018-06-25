@@ -40,12 +40,16 @@ class MediaBrowserContext extends DrupalSubContextBase {
       ->getContext(CkEditorContext::class)
       ->execute('editdrupalentity', NULL, ['id' => $button]);
 
-    $this->awaitAjax();
-
     $frame = $this->awaitElement("iframe[name='entity_browser_iframe_$button']", 30)
       ->getAttribute('name');
 
     $this->getSession()->switchToIFrame($frame);
+
+    // For whatever reason, the iFrame switch does not appear to take effect
+    // immediately under certain circumstances. I don't know what is going on
+    // here, but this needs to be revisited later. 2 seconds appears to be too
+    // soon, but 3 works consistently for me in my local environment.
+    sleep(3);
   }
 
   /**

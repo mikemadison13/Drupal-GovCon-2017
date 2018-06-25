@@ -7,6 +7,7 @@
 
 use Drupal\field\FieldConfigInterface;
 use Drupal\node\Entity\NodeType;
+use Drupal\workflows\Entity\Workflow;
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
@@ -51,8 +52,25 @@ function lightning_landing_page_modules_installed(array $modules) {
   if (\Drupal::isConfigSyncing()) {
     return;
   }
-  elseif (in_array('lightning_search', $modules)) {
-    $node_type = NodeType::load('landing_page');
+
+  $node_type = NodeType::load('landing_page');
+
+  if (in_array('lightning_search', $modules, TRUE)) {
     lightning_search_node_type_insert($node_type);
+  }
+
+  if (in_array('content_moderation', $modules, TRUE)) {
+    $workflow = Workflow::load('editorial');
+    /** @var \Drupal\content_moderation\Plugin\WorkflowType\ContentModerationInterface $plugin */
+    $plugin = $workflow->getTypePlugin();
+    $plugin->addEntityTypeAndBundle('node', $node_type->id());
+    $workflow->save();
+  }
+
+  if (in_array('menu_ui', $modules, TRUE)) {
+    $node_type
+      ->setThirdPartySetting('menu_ui', 'available_menus', ['main'])
+      ->setThirdPartySetting('menu_ui', 'parent', 'main:')
+      ->save();
   }
 }

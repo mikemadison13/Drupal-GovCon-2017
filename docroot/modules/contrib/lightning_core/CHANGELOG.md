@@ -1,3 +1,12 @@
+## 2.7.0
+* Updated Drupal core to 8.5.4.
+* Drush updb failure from drush_lightning_core_pre_updatedb (Issue #2972217)
+* Tests: "When I visit" step definition is too general (Issue #2955092)
+
+## 2.6.0
+* Added a Drush 9 command hook which will clear all cached plugin definitions before
+  database updates begin. (GitHub #55)
+
 ## 2.5.0
 * Security updated Drupal core to 8.5.3.
 

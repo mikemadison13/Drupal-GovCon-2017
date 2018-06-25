@@ -41,6 +41,8 @@ services:
   simple_oauth.repositories.refresh_token:
     class: Drupal\simple_oauth\Repositories\RefreshTokenRepository
     arguments: ['@entity_type.manager', '@serializer']
+  simple_oauth.server.response_type:
+    class: \League\OAuth2\Server\ResponseTypes\BearerTokenResponse
   plugin.manager.oauth2_grant.processor:
     class: Drupal\simple_oauth\Plugin\Oauth2GrantManager
     parent: default_plugin_manager
@@ -50,6 +52,7 @@ services:
       - '@simple_oauth.repositories.access_token'
       - '@simple_oauth.repositories.refresh_token'
       - '@config.factory'
+      - '@simple_oauth.server.response_type'
   simple_oauth.expired_collector:
     class: Drupal\simple_oauth\ExpiredCollector
     arguments: ['@entity_type.manager', '@datetime.time']

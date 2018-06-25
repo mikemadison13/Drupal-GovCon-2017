@@ -11,6 +11,11 @@ use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
  * Contains miscellaneous step definitions for working with HTML elements.
+ *
+ * @internal
+ * This class is part of Lightning's internal testing code. It is not an API and
+ * should not be extended. This class will be marked final, and all protected
+ * members will be made private, in Lightning Core 3.x.
  */
 class ElementContext extends DrupalSubContextBase {
 
@@ -434,6 +439,20 @@ class ElementContext extends DrupalSubContextBase {
     if ($count < $n) {
       throw new ExpectationException("Expected '$selector' to match at least $n elements, but it matched $count.", $session->getDriver());
     }
+  }
+
+  /**
+   * Asserts that a number of elements match a CSS selector.
+   *
+   * @param string $selector
+   *   The selector.
+   * @param int $n
+   *   The number of elements expected to match the selector.
+   *
+   * @Then exactly :n element(s) should match :selector
+   */
+  public function matchExactly($selector, $n) {
+    $this->assertSession()->elementsCount('css', $selector, $n);
   }
 
   /**

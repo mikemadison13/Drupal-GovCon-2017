@@ -15,8 +15,14 @@
             "url": "https://asset-packagist.org"
         },
         "dev": {
-            "type": "vcs",
-            "url": "https://github.com/acquia/lightning-dev"
+            "type": "github",
+            "url": "https://github.com/acquia/lightning-dev",
+            "no-api": true
+        }
+    },
+    "config": {
+        "preferred-install": {
+            "drupal/core": "dist"
         }
     },
     "require-dev": {
@@ -26,10 +32,10 @@
         "cweagans/composer-patches": "^1.6.4",
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "oomphinc/composer-installers-extender": "^1.1",
-        "drupal/lightning_core": "^1.0 || ^2.1",
+        "drupal/lightning_core": "^1.0 || ^2.5",
         "drupal/ctools": "^3.0",
-        "drupal/panels": "4.2.0",
-        "drupal/panelizer": "4.0.0",
+        "drupal/panels": "4.3",
+        "drupal/panelizer": "^4.1",
         "drupal/entity_block": "^1.0"
     },
     "scripts": {
@@ -75,19 +81,7 @@
                 "2878684 - Use String.match to correlate regions when switching Layouts in Panels IPE":
                 "https://www.drupal.org/files/issues/panels-ipe-2878684-3.patch",
                 "2825034 - Form error messages do not appear in IPE":
-                "https://www.drupal.org/files/issues/panels-ipe-propogate-errors-2825034-5.patch",
-                "2908897 - CategoryView leaves AJAX request marked active":
-                "https://www.drupal.org/files/issues/2908897-2.patch",
-                "2913353 - IPE attaches behaviors a bit too quickly":
-                "https://www.drupal.org/files/issues/2913353-2.patch",
-                "2825028 - AJAX error creating and placing blocks with date fields in IPE":
-                "https://www.drupal.org/files/issues/panels-ipe-date-field-2825028-10.patch",
-                "2923286 - Fatal error in Drupal\\panels\\Form\\PanelsAddBlockForm::buildForm() with PHP 7.2":
-                "https://www.drupal.org/files/issues/2923286-13.patch"
-            },
-            "drupal/panelizer": {
-                "2908917 - SaveTabView blindly assumes a Revert tab exists":
-                "https://www.drupal.org/files/issues/2908917-2.patch"
+                "https://www.drupal.org/files/issues/panels-ipe-propogate-errors-2825034-5.patch"
             }
         },
         "enable-patching": true

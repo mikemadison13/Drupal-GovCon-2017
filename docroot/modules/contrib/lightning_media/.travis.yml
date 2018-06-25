@@ -1,10 +1,8 @@
-sudo: required
 dist: trusty
 language: php
 
 cache:
   bundler: true
-  apt: true
   directories:
     - "$HOME/.composer/cache"
     - "$HOME/.drush/cache"
@@ -14,22 +12,21 @@ php:
 
 env:
   - VERSION=HEAD
+  - VERSION=2.3.0
+  - VERSION=2.2.0
   - VERSION=2.1.0
-  - VERSION=2.0.0
-  - VERSION=1.0.0-rc3
+  # The final CI slot should be used to test the update path from the oldest
+  # available database fixture.
   - VERSION=1.0.0-rc2
 
 addons:
-  apt:
-    packages:
-    # Dependencies for Chrome.
-    - libappindicator1
-    - fonts-liberation
+  chrome: stable
 
 before_install:
   - phpenv config-rm xdebug.ini
   - composer self-update
   - composer --version
+  - google-chrome --version
   # Initialize xvfb (see https://docs.travis-ci.com/user/gui-and-headless-browsers)
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
@@ -43,13 +40,6 @@ before_install:
   - mkdir -p $HOME/.composer/vendor/bin
   - mv -f chromedriver $HOME/.composer/vendor/bin/
   - rm chromedriver_linux64.zip
-
-  # Update Chrome.
-  - export CHROME_BIN=/usr/bin/google-chrome
-  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - sudo dpkg -i google-chrome-stable_current_amd64.deb
-  - rm google-chrome-stable_current_amd64.deb
-  - google-chrome --version
 
 install:
   # Add Composer's local bin directory to the PATH so that we will be running
@@ -75,7 +65,7 @@ install:
   # always be renegotiated.
   - composer install
   # Install on top of minimal for testing.
-  - lightning install "mysql\://lightning:lightning@127.0.0.1/lightning" minimal "http://127.0.0.1:8080"
+  - lightning install --from-config "mysql\://lightning:lightning@127.0.0.1/lightning" minimal "http://127.0.0.1:8080"
   # Restore database fixture from the version we're testing and run database and
   # and Lightning config updates.
   - lightning update $VERSION

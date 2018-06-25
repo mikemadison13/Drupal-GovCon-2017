@@ -73,7 +73,14 @@ class SimpleOauthAuthenticationProvider implements SimpleOauthAuthenticationProv
       'value' => $request->get('oauth_access_token_id'),
     ]);
     $token = reset($tokens);
-    return new TokenAuthUser($token);
+
+    $account = new TokenAuthUser($token);
+
+    // Set consumer ID header on successful authentication, so negotiators
+    // will trigger correctly.
+    $request->headers->set('X-Consumer-ID', $account->getConsumer()->uuid());
+
+    return $account;
   }
 
 }

@@ -81,7 +81,7 @@ class WebformSubmissionWebformCategory extends StringFilter {
     $webform_ids = $this->getApplicableWebformIds();
     if (empty($webform_ids)) {
       // Since no webforms were matched. Put a condition that yields FALSE.
-      $this->query->addWhereExpression($this->options['grou'], '1 = 0');
+      $this->query->addWhereExpression($this->options['group'], '1 = 0');
     }
     else {
       $this->ensureMyTable();

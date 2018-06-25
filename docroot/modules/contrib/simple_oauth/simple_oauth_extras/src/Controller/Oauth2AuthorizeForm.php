@@ -3,6 +3,7 @@
 namespace Drupal\simple_oauth_extras\Controller;
 
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -140,25 +141,35 @@ class Oauth2AuthorizeForm extends FormBase {
     }
     $client_drupal_entity = reset($client_drupal_entities);
 
-    // Gather all the role ids.
-    $scope_ids = array_merge(
-      explode(' ', $request->get('scope')),
-      array_map(function ($item) {
-        return $item['target_id'];
-      }, $client_drupal_entity->get('roles')->getValue())
-    );
-    $user_roles = $manager->getStorage('user_role')->loadMultiple($scope_ids);
+    $cacheablity_metadata = new CacheableMetadata();
+
     $form['client'] = $manager->getViewBuilder('consumer')->view($client_drupal_entity);
-    $client_drupal_entity->addCacheableDependency($form['client']);
     $form['scopes'] = [
       '#title' => $this->t('Permissions'),
       '#theme' => 'item_list',
       '#items' => [],
     ];
-    foreach ($user_roles as $user_role) {
-      $user_role->addCacheableDependency($form['scopes']);
-      $form['scopes']['#items'][] = $user_role->label();
+
+    $client_roles = [];
+    foreach ($client_drupal_entity->get('roles') as $role_item) {
+      $client_roles[$role_item->target_id] = $role_item->entity;
     }
+
+    /** @var \Drupal\simple_oauth\Entities\ScopeEntityNameInterface $scope */
+    foreach ($auth_request->getScopes() as $scope) {
+      $cacheablity_metadata->addCacheableDependency($scope);
+      $form['scopes']['#items'][] = $scope->getName();
+
+      unset($client_roles[$scope->getIdentifier()]);
+    }
+
+    // Add the client roles that were not explicitly requested to the list.
+    foreach ($client_roles as $client_role) {
+      $cacheablity_metadata->addCacheableDependency($client_role);
+      $form['scopes']['#items'][] = $client_role->label();
+    }
+
+    $cacheablity_metadata->applyTo($form['scopes']);
 
     $form['redirect_uri'] = [
       '#type' => 'hidden',

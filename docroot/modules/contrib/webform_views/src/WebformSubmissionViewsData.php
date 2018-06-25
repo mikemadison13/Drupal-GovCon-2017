@@ -135,11 +135,30 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
       ],
     ];
 
+    $data[$base_table]['webform_submission_notes_edit'] = [
+      'title' => $this->t('Edit notes'),
+      'help' => $this->t('In-line text area to edit webform submission notes.'),
+      'field' => [
+        'id' => 'webform_submission_notes_edit',
+        'real field' => 'notes',
+        'click sortable' => FALSE,
+      ],
+    ];
+
     $data[$base_table]['webform_category'] = [
       'title' => $this->t('Webform category'),
       'help' => $this->t('Webform category of webform submission.'),
       'filter' => [
         'id' => 'webform_views_webform_category',
+        'real field' => $this->entityType->getKey('bundle'),
+      ],
+    ];
+
+    $data[$base_table]['webform_status'] = [
+      'title' => $this->t('Webform status'),
+      'help' => $this->t('Status of a webform to which submission is submitted to.'),
+      'filter' => [
+        'id' => 'webform_views_webform_status',
         'real field' => $this->entityType->getKey('bundle'),
       ],
     ];

@@ -6,9 +6,10 @@ package: Lightning
 dependencies:
   - content_moderation
   - datetime
+  - lightning_core
 
-# Information added by Drupal.org packaging script on 2018-03-27
-version: '8.x-1.2'
+# Information added by Drupal.org packaging script on 2018-06-11
+version: '8.x-2.0'
 core: '8.x'
 project: 'lightning_workflow'
-datestamp: 1522167786
+datestamp: 1528747685

@@ -4,9 +4,10 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635
+class ComposerStaticInit403143a44dfd2845605db1fdb8ec59b9
 {
     public static $files = array (
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
@@ -61,6 +62,7 @@ class ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635
             'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Iconv\\' => 23,
+            'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\VarDumper\\' => 28,
             'Symfony\\Component\\Validator\\' => 28,
@@ -222,6 +224,10 @@ class ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635
         'Symfony\\Polyfill\\Iconv\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-iconv',
+        ),
+        'Symfony\\Polyfill\\Ctype\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
         'Symfony\\Component\\Yaml\\' => 
         array (
@@ -1120,9 +1126,10 @@ class ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635
         'Doctrine\\Instantiator\\Instantiator' => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator/Instantiator.php',
         'Doctrine\\Instantiator\\InstantiatorInterface' => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator/InstantiatorInterface.php',
         'Drupal' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal.php',
+        'DrupalComposer\\DrupalScaffold\\CommandProvider' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/CommandProvider.php',
+        'DrupalComposer\\DrupalScaffold\\DrupalScaffoldCommand' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/DrupalScaffoldCommand.php',
         'DrupalComposer\\DrupalScaffold\\FileFetcher' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/FileFetcher.php',
         'DrupalComposer\\DrupalScaffold\\Handler' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/Handler.php',
-        'DrupalComposer\\DrupalScaffold\\InitialFileFetcher' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/InitialFileFetcher.php',
         'DrupalComposer\\DrupalScaffold\\Plugin' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/Plugin.php',
         'DrupalComposer\\DrupalScaffold\\PrestissimoFileFetcher' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/PrestissimoFileFetcher.php',
         'Drupal\\Component\\Annotation\\AnnotationBase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Annotation/AnnotationBase.php',
@@ -5692,6 +5699,7 @@ class ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635
         'Symfony\\Component\\Yaml\\Tag\\TaggedValue' => __DIR__ . '/..' . '/symfony/yaml/Tag/TaggedValue.php',
         'Symfony\\Component\\Yaml\\Unescaper' => __DIR__ . '/..' . '/symfony/yaml/Unescaper.php',
         'Symfony\\Component\\Yaml\\Yaml' => __DIR__ . '/..' . '/symfony/yaml/Yaml.php',
+        'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
         'Symfony\\Polyfill\\Iconv\\Iconv' => __DIR__ . '/..' . '/symfony/polyfill-iconv/Iconv.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
@@ -6162,6 +6170,8 @@ class ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635
         'Zend\\Feed\\Reader\\Extension\\CreativeCommons\\Feed' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Reader/Extension/CreativeCommons/Feed.php',
         'Zend\\Feed\\Reader\\Extension\\DublinCore\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Reader/Extension/DublinCore/Entry.php',
         'Zend\\Feed\\Reader\\Extension\\DublinCore\\Feed' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Reader/Extension/DublinCore/Feed.php',
+        'Zend\\Feed\\Reader\\Extension\\GooglePlayPodcast\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Reader/Extension/GooglePlayPodcast/Entry.php',
+        'Zend\\Feed\\Reader\\Extension\\GooglePlayPodcast\\Feed' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Reader/Extension/GooglePlayPodcast/Feed.php',
         'Zend\\Feed\\Reader\\Extension\\Podcast\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Reader/Extension/Podcast/Entry.php',
         'Zend\\Feed\\Reader\\Extension\\Podcast\\Feed' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Reader/Extension/Podcast/Feed.php',
         'Zend\\Feed\\Reader\\Extension\\Slash\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Reader/Extension/Slash/Entry.php',
@@ -6200,6 +6210,10 @@ class ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635
         'Zend\\Feed\\Writer\\Extension\\Content\\Renderer\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/Content/Renderer/Entry.php',
         'Zend\\Feed\\Writer\\Extension\\DublinCore\\Renderer\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/DublinCore/Renderer/Entry.php',
         'Zend\\Feed\\Writer\\Extension\\DublinCore\\Renderer\\Feed' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/DublinCore/Renderer/Feed.php',
+        'Zend\\Feed\\Writer\\Extension\\GooglePlayPodcast\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/GooglePlayPodcast/Entry.php',
+        'Zend\\Feed\\Writer\\Extension\\GooglePlayPodcast\\Feed' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/GooglePlayPodcast/Feed.php',
+        'Zend\\Feed\\Writer\\Extension\\GooglePlayPodcast\\Renderer\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/GooglePlayPodcast/Renderer/Entry.php',
+        'Zend\\Feed\\Writer\\Extension\\GooglePlayPodcast\\Renderer\\Feed' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/GooglePlayPodcast/Renderer/Feed.php',
         'Zend\\Feed\\Writer\\Extension\\ITunes\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/ITunes/Entry.php',
         'Zend\\Feed\\Writer\\Extension\\ITunes\\Feed' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/ITunes/Feed.php',
         'Zend\\Feed\\Writer\\Extension\\ITunes\\Renderer\\Entry' => __DIR__ . '/..' . '/zendframework/zend-feed/src/Writer/Extension/ITunes/Renderer/Entry.php',
@@ -6353,10 +6367,10 @@ class ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit288bbfc5bc6e91c29dcc621438c3e635::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit403143a44dfd2845605db1fdb8ec59b9::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit403143a44dfd2845605db1fdb8ec59b9::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit403143a44dfd2845605db1fdb8ec59b9::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit403143a44dfd2845605db1fdb8ec59b9::$classMap;
 
         }, null, ClassLoader::class);
     }
