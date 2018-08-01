@@ -43,7 +43,7 @@ class Routes implements ContainerInjectionInterface {
   }
 
   /**
-   * Provides dynamic routes.
+   * {@inheritdoc}
    */
   public function routes() {
     $collection = new RouteCollection();

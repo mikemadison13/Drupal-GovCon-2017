@@ -20,6 +20,7 @@ use Psr\Http\Message\ResponseInterface;
 abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
 
   use RequestHelperTrait;
+  use SimpleOauthTestTrait;
 
   public static $modules = [
     'image',
@@ -62,16 +63,6 @@ abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
   /**
    * @var string
    */
-  protected $privateKeyPath;
-
-  /**
-   * @var string
-   */
-  protected $publicKeyPath;
-
-  /**
-   * @var string
-   */
   protected $scope;
 
   /**
@@ -79,8 +70,6 @@ abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
    */
   protected function setUp() {
     parent::setUp();
-
-    $this->htmlOutputEnabled = FALSE;
 
     $this->url = Url::fromRoute('oauth2_token.token');
 
@@ -126,21 +115,7 @@ abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
       'access content',
     ]);
 
-    // Use the public and private keys.
-    $path = $this->container->get('module_handler')->getModule('simple_oauth')->getPath();
-    $temp_dir = sys_get_temp_dir();
-    $public_path = '/' . $path . '/tests/certificates/public.key';
-    $private_path = '/' . $path . '/tests/certificates/private.key';
-    file_put_contents($temp_dir . '/public.key', file_get_contents(DRUPAL_ROOT . $public_path));
-    file_put_contents($temp_dir . '/private.key', file_get_contents(DRUPAL_ROOT . $private_path));
-    chmod($temp_dir . '/public.key', 0660);
-    chmod($temp_dir . '/private.key', 0660);
-    $this->publicKeyPath = $temp_dir . '/public.key';
-    $this->privateKeyPath = $temp_dir . '/private.key';
-    $settings = $this->config('simple_oauth.settings');
-    $settings->set('public_key', $this->publicKeyPath);
-    $settings->set('private_key', $this->privateKeyPath);
-    $settings->save();
+    $this->setUpKeys();
 
     $num_roles = mt_rand(1, count($this->additionalRoles));
     $requested_roles = array_slice($this->additionalRoles, 0, $num_roles);
@@ -159,10 +134,13 @@ abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
    *   The response object.
    * @param bool $has_refresh
    *   TRUE if the response should return a refresh token. FALSE otherwise.
+   *
+   * @return array
+   *   An array representing the response of "/oauth/token".
    */
   protected function assertValidTokenResponse(ResponseInterface $response, $has_refresh = FALSE) {
     $this->assertEquals(200, $response->getStatusCode());
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     $this->assertSame('Bearer', $parsed_response['token_type']);
     $expiration = $this->config('simple_oauth.settings')->get('access_token_expiration');
     $this->assertLessThanOrEqual($expiration, $parsed_response['expires_in']);
@@ -172,8 +150,10 @@ abstract class TokenBearerFunctionalTestBase extends BrowserTestBase {
       $this->assertNotEmpty($parsed_response['refresh_token']);
     }
     else {
-      $this->assertTrue(empty($parsed_response['refresh_token']));
+      $this->assertFalse(isset($parsed_response['refresh_token']));
     }
+
+    return $parsed_response;
   }
 
 }

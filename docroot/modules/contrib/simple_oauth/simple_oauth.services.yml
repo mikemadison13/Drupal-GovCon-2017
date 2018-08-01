@@ -67,3 +67,6 @@ services:
   simple_oauth.key.generator:
     class: Drupal\simple_oauth\Service\KeyGeneratorService
     arguments: ['@simple_oauth.filesystem']
+  simple_oauth.known_clients:
+    class: \Drupal\simple_oauth\KnownClientsRepository
+    arguments: ['@user.data']

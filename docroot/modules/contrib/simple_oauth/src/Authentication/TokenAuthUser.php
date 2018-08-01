@@ -47,8 +47,10 @@ class TokenAuthUser implements TokenAuthUserInterface {
    */
   public function __construct(Oauth2TokenInterface $token) {
     $this->consumer = $token->get('client')->entity;
-    $this->subject = $token->get('auth_user_id')->entity ?: $this->consumer;
 
+    if (!$this->subject = $token->get('auth_user_id')->entity) {
+      $this->subject = $this->consumer->get('user_id')->entity;
+    }
     if (!$this->subject) {
       throw OAuthServerException::invalidClient();
     }

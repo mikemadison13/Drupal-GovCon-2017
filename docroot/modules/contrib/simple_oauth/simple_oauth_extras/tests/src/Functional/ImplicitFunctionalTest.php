@@ -57,8 +57,8 @@ class ImplicitFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $assert_session = $this->assertSession();
-    $assert_session->buttonExists(t('Login'));
-    $assert_session->responseContains(t('An external client application is requesting access'));
+    $assert_session->buttonExists('Login');
+    $assert_session->responseContains('An external client application is requesting access');
 
     // 2. Log the user in and try again.
     $this->drupalLogin($this->user);
@@ -105,8 +105,8 @@ class ImplicitFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $assert_session = $this->assertSession();
-    $assert_session->buttonExists(t('Login'));
-    $assert_session->responseContains(t('An external client application is requesting access'));
+    $assert_session->buttonExists('Login');
+    $assert_session->responseContains('An external client application is requesting access');
 
     // 2. Log the user in and try again.
     $this->drupalLogin($this->user);

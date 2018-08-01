@@ -5,8 +5,8 @@ description: 'Contains configuration and support code for running Lightning func
 package: Lightning
 hidden: true
 
-# Information added by Drupal.org packaging script on 2018-06-07
-version: '8.x-2.7'
+# Information added by Drupal.org packaging script on 2018-08-01
+version: '8.x-2.8'
 core: '8.x'
 project: 'lightning_core'
-datestamp: 1528378694
+datestamp: 1533162544

@@ -7,7 +7,7 @@ const env_options = {
 
 module.exports = {
 
-    entry: ['core-js/fn/object/entries', './index.js'],
+    entry: ['core-js/fn/object/entries', './index.es6.js'],
 
     output: {
         filename: 'index.js',
@@ -19,10 +19,12 @@ module.exports = {
         'react-dom': 'ReactDOM'
     },
 
+    devtool: 'source-map',
+
     module: {
         loaders: [
             {
-                test: /.js$/,
+                test: /.es6.js$/,
                 loader: 'babel-loader',
                 exclude: ['/node_modules/'],
                 options: {

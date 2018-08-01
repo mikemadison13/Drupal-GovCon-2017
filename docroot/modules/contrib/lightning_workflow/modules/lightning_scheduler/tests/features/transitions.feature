@@ -2,7 +2,7 @@
 Feature: Scheduling transitions on content
 
   Background:
-    Given I am logged in as a user with the "create page content, view own unpublished content, edit own page content, use editorial transition create_new_draft, use editorial transition publish, use editorial transition archive, use editorial transition archived_draft, schedule editorial transition publish, schedule editorial transition archive, view latest version" permissions
+    Given I am logged in as a user with the "create page content, view own unpublished content, edit own page content, use editorial transition create_new_draft, use editorial transition review, use editorial transition publish, use editorial transition archive, use editorial transition archived_draft, schedule editorial transition publish, schedule editorial transition archive, view latest version" permissions
     And I visit "/node/add/page"
     And I enter "Schedule This" for "Title"
 
@@ -14,7 +14,7 @@ Feature: Scheduling transitions on content
     And I run cron over HTTP
     And I visit the edit form
     Then I should see "Current state Published"
-    And exactly 1 element should match ".scheduled-transition.past"
+    And I should not see a ".scheduled-transition" element
 
   @bafaf901
   Scenario: Automatically publishing in the past
@@ -23,7 +23,7 @@ Feature: Scheduling transitions on content
     And I run cron over HTTP
     And I visit the edit form
     Then I should see "Current state Published"
-    And exactly 1 element should match ".scheduled-transition.past"
+    And I should not see a ".scheduled-transition" element
 
   @368f0045
   Scenario: Automatically publishing, then unpublishing, in the future
@@ -36,7 +36,7 @@ Feature: Scheduling transitions on content
     And I run cron over HTTP
     And I visit the edit form
     Then I should see "Current state Archived"
-    And exactly 2 elements should match ".scheduled-transition.past"
+    And I should not see a ".scheduled-transition" element
 
   @19678505
   Scenario: Skipping a invalid transition scheduled in the past
@@ -48,7 +48,24 @@ Feature: Scheduling transitions on content
     # It will still be in the draft state because the transition should resolve
     # to Draft -> Archived, which doesn't exist.
     Then I should see "Current state Draft"
-    And exactly 2 elements should match ".scheduled-transition.past"
+    And I should not see a ".scheduled-transition" element
+
+  @5cdf4335
+  Scenario: Clearing previously run transitions
+    When I select "In review" from "moderation_state[0][state]"
+    And I press "Save"
+    And I visit the edit form
+    And I schedule a transition to Published in 10 seconds
+    And I press "Save"
+    And I wait 12 seconds
+    And I run cron over HTTP
+    And I visit the edit form
+    And I select "Archived" from "moderation_state[0][state]"
+    And I press "Save"
+    And I run cron over HTTP
+    And I visit the edit form
+    Then I should see "Current state Archived"
+    And I should not see "Current state Published"
 
   @4e8a6957
   Scenario: Automatically publishing when there is a pending revision

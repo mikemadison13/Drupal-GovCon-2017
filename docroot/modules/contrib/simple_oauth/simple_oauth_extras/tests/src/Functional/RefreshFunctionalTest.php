@@ -39,7 +39,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
     $response = $this->request('POST', $this->url, [
       'form_params' => $valid_payload,
     ]);
-    $body = $response->getBody()->getContents();
+    $body = (string) $response->getBody();
     $parsed_response = Json::decode($body);
     $this->refreshToken = $parsed_response['refresh_token'];
   }
@@ -64,7 +64,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
     // 2. Test the valid without scopes.
     // We need to use the new refresh token, the old one is revoked.
     $response->getBody()->rewind();
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     $valid_payload = [
       'grant_type' => 'refresh_token',
       'client_id' => $this->client->uuid(),
@@ -87,7 +87,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
     $response = $this->request('POST', $this->url, [
       'form_params' => $valid_payload,
     ]);
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     $this->assertSame(401, $response->getStatusCode());
     $this->assertSame('invalid_request', $parsed_response['error']);
   }
@@ -128,7 +128,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
       $response = $this->request('POST', $this->url, [
         'form_params' => $invalid_payload,
       ]);
-      $parsed_response = Json::decode($response->getBody()->getContents());
+      $parsed_response = Json::decode((string) $response->getBody());
       $this->assertSame($value['error'], $parsed_response['error'], sprintf('Correct error code %s for %s.', $value['error'], $key));
       $this->assertSame($value['code'], $response->getStatusCode(), sprintf('Correct status code %d for %s.', $value['code'], $key));
     }
@@ -170,7 +170,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
       $response = $this->request('POST', $this->url, [
         'form_params' => $invalid_payload,
       ]);
-      $parsed_response = Json::decode($response->getBody()->getContents());
+      $parsed_response = Json::decode((string) $response->getBody());
       $this->assertSame($value['error'], $parsed_response['error'], sprintf('Correct error code %s for %s.', $value['error'], $key));
       $this->assertSame($value['code'], $response->getStatusCode(), sprintf('Correct status code %d for %s.', $value['code'], $key));
     }

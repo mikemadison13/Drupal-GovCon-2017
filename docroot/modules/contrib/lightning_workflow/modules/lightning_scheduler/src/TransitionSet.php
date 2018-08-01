@@ -35,7 +35,7 @@ class TransitionSet {
    * of equal length.
    */
   public function __construct(DateTimeFieldItemList $date_list, FieldItemListInterface $state_list) {
-    if (sizeof($date_list) !== sizeof($state_list)) {
+    if (count($date_list) !== count($state_list)) {
       throw new \InvalidArgumentException('Transition sets must have equal-length sets of dates and workflow states.');
     }
     $this->dateList = $date_list;
@@ -54,8 +54,7 @@ class TransitionSet {
     $data = [];
 
     foreach ($this->dateList as $delta => $item) {
-      $key = (int) $item->date->format('YmdHis', 'UTC');
-
+      $key = $this->toInteger($item->date);
       $data[$key] = $this->stateList[$delta]->value;
     }
     ksort($data);
@@ -78,7 +77,9 @@ class TransitionSet {
     foreach ($this->dateList as $delta => $item) {
       $data[$delta] = [
         'state' => $this->stateList[$delta]->value,
-        'when' => $item->date->format('c', 'UTC'),
+        'when' => $item->date->format('c', [
+          'timezone' => 'UTC',
+        ]),
       ];
     }
     return Json::encode($data);
@@ -95,7 +96,7 @@ class TransitionSet {
    *   workflow state is targeted.
    */
   public function getExpectedState(DrupalDateTime $at) {
-    $at = (int) $at->format('YmdHis', ['timezone' => 'UTC']);
+    $at = $this->toInteger($at);
 
     $data = $this->toArray();
 
@@ -107,6 +108,37 @@ class TransitionSet {
       return $data[ end($filtered_keys) ];
     }
     return NULL;
+  }
+
+  /**
+   * Removes all transitions older than a given date and time.
+   *
+   * @param \Drupal\Core\Datetime\DrupalDateTime $until
+   *   The date and time older than which all transitions will be removed.
+   */
+  public function trim(DrupalDateTime $until) {
+    // Convert the date to an integer for easy comparison.
+    $until = $this->toInteger($until);
+
+    while (count($this->dateList) > 0 && $this->toInteger($this->dateList[0]->date) < $until) {
+      $this->dateList->removeItem(0);
+      $this->stateList->removeItem(0);
+    }
+  }
+
+  /**
+   * Converts a date and time to an integer.
+   *
+   * @param \Drupal\Core\Datetime\DrupalDateTime $date
+   *   The date/time to convert.
+   *
+   * @return int
+   *   The date and time, represented as an integer.
+   */
+  protected function toInteger(DrupalDateTime $date) {
+    return (int) $date->format('YmdHis', [
+      'timezone' => 'UTC',
+    ]);
   }
 
 }

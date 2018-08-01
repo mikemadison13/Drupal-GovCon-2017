@@ -1,43 +1,52 @@
-## OpenAPI Docs Module Documentation
-The  OpenAPI Docs (swagger_ui) module provides a visual web UI for browsing REST API documentation. It makes use of the [swagger-ui library](https://github.com/swagger-api/swagger-ui).
+# OpenAPI Swagger UI Module Documentation
 
-Note: at the moment, only the 2.x version of swagger-ui library works with this module.
+The  OpenAPI Swagger UI module provides a visual web UI for browsing REST API
+documentation using [swagger-ui](https://github.com/swagger-api/swagger-ui).
 
-### Installation - Composer (recommended)
-If you're using composer to manage the site (recommended), follow these steps:
- 
-1. Run `composer require --prefer-dist composer/installers` to ensure that you have the `composer/installers` package installed. This package facilitates the installation of packages into directories other than `/vendor` (e.g. `/libraries`) using Composer.
+The swagger-ui library needs to be installed into the drupal libraries folder
+for this module to work properly. For sites using composer, the package is found
+on Packagist. Otherwise installation can be done manually.
 
-2. Add the following to the "repositories" section of your project's composer.json:
- ```
--drush en -y swagger_ui
-{
-  "type": "package",
-  "package":{
-    "name": "swagger-api/swagger-ui",
-    "version": "2.2.10",
-    "type": "drupal-library",
-    "dist"    : {
-      "url": "https://github.com/swagger-api/swagger-ui/archive/v2.2.10.zip",
-      "type": "zip"
-    },
-    "require": {
-        "composer/installers": "~1.0"
-    }
+## Installation - Composer (recommended)
+If you're using composer to manage the site (recommended), there are two
+composer plugins required for this setup, `composer/installers` and `mnsami/
+composer-custom-directory-installer`. `composer-custom-directory-installer`
+extends the base installer libraries to allow setting installer path for an
+individual package. Follow the steps below.
+
+1. Run the following to ensure that you have the `composer/installers` and
+`mnsami/composer-custom-directory-installer` packages installed. These package
+facilitate the installation of packages into directories other than `/vendor`
+(e.g. `web/libraries`) using Composer.
+
+```
+composer require composer/installers mnsami/composer-custom-directory-installer
+```
+
+2. Edit your project's composer.json file to include instructions for installing
+the `swagger-ui` library to Drupal's `/libraries`. Your file should include the
+following:
+
+```
+"extra": {
+  "installer-paths": {
+    ...
+    "web/libraries/{$name}": ["swagger-api/swagger-ui", "type:drupal-library"],
+    ...
   }
 }
 ```
 
-3. Add the following to the "installer-paths" section of `composer.json`:
-    
- ```
-"libraries/{$name}": ["type:drupal-library"],
+3. Run the following to add the swagger-ui library to your composer project. It
+will be automatically installed into `web/libraries`
 ```
+composer require swagger-api/swagger-ui 3.0.17
+```
+*__NOTE:__ Using a version of `swagger-ui` other then 3.0.17, can cause issues
+with the display of swagger-ui within your Drupal Site.*
 
-4. Run the following to add the swagger-ui library to your composer.json and download it to /libraries:
-```
-composer require swagger-api/swagger-ui 2.2.10
-```
+## Installation - Manual
 
-### Installation - Manual
-Extract https://github.com/swagger-api/swagger-ui/archive/v2.2.10.zip into /libraries/swagger-ui
+If you are not managing your project through composer you can manually download
+swagger-ui from https://github.com/swagger-api/swagger-ui/archive/v3.0.17.zip,
+and extract the files into your `/libraries/swagger-ui` for your Drupal Project.

@@ -7,6 +7,7 @@ use Drupal\Core\Url;
 use Drupal\consumers\Entity\Consumer;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\simple_oauth\Functional\RequestHelperTrait;
+use Drupal\Tests\simple_oauth\Functional\SimpleOauthTestTrait;
 use Drupal\user\Entity\Role;
 
 /**
@@ -15,6 +16,7 @@ use Drupal\user\Entity\Role;
 class RolesNegotiationFunctionalTest extends BrowserTestBase {
 
   use RequestHelperTrait;
+  use SimpleOauthTestTrait;
 
   public static $modules = [
     'image',
@@ -49,16 +51,6 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
    * @var \GuzzleHttp\ClientInterface
    */
   protected $httpClient;
-
-  /**
-   * @var string
-   */
-  protected $privateKeyPath;
-
-  /**
-   * @var string
-   */
-  protected $publicKeyPath;
 
   /**
    * @var string
@@ -115,23 +107,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     ]);
     $this->client->save();
 
-    // Configure the public and private keys.
-    $path = $this->container->get('module_handler')
-      ->getModule('simple_oauth')
-      ->getPath();
-    $temp_dir = sys_get_temp_dir();
-    $public_path = '/' . $path . '/tests/certificates/public.key';
-    $private_path = '/' . $path . '/tests/certificates/private.key';
-    file_put_contents($temp_dir . '/public.key', file_get_contents(DRUPAL_ROOT . $public_path));
-    file_put_contents($temp_dir . '/private.key', file_get_contents(DRUPAL_ROOT . $private_path));
-    chmod($temp_dir . '/public.key', 0660);
-    chmod($temp_dir . '/private.key', 0660);
-    $this->publicKeyPath = $temp_dir . '/public.key';
-    $this->privateKeyPath = $temp_dir . '/private.key';
-    $settings = $this->config('simple_oauth.settings');
-    $settings->set('public_key', $this->publicKeyPath);
-    $settings->set('private_key', $this->privateKeyPath);
-    $settings->save();
+    $this->setUpKeys();
   }
 
   /**
@@ -151,7 +127,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
         ],
       ]
     );
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     $this->assertEquals($this->user->id(), $parsed_response['id']);
     $this->assertEquals(['foo', 'bar', 'authenticated', 'oof'], $parsed_response['roles']);
     $this->assertTrue($parsed_response['permissions']['view own simple_oauth entities']['access']);
@@ -173,7 +149,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
         ],
       ]
     );
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     // The token was successfully removed. The negotiated user is the anonymous
     // user.
     $this->assertEquals(0, $parsed_response['id']);
@@ -194,7 +170,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
         ],
       ]
     );
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     // The negotiated user is the expected user.
     $this->assertEquals($this->user->id(), $parsed_response['id']);
     $this->assertEquals(['foo', 'authenticated', 'oof'], $parsed_response['roles']);
@@ -219,7 +195,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
         ],
       ]
     );
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     $this->assertEquals($this->user->id(), $parsed_response['id']);
     $this->assertEquals(['authenticated', 'oof'], $parsed_response['roles']);
     $this->assertTrue($parsed_response['permissions']['delete own simple_oauth entities']['access']);
@@ -241,7 +217,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
         ],
       ]
     );
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     // The token was successfully removed. The negotiated user is the anonymous
     // user.
     $this->assertEquals(0, $parsed_response['id']);
@@ -260,7 +236,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
         ],
       ]
     );
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     $this->assertEquals($this->user->id(), $parsed_response['id']);
     $this->assertEquals(['authenticated'], $parsed_response['roles']);
     $this->assertFalse($parsed_response['permissions']['delete own simple_oauth entities']['access']);
@@ -282,7 +258,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
         ],
       ]
     );
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
     $this->assertEquals($this->user->id(), $parsed_response['id']);
     $this->assertEquals(['authenticated', 'oof'], $parsed_response['roles']);
     $this->assertFalse($parsed_response['permissions']['view own simple_oauth entities']['access']);
@@ -311,7 +287,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
       $this->url,
       ['form_params' => $valid_payload]
     );
-    $parsed_response = Json::decode($response->getBody()->getContents());
+    $parsed_response = Json::decode((string) $response->getBody());
 
     return $parsed_response['access_token'];
   }

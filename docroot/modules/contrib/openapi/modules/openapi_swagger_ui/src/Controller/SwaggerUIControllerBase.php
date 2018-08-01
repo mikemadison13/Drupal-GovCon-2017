@@ -16,6 +16,12 @@ abstract class SwaggerUIControllerBase extends ControllerBase {
   protected $request;
 
   /**
+   * The generator plugin id.
+   * @var string
+   */
+  protected $generator_plugin_id;
+
+  /**
    * Constructs a new SwaggerController object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -81,17 +87,9 @@ abstract class SwaggerUIControllerBase extends ControllerBase {
    *   Render array for documentations page.
    */
   public function openApiResources() {
-    $json_url = Url::fromRoute($this->getJsonGeneratorRoute());
+    $json_url = Url::fromRoute("openapi.download", ['openapi_generator' => $this->generator_plugin_id]);
     $build = $this->swaggerUi($json_url);
     return $build;
   }
-
-  /**
-   * Returns route for generating JSON.
-   *
-   * @return string
-   *   The route name.
-   */
-  abstract protected function getJsonGeneratorRoute();
 
 }

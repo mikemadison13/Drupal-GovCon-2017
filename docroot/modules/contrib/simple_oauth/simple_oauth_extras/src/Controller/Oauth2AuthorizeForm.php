@@ -4,19 +4,25 @@ namespace Drupal\simple_oauth_extras\Controller;
 
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Url;
 use Drupal\simple_oauth\Entities\UserEntity;
+use Drupal\simple_oauth\KnownClientsRepositoryInterface;
 use Drupal\simple_oauth\Plugin\Oauth2GrantManagerInterface;
 use GuzzleHttp\Psr7\Response;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Authorize form.
+ */
 class Oauth2AuthorizeForm extends FormBase {
 
   /**
@@ -45,18 +51,42 @@ class Oauth2AuthorizeForm extends FormBase {
   protected $grantManager;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * The known client repository service.
+   *
+   * @var \Drupal\simple_oauth\KnownClientsRepositoryInterface
+   */
+  protected $knownClientRepository;
+
+  /**
    * Oauth2AuthorizeForm constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface $message_factory
+   *   The message factory.
    * @param \Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface $foundation_factory
+   *   The foundation factory.
    * @param \Drupal\simple_oauth\Plugin\Oauth2GrantManagerInterface $grant_manager
+   *   The grant manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\simple_oauth\KnownClientsRepositoryInterface $known_clients_repository
+   *   The known client repository service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, HttpMessageFactoryInterface $message_factory, HttpFoundationFactoryInterface $foundation_factory, Oauth2GrantManagerInterface $grant_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, HttpMessageFactoryInterface $message_factory, HttpFoundationFactoryInterface $foundation_factory, Oauth2GrantManagerInterface $grant_manager, ConfigFactoryInterface $config_factory, KnownClientsRepositoryInterface $known_clients_repository) {
     $this->entityTypeManager = $entity_type_manager;
     $this->messageFactory = $message_factory;
     $this->foundationFactory = $foundation_factory;
     $this->grantManager = $grant_manager;
+    $this->configFactory = $config_factory;
+    $this->knownClientRepository = $known_clients_repository;
   }
 
   /**
@@ -67,7 +97,9 @@ class Oauth2AuthorizeForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('psr7.http_message_factory'),
       $container->get('psr7.http_foundation_factory'),
-      $container->get('plugin.manager.oauth2_grant.processor')
+      $container->get('plugin.manager.oauth2_grant.processor'),
+      $container->get('config.factory'),
+      $container->get('simple_oauth.known_clients')
     );
   }
 
@@ -212,6 +244,14 @@ class Oauth2AuthorizeForm extends FormBase {
         $response->getHeaders()
       );
       $form_state->setResponse($redirect_response);
+
+      $scopes = array_map(function (ScopeEntityInterface $scope) {
+        return $scope->getIdentifier();
+      }, $auth_request->getScopes());
+
+      if ($this->configFactory->get('simple_oauth.settings')->get('remember_clients')) {
+        $this->knownClientRepository->rememberClient($this->currentUser()->id(), $auth_request->getClient()->getIdentifier(), $scopes);
+      }
     }
     elseif ($params = $form_state->getValue('redirect_params')) {
       $url = Url::fromRoute('user.login');

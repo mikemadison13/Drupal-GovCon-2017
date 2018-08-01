@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Contains OpenApi reDoc Module.
+ */
+
+/**
  * Implements hook_theme().
  */
 function openapi_redoc_theme() {
@@ -18,7 +23,6 @@ function openapi_redoc_theme() {
     ],
   ];
 }
-
 
 /**
  * Implements hook_menu_links_discovered_alter().

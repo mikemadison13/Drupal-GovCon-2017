@@ -1,29 +1,21 @@
 {
-    "swagger": "2.0",
-    "schemes": [
-        "http"
-    ],
-    "info": {
-        "description": "This is a JSON API compliant implemenation",
-        "title": "Drupal - JSON API",
-        "version": "Versioning not supported"
-    },
-    "host": "{host}",
-    "basePath": "\/{base_path}\/jsonapi",
-    "securityDefinitions": [],
-    "tags": [
-        {
-            "name": "Taxonomy term - Camelids",
-            "description": "Vocabulary Camelids of type Taxonomy term. "
-        }
-    ],
     "definitions": {
-        "taxonomy_term:camelids": {
+        "taxonomy_term--camelids": {
             "type": "object",
-            "title": "taxonomy_term:camelids Schema",
-            "description": "Describes the payload for 'taxonomy_term' entities of the 'camelids' bundle.",
             "properties": {
+                "type": {
+                    "type": "string",
+                    "title": "type",
+                    "description": "Resource type"
+                },
+                "id": {
+                    "type": "string",
+                    "title": "Resource ID",
+                    "format": "uuid",
+                    "maxLength": 128
+                },
                 "attributes": {
+                    "description": "Entity attributes",
                     "type": "object",
                     "properties": {
                         "tid": {
@@ -122,6 +114,7 @@
                     ]
                 },
                 "relationships": {
+                    "description": "Entity relationships",
                     "properties": {
                         "vid": {
                             "type": "object",
@@ -167,7 +160,7 @@
                                                 "type": "string",
                                                 "title": "Referenced resource",
                                                 "enum": [
-                                                    "taxonomy_term--taxonomy_term"
+                                                    "taxonomy_term--camelids"
                                                 ]
                                             },
                                             "id": {
@@ -185,16 +178,20 @@
                     },
                     "type": "object"
                 },
-                "type": {
-                    "type": "string",
-                    "title": "Title",
-                    "example": "taxonomy_term--camelids"
-                },
-                "id": {
-                    "type": "string",
-                    "title": "Id"
+                "links": {
+                    "type": "object",
+                    "description": "Entity links",
+                    "properties": {
+                        "self": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "The absolute link to this entity."
+                        }
+                    }
                 }
-            }
+            },
+            "title": "taxonomy_term:camelids Schema",
+            "description": "Describes the payload for 'taxonomy_term' entities of the 'camelids' bundle."
         }
     },
     "paths": {
@@ -222,16 +219,13 @@
                         "required": false
                     }
                 ],
-                "tags": [
-                    "Taxonomy term - Camelids"
-                ],
                 "responses": {
                     "200": {
                         "description": "successful operation",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#\/definitions\/taxonomy_term:camelids"
+                                "$ref": "#\/definitions\/taxonomy_term--camelids"
                             }
                         }
                     }
@@ -247,12 +241,9 @@
                         "description": "The taxonomy_term object",
                         "required": true,
                         "schema": {
-                            "$ref": "#\/definitions\/taxonomy_term:camelids"
+                            "$ref": "#\/definitions\/taxonomy_term--camelids"
                         }
                     }
-                ],
-                "tags": [
-                    "Taxonomy term - Camelids"
                 ],
                 "responses": []
             }
@@ -270,14 +261,11 @@
                         "description": "The uuid of the taxonomy_term camelids"
                     }
                 ],
-                "tags": [
-                    "Taxonomy term - Camelids"
-                ],
                 "responses": {
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "$ref": "#\/definitions\/taxonomy_term:camelids"
+                            "$ref": "#\/definitions\/taxonomy_term--camelids"
                         }
                     }
                 }
@@ -294,9 +282,6 @@
                         "description": "The uuid of the taxonomy_term camelids"
                     }
                 ],
-                "tags": [
-                    "Taxonomy term - Camelids"
-                ],
                 "responses": []
             },
             "delete": {
@@ -310,9 +295,6 @@
                         "type": "uuid",
                         "description": "The uuid of the taxonomy_term camelids"
                     }
-                ],
-                "tags": [
-                    "Taxonomy term - Camelids"
                 ],
                 "responses": {
                     "201": {
@@ -332,16 +314,20 @@
                         "in": "path",
                         "type": "uuid",
                         "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "related",
+                        "required": true,
+                        "in": "path",
+                        "type": "string",
+                        "description": "The relationship field name"
                     }
-                ],
-                "tags": [
-                    "Taxonomy term - Camelids"
                 ],
                 "responses": {
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "$ref": "#\/definitions\/taxonomy_term:camelids"
+                            "$ref": "#\/definitions\/taxonomy_term--camelids"
                         }
                     }
                 }
@@ -358,16 +344,20 @@
                         "in": "path",
                         "type": "uuid",
                         "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "related",
+                        "required": true,
+                        "in": "path",
+                        "type": "string",
+                        "description": "The relationship field name"
                     }
-                ],
-                "tags": [
-                    "Taxonomy term - Camelids"
                 ],
                 "responses": {
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "$ref": "#\/definitions\/taxonomy_term:camelids"
+                            "$ref": "#\/definitions\/taxonomy_term--camelids"
                         }
                     }
                 }
@@ -382,16 +372,20 @@
                         "in": "path",
                         "type": "uuid",
                         "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "related",
+                        "required": true,
+                        "in": "path",
+                        "type": "string",
+                        "description": "The relationship field name"
                     }
-                ],
-                "tags": [
-                    "Taxonomy term - Camelids"
                 ],
                 "responses": {
                     "201": {
                         "description": "Entity created",
                         "schema": {
-                            "$ref": "#\/definitions\/taxonomy_term:camelids"
+                            "$ref": "#\/definitions\/taxonomy_term--camelids"
                         }
                     }
                 }
@@ -406,10 +400,14 @@
                         "in": "path",
                         "type": "uuid",
                         "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "related",
+                        "required": true,
+                        "in": "path",
+                        "type": "string",
+                        "description": "The relationship field name"
                     }
-                ],
-                "tags": [
-                    "Taxonomy term - Camelids"
                 ],
                 "responses": []
             },
@@ -423,10 +421,14 @@
                         "in": "path",
                         "type": "uuid",
                         "description": "The uuid of the taxonomy_term camelids"
+                    },
+                    {
+                        "name": "related",
+                        "required": true,
+                        "in": "path",
+                        "type": "string",
+                        "description": "The relationship field name"
                     }
-                ],
-                "tags": [
-                    "Taxonomy term - Camelids"
                 ],
                 "responses": {
                     "201": {

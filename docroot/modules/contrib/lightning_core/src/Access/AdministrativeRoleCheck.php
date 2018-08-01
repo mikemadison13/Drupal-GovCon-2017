@@ -42,6 +42,10 @@ class AdministrativeRoleCheck implements AccessInterface {
    *   The access result.
    */
   public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account) {
+    if (intval($account->id()) === 1) {
+      return AccessResult::allowed();
+    }
+
     /** @var \Drupal\user\RoleInterface[] $roles */
     $roles = $this->entityTypeManager
       ->getStorage('user_role')

@@ -16,7 +16,7 @@ class PanelizerIPEController extends PanelizerPanelsIPEController {
   /**
    * The moderation information service.
    *
-   * @var \Drupal\workbench_moderation\ModerationInformationInterface
+   * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $modInfo;
 
@@ -47,9 +47,10 @@ class PanelizerIPEController extends PanelizerPanelsIPEController {
    * {@inheritdoc}
    */
   public function revertToDefault(FieldableEntityInterface $entity, $view_mode) {
-    if ($this->modInfo->isModeratableEntity($entity)) {
+    if ($this->modInfo->isModeratedEntity($entity)) {
       $entity = $this->modInfo->getLatestRevision($entity->getEntityTypeId(), $entity->id());
     }
+
     return parent::revertToDefault($entity, $view_mode);
   }
 

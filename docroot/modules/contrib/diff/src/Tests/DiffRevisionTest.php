@@ -4,6 +4,7 @@ namespace Drupal\diff\Tests;
 
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\system\Tests\Menu\AssertBreadcrumbTrait;
+use Drupal\Tests\diff\Functional\CoreVersionUiTestTrait;
 
 /**
  * Tests the diff revisions overview.
@@ -13,6 +14,7 @@ use Drupal\system\Tests\Menu\AssertBreadcrumbTrait;
 class DiffRevisionTest extends DiffTestBase {
 
   use AssertBreadcrumbTrait;
+  use CoreVersionUiTestTrait;
 
   /**
    * Modules to enable.
@@ -51,9 +53,12 @@ class DiffRevisionTest extends DiffTestBase {
       <p>first_unique_text</p>
       <p>second_unique_text</p>',
     );
-    $this->drupalPostForm('node/add/article', $edit, t('Save and publish'));
+    // Set to published if content moderation is enabled.
+    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+      $edit['moderation_state[0][state]'] = 'published';
+    }
+    $this->drupalPostNodeForm('node/add/article', $edit, t('Save and publish'));
     $node = $this->drupalGetNodeByTitle($title);
-    $created = $node->getCreatedTime();
     $this->drupalGet('node/' . $node->id());
 
     // Make sure the revision tab doesn't exist.
@@ -68,7 +73,11 @@ class DiffRevisionTest extends DiffTestBase {
       'revision' => TRUE,
       'revision_log[0][value]' => 'Revision 2 comment',
     );
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    // Set to published if content moderation is enabled.
+    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+      $edit['moderation_state[0][state]'] = 'published';
+    }
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->drupalGet('node/' . $node->id());
 
     // Check the revisions overview.
@@ -78,7 +87,6 @@ class DiffRevisionTest extends DiffTestBase {
     $this->assertEqual(count($rows), 2);
     // Assert the revision summary.
     $this->assertUniqueText('Revision 2 comment');
-    $this->assertText('Initial revision.');
 
     // Compare the revisions in standard mode.
     $this->drupalPostForm(NULL, NULL, t('Compare selected revisions'));
@@ -207,29 +215,39 @@ class DiffRevisionTest extends DiffTestBase {
 
     // Make sure we only have 1 revision now.
     $rows = $this->xpath('//tbody/tr');
-    $this->assertEqual(count($rows), 1);
+    $this->assertEqual(count($rows), 0);
 
     // Assert that there are no radio buttons for revision selection.
     $this->assertNoFieldByXPath('//input[@type="radio"]');
     // Assert that there is no submit button.
-    $this->assertNoFieldByXPath('//input[@type="submit"]');
+    $this->assertNoFieldByXPath('//input[@type="submit" and text()="Compare selected revisions"]');
 
     // Create two new revisions of node.
     $edit = [
       'title[0][value]' => 'new test title',
       'body[0][value]' => '<p>new body</p>',
+      'revision_log[0][value]' => 'this revision message will appear twice',
     ];
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
+    // Set to published if content moderation is enabled.
+    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+      $edit['moderation_state[0][state]'] = 'published';
+    }
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
 
     $edit = [
       'title[0][value]' => 'newer test title',
       'body[0][value]' => '<p>newer body</p>',
+      'revision_log[0][value]' => 'this revision message will appear twice',
     ];
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
+    // Set to published if content moderation is enabled.
+    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+      $edit['moderation_state[0][state]'] = 'published';
+    }
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
 
     $this->clickLink(t('Revisions'));
     // Assert the revision summary.
-    $this->assertNoUniqueText('Changes on: Title, Body');
+    $this->assertNoUniqueText('this revision message will appear twice');
     $this->assertText('Copy of the revision from');
     $edit = [
       'radios_left' => 3,
@@ -251,6 +269,10 @@ class DiffRevisionTest extends DiffTestBase {
     $node = $this->getNodeByTitle('newer test title');
     $node->setNewRevision(TRUE);
     $node->isDefaultRevision(FALSE);
+    if ($node->hasField('moderation_state')) {
+      // If testing with content_moderation enabled, set as draft.
+      $node->moderation_state = 'draft';
+    }
     $node->save();
     $this->drupalGet('node/' . $node->id() . '/revisions');
 
@@ -263,10 +285,18 @@ class DiffRevisionTest extends DiffTestBase {
     $this->clickLink('Set as current revision');
     $this->drupalPostForm(NULL, [], t('Revert'));
 
-    // Check the last revision is set as current.
-    $text = $this->xpath('//tbody/tr[1]/td[4]/em');
-    $this->assertEqual($text[0], 'Current revision');
-    $this->assertNoLink(t('Set as current revision'));
+    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+      // With content moderation, the new revision will not be current.
+      // @see https://www.drupal.org/node/2899719
+      $text = $this->xpath('//tbody/tr[1]/td[4]/div/div/ul/li/a');
+      $this->assertEqual($text[0], 'Set as current revision');
+    }
+    else {
+      // Check the last revision is set as current.
+      $text = $this->xpath('//tbody/tr[1]/td[4]/em');
+      $this->assertEqual($text[0], 'Current revision');
+      $this->assertNoLink(t('Set as current revision'));
+    }
   }
 
   /**
@@ -281,11 +311,15 @@ class DiffRevisionTest extends DiffTestBase {
     $node = $this->drupalCreateNode([
       'type' => 'article',
     ]);
+
     // Create 11 more revisions in order to trigger paging on the revisions
     // overview screen.
     for ($i = 0; $i < 11; $i++) {
-      $node->setNewRevision(TRUE);
-      $node->save();
+      $edit = [
+        'revision' => TRUE,
+        'body[0][value]' => 'change: ' . $i,
+      ];
+      $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     }
 
     // Check the number of elements on the first page.
@@ -336,7 +370,7 @@ class DiffRevisionTest extends DiffTestBase {
       'title[0][value]' => $title,
       'body[0][value]' => '<p>Revision 1</p>',
     ];
-    $this->drupalPostForm('node/add/article', $edit, t('Save and publish'));
+    $this->drupalPostNodeForm('node/add/article', $edit, t('Save and publish'));
     $node = $this->drupalGetNodeByTitle($title);
     $revision1 = $node->getRevisionId();
 
@@ -346,7 +380,7 @@ class DiffRevisionTest extends DiffTestBase {
       'body[0][value]' => '<p>Revision 2</p>',
       'revision' => TRUE,
     ];
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
 
     // Check the revisions overview, ensure only one revisions is available.
     $this->clickLink(t('Revisions'));
@@ -363,7 +397,7 @@ class DiffRevisionTest extends DiffTestBase {
       'body[0][value]' => '<p>Revision 3</p>',
       'revision' => TRUE,
     ];
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $node = $this->drupalGetNodeByTitle($title, TRUE);
     $revision3 = $node->getRevisionId();
 
@@ -420,7 +454,10 @@ class DiffRevisionTest extends DiffTestBase {
       'title[0][value]' => $title,
       'body[0][value]' => '<p>First article</p>',
     ];
-    $this->drupalPostForm('node/add/article', $edit, t('Save and publish'));
+    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+      $edit['moderation_state[0][state]'] = 'published';
+    }
+    $this->drupalPostNodeForm('node/add/article', $edit, t('Save and publish'));
     $node_one = $this->drupalGetNodeByTitle($title);
 
     // Create second article.
@@ -429,7 +466,10 @@ class DiffRevisionTest extends DiffTestBase {
       'title[0][value]' => $title,
       'body[0][value]' => '<p>Second article</p>',
     ];
-    $this->drupalPostForm('node/add/article', $edit, t('Save and publish'));
+    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+      $edit['moderation_state[0][state]'] = 'published';
+    }
+    $this->drupalPostNodeForm('node/add/article', $edit, t('Save and publish'));
     $node_two = $this->drupalGetNodeByTitle($title);
 
     // Create revision and add entity reference from second node to first.
@@ -438,7 +478,10 @@ class DiffRevisionTest extends DiffTestBase {
       'field_content[0][target_id]' => $node_two->getTitle(),
       'revision' => TRUE,
     ];
-    $this->drupalPostForm('node/' . $node_one->id() . '/edit', $edit, t('Save and keep published'));
+    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+      $edit['moderation_state[0][state]'] = 'published';
+    }
+    $this->drupalPostNodeForm('node/' . $node_one->id() . '/edit', $edit, t('Save and keep published'));
 
     // Delete referenced node.
     $node_two->delete();

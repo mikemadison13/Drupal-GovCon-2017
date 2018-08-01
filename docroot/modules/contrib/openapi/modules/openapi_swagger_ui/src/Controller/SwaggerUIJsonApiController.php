@@ -10,8 +10,5 @@ class SwaggerUIJsonApiController extends SwaggerUIControllerBase {
   /**
    * {@inheritdoc}
    */
-  protected function getJsonGeneratorRoute() {
-    return 'openapi.jsonapi';
-  }
-
+  protected $generator_plugin_id = 'jsonapi';
 }

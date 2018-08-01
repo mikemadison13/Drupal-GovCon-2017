@@ -110,7 +110,7 @@ function simple_oauth_form_consumer_form_alter(array &$form, FormStateInterface 
   );
   $form['roles']['widget']['#description'] .= '<br>' . $recommendation_text;
   if (empty($form['roles']['widget']['#options'])) {
-    drupal_set_message($recommendation_text, 'error');
+    \Drupal::service('messenger')->addMessage($recommendation_text, 'error');
     $form['actions']['#disabled'] = TRUE;
   }
 

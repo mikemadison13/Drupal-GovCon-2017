@@ -218,7 +218,7 @@ class TransitionManager {
       $plugin = $workflow->getTypePlugin();
 
       if ($plugin->hasTransitionFromStateToState($from_state, $to_state)) {
-        $entity->set('moderation_state', $to_state)->save();
+        $entity->set('moderation_state', $to_state);
       }
       else {
         $error_context += [
@@ -229,6 +229,8 @@ class TransitionManager {
         $message = $this->t('Could not transition {entity_type} "{entity}" from {from_state} to {to_state} because no such transition exists in the "{workflow}" workflow.');
         $this->logger->warning($message, $error_context);
       }
+      $transition_set->trim($now);
+      $entity->save();
     }
   }
 

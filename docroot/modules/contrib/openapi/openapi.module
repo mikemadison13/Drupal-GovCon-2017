@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Hooks.
+ * Contains OpenApi module.
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;

@@ -3,11 +3,14 @@
 namespace Drupal\simple_oauth_extras\Controller;
 
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Url;
 use Drupal\simple_oauth\Entities\UserEntity;
+use Drupal\simple_oauth\KnownClientsRepositoryInterface;
 use Drupal\simple_oauth\Plugin\Oauth2GrantManagerInterface;
 use GuzzleHttp\Psr7\Response;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -37,16 +40,49 @@ class Oauth2AuthorizeController extends ControllerBase {
   protected $formBuilder;
 
   /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * The known client repository service.
+   *
+   * @var \Drupal\simple_oauth\KnownClientsRepositoryInterface
+   */
+  protected $knownClientRepository;
+
+  /**
    * Oauth2AuthorizeController construct.
    *
    * @param \Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface $message_factory
+   *   The PSR-7 converter.
    * @param \Drupal\simple_oauth\Plugin\Oauth2GrantManagerInterface $grant_manager
+   *   The plugin.manager.oauth2_grant.processor service.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   *   The form builder.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\simple_oauth\KnownClientsRepositoryInterface $known_clients_repository
+   *   The known client repository service.
    */
-  public function __construct(HttpMessageFactoryInterface $message_factory, Oauth2GrantManagerInterface $grant_manager, FormBuilderInterface $form_builder) {
+  public function __construct(HttpMessageFactoryInterface $message_factory, Oauth2GrantManagerInterface $grant_manager, FormBuilderInterface $form_builder, MessengerInterface $messenger, ConfigFactoryInterface $config_factory, KnownClientsRepositoryInterface $known_clients_repository) {
     $this->messageFactory = $message_factory;
     $this->grantManager = $grant_manager;
     $this->formBuilder = $form_builder;
+    $this->messenger = $messenger;
+    $this->configFactory = $config_factory;
+    $this->knownClientRepository = $known_clients_repository;
   }
 
   /**
@@ -56,7 +92,10 @@ class Oauth2AuthorizeController extends ControllerBase {
     return new static(
       $container->get('psr7.http_message_factory'),
       $container->get('plugin.manager.oauth2_grant.processor'),
-      $container->get('form_builder')
+      $container->get('form_builder'),
+      $container->get('messenger'),
+      $container->get('config.factory'),
+      $container->get('simple_oauth.known_clients')
     );
   }
 
@@ -94,8 +133,14 @@ class Oauth2AuthorizeController extends ControllerBase {
     $client_drupal_entity = reset($client_drupal_entities);
     $is_third_party = $client_drupal_entity->get('third_party')->value;
 
-    // Login user may skip the grant step if the client is not third party
-    if ($this->currentUser()->isAuthenticated() && !$is_third_party) {
+    $scopes = [];
+    if ($request->query->get('scope')) {
+      $scopes = explode(' ', $request->query->get('scope'));
+    }
+
+    // Login user may skip the grant step if the client is not third party or
+    // known.
+    if ($this->currentUser()->isAuthenticated() && !$is_third_party || $this->isKnownClient($client_uuid, $scopes)) {
       if ($request->get('response_type') == 'code') {
         $grant_type = 'code';
       }
@@ -111,7 +156,7 @@ class Oauth2AuthorizeController extends ControllerBase {
         $auth_request = $server->validateAuthorizationRequest($ps7_request);
       }
       catch (OAuthServerException $exception) {
-        drupal_set_message($this->t('Fatal error. Unable to get the authorization server.'));
+        $this->messenger->addMessage($this->t('Fatal error. Unable to get the authorization server.'));
         watchdog_exception('simple_oauth_extras', $exception);
         return RedirectResponse::create(Url::fromRoute('<front>')->toString());
       }
@@ -134,6 +179,24 @@ class Oauth2AuthorizeController extends ControllerBase {
       }
     }
     return $this->formBuilder->getForm('Drupal\simple_oauth_extras\Controller\Oauth2AuthorizeForm');
+  }
+
+  /**
+   * Whether the client with the given scopes is known and already authorized.
+   *
+   * @param string $client_uuid
+   *   The client UUID.
+   * @param string[] $scopes
+   *   The list of scopes.
+   *
+   * @return bool
+   *   TRUE if the client is authorized, FALSE otherwise.
+   */
+  protected function isKnownClient($client_uuid, array $scopes) {
+    if (!$this->configFactory->get('simple_oauth.settings')->get('remember_clients')) {
+      return FALSE;
+    }
+    return $this->knownClientRepository->isAuthorized($this->currentUser()->id(), $client_uuid, $scopes);
   }
 
 }

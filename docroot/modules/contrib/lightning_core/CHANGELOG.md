@@ -1,3 +1,13 @@
+## 2.8.0
+* Fixed a bug where user 1 could not access Lightning's administrative screens.
+  (Issue #2933520)
+* Lightning Page now enables moderation if Lightning Workflow is installed, not
+  Content Moderation. (Issue #2984737)
+* Lightning Roles now has an explicit dependency on the Node module.
+  (Issue 2984738)
+* Removed defunct default configuration from bundled Search API database
+  backend. (#70)
+
 ## 2.7.0
 * Updated Drupal core to 8.5.4.
 * Drush updb failure from drush_lightning_core_pre_updatedb (Issue #2972217)

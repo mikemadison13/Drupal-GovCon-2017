@@ -80,8 +80,8 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $assert_session = $this->assertSession();
-    $assert_session->buttonExists(t('Login'));
-    $assert_session->responseContains(t('An external client application is requesting access'));
+    $assert_session->buttonExists('Login');
+    $assert_session->responseContains('An external client application is requesting access');
 
     // 2. Log the user in and try again.
     $this->drupalLogin($this->user);
@@ -119,8 +119,8 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $assert_session = $this->assertSession();
-    $assert_session->buttonExists(t('Login'));
-    $assert_session->responseContains(t('An external client application is requesting access'));
+    $assert_session->buttonExists('Login');
+    $assert_session->responseContains('An external client application is requesting access');
 
     // 2. Log the user in and try again. This time we should get a code
     // immediately without granting, because the consumer is not 3rd party.
@@ -140,6 +140,85 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     $this->assertValidTokenResponse($response, TRUE);
   }
 
+  /**
+   * Tests the remember client functionality.
+   */
+  public function testRememberClient() {
+    $valid_params = [
+      'response_type' => 'code',
+      'client_id' => $this->client->uuid(),
+      'client_secret' => $this->clientSecret,
+    ];
+    // 1. Anonymous request invites the user to log in.
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+    $assert_session = $this->assertSession();
+    $assert_session->buttonExists('Login');
+    $assert_session->responseContains('An external client application is requesting access');
+
+    // 2. Log the user in and try again.
+    $this->drupalLogin($this->user);
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+    $this->assertGrantForm();
+
+    // 3. Grant access by submitting the form and get the token back.
+    $this->drupalPostForm(NULL, [], 'Grant');
+
+    // Store the code for the second part of the flow.
+    $code = $this->getAndValidateCodeFromResponse();
+
+    // 4. Send the code to get the access token.
+    $response = $this->postGrantedCodeWithScopes($code, $this->scope);
+    $this->assertValidTokenResponse($response, TRUE);
+
+    // Do a second authorize request, the client is now remembered and the user
+    // does not need to confirm again.
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+
+    $code = $this->getAndValidateCodeFromResponse();
+
+    $response = $this->postGrantedCodeWithScopes($code, $this->scope);
+    $this->assertValidTokenResponse($response, TRUE);
+
+    // Do a third request with an additional scope.
+    $valid_params['scope'] = $this->extraRole->id();
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+
+    $this->assertGrantForm();
+    $this->assertSession()->pageTextContains($this->extraRole->label());
+    $this->drupalPostForm(NULL, [], 'Grant');
+
+    $code = $this->getAndValidateCodeFromResponse();
+
+    $response = $this->postGrantedCodeWithScopes($code, $this->scope . ' ' . $this->extraRole->id());
+    $this->assertValidTokenResponse($response, TRUE);
+
+    // Do another request with the additional scope, this scope is now remembered too.
+    $valid_params['scope'] = $this->extraRole->id();
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+    $code = $this->getAndValidateCodeFromResponse();
+
+    $response = $this->postGrantedCodeWithScopes($code, $this->scope . ' ' . $this->extraRole->id());
+    $this->assertValidTokenResponse($response, TRUE);
+
+    // Disable the remember clients feature, make sure that the redirect doesn't happen automatically anymore.
+    $this->config('simple_oauth.settings')->set('remember_clients', FALSE)->save();
+
+    $this->drupalGet($this->authorizeUrl->toString(), [
+      'query' => $valid_params,
+    ]);
+
+    $this->assertGrantForm();
+  }
 
   /**
    * Helper function to assert the current page is a valid grant form.

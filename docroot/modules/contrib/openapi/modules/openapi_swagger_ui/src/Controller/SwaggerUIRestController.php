@@ -2,8 +2,10 @@
 
 namespace Drupal\openapi_swagger_ui\Controller;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
-use Drupal\openapi\OpenApiGenerator\RestInspectionTrait;
+use Drupal\openapi\RestInspectionTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Controller for REST documentation.
@@ -11,6 +13,25 @@ use Drupal\openapi\OpenApiGenerator\RestInspectionTrait;
 class SwaggerUIRestController extends SwaggerUIControllerBase {
 
   use RestInspectionTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $generator_plugin_id = 'rest';
+
+  /**
+   * Constructs a new SwaggerController object.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request
+   *   The request.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RequestStack $request) {
+    parent::__construct($entity_type_manager, $request);
+    $this->entityTypeManager = $entity_type_manager;
+    $this->request = $request;
+  }
 
   /**
    * List all REST Doc pages.
@@ -22,10 +43,9 @@ class SwaggerUIRestController extends SwaggerUIControllerBase {
     ];
 
     // @todo Implement non entity doc page.
-
     foreach ($this->getRestEnabledEntityTypes() as $entity_type_id => $entity_type) {
       if ($bundle_type = $entity_type->getBundleEntityType()) {
-        $bundle_storage = $this->entityTypeManager()->getStorage($bundle_type);
+        $bundle_storage = $this->entityTypeManager->getStorage($bundle_type);
         /** @var \Drupal\Core\Config\Entity\ConfigEntityBundleBase[] $bundles */
         $bundles = $bundle_storage->loadMultiple();
         $bundle_links = [];
@@ -57,13 +77,6 @@ class SwaggerUIRestController extends SwaggerUIControllerBase {
       }
     }
     return $return;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getJsonGeneratorRoute() {
-    return 'openapi.rest';
   }
 
 }

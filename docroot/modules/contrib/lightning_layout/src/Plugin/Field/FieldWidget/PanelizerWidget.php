@@ -26,9 +26,9 @@ class PanelizerWidget extends BaseWidget {
       // description if no description is set already.
       if ($item['view_mode']['#value'] && empty($item['default']['#description'])) {
         $view_mode = $items->getEntity()->getEntityTypeId() . '.' . $item['view_mode']['#value'];
-
-        $element[$i]['default']['#description'] = EntityViewMode::load($view_mode)
-          ->getThirdPartySetting('lightning_core', 'description');
+        if ($view_mode = EntityViewMode::load($view_mode)) {
+          $element[$i]['default']['#description'] = $view_mode->getThirdPartySetting('lightning_core', 'description');
+        }
       }
     }
     return $element;

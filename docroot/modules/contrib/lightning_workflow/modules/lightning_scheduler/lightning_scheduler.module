@@ -119,7 +119,6 @@ function lightning_scheduler_field_widget_moderation_state_default_form_alter(ar
     '#tag' => 'TransitionSet',
     '#attributes' => [
       'states' => Json::encode($states),
-      'since' => date('c', Drupal::state()->get('system.cron_last')),
     ],
     '#attached' => [
       'library' => ['lightning_scheduler/widget'],

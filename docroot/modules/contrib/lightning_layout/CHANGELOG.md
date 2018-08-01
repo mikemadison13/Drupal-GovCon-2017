@@ -1,3 +1,6 @@
+## 1.3.0
+* Allow Lightning Core 3.x and Drupal core 8.6.x.
+
 ## 1.2.0
 * Updated to Panelizer 4.1 and Panels 4.3.
 

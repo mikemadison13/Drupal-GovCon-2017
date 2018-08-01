@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Contains OpenApi SwaggerUI module.
+ */
+
+/**
  * Implements hook_theme().
  */
 function openapi_swagger_ui_theme() {
