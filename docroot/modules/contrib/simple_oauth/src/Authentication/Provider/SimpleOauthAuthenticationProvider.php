@@ -2,8 +2,10 @@
 
 namespace Drupal\simple_oauth\Authentication\Provider;
 
+use Drupal\Core\Authentication\AuthenticationProviderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\simple_oauth\Authentication\TokenAuthUser;
+use Drupal\simple_oauth\PageCache\SimpleOauthRequestPolicyInterface;
 use Drupal\simple_oauth\Server\ResourceServerInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @internal
  */
-class SimpleOauthAuthenticationProvider implements SimpleOauthAuthenticationProviderInterface {
+class SimpleOauthAuthenticationProvider implements AuthenticationProviderInterface {
 
   /**
    * @var \Drupal\simple_oauth\Server\ResourceServerInterface
@@ -24,38 +26,47 @@ class SimpleOauthAuthenticationProvider implements SimpleOauthAuthenticationProv
   protected $entityTypeManager;
 
   /**
+   * @var \Drupal\simple_oauth\PageCache\SimpleOauthRequestPolicyInterface
+   */
+  protected $oauthPageCacheRequestPolicy;
+
+  /**
    * Constructs a HTTP basic authentication provider object.
    *
    * @param \Drupal\simple_oauth\Server\ResourceServerInterface $resource_server
    *   The resource server object.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
+   * @param \Drupal\simple_oauth\PageCache\SimpleOauthRequestPolicyInterface $page_cache_request_policy
+   *   The page cache request policy.
    */
-  public function __construct(ResourceServerInterface $resource_server, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    ResourceServerInterface $resource_server,
+    EntityTypeManagerInterface $entity_type_manager,
+    SimpleOauthRequestPolicyInterface $page_cache_request_policy
+  ) {
     $this->resourceServer = $resource_server;
     $this->entityTypeManager = $entity_type_manager;
+    $this->oauthPageCacheRequestPolicy = $page_cache_request_policy;
   }
 
   /**
    * {@inheritdoc}
    */
   public function applies(Request $request) {
-    // Check for the presence of the token.
-    return $this->hasTokenValue($request);
+    // The request policy service won't be used in case of non GET or HEAD
+    // methods so we have to explicitly call it.
+    /* @see \Drupal\Core\PageCache\RequestPolicy\CommandLineOrUnsafeMethod::check() */
+    return $this->oauthPageCacheRequestPolicy->isOauth2Request($request);
   }
 
   /**
    * {@inheritdoc}
-   */
-  public static function hasTokenValue(Request $request) {
-    // Check the header. See: http://tools.ietf.org/html/rfc6750#section-2.1
-    $auth_header = trim($request->headers->get('Authorization', '', TRUE));
-
-    return strpos($auth_header, 'Bearer ') !== FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \League\OAuth2\Server\Exception\OAuthServerException
    */
   public function authenticate(Request $request) {
     // Update the request with the OAuth information.
@@ -75,6 +86,18 @@ class SimpleOauthAuthenticationProvider implements SimpleOauthAuthenticationProv
     $token = reset($tokens);
 
     $account = new TokenAuthUser($token);
+
+    // Revoke the access token for the blocked user.
+    if ($account->isBlocked()) {
+      $token->revoke();
+      $token->save();
+      throw OAuthServerException::accessDenied(
+        t(
+          '%name is blocked or has not been activated yet.',
+          ['%name' => $account->getAccountName()]
+        )
+      );
+    }
 
     // Set consumer ID header on successful authentication, so negotiators
     // will trigger correctly.

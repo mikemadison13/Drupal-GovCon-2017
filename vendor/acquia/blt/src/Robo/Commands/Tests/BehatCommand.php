@@ -77,7 +77,7 @@ class BehatCommand extends TestsCommandBase {
   /**
    * Executes all behat tests.
    *
-   * @command tests:behat
+   * @command tests:behat:run
    * @description Executes all behat tests. This optionally launch PhantomJS or Selenium prior to execution.
    * @usage
    *   Executes all configured tests.
@@ -85,6 +85,8 @@ class BehatCommand extends TestsCommandBase {
    *   Executes scenarios in the Examples.feature file.
    * @usage -D behat.paths=${PWD}/tests/behat/features/Examples.feature:4
    *   Executes only the scenario on line 4 of Examples.feature.
+   *
+   * @aliases tbr behat tests:behat
    *
    * @interactGenerateSettingsFiles
    * @interactInstallDrupal
@@ -94,7 +96,7 @@ class BehatCommand extends TestsCommandBase {
    * @validateBehatIsConfigured
    * @validateVmConfig
    * @launchWebServer
-   * @executeInDrupalVm
+   * @executeInVm
    */
   public function behat() {
     // Log config for debugging purposes.
@@ -117,14 +119,14 @@ class BehatCommand extends TestsCommandBase {
   /**
    * Lists available Behat step definitions.
    *
-   * @command tests:behat:definitions
+   * @command tests:behat:list:definitions
    *
    * @option mode l (default), i, or needle. Use l to just list definition expressions, i to show definitions with extended info, or needle to find specific definitions.
    *
+   * @aliases tbd tests:behat:definitions
+   *
    * @validateMySqlAvailable
-   * @validateBehatIsConfigured
-   * @validateVmConfig
-   * @executeInDrupalVm
+   * @executeInVm
    */
   public function behatDefinitions($options = ['mode' => 'l']) {
     $task = $this->taskBehat($this->getConfigValue('composer.bin') . '/behat')
@@ -134,7 +136,7 @@ class BehatCommand extends TestsCommandBase {
       ->option('definitions', $options['mode'])
       ->option('config', $this->getConfigValue('behat.config'))
       ->option('profile', $this->getConfigValue('behat.profile'))
-      ->detectInteractive();
+      ->interactive($this->input()->isInteractive());
     if ($this->output()->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
       $task->verbose();
     }
@@ -169,15 +171,16 @@ class BehatCommand extends TestsCommandBase {
     $this->killChrome();
     $chrome_bin = $this->findChrome();
     $this->checkChromeVersion($chrome_bin);
+    $chrome_host = 'http://localhost';
     $this->logger->info("Launching headless chrome...");
     $this->getContainer()
       ->get('executor')
-      ->execute("'$chrome_bin' --headless --disable-gpu --remote-debugging-port={$this->chromePort} {$this->chromeArgs} https://www.chromestatus.com --disable-web-security --user-data-dir > /dev/null 2>&1")
+      ->execute("'$chrome_bin' --headless --disable-web-security --remote-debugging-port={$this->chromePort} {$this->chromeArgs} $chrome_host")
       ->background(TRUE)
       ->printOutput(TRUE)
       ->printMetadata(TRUE)
       ->run();
-    $this->getContainer()->get('executor')->waitForUrlAvailable("localhost:{$this->chromePort}");
+    $this->getContainer()->get('executor')->waitForUrlAvailable("$chrome_host:{$this->chromePort}");
   }
 
   /**
@@ -316,7 +319,8 @@ class BehatCommand extends TestsCommandBase {
    *
    * Sometimes the download fails during `composer install`.
    *
-   * @command tests:configure-phantomjs
+   * @command tests:behat:init:phantomjs
+   * @aliases tbip
    */
   public function setupPhantomJs() {
     /** @var \Acquia\Blt\Robo\Wizards\TestsWizard $tests_wizard */
@@ -355,7 +359,7 @@ class BehatCommand extends TestsCommandBase {
         ->option('config', $this->getConfigValue('behat.config'))
         ->option('profile', $this->getConfigValue('behat.profile'))
         ->option('tags', $this->getConfigValue('behat.tags'))
-        ->detectInteractive();
+        ->interactive($this->input()->isInteractive());
 
       if ($this->output()->getVerbosity() >= OutputInterface::VERBOSITY_NORMAL) {
         $task->verbose();

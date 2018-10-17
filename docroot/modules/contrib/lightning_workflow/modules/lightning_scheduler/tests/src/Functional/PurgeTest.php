@@ -16,19 +16,19 @@ class PurgeTest extends MigrationTestBase {
     parent::test();
 
     $assert = $this->assertSession();
-    $assert->pageTextContains('You are about to migrate scheduled transitions for all custom block entities and content items.');
+    $assert->pageTextContains('You are about to migrate scheduled transitions for all custom blocks and content items.');
 
     // Assert that the purge-related fields are present and accounted for.
     $assert->pageTextContains('Purge without migrating');
     $select = $assert->fieldExists('purge[entity_type_id]')->getAttribute('name');
-    $this->assertSame('block_content', $assert->optionExists($select, 'custom block entities')->getValue());
+    $this->assertSame('block_content', $assert->optionExists($select, 'custom blocks')->getValue());
     $this->assertSame('node', $assert->optionExists($select, 'content items')->getValue());
     $this->getSession()->getPage()->fillField($select, 'node');
     $assert->buttonExists('Purge')->press();
     $assert->pageTextContains('Purged scheduled transitions for content items.');
     $assert->pageTextNotContains('All migrations are completed.');
-    $assert->pageTextContains('You are about to migrate scheduled transitions for all custom block entities.');
-    $assert->optionExists($select, 'custom block entities');
+    $assert->pageTextContains('You are about to migrate scheduled transitions for all custom blocks.');
+    $assert->optionExists($select, 'custom blocks');
     $assert->optionNotExists($select, 'content items');
 
     $storage = $this->postMigration('node');

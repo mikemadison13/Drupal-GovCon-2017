@@ -17,9 +17,12 @@ class DrupalCommand extends BltTasks {
    * @command internal:drupal:install
    *
    * @validateMySqlAvailable
+   * @validateDrushConfig
+   * @hidden
    *
    * @return \Robo\Result
    *   The `drush site-install` command result.
+   * @throws BltException
    */
   public function install() {
 
@@ -38,28 +41,17 @@ class DrupalCommand extends BltTasks {
       ->arg($this->getConfigValue('project.profile.name'))
       ->rawArg("install_configure_form.update_status_module='array(FALSE,FALSE)'")
       ->rawArg("install_configure_form.enable_update_status_module=NULL")
+      ->option('sites-subdir', $this->getConfigValue('site'))
       ->option('site-name', $this->getConfigValue('project.human_name'))
       ->option('site-mail', $this->getConfigValue('drupal.account.mail'))
       ->option('account-name', $username, '=')
       ->option('account-mail', $this->getConfigValue('drupal.account.mail'))
       ->option('locale', $this->getConfigValue('drupal.locale'))
       ->verbose(TRUE)
-      ->assume(TRUE)
       ->printOutput(TRUE);
 
-    $config_strategy = $this->getConfigValue('cm.strategy');
-
-    // --config-dir is not valid for Drush 9.
-    if ($config_strategy != 'none' && $this->getInspector()->getDrushMajorVersion() == 8 && $this->getConfigValue('setup.drupal.install.import-config')) {
-      $cm_core_key = $this->getConfigValue('cm.core.key');
-      $task->option('config-dir', $this->getConfigValue("cm.core.dirs.$cm_core_key.path"));
-    }
-
-    $result = $task->detectInteractive()->run();
-    if ($result->wasSuccessful()) {
-      $this->getConfig()->set('state.drupal.installed', TRUE);
-    }
-    else {
+    $result = $task->interactive($this->input()->isInteractive())->run();
+    if (!$result->wasSuccessful()) {
       throw new BltException("Failed to install Drupal!");
     }
 

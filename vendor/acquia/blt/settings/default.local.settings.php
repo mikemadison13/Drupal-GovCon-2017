@@ -5,6 +5,13 @@
  * Local development override configuration feature.
  */
 
+use Drupal\Component\Assertion\Handle;
+
+$db_name = '${drupal.db.database}';
+if (isset($acsf_site_name)) {
+  $db_name .= '_' . $acsf_site_name;
+}
+
 /**
  * Database configuration.
  */
@@ -13,11 +20,11 @@ $databases = array(
   array(
     'default' =>
     array(
-      'database' => 'drupal',
-      'username' => 'drupal',
-      'password' => 'drupal',
-      'host' => 'localhost',
-      'port' => '3306',
+      'database' => $db_name,
+      'username' => '${drupal.db.username}',
+      'password' => '${drupal.db.password}',
+      'host' => '${drupal.db.host}',
+      'port' => '${drupal.db.port}',
       'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
       'driver' => 'mysql',
       'prefix' => '',
@@ -51,7 +58,7 @@ $settings['update_free_access'] = TRUE;
  * @see https://wiki.php.net/rfc/expectations
  */
 assert_options(ASSERT_ACTIVE, TRUE);
-\Drupal\Component\Assertion\Handle::register();
+Handle::register();
 
 /**
  * Show all error messages, with backtrace information.
@@ -79,8 +86,7 @@ $config['system.performance']['js']['preprocess'] = FALSE;
  *
  * Do not use this setting until after the site is installed.
  */
-# $settings['cache']['bins']['render'] = 'cache.backend.null';
-
+// $settings['cache']['bins']['render'] = 'cache.backend.null';
 /**
  * Disable Dynamic Page Cache.
  *
@@ -88,8 +94,7 @@ $config['system.performance']['js']['preprocess'] = FALSE;
  * cacheability metadata is present (and hence the expected behavior). However,
  * in the early stages of development, you may want to disable it.
  */
-# $settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.null';
-
+// $settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.null';
 /**
  * Allow test modules and themes to be installed.
  *
@@ -98,6 +103,22 @@ $config['system.performance']['js']['preprocess'] = FALSE;
  * purposes.
  */
 $settings['extension_discovery_scan_tests'] = FALSE;
+
+
+/**
+ * Configure static caches.
+ *
+ * Note: you should test with the config, bootstrap, and discovery caches enabled to 
+ * test that metadata is cached as expected. However, in the early stages of development,
+ * you may want to disable them. Overrides to these bins must be explicitly set for each 
+ * bin to change the default configuration provided by Drupal core in core.services.yml. 
+ * See https://www.drupal.org/node/2754947
+ */
+
+ // $settings['cache']['bins']['bootstrap'] = 'cache.backend.null';
+ // $settings['cache']['bins']['discovery'] = 'cache.backend.null';
+ // $settings['cache']['bins']['config'] = 'cache.backend.null';
+
 
 /**
  * Enable access to rebuild.php.
@@ -126,6 +147,10 @@ $config['system.file']['path']['temporary'] = '/tmp';
  * Private file path.
  */
 $settings['file_private_path'] = $dir . '/files-private';
+if (isset($acsf_site_name)) {
+  $settings['file_public_path'] = "sites/default/files/$acsf_site_name";
+  $settings['file_private_path'] = "$repo_root/files-private/$acsf_site_name";
+}
 
 /**
  * Trusted host configuration.

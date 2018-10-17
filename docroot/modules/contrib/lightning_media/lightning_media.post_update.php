@@ -13,7 +13,7 @@ function lightning_media_post_update_change_action_plugins() {
     'media_delete_action' => 'entity:delete_action:media',
   ];
 
-  /** @var Action[] $actions */
+  /** @var \Drupal\system\Entity\Action[] $actions */
   $actions = Action::loadMultiple();
   foreach ($actions as $action) {
     $plugin_id = $action->get('plugin');

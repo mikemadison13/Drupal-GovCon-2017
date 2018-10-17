@@ -28,6 +28,7 @@ services:
       - '@container.namespaces'
       - '@class_resolver'
       - '@config.factory'
+      - '@extension.list.module'
 
   lightning.command.update:
     class: '\Drupal\lightning_core\Command\UpdateCommand'

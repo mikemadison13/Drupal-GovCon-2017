@@ -2,7 +2,11 @@
 
 namespace Acquia\Blt\Robo\Common;
 
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * An extension of \Robo\Common\IO.
@@ -64,11 +68,91 @@ trait IO {
    *   The response.
    */
   protected function confirm($question, $default = FALSE) {
-    if ($this->input()->hasOption('yes') && $this->input()->getOption('yes')) {
+    if ($this->input()->hasOption('yes') && $this->input()->getOption('yes') !== FALSE) {
       return TRUE;
     }
 
     return $this->doAsk(new ConfirmationQuestion($this->formatQuestion($question . ' (y/n)'), $default));
+  }
+
+  /**
+   * Asks the user a multiple-choice question.
+   *
+   * @param string $question
+   *   The question text.
+   * @param array $options
+   *   An array of available options.
+   *
+   * @return string
+   *   The chosen option.
+   */
+  protected function askChoice($question, $options, $default = NULL) {
+    return $this->doAsk(new ChoiceQuestion($this->formatQuestion($question),
+      $options, $default));
+  }
+
+  /**
+   * Asks a required question.
+   *
+   * @param string $message
+   *   The question text.
+   *
+   * @return string
+   *   The response.
+   */
+  protected function askRequired($message) {
+    $question = new Question($this->formatQuestion($message));
+    $question->setValidator(function ($answer) {
+      if (empty($answer)) {
+        throw new \RuntimeException(
+          'You must enter a value!'
+        );
+      }
+
+      return $answer;
+    });
+    return $this->doAsk($question);
+  }
+
+  /**
+   * Writes an array to the screen as a formatted table.
+   *
+   * @param array $array
+   *   The unformatted array.
+   * @param array $headers
+   *   The headers for the array. Defaults to ['Property','Value'].
+   */
+  protected function printArrayAsTable(
+    array $array,
+    array $headers = ['Property', 'Value']
+  ) {
+    $table = new Table($this->output);
+    $table->setHeaders($headers)
+      ->setRows(ArrayManipulator::convertArrayToFlatTextArray($array))
+      ->render();
+  }
+
+  /**
+   * Writes a particular configuration key's value to the log.
+   *
+   * @param array $array
+   *   The configuration.
+   * @param string $prefix
+   *   A prefix to add to each row in the configuration.
+   * @param int $verbosity
+   *   The verbosity level at which to display the logged message.
+   */
+  protected function logConfig(array $array, $prefix = '', $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE) {
+    if ($this->output()->getVerbosity() >= $verbosity) {
+      if ($prefix) {
+        $this->output()->writeln("<comment>Configuration for $prefix:</comment>");
+        foreach ($array as $key => $value) {
+          $array["$prefix.$key"] = $value;
+          unset($array[$key]);
+        }
+      }
+      $this->printArrayAsTable($array);
+    }
   }
 
 }

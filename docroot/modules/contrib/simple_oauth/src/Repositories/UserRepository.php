@@ -4,6 +4,7 @@ namespace Drupal\simple_oauth\Repositories;
 
 use Drupal\user\UserAuthInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use Drupal\simple_oauth\Entities\UserEntity;
 
@@ -35,8 +36,7 @@ class UserRepository implements UserRepositoryInterface {
 
       return $user;
     }
-
-    return NULL;
+    throw OAuthServerException::invalidCredentials();
   }
 
 }

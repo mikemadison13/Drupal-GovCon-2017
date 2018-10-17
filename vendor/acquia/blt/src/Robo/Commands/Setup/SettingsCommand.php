@@ -5,10 +5,13 @@ namespace Acquia\Blt\Robo\Commands\Setup;
 use Acquia\Blt\Robo\BltTasks;
 use Acquia\Blt\Robo\Common\RandomString;
 use Acquia\Blt\Robo\Exceptions\BltException;
+use function file_exists;
 use Robo\Contract\VerbosityThresholdInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Defines commands in the "setup:settings" namespace.
+ * Defines commands in the "blt:init:settings" namespace.
  */
 class SettingsCommand extends BltTasks {
 
@@ -28,7 +31,9 @@ class SettingsCommand extends BltTasks {
   /**
    * Generates default settings files for Drupal and drush.
    *
-   * @command setup:settings
+   * @command blt:init:settings
+   *
+   * @aliases bis settings setup:settings
    */
   public function generateSiteConfigFiles() {
     if (!file_exists($this->getConfigValue('blt.config-files.local'))) {
@@ -44,11 +49,21 @@ class SettingsCommand extends BltTasks {
       }
     }
 
+    // Generate hash file in salt.txt.
+    $this->hashSalt();
+
     $default_multisite_dir = $this->getConfigValue('docroot') . "/sites/default";
     $default_project_default_settings_file = "$default_multisite_dir/default.settings.php";
 
     $multisites = $this->getConfigValue('multisites');
+    $initial_site = $this->getConfigValue('site');
+    $current_site = $initial_site;
+
     foreach ($multisites as $multisite) {
+      if ($current_site != $multisite) {
+        $this->switchSiteContext($multisite);
+        $current_site = $multisite;
+      }
 
       // Generate settings.php.
       $multisite_dir = $this->getConfigValue('docroot') . "/sites/$multisite";
@@ -60,15 +75,20 @@ class SettingsCommand extends BltTasks {
       $default_local_settings_file = "$multisite_dir/settings/default.local.settings.php";
       $project_local_settings_file = "$multisite_dir/settings/local.settings.php";
 
-      // Generate local.drushrc.php.
-      $blt_local_drush_file = $this->getConfigValue('blt.root') . '/settings/default.local.drushrc.php';
-      $default_local_drush_file = "$multisite_dir/default.local.drushrc.php";
-      $project_local_drush_file = "$multisite_dir/local.drushrc.php";
+      // Generate local.drush.yml.
+      $blt_local_drush_file = $this->getConfigValue('blt.root') . '/settings/default.local.drush.yml';
+      $default_local_drush_file = "$multisite_dir/default.local.drush.yml";
+      $project_local_drush_file = "$multisite_dir/local.drush.yml";
 
       $copy_map = [
         $blt_local_settings_file => $default_local_settings_file,
         $default_local_settings_file => $project_local_settings_file,
         $blt_local_drush_file => $default_local_drush_file,
+        $default_local_drush_file => $project_local_drush_file,
+      ];
+      // Define an array of files that require property expansion.
+      $expand_map = [
+        $default_local_settings_file => $project_local_settings_file,
         $default_local_drush_file => $project_local_drush_file,
       ];
 
@@ -84,8 +104,11 @@ class SettingsCommand extends BltTasks {
       $task = $this->taskFilesystemStack()
         ->stopOnFail()
         ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
-        ->chmod($multisite_dir, 0777)
-        ->chmod($project_settings_file, 0777);
+        ->chmod($multisite_dir, 0777);
+
+      if (file_exists($project_settings_file)) {
+        $task->chmod($project_settings_file, 0777);
+      }
 
       // Copy files without overwriting.
       foreach ($copy_map as $from => $to) {
@@ -96,11 +119,13 @@ class SettingsCommand extends BltTasks {
 
       $result = $task->run();
 
+      foreach ($expand_map as $from => $to) {
+        $this->getConfig()->expandFileProperties($to);
+      }
+
       if (!$result->wasSuccessful()) {
         throw new BltException("Unable to copy files settings files from BLT into your repository.");
       }
-
-      $this->getConfig()->expandFileProperties($project_local_drush_file);
 
       $result = $this->taskWriteToFile($project_settings_file)
         ->appendUnlessMatches('#vendor/acquia/blt/settings/blt.settings.php#', 'require DRUPAL_ROOT . "/../vendor/acquia/blt/settings/blt.settings.php";' . "\n")
@@ -123,14 +148,18 @@ class SettingsCommand extends BltTasks {
         throw new BltException("Unable to set permissions on $project_settings_file.");
       }
     }
+
+    if ($current_site != $initial_site) {
+      $this->switchSiteContext($initial_site);
+    }
   }
 
   /**
    * Generates tests/behat/local.yml file for executing Behat tests locally.
    *
-   * @command setup:behat
+   * @command tests:behat:init:config
+   * @aliases tbic setup:behat
    *
-   * @executeInDrupalVm
    */
   public function behat() {
     $copy_map = [
@@ -156,7 +185,9 @@ class SettingsCommand extends BltTasks {
         $task->copy($from, $to);
       }
       $result = $task->run();
-      $this->getConfig()->expandFileProperties($this->projectBehatLocalConfigFile);
+      foreach ($copy_map as $from => $to) {
+        $this->getConfig()->expandFileProperties($to);
+      }
 
       if (!$result->wasSuccessful()) {
         $filepath = $this->getInspector()->getFs()->makePathRelative($this->defaultBehatLocalConfigFile, $this->getConfigValue('repo.root'));
@@ -168,10 +199,11 @@ class SettingsCommand extends BltTasks {
   /**
    * Installs BLT git hooks to local .git/hooks directory.
    *
-   * @command setup:git-hooks
+   * @command blt:init:git-hooks
+   * @aliases big setup:git-hooks
    */
   public function gitHooks() {
-    foreach (['pre-commit', 'commit-msg'] as $hook) {
+    foreach ($this->getConfigValue('git.hooks') as $hook => $path) {
       $this->installGitHook($hook);
     }
   }
@@ -182,20 +214,23 @@ class SettingsCommand extends BltTasks {
    * This symlinks the hook into the project's .git/hooks directory.
    *
    * @param string $hook
-   *   The git hook to install. E.g., 'pre-commit'.
+   *   The git hook to install, e.g., 'pre-commit'.
    *
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   protected function installGitHook($hook) {
+    $fs = new Filesystem();
+    $project_hook_directory = $this->getConfigValue('repo.root') . "/.git/hooks";
+    $project_hook = $project_hook_directory . "/$hook";
     if ($this->getConfigValue('git.hooks.' . $hook)) {
       $this->say("Installing $hook git hook...");
-      $source = $this->getConfigValue('git.hooks.' . $hook) . "/$hook";
-      $dest = $this->getConfigValue('repo.root') . "/.git/hooks/$hook";
+      $hook_source = $this->getConfigValue('git.hooks.' . $hook) . "/$hook";
+      $path_to_hook_source = rtrim($fs->makePathRelative($hook_source, $project_hook_directory), '/');
 
       $result = $this->taskFilesystemStack()
         ->mkdir($this->getConfigValue('repo.root') . '/.git/hooks')
-        ->remove($dest)
-        ->symlink($source, $dest)
+        ->remove($project_hook)
+        ->symlink($path_to_hook_source, $project_hook)
         ->stopOnFail()
         ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
         ->run();
@@ -205,14 +240,29 @@ class SettingsCommand extends BltTasks {
       }
     }
     else {
-      $this->say("Skipping installation of $hook git hook");
+      if (file_exists($project_hook)) {
+        $this->say("Removing disabled $hook git hook...");
+        $result = $this->taskFilesystemStack()
+          ->remove($project_hook)
+          ->stopOnFail()
+          ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
+          ->run();
+
+        if (!$result->wasSuccessful()) {
+          throw new BltException("Unable to remove disabled $hook git hook");
+        }
+      }
+      else {
+        $this->say("Skipping installation of $hook git hook...");
+      }
     }
   }
 
   /**
    * Writes a hash salt to ${repo.root}/salt.txt if one does not exist.
    *
-   * @command setup:hash-salt
+   * @command drupal:hash-salt:init
+   * @aliases dhsi setup:hash-salt
    *
    * @return int
    *   A CLI exit code.
@@ -237,6 +287,31 @@ class SettingsCommand extends BltTasks {
     else {
       $this->say("Hash salt already exists.");
       return 0;
+    }
+  }
+
+  /**
+   * Writes a deployment_identifier to ${repo.root}/deployment_identifier.
+   *
+   * @command drupal:deployment-identifier:init
+   * @aliases ddii
+   *
+   * @throws \Acquia\Blt\Robo\Exceptions\BltException
+   */
+  public function createDeployId($options = ['id' => InputOption::VALUE_REQUIRED]) {
+    if (!$options['id']) {
+      $options['id'] = RandomString::string(8);
+    }
+    $deployment_identifier_file = $this->getConfigValue('repo.root') . '/deployment_identifier';
+    $this->say("Generating deployment identifier...");
+    $result = $this->taskWriteToFile($deployment_identifier_file)
+      ->line($options['id'])
+      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
+      ->run();
+
+    if (!$result->wasSuccessful()) {
+      $filepath = $this->getInspector()->getFs()->makePathRelative($deployment_identifier_file, $this->getConfigValue('repo.root'));
+      throw new BltException("Unable to write deployment identifier to $filepath.");
     }
   }
 

@@ -35,7 +35,31 @@ class EmbedCode extends EntityFormProxy {
       ],
     ];
 
+    // Allow the form to be rebuilt without using AJAX.
+    $form['update'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Update'),
+      '#attributes' => [
+        'class' => ['js-hide'],
+      ],
+      '#submit' => [
+        [static::class, 'update'],
+      ],
+    ];
+
     return $form;
+  }
+
+  /**
+   * Submit callback for the Update button.
+   *
+   * @param array $form
+   *   The complete form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   */
+  public static function update(array &$form, FormStateInterface $form_state) {
+    $form_state->setRebuild();
   }
 
   /**

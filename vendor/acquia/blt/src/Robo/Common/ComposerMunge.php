@@ -18,7 +18,7 @@ class ComposerMunge {
    * @return string
    *   The new, merged composer.json contents.
    */
-  public static function munge($file1, $file2) {
+  public static function mungeFiles($file1, $file2) {
     $default_contents = [];
     $file1_contents = (array) json_decode(file_get_contents($file1), TRUE) + $default_contents;
     $file2_contents = (array) json_decode(file_get_contents($file2), TRUE) + $default_contents;
@@ -50,6 +50,7 @@ class ComposerMunge {
   protected static function mergeKeyed($file1_contents, $file2_contents, $exclude_keys = []) {
     // Merge keyed arrays objects.
     $merge_keys = [
+      'config',
       'extra',
     ];
     $output = $file1_contents;

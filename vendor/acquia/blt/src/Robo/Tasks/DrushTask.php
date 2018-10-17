@@ -4,8 +4,8 @@ namespace Acquia\Blt\Robo\Tasks;
 
 use Robo\Exception\TaskException;
 use Robo\Task\CommandStack;
-use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Common\CommandArguments;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Runs Drush commands in stack. You can use `stopOnFail()` to point that stack
@@ -48,18 +48,25 @@ class DrushTask extends CommandStack {
   protected $uri;
 
   /**
-   * Assume 'yes' or 'no' to all prompts.
-   *
-   * @var string|bool
-   */
-  protected $assume;
-
-  /**
    * Indicates if the command output should be verbose.
    *
    * @var bool
    */
   protected $verbose;
+
+  /**
+   * Indicates if the command output should be very verbose.
+   *
+   * @var bool
+   */
+  protected $veryVerbose;
+
+  /**
+   * Indicates if the command output should be debug verbosity.
+   *
+   * @var bool
+   */
+  protected $debug;
 
   /**
    * @var bool
@@ -155,23 +162,6 @@ class DrushTask extends CommandStack {
   }
 
   /**
-   * Assume 'yes' or 'no' to all prompts.
-   *
-   * @param string|bool $assume
-   *
-   * @return $this
-   */
-  public function assume($assume) {
-    if ($assume === "") {
-      $this->assume = $assume;
-    }
-    else {
-      $this->assume = $this->mixedToBool($assume);
-    }
-    return $this;
-  }
-
-  /**
    * Indicates if the command output should be verbose.
    *
    * @param string|bool $verbose
@@ -180,6 +170,30 @@ class DrushTask extends CommandStack {
    */
   public function verbose($verbose) {
     $this->verbose = $this->mixedToBool($verbose);
+    return $this;
+  }
+
+  /**
+   * Indicates if the command output should be very verbose.
+   *
+   * @param string|bool $verbose
+   *
+   * @return $this
+   */
+  public function veryVerbose($verbose) {
+    $this->veryVerbose = $this->mixedToBool($verbose);
+    return $this;
+  }
+
+  /**
+   * Indicates if the command output should be debug verbosity.
+   *
+   * @param string|bool $verbose
+   *
+   * @return $this
+   */
+  public function debug($verbose) {
+    $this->debug = $this->mixedToBool($verbose);
     return $this;
   }
 
@@ -216,11 +230,8 @@ class DrushTask extends CommandStack {
     if (!isset($this->alias)) {
       $this->alias($this->getConfig()->get('drush.alias'));
     }
-    if (!isset($this->assume) && $this->input->hasOption('yes') && $this->input->getOption('yes')) {
-      $this->assume(TRUE);
-    }
-    elseif (!isset($this->assume) && !$this->input->isInteractive()) {
-      $this->assume(TRUE);
+    if (!isset($this->interactive)) {
+      $this->interactive(FALSE);
     }
 
     $this->defaultsInitialized = TRUE;
@@ -268,24 +279,49 @@ class DrushTask extends CommandStack {
       $this->option('uri', $this->uri);
     }
 
-    if (isset($this->assume) && is_bool($this->assume)) {
-      $assumption = $this->assume ? 'yes' : 'no';
-      $this->option($assumption);
+    if (!$this->interactive) {
+      $this->option('no-interaction');
     }
 
-    if ($this->verbosityThreshold() >= VerbosityThresholdInterface::VERBOSITY_VERBOSE
+    if ($this->verbose !== FALSE) {
+      $verbosity_threshold = $this->verbosityThreshold();
+      switch ($verbosity_threshold) {
+        case OutputInterface::VERBOSITY_VERBOSE:
+          $this->verbose(TRUE);
+          break;
+
+        case OutputInterface::VERBOSITY_VERY_VERBOSE:
+          $this->veryVerbose(TRUE);
+          break;
+
+        case OutputInterface::VERBOSITY_DEBUG:
+          $this->debug(TRUE);
+          break;
+      }
+    }
+    if ($this->verbosityThreshold() >= OutputInterface::VERBOSITY_VERBOSE
       && $this->verbose !== FALSE) {
       $this->verbose(TRUE);
     }
 
-    if ($this->verbose) {
-      $this->option('verbose');
+    if (($this->debug || $this->getConfig()->get('drush.debug'))
+      && $this->getConfig()->get('drush.debug') !== FALSE) {
+      $this->option('-vvv');
+    }
+    elseif (($this->veryVerbose || $this->getConfig()->get('drush.veryVerbose'))
+      && $this->getConfig()->get('drush.veryVerbose') !== FALSE) {
+      $this->option('-vv');
+    }
+    elseif (($this->verbose || $this->getConfig()->get('drush.verbose'))
+      && $this->getConfig()->get('drush.verbose') !== FALSE) {
+      $this->option('-v');
     }
 
     if ($this->include) {
       $this->option('include', $this->include);
     }
 
+    $this->option("ansi");
   }
 
   /**

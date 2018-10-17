@@ -32,7 +32,7 @@
         "cweagans/composer-patches": "^1.6.4",
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "oomphinc/composer-installers-extender": "^1.1",
-        "drupal/lightning_core": "^1.0.0 || ^2.7.0 || ^3.0.0",
+        "drupal/lightning_core": "^1.0 || ^2.9 || ^3.0",
         "drupal/ctools": "^3.0",
         "drupal/panels": "4.3",
         "drupal/panelizer": "^4.1",
@@ -82,6 +82,10 @@
                 "https://www.drupal.org/files/issues/panels-ipe-2878684-3.patch",
                 "2825034 - Form error messages do not appear in IPE":
                 "https://www.drupal.org/files/issues/panels-ipe-propogate-errors-2825034-5.patch"
+            },
+            "drupal/panelizer": {
+                "2778565 - Multilingual support for Panelizer":
+                "https://www.drupal.org/files/issues/2018-08-13/panelizer-multilingual-2778565-38.patch"
             }
         },
         "enable-patching": true

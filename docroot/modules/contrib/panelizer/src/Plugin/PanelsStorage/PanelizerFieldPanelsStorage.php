@@ -6,10 +6,13 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\ctools\Context\AutomaticContext;
 use Drupal\panelizer\Exception\PanelizerException;
 use Drupal\panelizer\PanelizerInterface;
@@ -35,6 +38,13 @@ class PanelizerFieldPanelsStorage extends PanelsStorageBase implements Container
   protected $panelizer;
 
   /**
+   * The language manager.
+   *
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   */
+  protected $languageManager;
+
+  /**
    * Constructs a PanelizerDefaultPanelsStorage.
    *
    * @param array $configuration
@@ -47,10 +57,13 @@ class PanelizerFieldPanelsStorage extends PanelsStorageBase implements Container
    *   The entity type manager.
    * @param \Drupal\panelizer\PanelizerInterface $panelizer
    *   The Panelizer service.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, PanelizerInterface $panelizer) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, PanelizerInterface $panelizer, LanguageManagerInterface $language_manager) {
     $this->entityTypeManager = $entity_type_manager;
     $this->panelizer = $panelizer;
+    $this->languageManager = $language_manager;
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
@@ -63,7 +76,8 @@ class PanelizerFieldPanelsStorage extends PanelsStorageBase implements Container
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('panelizer')
+      $container->get('panelizer'),
+      $container->get('language_manager')
     );
   }
 
@@ -84,6 +98,13 @@ class PanelizerFieldPanelsStorage extends PanelsStorageBase implements Container
     }
     else {
       $entity = $storage->load($id);
+    }
+
+    $langcode = $this->languageManager->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+    if ($entity instanceof TranslatableInterface
+      && $entity->hasTranslation($langcode)
+      && $entity->language()->getId() !== $langcode) {
+      $entity = $entity->getTranslation($langcode);
     }
 
     return $entity;

@@ -13,7 +13,7 @@ use League\JsonReference\Dereferencer;
 /**
  * Sets up functional testing for Schemata.
  */
-class SchemataBrowserTestBase extends BrowserTestBase {
+abstract class SchemataBrowserTestBase extends BrowserTestBase {
 
   /**
    * Entity Type Manager.

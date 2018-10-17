@@ -125,6 +125,7 @@ function lightning_media_field_widget_entity_browser_entity_reference_form_alter
         'open' => TRUE,
       ],
       '#title' => new Plural($cardinality, 'Current selection', 'Current selections'),
+      '#summary_attributes' => [],
     ],
   ];
 }
@@ -150,6 +151,7 @@ function lightning_media_modules_installed(array $modules) {
     \Drupal::service('module_installer')->install([
       'image_widget_crop',
       'lightning_page',
+      'pathauto',
     ]);
 
     module_load_install('lightning_media_image');
@@ -182,8 +184,8 @@ function lightning_media_modules_installed(array $modules) {
       ->set('use_admin_theme', TRUE)
       ->save();
 
-    // Sentence-case the label of the media browser's embed code widget. Yes, not
-    // doing this can cause tests to fail.
+    // Sentence-case the label of the media browser's embed code widget. Yes,
+    // not doing this can cause tests to fail.
     $config_factory->getEditable('entity_browser.browser.media_browser')
       ->set('widgets.8b142f33-59d1-47b1-9e3a-4ae85d8376fa.label', 'Create embed')
       ->save();
@@ -411,10 +413,10 @@ function lightning_media_media_type_insert(MediaTypeInterface $media_type) {
       'field_name' => 'field_media_in_library',
       'entity_type' => 'media',
       'bundle' => $media_type->id(),
-      'label' => t('Save to my media library'),
+      'label' => t('Show in media library'),
       'settings' => [
-        'on_label' => t('Saved to my media library'),
-        'off_label' => t('Not in my media library'),
+        'on_label' => t('Shown in media library'),
+        'off_label' => t('Hidden in media library'),
       ],
       'default_value' => [
         ['value' => TRUE],

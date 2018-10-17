@@ -46,6 +46,7 @@ class ResourceServer implements ResourceServerInterface {
       }
     }
     catch (\LogicException $exception) {
+      trigger_error($exception, E_USER_WARNING);
     }
     $this->messageFactory = $message_factory;
     $this->foundationFactory = $foundation_factory;

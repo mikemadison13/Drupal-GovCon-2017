@@ -57,16 +57,6 @@ class OpenApiDownloadController extends ControllerBase {
 
     $plugins = $this->openApiGeneratorManager->getDefinitions();
     if (count($plugins)) {
-      $links = [
-        '%rest_link' => (new Link('Core REST', Url::fromUri('https://www.drupal.org/docs/8/core/modules/rest')))->toString(),
-        '%jsonapi_link' => (new Link('JSON API', Url::fromUri('https://www.drupal.org/project/jsonapi')))->toString(),
-      ];
-
-      $no_plugins_message = '<strong>' . $this->t('No OpenApi generator plugins are currently available.') . '</strong> ';
-      $no_plugins_message .= $this->t('You must enable a REST or API module which supports OpenApi Downloads, such as the %rest_link and %jsonapi_link modules.', $links);
-      drupal_set_message(['#markup' => $no_plugins_message], 'warning');
-    }
-    else {
       $open_api_links = [];
       foreach ($plugins as $generator_id => $generator) {
         $open_api_links[$generator_id] = [
@@ -83,6 +73,16 @@ class OpenApiDownloadController extends ControllerBase {
         '#theme' => 'links',
         '#links' => $open_api_links,
       ];
+    }
+    else {
+      $links = [
+        '%rest_link' => (new Link('Core REST', Url::fromUri('https://www.drupal.org/docs/8/core/modules/rest')))->toString(),
+        '%jsonapi_link' => (new Link('JSON API', Url::fromUri('https://www.drupal.org/project/jsonapi')))->toString(),
+      ];
+
+      $no_plugins_message = '<strong>' . $this->t('No OpenApi generator plugins are currently available.') . '</strong> ';
+      $no_plugins_message .= $this->t('You must enable a REST or API module which supports OpenApi Downloads, such as the %rest_link and %jsonapi_link modules.', $links);
+      drupal_set_message(['#markup' => $no_plugins_message], 'warning');
     }
 
     return $return;

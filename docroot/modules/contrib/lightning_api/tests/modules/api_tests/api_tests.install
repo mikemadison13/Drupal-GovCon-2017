@@ -6,7 +6,10 @@
 function api_tests_install() {
   $config = \Drupal::configFactory()->getEditable('lightning_api.settings');
   \Drupal::state()->set('api_tests', $config->get());
-  $config->set('entity_json', TRUE)->save();
+  $config
+    ->set('entity_json', TRUE)
+    ->set('bundle_docs', TRUE)
+    ->save();
 }
 
 /**

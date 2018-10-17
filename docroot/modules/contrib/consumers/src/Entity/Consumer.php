@@ -23,19 +23,26 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  *       "edit" = "Drupal\consumers\Entity\Form\ConsumerForm",
  *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
  *     },
+ *     "route_provider" = {
+ *       "html" = "Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
+ *     },
+ *     "views_data" = "\Drupal\views\EntityViewsData",
  *     "access" = "Drupal\consumers\AccessControlHandler",
  *   },
  *   base_table = "consumer",
+ *   data_table = "consumer_field_data",
+ *   translatable = TRUE,
  *   admin_permission = "administer consumer entities",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "langcode" = "langcode",
  *   },
  *   links = {
  *     "canonical" = "/admin/config/services/consumer/{consumer}",
  *     "collection" = "/admin/config/services/consumer",
- *     "add-form" = "/admin/config/services/consumer/{consumer}/add",
+ *     "add-form" = "/admin/config/services/consumer/add",
  *     "edit-form" = "/admin/config/services/consumer/{consumer}/edit",
  *     "delete-form" = "/admin/config/services/consumer/{consumer}/delete"
  *   }
@@ -121,6 +128,7 @@ class Consumer extends ContentEntityBase {
       ->setLabel(t('Logo'))
       ->setDescription(t('Logo of the consumer.'))
       ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'image',
@@ -150,7 +158,7 @@ class Consumer extends ContentEntityBase {
       ])
       ->setRevisionable(TRUE)
       ->setTranslatable(TRUE)
-      ->setDefaultValue(FALSE);
+      ->setDefaultValue(TRUE);
 
     return $fields;
   }

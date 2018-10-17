@@ -76,6 +76,13 @@ function lightning_scheduler_update_8001() {
 }
 
 /**
+ * Refreshes the field widget plugin definition cache.
+ */
+function lightning_scheduler_update_8002() {
+  Drupal::service('plugin.manager.field.widget')->clearCachedDefinitions();
+}
+
+/**
  * Implements hook_update_dependencies().
  */
 function lightning_scheduler_update_dependencies() {

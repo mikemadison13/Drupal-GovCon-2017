@@ -5,6 +5,7 @@ namespace Acquia\Blt\Robo;
 use Acquia\Blt\Robo\Common\ArrayManipulator;
 use Acquia\Blt\Robo\Common\IO;
 use Acquia\Blt\Robo\Config\ConfigAwareTrait;
+use Acquia\Blt\Robo\Config\ConfigInitializer;
 use Acquia\Blt\Robo\Exceptions\BltException;
 use Acquia\Blt\Robo\Inspector\InspectorAwareInterface;
 use Acquia\Blt\Robo\Inspector\InspectorAwareTrait;
@@ -18,10 +19,7 @@ use Robo\Contract\ConfigAwareInterface;
 use Robo\Contract\IOAwareInterface;
 use Robo\Contract\VerbosityThresholdInterface;
 use Robo\LoadAllTasks;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Base class for BLT Robo commands.
@@ -50,7 +48,7 @@ class BltTasks implements ConfigAwareInterface, InspectorAwareInterface, LoggerA
    * Invokes an array of Symfony commands.
    *
    * @param array $commands
-   *   An array of Symfony commands to invoke. E.g., 'tests:behat'.
+   *   An array of Symfony commands to invoke, e.g., 'tests:behat:run'.
    */
   protected function invokeCommands(array $commands) {
     foreach ($commands as $key => $value) {
@@ -70,7 +68,7 @@ class BltTasks implements ConfigAwareInterface, InspectorAwareInterface, LoggerA
    * Invokes a single Symfony command.
    *
    * @param string $command_name
-   *   The name of the command. E.g., 'tests:behat'.
+   *   The name of the command, e.g., 'tests:behat:run'.
    * @param array $args
    *   An array of arguments to pass to the command.
    *
@@ -85,6 +83,7 @@ class BltTasks implements ConfigAwareInterface, InspectorAwareInterface, LoggerA
       $command = $application->find($command_name);
 
       $input = new ArrayInput($args);
+      $input->setInteractive($this->input()->isInteractive());
       $prefix = str_repeat(">", $this->invokeDepth);
       $this->output->writeln("<comment>$prefix $command_name</comment>");
       $exit_code = $application->runCommand($command, $input, $this->output());
@@ -134,7 +133,7 @@ class BltTasks implements ConfigAwareInterface, InspectorAwareInterface, LoggerA
   }
 
   /**
-   * Invokes a given 'target-hooks' hook, typically defined in project.yml.
+   * Invokes a given 'command-hooks' hook, typically defined in blt.yml.
    *
    * @param string $hook
    *   The hook name.
@@ -144,13 +143,13 @@ class BltTasks implements ConfigAwareInterface, InspectorAwareInterface, LoggerA
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   protected function invokeHook($hook) {
-    if ($this->getConfig()->has("target-hooks.$hook.command")
-      && $this->getConfigValue("target-hooks.$hook.command")) {
+    if ($this->getConfig()->has("command-hooks.$hook.command")
+      && $this->getConfigValue("command-hooks.$hook.command")) {
       $this->say("Executing $hook target hook...");
       $result = $this->taskExecStack()
-        ->exec($this->getConfigValue("target-hooks.$hook.command"))
-        ->dir($this->getConfigValue("target-hooks.$hook.dir"))
-        ->detectInteractive()
+        ->exec($this->getConfigValue("command-hooks.$hook.command"))
+        ->dir($this->getConfigValue("command-hooks.$hook.dir"))
+        ->interactive($this->input()->isInteractive())
         ->printOutput(TRUE)
         ->printMetadata(TRUE)
         ->stopOnFail()
@@ -178,28 +177,6 @@ class BltTasks implements ConfigAwareInterface, InspectorAwareInterface, LoggerA
       $this->logger->warning("The $plugin plugin is not installed! Attempting to install it...");
       $this->taskExec("vagrant plugin install $plugin")->run();
     }
-  }
-
-  /**
-   * Executes a command inside of Drupal VM.
-   *
-   * @param string $command
-   *   The command to execute.
-   *
-   * @return \Robo\Result
-   *   The command result.
-   */
-  protected function executeCommandInDrupalVm($command) {
-    $this->say("Executing command <comment>$command</comment> inside of Drupal VM...");
-    $vm_config = Yaml::parse(file_get_contents($this->getConfigValue('vm.config')));
-    $result = $this->taskExecStack()
-      ->exec("vagrant ssh --command 'cd {$vm_config['ssh_home']}; $command'")
-      ->dir($this->getConfigValue('repo.root'))
-      ->detectInteractive()
-      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
-      ->run();
-
-    return $result;
   }
 
   /**
@@ -321,44 +298,20 @@ class BltTasks implements ConfigAwareInterface, InspectorAwareInterface, LoggerA
   }
 
   /**
-   * Writes a particular configuration key's value to the log.
+   * Sets multisite context by settings site-specific config values.
    *
-   * @param array $array
-   *   The configuration.
-   * @param string $prefix
-   *   A prefix to add to each row in the configuration.
-   * @param int $verbosity
-   *   The verbosity level at which to display the logged message.
+   * @param string $site_name
+   *   The name of a multisite, e.g., if docroot/sites/example.com is the site,
+   *   $site_name would be example.com.
    */
-  protected function logConfig(array $array, $prefix = '', $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE) {
-    if ($this->output()->getVerbosity() >= $verbosity) {
-      if ($prefix) {
-        $this->output()->writeln("<comment>Configuration for $prefix:</comment>");
-        foreach ($array as $key => $value) {
-          $array["$prefix.$key"] = $value;
-          unset($array[$key]);
-        }
-      }
-      $this->printArrayAsTable($array);
-    }
-  }
+  public function switchSiteContext($site_name) {
+    $this->logger->debug("Switching site context to <comment>$site_name</comment>.");
+    $config_initializer = new ConfigInitializer($this->getConfigValue('repo.root'), $this->input());
+    $config_initializer->setSite($site_name);
+    $new_config = $config_initializer->initialize();
 
-  /**
-   * Writes an array to the screen as a formatted table.
-   *
-   * @param array $array
-   *   The unformatted array.
-   * @param array $headers
-   *   The headers for the array. Defaults to ['Property','Value'].
-   */
-  protected function printArrayAsTable(
-    array $array,
-    array $headers = ['Property', 'Value']
-  ) {
-    $table = new Table($this->output);
-    $table->setHeaders($headers)
-      ->setRows(ArrayManipulator::convertArrayToFlatTextArray($array))
-      ->render();
+    // Replaces config.
+    $this->getConfig()->import($new_config->export());
   }
 
 }

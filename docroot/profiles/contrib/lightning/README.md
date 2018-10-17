@@ -30,6 +30,13 @@ Lightning as its base profile][sub-profile documentation]. Lightning includes a
 Drupal Console command (`lightning:subprofile`) which will generate a
 sub-profile for you.
 
+#### Installing from exported config
+If you have a config export of a site built with Lighting, you can install it
+using the [Config Installer](https://drupal.org/project/config_installer)
+profile. This profile is fully supported by Lightning (we even run our tests
+against it). You can find more information about installing Lightning from
+exported config [here](https://lightning.acquia.com/blog/using-configuration-installer-lightning).
+
 ## What Lightning Does
 Through custom, contrib, and core modules plus configuration, Lightning aims to
 target four functional areas:
@@ -43,9 +50,10 @@ The current version of media includes the following functionality:
 * The ability to place media into the text area and have it fully embedded as it
   will appear in the live entity. The following media types are currently
   supported:
+  * Audio files
   * Tweets
   * Instagram posts
-  * Videos (YouTube and Vimeo supported out of the box)
+  * Videos (YouTube, Vimeo, and files are supported out of the box)
   * Images
 * Drag-and-drop bulk image uploads.
 * Image cropping.
@@ -124,7 +132,7 @@ to request features or bug fixes.
   compatible with the Core Media entity.
 * Using the bulk upload feature in environments with a load balancer might
   result in some images not being saved.
-  
+
 ### Inherited profiles
 Drush is not aware of the concept of inherited profiles and as a result, you
 will be unable to uninstall dependencies of any parent profile using Drush. You

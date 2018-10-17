@@ -38,7 +38,7 @@ function lightning_layout_modules_installed(array $modules) {
   }
 
   if (in_array('lightning_dev', $modules, TRUE)) {
-    \Drupal::service('module_installer')->install(['lightning_roles']);
+    Drupal::service('module_installer')->install(['lightning_roles', 'pathauto']);
 
     // Grant permissions needed for testing.
     Role::load('landing_page_creator')

@@ -143,23 +143,6 @@ class WebformSubmissionField extends FieldPluginBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function query() {
-    // Since we will render the field off webform_submission entity, there is
-    // no need to join any table nor include any fields in the select.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function clickSort($order) {
-    $webform_submission_data_alias = $this->ensureMyTable();
-    $params = $this->options['group_type'] != 'group' ? ['function' => $this->options['group_type']] : [];
-    $this->query->addOrderBy($webform_submission_data_alias, 'value', $order, '', $params);
-  }
-
-  /**
    * Retrieve webform element plugin instance.
    *
    * @return \Drupal\webform\Plugin\WebformElementInterface

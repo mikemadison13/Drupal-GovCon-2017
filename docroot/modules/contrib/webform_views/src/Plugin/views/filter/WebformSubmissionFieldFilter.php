@@ -98,7 +98,7 @@ class WebformSubmissionFieldFilter extends StringFilter {
         $parents = [];
       }
       $operator = NestedArray::getValue($form_state->getUserInput(), $parents);
-      if (!$operator || !isset($this->operators()[$operator])) {
+      if (!$operator || is_array($operator) || !isset($this->operators()[$operator])) {
         $operator = $this->operator;
       }
 
@@ -144,9 +144,7 @@ class WebformSubmissionFieldFilter extends StringFilter {
    * {@inheritdoc}
    */
   public function valueForm(&$form, FormStateInterface $form_state) {
-    $webform = $this->entityTypeManager->getStorage('webform')->load($this->definition['webform_id']);
-
-    $element = $webform->getElementInitialized($this->definition['webform_submission_field']);
+    $element = $this->getWebformElement();
     $element['#default_value'] = $this->value;
     $element['#required'] = FALSE;
 
@@ -287,4 +285,16 @@ class WebformSubmissionFieldFilter extends StringFilter {
 
     return $this->elementInfoManager->getInfoProperty($element['#type'], $property, $default);
   }
+
+  /**
+   * Retrieve webform element on which this filter is set up.
+   *
+   * @return array
+   *   Webform element on which this filter is set up
+   */
+  protected function getWebformElement() {
+    $webform = $this->entityTypeManager->getStorage('webform')->load($this->definition['webform_id']);
+    return $webform->getElementInitialized($this->definition['webform_submission_field']);
+  }
+
 }

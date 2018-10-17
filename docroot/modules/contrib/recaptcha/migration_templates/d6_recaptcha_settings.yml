@@ -6,13 +6,13 @@ migration_groups:
 source:
   plugin: variable
   variables:
+    - recaptcha_noscript
     - recaptcha_site_key
+    - recaptcha_size
     - recaptcha_secret_key
+    - recaptcha_tabindex
     - recaptcha_theme
     - recaptcha_type
-    - recaptcha_size
-    - recaptcha_tabindex
-    - recaptcha_noscript
   source_module: recaptcha
 process:
   site_key: recaptcha_site_key

@@ -6,6 +6,8 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\ctools\Context\AutomaticContext;
 use Drupal\panelizer\Exception\PanelizerException;
@@ -56,6 +58,13 @@ class PanelizerFieldPanelsStorageTest extends UnitTestCase {
 
     $this->panelizer = $this->prophesize(Panelizer::class);
 
+    /** @var \Drupal\Core\Language\LanguageInterface|\Prophecy\Prophecy\ProphecyInterface $language */
+    $language = $this->prophesize(LanguageInterface::class);
+    $language->getId()->willReturn('en');
+    /** @var \Drupal\Core\Language\LanguageManagerInterface|\Prophecy\Prophecy\ProphecyInterface $language_manager */
+    $language_manager = $this->prophesize(LanguageManager::class);
+    $language_manager->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->willReturn($language);
+
     $this->panelsStorage = $this->getMockBuilder(PanelizerFieldPanelsStorage::class)
       ->setConstructorArgs([
         [],
@@ -63,6 +72,7 @@ class PanelizerFieldPanelsStorageTest extends UnitTestCase {
         [],
         $this->entityTypeManager->reveal(),
         $this->panelizer->reveal(),
+        $language_manager->reveal(),
       ])
       ->setMethods(['getEntityContext'])
       ->getMock();

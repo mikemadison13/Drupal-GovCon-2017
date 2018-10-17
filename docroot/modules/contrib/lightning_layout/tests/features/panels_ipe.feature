@@ -45,8 +45,8 @@ Feature: Creating and editing landing pages visually
     Given I am logged in as a user with the administrator role
     And landing_page content:
       | title  | path    | body                                 |
-      | Foobar | /zebras | How quickly deft jumping zebras vex. |
-    When I visit "/zebras"
+      | Foobar | /foobar | How quickly deft jumping zebras vex. |
+    When I visit "/foobar"
     And I place the "entity_field:node:body" block from the "Content" category
     And I save the layout
     And I reload the page

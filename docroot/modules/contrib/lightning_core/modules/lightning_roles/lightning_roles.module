@@ -32,6 +32,8 @@ function lightning_roles_node_type_insert(NodeTypeInterface $node_type) {
         $role_id,
       'label' =>
         str_replace('?', $node_type->label(), $info['label']),
+      'is_admin' =>
+        FALSE,
     ]);
 
     // Only grant permissions the role does not already have.

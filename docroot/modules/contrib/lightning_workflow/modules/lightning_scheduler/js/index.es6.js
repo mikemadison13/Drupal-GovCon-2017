@@ -3,15 +3,15 @@ import { render } from 'react-dom';
 
 import TransitionSet from './TransitionSet.es6';
 
-const target = document.querySelector('TransitionSet');
+const transitionSets = document.getElementsByTagName('TransitionSet');
 
-if (target)
-{
-    const dataElement = target.querySelector('input[ type="hidden" ]');
+for (let i = 0; i < transitionSets.length; i++) {
+    const transitionSet = transitionSets[i];
+    const dataElement = transitionSet.querySelector('input[ type="hidden" ]');
 
     const element = createElement(TransitionSet, {
         states: JSON.parse(
-            target.getAttribute('states')
+            transitionSet.getAttribute('states')
         ),
         transitions: JSON.parse(
             dataElement.value,
@@ -19,7 +19,7 @@ if (target)
         input:
             dataElement.name,
         step:
-            target.getAttribute('step') || 60,
+            transitionSet.getAttribute('step') || 60,
     });
-    render(element, target);
+    render(element, transitionSet);
 }

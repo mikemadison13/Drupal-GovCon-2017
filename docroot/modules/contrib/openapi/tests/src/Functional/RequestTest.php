@@ -260,7 +260,7 @@ class RequestTest extends BrowserTestBase {
       $this->assertNotEmpty($decoded_response[$key], "Schema has empty root $key");
       if (!isset($decoded_response[$key])) {
         if ($api_module == 'jsonapi') {
-          $this->assertEquals(['application/vdn.api+json'], $decoded_response[$key], "$api_module root $key should only contain application/vdn.api+json");
+          $this->assertEquals(['application/vnd.api+json'], $decoded_response[$key], "$api_module root $key should only contain application/vnd.api+json");
         }
         elseif ($api_module == 'rest') {
           $rest_mimetypes = ['application/json'];

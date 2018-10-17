@@ -10,37 +10,39 @@ use Acquia\Blt\Robo\BltTasks;
 class AllCommand extends BltTasks {
 
   /**
-   * Install dependencies, builds docroot, installs Drupal.
+   * Executes source:build:* and installs Drupal via setup.strategy.
    *
    * @command setup
-   *
-   * @aliases setup:all
+   * @executeInVm
    */
   public function setup() {
-    $this->say("Setting up local environment for site '{$this->getConfigValue('site')}' using drush alias @{$this->getConfigValue('drush.alias')}");
+    $this->say("Setting up local environment for site <comment>{$this->getConfigValue('site')}</comment>.");
+    if ($this->getConfigValue('drush.alias')) {
+      $this->say("Using drush alias <comment>@{$this->getConfigValue('drush.alias')}</comment>");
+    }
 
     $commands = [
-      'setup:build',
-      'setup:hash-salt',
+      'source:build',
+      'drupal:deployment-identifier:init',
     ];
 
     switch ($this->getConfigValue('setup.strategy')) {
       case 'install':
-        $commands[] = 'setup:drupal:install';
-        $commands[] = 'setup:toggle-modules';
+        $commands[] = 'drupal:install';
+        $commands[] = 'drupal:toggle:modules';
         break;
 
       case 'sync':
-        $commands[] = 'sync:refresh';
+        $commands[] = 'drupal:sync:default:site';
         break;
 
       case 'import':
-        $commands[] = 'setup:import';
-        $commands[] = 'setup:update';
+        $commands[] = 'drupal:sql:import';
+        $commands[] = 'drupal:update';
         break;
     }
 
-    $commands[] = 'install-alias';
+    $commands[] = 'blt:init:shell-alias';
 
     $this->invokeCommands($commands);
   }

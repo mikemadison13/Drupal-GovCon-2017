@@ -101,7 +101,6 @@ class ValidateHook implements ConfigAwareInterface, LoggerAwareInterface, Inspec
    */
   public function validateMySqlAvailable() {
     if (!$this->getInspector()->isMySqlAvailable()) {
-      // @todo Prompt to fix.
       throw new BltException("MySql is not available. Please run `blt doctor` to diagnose the issue.");
     }
   }
@@ -113,12 +112,12 @@ class ValidateHook implements ConfigAwareInterface, LoggerAwareInterface, Inspec
    */
   public function validateSettingsFilesPresent() {
     if (!$this->getInspector()->isHashSaltPresent()) {
-      throw new BltException("salt.txt is not present. Please run `blt setup:settings` to generate it.");
+      throw new BltException("salt.txt is not present. Please run `blt blt:init:settings` to generate it.");
     }
     if (!$this->getInspector()->isDrupalLocalSettingsFilePresent()) {
       throw new BltException("Could not find settings.php for this site.");
     }
-    // @todo Look for local.drushrc.php.
+    // @todo Look for local.drush.yml.
   }
 
   /**
@@ -126,7 +125,7 @@ class ValidateHook implements ConfigAwareInterface, LoggerAwareInterface, Inspec
    *
    * @hook validate validateVmConfig
    */
-  public function validateInsideVm() {
+  public function validateVmConfig() {
     if ($this->getInspector()->isDrupalVmLocallyInitialized() && $this->getInspector()->isDrupalVmBooted() && !$this->getInspector()->isDrupalVmConfigValid()) {
       throw new BltException("Drupal VM configuration is invalid.");
     }

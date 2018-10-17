@@ -3,6 +3,7 @@
 namespace Drupal\Core\Config;
 
 use Drupal\Core\Extension\ExtensionDiscovery;
+use Drupal\Core\Extension\ProfileExtensionList;
 use Drupal\Core\Extension\ProfileHandlerInterface;
 
 /**
@@ -53,11 +54,11 @@ class ExtensionInstallStorage extends InstallStorage {
    *   (optional) The current installation profile. This parameter will be
    *   mandatory in Drupal 9.0.0. In Drupal 8.3.0 not providing this parameter
    *   will trigger a silenced deprecation warning.
-   * @param \Drupal\Core\Extension\ProfileHandlerInterface $profile_handler
-   *   (optional) The profile handler.
+   * @param \Drupal\Core\Extension\ProfileExtensionList $profile_list
+   *   (optional) The profile list.
    */
-  public function __construct(StorageInterface $config_storage, $directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION, $include_profile = TRUE, $profile = NULL, ProfileHandlerInterface $profile_handler = NULL) {
-    parent::__construct($directory, $collection, $profile_handler);
+  public function __construct(StorageInterface $config_storage, $directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION, $include_profile = TRUE, $profile = NULL, ProfileExtensionList $profile_list = NULL) {
+    parent::__construct($directory, $collection, $profile_list);
     $this->configStorage = $config_storage;
     $this->includeProfile = $include_profile;
     if (is_null($profile)) {
@@ -96,7 +97,7 @@ class ExtensionInstallStorage extends InstallStorage {
 
       $extensions = $this->configStorage->read('core.extension');
       // @todo Remove this scan as part of https://www.drupal.org/node/2186491
-      $listing = new ExtensionDiscovery(\Drupal::root(), TRUE, NULL, NULL, $this->profileHandler);
+      $listing = new ExtensionDiscovery(\Drupal::root(), TRUE, NULL, NULL, $this->profileList);
       if (!empty($extensions['module'])) {
         $modules = $extensions['module'];
         // Remove the install profile as this is handled later.
@@ -125,7 +126,7 @@ class ExtensionInstallStorage extends InstallStorage {
         // default configuration. We do this by replacing the config file path
         // from the module/theme with the install profile version if there are
         // any duplicates.
-        $this->folders += $this->getComponentNames($this->profileHandler->getProfileInheritance($this->installProfile));
+        $this->folders += $this->getComponentNames($this->profileList->getAncestors($this->installProfile));
       }
     }
     return $this->folders;

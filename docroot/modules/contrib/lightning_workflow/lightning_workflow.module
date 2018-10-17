@@ -6,9 +6,13 @@
  */
 
 use Drupal\content_moderation\Plugin\WorkflowType\ContentModerationInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\lightning_core\Element;
 use Drupal\lightning_core\Routing\RouteSubscriber;
 use Drupal\lightning_workflow\Plugin\views\field\NodeBulkForm;
@@ -38,15 +42,11 @@ function lightning_workflow_node_type_insert(NodeTypeInterface $node_type) {
 
   $plugin = $workflow->getTypePlugin();
   if ($plugin instanceof ContentModerationInterface) {
-    $rebuild = ! in_array('node', $plugin->getEntityTypes(), TRUE);
-    $plugin->addEntityTypeAndBundle('node', $node_type->id());
-    $workflow->save();
-
     // We need to rebuild all routes because Content Moderation needs to ensure
     // that edit forms load the latest revision.
-    if ($rebuild) {
-      Drupal::service('router.builder')->rebuild();
-    }
+    $plugin->addEntityTypeAndBundle('node', $node_type->id());
+    $workflow->save();
+    Drupal::service('router.builder')->rebuild();
   }
 }
 
@@ -158,6 +158,7 @@ function lightning_workflow_modules_installed(array $modules) {
         'use editorial transition review',
         'view any unpublished content',
         'view latest version',
+        'use moderation sidebar',
       ])
       ->grantPermissions('reviewer', [
         'use editorial transition publish',
@@ -165,16 +166,29 @@ function lightning_workflow_modules_installed(array $modules) {
         'use editorial transition archive',
         'view any unpublished content',
         'view latest version',
+        'access toolbar',
+        'use moderation sidebar',
       ]);
   }
 
   if (in_array('lightning_dev', $modules, TRUE)) {
     /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
-    $module_installer = \Drupal::service('module_installer');
+    $module_installer = Drupal::service('module_installer');
+    // Install Lightning Page separately in order to ensure that the optional
+    // Pathauto config that it ships is installed too.
+    $module_installer->install(['lightning_page']);
     // Lightning Workflow optionally integrates with Diff, and for testing
     // purposes we'd like to enable that integration. In order to test with
     // meaningful responsibility-based roles, we also enable Lightning Roles.
-    $module_installer->install(['diff', 'lightning_roles']);
+    $module_installer->install([
+      'diff',
+      'lightning_roles',
+      'moderation_sidebar',
+      'pathauto',
+      'quickedit',
+      'toolbar',
+      'views',
+    ]);
     // BigPipe breaks a couple of non-JS tests which expect to find local task
     // links, but receive BigPipe placeholders instead. This is a bit of a
     // sledgehammer approach, but until it's possible to disable a module during
@@ -191,6 +205,22 @@ function lightning_workflow_modules_installed(array $modules) {
     $view = entity_load('view', 'content')->enforceIsNew();
     lightning_workflow_view_presave($view);
     $view->enforceIsNew(FALSE)->save();
+
+    // Ensure that the main content block exists.
+    $values = [
+      'theme' => Drupal::theme()->getActiveTheme()->getName(),
+      'plugin' => 'system_main_block',
+    ];
+
+    $main_content_block = Drupal::entityTypeManager()
+      ->getStorage('block')
+      ->loadByProperties($values);
+
+    if (empty($main_content_block)) {
+      $values['id'] = $values['theme'] . '_content';
+      $values['region'] = 'content';
+      entity_create('block', $values)->save();
+    }
   }
 }
 
@@ -212,6 +242,25 @@ function lightning_workflow_views_plugins_field_alter(array &$plugins) {
   if (isset($plugins['node_bulk_form'])) {
     $plugins['node_bulk_form']['class'] = NodeBulkForm::class;
   }
+}
+
+/**
+ * Implements hook_entity_field_access().
+ *
+ * Tests that rely on promoting a node to the front page cannot access the
+ * "Promote to front page" checkbox without the "administer nodes" permission.
+ * That totally sucks, so this hook will allow access to the field if
+ * lightning_dev is enabled.
+ */
+function lightning_workflow_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
+  return (
+    Drupal::moduleHandler()->moduleExists('lightning_dev') &&
+    $field_definition->getTargetEntityTypeId() === 'node' &&
+    $field_definition->getName() === 'promote' &&
+    $items
+  )
+    ? $items->getEntity()->access($operation === 'edit' ? 'update' : $operation, $account, TRUE)
+    : AccessResult::neutral();
 }
 
 /**

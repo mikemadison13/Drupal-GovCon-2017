@@ -1,0 +1,13 @@
+name: 'Unmoderated content type'
+# core: 8.x
+type: module
+description: 'Creates an unmoderated content type for testing purposes.'
+dependencies:
+  - lightning_workflow
+  - node
+
+# Information added by Drupal.org packaging script on 2018-09-04
+version: '8.x-3.0'
+core: '8.x'
+project: 'lightning_workflow'
+datestamp: 1536077592

@@ -19,6 +19,7 @@ class DeployCommand extends BltTasks {
   protected $commitMessage;
   protected $excludeFileTemp;
   protected $deployDir;
+  protected $tagSource;
 
   /**
    * This hook will fire for all commands in this command file.
@@ -28,12 +29,15 @@ class DeployCommand extends BltTasks {
   public function initialize() {
     $this->excludeFileTemp = $this->getConfigValue('deploy.exclude_file') . '.tmp';
     $this->deployDir = $this->getConfigValue('deploy.dir');
+    $this->tagSource = $this->getConfigValue('deploy.tag_source', TRUE);
   }
 
   /**
-   * Builds separate artifact and pushes to git.remotes defined project.yml.
+   * Builds separate artifact and pushes to git.remotes defined blt.yml.
    *
-   * @command deploy
+   * @command artifact:deploy
+   *
+   * @aliases ad deploy
    */
   public function deploy($options = [
     'branch' => InputOption::VALUE_REQUIRED,
@@ -51,12 +55,15 @@ class DeployCommand extends BltTasks {
     $this->checkDirty($options);
 
     if (!$options['tag'] && !$options['branch']) {
-      $this->say("Typically, you would only create a tag if you currently have a tag checked out on your source repository.");
       $this->createTag = $this->confirm("Would you like to create a tag?", $this->createTag);
     }
     $this->commitMessage = $this->getCommitMessage($options);
 
     if ($options['tag'] || $this->createTag) {
+      // Warn if they're creating a tag and we won't tag the source for them.
+      if (!$this->tagSource) {
+        $this->say("Config option deploy.tag_source if FALSE. The source repo will not be tagged.");
+      }
       $this->deployToTag($options);
     }
     else {
@@ -146,11 +153,11 @@ class DeployCommand extends BltTasks {
       $tag_name = $options['tag'];
     }
     else {
-      $tag_name = $this->ask('Enter the tag name for the deployment artifact. E.g., 1.0.0-build');
+      $tag_name = $this->ask('Enter the tag name for the deployment artifact, e.g., 1.0.0-build');
     }
 
     if (empty($tag_name)) {
-      // @todo Validate tag name is valid. E.g., no spaces or special characters.
+      // @todo Validate tag name is valid, e.g., no spaces or special characters.
       throw new BltException("You must enter a valid tag name.");
     }
     else {
@@ -186,7 +193,14 @@ class DeployCommand extends BltTasks {
     $this->checkoutLocalDeployBranch();
     $this->build();
     $this->commit();
-    $this->cutTag();
+    $this->cutTag('build');
+
+    // Check the deploy.tag_source config value and also tag the source repo if
+    // it is set to TRUE (the default).
+    if ($this->tagSource) {
+      $this->cutTag('source');
+    }
+
     $this->push($this->tagName, $options);
   }
 
@@ -224,6 +238,7 @@ class DeployCommand extends BltTasks {
       ->stopOnFail()
       ->exec("git init")
       ->exec("git config --local core.excludesfile false")
+      ->exec("git config --local core.fileMode true")
       ->run();
     $this->say("Global .gitignore file is being disabled for this repository to prevent unexpected behavior.");
     if ($this->getConfig()->has("git.user.name") &&
@@ -236,6 +251,7 @@ class DeployCommand extends BltTasks {
         ->dir($this->deployDir)
         ->exec("git config --local --add user.name '$git_user'")
         ->exec("git config --local --add user.email '$git_email'")
+        ->exec("git config --local core.fileMode true")
         ->run();
     }
   }
@@ -247,7 +263,7 @@ class DeployCommand extends BltTasks {
     // Add remotes and fetch upstream refs.
     $git_remotes = $this->getConfigValue('git.remotes');
     if (empty($git_remotes)) {
-      throw new BltException("git.remotes is empty. Please define at least one value for git.remotes in blt/project.yml.");
+      throw new BltException("git.remotes is empty. Please define at least one value for git.remotes in blt/blt.yml.");
     }
     foreach ($git_remotes as $remote_url) {
       $this->addGitRemote($remote_url);
@@ -308,27 +324,33 @@ class DeployCommand extends BltTasks {
   /**
    * Builds deployment artifact.
    *
-   * @command deploy:build
+   * @command artifact:build
+   * @aliases ab deploy:build
    */
   public function build() {
     $this->say("Generating build artifact...");
     $this->say("For more detailed output, use the -v flag.");
-    $this->invokeCommands([
-      // Execute `blt frontend` to ensure that frontend artifact are generated
-      // in source repo.
-      'frontend',
-      // Execute `setup:hash-salt` to ensure that salt.txt exists. There's a
-      // slim chance this has never been generated.
-      'setup:hash-salt',
-    ]);
+
+    $commands = [
+      // Execute `blt source:build:frontend` to ensure that frontend artifact
+      // are generated in source repo.
+      'source:build:frontend',
+      // Execute `drupal:hash-salt:init` to ensure that salt.txt exists.
+      // There's a slim chance this has never been generated.
+      'drupal:hash-salt:init',
+    ];
+    if (!empty($this->tagName)) {
+      $commands['drupal:deployment-identifier:init'] = ['--id' => $this->tagName];
+    }
+    else {
+      $commands[] = 'drupal:deployment-identifier:init';
+    }
+    $this->invokeCommands($commands);
 
     $this->buildCopy();
     $this->composerInstall();
     $this->sanitize();
     $this->deploySamlConfig();
-    if (!empty($this->tagName)) {
-      $this->createDeployId($this->tagName);
-    }
     $this->invokeHook("post-deploy-build");
     $this->say("<info>The deployment artifact was generated at {$this->deployDir}.</info>");
   }
@@ -391,17 +413,6 @@ class DeployCommand extends BltTasks {
   }
 
   /**
-   * Creates deployment_identifier file.
-   */
-  protected function createDeployId($id) {
-    $this->taskExecStack()->exec("echo '$id' > deployment_identifier")
-      ->dir($this->deployDir)
-      ->stopOnFail()
-      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
-      ->run();
-  }
-
-  /**
    * Removes sensitive files from the deploy dir.
    */
   protected function sanitize() {
@@ -409,8 +420,8 @@ class DeployCommand extends BltTasks {
 
     $this->logger->info("Removing .git subdirectories...");
     $this->taskExecStack()
-      ->exec("find '{$this->deployDir}/vendor' -type d | grep '\.git' | xargs rm -rf")
-      ->exec("find '{$this->deployDir}/docroot' -type d | grep '\.git' | xargs rm -rf")
+      ->exec("find '{$this->deployDir}/vendor' -type d -name '.git' -exec rm -fr \\{\\} \\+")
+      ->exec("find '{$this->deployDir}/docroot' -type d -name '.git' -exec rm -fr \\{\\} \\+")
       ->stopOnFail()
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
       ->run();
@@ -531,61 +542,115 @@ class DeployCommand extends BltTasks {
   }
 
   /**
-   * Creates a tag on the source repository.
+   * Creates a tag on the build repository.
+   *
+   * @param $repo
+   *   The repo in which a tag should be cut.
    */
-  protected function cutTag() {
-    $this->taskExecStack()
+  protected function cutTag($repo = 'build') {
+    $execStack = $this->taskExecStack()
       ->exec("git tag -a {$this->tagName} -m '{$this->commitMessage}'")
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
-      ->stopOnFail()
-      ->dir($this->deployDir)
-      ->run();
-    $this->say("The tag {$this->tagName} was created for the build artifact.");
+      ->stopOnFail();
+
+    if ($repo == 'build') {
+      $execStack->dir($this->deployDir);
+    }
+
+    $execStack->run();
+    $this->say("The tag {$this->tagName} was created on the {$repo} repository.");
   }
 
   /**
-   * Executes simplesamlphp:deploy:config command.
+   * Executes artifact:build:simplesamlphp-config command.
    */
   protected function deploySamlConfig() {
     if ($this->getConfigValue('simplesamlphp')) {
-      $this->invokeCommand('simplesamlphp:deploy:config');
+      $this->invokeCommand('artifact:build:simplesamlphp-config');
     }
   }
 
   /**
    * Update the database to reflect the state of the Drupal file system.
    *
-   * @command deploy:update
+   * @command artifact:update:drupal
+   * @aliases aud deploy:update
    */
-  public function updateSites() {
+  public function update() {
+    // Disable alias since we are targeting specific uri.
+    $this->config->set('drush.alias', '');
+    $this->updateSite($this->getConfigValue('site'));
+  }
+
+  /**
+   * Update the database to reflect the state of the Drupal file system.
+   *
+   * @command artifact:update:drupal:all-sites
+   * @aliases auda
+   */
+  public function updateAll() {
     // Disable alias since we are targeting specific uri.
     $this->config->set('drush.alias', '');
 
     foreach ($this->getConfigValue('multisites') as $multisite) {
-      $this->say("Deploying updates to $multisite...");
+      $this->updateSite($multisite);
+    }
+  }
+
+  /**
+   * Execute updates on a specific site.
+   * @param string $multisite
+   *
+   */
+  protected function updateSite($multisite) {
+    $this->say("Deploying updates to <comment>$multisite</comment>...");
+    $this->switchSiteContext($multisite);
+
+    $this->invokeCommand('drupal:config:import');
+    $this->invokeCommand('drupal:toggle:modules');
+
+    $this->say("Finished deploying updates to $multisite.");
+  }
+
+  /**
+   * Syncs database and files and runs updates.
+   *
+   * @command artifact:sync:all-sites
+   * @aliases asas
+   */
+  public function syncRefresh() {
+    // Disable alias since we are targeting specific uri.
+    $this->config->set('drush.alias', '');
+
+    // Sync files.
+    $this->config->set('sync.files', TRUE);
+
+    foreach ($this->getConfigValue('multisites') as $multisite) {
+      $this->say("Syncing $multisite...");
       if (!$this->config->get('drush.uri')) {
         $this->config->set('drush.uri', $multisite);
       }
 
-      $this->invokeCommand('setup:config-import');
-      $this->invokeCommand('setup:toggle-modules');
+      $this->invokeCommand('drupal:sync:db');
+      $this->invokeCommand('drupal:sync:files');
+      $this->invokeCommand('drupal:config:import');
+      $this->invokeCommand('drupal:toggle:modules');
 
-      $this->say("Finished deploying updates to $multisite.");
+      $this->say("Finished syncing $multisite.");
     }
   }
 
   /**
    * Installs Drupal, imports config, and executes updates.
    *
-   * @command deploy:drupal:install
+   * @command artifact:install:drupal
+   * @aliases aid deploy:drupal:install
    */
   public function installDrupal() {
     $this->invokeCommands([
       'internal:drupal:install',
-      'deploy:update',
+      'artifact:update:drupal:all-sites',
     ]);
-
-    $this->updateSites();
   }
 
 }

@@ -396,26 +396,6 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
   /**
    * {@inheritdoc}
    */
-  protected function getJsonSchema($described_format, $entity_type_id, $bundle_name = NULL) {
-    $json_schema = parent::getJsonSchema($described_format, $entity_type_id, $bundle_name);
-    // @todo Should the schemata module be adding these?
-    $json_schema['properties'] += [
-      'type' => [
-        'type' => 'string',
-        'title' => $this->t('Title'),
-        'example' => $this->getEntityDefinitionKey($entity_type_id, $bundle_name),
-      ],
-      'id' => [
-        'type' => 'string',
-        'title' => $this->t('Id'),
-      ],
-    ];
-    return $json_schema;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getTags() {
     $tags = [];
     foreach ($this->entityTypeManager->getDefinitions() as $entity_type) {
@@ -468,7 +448,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    */
   public function getConsumes() {
     return [
-      'application/vdn.api+json',
+      'application/vnd.api+json',
     ];
   }
 
@@ -477,7 +457,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    */
   public function getProduces() {
     return [
-      'application/vdn.api+json',
+      'application/vnd.api+json',
     ];
   }
 
@@ -497,7 +477,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
     if (!isset($tags[$entity_type_id][$bundle_name])) {
       $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
       $tag = $entity_type->getLabel();
-      if ($bundle_type_id = $entity_type->getBundleEntityType()) {
+      if ($bundle_name && $bundle_type_id = $entity_type->getBundleEntityType()) {
         $bundle_entity = $this->entityTypeManager->getStorage($bundle_type_id)->load($bundle_name);
         $tag .= ' - ' . $bundle_entity->label();
       }

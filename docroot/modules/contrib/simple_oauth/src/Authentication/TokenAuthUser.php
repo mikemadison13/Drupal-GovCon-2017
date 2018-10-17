@@ -42,7 +42,7 @@ class TokenAuthUser implements TokenAuthUserInterface {
    * @param \Drupal\simple_oauth\Entity\Oauth2TokenInterface $token
    *   The underlying token.
    *
-   * @throws \Exception
+   * @throws \League\OAuth2\Server\Exception\OAuthServerException
    *   When there is no user.
    */
   public function __construct(Oauth2TokenInterface $token) {

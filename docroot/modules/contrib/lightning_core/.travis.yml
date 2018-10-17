@@ -12,9 +12,7 @@ php:
 
 env:
   - VERSION=HEAD
-  - VERSION=2.8.0
-  - VERSION=2.7.0
-  - VERSION=2.6.0
+  - VERSION=3.1.0
   # The final CI slot should be used to test the update path from the oldest
   # available database fixture.
   - VERSION=2.0.0

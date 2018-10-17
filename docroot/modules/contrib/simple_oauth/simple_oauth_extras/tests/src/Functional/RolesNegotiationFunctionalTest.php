@@ -289,7 +289,9 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     );
     $parsed_response = Json::decode((string) $response->getBody());
 
-    return $parsed_response['access_token'];
+    return isset($parsed_response['access_token'])
+      ? $parsed_response['access_token']
+      : NULL;
   }
 
 }

@@ -2,8 +2,8 @@
 
 namespace Acquia\Blt\Robo\Common;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
-use Symfony\Component\Yaml\Exception\ParseException;
 
 /**
  * Munges two yaml files.
@@ -18,16 +18,36 @@ class YamlMunge {
    * @param string $file2
    *   The file path of the second file.
    *
-   * @return string
-   *   The merged arrays, in yaml format.
+   * @return array
+   *   The merged arrays.
    */
-  public static function munge($file1, $file2) {
+  public static function mungeFiles($file1, $file2) {
     $file1_contents = (array) self::parseFile($file1);
     $file2_contents = (array) self::parseFile($file2);
 
-    $munged_contents = self::arrayMergeRecursiveExceptEmpty($file1_contents, $file2_contents);
+    return self::arrayMergeRecursiveExceptEmpty($file1_contents, $file2_contents);
+  }
 
-    return Yaml::dump($munged_contents, 3, 2);
+  /**
+   * @param $array
+   * @param $file
+   * @param bool $overwrite
+   */
+  public static function mergeArrayIntoFile($array, $file, $overwrite = TRUE) {
+    if (file_exists($file)) {
+      $file_contents = (array) self::parseFile($file);
+      if ($overwrite) {
+        $new_contents = ArrayManipulator::arrayMergeRecursiveDistinct($file_contents, $array);
+      }
+      else {
+        $new_contents = ArrayManipulator::arrayMergeRecursiveDistinct($array, $file_contents);
+      }
+    }
+    else {
+      $new_contents = $array;
+    }
+
+    self::writeFile($file, $new_contents);
   }
 
   /**
@@ -41,15 +61,18 @@ class YamlMunge {
    *
    * @throws \Symfony\Component\Yaml\Exception\ParseException
    */
-  protected static function parseFile($file) {
-    try {
-      $value = Yaml::parse(file_get_contents($file));
-    }
-    catch (ParseException $e) {
-      printf("Unable to parse the YAML string: %s", $e->getMessage());
-    }
+  public static function parseFile($file) {
+    return Yaml::parse(file_get_contents($file));
+  }
 
-    return $value;
+  /**
+   * @params string $file
+   * @param array $contents
+   */
+  public static function writeFile($file, $contents) {
+    $fs = new Filesystem();
+    $yaml_string = Yaml::dump($contents, 3, 2);
+    $fs->dumpFile($file, $yaml_string);
   }
 
   /**

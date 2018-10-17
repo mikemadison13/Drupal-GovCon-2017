@@ -6,14 +6,18 @@
  */
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
- * Sub context for Lightning step definitions.
+ * Contains step definitions for interacting with the Lightning distribution.
+ *
+ * @internal
+ * This class is part of Lightning's internal testing code. It is not an API and
+ * should not be extended. This class will be marked final, and all protected
+ * members will be made private, in Lightning 4.x.
  */
 class LightningSubContext extends DrupalSubContextBase {
 
@@ -25,13 +29,6 @@ class LightningSubContext extends DrupalSubContextBase {
   protected $minkContext;
 
   /**
-   * Start time for each scenario.
-   *
-   * @var int
-   */
-  protected $startTime;
-
-  /**
    * Pre-scenario hook.
    *
    * @BeforeScenario
@@ -40,48 +37,6 @@ class LightningSubContext extends DrupalSubContextBase {
     $environment = $scope->getEnvironment();
 
     $this->minkContext = $environment->getContext('Drupal\DrupalExtension\Context\MinkContext');
-  }
-
-  /**
-   * Store current time.
-   *
-   * @BeforeScenario
-   */
-  public function setStartTime() {
-    $this->startTime = time();
-  }
-
-  /**
-   * Check for errors since the scenario started.
-   *
-   * @AfterScenario ~@errors
-   */
-  public function checkWatchdog(AfterScenarioScope $scope) {
-    // Bypass the error checking if the scenario has the @errors tag.
-    if (in_array('errors', $scope->getScenario()->getTags())) {
-      return;
-    }
-
-    $db = \Drupal::database();
-    if ($db->schema()->tableExists('watchdog')) {
-      $log = $db->select('watchdog', 'w')
-        ->fields('w')
-        ->condition('w.type', 'php', '=')
-        ->condition('w.timestamp', $this->startTime, '>=')
-        ->execute()
-        ->fetchAll();
-
-      if (!empty($log)) {
-        // TODO: Move this stuff to its own exception class in Lightning
-        // Extension for greater clarity.
-        foreach ($log as $error) {
-          // Make the substitutions easier to read in the log.
-          $error->variables = unserialize($error->variables);
-          print_r($error);
-        }
-        throw new \Exception('PHP errors logged to watchdog in this scenario.');
-      }
-    }
   }
 
   /**
@@ -187,15 +142,16 @@ class LightningSubContext extends DrupalSubContextBase {
   /**
    * Takes a screenshot for debugging purposes.
    *
-   * @param string $filename
-   *   The name of the screenshot file.
+   * @deprecated in Lightning 3.x and will be removed in Lightning 4.x. Use
+   * \Acquia\LightningExtension\Context\DebugContext::saveScreenshot() instead.
    *
    * @When I take a screenshot named :filename
    */
-  public function takeScreenshot($filename) {
-    $screenshot = $this->getSession()->getDriver()->getScreenshot();
-    // If this file is in tests/features/bootstrap, the screenshot be in tests.
-    file_put_contents(__DIR__ . '../../' . $filename . '.png', $screenshot);
+  public function takeScreenshot() {
+    /** @var \Acquia\LightningExtension\Context\DebugContext $context */
+    $context = $this->getContext('\Acquia\LightningExtension\Context\DebugContext');
+    @trigger_error(__CLASS__ . '::takeScreenshot() is deprecated and will be removed in Lightning 4.x. Use ' . get_class($context) . '::saveScreenshot() instead.');
+    $context->saveScreenshot();
   }
 
   /**
@@ -204,11 +160,13 @@ class LightningSubContext extends DrupalSubContextBase {
    * @When I view the HTML
    */
   public function viewTheHtml() {
+    /** @var \Acquia\LightningExtension\Context\DebugContext $context */
+    $context = $this->getContext('\Acquia\LightningExtension\Context\DebugContext');
+    $context->dumpHTML();
 
-    $html_data = $this->getSession()->getDriver()->getContent();
-    echo $html_data;
+    // @todo Move the functionality into DebugContext and deprecate this method.
     $file_and_path = '/tmp/behat_page.html';
-    file_put_contents($file_and_path, $html_data);
+    file_put_contents($file_and_path, $this->getSession()->getDriver()->getContent());
 
     if (PHP_OS === "Darwin" && PHP_SAPI === "cli") {
       exec('open -a "Safari.app" ' . $file_and_path);
@@ -271,19 +229,6 @@ class LightningSubContext extends DrupalSubContextBase {
     }
     catch (UnsupportedDriverActionException $e) {
       // This isn't a critically important assertion, so don't worry about it.
-    }
-  }
-
-  /**
-   * Sets the absolute path to the directory containing uploadable files.
-   *
-   * @BeforeScenario
-   */
-  public function setFilePath() {
-
-    $existing = $this->minkContext->getMinkParameter('files_path');
-    if (empty($existing)) {
-      $this->minkContext->setMinkParameter('files_path', __DIR__ . '/../../files');
     }
   }
 

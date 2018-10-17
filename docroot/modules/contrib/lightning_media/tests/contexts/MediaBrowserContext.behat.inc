@@ -2,22 +2,35 @@
 
 namespace Acquia\LightningExtension\Context;
 
+use Behat\Behat\Hook\Scope\ScenarioScope;
 use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 use Drupal\DrupalExtension\Context\MinkContext;
 
 /**
  * Contains step definitions for interacting with Lightning's media browser.
+ *
+ * @internal
+ * This class is part of Lightning's internal testing code. It is not an API and
+ * should not be extended. This class will be marked final, and all protected
+ * members will be made private, in Lightning Media 3.x.
  */
 class MediaBrowserContext extends DrupalSubContextBase {
 
   use AwaitTrait;
 
   /**
-   * Sets the path to any uploadable files.
+   * Indicates if the current scenario uses JavaScript.
+   *
+   * @var bool
+   */
+  private $isJS;
+
+  /**
+   * Performs pre-scenario tasks.
    *
    * @BeforeScenario
    */
-  public function setFilePath() {
+  public function setUp(ScenarioScope $scope) {
     /** @var MinkContext $mink_context */
     $mink_context = $this->getContext(MinkContext::class);
 
@@ -25,6 +38,13 @@ class MediaBrowserContext extends DrupalSubContextBase {
     if (empty($path)) {
       $mink_context->setMinkParameter('files_path', __DIR__ . '/../files');
     }
+
+    // Check if the feature or scenario has the 'javascript' tag.
+    $tags = array_merge(
+      $scope->getScenario()->getTags(),
+      $scope->getFeature()->getTags()
+    );
+    $this->isJS = in_array('javascript', $tags, TRUE);
   }
 
   /**
@@ -36,6 +56,16 @@ class MediaBrowserContext extends DrupalSubContextBase {
    * @When I open the media browser
    */
   public function open($button = 'media_browser') {
+    $this->isJS ? $this->openJS($button) : $this->openNoJS();
+  }
+
+  /**
+   * Opens the media browser when JavaScript is enabled.
+   *
+   * @param string $button
+   *   (optional) The embed button ID.
+   */
+  private function openJS($button = 'media_browser') {
     $this
       ->getContext(CkEditorContext::class)
       ->execute('editdrupalentity', NULL, ['id' => $button]);
@@ -44,12 +74,20 @@ class MediaBrowserContext extends DrupalSubContextBase {
       ->getAttribute('name');
 
     $this->getSession()->switchToIFrame($frame);
+  }
 
-    // For whatever reason, the iFrame switch does not appear to take effect
-    // immediately under certain circumstances. I don't know what is going on
-    // here, but this needs to be revisited later. 2 seconds appears to be too
-    // soon, but 3 works consistently for me in my local environment.
-    sleep(3);
+  /**
+   * Opens the media browser without JavaScript.
+   *
+   * @param string $browser_id
+   *   (optional) The entity browser ID.
+   */
+  private function openNoJS($browser_id = 'media_browser') {
+    $uuid = $this->assertSession()
+      ->elementExists('named', ['link', 'Select entities'])
+      ->getAttribute('data-uuid');
+
+    $this->visitPath("/entity-browser/iframe/$browser_id?uuid=$uuid");
   }
 
   /**
@@ -61,7 +99,6 @@ class MediaBrowserContext extends DrupalSubContextBase {
    * @When I select item :n in the media browser
    */
   public function selectN($n) {
-    sleep(5);
     $this->getContext(EntityBrowserContext::class)->select($n, 'media_browser');
   }
 
@@ -71,19 +108,24 @@ class MediaBrowserContext extends DrupalSubContextBase {
    * @When I complete the media browser selection
    */
   public function completeSelection() {
+    $assert = $this->assertSession();
     $session = $this->getSession();
 
-    // The iframe is destroyed after submitting it, so we need to switch back
-    // into the window context in order for the session to stay sane.
-    $session->switchToWindow();
+    $frame = $session->evaluateScript('window.name') ?: $session->evaluateScript('window.active_iframe.name');
+    assert(! empty($frame));
 
-    $frame = 'window.frames.entity_browser_iframe_media_browser';
-    $session->executeScript("$frame.document.forms[0].elements.op.click()");
-    $this->awaitExpression("!$frame");
-    $this->awaitAjax();
+    $button = $assert->elementExists('named', ['button', 'Place'])->getXpath();
+
+    // Switch out of the iFrame, because it will be destroyed as soon as we
+    // press the button.
+    $session->switchToIFrame();
+    $js = <<<END
+document.evaluate('$button', window.$frame.document, null).iterateNext().click();
+END;
+    $session->executeScript($js);
 
     $this->awaitElement('form.entity-embed-dialog');
-    $session->executeScript('document.querySelector("form.entity-embed-dialog").elements.op[1].click()');
+    $assert->elementExists('named', ['button', 'Embed'])->press();
     $this->awaitAjax();
   }
 
@@ -121,12 +163,88 @@ class MediaBrowserContext extends DrupalSubContextBase {
    * @When I upload :file
    */
   public function upload($file) {
+    $this->isJS ? $this->uploadJS($file) : $this->uploadNoJS($file);
+  }
+
+  /**
+   * Uploads a file in the media browser using JavaScript.
+   *
+   * @param string $file
+   *   The path to the file, relative to the test files directory.
+   */
+  private function uploadJS($file) {
+    $this->assertSession()->elementExists('named', ['link', 'Upload'])->click();
+    $this->getContext(MinkContext::class)->attachFileToField('File', $file);
+    $this->awaitExpression('jQuery("#entity").children().length');
+  }
+
+  /**
+   * Uploads a file in the media browser without using JavaScript.
+   *
+   * @param string $file
+   *   The path to the file, relative to the test files directory.
+   */
+  private function uploadNoJS($file) {
+    $assert = $this->assertSession();
+
+    // Switch to the "Upload" tab of the media browser, which should be the
+    // first button named "Upload" on the page.
+    $assert->elementExists('named', ['button', 'Upload'])->press();
+
+    $this->getContext(MinkContext::class)->attachFileToField('File', $file);
+    $wrapper = $assert->elementExists('css', '.js-form-managed-file');
+    $assert->elementExists('named', ['button', 'Upload'], $wrapper)->press();
+  }
+
+  /**
+   * @param $title
+   * @param $file
+   *
+   * @When I create media named :title by uploading :file
+   */
+  public function createFromUpload($title, $file) {
     /** @var MinkContext $mink_context */
     $mink_context = $this->getContext(MinkContext::class);
+    $mink_context->assertAtPath('/entity-browser/iframe/media_browser');
 
-    $mink_context->clickLink('Upload');
-    $mink_context->attachFileToField('File', $file);
-    $this->awaitExpression('jQuery("#entity").children().length');
+    $this->upload($file);
+
+    // If the file is an image, assert that cropping is available.
+    $extension = pathinfo($file, PATHINFO_EXTENSION);
+    $extension = strtolower($extension);
+
+    if (in_array($extension, ['jpg', 'jpeg', 'gif', 'png'])) {
+      /** @var \Acquia\LightningExtension\Context\ImageBrowserContext $context */
+      $context = $this->getContext(ImageBrowserContext::class);
+      $context->assertCrop();
+    }
+
+    $assert = $this->assertSession();
+    $assert->fieldExists('Name')->setValue($title);
+    $assert->elementExists('named', ['button', 'Place'])->press();
+  }
+
+  /**
+   * Creates a media item in the media browser using an embed code.
+   *
+   * @param string $title
+   *   The label of the created media item.
+   * @param string $embed_code
+   *   The embed code from which to create the media item.
+   *
+   * @When I create media named :title using the embed code :embed_code
+   */
+  public function createFromEmbedCode($title, $embed_code) {
+    /** @var MinkContext $mink_context */
+    $mink_context = $this->getContext(MinkContext::class);
+    $mink_context->assertAtPath('/entity-browser/iframe/media_browser');
+
+    $assert = $this->assertSession();
+    $assert->elementExists('named', ['button', 'Create embed'])->press();
+    $assert->fieldExists('input')->setValue($embed_code);
+    $assert->elementExists('named', ['button', 'Update'])->press();
+    $assert->fieldExists('Name')->setValue($title);
+    $assert->elementExists('named', ['button', 'Place'])->press();
   }
 
 }

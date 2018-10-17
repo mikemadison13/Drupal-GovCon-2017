@@ -54,7 +54,7 @@ class TransitionSet {
     $data = [];
 
     foreach ($this->dateList as $delta => $item) {
-      $key = $this->toInteger($item->date);
+      $key = $item->date->getTimestamp();
       $data[$key] = $this->stateList[$delta]->value;
     }
     ksort($data);
@@ -82,6 +82,7 @@ class TransitionSet {
         ]),
       ];
     }
+
     return Json::encode($data);
   }
 
@@ -96,7 +97,7 @@ class TransitionSet {
    *   workflow state is targeted.
    */
   public function getExpectedState(DrupalDateTime $at) {
-    $at = $this->toInteger($at);
+    $at = $at->getTimestamp();
 
     $data = $this->toArray();
 
@@ -117,28 +118,12 @@ class TransitionSet {
    *   The date and time older than which all transitions will be removed.
    */
   public function trim(DrupalDateTime $until) {
-    // Convert the date to an integer for easy comparison.
-    $until = $this->toInteger($until);
+    $until = $until->getTimestamp();
 
-    while (count($this->dateList) > 0 && $this->toInteger($this->dateList[0]->date) < $until) {
+    while (count($this->dateList) > 0 && $this->dateList[0]->date->getTimestamp() < $until) {
       $this->dateList->removeItem(0);
       $this->stateList->removeItem(0);
     }
-  }
-
-  /**
-   * Converts a date and time to an integer.
-   *
-   * @param \Drupal\Core\Datetime\DrupalDateTime $date
-   *   The date/time to convert.
-   *
-   * @return int
-   *   The date and time, represented as an integer.
-   */
-  protected function toInteger(DrupalDateTime $date) {
-    return (int) $date->format('YmdHis', [
-      'timezone' => 'UTC',
-    ]);
   }
 
 }

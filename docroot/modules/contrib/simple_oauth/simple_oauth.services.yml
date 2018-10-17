@@ -1,7 +1,10 @@
 services:
   simple_oauth.authentication.simple_oauth:
     class: Drupal\simple_oauth\Authentication\Provider\SimpleOauthAuthenticationProvider
-    arguments: ['@simple_oauth.server.resource_server', '@entity_type.manager']
+    arguments:
+      - '@simple_oauth.server.resource_server'
+      - '@entity_type.manager'
+      - '@simple_oauth.page_cache_request_policy.disallow_oauth2_token_requests'
     tags:
       - { name: authentication_provider, provider_id: oauth2, global: TRUE, priority: 35 }
   simple_oauth.page_cache_request_policy.disallow_oauth2_token_requests:

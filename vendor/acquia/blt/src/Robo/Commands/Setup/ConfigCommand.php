@@ -4,6 +4,7 @@ namespace Acquia\Blt\Robo\Commands\Setup;
 
 use Acquia\Blt\Robo\BltTasks;
 use Acquia\Blt\Robo\Exceptions\BltException;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Defines commands in the "setup:config*" namespace.
@@ -13,16 +14,22 @@ class ConfigCommand extends BltTasks {
   /**
    * Update current database to reflect the state of the Drupal file system.
    *
-   * @command setup:update
+   * @command drupal:update
+   * @aliases du setup:update
+   * @executeInVm
    */
   public function update() {
-    $this->invokeCommands(['setup:config-import', 'setup:toggle-modules']);
+    $this->invokeCommands(['drupal:config:import', 'drupal:toggle:modules']);
   }
 
   /**
    * Imports configuration from the config directory according to cm.strategy.
    *
-   * @command setup:config-import
+   * @command drupal:config:import
+   * @aliases dci setup:config-import
+   *
+   * @validateDrushConfig
+   * @executeInVm
    */
   public function import() {
     $strategy = $this->getConfigValue('cm.strategy');
@@ -46,7 +53,6 @@ class ConfigCommand extends BltTasks {
 
       $task = $this->taskDrush()
         ->stopOnFail()
-        ->assume(TRUE)
         // Sometimes drush forgets where to find its aliases.
         ->drush("cc")->arg('drush')
         // Rebuild caches in case service definitions have changed.
@@ -61,6 +67,14 @@ class ConfigCommand extends BltTasks {
         // necessary configuration file(s) as part of the db update.
         ->drush("updb");
 
+      // If exported site UUID does not match site active site UUID, set active
+      // to equal exported.
+      // @see https://www.drupal.org/project/drupal/issues/1613424
+      $exported_site_uuid = $this->getExportedSiteUuid($cm_core_key);
+      if ($exported_site_uuid) {
+        $task->drush("config:set system.site uuid $exported_site_uuid");
+      }
+
       switch ($strategy) {
         case 'core-only':
           $this->importCoreOnly($task, $cm_core_key);
@@ -72,6 +86,11 @@ class ConfigCommand extends BltTasks {
 
         case 'features':
           $this->importFeatures($task, $cm_core_key);
+
+          if ($this->getConfigValue('cm.features.no-overrides')) {
+            // @codingStandardsIgnoreLine
+            $this->checkFeaturesOverrides();
+          }
           break;
       }
 
@@ -81,9 +100,6 @@ class ConfigCommand extends BltTasks {
         throw new BltException("Failed to import configuration!");
       }
 
-      if ($this->getInspector()->getDrushMajorVersion() == 8) {
-        $this->checkFeaturesOverrides();
-      }
       $this->checkConfigOverrides($cm_core_key);
 
       $result = $this->invokeHook('post-config-import');
@@ -111,6 +127,9 @@ class ConfigCommand extends BltTasks {
   protected function importConfigSplit($task, $cm_core_key) {
     $task->drush("pm-enable")->arg('config_split');
     $task->drush("config-import")->arg($cm_core_key);
+    // Runs a second import to ensure splits are
+    // both defined and imported.
+    $task->drush("config-import")->arg($cm_core_key);
   }
 
   /**
@@ -121,10 +140,10 @@ class ConfigCommand extends BltTasks {
    */
   protected function importFeatures($task, $cm_core_key) {
     $task->drush("config-import")->arg($cm_core_key)->option('partial');
+    $task->drush("pm-enable")->arg('features');
+    $task->drush("cc")->arg('drush');
     if ($this->getConfig()->has('cm.features.bundle')) {
-      $task->drush("pm-enable")->arg('features');
       // Clear drush caches to register features drush commands.
-      $task->drush("cc")->arg('drush');
       foreach ($this->getConfigValue('cm.features.bundle') as $bundle) {
         $task->drush("features-import-all")->option('bundle', $bundle);
         // Revert all features again!
@@ -143,6 +162,7 @@ class ConfigCommand extends BltTasks {
    */
   protected function checkFeaturesOverrides() {
     if ($this->getConfigValue('cm.features.no-overrides')) {
+      // @codingStandardsIgnoreStart
       $this->say("Checking for features overrides...");
       if ($this->getConfig()->has('cm.features.bundle')) {
         $task = $this->taskDrush()->stopOnFail();
@@ -164,6 +184,7 @@ class ConfigCommand extends BltTasks {
         }
       }
     }
+    // @codingStandardsIgnoreEnd
   }
 
   /**
@@ -174,17 +195,28 @@ class ConfigCommand extends BltTasks {
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   protected function checkConfigOverrides($cm_core_key) {
-    // Check for configuration overrides.
-    if (!$this->getConfigValue('cm.allow-overrides')) {
-      $this->say("Checking for config overrides...");
-      $config_overrides = $this->taskDrush()
-        ->assume(FALSE)
-        ->drush("cex")
-        ->arg($cm_core_key);
-      if (!$config_overrides->run()->wasSuccessful()) {
-        throw new BltException("Configuration in the database does not match configuration on disk. You must re-export configuration to capture the changes. This could also indicate a problem with the import process, such as changed field storage for a field with existing content. To permit configuration overrides, set cm.allow-overrides to true in blt/project.yml.");
-      }
+    if (!$this->getConfigValue('cm.allow-overrides') && !$this->getInspector()->isActiveConfigIdentical()) {
+      throw new BltException("Configuration in the database does not match configuration on disk. BLT has attempted to automatically fix this by re-exporting configuration to disk. Please read https://github.com/acquia/blt/wiki/Configuration-override-test-and-errors");
     }
+  }
+
+  /**
+   * Returns the site UUID stored in exported configuration.
+   *
+   * @param string $cm_core_key
+   *
+   * @return null
+   */
+  protected function getExportedSiteUuid($cm_core_key) {
+    $site_config_file = $this->getConfigValue('docroot') . '/' . $this->getConfigValue("cm.core.dirs.$cm_core_key.path") . '/system.site.yml';
+    if (file_exists($site_config_file)) {
+      $site_config = Yaml::parseFile($site_config_file);
+      $site_uuid = $site_config['uuid'];
+
+      return $site_uuid;
+    }
+
+    return NULL;
   }
 
 }

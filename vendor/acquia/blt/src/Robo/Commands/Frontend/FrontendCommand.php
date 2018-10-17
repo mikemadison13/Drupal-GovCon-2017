@@ -12,43 +12,49 @@ class FrontendCommand extends BltTasks {
   /**
    * Runs all frontend targets.
    *
-   * @command frontend
-   * @executeInDrupalVm
+   * @command source:build:frontend
+   * @aliases sbf frontend
+   * @executeInVm
    */
   public function frontend() {
     $this->invokeCommands([
-      'frontend:setup',
-      'frontend:build',
+      'source:build:frontend-reqs',
+      'source:build:frontend-assets',
     ]);
   }
 
   /**
-   * Executes frontend-build target hook.
+   * Executes source:build:frontend-assets target hook.
    *
-   * @command frontend:build
-   * @executeInDrupalVm
+   * @command source:build:frontend-assets
+   * @aliases sbfa frontend:build
+   * @executeInVm
    */
-  public function build() {
-    return $this->invokeHook('frontend-build');
+  public function assets() {
+    return $this->invokeHook('frontend-assets');
   }
 
   /**
-   * Executes frontend-setup target hook.
+   * Executes source:build:frontend-reqs target hook.
    *
-   * @command frontend:setup
-   * @executeInDrupalVm
+   * @command source:build:frontend-reqs
+   * @aliases sbfr frontend:setup
+   * @executeInVm
    */
-  public function setup() {
-    return $this->invokeHook('frontend-setup');
+  public function reqs() {
+    return $this->invokeHook('frontend-reqs');
   }
 
   /**
    * Executes frontend-test target hook.
    *
-   * @command frontend:test
+   * @command tests:frontend:run
+   * @aliases tfr tests:frontend frontend:test
+   *
+   * @todo add alias for tests:frontend.
    *
    * @launchWebServer
-   * @executeInDrupalVm
+   * @executeInVm
    */
   public function test() {
     return $this->invokeHook('frontend-test');

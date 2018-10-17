@@ -4,10 +4,9 @@ namespace Acquia\Blt\Robo\Commands\Setup;
 
 use Acquia\Blt\Robo\BltTasks;
 use Acquia\Blt\Robo\Exceptions\BltException;
-use Symfony\Component\Console\Input\InputOption;
 
 /**
- * Defines commands in the "setup:toggle-modules" namespace.
+ * Defines commands in the "drupal:toggle:modules" namespace.
  */
 class ToggleModulesCommand extends BltTasks {
 
@@ -19,19 +18,16 @@ class ToggleModulesCommand extends BltTasks {
    * $_ENV['environment'] via the CLI, or defining environment in one of your
    * BLT configuration files.
    *
-   * @command setup:toggle-modules
+   * @command drupal:toggle:modules
    *
-   * @option environment The environment key for which modules should be
-   *   toggled. This should correspond with a modules.[environment].* key in
-   *   your configuration.
+   * @aliases dtm toggle setup:toggle-modules
    *
-   * @executeInDrupalVm
+   * @validateDrushConfig
+   * @executeInVm
    */
-  public function toggleModules($options = [
-    'environment' => InputOption::VALUE_REQUIRED,
-  ]) {
-    if ($options['environment']) {
-      $environment = $options['environment'];
+  public function toggleModules() {
+    if ($this->input()->hasArgument('environment')) {
+      $environment = $this->input()->getArgument('environment');
     }
     elseif ($this->getConfig()->has('environment')) {
       $environment = $this->getConfigValue('environment');
@@ -50,7 +46,7 @@ class ToggleModulesCommand extends BltTasks {
       $this->doToggleModules('pm-uninstall', $disable_key);
     }
     else {
-      $this->say("Environment is unset. Skipping setup:toggle-modules...");
+      $this->say("Environment is unset. Skipping drupal:toggle:modules...");
     }
   }
 
@@ -58,7 +54,7 @@ class ToggleModulesCommand extends BltTasks {
    * Enables or uninstalls an array of modules.
    *
    * @param string $command
-   *   The drush command to execute. E.g., pm-enable or pm-uninstall.
+   *   The drush command to execute, e.g., pm-enable or pm-uninstall.
    * @param string $config_key
    *   The config key containing the array of modules.
    *
@@ -66,11 +62,11 @@ class ToggleModulesCommand extends BltTasks {
    */
   protected function doToggleModules($command, $config_key) {
     if ($this->getConfig()->has($config_key)) {
+      $this->say("Executing <comment>drush $command</comment> for modules defined in <comment>$config_key</comment>...");
       $modules = (array) $this->getConfigValue($config_key);
       $modules_list = implode(' ', $modules);
       $result = $this->taskDrush()
         ->drush("$command $modules_list")
-        ->assume(TRUE)
         ->run();
       $exit_code = $result->getExitCode();
     }

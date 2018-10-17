@@ -14,6 +14,7 @@ dependencies:
   - user
   - views_infinite_scroll
 components:
+  - lightning_media_audio
   - lightning_media_bulk_upload
   - lightning_media_document
   - lightning_media_image
@@ -21,8 +22,8 @@ components:
   - lightning_media_twitter
   - lightning_media_video
 
-# Information added by Drupal.org packaging script on 2018-05-08
-version: '8.x-2.3'
+# Information added by Drupal.org packaging script on 2018-09-04
+version: '8.x-3.0'
 core: '8.x'
 project: 'lightning_media'
-datestamp: 1525814591
+datestamp: 1536076030

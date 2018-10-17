@@ -2,6 +2,8 @@
 
 namespace Acquia\Blt\Robo\Inspector;
 
+use Acquia\Blt\Robo\Blt;
+use Acquia\Blt\Robo\Common\ArrayManipulator;
 use Acquia\Blt\Robo\Config\YamlConfigProcessor;
 use Acquia\Blt\Robo\Exceptions\BltException;
 use League\Container\ContainerAwareInterface;
@@ -16,7 +18,6 @@ use Psr\Log\LoggerAwareTrait;
 use Robo\Common\BuilderAwareTrait;
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Contract\ConfigAwareInterface;
-use function substr;
 use Symfony\Component\Filesystem\Filesystem;
 use Robo\Contract\VerbosityThresholdInterface;
 use Tivie\OS\Detector;
@@ -41,11 +42,6 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
    * @var \Acquia\Blt\Robo\Common\Executor
    */
   protected $executor;
-
-  /**
-   * @var null
-   */
-  protected $isDrupalInstalled = NULL;
 
   /**
    * @var null
@@ -106,7 +102,6 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
    *
    */
   public function clearState() {
-    $this->isDrupalInstalled = NULL;
     $this->isMySqlAvailable = NULL;
     $this->drupalVmStatus = [];
     $this->isDrupalVmLocallyInitialized = NULL;
@@ -134,7 +129,7 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
   }
 
   /**
-   * Determines if BLT configuration file exists, typically project.yml.
+   * Determines if BLT configuration file exists, typically blt.yml.
    *
    * @return bool
    *   TRUE if file exists.
@@ -144,7 +139,7 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
   }
 
   /**
-   * Determines if BLT configuration file exists, typically project.local.yml.
+   * Determines if BLT configuration file exists, typically local.blt.yml.
    *
    * @return bool
    *   TRUE if file exists.
@@ -209,24 +204,6 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
    *   TRUE if Drupal is installed.
    */
   public function isDrupalInstalled() {
-    // This will only run once per command. If Drupal is installed mid-command,
-    // this value needs to be changed.
-    if (is_null($this->isDrupalInstalled)) {
-      $this->isDrupalInstalled = $this->getDrupalInstalled();
-    }
-
-    return $this->isDrupalInstalled;
-  }
-
-  /**
-   * Determines if Drupal is installed.
-   *
-   * This method does not cache its result.
-   *
-   * @return bool
-   *   TRUE if Drupal is installed.
-   */
-  protected function getDrupalInstalled() {
     $this->logger->debug("Verifying that Drupal is installed...");
     $result = $this->executor->drush("sqlq \"SHOW TABLES LIKE 'config'\"")->run();
     $output = trim($result->getMessage());
@@ -242,9 +219,54 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
    *   The result of `drush status`.
    */
   public function getDrushStatus() {
-    $status_info = json_decode($this->executor->drush('status --format=json --show-passwords')->run()->getMessage(), TRUE);
+    $status_info = (array) json_decode($this->executor->drush('status --format=json --fields=*')->run()->getMessage(), TRUE);
 
     return $status_info;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getStatus() {
+    $status = $this->getDrushStatus();
+    if (array_key_exists('php-conf', $status)) {
+      foreach ($status['php-conf'] as $key => $conf) {
+        unset($status['php-conf'][$key]);
+        $status['php-conf'][] = $conf;
+      }
+    }
+
+    $defaults = [
+      'root' => $this->getConfigValue('docroot'),
+      'uri' => $this->getConfigValue('site'),
+    ];
+
+    $status['composer-version'] = $this->getComposerVersion();
+    $status['blt-version'] = Blt::VERSION;
+    $status['stacks']['drupal-vm']['inited'] = $this->isDrupalVmLocallyInitialized();
+    $status['stacks']['dev-desktop']['inited'] = $this->isDevDesktopInitialized();
+
+    $status = ArrayManipulator::arrayMergeRecursiveDistinct($defaults, $status);
+    ksort($status);
+
+    return $status;
+  }
+
+  /**
+   * Validates a drush alias.
+   *
+   * @param string $alias
+   *
+   * @return bool
+   *   TRUE if alias is valid.
+   */
+  public function isDrushAliasValid($alias) {
+    $bin = $this->getConfigValue('composer.bin');
+    $command = "'$bin/drush' site:alias @$alias --format=json";
+    return $this->executor->execute($command)
+      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERY_VERBOSE)
+      ->run()
+      ->wasSuccessful();
   }
 
   /**
@@ -307,7 +329,8 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
    *   TRUE if Drupal VM configuration exists.
    */
   public function isDrupalVmConfigPresent() {
-    return file_exists($this->getConfigValue('repo.root') . '/Vagrantfile');
+    return file_exists($this->getConfigValue('repo.root') . '/Vagrantfile')
+      && file_exists($this->getConfigValue('vm.config'));
   }
 
   /**
@@ -320,7 +343,7 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
    */
   public function isDrupalVmLocallyInitialized() {
     if (is_null($this->isDrupalVmLocallyInitialized)) {
-      $this->isDrupalVmLocallyInitialized = $this->getConfigValue('vm.enable') && $this->isDrupalVmConfigValid();
+      $this->isDrupalVmLocallyInitialized = $this->isVmCli() || $this->getConfigValue('vm.enable');
       $statement = $this->isDrupalVmLocallyInitialized ? "is" : "is not";
       $this->logger->debug("Drupal VM $statement initialized.");
     }
@@ -413,6 +436,28 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
     return $installed;
   }
 
+  public function isDevDesktopInitialized() {
+    $file_contents = file_get_contents($this->getConfigValue('drupal.settings_file'));
+
+    return strstr($file_contents, 'DDSETTINGS');
+  }
+
+  /**
+   * Gets Composer version.
+   *
+   * @return string
+   *   The version of Composer.
+   */
+  public function getComposerVersion() {
+    $version = $this->executor->execute("composer --version")
+      ->interactive(FALSE)
+      ->silent(TRUE)
+      ->run()
+      ->getMessage();
+
+    return $version;
+  }
+
   /**
    * Checks to see if BLT alias is installed on CLI.
    *
@@ -454,6 +499,9 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
     elseif (file_exists($home_dir . '/.profile')) {
       $file = $home_dir . '/.profile';
     }
+    elseif (file_exists($home_dir . '/.functions')) {
+      $file = $home_dir . '/.functions';
+    }
 
     return $file;
   }
@@ -462,7 +510,7 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
    * Checks if a given command exists on the system.
    *
    * @param string $command
-   *   The command binary only. E.g., "drush" or "php".
+   *   The command binary only, e.g., "drush" or "php".
    *
    * @return bool
    *   TRUE if the command exists, otherwise FALSE.
@@ -502,6 +550,7 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
     $loader = new YamlConfigLoader();
     $processor = new YamlConfigProcessor();
     $processor->extend($loader->load($behat_local_config_file));
+    $processor->extend($loader->load($this->getConfigValue('repo.root') . '/tests/behat/behat.yml'));
     $behat_local_config->import($processor->export());
 
     return $behat_local_config;
@@ -523,7 +572,6 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
     return [
       $behat_local_config->get('local.extensions.Drupal\DrupalExtension.drupal.drupal_root'),
       $behat_local_config->get('local.suites.default.paths.features'),
-      $behat_local_config->get('local.suites.default.paths.bootstrap'),
     ];
   }
 
@@ -568,7 +616,7 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
     // Verify that URIs required for Drupal and Behat are configured correctly.
     $local_behat_config = $this->getLocalBehatConfig();
     if ($this->getConfigValue('project.local.uri') != $local_behat_config->get('local.extensions.Behat\MinkExtension.base_url')) {
-      $this->logger->warning('project.local.uri in project.yml does not match local.extensions.Behat\MinkExtension.base_url in local.yml.');
+      $this->logger->warning('project.local.uri in blt.yml does not match local.extensions.Behat\MinkExtension.base_url in local.yml.');
       $this->logger->warning('project.local.uri = ' . $this->getConfigValue('project.local.uri'));
       $this->logger->warning('local.extensions.Behat\MinkExtension.base_url = ' . $local_behat_config->get('local.extensions.Behat\MinkExtension.base_url'));
       return FALSE;
@@ -655,6 +703,26 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
   }
 
   /**
+   * Indicates whether ACSF has been initialized.
+   *
+   * @return bool
+   *   TRUE if ACSF has been initialized.
+   */
+  public function isAcsfInited() {
+    return file_exists($this->getConfigValue('docroot') . '/sites/g');
+  }
+
+  /**
+   * Determines whether operating in an Acquia Hosting environment or not.
+   *
+   * @return bool
+   *   Returns TRUE if on Acquia Hosting or FALSE if not.
+   */
+  public function isAhEnv() {
+    return isset($_ENV['AH_SITE_ENVIRONMENT']);
+  }
+
+  /**
    * Gets the Operating system type.
    *
    * @return int
@@ -701,12 +769,24 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
 
   /**
    * Issues warnings to user if their local environment is mis-configured.
+   *
+   * @param $command_name string
+   *   The name of the BLT Command being executed.
    */
-  public function issueEnvironmentWarnings() {
+  public function issueEnvironmentWarnings($command_name) {
     if (!$this->warningsIssued) {
       $this->warnIfPhpOutdated();
-      $this->warnIfDrupalVmNotRunning();
       $this->warnIfXdebugLoaded();
+
+      $exclude_commands = [
+        'list',
+        'recipes:drupalvm:init',
+        'recipes:drupalvm:destroy',
+      ];
+      if (!in_array($command_name, $exclude_commands)) {
+        $this->warnIfDrupalVmNotRunning();
+      }
+
       $this->warningsIssued = TRUE;
     }
   }
@@ -732,6 +812,21 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
     if ($xdebug_loaded) {
       $this->logger->warning("The xDebug extension is loaded. This will significantly decrease performance.");
     }
+  }
+
+  /**
+   * Determines if the active config is identical to sync directory.
+   *
+   * @return bool
+   *   TRUE if config is identical.
+   */
+  public function isActiveConfigIdentical() {
+    $uri = $this->getConfigValue('drush.uri');
+    $result = $this->executor->drush("config:status --uri=$uri 2>&1")->run();
+    $message = trim($result->getMessage());
+    $identical = strstr($message, 'No differences between DB and sync directory') !== FALSE;
+
+    return $identical;
   }
 
 }

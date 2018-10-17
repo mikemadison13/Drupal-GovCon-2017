@@ -16,7 +16,7 @@ class BaseFieldMigrationTest extends MigrationTestBase {
     parent::test();
 
     $assert = $this->assertSession();
-    $assert->pageTextContains('You are about to migrate scheduled transitions for all custom block entities and content items.');
+    $assert->pageTextContains('You are about to migrate scheduled transitions for all custom blocks and content items.');
     $assert->elementExists('named', ['link', 'switch to maintenance mode']);
     $assert->buttonExists('Continue')->press();
     $this->checkForMetaRefresh();

@@ -8,8 +8,8 @@ function lightning_page_install() {
 
   $modules = [];
 
-  if ($module_handler->moduleExists('content_moderation')) {
-    array_push($modules, 'content_moderation');
+  if ($module_handler->moduleExists('lightning_workflow')) {
+    array_push($modules, 'lightning_workflow');
   }
   if ($module_handler->moduleExists('menu_ui')) {
     array_push($modules, 'menu_ui');

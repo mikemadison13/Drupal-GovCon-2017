@@ -1,3 +1,21 @@
+## 3.0.0
+* Updated Lightning Core to 3.0, which requires Drupal core 8.6.0.
+* The Editorial workflow has been added to this module as it is no longer
+  provided by Content Moderation. (CR #2958726)
+* Fixed a bug where Lightning Scheduler would keep publishing content.
+  (Issue #2981817)
+* Added a return value to hook_requirements implementation. (Issue #2984734)
+
+## 2.4.0
+* Fixed an incompatibility between Lightning Scheduler and Inline Entity Form
+  (Issue #2993137)
+
+## 2.3.0
+* Moderation Sidebar is now included with Lightning Workflow. (#62)
+* The editorial workflow transitions have changed. "Review" is now "Send to
+  review", "Restore" is now "Restore from archive", and the "Restore to Draft"
+  transition has been merged into the "Create new draft" transition. (#64)
+
 ## 2.2.0
 * Fixed a bug where Lightning Scheduler would not correctly handle "AM/PM" in
   its input fields. (Issue #2981807)
@@ -5,10 +23,6 @@
   to Content Moderation. (Issue #2973811)
 * Renamed Lightning Scheduler's ECMAScript 6 files to .es6.js, and provided a
   source map to help community developers debug and file patches. (#50, #51)
-
-## 2.1.0
-* Fixed a bug where Lightning Scheduler would keep publishing content.
-  (Issue #2981817)
 
 ## 2.0.0
 * Scheduler UI is now compatible with Internet Explorer.

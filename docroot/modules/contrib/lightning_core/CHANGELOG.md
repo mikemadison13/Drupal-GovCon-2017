@@ -1,12 +1,20 @@
+## 3.1.0
+* Updated Drupal core to 8.6.1.
+
+## 3.0.0
+* Updated Drupal core to 8.6.0.
+* Removed the 'partial_matches' configuration from the Search API database
+  backend bundled with Lightning Search.
+* If Pathauto is installed, the Basic Page content type will automatically
+  generate URL aliases. (#74)
+* Fixed a bug where the Basic Page content type could fail to have workflow
+  enabled when it should be. (Issue #2990048)
+* Fixed a bug where Lightning-generated user roles had a null is_admin value.
+  (Issue #2882197)
+
 ## 2.8.0
 * Fixed a bug where user 1 could not access Lightning's administrative screens.
   (Issue #2933520)
-* Lightning Page now enables moderation if Lightning Workflow is installed, not
-  Content Moderation. (Issue #2984737)
-* Lightning Roles now has an explicit dependency on the Node module.
-  (Issue 2984738)
-* Removed defunct default configuration from bundled Search API database
-  backend. (#70)
 
 ## 2.7.0
 * Updated Drupal core to 8.5.4.
@@ -35,14 +43,14 @@
 * Security updated Drupal core to 8.5.1. (SA-2018-002)
 * When renaming the configuration which stores extension's version numbers,
   Lightning Core will no longer assume configuration by the same name does not
-  already exist. (Issue #2955072) 
+  already exist. (Issue #2955072)
 
 ## 2.1.0
 * Behat contexts used for testing were moved into the
   `Acquia\LightningExtension\Context` namespace.
 
 ## 2.0.0
-* Updated core to 8.5.x.
+* Updated Drupal core to 8.5.x.
 
 ## 1.0.0-rc3
 * Fixed a problem in the 8006 update that caused problems for users that had an
@@ -57,7 +65,7 @@
   Drush 9.
 * Component version numbers are now recorded on install (and via an update hook
   on existing installations) so that the `version` argument is no longer needed
-  with the `update:lightning` command. 
+  with the `update:lightning` command.
 
 ## 1.0.0-alpha3
 * Updated core to 8.4.4.

@@ -3,7 +3,7 @@
 namespace Drupal\simple_oauth_extras\Plugin\Oauth2Grant;
 
 use Drupal\simple_oauth\Plugin\Oauth2GrantBase;
-use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use Drupal\simple_oauth_extras\Grant\ClientCredentialsOverrideGrant;
 
 /**
  * @Oauth2Grant(
@@ -17,7 +17,7 @@ class ClientCredentials extends Oauth2GrantBase {
    * {@inheritdoc}
    */
   public function getGrantType() {
-    return new ClientCredentialsGrant();
+    return new ClientCredentialsOverrideGrant();
   }
 
 }

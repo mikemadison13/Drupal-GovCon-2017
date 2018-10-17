@@ -56,6 +56,7 @@ class ModuleInstallTest extends KernelTestBase {
       $this->container->get('container.namespaces'),
       $this->container->get('class_resolver'),
       $this->container->get('config.factory'),
+      $this->container->get('extension.list.module'),
       $discovery->reveal()
     ));
 

@@ -14,15 +14,17 @@ class AliasCommand extends BltTasks {
   /**
    * Installs the BLT alias for command line usage.
    *
-   * @command install-alias
+   * @command blt:init:shell-alias
+   *
+   * @aliases alias install-alias
    */
   public function installBltAlias() {
     if (!$this->getInspector()->isBltAliasInstalled()) {
       $config_file = $this->getInspector()->getCliConfigFile();
       if (is_null($config_file)) {
         $this->logger->warning("Could not find your CLI configuration file.");
-        $this->logger->warning("Looked in ~/.zsh, ~/.bash_profile, ~/.bashrc, ~/.profile.");
-        $created = $this->createOsxBashProfile();
+        $this->logger->warning("Looked in ~/.zsh, ~/.bash_profile, ~/.bashrc, ~/.profile, and ~/.functions.");
+        $created = $this->createBashProfile();
         if (!$created) {
           $this->logger->warning("Please create one of the aforementioned files, or create the BLT alias manually.");
         }
@@ -55,7 +57,7 @@ class AliasCommand extends BltTasks {
     $this->say("Installing <comment>blt</comment> alias...");
     $config_file = $this->getInspector()->getCliConfigFile();
     if (is_null($config_file)) {
-      $this->logger->error("Could not install blt alias. No profile found. Tried ~/.zshrc, ~/.bashrc, ~/.bash_profile and ~/.profile.");
+      $this->logger->error("Could not install blt alias. No profile found. Tried ~/.zshrc, ~/.bashrc, ~/.bash_profile, ~/.profile, and ~/.functions.");
     }
     else {
       $canonical_alias = file_get_contents($this->getConfigValue('blt.root') . '/scripts/blt/alias');
@@ -164,10 +166,13 @@ class AliasCommand extends BltTasks {
   }
 
   /**
-   * Creates a ~/.bash_profile on OSX if one does not exist.
+   * Creates a ~/.bash_profile on supporting systems if one does not exist.
+   *
+   * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
-  protected function createOsxBashProfile() {
-    if ($this->getInspector()->isOsx()) {
+  protected function createBashProfile() {
+    $inspector = $this->getInspector();
+    if ($inspector->isOsx() || $inspector->isAhEnv()) {
       $continue = $this->confirm("Would you like to create ~/.bash_profile?");
       if ($continue) {
         $user = posix_getpwuid(posix_getuid());

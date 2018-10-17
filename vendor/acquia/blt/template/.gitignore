@@ -1,12 +1,12 @@
 # Ignore configuration files that may contain sensitive information.
 local.settings.php
-local.drushrc.php
-local.aliases.drushrc.php
+local.drush.yml
+local.site.yml
 local.services.yml
 tests/behat/local.yml
 box/local.config.yml
 *.local
-project.local.yml
+local.blt.yml
 
 # Ignore drupal core.
 docroot/core
@@ -21,7 +21,7 @@ docroot/modules/contrib
 docroot/themes/contrib
 docroot/profiles/contrib
 docroot/libraries
-drush/contrib
+drush/Commands
 
 # Ignore custom theme build artifacts
 docroot/themes/custom/*/node_modules
@@ -29,6 +29,7 @@ docroot/themes/custom/*/css
 docroot/themes/custom/*/styleguide
 
 # Ignore build artifacts
+deployment_identifier
 /deploy
 bin/*
 tmp
@@ -124,3 +125,12 @@ nbproject/*
 
 # PHPStorm
 atlassian-ide-plugin.xml
+
+#NPM
+npm-debug.log
+
+# Drush 9 Checksums
+drush/sites/.checksums
+
+# Deprecation detector rules
+.rules

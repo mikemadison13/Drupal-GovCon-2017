@@ -6,7 +6,6 @@ use Drupal\Component\Serialization\Json;
 use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -128,7 +127,6 @@ class TransitionManager {
     }
 
     $minimum_date = NULL;
-    $dates = $states = [];
     $format_options = [
       'timezone' => drupal_get_user_timezone(),
     ];
@@ -149,7 +147,7 @@ class TransitionManager {
       }
 
       // The transition must take place after $minimum_date.
-      if ($minimum_date instanceof DrupalDateTime && static::toInt($date_time) < static::toInt($minimum_date)) {
+      if ($minimum_date instanceof DrupalDateTime && $date_time->getTimestamp() < $minimum_date->getTimestamp()) {
         $variables = [
           '@date' => $minimum_date->format('F j, Y', $format_options),
           '@time' => $minimum_date->format('g:i A', $format_options),
@@ -158,24 +156,6 @@ class TransitionManager {
         return;
       }
       $minimum_date = $date_time;
-
-      // Prepare field values for the date and state.
-      array_push($dates, [
-        'value' => $date_time->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
-      ]);
-      array_push($states, [
-        'value' => $transition['state'],
-      ]);
-    }
-
-    $form_object = $form_state->getFormObject();
-
-    // This check is done explicitly in order to facilitate unit testing.
-    // @see \Drupal\Tests\lightning_scheduler\Kernel\TransitionManagerTest
-    if ($form_object instanceof EntityFormInterface) {
-      $form_object->getEntity()
-        ->set('scheduled_transition_state', $states)
-        ->set('scheduled_transition_date', $dates);
     }
   }
 
@@ -264,20 +244,6 @@ class TransitionManager {
     foreach (array_keys($IDs) as $revision_id) {
       yield $storage->loadRevision($revision_id);
     }
-  }
-
-  /**
-   * Represents a DrupalDateTime as an integer.
-   *
-   * @param \Drupal\Core\Datetime\DrupalDateTime $when
-   *   The date and time to convert.
-   *
-   * @return int
-   *   The date and time, in the UTC time zone, in the format YYYYMMDDHHMMSS
-   *   (i.e., a comparable integer).
-   */
-  protected static function toInt(DrupalDateTime $when) {
-    return (int) $when->format('YmdHis');
   }
 
 }

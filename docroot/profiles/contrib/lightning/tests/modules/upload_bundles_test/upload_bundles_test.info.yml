@@ -1,9 +1,7 @@
-name: ced013a5
+name: 'ced013a5 (deprecated)'
 core: 8.x
 type: module
-package: Lightning
 hidden: true
 dependencies:
-  - lightning_media_image
-  - lightning_page
-version: '8.x-3.014'
+  - test_ced013a5
+version: '8.x-3.200'

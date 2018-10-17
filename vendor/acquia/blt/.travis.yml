@@ -1,13 +1,11 @@
-# Note that the example .travis.yml file for child projects lives in /install.
-sudo: required
+sudo: true
 language: php
 dist: trusty
 
 php:
   - 5.6
-
-matrix:
-  fast_finish: true
+  - 7.1
+  - 7.2
 
 env:
   global:
@@ -16,6 +14,16 @@ env:
     - BLT_DIR=$TRAVIS_BUILD_DIR
     - IS_PULL_REQUEST=$TRAVIS_PULL_REQUEST
     - BUILD_DIR=$TRAVIS_BUILD_DIR
+    - DRUPAL_CORE_HEAD=8.6.x-dev
+  matrix:
+    - DRUPAL_CORE_VERSION=default PHPUNIT_EXCLUDE_GROUP='long,requires-vm'
+    - DRUPAL_CORE_VERSION=default PHPUNIT_GROUP='long' PHPUNIT_EXCLUDE_GROUP='requires-vm'
+    - DRUPAL_CORE_VERSION=$DRUPAL_CORE_HEAD
+
+matrix:
+  allow_failures:
+    - env: DRUPAL_CORE_VERSION=$DRUPAL_CORE_HEAD
+  fast_finish: true
 
 cache:
   bundler: true
@@ -25,11 +33,13 @@ cache:
   - "$HOME/.console"
   - "$HOME/.drush/cache"
   - "$HOME/.nvm"
-  - "vendor"
+  -  "/tmp/blt-sandbox-instance/.rules"
+
+services:
+- memcached
 
 addons:
-  ssh_known_hosts:
-    - svn-5223.devcloud.hosting.acquia.com
+  ssh_known_hosts: []
   chrome: stable
 
 before_install:
@@ -37,6 +47,8 @@ before_install:
   - source ${BLT_DIR}/scripts/travis/exit_early
   # Decrypt private SSH key id_rsa_blt.enc, save as ~/.ssh/id_rsa_blt.
   - if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then openssl aes-256-cbc -K $encrypted_c0b166e924da_key -iv $encrypted_c0b166e924da_iv -in id_rsa_blt.enc -out ~/.ssh/id_rsa -d; chmod 600 ~/.ssh/id_rsa; ls -lash ~/.ssh; eval "$(ssh-agent -s)"; ssh-add ~/.ssh/id_rsa; fi
+  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - sudo service memcached status
   - phpenv config-rm xdebug.ini
   - phpenv config-add travis.php.ini
   - composer self-update
@@ -45,23 +57,16 @@ before_install:
 
 install:
   - source ${BLT_DIR}/scripts/travis/setup_environment
-  - source ${BLT_DIR}/scripts/travis/setup_project
+  # Create extra dbs for multisite testing.
+  - mysql -u root -e "CREATE DATABASE drupal2; GRANT ALL ON drupal2.* TO 'drupal'@'localhost';"
+  - mysql -u root -e "CREATE DATABASE drupal3; GRANT ALL ON drupal3.* TO 'drupal'@'localhost';"
+  - mysql -u root -e "CREATE DATABASE drupal4; GRANT ALL ON drupal4.* TO 'drupal'@'localhost';"
 
 script:
-  - source ${BLT_DIR}/scripts/blt/ci/internal/smoke_tests.sh
-  - source ${BLT_DIR}/scripts/blt/ci/internal/create_blt_project.sh
-  - source ${BLT_DIR}/scripts/blt/ci/internal/run_tests.sh
-  # Add Drupal VM config to repo.
-  - blt vm --no-boot --no-interaction --yes
-  # Execute PHP Unit tests.
-  - ./vendor/bin/phpunit ${BLT_DIR}/tests/phpunit --group blt-project -c ${BLT_DIR}/tests/phpunit/phpunit.xml
-  - ./vendor/bin/phpunit ${BLT_DIR}/tests/phpunit --group blt-multisite -c ${BLT_DIR}/tests/phpunit/phpunit.xml
-  # Deploy build artifact.
-  - blt deploy:build
-  - source ${BLT_DIR}/scripts/blt/ci/internal/test_artifact.sh
+  - ${BLT_DIR}/vendor/bin/robo release:test
 
 before_deploy:
-  - cd ${TRAVIS_BUILD_DIR}/../blt-project
+  - cd ${TRAVIS_BUILD_DIR}/../blted8
   # The BLTed8 project will need its ssh_known_hosts configured to push to ACF.
   - yaml-cli update:value .travis.yml addons.ssh_known_hosts.0 svn-5223.devcloud.hosting.acquia.com
   # Add encrypted SSH key to BLTed8 project.
@@ -80,16 +85,10 @@ after_success:
 
 deploy:
   - provider: script
-    # Deploys build artifact for generated `blt-project` to acquia-pso/blted8 on GitHub and also to bolt8 sub on ACF.
-    script: ${BLT_DIR}/scripts/travis/deploy_branch && $COMPOSER_BIN/phpunit $BLT_DIR/tests/phpunit --group=deploy
-    skip_cleanup: true
-    on:
-      branch: $DEPLOY_SOURCE_BRANCH
-      php: 5.6
-  - provider: script
     # Deploys build artifact's source branch to acquia-pso/blted8 on GitHub.
     script: ${BLT_DIR}/scripts/blt/ci/internal/deploy_blted8.sh
     skip_cleanup: true
     on:
       branch: $DEPLOY_SOURCE_BRANCH
       php: 5.6
+      condition: $DRUPAL_CORE_VERSION = default

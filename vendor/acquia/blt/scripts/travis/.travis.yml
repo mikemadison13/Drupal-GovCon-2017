@@ -1,8 +1,10 @@
-# Note that the example .travis.yml file for child projects lives in /install.
-sudo: false
+sudo: true
 language: php
 dist: trusty
 
+# Adjust the version of PHP to match your production environment.
+# Making this version number greater than the production environment can have unintended consequences
+# including a non-functional prod environment.
 php:
   - 5.6
 
@@ -26,7 +28,7 @@ cache:
   - "$HOME/.drush/cache"
   - "$HOME/.npm"
   - "$HOME/.nvm"
-  - "vendor"
+  - ".rules"
   # Cache front end dependencies to dramatically improve build time.
   # - "docroot/themes/custom/mytheme/node_modules"
   # - "docroot/themes/custom/mytheme/bower_components"
@@ -57,6 +59,7 @@ install:
 script:
   - source ${BLT_DIR}/scripts/travis/run_tests
 
+# The version below MUST match the php version indicated at the top of this file, otherwise the artifact won't build.
 deploy:
    - provider: script
      script: "${BLT_DIR}/scripts/travis/deploy_branch"

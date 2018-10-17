@@ -5,14 +5,15 @@ namespace Acquia\Blt\Robo\Commands\Setup;
 use Acquia\Blt\Robo\BltTasks;
 
 /**
- * Defines commands in the "setup:build" namespace.
+ * Defines commands in the "recipes:cloud-hooks" namespace.
  */
 class CloudHooksCommand extends BltTasks {
 
   /**
    * Installs Acquia cloud hooks.
    *
-   * @command setup:cloud-hooks
+   * @command recipes:cloud-hooks:init
+   * @aliases rchi setup:cloud-hooks
    */
   public function copy() {
     $destination = $this->getConfigValue('repo.root') . '/hooks';
@@ -21,6 +22,9 @@ class CloudHooksCommand extends BltTasks {
     $result = $this->taskCopyDir([
       $this->getConfigValue('blt.root') . '/scripts/cloud-hooks/hooks' => $destination,
     ])
+      ->run();
+    $this->taskFilesystemStack()
+      ->chmod($destination, 0755, 0000, TRUE)
       ->run();
 
     return $result;

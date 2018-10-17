@@ -28,13 +28,11 @@ class InheritedProfileTest extends BrowserTestBase {
     // Check that stable is the default theme.
     $this->assertEquals('stable', $this->config('system.theme')->get('default'));
 
-    // Check the excluded_dependencies flag on installation profiles.
+    // Check that parent dependencies are installed.
     $this->assertTrue(\Drupal::moduleHandler()->moduleExists('config'));
-    $this->assertFalse(\Drupal::moduleHandler()->moduleExists('page_cache'));
 
-    // Check that all themes were installed, except excluded ones.
+    // Check that all themes were installed.
     $this->assertTrue(\Drupal::service('theme_handler')->themeExists('stable'));
-    $this->assertFalse(\Drupal::service('theme_handler')->themeExists('classy'));
   }
 
 }

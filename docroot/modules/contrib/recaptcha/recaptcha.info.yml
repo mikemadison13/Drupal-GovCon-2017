@@ -5,4 +5,4 @@ package: Spam control
 core: 8.x
 configure: recaptcha.admin_settings_form
 dependencies:
-  - captcha
+  - captcha:captcha

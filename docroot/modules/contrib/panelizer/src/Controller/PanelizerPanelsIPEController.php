@@ -6,7 +6,9 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\panelizer\PanelizerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,6 +61,13 @@ class PanelizerPanelsIPEController extends ControllerBase {
    * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
    */
   public function revertToDefault(FieldableEntityInterface $entity, $view_mode) {
+    $langcode = $this->languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+    if ($entity instanceof TranslatableInterface
+      && $entity->hasTranslation($langcode)
+      && $entity->language()->getId() !== $langcode) {
+      $entity = $entity->getTranslation($langcode);
+    }
+
     // Get the bundle specific default display as a fallback.
     $settings = $this->panelizer->getPanelizerSettings($entity->getEntityTypeId(), $entity->bundle(), $view_mode);
     $default = $settings['default'];

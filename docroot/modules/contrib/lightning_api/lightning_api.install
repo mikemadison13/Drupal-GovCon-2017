@@ -2,7 +2,6 @@
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Url;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Implements hook_install().
@@ -10,9 +9,9 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 function lightning_api_install() {
   $module_handler = \Drupal::moduleHandler();
 
-  // If the openapi_redoc and jsonapi modules are installed, give the API
+  // If the openapi_ui_redoc and jsonapi modules are installed, give the API
   // documentation a nice path alias.
-  if ($module_handler->moduleExists('openapi_redoc') && $module_handler->moduleExists('jsonapi')) {
+  if ($module_handler->moduleExists('openapi_ui_redoc') && $module_handler->moduleExists('jsonapi')) {
     /** @var \Drupal\Core\Path\AliasStorageInterface $alias_storage */
     $alias_storage = \Drupal::service('path.alias_storage');
 
@@ -21,16 +20,12 @@ function lightning_api_install() {
       LanguageInterface::LANGCODE_NOT_SPECIFIED
     );
     if (empty($path)) {
-      $route = 'openapi_redoc.jsonapi';
-      try {
-        \Drupal::urlGenerator()->getPathFromRoute($route);
-      }
-      catch (RouteNotFoundException $e) {
-        \Drupal::service('router.builder')->rebuild();
-      }
-
+      $route_parameters = [
+        'openapi_ui' => 'redoc',
+        'openapi_generator' => 'jsonapi',
+      ];
       $alias_storage->save(
-        '/' . Url::fromRoute($route)->getInternalPath(),
+        Url::fromRoute('openapi.docs', $route_parameters)->toString(),
         '/api-docs'
       );
     }
@@ -52,4 +47,58 @@ function lightning_api_update_8001() {
  */
 function lightning_api_update_8002() {
   \Drupal::service('module_installer')->install(['consumers']);
+}
+
+/**
+ * Installs the new versions of 'ReDoc for OpenAPI UI' and
+ * 'Swagger UI for OpenAPI UI' modules, and removes the old ones.
+ *
+ * This is needed, because the corresponding openapi update hook only installs
+ * them if the old versions are enabled.
+ *
+ * @see openapi_update_8100
+ */
+function lightning_api_update_8300() {
+  /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+  $module_installer = \Drupal::service('module_installer');
+  $uninstalled = $module_installer->uninstall([
+    'openapi_redoc',
+    'openapi_swagger_ui',
+  ]);
+
+  // If the uninstall failed -- for example, the openapi_redoc and
+  // openapi_swagger_ui modules were physically unavailable, as they would be if
+  // they were brought in by Composer back when they were all part of the
+  // openapi project before beta2 -- we need to forcibly remove them from the
+  // core.extension config so that they are actually uninstalled.
+  if (!$uninstalled) {
+    \Drupal::configFactory()
+      ->getEditable('core.extension')
+      ->clear('module.openapi_redoc')
+      ->clear('module.openapi_swagger_ui')
+      ->save();
+
+    Drupal::keyValue('system.schema')->deleteMultiple([
+      'openapi_redoc',
+      'openapi_swagger_ui',
+    ]);
+  }
+
+  $module_installer->install([
+    'openapi_ui_swagger',
+    'openapi_ui_redoc',
+  ]);
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function lightning_api_update_dependencies() {
+  return [
+    'lightning_api' => [
+      8300 => [
+        'openapi' => 8100,
+      ],
+    ],
+  ];
 }

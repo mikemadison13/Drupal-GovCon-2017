@@ -42,7 +42,8 @@ class UpdateManagerTest extends UnitTestCase {
     $update_manager = new TestUpdateManager(
       new \ArrayIterator,
       $this->createMock('\Drupal\Core\DependencyInjection\ClassResolverInterface'),
-      $this->createMock('\Drupal\Core\Config\ConfigFactoryInterface')
+      $this->createMock('\Drupal\Core\Config\ConfigFactoryInterface'),
+      $this->createMock('\Drupal\Core\Extension\ModuleExtensionList')
     );
 
     $tasks = $update_manager->getTasks(new TestUpdateHandler);

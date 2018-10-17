@@ -4,7 +4,10 @@ namespace Acquia\Blt\Update;
 
 use Acquia\Blt\Annotations\Update;
 use Acquia\Blt\Robo\Common\ArrayManipulator;
-use function file_exists;
+use Dflydev\DotAccessData\Data;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Process;
+use Acquia\Blt\Robo\Common\ComposerMunge;
 
 /**
  * Defines scripted updates for specific version deltas of BLT.
@@ -57,7 +60,7 @@ class Updates {
     // Delete symlink to hooks directory. Individual git hooks are now symlinked, not the entire directory.
     $this->updater->deleteFile('.git/hooks');
     $this->updater->getOutput()
-      ->writeln('.git/hooks was deleted. Please re-run setup:git-hooks to install git hooks locally.');
+      ->writeln('.git/hooks was deleted. Please re-run blt:init:git-hooks to install git hooks locally.');
 
     $this->updater->removeComposerRepository('https://github.com/mortenson/composer-patches');
     $this->updater->removeComposerScript('post-create-project-cmd');
@@ -71,7 +74,7 @@ class Updates {
     }
 
     $this->updater->getOutput()
-      ->writeln("<comment>You MUST remove .travis.yml and re-initialize Travis CI support with `blt ci:travis:init`.</comment>");
+      ->writeln("<comment>You MUST remove .travis.yml and re-initialize Travis CI support with `blt recipes:ci:travis:init`.</comment>");
   }
 
   /**
@@ -264,7 +267,7 @@ class Updates {
     $messages = [
       'BLT will no longer directly modify your composer.json requirements!',
       "Default composer.json values from BLT are now merged into your root composer.json via wikimedia/composer-merge-plugin. Please see the following documentation for more information:\n",
-      "  - http://blt.readthedocs.io/en/8.x/readme/updating-blt/#modifying-blts-default-composer-values\n   - https://github.com/wikimedia/composer-merge-plugin"
+      "  - http://blt.readthedocs.io/en/9.x/readme/updating-blt/#modifying-blts-default-composer-values\n   - https://github.com/wikimedia/composer-merge-plugin"
     ];
     $formattedBlock = $this->updater->getFormatter()->formatBlock($messages, 'ice');
 
@@ -319,11 +322,10 @@ class Updates {
       "You have updated to a new major version of BLT, which introduces backwards-incompatible changes.",
       "You may need to perform the following manual update steps:",
       "  - View the full list of commands via `blt list`, <comment>BLT commands have changed</comment>",
-      "  - Re-initialize default Drupal VM configuration via `blt vm:config`.",
-      "  - Re-initialize default Travis CI configuration via `blt ci:travis:init`.
-         - Re-initialize default Acquia Pipelines configuration via `blt ci:pipelines:init`.",
+      "  - Re-initialize default Travis CI configuration via `blt recipes:ci:travis:init`.
+         - Re-initialize default Acquia Pipelines configuration via `blt recipes:ci:pipelines:init`.",
       "  - Port custom Phing commands to Robo. All Phing commands are now obsolete. See:",
-      "    http://blt.readthedocs.io/en/8.x/readme/extending-blt/",
+      "    http://blt.readthedocs.io/en/9.x/readme/extending-blt/",
     ];
     if (file_exists($this->updater->getRepoRoot() . '/blt/composer.overrides.json')) {
       $messages[] = "  - <comment>blt/composer.overrides.json</comment> is no longer necessary.";
@@ -435,15 +437,173 @@ class Updates {
    */
   public function update_8009011() {
     $project_yml = $this->updater->getProjectYml();
-    if (isset($project_yml['vm']) && $project_yml['vm']['enable']) {
+    if (isset($project_yml['vm']['enable'])) {
+      // Add to project.local.yml.
+      $project_local_yml = $this->updater->getProjectLocalYml();
+      $project_local_yml['vm']['enable'] = $project_yml['vm']['enable'];
+      $this->updater->writeProjectLocalYml($project_local_yml);
       // Remove from project.yml.
       unset($project_yml['vm']);
       $this->updater->writeProjectYml($project_yml);
-      // Add to project.local.yml.
-      $project_local_yml = $this->updater->getProjectLocalYml();
-      $project_local_yml['vm']['enable'] = TRUE;
-      $this->updater->writeProjectLocalYml($project_local_yml);
     }
 
   }
+
+  /**
+   * 9.0.0.
+   *
+   * @Update(
+   *    version = "9000000",
+   *    description = "Convert Drush 8 files to Drush 9."
+   * )
+   */
+  public function update_9000000() {
+    $messages = [];
+    $this->updater->syncWithTemplate('.gitignore', TRUE);
+    $this->updater->syncWithTemplate('phpcs.xml.dist', TRUE);
+    if (file_exists($this->updater->getRepoRoot() . '/phpcs.xml')) {
+      $messages[] = 'phpcs.xml.dist has been updated. Review it for changes that should be copied to your custom phpcs.xml';
+    }
+    $this->updater->syncWithTemplate('tests/behat/example.local.yml', TRUE);
+    $this->updater->moveFile('drush/site-aliases/aliases.drushrc.php', 'drush/site-aliases/legacy.aliases.drushrc.php');
+    $this->updater->replaceInFile('drush/site-aliases/legacy.aliases.drushrc.php', "' . drush_server_home() . '", '$HOME');
+    $process = new Process(
+      "./vendor/bin/drush site:alias-convert {$this->updater->getRepoRoot()}/drush/sites --sources={$this->updater->getRepoRoot()}/drush/site-aliases",
+      $this->updater->getRepoRoot()
+    );
+    $process->run();
+
+    $files = [
+      'docroot/sites/default/local.drushrc.php',
+      'legacy.aliases.drushrc.php',
+      'drush/drushrc.php',
+      'drush/site-aliases/legacy.aliases.drushrc.php',
+      'drush/sites/.checksums',
+      'example.acsf.aliases.yml',
+      'example.local.aliases.yml',
+      'tests/behat/local.yml',
+    ];
+    foreach ($files as $key => $file) {
+      if (!file_exists($file)) {
+        unset($files[$key]);
+      }
+    }
+    $this->updater->getFileSystem()->chmod('docroot/sites/default', 0755);
+    $this->updater->getFileSystem()->chmod($files, 0777);
+    $this->updater->deleteFile($files);
+    $this->updater->getFileSystem()->mirror('drush/site-aliases', 'drush/sites');
+    $this->updater->getFileSystem()->remove('drush/site-aliases');
+
+    $finder = new Finder();
+    $finder->files()->in(['drush/sites'])->name('*.md5');
+    $this->updater->getFileSystem()->remove(iterator_to_array($finder->getIterator()));
+    $messages[] = "BLT attempted to upgrade your project-specific drush aliases. Please review and manually convert any that remain.";
+
+    $this->updater->moveFile('blt/example.project.local.yml', 'blt/example.local.blt.yml', TRUE);
+    $this->updater->moveFile('blt/project.local.yml', 'blt/local.blt.yml', TRUE);
+    $this->updater->moveFile('blt/project.yml', 'blt/blt.yml', TRUE);
+    $this->updater->moveFile('blt/ci.yml', 'blt/ci.blt.yml', TRUE);
+    $messages[] = "BLT configuration files have been renamed.";
+
+    $rekey_map = [
+      'target-hooks.frontend-setup' => 'target-hooks.frontend-reqs',
+      'target-hooks.frontend-build' => 'target-hooks.frontend-assets',
+      'target-hooks' => 'command-hooks',
+    ];
+
+    $project_yml = $this->updater->getProjectYml();
+    $project_config = new Data($project_yml);
+    foreach ($rekey_map as $original => $new) {
+      $value = $project_config->get($original);
+      $project_config->set($new, $value);
+      $project_config->remove($original);
+    }
+    $this->updater->writeProjectYml($project_yml);
+
+    if (file_exists($this->updater->projectLocalYmlFilepath)) {
+      $project_local_yml = $this->updater->getProjectLocalYml();
+      unset($project_local_yml['drush']['default_alias']);
+      unset($project_local_yml['drush']['aliases']['local']);
+      $this->updater->writeProjectLocalYml($project_local_yml);;
+    }
+
+    $process = new Process("blt blt:init:settings", $this->updater->getRepoRoot());
+    $process->run();
+
+    $formattedBlock = $this->updater->getFormatter()->formatBlock($messages, 'ice');
+    $this->updater->getOutput()->writeln("");
+    $this->updater->getOutput()->writeln($formattedBlock);
+    $this->updater->getOutput()->writeln("");
+  }
+
+  /**
+   * 9.1.0-alpha1.
+   *
+   * @Update(
+   *    version = "9001000",
+   *    description = "Add deployment_identifier to project .gitignore and re-syncs ci.blt.yml."
+   * )
+   */
+  public function update_9001000() {
+    $this->updater->syncWithTemplate('.gitignore', TRUE);
+    $messages = ['.gitignore has been updated. Review it for any custom changes that may have been overwritten.'];
+
+    $formattedBlock = $this->updater->getFormatter()->formatBlock($messages, 'ice');
+    $this->updater->getOutput()->writeln("");
+    $this->updater->getOutput()->writeln($formattedBlock);
+    $this->updater->getOutput()->writeln("");
+
+    $this->updater->syncWithTemplate('blt/ci.blt.yml', TRUE);
+    $messages = ['blt/ci.blt.yml has been updated. Review it for any custom changes that may have been overwritten.'];
+
+    $formattedBlock = $this->updater->getFormatter()->formatBlock($messages, 'ice');
+    $this->updater->getOutput()->writeln("");
+    $this->updater->getOutput()->writeln($formattedBlock);
+    $this->updater->getOutput()->writeln("");
+
+    // Update composer.json to include new BLT required/suggested files.
+    // Pulls in wikimedia/composer-merge-plugin and composer/installers settings.
+    $project_composer_json = $this->updater->getRepoRoot() . '/composer.json';
+    $template_composer_json = $this->updater->getBltRoot() . '/template/composer.json';
+    $munged_json = ComposerMunge::mungeFiles($project_composer_json, $template_composer_json);
+    $bytes = file_put_contents($project_composer_json, $munged_json);
+    if (!$bytes) {
+      $messages = ["Could not update $project_composer_json."];
+    }
+    else {
+      $messages = ["Updated $project_composer_json. Review changes, then re-run composer update."];
+    }
+
+    $formattedBlock = $this->updater->getFormatter()->formatBlock($messages, 'ice');
+    $this->updater->getOutput()->writeln("");
+    $this->updater->getOutput()->writeln($formattedBlock);
+    $this->updater->getOutput()->writeln("");
+  }
+
+  /**
+   * 9.1.0.
+   *
+   * @Update(
+   *    version = "9001001",
+   *    description = "Adjust Drush 9 Composer contrib directory."
+   * )
+   */
+  public function update_9001001() {
+    $this->updater->syncWithTemplate('.gitignore', TRUE);
+    $composer_json = $this->updater->getComposerJson();
+    if (isset($composer_json['extra']['installer-paths']['drush/contrib/{$name}'])) {
+      unset($composer_json['extra']['installer-paths']['drush/contrib/{$name}']);
+    }
+    $composer_json['extra']['installer-paths']['drush/Commands/{$name}'][] = 'type:drupal-drush';
+    $this->updater->writeComposerJson($composer_json);
+    $messages = [
+      "Your composer.json file has been modified to be compatible with Drush 9.",
+      "You must execute `composer update --lock` to update your lock file.",
+    ];
+    $formattedBlock = $this->updater->getFormatter()->formatBlock($messages, 'ice');
+    $this->updater->getOutput()->writeln("");
+    $this->updater->getOutput()->writeln($formattedBlock);
+    $this->updater->getOutput()->writeln("");
+  }
+
 }

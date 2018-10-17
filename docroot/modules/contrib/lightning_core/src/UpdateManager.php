@@ -5,6 +5,7 @@ namespace Drupal\lightning_core;
 use Drupal\Component\Plugin\Discovery\DiscoveryInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Plugin\Discovery\AnnotatedClassDiscovery;
 use Drupal\lightning_core\Annotation\Update;
 use phpDocumentor\Reflection\DocBlockFactory;
@@ -49,6 +50,13 @@ class UpdateManager {
   protected $configFactory;
 
   /**
+   * The module extension list.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
+   */
+  protected $moduleExtensionList;
+
+  /**
    * The doc block factory.
    *
    * @var \phpDocumentor\Reflection\DocBlockFactoryInterface
@@ -64,14 +72,17 @@ class UpdateManager {
    *   The class resolver service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
+   * @param \Drupal\Core\Extension\ModuleExtensionList
+   *   The module extension list.
    * @param \Drupal\Component\Plugin\Discovery\DiscoveryInterface $discovery
    *   (optional) The update discovery handler.
    * @param \phpDocumentor\Reflection\DocBlockFactoryInterface $doc_block_factory
    *   (optional) The doc block factory.
    */
-  public function __construct(\Traversable $namespaces, ClassResolverInterface $class_resolver, ConfigFactoryInterface $config_factory, DiscoveryInterface $discovery = NULL, DocBlockFactoryInterface $doc_block_factory = NULL) {
+  public function __construct(\Traversable $namespaces, ClassResolverInterface $class_resolver, ConfigFactoryInterface $config_factory, ModuleExtensionList $module_extension_list, DiscoveryInterface $discovery = NULL, DocBlockFactoryInterface $doc_block_factory = NULL) {
     $this->classResolver = $class_resolver;
     $this->configFactory = $config_factory;
+    $this->moduleExtensionList = $module_extension_list;
     $this->discovery = $discovery ?: new AnnotatedClassDiscovery('Update', $namespaces, Update::class);
     $this->docBlockFactory = $doc_block_factory ?: DocBlockFactory::createInstance();
   }
@@ -87,10 +98,10 @@ class UpdateManager {
    *   could not be determined.
    */
   public function getVersion($module) {
-    $info = system_get_info('module', $module);
+    $info = $this->moduleExtensionList->getAllAvailableInfo();
 
-    if (isset($info['version'])) {
-      return static::toSemanticVersion($info['version']);
+    if (isset($info[$module]['version'])) {
+      return static::toSemanticVersion($info[$module]['version']);
     }
     else {
       // Follow core's model and try to determine the target version of the

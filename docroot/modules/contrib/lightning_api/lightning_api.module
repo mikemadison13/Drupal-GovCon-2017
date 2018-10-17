@@ -89,9 +89,13 @@ function lightning_api_entity_operation(EntityInterface $entity) {
       $entity->label()
     ));
 
+    $route_parameters = [
+      'openapi_ui' => 'redoc',
+      'openapi_generator' => 'jsonapi',
+    ];
     $operations['api-documentation'] = [
       'title' => t('View API documentation'),
-      'url' => Url::fromRoute('openapi_redoc.jsonapi', [], ['fragment' => $fragment]),
+      'url' => Url::fromRoute('openapi.docs', $route_parameters, ['fragment' => $fragment]),
       'weight' => 51,
     ];
   }

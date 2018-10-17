@@ -194,6 +194,10 @@ function drush_acsf_site_scrub() {
     \Drupal::keyValueExpirable($bin)->deleteAll();
   }
 
+  // Raise the database connection wait timeout (default 10 minutes) so mysql
+  // will not have "gone away" after the separate sql-sanitize process ends.
+  \Drupal::database()->query('SET session wait_timeout=3600');
+
   // Run the sql-sanitize which allows customers to use custom scrubbing. We
   // will handle email addresses and passwords ourselves.
   drush_invoke_process('@self', 'sql-sanitize', array(), array('sanitize-email' => 'no', 'sanitize-password' => 'no'));

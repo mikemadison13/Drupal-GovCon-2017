@@ -1,20 +1,24 @@
 @lightning @api @lightning_media @javascript
 Feature: Bulk uploading media assets
 
-  # We have no idea why, but this test persistently fails on Travis CI, but
-  # invariably passes locally. It works. But Travis doesn't pass it, and
-  # produces no errors. For now, we are commenting it out so we can move on
-  # with our lives. Hopefully, we'll eventually be able to test this again.
+  # This test may produce a false negative if the browser is on a different
+  # host (i.e., the test is running a Docker container and communicating
+  # with headless Chrome on the host system). The reason for this is that Mink
+  # will compute an absolute path to the file *in the container*, but the
+  # browser will not be able to load the file from that path (since it's not
+  # running in the container), and the upload will fail. So, this test can
+  # only really be run locally.
   @72286b5d
   Scenario: Bulk uploading media assets
     Given I am logged in as a user with the "access media overview, create media, update media, dropzone upload files" permissions
-    When I visit "/admin/content/media"
-    And I click "Bulk upload"
-    # Wait for Dropzone to be fully initialized.
-    And I wait 5 seconds
-    And I attach the file "test.jpg" to the dropzone
-#    And I attach the file "test.pdf" to the dropzone
-    And I press "Continue"
-    And I press "Save"
-#    And I press "Save"
-    Then I should be visiting a media item
+    When I upload the following files:
+    """
+    test.jpg
+    test.mp3
+    test.mp4
+    test.pdf
+    """
+    Then I should see "test.jpg" in the media library
+    And I should see "test.mp3" in the media library
+    And I should see "test.mp4" in the media library
+    And I should see "test.pdf" in the media library

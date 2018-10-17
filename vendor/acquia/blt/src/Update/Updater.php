@@ -2,6 +2,7 @@
 
 namespace Acquia\Blt\Update;
 
+use Acquia\Blt\Robo\Common\YamlMunge;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\IndexedReader;
@@ -13,7 +14,6 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  *
@@ -83,8 +83,8 @@ class Updater {
     $this->composerRequiredJsonFilepath = $this->getBltRoot() . '/composer.required.json';
     $this->composerSuggestedJsonFilepath = $this->getBltRoot() . '/composer.suggested.json';
     $this->templateComposerJsonFilepath = $this->getBltRoot() . '/template/composer.json';
-    $this->projectYmlFilepath = $this->repoRoot . '/blt/project.yml';
-    $this->projectLocalYmlFilepath = $this->repoRoot . '/blt/project.local.yml';
+    $this->projectYmlFilepath = $this->repoRoot . '/blt/blt.yml';
+    $this->projectLocalYmlFilepath = $this->repoRoot . '/blt/local.blt.yml';
     $this->formatter = new FormatterHelper();
 
     // Create "ice" style.
@@ -192,10 +192,10 @@ class Updater {
    * Gets all applicable updates for a given version delta.
    *
    * @param string $starting_version
-   *   The starting version. E.g., 8005000.
+   *   The starting version, e.g., 8005000.
    *
    * @param string $ending_version
-   *   The ending version. E.g., 8005001.
+   *   The ending version, e.g., 8005001.
    *
    * @return array
    *   An array of applicable update methods, keyed by method name. Each row
@@ -299,7 +299,7 @@ class Updater {
    * Removes a patch from repo's root composer.json file.
    *
    * @param string $package
-   *   The composer package name. E.g., 'drupal/features'.
+   *   The composer package name, e.g., 'drupal/features'.
    *
    * @param string $url
    *   The URL of the patch.
@@ -355,7 +355,7 @@ class Updater {
    * Removes a repository from composer.json using the repository url[.
    *
    * @param string $script_key
-   *   The key of the scripts to remove. E.g., post-create-project-cmd.
+   *   The key of the scripts to remove, e.g., post-create-project-cmd.
    *
    * @return bool
    *   TRUE if script was removed, otherwise false.
@@ -444,32 +444,28 @@ class Updater {
    * @return mixed
    */
   public function getProjectYml() {
-    $project_yml = Yaml::parse(file_get_contents($this->projectYmlFilepath));
-
-    return $project_yml;
+    return YamlMunge::parseFile($this->projectYmlFilepath);
   }
 
   /**
    * @return mixed
    */
   public function getProjectLocalYml() {
-    $project_yml = Yaml::parse(file_get_contents($this->projectLocalYmlFilepath));
-
-    return $project_yml;
+    return YamlMunge::parseFile($this->projectLocalYmlFilepath);
   }
 
   /**
    * @param $contents
    */
   public function writeProjectYml($contents) {
-    file_put_contents($this->projectYmlFilepath, Yaml::dump($contents, 3, 2));
+    YamlMunge::writeFile($this->projectYmlFilepath, $contents);
   }
 
   /**
    * @param $contents
    */
   public function writeProjectLocalYml($contents) {
-    file_put_contents($this->projectLocalYmlFilepath, Yaml::dump($contents, 3, 2));
+    YamlMunge::writeFile($this->projectLocalYmlFilepath, $contents);
   }
 
   /**
@@ -504,8 +500,10 @@ class Updater {
   /**
    * Copies a file from the BLT template to the repository.
    *
-   * @param string $source
+   * @param string $filePath
    *   The filepath, relative to the BLT template directory.
+   * @param bool $overwrite
+   *   If true, target files newer than origin files are overwritten.
    */
   public function syncWithTemplate($filePath, $overwrite = FALSE) {
     $sourcePath = $this->getBltRoot() . '/template/' . $filePath;
@@ -542,11 +540,15 @@ class Updater {
   }
 
   /**
-   * @param $filepath
+   * @param string|array $filepaths
    */
-  public function deleteFile($filepath) {
-    $abs_path = $this->getRepoRoot() . '/' . $filepath;
-    $this->getFileSystem()->remove($abs_path);
+  public function deleteFile($filepaths) {
+    $filepaths = (array) $filepaths;
+    $files = [];
+    foreach ($filepaths as $filepath) {
+      $files[] = $this->getRepoRoot() . '/' . $filepath;
+    }
+    $this->getFileSystem()->remove($files);
   }
 
 }

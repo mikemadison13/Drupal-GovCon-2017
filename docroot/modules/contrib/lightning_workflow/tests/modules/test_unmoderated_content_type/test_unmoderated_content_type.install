@@ -1,0 +1,20 @@
+<?php
+
+use Drupal\node\Entity\NodeType;
+
+/**
+ * Implements hook_install().
+ */
+function test_unmoderated_content_type_install() {
+  NodeType::create([
+    'type' => 'unmoderated',
+    'name' => 'Unmoderated',
+  ])->save();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function test_unmoderated_content_type_uninstall() {
+  NodeType::load('unmoderated')->delete();
+}

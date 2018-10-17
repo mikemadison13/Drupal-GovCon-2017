@@ -2,7 +2,7 @@
 
 namespace Drupal\simple_oauth\Service\Filesystem;
 
-use Drupal\Core\File\FileSystem as CoreFileSystem;
+use Drupal\Core\File\FileSystemInterface as CoreFileSystemInterface;
 
 /**
  * @internal
@@ -19,7 +19,7 @@ class Filesystem implements FilesystemInterface {
    *
    * @param \Drupal\Core\File\FileSystem $file_system
    */
-  public function __construct(CoreFileSystem $file_system) {
+  public function __construct(CoreFileSystemInterface $file_system) {
     $this->fileSystem = $file_system;
   }
 

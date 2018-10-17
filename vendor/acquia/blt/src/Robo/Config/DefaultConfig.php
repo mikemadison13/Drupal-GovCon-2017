@@ -3,7 +3,6 @@
 namespace Acquia\Blt\Robo\Config;
 
 use Acquia\Blt\Robo\Exceptions\BltException;
-use Consolidation\Config\Loader\YamlConfigLoader;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -27,7 +26,7 @@ class DefaultConfig extends BltConfig {
   }
 
   /**
-   * Gets the BLT root directory. E.g., /vendor/acquia/blt.
+   * Gets the BLT root directory, e.g., /vendor/acquia/blt.
    *
    * @return string
    *   THe filepath for the Drupal docroot.
@@ -52,51 +51,34 @@ class DefaultConfig extends BltConfig {
    * Populates configuration settings not available during construction.
    */
   public function populateHelperConfig() {
-    $defaultAlias = $this->get('drush.default_alias');
-    $alias = $defaultAlias == 'self' ? '' : $defaultAlias;
-    $this->set('drush.alias', $alias);
+    $this->set('drush.alias', $this->get('drush.default_alias'));
+
     if (!$this->get('multisites')) {
       $this->set('multisites', $this->getSiteDirs());
     }
+
+    $multisites = $this->get('multisites');
+    $first_multisite = reset($multisites);
+    $site = $this->get('site', $first_multisite);
+    $this->setSite($site);
   }
 
   /**
-   * Sets multisite context by settings site-specific config values.
-   *
-   * @param string $site_name
-   *   The name of a multisite. E.g., if docroot/sites/example.com is the site,
-   *   $site_name would be example.com.
+   * @param $site
    */
-  public function setSiteConfig($site_name) {
-    $this->config->set('site', $site_name);
-    if (!$this->config->get('drush.uri')) {
-      $this->config->set('drush.uri', $site_name);
+  public function setSite($site) {
+    $this->config->set('site', $site);
+    if (!$this->get('drush.uri') && $site != 'default') {
+      $this->set('drush.uri', $site);
     }
 
-    // After having set site, this should now return the multisite
-    // specific config.
-    $site_config_file = $this->get('blt.config-files.multisite');
-    $this->importYamlFile($site_config_file);
-  }
-
-  /**
-   * Sets multisite context by settings site-specific config values.
-   *
-   * @param string $file_path
-   *   The file path to the config yaml file.
-   */
-  public function importYamlFile($file_path) {
-    $loader = new YamlConfigLoader();
-    $processor = new YamlConfigProcessor();
-    $processor->add($this->config->export());
-    $processor->extend($loader->load($file_path));
-    $this->config->import($processor->export());
   }
 
   /**
    * Gets an array of sites for the Drupal application.
    *
-   * I.e., sites under docroot/sites, not including acsf 'g' pseudo-site.
+   * I.e., sites under docroot/sites, not including acsf 'g' pseudo-site and
+   * 'settings' directory globbed in blt.settings.php.
    *
    * @return array
    *   An array of sites.
@@ -116,7 +98,8 @@ class DefaultConfig extends BltConfig {
       ->in($sites_dir)
       ->directories()
       ->depth('< 1')
-      ->exclude(['g']);
+      ->exclude(['g', 'settings'])
+      ->sortByName();
     foreach ($dirs->getIterator() as $dir) {
       $sites[] = $dir->getRelativePathname();
     }

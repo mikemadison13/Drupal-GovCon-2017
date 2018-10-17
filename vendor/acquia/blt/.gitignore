@@ -1,9 +1,12 @@
-# Ignore blt-project files
-blt-project/composer.lock
-blt-project/vendor
+# Ignore composer.lock to allow highest/lowest testing.
+composer.lock
+
+# Ignore blted8 files
+blted8/composer.lock
+blted8/vendor
 
 # Ignore config files
-/project.yml
+/blt.yml
 local.*
 
 build
@@ -118,3 +121,9 @@ template/composer.lock
 CHANGELOG.partial
 build
 cache/commands/*
+
+# Ignore the local deployment identifier.
+deployment_identifier
+
+# Ignore phpunit.xml, only phpunit.xml.dist should be committed.
+phpunit.xml

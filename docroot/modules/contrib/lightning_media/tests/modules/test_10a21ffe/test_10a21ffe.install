@@ -1,6 +1,7 @@
 <?php
 
 use Drupal\entity_browser\Element\EntityBrowserElement;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Implements hook_install().
@@ -27,6 +28,6 @@ function test_10a21ffe_install() {
  * Implements hook_uninstall().
  */
 function test_10a21ffe_uninstall() {
-  // entity_load('field_config', 'node.page.field_hero_image')->delete();
-  // entity_load('field_storage_config', 'node.field_hero_image')->delete();
+  FieldConfig::loadByName('node', 'page', 'field_hero_image')->delete();
+  field_purge_batch(10);
 }

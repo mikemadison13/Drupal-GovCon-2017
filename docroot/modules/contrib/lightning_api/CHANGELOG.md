@@ -1,3 +1,12 @@
+## 2.7.0
+* Fixed a persistent warning about openapi_redoc not being present in the
+  file system after updating to beta2. (Issue #2996108)
+
+## 2.6.0
+* Updated OpenAPI module to 1.0-beta2, which split out openapi_redoc and
+  openapi_swagger into separate modules (which are now brought in by
+  Composer). (#33)
+
 ## 2.5.0
 * Allow Lightning Core 3.x and Drupal core 8.6.x.
 
