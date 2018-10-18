@@ -5,7 +5,7 @@ namespace Drupal\memcache;
 use Drupal\Component\Assertion\Inspector;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\CacheTagsChecksumInterface;
-use Drupal\memcache\Invalidator\TimestampInvalidatorInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 
 /**
  * Defines a Memcache cache backend.
@@ -36,34 +36,24 @@ class MemcacheBackend implements CacheBackendInterface {
   /**
    * The cache tags checksum provider.
    *
-   * @var \Drupal\Core\Cache\CacheTagsChecksumInterface|\Drupal\Core\Cache\CacheTagsInvalidatorInterface
+   * @var \Drupal\Core\Cache\CacheTagsChecksumInterface
    */
   protected $checksumProvider;
 
   /**
-   * The timestamp invalidation provider.
-   *
-   * @var \Drupal\memcache\Invalidator\TimestampInvalidatorInterface
-   */
-  protected $timestampInvalidator;
-
-  /**
    * Constructs a MemcacheBackend object.
-   *
+   *\Drupal\Core\Site\Settings
    * @param string $bin
    *   The bin name.
    * @param \Drupal\memcache\DrupalMemcacheInterface $memcache
    *   The memcache object.
    * @param \Drupal\Core\Cache\CacheTagsChecksumInterface $checksum_provider
    *   The cache tags checksum service.
-   * @param \Drupal\memcache\Invalidator\TimestampInvalidatorInterface $timestamp_invalidator
-   *   The timestamp invalidation provider.
    */
-  public function __construct($bin, DrupalMemcacheInterface $memcache, CacheTagsChecksumInterface $checksum_provider, TimestampInvalidatorInterface $timestamp_invalidator) {
+  public function __construct($bin, DrupalMemcacheInterface $memcache, CacheTagsChecksumInterface $checksum_provider) {
     $this->bin = $bin;
     $this->memcache = $memcache;
     $this->checksumProvider = $checksum_provider;
-    $this->timestampInvalidator = $timestamp_invalidator;
 
     $this->ensureBinDeletionTimeIsSet();
   }
@@ -113,7 +103,6 @@ class MemcacheBackend implements CacheBackendInterface {
    *   The cache item.
    *
    * @return bool
-   *   TRUE if valid, FALSE otherwise.
    */
   protected function valid($cid, \stdClass $cache) {
     $cache->valid = TRUE;
@@ -145,7 +134,7 @@ class MemcacheBackend implements CacheBackendInterface {
     // Create new cache object.
     $cache = new \stdClass();
     $cache->cid = $cid;
-    $cache->data = $data;
+    $cache->data = is_object($data) ? clone $data : $data;
     $cache->created = round(microtime(TRUE), 3);
     $cache->expire = $expire;
     $cache->tags = $tags;
@@ -189,14 +178,14 @@ class MemcacheBackend implements CacheBackendInterface {
    * {@inheritdoc}
    */
   public function deleteAll() {
-    $this->lastBinDeletionTime = $this->timestampInvalidator->invalidateTimestamp($this->bin);
+    $this->updateBinLastDeletionTime();
   }
 
   /**
    * {@inheritdoc}
    */
   public function invalidate($cid) {
-    $this->invalidateMultiple([$cid]);
+    $this->invalidateMultiple((array) $cid);
   }
 
   /**
@@ -240,7 +229,7 @@ class MemcacheBackend implements CacheBackendInterface {
    * {@inheritdoc}
    */
   public function removeBin() {
-    $this->lastBinDeletionTime = $this->timestampInvalidator->invalidateTimestamp($this->bin);
+    $this->updateBinLastDeletionTime();
   }
 
   /**
@@ -252,7 +241,7 @@ class MemcacheBackend implements CacheBackendInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * (@inheritdoc)
    */
   public function isEmpty() {
     // We do not know so err on the safe side? Not sure if we can know this?
@@ -262,14 +251,11 @@ class MemcacheBackend implements CacheBackendInterface {
   /**
    * Determines if a (micro)time is greater than the last bin deletion time.
    *
-   * @param float $item_microtime
-   *   A given (micro)time.
-   *
    * @internal
    *
+   * @param float $item_microtime
+   *
    * @return bool
-   *   TRUE if the (micro)time is greater than the last bin deletion time, FALSE
-   *   otherwise.
    */
   protected function timeIsGreaterThanBinDeletionTime($item_microtime) {
     $last_bin_deletion = $this->getBinLastDeletionTime();
@@ -280,7 +266,14 @@ class MemcacheBackend implements CacheBackendInterface {
       return FALSE;
     }
 
-    return $item_microtime > $last_bin_deletion;
+    // Clocks on a single server can drift. Multiple servers may have slightly
+    // differing opinions about the current time. Given that, do not assume
+    // 'now' on this server is always later than our stored timestamp.
+    // Also add 1 millisecond, to ensure that caches written earlier in the same
+    // millisecond are invalidated. It is possible that caches will be later in
+    // the same millisecond and are then incorrectly invalidated, but that only
+    // costs one additional roundtrip to the persistent cache.
+    return (($item_microtime + .001) > $last_bin_deletion);
   }
 
   /**
@@ -288,15 +281,31 @@ class MemcacheBackend implements CacheBackendInterface {
    *
    * @internal
    *
-   * @return float
-   *   The last invalidation timestamp of the tag.
+   * @return mixed
    */
   protected function getBinLastDeletionTime() {
     if (!isset($this->lastBinDeletionTime)) {
-      $this->lastBinDeletionTime = $this->timestampInvalidator->getLastInvalidationTimestamp($this->bin);
+      $this->lastBinDeletionTime = $this->memcache->get($this->getBinLastDeletionTimeKey());
     }
 
     return $this->lastBinDeletionTime;
+  }
+
+  /**
+   * Updates the last invalidation time for the bin.
+   *
+   * @internal
+   *
+   * @return bool|\Drupal\memcache\DrupalMemcacheInterface
+   */
+  protected function updateBinLastDeletionTime() {
+    $now = round(microtime(TRUE), 3);
+
+    $return = $this->memcache->set($this->getBinLastDeletionTimeKey(), $now);
+
+    $this->lastBinDeletionTime = $now;
+
+    return $return;
   }
 
   /**
@@ -306,8 +315,19 @@ class MemcacheBackend implements CacheBackendInterface {
    */
   protected function ensureBinDeletionTimeIsSet() {
     if (!$this->getBinLastDeletionTime()) {
-      $this->lastBinDeletionTime = $this->timestampInvalidator->invalidateTimestamp($this->bin);
+      $this->updateBinLastDeletionTime();
     }
+  }
+
+  /**
+   * Gets the invalidation time cache key.
+   *
+   * @internal
+   *
+   * @return string
+   */
+  protected function getBinLastDeletionTimeKey() {
+    return sprintf('bin_deletion:%s', $this->bin);
   }
 
 }

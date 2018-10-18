@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\memcache\MemcacheException.
+ */
+
 namespace Drupal\memcache;
 
 /**

@@ -19,3 +19,4 @@ class MemcacheLockFunctionalTest extends LockFunctionalTest {
   public static $modules = ['system_test', 'memcache', 'memcache_test'];
 
 }
+

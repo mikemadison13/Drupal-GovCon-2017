@@ -2,9 +2,6 @@
 
 namespace Drupal\memcache\Connection;
 
-/**
- * Defines the Memcache connection interface.
- */
 interface MemcacheConnectionInterface {
 
   /**

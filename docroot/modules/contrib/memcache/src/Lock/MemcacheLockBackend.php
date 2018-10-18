@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\memcache\MemcacheLockBackend.
+ */
+
 namespace Drupal\memcache\Lock;
 
 use Drupal\Core\Lock\LockBackendAbstract;
@@ -35,9 +40,7 @@ class MemcacheLockBackend extends LockBackendAbstract {
    * Constructs a new MemcacheLockBackend.
    *
    * @param string $bin
-   *   The bin name for this lock.
    * @param \Drupal\memcache\DrupalMemcacheInterface $memcache
-   *   The memcache wrapper object.
    */
   public function __construct($bin, DrupalMemcacheInterface $memcache) {
     $this->bin = $bin;
