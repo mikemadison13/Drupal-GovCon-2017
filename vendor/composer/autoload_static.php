@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
+class ComposerStaticInit5b7354dd91074a54466dca37efb2ac7c
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -129,6 +129,11 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
             'League\\Event\\' => 13,
             'League\\Container\\' => 17,
             'Lcobucci\\JWT\\' => 13,
+        ),
+        'J' => 
+        array (
+            'JakubOnderka\\PhpConsoleHighlighter\\' => 35,
+            'JakubOnderka\\PhpConsoleColor\\' => 29,
         ),
         'I' => 
         array (
@@ -414,6 +419,14 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
         array (
             0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
+        'JakubOnderka\\PhpConsoleHighlighter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src',
+        ),
+        'JakubOnderka\\PhpConsoleColor\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src',
+        ),
         'Interop\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
@@ -632,17 +645,6 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
             'Prophecy\\' => 
             array (
                 0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
-            ),
-        ),
-        'J' => 
-        array (
-            'JakubOnderka\\PhpConsoleHighlighter' => 
-            array (
-                0 => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src',
-            ),
-            'JakubOnderka\\PhpConsoleColor' => 
-            array (
-                0 => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src',
             ),
         ),
         'H' => 
@@ -1757,9 +1759,12 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
         'Consolidation\\OutputFormatters\\Formatters\\YamlFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/YamlFormatter.php',
         'Consolidation\\OutputFormatters\\Options\\FormatterOptions' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Options/FormatterOptions.php',
         'Consolidation\\OutputFormatters\\Options\\OverrideOptionsInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Options/OverrideOptionsInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\AbstractListData' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/AbstractListData.php',
         'Consolidation\\OutputFormatters\\StructuredData\\AbstractStructuredList' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/AbstractStructuredList.php',
         'Consolidation\\OutputFormatters\\StructuredData\\AssociativeList' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/AssociativeList.php',
         'Consolidation\\OutputFormatters\\StructuredData\\CallableRenderer' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/CallableRenderer.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\ConversionInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/ConversionInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\FieldProcessor' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/FieldProcessor.php',
         'Consolidation\\OutputFormatters\\StructuredData\\HelpDocument' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/HelpDocument.php',
         'Consolidation\\OutputFormatters\\StructuredData\\ListDataFromKeys' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/ListDataFromKeys.php',
         'Consolidation\\OutputFormatters\\StructuredData\\ListDataInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/ListDataInterface.php',
@@ -1776,6 +1781,8 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
         'Consolidation\\OutputFormatters\\StructuredData\\RowsOfFields' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/RowsOfFields.php',
         'Consolidation\\OutputFormatters\\StructuredData\\RowsOfFieldsWithMetadata' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/RowsOfFieldsWithMetadata.php',
         'Consolidation\\OutputFormatters\\StructuredData\\TableDataInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/TableDataInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\UnstructuredData' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/UnstructuredData.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\UnstructuredListData' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/UnstructuredListData.php',
         'Consolidation\\OutputFormatters\\StructuredData\\Xml\\DomDataInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/Xml/DomDataInterface.php',
         'Consolidation\\OutputFormatters\\StructuredData\\Xml\\XmlSchema' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/Xml/XmlSchema.php',
         'Consolidation\\OutputFormatters\\StructuredData\\Xml\\XmlSchemaInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/Xml/XmlSchemaInterface.php',
@@ -1785,7 +1792,11 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
         'Consolidation\\OutputFormatters\\Transformations\\PropertyParser' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/PropertyParser.php',
         'Consolidation\\OutputFormatters\\Transformations\\ReorderFields' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/ReorderFields.php',
         'Consolidation\\OutputFormatters\\Transformations\\SimplifyToArrayInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/SimplifyToArrayInterface.php',
+        'Consolidation\\OutputFormatters\\Transformations\\StringTransformationInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/StringTransformationInterface.php',
         'Consolidation\\OutputFormatters\\Transformations\\TableTransformation' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/TableTransformation.php',
+        'Consolidation\\OutputFormatters\\Transformations\\UnstructuredDataFieldAccessor' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/UnstructuredDataFieldAccessor.php',
+        'Consolidation\\OutputFormatters\\Transformations\\UnstructuredDataListTransformation' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/UnstructuredDataListTransformation.php',
+        'Consolidation\\OutputFormatters\\Transformations\\UnstructuredDataTransformation' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/UnstructuredDataTransformation.php',
         'Consolidation\\OutputFormatters\\Transformations\\WordWrapper' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/WordWrapper.php',
         'Consolidation\\OutputFormatters\\Transformations\\Wrap\\CalculateWidths' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/Wrap/CalculateWidths.php',
         'Consolidation\\OutputFormatters\\Transformations\\Wrap\\ColumnWidths' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/Wrap/ColumnWidths.php',
@@ -2011,12 +2022,13 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
         'DrupalCodeGenerator\\Command\\Drupal_8\\ModuleFile' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/ModuleFile.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Module\\ConfigurationEntity' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Module/ConfigurationEntity.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Module\\ContentEntity' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Module/ContentEntity.php',
-        'DrupalCodeGenerator\\Command\\Drupal_8\\Module\\PluginManager' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Module/PluginManager.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Module\\Standard' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Module/Standard.php',
+        'DrupalCodeGenerator\\Command\\Drupal_8\\PluginManager' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/PluginManager.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Action' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Action.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Block' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Block.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\CKEditor' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/CKEditor.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Condition' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Condition.php',
+        'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Constraint' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Constraint.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\EntityReferenceSelection' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/EntityReferenceSelection.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Field\\Formatter' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Field/Formatter.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Field\\Type' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Field/Type.php',
@@ -2049,6 +2061,7 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
         'DrupalCodeGenerator\\Command\\Drupal_8\\Template' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Template.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Browser' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Browser.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Kernel' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Kernel.php',
+        'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Nightwatch' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Nightwatch.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Unit' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Unit.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\Web' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/Web.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Test\\WebDriver' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Test/WebDriver.php',
@@ -4448,9 +4461,9 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
         'Interop\\Container\\ContainerInterface' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/ContainerInterface.php',
         'Interop\\Container\\Exception\\ContainerException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/ContainerException.php',
         'Interop\\Container\\Exception\\NotFoundException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/NotFoundException.php',
-        'JakubOnderka\\PhpConsoleColor\\ConsoleColor' => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src/JakubOnderka/PhpConsoleColor/ConsoleColor.php',
-        'JakubOnderka\\PhpConsoleColor\\InvalidStyleException' => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src/JakubOnderka/PhpConsoleColor/InvalidStyleException.php',
-        'JakubOnderka\\PhpConsoleHighlighter\\Highlighter' => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src/JakubOnderka/PhpConsoleHighlighter/Highlighter.php',
+        'JakubOnderka\\PhpConsoleColor\\ConsoleColor' => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src/ConsoleColor.php',
+        'JakubOnderka\\PhpConsoleColor\\InvalidStyleException' => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src/InvalidStyleException.php',
+        'JakubOnderka\\PhpConsoleHighlighter\\Highlighter' => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src/Highlighter.php',
         'Lcobucci\\JWT\\Builder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Builder.php',
         'Lcobucci\\JWT\\Claim' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim.php',
         'Lcobucci\\JWT\\Claim\\Basic' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Basic.php',
@@ -7517,40 +7530,6 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
         'Twig_Util_TemplateDirIterator' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Util/TemplateDirIterator.php',
         'TwitterAPIExchange' => __DIR__ . '/..' . '/j7mbo/twitter-api-php/TwitterAPIExchange.php',
         'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
-        'Unish\\AnnotatedCommandCase' => __DIR__ . '/..' . '/drush/drush/tests/AnnotatedCommandTest.php',
-        'Unish\\ArgsRemapperTest' => __DIR__ . '/..' . '/drush/drush/tests/ArgsRemapperTest.php',
-        'Unish\\BackendCase' => __DIR__ . '/..' . '/drush/drush/tests/BackendTest.php',
-        'Unish\\BatchCase' => __DIR__ . '/..' . '/drush/drush/tests/BatchTest.php',
-        'Unish\\CacheCommandCase' => __DIR__ . '/..' . '/drush/drush/tests/CacheCommandTest.php',
-        'Unish\\CommandInfoAlterTest' => __DIR__ . '/..' . '/drush/drush/tests/CommandInfoAlterTest.php',
-        'Unish\\CommandUnishTestCase' => __DIR__ . '/..' . '/drush/drush/tests/CommandUnishTestCase.php',
-        'Unish\\ConfigCase' => __DIR__ . '/..' . '/drush/drush/tests/ConfigTest.php',
-        'Unish\\ConfigPullCase' => __DIR__ . '/..' . '/drush/drush/tests/ConfigPullTest.php',
-        'Unish\\ContainerTest' => __DIR__ . '/..' . '/drush/drush/tests/ContainerTest.php',
-        'Unish\\CoreCase' => __DIR__ . '/..' . '/drush/drush/tests/CoreTest.php',
-        'Unish\\EnDisUnListInfoCase' => __DIR__ . '/..' . '/drush/drush/tests/PmEnDisUnListInfoTest.php',
-        'Unish\\ImageCase' => __DIR__ . '/..' . '/drush/drush/tests/ImageTest.php',
-        'Unish\\InitCommandCase' => __DIR__ . '/..' . '/drush/drush/tests/InitCommandTest.php',
-        'Unish\\LanguageAddCase' => __DIR__ . '/..' . '/drush/drush/tests/LanguageAddTest.php',
-        'Unish\\PmEnLocaleImportCase' => __DIR__ . '/..' . '/drush/drush/tests/PmEnLocaleImportTest.php',
-        'Unish\\QueueCase' => __DIR__ . '/..' . '/drush/drush/tests/QueueTest.php',
-        'Unish\\RoleCase' => __DIR__ . '/..' . '/drush/drush/tests/RoleTest.php',
-        'Unish\\RsyncCase' => __DIR__ . '/..' . '/drush/drush/tests/RsyncTest.php',
-        'Unish\\SecurityUpdatesTest' => __DIR__ . '/..' . '/drush/drush/tests/SecurityUpdatesTest.php',
-        'Unish\\SiteAliasConvertTest' => __DIR__ . '/..' . '/drush/drush/tests/SiteAliasConvertTest.php',
-        'Unish\\SiteSetCommandCase' => __DIR__ . '/..' . '/drush/drush/tests/SiteSetTest.php',
-        'Unish\\SiteSshCase' => __DIR__ . '/..' . '/drush/drush/tests/SiteSshTest.php',
-        'Unish\\SqlConnectCase' => __DIR__ . '/..' . '/drush/drush/tests/SqlConnectCreateTest.php',
-        'Unish\\SqlDumpTest' => __DIR__ . '/..' . '/drush/drush/tests/SqlDumpTest.php',
-        'Unish\\SqlSyncTest' => __DIR__ . '/..' . '/drush/drush/tests/SqlSyncTest.php',
-        'Unish\\TestModuleHelperTrait' => __DIR__ . '/..' . '/drush/drush/tests/TestModuleHelperTrait.php',
-        'Unish\\UnishProcessFailedError' => __DIR__ . '/..' . '/drush/drush/tests/UnishProcessFailedError.php',
-        'Unish\\UnishTestCase' => __DIR__ . '/..' . '/drush/drush/tests/UnishTestCase.php',
-        'Unish\\UpdateDBTest' => __DIR__ . '/..' . '/drush/drush/tests/UpdateDBTest.php',
-        'Unish\\UserCase' => __DIR__ . '/..' . '/drush/drush/tests/UserTest.php',
-        'Unish\\WatchdogCase' => __DIR__ . '/..' . '/drush/drush/tests/WatchdogTest.php',
-        'Unish\\WildcardUnitCase' => __DIR__ . '/..' . '/drush/drush/tests/ExpandWildcardTablesUnitTest.php',
-        'Unish\\XhUnitCase' => __DIR__ . '/..' . '/drush/drush/tests/XhUnitTest.php',
         'WebDriver\\AbstractWebDriver' => __DIR__ . '/..' . '/instaclick/php-webdriver/lib/WebDriver/AbstractWebDriver.php',
         'WebDriver\\AppCacheStatus' => __DIR__ . '/..' . '/instaclick/php-webdriver/lib/WebDriver/AppCacheStatus.php',
         'WebDriver\\ApplicationCache' => __DIR__ . '/..' . '/instaclick/php-webdriver/lib/WebDriver/ApplicationCache.php',
@@ -7899,10 +7878,10 @@ class ComposerStaticInitba074250fa0c3aa006fef94c120a988c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitba074250fa0c3aa006fef94c120a988c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitba074250fa0c3aa006fef94c120a988c::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitba074250fa0c3aa006fef94c120a988c::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitba074250fa0c3aa006fef94c120a988c::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5b7354dd91074a54466dca37efb2ac7c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5b7354dd91074a54466dca37efb2ac7c::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit5b7354dd91074a54466dca37efb2ac7c::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit5b7354dd91074a54466dca37efb2ac7c::$classMap;
 
         }, null, ClassLoader::class);
     }
