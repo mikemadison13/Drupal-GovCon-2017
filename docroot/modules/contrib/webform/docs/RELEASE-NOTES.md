@@ -11,17 +11,29 @@ Steps for creating a new release
 1. Review code
 --------------
 
-[Online](http://pareview.sh)
+[PHP](https://www.drupal.org/node/1587138)
 
-    http://git.drupal.org/project/webform.git 8.x-5.x
+    # Check Drupal PHP coding standards
+    cd /var/www/sites/d8_webform/web
+    phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info modules/sandbox/webform > ~/webform-php-coding-standards.txt
+    cat ~/webform-php-coding-standards.txt
 
-[Commandline](https://www.drupal.org/node/1587138)
+    # Check Drupal PHP best practices
+    cd /var/www/sites/d8_webform/web
+    phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,js,css,info modules/sandbox/webform > ~/webform-php-best-practice.txt
+    cat ~/webform-php-best-practice.txt
 
-    # Check Drupal coding standards
-    phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info modules/sandbox/webform
+[JavaScript](https://www.drupal.org/node/2873849)
 
-    # Check Drupal best practices
-    phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,js,css,info modules/sandbox/webform
+    # Install Eslint. (One-time)
+    cd /var/www/sites/d8_webform/web/core
+    yarn install
+    
+    # Check Drupal JavaScript (ES5) legacy coding standards.
+    cd /var/www/sites/d8_webform/web
+    core/node_modules/.bin/eslint --no-eslintrc -c=core/.eslintrc.legacy.json --ext=.js modules/sandbox/webform > ~/webform-javascript-coding-standards.txt
+    cat ~/webform-javascript-coding-standards.txt
+          
 
 [File Permissions](https://www.drupal.org/comment/reply/2690335#comment-form)
 
@@ -31,7 +43,7 @@ Steps for creating a new release
     # Directories should be 755 or drwxr-xr-x
     find . -type f -print0 | xargs -0 chmod 0644
 
-
+    
 2. Review accessibility
 -----------------------
 

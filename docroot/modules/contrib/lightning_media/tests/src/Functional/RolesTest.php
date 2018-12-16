@@ -6,7 +6,7 @@ use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\InstallStorage;
 use Drupal\media\Entity\Media;
 use Drupal\Tests\BrowserTestBase;
-use Drupal\Tests\media\Functional\MediaFunctionalTestCreateMediaTypeTrait;
+use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
 
 /**
@@ -15,7 +15,7 @@ use Drupal\user\Entity\Role;
  */
 class RolesTest extends BrowserTestBase {
 
-  use MediaFunctionalTestCreateMediaTypeTrait;
+  use MediaTypeCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -34,11 +34,20 @@ class RolesTest extends BrowserTestBase {
   protected $mediaType;
 
   /**
+   * Slick Entity Reference has a schema error.
+   *
+   * @todo Remove when depending on slick_entityreference 1.2 or later.
+   *
+   * @var bool
+   */
+  protected $strictConfigSchema = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
-    $this->mediaType = $this->createMediaType()->id();
+    $this->mediaType = $this->createMediaType('test')->id();
 
     $dir = __DIR__ . '/../../../' . InstallStorage::CONFIG_OPTIONAL_DIRECTORY;
     $storage = new FileStorage($dir);

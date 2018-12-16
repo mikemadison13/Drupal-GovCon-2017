@@ -1,0 +1,27 @@
+<?php
+
+use Drupal\media\Entity\MediaType;
+
+/**
+ * Implements hook_uninstall().
+ */
+function test_aab7f955_uninstall() {
+  $media_storage = \Drupal::entityTypeManager()->getStorage('media');
+
+  $test_images_1 = $media_storage->loadByProperties([
+    'bundle' => 'test_image_1',
+  ]);
+  $test_images_2 = $media_storage->loadByProperties([
+    'bundle' => 'test_image_2',
+  ]);
+
+  foreach ($test_images_1 as $test_image) {
+    $test_image->delete();
+  }
+  foreach ($test_images_2 as $test_image) {
+    $test_image->delete();
+  }
+
+  MediaType::load('test_image_1')->delete();
+  MediaType::load('test_image_2')->delete();
+}

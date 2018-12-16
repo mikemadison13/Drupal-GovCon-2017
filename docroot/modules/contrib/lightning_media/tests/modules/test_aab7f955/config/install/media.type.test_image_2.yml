@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies: {  }
+id: test_image_2
+label: 'Test Image 2'
+description: ''
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: image
+field_map: {  }

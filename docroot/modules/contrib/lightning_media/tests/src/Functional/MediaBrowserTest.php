@@ -3,7 +3,7 @@
 namespace Drupal\Tests\lightning_media\Functional;
 
 use Drupal\Tests\BrowserTestBase;
-use Drupal\Tests\media\Functional\MediaFunctionalTestCreateMediaTypeTrait;
+use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 
 /**
  * @group lightning
@@ -11,7 +11,7 @@ use Drupal\Tests\media\Functional\MediaFunctionalTestCreateMediaTypeTrait;
  */
 class MediaBrowserTest extends BrowserTestBase {
 
-  use MediaFunctionalTestCreateMediaTypeTrait;
+  use MediaTypeCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -22,6 +22,15 @@ class MediaBrowserTest extends BrowserTestBase {
     'lightning_media',
     'node',
   ];
+
+  /**
+   * Slick Entity Reference has a schema error.
+   *
+   * @todo Remove when depending on slick_entityreference 1.2 or later.
+   *
+   * @var bool
+   */
+  protected $strictConfigSchema = FALSE;
 
   /**
    * The ID of the content type created for the test.
@@ -44,7 +53,7 @@ class MediaBrowserTest extends BrowserTestBase {
     parent::setUp();
     $this->drupalPlaceBlock('local_actions_block');
     $this->nodeType = $this->drupalCreateContentType()->id();
-    $this->mediaType = $this->createMediaType([], 'image')->id();
+    $this->mediaType = $this->createMediaType('image')->id();
   }
 
   /**

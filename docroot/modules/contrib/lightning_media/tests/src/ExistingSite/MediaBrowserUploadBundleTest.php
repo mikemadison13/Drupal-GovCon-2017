@@ -43,7 +43,7 @@ class MediaBrowserUploadBundleTest extends ExistingSiteBase {
     $this->createMediaType('image', [
       'id' => 'z_image',
     ]);
-    
+
     $field_storage = entity_create('field_storage_config', [
       'field_name' => 'field_z_image',
       'entity_type' => 'node',

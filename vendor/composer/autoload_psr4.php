@@ -73,6 +73,7 @@ return array(
     'Drush\\Internal\\' => array($vendorDir . '/drush/drush/internal-copy'),
     'Drush\\' => array($vendorDir . '/drush/drush/src'),
     'Drupal\\acsf\\' => array($baseDir . '/docroot/modules/contrib/acsf/src'),
+    'Drupal\\Tests\\lightning_core\\' => array($baseDir . '/docroot/modules/contrib/lightning_core/tests/src'),
     'Drupal\\Driver\\' => array($baseDir . '/docroot/drivers/lib/Drupal/Driver'),
     'Drupal\\Core\\' => array($baseDir . '/docroot/core/lib/Drupal/Core'),
     'Drupal\\Component\\' => array($baseDir . '/docroot/core/lib/Drupal/Component'),

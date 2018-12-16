@@ -309,6 +309,13 @@ function lightning_media_update_8018() {
 }
 
 /**
+ * Installs the core Media Library module.
+ */
+function lightning_media_update_8019() {
+  Drupal::service('module_installer')->install(['media_library']);
+}
+
+/**
  * Implements hook_update_dependencies().
  */
 function lightning_media_update_dependencies() {

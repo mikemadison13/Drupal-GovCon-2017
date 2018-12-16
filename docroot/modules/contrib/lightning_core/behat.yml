@@ -1,0 +1,38 @@
+default:
+  suites:
+    lightning_core:
+      contexts:
+        - '\Drupal\DrupalExtension\Context\DrupalContext'
+        - '\Drupal\DrupalExtension\Context\MinkContext'
+        - '\Drupal\DrupalExtension\Context\MessageContext'
+        - '\Drupal\Tests\lightning_core\FixtureContext'
+      paths:
+        - 'tests/features'
+  extensions:
+    Behat\MinkExtension:
+      base_url: 'http://127.0.0.1:8080'
+      goutte: ~
+      selenium2:
+        wd_host: 'http://127.0.0.1:4444/wd/hub'
+        browser: chrome
+      browser_name: chrome
+      sessions:
+        javascript:
+          chrome:
+            api_url: 'http://localhost:9222'
+    Drupal\DrupalExtension:
+      api_driver: drupal
+      blackbox: ~
+      drupal:
+        drupal_root: 'docroot'
+      drush:
+        alias: self
+      selectors:
+        error_message_selector: '.messages [role="alert"]'
+        warning_message_selector: .messages--warning
+        login_form_selector: '#user-login-form'
+      subcontexts:
+        # These paths are relative to the Drupal root.
+        paths:
+          - 'modules/contrib'
+    DMore\ChromeExtension\Behat\ServiceContainer\ChromeExtension: ~

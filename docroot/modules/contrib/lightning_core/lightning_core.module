@@ -151,39 +151,6 @@ function lightning_core_modules_installed(array $modules) {
         ->save();
     }
   }
-
-  if (in_array('lightning_dev', $modules, TRUE)) {
-    $administrator = Role::load('administrator');
-    if ($administrator == NULL) {
-      $administrator = Role::create([
-        'id' => 'administrator',
-        'label' => 'Administrator'
-      ]);
-      $administrator->setIsAdmin(TRUE);
-      $administrator->save();
-    }
-
-    Drupal::service('theme_installer')->install(['seven']);
-
-    Drupal::configFactory()
-      ->getEditable('system.theme')
-      ->set('admin', 'seven')
-      ->set('default', 'seven')
-      ->save();
-
-    // Place the main content block if it's not already there.
-    $block_storage = Drupal::entityTypeManager()->getStorage('block');
-    $block = $block_storage->load('seven_content') ?: $block_storage->create([
-      'id' => 'seven_content',
-      'theme' => 'seven',
-      'region' => 'content',
-      'plugin' => 'system_main_block',
-      'settings' => [
-        'label_display' => '0',
-      ],
-    ]);
-    $block_storage->save($block);
-  }
 }
 
 /**

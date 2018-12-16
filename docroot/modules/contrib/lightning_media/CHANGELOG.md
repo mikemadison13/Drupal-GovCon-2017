@@ -1,3 +1,15 @@
+## 3.1.0
+* Added a new component, Media Slideshow, which allows you to create
+  slideshows and carousels of assets from your media library using the
+  Slick JavaScript library. (#52)
+* Lightning Media now has the Media Library module as an explicit
+  dependency.
+* In Quick Edit, it's now possible to remove images selected with the
+  media browser. (#53)
+* Entity reference fields that use the media browser now allow you to
+  explicitly select the media type to use when creating or uploading new
+  media items. This works in CKEditor as well. (#55 and issue #2969541)
+
 ## 3.0.0
 * Updated Lightning Core to 3.0, which requires Drupal core 8.6.0.
 

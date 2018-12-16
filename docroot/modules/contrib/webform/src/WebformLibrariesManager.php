@@ -102,6 +102,12 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
     ];
 
     foreach ($libraries as $library_name => $library) {
+      // Excluded.
+      if ($this->isExcluded($library_name)) {
+        $stats['@excluded']++;
+        continue;
+      }
+
       $library_path = '/libraries/' . $library_name;
       $library_exists = (file_exists(DRUPAL_ROOT . $library_path)) ? TRUE : FALSE;
 
@@ -117,19 +123,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         ':settings_elements_href' => Url::fromRoute('webform.config.elements')->toString(),
       ];
 
-      if ($this->isExcluded($library_name)) {
-        // Excluded.
-        $stats['@excluded']++;
-        $title = $this->t('<strong>@title</strong> (Excluded)', $t_args);
-        if (!empty($library['elements']) && $this->areElementsExcluded($library['elements'])) {
-          $t_args['@element_type'] = implode('; ', $library['elements']);
-          $description = $this->t('The <a href=":homepage_href">@title</a> library is excluded because required element types (@element_type) are <a href=":settings_elements_href">excluded</a>.', $t_args);
-        }
-        else {
-          $description = $this->t('The <a href=":homepage_href">@title</a> library is <a href=":settings_libraries_href">excluded</a>.', $t_args);
-        }
-      }
-      elseif ($library_exists) {
+      if ($library_exists) {
         // Installed.
         $stats['@installed']++;
         $title = $this->t('<strong>@title @version</strong> (Installed)', $t_args);
@@ -327,9 +321,9 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t('Code Mirror is a versatile text editor implemented in JavaScript for the browser.'),
       'notes' => $this->t('Code Mirror is used to provide a text editor for YAML, HTML, CSS, and JavaScript configuration settings and messages.'),
       'homepage_url' => Url::fromUri('http://codemirror.net/'),
-      'download_url' => Url::fromUri('https://github.com/components/codemirror/archive/5.40.0.zip'),
+      'download_url' => Url::fromUri('https://github.com/components/codemirror/archive/5.41.0.zip'),
       'issues_url' => Url::fromUri('https://github.com/codemirror/codemirror/issues'),
-      'version' => '5.40.0',
+      'version' => '5.41.0',
     ];
     $libraries['algolia.places'] = [
       'title' => $this->t('Algolia Places'),
@@ -340,8 +334,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       // NOTE: Using NPM/JsDelivr because it contains the '/dist/cdn/' directory.
       // @see https://asset-packagist.org/package/detail?fullname=npm-asset/places.js
       // @see https://www.jsdelivr.com/package/npm/places.js
-      'download_url' => Url::fromUri('https://registry.npmjs.org/places.js/-/places.js-1.10.0.tgz'),
-      'version' => '1.10.0',
+      'download_url' => Url::fromUri('https://registry.npmjs.org/places.js/-/places.js-1.13.0.tgz'),
+      'version' => '1.13.0',
       'elements' => ['webform_location_places'],
     ];
     $libraries['jquery.geocomplete'] = [
@@ -368,16 +362,16 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t('Input masks ensures a predefined format is entered. This can be useful for dates, numerics, phone numbers, etc…'),
       'notes' => $this->t('Input masks are used to ensure predefined and custom formats for text fields.'),
       'homepage_url' => Url::fromUri('https://robinherbots.github.io/Inputmask/'),
-      'download_url' => Url::fromUri('https://github.com/RobinHerbots/jquery.inputmask/archive/4.0.0.zip'),
-      'version' => '4.0.0',
+      'download_url' => Url::fromUri('https://github.com/RobinHerbots/jquery.inputmask/archive/4.0.2.zip'),
+      'version' => '4.0.2',
     ];
     $libraries['jquery.intl-tel-input'] = [
       'title' => $this->t('jQuery: International Telephone Input'),
       'description' => $this->t("A jQuery plugin for entering and validating international telephone numbers. It adds a flag dropdown to any input, detects the user's country, displays a relevant placeholder and provides formatting/validation methods."),
       'notes' => $this->t('International Telephone Input is used by the Telephone element.'),
       'homepage_url' => Url::fromUri('https://github.com/jackocnr/intl-tel-input'),
-      'download_url' => Url::fromUri('https://github.com/jackocnr/intl-tel-input/archive/v13.0.0.zip'),
-      'version' => '13.0.0',
+      'download_url' => Url::fromUri('https://github.com/jackocnr/intl-tel-input/archive/v14.0.4.zip'),
+      'version' => '14.0.4',
     ];
     $libraries['jquery.rateit'] = [
       'title' => $this->t('jQuery: RateIt'),
@@ -417,8 +411,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t('A lightweight, customizable javascript timepicker plugin for jQuery, inspired by Google Calendar.'),
       'notes' => $this->t('Timepicker is used to provide a polyfill for HTML 5 time elements.'),
       'homepage_url' => Url::fromUri('https://github.com/jonthornton/jquery-timepicker'),
-      'download_url' => Url::fromUri('https://github.com/jonthornton/jquery-timepicker/archive/1.11.13.zip'),
-      'version' => '1.11.13',
+      'download_url' => Url::fromUri('https://github.com/jonthornton/jquery-timepicker/archive/1.11.14.zip'),
+      'version' => '1.11.14',
     ];
     $libraries['jquery.toggles'] = [
       'title' => $this->t('jQuery: Toggles'),

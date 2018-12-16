@@ -1,6 +1,8 @@
+# Drupal Lightning
+![Lightning logo of a bolt of lightning](https://raw.githubusercontent.com/acquia/lightning/8.x-3.x/lightning-logo.png)
+
 [![Build Status](https://travis-ci.org/acquia/lightning.svg?branch=8.x-3.x)](https://travis-ci.org/acquia/lightning)
 
-# Drupal Lightning
 Lightning's mission is to enable developers to create great authoring
 experiences and empower editorial teams.
 
@@ -57,6 +59,7 @@ The current version of media includes the following functionality:
   * Images
 * Drag-and-drop bulk image uploads.
 * Image cropping.
+* Support for creating slideshows and carousels of media assets.
 * Ability to create new media through the media library (/media/add)
 * Ability to embed tweets, Instagrams, and YouTube/Vimeo videos directly into
   CKEditor by pasting the video URL
@@ -129,7 +132,7 @@ to request features or bug fixes.
   replicated to the image field. This is due to a limitation of Entity Browser's
   API.
 * Some of the Lightning contributed media module listed above might not yet be
-  compatible with the Core Media entity.
+  compatible with the core Media module.
 * Using the bulk upload feature in environments with a load balancer might
   result in some images not being saved.
 

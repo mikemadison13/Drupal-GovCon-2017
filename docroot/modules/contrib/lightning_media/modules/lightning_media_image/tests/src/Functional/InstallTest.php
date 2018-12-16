@@ -19,6 +19,15 @@ class InstallTest extends BrowserTestBase {
     'image_widget_crop',
   ];
 
+  /**
+   * Slick Entity Reference has a schema error.
+   *
+   * @todo Remove when depending on slick_entityreference 1.2 or later.
+   *
+   * @var bool
+   */
+  protected $strictConfigSchema = FALSE;
+
   public function test() {
     // Assert that a local copy of the Cropper library is being used.
     $settings = $this->config('image_widget_crop.settings')->get('settings');

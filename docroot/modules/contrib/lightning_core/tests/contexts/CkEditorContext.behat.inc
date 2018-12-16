@@ -8,13 +8,8 @@ use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
  * Contains step definitions for working with CKEditor instances.
- *
- * @internal
- * This class is part of Lightning's internal testing code. It is not an API and
- * should not be extended. This class will be marked final, and all protected
- * members will be made private, in Lightning Core 3.x.
  */
-class CkEditorContext extends DrupalSubContextBase {
+final class CkEditorContext extends DrupalSubContextBase {
 
   /**
    * Asserts that a CKEditor instance exists and is fully loaded.
@@ -155,7 +150,7 @@ class CkEditorContext extends DrupalSubContextBase {
    * @return string|false
    *   The first CKEditor instance ID, or FALSE if there are no instances.
    */
-  protected function getDefault() {
+  private function getDefault() {
     $keys = $this->getKeys();
     return reset($keys);
   }
@@ -166,7 +161,7 @@ class CkEditorContext extends DrupalSubContextBase {
    * @return string[]
    *   The CKEditor instance IDs.
    */
-  protected function getKeys() {
+  private function getKeys() {
     $keys = $this
       ->getSession()
       ->evaluateScript('Object.keys(CKEDITOR.instances).join(",")');

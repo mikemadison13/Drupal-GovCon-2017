@@ -139,6 +139,7 @@ entity.webform.access_denied:
     _controller: '\Drupal\webform\Controller\WebformEntityController::accessDenied'
     _title_callback: '\Drupal\webform\Controller\WebformEntityController::accessDeniedTitle'
   requirements:
+    # Access denied is available to all users.
     _access: 'TRUE'
 
 entity.webform.assets.javascript:
@@ -146,14 +147,14 @@ entity.webform.assets.javascript:
   defaults:
     _controller: '\Drupal\webform\Controller\WebformEntityController::javascript'
   requirements:
-    _entity_access: 'webform.submission_create'
+    _entity_access: 'webform.view'
 
 entity.webform.assets.css:
   path: '/webform/css/{webform}'
   defaults:
     _controller: '\Drupal\webform\Controller\WebformEntityController::css'
   requirements:
-    _entity_access: 'webform.submission_create'
+    _entity_access: 'webform.view'
 
 entity.webform.confirmation:
   path: '/webform/{webform}/confirmation'
@@ -161,7 +162,7 @@ entity.webform.confirmation:
     _controller: '\Drupal\webform\Controller\WebformEntityController::confirmation'
     _title_callback: '\Drupal\webform\Controller\WebformEntityController::title'
   requirements:
-    _entity_access: 'webform.submission_create'
+    _entity_access: 'webform.view'
 
 entity.webform.user.submissions:
   path: '/webform/{webform}/submissions/{submission_view}'
@@ -531,6 +532,7 @@ entity.webform_submission.access_denied:
     _controller: '\Drupal\webform\Controller\WebformSubmissionController::accessDenied'
     _title_callback: '\Drupal\webform\Controller\WebformSubmissionController::accessDeniedTitle'
   requirements:
+    # Access denied is available to all users.
     _access: 'TRUE'
 
 entity.webform_submission.table:
@@ -601,6 +603,7 @@ entity.webform_submission.resend_form:
     _form: 'Drupal\webform\Form\WebformSubmissionResendForm'
     _title_callback: '\Drupal\webform\Controller\WebformSubmissionViewController::title'
   requirements:
+    _entity_access: 'webform_submission.update_any'
     _custom_access: '\Drupal\webform\Access\WebformSubmissionAccess::checkResendAccess'
 
 entity.webform_submission.duplicate_form:

@@ -19,6 +19,8 @@ return array(
     'Drupal\\DrupalExtension' => array($vendorDir . '/drupal/drupal-extension/src'),
     'Drupal\\Drupal' => array($vendorDir . '/drupal/drupal-extension/src'),
     'Drupal\\Driver' => array($vendorDir . '/drupal/drupal-driver/src'),
+    'Drupal\\' => array($vendorDir . '/drupal/coder/coder_sniffer/Drupal'),
+    'DrupalPractice\\' => array($vendorDir . '/drupal/coder/coder_sniffer/Drupal'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
     'Doctrine\\Common\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib'),
     'Doctrine\\Common\\Collections\\' => array($vendorDir . '/doctrine/collections/lib'),

@@ -1276,30 +1276,40 @@ function install_select_profile(&$install_state) {
 /**
  * Determines the installation profile to use in the installer.
  *
- * A profile will be selected in the following order of conditions:
+ * Depending on the context from which it's being called, this method
+ * may be used to:
+ * - Automatically select a profile under certain conditions.
+ * - Indicate which profile has already been selected.
+ * - Indicate that a profile still needs to be selected.
+ *
+ * A profile will be selected automatically if one of the following conditions
+ * is met. They are checked in the given order:
  * - Only one profile is available.
  * - A specific profile name is requested in installation parameters:
  *   - For interactive installations via request query parameters.
  *   - For non-interactive installations via install_drupal() settings.
- * - A discovered profile that is a distribution. If multiple profiles are
- *   distributions, then the first discovered profile will be selected.
- *   If an inherited profile is detected that is a distribution, it will be
- *   chosen over its base profile.
+ * - One of the available profiles is a distribution. If multiple profiles are
+ *   distributions, then the first discovered profile will be selected. If an
+ *   inherited profile is detected that is a distribution, it will be chosen
+ *   over its base profile.
  * - Only one visible profile is available.
  *
  * @param array $install_state
  *   The current installer state, containing a 'profiles' key, which is an
  *   associative array of profiles with the machine-readable names as keys.
  *
- * @return
+ * @return string|null
  *   The machine-readable name of the selected profile or NULL if no profile was
  *   selected.
+ *
+ *  @see install_select_profile()
  */
 function _install_select_profile(&$install_state) {
-  // Don't need to choose profile if only one available.
+  // If there is only one profile available it will always be the one selected.
   if (count($install_state['profiles']) == 1) {
     return key($install_state['profiles']);
   }
+  // If a valid profile has already been selected, return the selection.
   if (!empty($install_state['parameters']['profile'])) {
     $profile = $install_state['parameters']['profile'];
     if (isset($install_state['profiles'][$profile])) {
@@ -1310,13 +1320,12 @@ function _install_select_profile(&$install_state) {
   if ($distribution = \Drupal::service('extension.list.profile')->selectDistribution(array_keys($install_state['profiles']))) {
     return $distribution;
   }
-
   // Get all visible (not hidden) profiles.
   $visible_profiles = array_filter($install_state['profiles'], function ($profile) {
     $profile_info = install_profile_info($profile->getName());
     return !isset($profile_info['hidden']) || !$profile_info['hidden'];
   });
-
+  // If there is only one visible profile, return it.
   if (count($visible_profiles) == 1) {
     return (key($visible_profiles));
   }

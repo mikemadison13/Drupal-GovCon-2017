@@ -1,0 +1,17 @@
+name: Moderation dashboard
+description: 'Provides a per-user dashboard for moderation.'
+type: module
+package: Other
+# core: 8.x
+dependencies:
+  - drupal:content_moderation
+  - drupal:node
+  - drupal:views
+  - page_manager:page_manager
+  - panels:panels
+
+# Information added by Drupal.org packaging script on 2018-09-25
+version: '8.x-1.0-alpha1'
+core: '8.x'
+project: 'moderation_dashboard'
+datestamp: 1537899184

@@ -9,3 +9,4 @@ base profile: testing_inherited
 
 install:
   - syslog
+  - grandchild_profile_module

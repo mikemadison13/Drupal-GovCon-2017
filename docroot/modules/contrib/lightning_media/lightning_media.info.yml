@@ -10,7 +10,7 @@ dependencies:
   - image
   - inline_entity_form
   - lightning_core
-  - media
+  - media_library
   - user
   - views_infinite_scroll
 components:
@@ -19,11 +19,12 @@ components:
   - lightning_media_document
   - lightning_media_image
   - lightning_media_instagram
+  - lightning_media_slideshow
   - lightning_media_twitter
   - lightning_media_video
 
-# Information added by Drupal.org packaging script on 2018-09-04
-version: '8.x-3.0'
+# Information added by Drupal.org packaging script on 2018-10-03
+version: '8.x-3.1'
 core: '8.x'
 project: 'lightning_media'
-datestamp: 1536076030
+datestamp: 1538573897

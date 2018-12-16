@@ -156,4 +156,15 @@ class MediaEntityContext extends DrupalSubContextBase {
     }
   }
 
+  /**
+   * Asserts that a slideshow of media assets is present on the page.
+   *
+   * @Then I should see a slideshow of media assets
+   */
+  public function assertSlideshow() {
+    $assert = $this->assertSession();
+    $assert->elementExists('css', 'button.slick-prev.slick-arrow');
+    $assert->elementExists('css', 'button.slick-next.slick-arrow');
+  }
+
 }

@@ -21,7 +21,7 @@ class EmbedCode extends EntityFormProxy {
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
 
-    $form['input'] = [
+    $form['entity_form']['input'] = [
       '#type' => 'textarea',
       '#placeholder' => $this->t('Enter a URL...'),
       '#attributes' => [
@@ -29,14 +29,18 @@ class EmbedCode extends EntityFormProxy {
       ],
       '#ajax' => [
         'event' => 'change',
-        'wrapper' => 'entity',
+        'wrapper' => 'entity-form',
         'method' => 'html',
         'callback' => [static::class, 'ajax'],
+      ],
+      // I don't know why, but this is needed to display error messages.
+      '#limit_validation_errors' => [
+        ['input'],
       ],
     ];
 
     // Allow the form to be rebuilt without using AJAX.
-    $form['update'] = [
+    $form['entity_form']['update'] = [
       '#type' => 'submit',
       '#value' => $this->t('Update'),
       '#attributes' => [
@@ -72,8 +76,16 @@ class EmbedCode extends EntityFormProxy {
       parent::validate($form, $form_state);
     }
     else {
-      $form_state->setError($form['widget'], $this->t('You must enter a URL or embed code.'));
+      $form_state->setError($form['widget']['entity_form']['input'], $this->t('You must enter a URL or embed code.'));
     }
+
+    // Form state errors can't be set here, because then the form won't get
+    // rebuilt. Use the messenger service to display error messages.
+    foreach ($form_state->getErrors() as $error) {
+      $this->messenger()->addError($error);
+    }
+
+    $form_state->clearErrors();
   }
 
 }

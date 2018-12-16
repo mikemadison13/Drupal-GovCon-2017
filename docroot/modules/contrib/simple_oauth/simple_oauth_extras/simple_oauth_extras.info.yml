@@ -4,10 +4,10 @@ description: OAuth2 extra access grants.
 # core: 8.x
 package: Authentication
 dependencies:
-  - simple_oauth
+  - simple_oauth:simple_oauth
 
-# Information added by Drupal.org packaging script on 2018-09-13
-version: '8.x-3.10'
+# Information added by Drupal.org packaging script on 2018-11-13
+version: '8.x-3.11'
 core: '8.x'
 project: 'simple_oauth'
-datestamp: 1536851888
+datestamp: 1542151989

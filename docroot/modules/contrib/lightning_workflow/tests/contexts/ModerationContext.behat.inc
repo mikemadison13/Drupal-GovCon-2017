@@ -163,4 +163,22 @@ final class ModerationContext extends DrupalSubContextBase {
     array_push($this->moderated, $node_type->id());
   }
 
+  /**
+   * Asserts the presence of the moderation dashboard.
+   *
+   * @Then I should see a dashboard for moderating content
+   */
+  public function assertModerationDashboard() {
+    $assert = $this->assertSession();
+
+    $assert->elementExists('css', "[data-block-plugin-id='views_block:content_moderation_dashboard_in_review-block_1']");
+    $assert->elementExists('css', "[data-block-plugin-id='views_block:content_moderation_dashboard_in_review-block_2']");
+    $assert->elementExists('css', "[data-block-plugin-id='moderation_dashboard_activity']");
+    $assert->elementExists('css', "[data-block-plugin-id='views_block:moderation_dashboard_recently_created-block_1']");
+    $assert->elementExists('css', "[data-block-plugin-id='views_block:content_moderation_dashboard_in_review-block_3']");
+    $assert->elementExists('css', "[data-block-plugin-id='views_block:moderation_dashboard_recent_changes-block_1']");
+    $assert->elementExists('css', "[data-block-plugin-id='views_block:moderation_dashboard_recent_changes-block_2']");
+    $assert->elementExists('css', "[data-block-plugin-id='views_block:moderation_dashboard_recently_created-block_2']");
+  }
+
 }

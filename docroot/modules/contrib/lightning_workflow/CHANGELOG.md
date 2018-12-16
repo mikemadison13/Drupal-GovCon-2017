@@ -1,3 +1,6 @@
+## 3.1.0
+* Lightning Workflow now includes the Moderation Dashboard module. (#70)
+
 ## 3.0.0
 * Updated Lightning Core to 3.0, which requires Drupal core 8.6.0.
 * The Editorial workflow has been added to this module as it is no longer

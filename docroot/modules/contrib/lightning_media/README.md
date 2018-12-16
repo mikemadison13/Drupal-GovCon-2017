@@ -30,6 +30,11 @@ posts in your Drupal site using the
 [Media Entity Instagram](https://drupal.org/project/media_entity_instagram)
 module.
 
+#### Media Slideshow (`lightning_media_slideshow`)
+Provides a Slideshow block type type, which allows you to reference any number
+of assets from your media library and display them as a slideshow or carousel
+using the [Slick](https://drupal.org/project/slick) library.
+
 #### Media Twitter (`lightning_media_twitter`)
 Provides a Tweet media type, for referencing and displaying tweets in your
 Drupal site using the

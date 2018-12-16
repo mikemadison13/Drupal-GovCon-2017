@@ -52,7 +52,7 @@ class IgnoreFilter extends ConfigFilterBase implements ContainerFactoryPluginInt
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     // Get the list of ignored config.
-    $ignored = $container->get('config.factory')->get('config_ignore.settings')->get('ignored_config_entities');
+    $ignored = (array) $container->get('config.factory')->get('config_ignore.settings')->get('ignored_config_entities');
     // Allow hooks to alter the list.
     $container->get('module_handler')->invokeAll('config_ignore_settings_alter', [&$ignored]);
     // Set the list in the plugin configuration.

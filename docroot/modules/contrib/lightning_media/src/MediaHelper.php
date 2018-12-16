@@ -7,6 +7,7 @@ use Drupal\file\FileInterface;
 use Drupal\file\Plugin\Field\FieldType\FileItem;
 use Drupal\lightning_media\Exception\IndeterminateBundleException;
 use Drupal\media\MediaInterface;
+use Drupal\media\MediaTypeInterface;
 
 /**
  * Provides helper methods for dealing with media entities.
@@ -86,6 +87,31 @@ class MediaHelper {
    * no bundle can be matched to the input value.
    */
   public function getBundleFromInput($value, $check_access = TRUE, array $bundles = []) {
+    $media_types = $this->getBundlesFromInput($value, $check_access, $bundles);
+
+    if (!$media_types) {
+      throw new IndeterminateBundleException($value);
+    }
+
+    return reset($media_types);
+  }
+
+  /**
+   * Returns the media bundles that can accept an input value.
+   *
+   * @param mixed $value
+   *   The input value.
+   * @param bool $check_access
+   *   (optional) Whether to filter the bundles by create access for the current
+   *   user. Defaults to TRUE.
+   * @param string[] $bundles
+   *   (optional) A set of media bundle IDs which might match the input. If
+   *   omitted, all available bundles are checked.
+   *
+   * @return \Drupal\media\MediaTypeInterface[]
+   *   The media bundles that can accept the input value.
+   */
+  public function getBundlesFromInput($value, $check_access = TRUE, array $bundles = []) {
     // Lightning Media overrides the media_bundle storage handler with a special
     // one that adds an optional second parameter to loadMultiple().
     $media_types = $this->entityTypeManager
@@ -93,15 +119,11 @@ class MediaHelper {
       ->loadMultiple($bundles ?: NULL, $check_access);
     ksort($media_types);
 
-    /** @var \Drupal\media\MediaTypeInterface $media_type */
-    foreach ($media_types as $media_type) {
+    return array_filter($media_types, function (MediaTypeInterface $media_type) use ($value) {
       $source = $media_type->getSource();
 
-      if ($source instanceof InputMatchInterface && $source->appliesTo($value, $media_type)) {
-        return $media_type;
-      }
-    }
-    throw new IndeterminateBundleException($value);
+      return $source instanceof InputMatchInterface && $source->appliesTo($value, $media_type);
+    });
   }
 
   /**

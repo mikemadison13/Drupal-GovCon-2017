@@ -7,8 +7,8 @@ dependencies:
   - lightning_media
   - media_entity_twitter
 
-# Information added by Drupal.org packaging script on 2018-09-04
-version: '8.x-3.0'
+# Information added by Drupal.org packaging script on 2018-10-03
+version: '8.x-3.1'
 core: '8.x'
 project: 'lightning_media'
-datestamp: 1536076030
+datestamp: 1538573897

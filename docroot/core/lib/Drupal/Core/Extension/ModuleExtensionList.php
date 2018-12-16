@@ -100,8 +100,7 @@ class ModuleExtensionList extends ExtensionList {
   protected function getProfileDirectories(ExtensionDiscovery $discovery) {
     $discovery->setProfileDirectories([]);
     $all_profiles = $discovery->scan('profile');
-    $active_profile = $all_profiles[$this->installProfile];
-    $profiles = array_intersect_key($all_profiles, $this->configFactory->get('core.extension')->get('module') ?: [$active_profile->getName() => 0]);
+    $profiles = $this->profileList->getAncestors($this->installProfile);
 
     // If a module is within a profile directory but specifies another
     // profile for testing, it needs to be found in the parent profile.

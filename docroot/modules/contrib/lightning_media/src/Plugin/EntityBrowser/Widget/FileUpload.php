@@ -51,12 +51,13 @@ class FileUpload extends EntityFormProxy {
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
 
-    $form['input'] = [
+    $form['entity_form']['input'] = [
       '#type' => 'ajax_upload',
       '#title' => $this->t('File'),
       '#process' => [
         [$this, 'processUploadElement'],
       ],
+      '#weight' => 70,
     ];
 
     $validators = $form_state->get(['entity_browser', 'widget_context', 'upload_validators']) ?: [];
@@ -66,19 +67,15 @@ class FileUpload extends EntityFormProxy {
     // associated with existing media bundles.
     if (empty($validators['file_validate_extensions'])) {
       $allowed_bundles = $this->getAllowedBundles($form_state);
+      $extensions = implode(' ', $this->helper->getFileExtensions(TRUE, $allowed_bundles));
 
       $validators = array_merge([
         'file_validate_extensions' => [
-          implode(' ', $this->helper->getFileExtensions(TRUE, $allowed_bundles)),
-        ],
-        // This must be a function because file_validate() still thinks that
-        // function_exists() is a good way to ensure callability.
-        'lightning_media_validate_upload' => [
-          $allowed_bundles,
+          $extensions,
         ],
       ], $validators);
     }
-    $form['input']['#upload_validators'] = $validators;
+    $form['entity_form']['input']['#upload_validators'] = $validators;
 
     return $form;
   }
@@ -87,13 +84,21 @@ class FileUpload extends EntityFormProxy {
    * {@inheritdoc}
    */
   public function validate(array &$form, FormStateInterface $form_state) {
-    $value = $this->getInputValue($form_state);
+    $fid = $this->getInputValue($form_state);
 
-    if ($value) {
+    if ($fid) {
       parent::validate($form, $form_state);
-    }
-    else {
-      $form_state->setError($form['widget'], $this->t('You must upload a file.'));
+      $allowed_bundles = $this->getAllowedBundles($form_state);
+
+      // Only validate uploaded file if the exact bundle is known.
+      if (count($allowed_bundles) === 1) {
+        $file = $this->entityTypeManager->getStorage('file')->load($fid);
+        $errors = lightning_media_validate_upload($file, $allowed_bundles);
+
+        foreach ($errors as $error) {
+          $form_state->setError($form['widget']['entity_form']['input'], $error);
+        }
+      }
     }
   }
 
@@ -102,7 +107,7 @@ class FileUpload extends EntityFormProxy {
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\media\MediaInterface $entity */
-    $entity = $element['entity']['#entity'];
+    $entity = $element['entity_form']['entity']['#entity'];
 
     $file = MediaHelper::useFile(
       $entity,
@@ -138,27 +143,6 @@ class FileUpload extends EntityFormProxy {
     $element['remove']['#value'] = $this->t('Cancel');
 
     return $element;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function ajax(array &$form, FormStateInterface $form_state) {
-    $el = AjaxUpload::el($form, $form_state);
-
-    $wrapper = '#' . $el['#ajax']['wrapper'];
-
-    return parent::ajax($form, $form_state)
-      // Replace the upload element with its rebuilt version.
-      ->addCommand(
-        new ReplaceCommand($wrapper, $el)
-      )
-      // Prepend the status messages so that a) any errors regarding the
-      // uploaded file will be displayed right away, and b) the message queue
-      // will be cleared so that the errors won't persist on a full page reload.
-      ->addCommand(
-        new PrependCommand($wrapper, ['#type' => 'status_messages'])
-      );
   }
 
   /**

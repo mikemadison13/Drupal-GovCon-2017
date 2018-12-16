@@ -6,13 +6,8 @@ use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
  * Contains step definitions to assist with debugging tests.
- *
- * @internal
- * This class is part of Lightning's internal testing code. It is not an API and
- * should not be extended. This class will be marked final, and all protected
- * members will be made private, in Lightning Core 3.x.
  */
-class DebugContext extends DrupalSubContextBase {
+final class DebugContext extends DrupalSubContextBase {
 
   /**
    * The number of screenshots that have been taken during the scenario.

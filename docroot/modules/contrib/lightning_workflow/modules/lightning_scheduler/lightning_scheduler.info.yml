@@ -8,8 +8,8 @@ dependencies:
   - datetime
   - lightning_core
 
-# Information added by Drupal.org packaging script on 2018-09-04
-version: '8.x-3.0'
+# Information added by Drupal.org packaging script on 2018-09-28
+version: '8.x-3.1'
 core: '8.x'
 project: 'lightning_workflow'
-datestamp: 1536077592
+datestamp: 1538155385

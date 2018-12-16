@@ -3,7 +3,7 @@ Feature: User roles and related config
 
   @394cee8a
   Scenario: Administrator Role select list should be present in Account Settings
-    Given I am logged in as a user with the administrator role
+    Given I am logged in as an administrator
     When I visit "/admin/config/people/accounts"
     Then I should see "This role will be automatically assigned new permissions whenever a module is enabled."
 
@@ -22,9 +22,3 @@ Feature: User roles and related config
     # Clean up.
     And I visit "/admin/people/roles/manage/foobaz/delete"
     And I press "Delete"
-
-  @c62e5bfa
-  Scenario: Visiting the content overview page as a content reviewer
-    Given I am logged in as a user with the page_reviewer role
-    When I visit "/admin/content"
-    Then the response status code should be 200

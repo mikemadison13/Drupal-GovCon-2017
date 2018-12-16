@@ -2,14 +2,14 @@
 
 namespace Drupal\Tests\testing_subsubprofile\Functional;
 
-use Drupal\Tests\BrowserTestBase;
+use Drupal\FunctionalTests\Installer\InstallerTestBase;
 
 /**
- * Tests inherited profiles.
+ * Tests installing from an inherited profile whose parent is also inherited.
  *
  * @group profiles
  */
-class DeepInheritedProfileTest extends BrowserTestBase {
+class DeepInheritedProfileTest extends InstallerTestBase {
 
   /**
    * {@inheritdoc}
@@ -21,14 +21,18 @@ class DeepInheritedProfileTest extends BrowserTestBase {
    */
   public function testDeepInheritedProfile() {
     // Check that stable is the default theme enabled in parent profile.
-    $this->assertEquals('stable', $this->config('system.theme')->get('default'));
+    $this->assertSame('stable', $this->config('system.theme')->get('default'));
 
+    /** @var \Drupal\Core\Extension\ModuleHandlerInterface $module_handler */
+    $module_handler = $this->container->get('module_handler');
     // page_cache was enabled in main profile.
-    $this->assertTrue(\Drupal::moduleHandler()->moduleExists('page_cache'));
+    $this->assertTrue($module_handler->moduleExists('page_cache'));
     // block was enabled in parent profile.
-    $this->assertTrue(\Drupal::moduleHandler()->moduleExists('block'));
+    $this->assertTrue($module_handler->moduleExists('block'));
     // syslog was enabled in this profile.
-    $this->assertTrue(\Drupal::moduleHandler()->moduleExists('syslog'));
+    $this->assertTrue($module_handler->moduleExists('syslog'));
+    // A module contained in this profile was installed too.
+    $this->assertTrue($module_handler->moduleExists('grandchild_profile_module'));
   }
 
 }

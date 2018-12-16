@@ -11,13 +11,8 @@ use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
  * Contains miscellaneous step definitions for working with HTML elements.
- *
- * @internal
- * This class is part of Lightning's internal testing code. It is not an API and
- * should not be extended. This class will be marked final, and all protected
- * members will be made private, in Lightning Core 3.x.
  */
-class ElementContext extends DrupalSubContextBase {
+final class ElementContext extends DrupalSubContextBase {
 
   /**
    * Asserts that an element is empty.
@@ -296,7 +291,7 @@ class ElementContext extends DrupalSubContextBase {
    * @return \Behat\Mink\Element\NodeElement|bool
    *   The <details> element, or FALSE if it was not found.
    */
-  protected function findDetails($summary, ElementInterface $container) {
+  private function findDetails($summary, ElementInterface $container) {
     /** @var \Behat\Mink\Element\NodeElement $element */
     foreach ($container->findAll('css', 'details > summary') as $element) {
       if ($element->getText() == $summary) {
@@ -493,7 +488,7 @@ class ElementContext extends DrupalSubContextBase {
    * @return ElementInterface
    *   The list of contextual links.
    */
-  protected function assertContextualLinks(ElementInterface $element) {
+  private function assertContextualLinks(ElementInterface $element) {
     return $this->assertSession()
       ->elementExists('css', 'ul.contextual-links', $element);
   }
@@ -509,7 +504,7 @@ class ElementContext extends DrupalSubContextBase {
    * @return ElementInterface
    *   The contextual link.
    */
-  protected function assertContextualLink(ElementInterface $element, $link_class) {
+  private function assertContextualLink(ElementInterface $element, $link_class) {
     return $this->assertSession()
       ->elementExists('css', "li.$link_class", $this->assertContextualLinks($element));
   }

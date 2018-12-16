@@ -71,7 +71,7 @@ class SimpleOauthAuthenticationProvider implements AuthenticationProviderInterfa
   public function authenticate(Request $request) {
     // Update the request with the OAuth information.
     try {
-      $request = $this->resourceServer->validateAuthenticatedRequest($request);
+      $auth_request = $this->resourceServer->validateAuthenticatedRequest($request);
     }
     catch (OAuthServerException $exception) {
       // Procedural code here is hard to avoid.
@@ -81,14 +81,14 @@ class SimpleOauthAuthenticationProvider implements AuthenticationProviderInterfa
     }
 
     $tokens = $this->entityTypeManager->getStorage('oauth2_token')->loadByProperties([
-      'value' => $request->get('oauth_access_token_id'),
+      'value' => $auth_request->get('oauth_access_token_id'),
     ]);
     $token = reset($tokens);
 
     $account = new TokenAuthUser($token);
 
     // Revoke the access token for the blocked user.
-    if ($account->isBlocked()) {
+    if ($account->isBlocked() && $account->isAuthenticated()) {
       $token->revoke();
       $token->save();
       throw OAuthServerException::accessDenied(
@@ -99,6 +99,9 @@ class SimpleOauthAuthenticationProvider implements AuthenticationProviderInterfa
       );
     }
 
+    // Inherit uploaded files for the current request.
+    /* @link https://www.drupal.org/project/drupal/issues/2934486 */
+    $request->files->add($auth_request->files->all());
     // Set consumer ID header on successful authentication, so negotiators
     // will trigger correctly.
     $request->headers->set('X-Consumer-ID', $account->getConsumer()->uuid());

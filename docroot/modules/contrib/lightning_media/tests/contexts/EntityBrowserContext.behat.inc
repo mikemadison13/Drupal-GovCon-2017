@@ -265,4 +265,51 @@ END;
     return Json::decode($settings);
   }
 
+  /**
+   * Selects several items from an entity browser.
+   *
+   * @param int $count
+   *   The number of items to select.
+   * @param string $id
+   *   The entity browser ID.
+   *
+   * @When I select :count item(s) from the :id entity browser
+   */
+  public function selectItems($count, $id) {
+    $this->isJS ? $this->switchJS($id) : $this->switchNoJS($id);
+    $this->switchToEBTab('Library');
+    $this->awaitAjax();
+    for ($n = 0; $n < $count; $n++) {
+      $this->select($n + 1);
+    }
+    $this->submit();
+    $this->awaitAjax();
+  }
+
+  /**
+   * Switches to an entity browser using JavaScript.
+   *
+   * @param string $id
+   *   The entity browser ID.
+   */
+  private function switchJS($id) {
+    $iframe_id = $this
+      ->awaitElement('iframe[name="entity_browser_iframe_' . $id . '"]', 30)
+      ->getAttribute('id');
+
+    $this->getSession()->switchToIFrame($iframe_id);
+  }
+
+  /**
+   * Switches to an entity browser without using JavaScript.
+   *
+   * @param string $id
+   *   The entity browser ID.
+   */
+  private function switchNoJS($id) {
+    $settings = $this->getEntityBrowserSettings($id);
+    Assert::notEmpty($settings['src']);
+    $this->visitPath($settings['src']);
+  }
+
 }
