@@ -12,19 +12,17 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\entity_test\Entity\EntityTest;
-use Drupal\Tests\rest\Functional\BcTimestampNormalizerUnixTestTrait;
 use Drupal\Tests\jsonapi\Traits\CommonCollectionFilterAccessTestPatternsTrait;
 use Drupal\user\Entity\User;
 use GuzzleHttp\RequestOptions;
 
 /**
- * JSON API integration test for the "Comment" content entity type.
+ * JSON:API integration test for the "Comment" content entity type.
  *
  * @group jsonapi
  */
 class CommentTest extends ResourceTestBase {
 
-  use BcTimestampNormalizerUnixTestTrait;
   use CommentTestTrait;
   use CommonCollectionFilterAccessTestPatternsTrait;
 
@@ -121,7 +119,7 @@ class CommentTest extends ResourceTestBase {
     ]);
     $comment->setSubject('Llama')
       ->setOwnerId($this->account->id())
-      ->setPublished(TRUE)
+      ->setPublished()
       ->setCreatedTime(123456789)
       ->setChangedTime(123456789);
     $comment->save();
@@ -135,32 +133,27 @@ class CommentTest extends ResourceTestBase {
   protected function getExpectedDocument() {
     $self_url = Url::fromUri('base:/jsonapi/comment/comment/' . $this->entity->uuid())->setAbsolute()->toString(TRUE)->getGeneratedUrl();
     $author = User::load($this->entity->getOwnerId());
-    $document = [
+    return [
       'jsonapi' => [
         'meta' => [
           'links' => [
-            'self' => 'http://jsonapi.org/format/1.0/',
+            'self' => ['href' => 'http://jsonapi.org/format/1.0/'],
           ],
         ],
         'version' => '1.0',
       ],
       'links' => [
-        'self' => $self_url,
+        'self' => ['href' => $self_url],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'comment--comment',
         'links' => [
-          'self' => $self_url,
+          'self' => ['href' => $self_url],
         ],
         'attributes' => [
-          'cid' => 1,
-          'created' => 123456789,
-          // @todo uncomment this in https://www.drupal.org/project/jsonapi/issues/2929932
-          /* 'created' => $this->formatExpectedTimestampItemValues(123456789), */
-          'changed' => $this->entity->getChangedTime(),
-          // @todo uncomment this in https://www.drupal.org/project/jsonapi/issues/2929932
-          /* 'changed' => $this->formatExpectedTimestampItemValues($this->entity->getChangedTime()), */
+          'created' => '1973-11-29T21:33:09+00:00',
+          'changed' => (new \DateTime())->setTimestamp($this->entity->getChangedTime())->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::RFC3339),
           'comment_body' => [
             'value' => 'The name "llama" was adopted by European settlers from native Peruvians.',
             'format' => 'plain_text',
@@ -175,7 +168,7 @@ class CommentTest extends ResourceTestBase {
           'status' => TRUE,
           'subject' => 'Llama',
           'thread' => '01/',
-          'uuid' => $this->entity->uuid(),
+          'drupal_internal__cid' => 1,
         ],
         'relationships' => [
           'uid' => [
@@ -184,8 +177,8 @@ class CommentTest extends ResourceTestBase {
               'type' => 'user--user',
             ],
             'links' => [
-              'related' => $self_url . '/uid',
-              'self' => $self_url . '/relationships/uid',
+              'related' => ['href' => $self_url . '/uid'],
+              'self' => ['href' => $self_url . '/relationships/uid'],
             ],
           ],
           'comment_type' => [
@@ -194,8 +187,8 @@ class CommentTest extends ResourceTestBase {
               'type' => 'comment_type--comment_type',
             ],
             'links' => [
-              'related' => $self_url . '/comment_type',
-              'self' => $self_url . '/relationships/comment_type',
+              'related' => ['href' => $self_url . '/comment_type'],
+              'self' => ['href' => $self_url . '/relationships/comment_type'],
             ],
           ],
           'entity_id' => [
@@ -204,25 +197,20 @@ class CommentTest extends ResourceTestBase {
               'type' => 'entity_test--bar',
             ],
             'links' => [
-              'related' => $self_url . '/entity_id',
-              'self' => $self_url . '/relationships/entity_id',
+              'related' => ['href' => $self_url . '/entity_id'],
+              'self' => ['href' => $self_url . '/relationships/entity_id'],
             ],
           ],
           'pid' => [
             'data' => NULL,
             'links' => [
-              'related' => $self_url . '/pid',
-              'self' => $self_url . '/relationships/pid',
+              'related' => ['href' => $self_url . '/pid'],
+              'self' => ['href' => $self_url . '/relationships/pid'],
             ],
           ],
         ],
       ],
     ];
-    // @todo Remove this when JSON API requires Drupal 8.5 or newer.
-    if (floatval(\Drupal::VERSION) < 8.5) {
-      unset($document['data']['attributes']['comment_body']['processed']);
-    }
-    return $document;
   }
 
   /**
@@ -257,11 +245,6 @@ class CommentTest extends ResourceTestBase {
    * {@inheritdoc}
    */
   protected function getExpectedCacheTags(array $sparse_fieldset = NULL) {
-    // @todo Remove this when JSON API requires Drupal 8.5 or newer.
-    if (floatval(\Drupal::VERSION) < 8.5) {
-      return parent::getExpectedCacheTags($sparse_fieldset);
-    }
-
     $tags = parent::getExpectedCacheTags($sparse_fieldset);
     if ($sparse_fieldset === NULL || in_array('comment_body', $sparse_fieldset)) {
       $tags = Cache::mergeTags($tags, ['config:filter.format.plain_text']);
@@ -273,10 +256,6 @@ class CommentTest extends ResourceTestBase {
    * {@inheritdoc}
    */
   protected function getExpectedCacheContexts(array $sparse_fieldset = NULL) {
-    // @todo Remove this when JSON API requires Drupal 8.5 or newer.
-    if (floatval(\Drupal::VERSION) < 8.5) {
-      return parent::getExpectedCacheContexts($sparse_fieldset);
-    }
     $contexts = parent::getExpectedCacheContexts($sparse_fieldset);
     if ($sparse_fieldset === NULL || in_array('comment_body', $sparse_fieldset)) {
       $contexts = Cache::mergeContexts($contexts, ['languages:language_interface', 'theme']);
@@ -296,7 +275,7 @@ class CommentTest extends ResourceTestBase {
         return "The 'post comments' permission is required.";
 
       case 'PATCH':
-        // @todo Make this unconditional when JSON API requires Drupal 8.6 or newer.
+        // @todo Make this unconditional when JSON:API requires Drupal 8.6 or newer.
         if (floatval(\Drupal::VERSION) >= 8.6) {
           return "The 'edit own comments' permission is required, the user must be the comment author, and the comment must be published.";
         }
@@ -322,9 +301,10 @@ class CommentTest extends ResourceTestBase {
   public function testPostIndividualDxWithoutCriticalBaseFields() {
     $this->setUpAuthorization('POST');
 
-    $url = Url::fromRoute(sprintf('jsonapi.%s.collection', static::$resourceTypeName));
+    $url = Url::fromRoute(sprintf('jsonapi.%s.collection.post', static::$resourceTypeName));
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
 
     $remove_field = function (array $normalization, $type, $attribute_name) {
@@ -336,10 +316,10 @@ class CommentTest extends ResourceTestBase {
     $request_options[RequestOptions::BODY] = Json::encode($remove_field($this->getPostDocument(), 'attributes', 'entity_type'));
     $response = $this->request('POST', $url, $request_options);
     if (floatval(\Drupal::VERSION) >= 8.7) {
-      $this->assertResourceErrorResponse(422, 'entity_type: This value should not be null.', $response, '/data/attributes/entity_type');
+      $this->assertResourceErrorResponse(422, 'entity_type: This value should not be null.', NULL, $response, '/data/attributes/entity_type');
     }
     else {
-      $this->assertResourceErrorResponse(500, 'The "" entity type does not exist.', $response, FALSE);
+      $this->assertResourceErrorResponse(500, 'The "" entity type does not exist.', $url, $response, FALSE);
     }
 
     // DX: 422 when missing 'entity_id' field.
@@ -347,7 +327,7 @@ class CommentTest extends ResourceTestBase {
     // @todo Remove the try/catch in https://www.drupal.org/node/2820364.
     try {
       $response = $this->request('POST', $url, $request_options);
-      $this->assertResourceErrorResponse(422, 'entity_id: This value should not be null.', $response, '/data/attributes/entity_id');
+      $this->assertResourceErrorResponse(422, 'entity_id: This value should not be null.', NULL, $response, '/data/attributes/entity_id');
     }
     catch (\Exception $e) {
       $this->assertSame("Error: Call to a member function get() on null\nDrupal\\comment\\Plugin\\Validation\\Constraint\\CommentNameConstraintValidator->getAnonymousContactDetailsSetting()() (Line: 96)\n", $e->getMessage());
@@ -357,7 +337,7 @@ class CommentTest extends ResourceTestBase {
     $request_options[RequestOptions::BODY] = Json::encode($remove_field($this->getPostDocument(), 'attributes', 'field_name'));
     $response = $this->request('POST', $url, $request_options);
     if (floatval(\Drupal::VERSION) >= 8.7) {
-      $this->assertResourceErrorResponse(422, 'field_name: This value should not be null.', $response, '/data/attributes/field_name');
+      $this->assertResourceErrorResponse(422, 'field_name: This value should not be null.', NULL, $response, '/data/attributes/field_name');
     }
     else {
       $this->assertSame(500, $response->getStatusCode());
@@ -373,10 +353,11 @@ class CommentTest extends ResourceTestBase {
     // Create request.
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
     $request_options[RequestOptions::BODY] = Json::encode($this->getPostDocument());
 
-    $url = Url::fromRoute('jsonapi.comment--comment.collection');
+    $url = Url::fromRoute('jsonapi.comment--comment.collection.post');
 
     // Status should be FALSE when posting as anonymous.
     $response = $this->request('POST', $url, $request_options);

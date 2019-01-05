@@ -9,8 +9,8 @@ dependencies:
   - drupal:serialization
   - consumers:consumers (>=8.x-1.0-beta3)
 
-# Information added by Drupal.org packaging script on 2018-11-13
-version: '8.x-3.11'
+# Information added by Drupal.org packaging script on 2018-12-30
+version: '8.x-3.13'
 core: '8.x'
 project: 'simple_oauth'
-datestamp: 1542151989
+datestamp: 1546204108

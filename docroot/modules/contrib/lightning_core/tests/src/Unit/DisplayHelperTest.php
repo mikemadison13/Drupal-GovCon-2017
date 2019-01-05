@@ -13,6 +13,7 @@ use Drupal\Tests\UnitTestCase;
  *
  * @group lightning
  * @group lightning_core
+ * @group orca_public
  */
 class DisplayHelperTest extends UnitTestCase {
 

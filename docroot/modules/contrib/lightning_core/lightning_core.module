@@ -21,6 +21,11 @@ use Drupal\lightning_core\UpdateManager;
  * Implements hook_local_tasks_alter().
  */
 function lightning_core_local_tasks_alter(array &$local_tasks) {
+  // When Content Moderation is installed, the "Edit" tab may have different
+  // text, depending on the circumstances. In order for Behat tests to visit
+  // the edit form, there must be a consistent way to target the tab. Rather
+  // than rely on the text, set a consistent 'rel' attribute which step
+  // definitions can reliably target.
   $local_tasks['entity.node.edit_form']['options']['attributes']['rel'] = 'edit-form';
 }
 

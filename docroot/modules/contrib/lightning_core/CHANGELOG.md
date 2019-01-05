@@ -1,3 +1,6 @@
+## 3.4.0
+* Updated Drupal core to 8.6.4.
+
 ## 3.3.0
 * Updated Drupal core to 8.6.3.
 * Various improvements to testing infrastucture.

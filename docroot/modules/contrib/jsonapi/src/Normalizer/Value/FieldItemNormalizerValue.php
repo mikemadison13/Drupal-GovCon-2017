@@ -3,10 +3,10 @@
 namespace Drupal\jsonapi\Normalizer\Value;
 
 use Drupal\Core\Cache\CacheableDependencyInterface;
-use Drupal\jsonapi\Normalizer\CacheableDependencyTrait;
+use Drupal\Core\Cache\CacheableDependencyTrait;
 
 /**
- * Helps normalize field items in compliance with the JSON API spec.
+ * Helps normalize field items in compliance with the JSON:API spec.
  *
  * @internal
  */

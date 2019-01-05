@@ -2,12 +2,13 @@
 
 namespace Drupal\lightning_media\Plugin\EntityBrowser\Widget;
 
-use Drupal\Core\Ajax\PrependCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Plugin\Field\FieldType\FileItem;
+use Drupal\image\Plugin\Field\FieldType\ImageItem;
 use Drupal\lightning_media\Element\AjaxUpload;
 use Drupal\lightning_media\MediaHelper;
 use Drupal\media\MediaInterface;
+use Drupal\media\MediaTypeInterface;
 
 /**
  * An Entity Browser widget for creating media entities from uploaded files.
@@ -23,8 +24,9 @@ class FileUpload extends EntityFormProxy {
   /**
    * {@inheritdoc}
    */
-  protected function getInputValue(FormStateInterface $form_state) {
-    return $form_state->getValue(['input', 'fid']);
+  protected function getCurrentValue(FormStateInterface $form_state) {
+    $value = parent::getCurrentValue($form_state);
+    return $value['fid'];
   }
 
   /**
@@ -51,55 +53,116 @@ class FileUpload extends EntityFormProxy {
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
 
-    $form['entity_form']['input'] = [
+    $form['input'] = [
       '#type' => 'ajax_upload',
       '#title' => $this->t('File'),
+      '#required' => TRUE,
       '#process' => [
         [$this, 'processUploadElement'],
       ],
+      '#upload_validators' => $this->getUploadValidators(),
       '#weight' => 70,
     ];
 
-    $validators = $form_state->get(['entity_browser', 'widget_context', 'upload_validators']) ?: [];
+    return $form;
+  }
+
+  protected function getUploadValidators() {
+    $validators = $this->configuration['upload_validators'];
 
     // If the widget context didn't specify any file extension validation, add
     // it as the first validator, allowing it to accept only file extensions
     // associated with existing media bundles.
     if (empty($validators['file_validate_extensions'])) {
-      $allowed_bundles = $this->getAllowedBundles($form_state);
-      $extensions = implode(' ', $this->helper->getFileExtensions(TRUE, $allowed_bundles));
-
-      $validators = array_merge([
+      return array_merge([
         'file_validate_extensions' => [
-          $extensions,
+          implode(' ', $this->getAllowedFileExtensions()),
         ],
       ], $validators);
     }
-    $form['entity_form']['input']['#upload_validators'] = $validators;
+    return $validators;
+  }
 
-    return $form;
+  /**
+   * Returns all file extensions accepted by the allowed media types.
+   *
+   * @return string[]
+   *   The allowed file extensions.
+   */
+  protected function getAllowedFileExtensions() {
+    $extensions = '';
+
+    foreach ($this->getAllowedTypes() as $media_type) {
+      $extensions .= $media_type->getSource()
+        ->getSourceFieldDefinition($media_type)
+        ->getSetting('file_extensions') . ' ';
+    }
+    $extensions = preg_split('/,?\s+/', rtrim($extensions));
+
+    return array_unique($extensions);
   }
 
   /**
    * {@inheritdoc}
    */
   public function validate(array &$form, FormStateInterface $form_state) {
-    $fid = $this->getInputValue($form_state);
-
+    $fid = $this->getCurrentValue($form_state);
     if ($fid) {
       parent::validate($form, $form_state);
-      $allowed_bundles = $this->getAllowedBundles($form_state);
 
-      // Only validate uploaded file if the exact bundle is known.
-      if (count($allowed_bundles) === 1) {
-        $file = $this->entityTypeManager->getStorage('file')->load($fid);
-        $errors = lightning_media_validate_upload($file, $allowed_bundles);
-
-        foreach ($errors as $error) {
-          $form_state->setError($form['widget']['entity_form']['input'], $error);
+      $media = $this->getCurrentEntity($form_state);
+      if ($media) {
+        foreach ($this->validateFile($media) as $error) {
+          $form_state->setError($form['widget']['input'], $error);
         }
       }
     }
+  }
+
+  /**
+   * Validates the file entity associated with a media item.
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   The media item.
+   *
+   * @return array[]
+   *   Any errors returned by file_validate().
+   */
+  protected function validateFile(MediaInterface $media) {
+    $field = $media->getSource()
+      ->getSourceFieldDefinition($media->bundle->entity)
+      ->getName();
+
+    /** @var \Drupal\file\Plugin\Field\FieldType\FileItem $item */
+    $item = $media->get($field)->first();
+
+    $validators = [
+      // It's maybe a bit overzealous to run this validator, but hey...better
+      // safe than screwed over by script kiddies.
+      'file_validate_name_length' => [],
+    ];
+    $validators = array_merge($validators, $item->getUploadValidators());
+    // This function is only called by the custom FileUpload widget, which runs
+    // file_validate_extensions before this function. So there's no need to
+    // validate the extensions again.
+    unset($validators['file_validate_extensions']);
+
+    // If this is an image field, add image validation. Against all sanity,
+    // this is normally done by ImageWidget, not ImageItem, which is why we
+    // need to facilitate this a bit.
+    if ($item instanceof ImageItem) {
+      // Validate that this is, indeed, a supported image.
+      $validators['file_validate_is_image'] = [];
+
+      $settings = $item->getFieldDefinition()->getSettings();
+      if ($settings['max_resolution'] || $settings['min_resolution']) {
+        $validators['file_validate_image_resolution'] = [
+          $settings['max_resolution'],
+          $settings['min_resolution'],
+        ];
+      }
+    }
+    return file_validate($item->entity, $validators);
   }
 
   /**
@@ -107,7 +170,7 @@ class FileUpload extends EntityFormProxy {
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\media\MediaInterface $entity */
-    $entity = $element['entity_form']['entity']['#entity'];
+    $entity = $element['entity']['#entity'];
 
     $file = MediaHelper::useFile(
       $entity,
@@ -151,6 +214,7 @@ class FileUpload extends EntityFormProxy {
   public function defaultConfiguration() {
     $configuration = parent::defaultConfiguration();
     $configuration['return_file'] = FALSE;
+    $configuration['upload_validators'] = [];
     return $configuration;
   }
 
@@ -167,6 +231,23 @@ class FileUpload extends EntityFormProxy {
       '#description' => $this->t('If checked, the source file(s) of the media entity will be returned from this widget.'),
     ];
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function isAllowedType(MediaTypeInterface $media_type) {
+    $is_allowed = parent::isAllowedType($media_type);
+
+    if ($is_allowed) {
+      $item_class = $media_type->getSource()
+        ->getSourceFieldDefinition($media_type)
+        ->getItemDefinition()
+        ->getClass();
+
+      $is_allowed = is_a($item_class, FileItem::class, TRUE);
+    }
+    return $is_allowed;
   }
 
 }

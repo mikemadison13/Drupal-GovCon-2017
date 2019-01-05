@@ -3,19 +3,33 @@
 namespace Drupal\simple_oauth\Repositories;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
+/**
+ * Common methods for token repositories on different grants.
+ */
 trait RevocableTokenRepositoryTrait {
 
+  /**
+   * The entity type ID.
+   *
+   * @var string
+   */
   protected static $entity_type_id = 'oauth2_token';
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
-   * @var \Symfony\Component\Serializer\Serializer
+   * The serializer.
+   *
+   * @var \Symfony\Component\Serializer\SerializerInterface
    */
   protected $serializer;
 
@@ -23,9 +37,11 @@ trait RevocableTokenRepositoryTrait {
    * Construct a revocable token.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\simple_oauth\Normalizer\TokenEntityNormalizerInterface $normalizer
+   *   The entity type manager.
+   * @param \Symfony\Component\Serializer\SerializerInterface $serializer
+   *   The normalizer for tokens.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, Serializer $serializer) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, SerializerInterface $serializer) {
     $this->entityTypeManager = $entity_type_manager;
     $this->serializer = $serializer;
   }
@@ -40,6 +56,14 @@ trait RevocableTokenRepositoryTrait {
     $values = $this->serializer->normalize($token_entity);
     $values['bundle'] = static::$bundle_id;
     $new_token = $this->entityTypeManager->getStorage(static::$entity_type_id)->create($values);
+
+    if ($token_entity instanceof RefreshTokenEntityInterface) {
+      $access_token = $token_entity->getAccessToken();
+      if (!empty($access_token->getUserIdentifier())) {
+        $new_token->set('auth_user_id', $access_token->getUserIdentifier());
+      }
+    }
+
     $new_token->save();
   }
 

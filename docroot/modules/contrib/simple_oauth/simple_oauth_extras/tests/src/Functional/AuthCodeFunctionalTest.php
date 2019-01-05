@@ -41,7 +41,8 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
       'absolute' => TRUE,
     ])->toString();
     $this->client->set('redirect', $this->redirectUri);
-    $this->client->set('description', $this->getRandomGenerator()->paragraphs());
+    $this->client->set('description', $this->getRandomGenerator()
+      ->paragraphs());
     $this->client->save();
     $this->authorizeUrl = Url::fromRoute('oauth2_token_extras.authorize');
     $this->grantPermissions(Role::load(RoleInterface::AUTHENTICATED_ID), [
@@ -80,7 +81,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $assert_session = $this->assertSession();
-    $assert_session->buttonExists('Login');
+    $assert_session->buttonExists('Log in');
     $assert_session->responseContains('An external client application is requesting access');
 
     // 2. Log the user in and try again.
@@ -119,7 +120,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $assert_session = $this->assertSession();
-    $assert_session->buttonExists('Login');
+    $assert_session->buttonExists('Log in');
     $assert_session->responseContains('An external client application is requesting access');
 
     // 2. Log the user in and try again. This time we should get a code
@@ -154,7 +155,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $assert_session = $this->assertSession();
-    $assert_session->buttonExists('Login');
+    $assert_session->buttonExists('Log in');
     $assert_session->responseContains('An external client application is requesting access');
 
     // 2. Log the user in and try again.
@@ -211,7 +212,9 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     $this->assertValidTokenResponse($response, TRUE);
 
     // Disable the remember clients feature, make sure that the redirect doesn't happen automatically anymore.
-    $this->config('simple_oauth.settings')->set('remember_clients', FALSE)->save();
+    $this->config('simple_oauth.settings')
+      ->set('remember_clients', FALSE)
+      ->save();
 
     $this->drupalGet($this->authorizeUrl->toString(), [
       'query' => $valid_params,

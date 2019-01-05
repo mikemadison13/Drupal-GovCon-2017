@@ -11,6 +11,8 @@ use Drupal\user\UserInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 
 /**
+ * The decorated user class with token information.
+ *
  * @internal
  */
 class TokenAuthUser implements TokenAuthUserInterface {
@@ -68,7 +70,7 @@ class TokenAuthUser implements TokenAuthUserInterface {
    * {@inheritdoc}
    */
   public function getConsumer() {
-      return $this->consumer;
+    return $this->consumer;
   }
 
   /**
@@ -920,6 +922,21 @@ class TokenAuthUser implements TokenAuthUserInterface {
    */
   public function isDefaultTranslationAffectedOnly() {
     return $this->subject->isDefaultTranslationAffectedOnly();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSyncing($status) {
+    $this->subject->setSyncing($status);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isSyncing() {
+    return $this->subject->isSyncing();
   }
 
 }

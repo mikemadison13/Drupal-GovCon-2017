@@ -57,7 +57,7 @@ class ImplicitFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $assert_session = $this->assertSession();
-    $assert_session->buttonExists('Login');
+    $assert_session->buttonExists('Log in');
     $assert_session->responseContains('An external client application is requesting access');
 
     // 2. Log the user in and try again.
@@ -90,7 +90,7 @@ class ImplicitFunctionalTest extends TokenBearerFunctionalTestBase {
   }
 
   /**
-   * Test the valid Implicit grant if the client is non 3rd party
+   * Test the valid Implicit grant if the client is non 3rd party.
    */
   public function testValidClientImplicitGrant() {
     $this->client->set('third_party', FALSE);
@@ -105,7 +105,7 @@ class ImplicitFunctionalTest extends TokenBearerFunctionalTestBase {
       'query' => $valid_params,
     ]);
     $assert_session = $this->assertSession();
-    $assert_session->buttonExists('Login');
+    $assert_session->buttonExists('Log in');
     $assert_session->responseContains('An external client application is requesting access');
 
     // 2. Log the user in and try again.

@@ -69,7 +69,7 @@ class OAuthKeyForm extends ConfigFormBase {
    *   The current form state.
    */
   private function onException(\Exception $e, FormStateInterface $form_state) {
-    drupal_set_message($e->getMessage(), 'error');
+    $this->messenger()->addError($e->getMessage());
     $form_state->setRebuild();
   }
 
@@ -78,12 +78,12 @@ class OAuthKeyForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     if (extension_loaded('openssl') == FALSE) {
-      drupal_set_message($this->t('The OpenSSL extension is unavailable. Please enable it to generate OAuth keys.'), 'error');
+      $this->messenger()->addError($this->t('The OpenSSL extension is unavailable. Please enable it to generate OAuth keys.'));
       return $form;
     }
 
     if ($this->key->exists() && $form_state->isSubmitted() == FALSE && $form_state->isRebuilding() == FALSE) {
-      drupal_set_message($this->t('A key pair already exists and will be overwritten if you generate new keys.'), 'warning');
+      $this->messenger()->addWarning($this->t('A key pair already exists and will be overwritten if you generate new keys.'));
     }
 
     $form['dir'] = [
@@ -203,7 +203,7 @@ class OAuthKeyForm extends ConfigFormBase {
       return $this->onException($e, $form_state);
     }
 
-    drupal_set_message($this->t('A key pair was generated successfully.'));
+    $this->messenger()->addStatus($this->t('A key pair was generated successfully.'));
   }
 
 }

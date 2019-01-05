@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheableResponse;
 use Drupal\Core\Cache\CacheableResponseInterface;
 use Drupal\jsonapi\Normalizer\Value\JsonApiDocumentTopLevelNormalizerValue;
 use Drupal\jsonapi\ResourceResponse;
+use Drupal\jsonapi\ResourceType\ResourceType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * 2. It has the @current_route_match service no longer injected
  * 3. It hardcodes the format to 'api_json'
  * 4. It adds the JsonApiDocumentTopLevelNormalizerValue value object returned
- *    by JSON API normalization to the response object.
+ *    by JSON:API normalization to the response object.
  * 5. It flattens only to a cacheable response if the HTTP method is cacheable.
  */
 class ResourceResponseSubscriber implements EventSubscriberInterface {
@@ -94,7 +95,7 @@ class ResourceResponseSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    * @param \Drupal\jsonapi\ResourceResponse $response
-   *   The response from the JSON API resource.
+   *   The response from the JSON:API resource.
    * @param \Symfony\Component\Serializer\SerializerInterface $serializer
    *   The serializer to use.
    * @param string|null $format
@@ -109,20 +110,47 @@ class ResourceResponseSubscriber implements EventSubscriberInterface {
 
     // If there is data to send, serialize and set it as the response body.
     if ($data !== NULL) {
-      // First normalize the data.
-      $jsonapi_doc_object = $serializer->normalize($data, $format, [
-        'request' => $request,
-        'resource_type' => $request->get('resource_type'),
-      ]);
+      // First normalize the data. Note that error responses do not need a
+      // normalization context, since there are no entities to normalize.
+      // @see \Drupal\jsonapi\EventSubscriber\DefaultExceptionSubscriber::isJsonApiExceptionEvent()
+      $context = !$response->isSuccessful() ? [] : static::generateContext($request);
+      $jsonapi_doc_object = $serializer->normalize($data, $format, $context);
       // Having just normalized the data, we can associate its cacheability with
       // the response object.
       assert($jsonapi_doc_object instanceof JsonApiDocumentTopLevelNormalizerValue);
       $response->addCacheableDependency($jsonapi_doc_object);
-      // Finally, encode the normalized data (JSON API's encoder rasterizes it
+      // Finally, encode the normalized data (JSON:API's encoder rasterizes it
       // automatically).
       $response->setContent($serializer->encode($jsonapi_doc_object, $format));
       $response->headers->set('Content-Type', $request->getMimeType($format));
     }
+  }
+
+  /**
+   * Generates a top-level JSON:API normalization context.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request from which the context can be derived.
+   *
+   * @return array
+   *   The generated context.
+   */
+  protected static function generateContext(Request $request) {
+    $resource_type = $request->get('resource_type');
+    assert($resource_type instanceof ResourceType || $resource_type === NULL);
+
+    // Build the expanded context.
+    $context = [
+      'account' => NULL,
+      'sparse_fieldset' => NULL,
+      'resource_type' => $resource_type,
+    ];
+    if ($request->query->get('fields')) {
+      $context['sparse_fieldset'] = array_map(function ($item) {
+        return explode(',', $item);
+      }, $request->query->get('fields'));
+    }
+    return $context;
   }
 
   /**

@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Route;
  *
  * @group lightning
  * @group lightning_core
+ * @group orca_public
  */
 class AdministrativeRoleCheckTest extends KernelTestBase {
 

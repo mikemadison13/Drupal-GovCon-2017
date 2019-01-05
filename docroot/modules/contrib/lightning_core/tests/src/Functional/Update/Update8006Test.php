@@ -8,6 +8,7 @@ use Drupal\lightning_core\UpdateManager;
 /**
  * @group lightning
  * @group lightning_core
+ * @group orca_public
  */
 class Update8006Test extends UpdatePathTestBase {
 
@@ -21,6 +22,16 @@ class Update8006Test extends UpdatePathTestBase {
   }
 
   public function testUpdate() {
+    // Forcibly remove Lightning Dev to prevent test failures. This does not
+    // affect the test, because Lightning Dev should never have been included in
+    // the fixture anyway.
+    $this->config('core.extension')
+      ->clear('module.lightning_dev')
+      ->save();
+    $this->container->get('keyvalue')
+      ->get('system.schema')
+      ->deleteMultiple(['lightning_dev']);
+
     $old_name = 'lightning.versions';
     $new_name = UpdateManager::CONFIG_NAME;
 

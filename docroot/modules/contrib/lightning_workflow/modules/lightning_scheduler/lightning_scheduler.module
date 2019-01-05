@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\lightning_core\OverrideHelper;
 use Drupal\lightning_scheduler\Plugin\Field\FieldWidget\ModerationStateWidget;
@@ -25,18 +24,6 @@ function lightning_scheduler_library_info_alter(array &$libraries, $extension) {
           // @TODO This will break if the site is running in a subdirectory.
           "/$dir/css/component.seven.css" => [],
         ],
-      ],
-    ];
-  }
-
-  // Import React's testing utilities if Lightning Dev is enabled. This is
-  // necessary in order for Behat tests to pass.
-  if (Drupal::moduleHandler()->moduleExists('lightning_dev') && $extension === 'lightning_scheduler') {
-    $libraries['react']['js']['https://unpkg.com/react-dom@16.3.2/umd/react-dom-test-utils.production.min.js'] = [
-      'external' => TRUE,
-      'attributes' => [
-        'integrity' => 'sha384-7jjA9Du+a2tQZfn0Rzzz4xsYIwnft+l09jw6BUpA21gsQNj+0x2yLq77a7mvqwWl',
-        'crossorigin' => 'anonymous',
       ],
     ];
   }

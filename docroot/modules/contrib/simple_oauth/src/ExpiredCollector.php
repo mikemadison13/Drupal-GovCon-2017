@@ -14,16 +14,22 @@ use Drupal\consumers\Entity\Consumer;
 class ExpiredCollector {
 
   /**
+   * The token storage.
+   *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $tokenStorage;
 
   /**
+   * The client storage.
+   *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $clientStorage;
 
   /**
+   * The date time to collect tokens.
+   *
    * @var \Drupal\Component\Datetime\TimeInterface
    */
   protected $dateTime;
@@ -69,6 +75,7 @@ class ExpiredCollector {
   public function collectForAccount(AccountInterface $account) {
     $query = $this->tokenStorage->getQuery();
     $query->condition('auth_user_id', $account->id());
+    $query->condition('bundle', 'refresh_token', '!=');
     $entity_ids = $query->execute();
     $output = $entity_ids
       ? array_values($this->tokenStorage->loadMultiple(array_values($entity_ids)))

@@ -3,6 +3,7 @@
 namespace Acquia\LightningExtension\Context;
 
 use Behat\Behat\Hook\Scope\ScenarioScope;
+use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Exception\ExpectationException;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
@@ -11,13 +12,8 @@ use Webmozart\Assert\Assert;
 
 /**
  * Contains step definitions for interacting with entity browser instances.
- *
- * @internal
- * This class is part of Lightning's internal testing code. It is not an API and
- * should not be extended. This class will be marked final, and all protected
- * members will be made private, in Lightning Media 3.x.
  */
-class EntityBrowserContext extends DrupalSubContextBase {
+final class EntityBrowserContext extends DrupalSubContextBase {
 
   use AwaitTrait;
 
@@ -51,7 +47,7 @@ class EntityBrowserContext extends DrupalSubContextBase {
    * @return \Behat\Mink\Element\NodeElement[]
    *   An array of items in the entity browser.
    */
-  protected function getItems($browser_id = NULL) {
+  private function getItems($browser_id = NULL) {
     if ($browser_id) {
       $selector = 'form#entity-browser-' . Html::cleanCssIdentifier($browser_id) . '-form';
     }
@@ -140,10 +136,8 @@ class EntityBrowserContext extends DrupalSubContextBase {
   public function submit() {
     $session = $this->getSession();
 
-    // @TODO: Make this smarter, because we can't be sure that #edit-submit
-    // exists at all, or that it's the correct submit button.
     $button = $this->assertSession()
-      ->elementExists('css', '#edit-submit')
+      ->elementExists('css', '[data-drupal-selector="edit-submit"]')
       ->getXpath();
 
     $frame = $session->evaluateScript('window.name') ?: $session->evaluateScript('window.active_iframe.name');
@@ -153,6 +147,11 @@ class EntityBrowserContext extends DrupalSubContextBase {
     // press the button.
     $session->switchToIFrame();
 
+    // If there are single quotes in the button's XPath query, WebDriver needs
+    // them to be escaped.
+    if ($session->getDriver() instanceof Selenium2Driver) {
+      $button = addslashes($button);
+    }
     $js = <<<END
 document.evaluate('$button', window.$frame.document, null).iterateNext().click();
 END;

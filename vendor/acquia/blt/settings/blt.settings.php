@@ -20,6 +20,12 @@ $request_method = getenv('REQUEST_METHOD');
 $request_uri = getenv('REQUEST_URI');
 $http_x_request_id = getenv('HTTP_X_REQUEST_ID');
 
+// If trusted_reverse_proxy_ips is not defined, fail gracefully.
+$trusted_reverse_proxy_ips = isset($trusted_reverse_proxy_ips) ? $trusted_reverse_proxy_ips : '';
+if (!is_array($trusted_reverse_proxy_ips)) {
+  $trusted_reverse_proxy_ips = [];
+}
+
 // Tell Drupal whether the client arrived via HTTPS. Ensure the
 // request is coming from our load balancers by checking the IP address.
 if (getenv('HTTP_X_FORWARDED_PROTO') == 'https'
@@ -135,7 +141,7 @@ if ($is_acsf_inited) {
     // When developing locally, we use the host name to determine which site
     // factory site is active. The hostname must have a corresponding entry
     // under the multisites key.
-    $input = new ArgvInput($_SERVER['argv']);
+    $input = new ArgvInput(!empty($_SERVER['argv']) ? $_SERVER['argv'] : ['']);
     $config_initializer = new ConfigInitializer($repo_root, $input);
     $blt_config = $config_initializer->initialize();
 
@@ -145,7 +151,7 @@ if ($is_acsf_inited) {
     $name = array_slice($domain_fragments, 1);
     $acsf_sites = $blt_config->get('multisites');
     if (in_array($name, $acsf_sites)) {
-      $acsf_site_name = $name;
+      $_acsf_site_name = $name;
     }
   }
 }

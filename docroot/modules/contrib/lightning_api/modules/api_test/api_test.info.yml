@@ -8,8 +8,8 @@ dependencies:
   - lightning_core
 # version: '8.x-2.24-dev'
 
-# Information added by Drupal.org packaging script on 2018-08-31
-version: '8.x-2.7'
+# Information added by Drupal.org packaging script on 2018-12-19
+version: '8.x-3.1'
 core: '8.x'
 project: 'lightning_api'
-datestamp: 1535722384
+datestamp: 1545253395

@@ -51,6 +51,7 @@ class EntityCollectorTest extends UnitTestCase {
     $account = $this->prophesize(AccountInterface::class);
     $account->id()->willReturn(22);
     $token_query->condition('auth_user_id', 22)->shouldBeCalledTimes(1);
+    $token_query->condition('bundle', 'refresh_token', '!=')->shouldBeCalledTimes(1);
     $client_storage->loadByProperties([
       'user_id' => 22,
     ])->shouldBeCalledTimes(1);
@@ -70,6 +71,12 @@ class EntityCollectorTest extends UnitTestCase {
     $expired_collector->deleteMultipleTokens(['foo']);
   }
 
+  /**
+   * Builds prophecies for the tests.
+   *
+   * @return \Prophecy\Prophecy\ProphecyInterface[]
+   *   The prophecies.
+   */
   protected function buildProphecies() {
     $entity_type_manager = $this->prophesize(EntityTypeManagerInterface::class);
 

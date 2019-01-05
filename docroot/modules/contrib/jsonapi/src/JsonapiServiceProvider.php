@@ -8,6 +8,7 @@ use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\jsonapi\DependencyInjection\Compiler\RegisterSerializationClassesCompilerPass;
 use Drupal\jsonapi\DependencyInjection\Compiler\RemoveJsonapiFormatCompilerPass;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Adds 'api_json' as known format and prevents its use in the REST module.
@@ -20,6 +21,17 @@ class JsonapiServiceProvider implements ServiceModifierInterface, ServiceProvide
    * {@inheritdoc}
    */
   public function alter(ContainerBuilder $container) {
+    // @todo Remove when we stop supporting Drupal 8.5.
+    if (floatval(\Drupal::VERSION) < 8.6) {
+      // Swap the cache service back.
+      $definition = $container->getDefinition('jsonapi.resource_type.repository');
+      $definition->setArgument(3, new Reference('cache.static'));
+      $container->setDefinition('jsonapi.resource_type.repository', $definition);
+
+      // Drop the new service definition.
+      $container->removeDefinition('cache.jsonapi_resource_types');
+    }
+
     if ($container->has('http_middleware.negotiation') && is_a($container->getDefinition('http_middleware.negotiation')
       ->getClass(), '\Drupal\Core\StackMiddleware\NegotiationMiddleware', TRUE)
     ) {

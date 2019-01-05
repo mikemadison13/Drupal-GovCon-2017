@@ -3,7 +3,7 @@
 namespace Drupal\jsonapi\ResourceType;
 
 /**
- * Value object containing all metadata for a JSON API resource type.
+ * Value object containing all metadata for a JSON:API resource type.
  *
  * Used to generate routes (collection, individual, etcetera), generate
  * relationship links, and so on.
@@ -55,6 +55,43 @@ class ResourceType {
    * @var bool
    */
   protected $isLocatable;
+
+  /**
+   * Whether this resource type's resources are mutable.
+   *
+   * @var bool
+   */
+  protected $isMutable;
+
+  /**
+   * The list of fields on the underlying entity type + bundle.
+   *
+   * @var string[]
+   */
+  protected $fields;
+
+  /**
+   * The list of disabled fields. Disabled by default: uuid, id, type.
+   *
+   * @var string[]
+   *
+   * @see \Drupal\jsonapi\ResourceType\ResourceTypeRepository::getFieldMapping()
+   */
+  protected $disabledFields;
+
+  /**
+   * The mapping for field aliases: keys=internal names, values=public names.
+   *
+   * @var string[]
+   */
+  protected $fieldMapping;
+
+  /**
+   * The inverse of $fieldMapping.
+   *
+   * @var string[]
+   */
+  protected $invertedFieldMapping;
 
   /**
    * Gets the entity type ID.
@@ -112,7 +149,9 @@ class ResourceType {
    */
   public function getPublicName($field_name) {
     // By default the entity field name is the public field name.
-    return $field_name;
+    return isset($this->fieldMapping[$field_name])
+      ? $this->fieldMapping[$field_name]
+      : $field_name;
   }
 
   /**
@@ -126,7 +165,30 @@ class ResourceType {
    */
   public function getInternalName($field_name) {
     // By default the entity field name is the public field name.
-    return $field_name;
+    return isset($this->invertedFieldMapping[$field_name])
+      ? $this->invertedFieldMapping[$field_name]
+      : $field_name;
+  }
+
+  /**
+   * Checks if the field exists.
+   *
+   * Note: a minority of config entity types which do not define a
+   * `config_export` in their entity type annotation will not have their fields
+   * represented here because it is impossible to determine them without an
+   * instance of config available.
+   *
+   * @todo Refactor this in Drupal 9 if https://www.drupal.org/project/drupal/issues/2949021 lands, then `config_export` will be guaranteed to exist, and this won't need an instance anymore.
+   *
+   * @param string $field_name
+   *   The internal field name.
+   *
+   * @return bool
+   *   TRUE if the field is known to exist on the resource type; FALSE
+   *   otherwise.
+   */
+  public function hasField($field_name) {
+    return in_array($field_name, $this->fields, TRUE);
   }
 
   /**
@@ -139,12 +201,11 @@ class ResourceType {
    *   The internal field name.
    *
    * @return bool
-   *   TRUE if the field is enabled and should be considered as part of the data
-   *   model. FALSE otherwise.
+   *   TRUE if the field exists and is enabled and should be considered as part
+   *   of the data model. FALSE otherwise.
    */
   public function isFieldEnabled($field_name) {
-    // By default all fields are enabled.
-    return TRUE;
+    return $this->hasField($field_name) && !in_array($field_name, $this->disabledFields, TRUE);
   }
 
   /**
@@ -196,6 +257,19 @@ class ResourceType {
   }
 
   /**
+   * Whether resources of this resource type are mutable.
+   *
+   * Indicates that resources of this type may not be created, updated or
+   * deleted (POST, PATCH or DELETE, respectively).
+   *
+   * @return bool
+   *   TRUE if the resource type's resources are mutable. FALSE otherwise.
+   */
+  public function isMutable() {
+    return $this->isMutable;
+  }
+
+  /**
    * Instantiates a ResourceType object.
    *
    * @param string $entity_type_id
@@ -208,15 +282,29 @@ class ResourceType {
    *   (optional) Whether the resource type should be internal.
    * @param bool $is_locatable
    *   (optional) Whether the resource type is locatable.
+   * @param bool $is_mutable
+   *   (optional) Whether the resource type is mutable.
+   * @param array $field_mapping
+   *   (optional) The field mapping to use.
    */
-  public function __construct($entity_type_id, $bundle, $deserialization_target_class, $internal = FALSE, $is_locatable = TRUE) {
+  public function __construct($entity_type_id, $bundle, $deserialization_target_class, $internal = FALSE, $is_locatable = TRUE, $is_mutable = TRUE, array $field_mapping = []) {
     $this->entityTypeId = $entity_type_id;
     $this->bundle = $bundle;
     $this->deserializationTargetClass = $deserialization_target_class;
     $this->internal = $internal;
     $this->isLocatable = $is_locatable;
+    $this->isMutable = $is_mutable;
 
-    $this->typeName = sprintf('%s--%s', $this->entityTypeId, $this->bundle);
+    $this->typeName = $this->bundle === '?'
+      ? 'unknown'
+      : sprintf('%s--%s', $this->entityTypeId, $this->bundle);
+
+    $this->fields = array_keys($field_mapping);
+    $this->disabledFields = array_keys(array_filter($field_mapping, function ($v) {
+      return $v === FALSE;
+    }));
+    $this->fieldMapping = array_filter($field_mapping, 'is_string');
+    $this->invertedFieldMapping = array_flip($this->fieldMapping);
   }
 
   /**
@@ -254,7 +342,7 @@ class ResourceType {
    *   The public field name.
    *
    * @return \Drupal\jsonapi\ResourceType\ResourceType[]
-   *   The relatable JSON API resource types.
+   *   The relatable JSON:API resource types.
    *
    * @see self::getRelatableResourceTypes()
    */

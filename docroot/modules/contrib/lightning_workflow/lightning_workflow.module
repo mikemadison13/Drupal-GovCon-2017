@@ -170,59 +170,6 @@ function lightning_workflow_modules_installed(array $modules) {
         'use moderation sidebar',
       ]);
   }
-
-  if (in_array('lightning_dev', $modules, TRUE)) {
-    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
-    $module_installer = Drupal::service('module_installer');
-    // Install Lightning Page separately in order to ensure that the optional
-    // Pathauto config that it ships is installed too.
-    $module_installer->install(['lightning_page']);
-    // Lightning Workflow optionally integrates with Diff, and for testing
-    // purposes we'd like to enable that integration. In order to test with
-    // meaningful responsibility-based roles, we also enable Lightning Roles.
-    $module_installer->install([
-      'diff',
-      'lightning_roles',
-      'moderation_dashboard',
-      'moderation_sidebar',
-      'pathauto',
-      'quickedit',
-      'toolbar',
-      'views',
-    ]);
-    // BigPipe breaks a couple of non-JS tests which expect to find local task
-    // links, but receive BigPipe placeholders instead. This is a bit of a
-    // sledgehammer approach, but until it's possible to disable a module during
-    // a single test, it's the best we can do.
-    $module_installer->uninstall(['big_pipe']);
-
-    // Add moderation to the page content type.
-    /** @var NodeTypeInterface $node_type */
-    $node_type = entity_load('node_type', 'page');
-    $node_type->setThirdPartySetting('lightning_workflow', 'workflow', 'editorial');
-    lightning_workflow_node_type_insert($node_type);
-
-    // Allow the content view to filter by moderation state.
-    $view = entity_load('view', 'content')->enforceIsNew();
-    lightning_workflow_view_presave($view);
-    $view->enforceIsNew(FALSE)->save();
-
-    // Ensure that the main content block exists.
-    $values = [
-      'theme' => Drupal::theme()->getActiveTheme()->getName(),
-      'plugin' => 'system_main_block',
-    ];
-
-    $main_content_block = Drupal::entityTypeManager()
-      ->getStorage('block')
-      ->loadByProperties($values);
-
-    if (empty($main_content_block)) {
-      $values['id'] = $values['theme'] . '_content';
-      $values['region'] = 'content';
-      entity_create('block', $values)->save();
-    }
-  }
 }
 
 /**

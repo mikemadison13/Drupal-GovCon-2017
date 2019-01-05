@@ -2,10 +2,10 @@
 
 namespace Drupal\Tests\lightning_media\ExistingSite;
 
-use Drupal\Core\Session\AccountInterface;
 use Drupal\entity_browser\Element\EntityBrowserElement;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
-use Drupal\Tests\WebAssert;
+use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 use weitzman\DrupalTestTraits\ExistingSiteBase;
 
 /**
@@ -14,37 +14,36 @@ use weitzman\DrupalTestTraits\ExistingSiteBase;
  */
 class MediaBrowserUploadBundleTest extends ExistingSiteBase {
 
+  use ContentTypeCreationTrait;
   use MediaTypeCreationTrait;
 
   /**
-   * The session assertion helper.
+   * The content type created during the test.
    *
-   * @var WebAssert
+   * @var \Drupal\node\NodeTypeInterface
    */
-  private $assert;
+  private $nodeType;
 
   /**
-   * The media entity storage handler.
+   * The media type created during the test.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\media\MediaTypeInterface
    */
-  private $storage;
+  private $mediaType;
 
   /**
    * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
-    $this->assert = new WebAssert($this->getSession());
 
-    $this->storage = $this->container->get('entity_type.manager')
-      ->getStorage('media');
+    $this->nodeType = $this->createContentType();
+    $this->markEntityForCleanup($this->nodeType);
 
-    $this->createMediaType('image', [
-      'id' => 'z_image',
-    ]);
+    $this->mediaType = $this->createMediaType('image');
+    $this->markEntityForCleanup($this->mediaType);
 
-    $field_storage = entity_create('field_storage_config', [
+    $field_storage = FieldStorageConfig::create([
       'field_name' => 'field_z_image',
       'entity_type' => 'node',
       'type' => 'entity_reference',
@@ -52,22 +51,25 @@ class MediaBrowserUploadBundleTest extends ExistingSiteBase {
         'target_type' => 'media',
       ],
     ]);
-    $field_storage->save();
+    $dependencies = $field_storage->getDependencies();
+    // Ensure that the field is deleted when the media type is.
+    $dependencies['enforced']['config'][] = $this->mediaType->getConfigDependencyName();
+    $field_storage->set('dependencies', $dependencies)->save();
 
     entity_create('field_config', [
       'field_storage' => $field_storage,
-      'bundle' => 'page',
+      'bundle' => $this->nodeType->id(),
       'label' => 'Z Image',
       'settings' => [
         'handler_settings' => [
           'target_bundles' => [
-            'z_image' => 'z_image',
+            $this->mediaType->id() => $this->mediaType->id(),
           ],
         ],
       ],
     ])->save();
 
-    entity_get_form_display('node', 'page', 'default')
+    entity_get_form_display('node', $this->nodeType->id(), 'default')
       ->setComponent('field_z_image', [
         'type' => 'entity_browser_entity_reference',
         'settings' => [
@@ -87,75 +89,75 @@ class MediaBrowserUploadBundleTest extends ExistingSiteBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Tests that the upload widget validates file extensions.
    */
-  public function tearDown() {
-    entity_get_form_display('node', 'page', 'default')
-      ->removeComponent('field_z_image')
-      ->save();
+  public function testFileExtensionValidation() {
+    $account = $this->createUser([
+      'access media_browser entity browser pages',
+      'create media',
+    ]);
+    $this->drupalLogin($account);
 
-    $media = $this->storage->loadByProperties(['bundle' => 'z_image']);
-    $this->storage->delete($media);
+    $this->drupalGet('/entity-browser/iframe/media_browser');
+    $this->assertSession()->statusCodeEquals(200);
 
-    entity_load('field_config', 'node.page.field_z_image')->delete();
-    entity_load('media_type', 'z_image')->delete();
-    field_purge_batch(10);
-
-    parent::tearDown();
+    $file_field = $this->assertSession()->elementExists('css', '.js-form-managed-file');
+    $file_field->attachFileToField('File', __DIR__ . "/../../files/test.php");
+    $file_field->pressButton('Upload');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->elementExists('css', '[role="alert"]');
+    $this->assertSession()->pageTextContains('Only files with the following extensions are allowed');
   }
 
   /**
-   * Tests that the upload widget respects bundles allowed by the field.
+   * Tests that the upload widget respects media types allowed by the field.
    */
-  public function test() {
-    $account = $this->createUser();
-    $account->addRole('media_creator');
-    $account->addRole('media_manager');
-    $account->save();
-    $this->logIn($account);
+  public function testFilterFieldSettings() {
+    $account = $this->createUser([
+      'create ' . $this->nodeType->id() . ' content',
+      'access media_browser entity browser pages',
+      'create media',
+    ]);
+    $this->drupalLogin($account);
 
-    $this->visit('/node/add/page');
-    $this->assert->statusCodeEquals(200);
+    $this->drupalGet('/node/add/' . $this->nodeType->id());
+    $this->assertSession()->statusCodeEquals(200);
 
-    $uuid = $this->assert
+    $uuid = $this->assertSession()
       ->elementExists('named', ['link', 'Select entities'])
       ->getAttribute('data-uuid');
     $this->assertNotEmpty($uuid);
 
-    $this->visit("/entity-browser/iframe/media_browser?uuid=$uuid");
-    $this->assert->statusCodeEquals(200);
+    $this->drupalGet("/entity-browser/iframe/media_browser", [
+      'query' => [
+        'uuid' => $uuid,
+      ],
+    ]);
+    $this->assertSession()->statusCodeEquals(200);
 
-    // Switch to the "Upload" tab of the media browser, which should be the
-    // first button named "Upload" on the page.
-    $this->assert->buttonExists('Upload')->press();
+    $file_field = $this->assertSession()
+      ->elementExists('css', '.js-form-managed-file');
+    $file_field->attachFileToField('File', __DIR__ . '/../../files/test.jpg');
+    $file_field->pressButton('Upload');
 
-    $this->assert->fieldExists('File')->attachFile(__DIR__ . '/../../files/test.jpg');
-    $wrapper = $this->assert->elementExists('css', '.js-form-managed-file');
-    $this->assert->buttonExists('Upload', $wrapper)->press();
-    $this->assert->fieldExists('Name')->setValue($this->randomString());
-    $this->assert->fieldExists('Alternative text')->setValue($this->randomString());
-    $this->assert->buttonExists('Place')->press();
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldNotExists('Bundle');
+    $this->assertSession()->fieldExists('Name')->setValue($this->randomString());
+    $this->assertSession()->fieldExists('Alternative text')->setValue($this->randomString());
+    $this->assertSession()->buttonExists('Place')->press();
+    $this->assertSession()->statusCodeEquals(200);
 
-    $media = $this->storage->loadByProperties(['bundle' => 'z_image']);
+    /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('media');
+
+    $media = $storage->loadByProperties([
+      'bundle' => $this->mediaType->id(),
+    ]);
     $this->assertCount(1, $media);
+    $storage->delete($media);
 
-    $media = $this->storage->loadByProperties(['bundle' => 'image']);
-    $this->assertEmpty($media);
-  }
-
-  /**
-   * Logs in a user.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The account to log in.
-   */
-  private function logIn(AccountInterface $account) {
-    $this->assertNotEmpty($account->passRaw);
-    $this->visit('/user/login');
-
-    $this->assert->fieldExists('name')->setValue($account->getAccountName());
-    $this->assert->fieldExists('pass')->setValue($account->passRaw);
-    $this->assert->buttonExists('Log in')->press();
+    $this->assertCount(0, $storage->getQuery()->condition('bundle', 'image')->execute());
   }
 
 }

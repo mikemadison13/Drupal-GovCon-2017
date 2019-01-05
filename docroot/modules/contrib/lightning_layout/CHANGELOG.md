@@ -1,3 +1,7 @@
+## 1.5.0
+* Many internal changes to testing infrastructure, but nothing that affects
+  users of Lightning Layout.
+
 ## 1.4.0
 * Patched Panelizer to support translations. (#40)
 * The Landing Page content type now includes out-of-the-box support for

@@ -2,7 +2,7 @@
     "name": "acquia/lightning_workflow",
     "description": "Tools to improve your content workflow.",
     "type": "drupal-module",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "repositories": {
@@ -30,7 +30,7 @@
         "cweagans/composer-patches": "^1.6.4",
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "oomphinc/composer-installers-extender": "^1.1",
-        "drupal/lightning_core": "^3.1",
+        "drupal/lightning_core": "^3.4",
         "drupal/diff": "^1.0",
         "drupal/moderation_sidebar": "^1.0",
         "drupal/moderation_dashboard": "1.0.0-alpha1"
@@ -54,6 +54,11 @@
         "pull": "Acquia\\Lightning\\Commands\\FileCommands::pull",
         "push": "Acquia\\Lightning\\Commands\\FileCommands::push"
     },
+    "autoload": {
+        "psr-4": {
+            "Drupal\\Tests\\lightning_workflow\\": "tests/src"
+        }
+    },
     "extra": {
         "installer-types": [
             "bower-asset",
@@ -67,6 +72,10 @@
                 "type:drupal-library",
                 "type:bower-asset",
                 "type:npm-asset"
+            ],
+            "docroot/modules/contrib/acquia/{$name}": [
+                "drupal/lightning_core",
+                "drupal/lightning_workflow"
             ],
             "docroot/modules/contrib/{$name}": [
                 "type:drupal-module"

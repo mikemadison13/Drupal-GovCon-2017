@@ -1,4 +1,4 @@
-@lightning @core @api
+@lightning @core @api @orca_public
 Feature: User roles and related config
 
   @394cee8a

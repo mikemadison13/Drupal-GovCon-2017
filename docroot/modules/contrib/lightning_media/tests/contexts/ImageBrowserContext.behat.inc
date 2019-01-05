@@ -2,17 +2,13 @@
 
 namespace Acquia\LightningExtension\Context;
 
+use Behat\Mink\Exception\ElementNotFoundException;
 use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
  * Contains step definitions for interacting with Lightning's image browsers.
- *
- * @internal
- * This class is part of Lightning's internal testing code. It is not an API and
- * should not be extended. This class will be marked final, and all protected
- * members will be made private, in Lightning Media 3.x.
  */
-class ImageBrowserContext extends DrupalSubContextBase {
+final class ImageBrowserContext extends DrupalSubContextBase {
 
   use AwaitTrait;
 
@@ -45,8 +41,16 @@ class ImageBrowserContext extends DrupalSubContextBase {
     /** @var \Acquia\LightningExtension\Context\ElementContext $context */
     $context = $this->getContext(ElementContext::class);
 
-    $context->assertOpenDetails('Crop image');
-    $context->assertDetails('Freeform');
+    // There should always be a collapsible cropping area, but depending on the
+    // circumstances, the Freeform crop widget might either be a vertical tab
+    // inside that area, or its own cropping area. Try to account for both.
+    $crop = $context->assertOpenDetails('Crop image');
+    try {
+      $context->assertVerticalTab('Freeform', $crop);
+    }
+    catch (ElementNotFoundException $e) {
+      $context->assertDetails('Freeform');
+    }
   }
 
 }

@@ -6,7 +6,7 @@ use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Url;
 
 /**
- * JSON API integration test for the "BlockContentType" config entity type.
+ * JSON:API integration test for the "BlockContentType" config entity type.
  *
  * @group jsonapi
  */
@@ -66,30 +66,28 @@ class BlockContentTypeTest extends ResourceTestBase {
       'jsonapi' => [
         'meta' => [
           'links' => [
-            'self' => 'http://jsonapi.org/format/1.0/',
+            'self' => ['href' => 'http://jsonapi.org/format/1.0/'],
           ],
         ],
         'version' => '1.0',
       ],
       'links' => [
-        'self' => $self_url,
+        'self' => ['href' => $self_url],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'block_content_type--block_content_type',
         'links' => [
-          'self' => $self_url,
+          'self' => ['href' => $self_url],
         ],
         'attributes' => [
           'dependencies' => [],
           'description' => 'Provides a competitive alternative to the "basic" type',
-          'id' => 'pascal',
           'label' => 'Pascal',
           'langcode' => 'en',
           'revision' => 0,
           'status' => TRUE,
-          'uuid' => $this->entity->uuid(),
-
+          'drupal_internal__id' => 'pascal',
         ],
       ],
     ];

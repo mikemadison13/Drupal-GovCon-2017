@@ -21,7 +21,7 @@ class EmbedCode extends EntityFormProxy {
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
 
-    $form['entity_form']['input'] = [
+    $form['input'] = [
       '#type' => 'textarea',
       '#placeholder' => $this->t('Enter a URL...'),
       '#attributes' => [
@@ -38,54 +38,29 @@ class EmbedCode extends EntityFormProxy {
         ['input'],
       ],
     ];
-
-    // Allow the form to be rebuilt without using AJAX.
-    $form['entity_form']['update'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Update'),
-      '#attributes' => [
-        'class' => ['js-hide'],
-      ],
-      '#submit' => [
-        [static::class, 'update'],
-      ],
-    ];
-
     return $form;
   }
 
   /**
-   * Submit callback for the Update button.
-   *
-   * @param array $form
-   *   The complete form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current form state.
+   * {@inheritdoc}
    */
-  public static function update(array &$form, FormStateInterface $form_state) {
-    $form_state->setRebuild();
+  protected function getCurrentValue(FormStateInterface $form_state) {
+    $value = parent::getCurrentValue($form_state);
+    return trim($value);
   }
 
   /**
    * {@inheritdoc}
    */
   public function validate(array &$form, FormStateInterface $form_state) {
-    $value = trim($this->getInputValue($form_state));
+    $value = $this->getCurrentValue($form_state);
 
     if ($value) {
       parent::validate($form, $form_state);
     }
-    else {
-      $form_state->setError($form['widget']['entity_form']['input'], $this->t('You must enter a URL or embed code.'));
+    elseif ($form_state->isSubmitted()) {
+      $form_state->setError($form['widget']['input'], $this->t('You must enter a URL or embed code.'));
     }
-
-    // Form state errors can't be set here, because then the form won't get
-    // rebuilt. Use the messenger service to display error messages.
-    foreach ($form_state->getErrors() as $error) {
-      $this->messenger()->addError($error);
-    }
-
-    $form_state->clearErrors();
   }
 
 }

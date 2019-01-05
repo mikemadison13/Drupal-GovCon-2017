@@ -20,6 +20,7 @@ class Upload extends FileElement {
   public function getInfo() {
     $info = parent::getInfo();
 
+    $info['#required'] = FALSE;
     $info['#upload_location'] = 'public://';
     $info['#upload_validators'] = [];
     $info['#element_validate'] = [
@@ -44,10 +45,13 @@ class Upload extends FileElement {
       $errors = file_validate($file, $element['#upload_validators']);
       if ($errors) {
         foreach ($errors as $error) {
-          $form_state->setError($element, (string) $error);
+          $form_state->setError($element, $error);
         }
         static::delete($element);
       }
+    }
+    elseif ($element['#required']) {
+      $form_state->setError($element, t('You must upload a file.'));
     }
   }
 

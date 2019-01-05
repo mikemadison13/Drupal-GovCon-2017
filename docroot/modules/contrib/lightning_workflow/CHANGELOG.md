@@ -1,3 +1,7 @@
+## 3.2.0
+* Many changes to internal testing code and infrastructure, but nothing that
+  affects users of Lightning Workflow.
+
 ## 3.1.0
 * Lightning Workflow now includes the Moderation Dashboard module. (#70)
 

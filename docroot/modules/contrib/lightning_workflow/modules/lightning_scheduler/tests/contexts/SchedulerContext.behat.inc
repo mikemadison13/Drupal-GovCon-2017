@@ -40,35 +40,9 @@ final class SchedulerContext extends DrupalSubContextBase {
     }
 
     $assert->fieldExists('Scheduled moderation state')->selectOption($state);
-    $this->setValue('Scheduled transition date', date('Y-m-d', strtotime($date)));
-    $this->setValue('Scheduled transition time', date('H:i:s', strtotime($time)));
-  }
-
-  /**
-   * Sets the value of a field and tries to trigger a React event on it.
-   *
-   * @param string $field
-   *   The field locator.
-   * @param mixed $value
-   *   The value to set.
-   * @param string $event
-   *   (optional) The event to trigger. Defaults to 'change'.
-   */
-  private function setValue($field, $value, $event = 'change') {
-    $field = $this->assertSession()->fieldExists($field);
-    $field->setValue($value);
-
-    $field = $field->getXpath();
-
-    // If React's testing utilities are present, simulate the event so that all
-    // values will be updated successfully.
-    $js = <<<END
-if (ReactTestUtils) {
-  let element = document.evaluate('$field', document, null).iterateNext();
-  ReactTestUtils.Simulate.$event(element);
-}
-END;
-    $this->getSession()->executeScript($js);
+    // These date and time formats will only work Chrome via WebDriver.
+    $assert->fieldExists('Scheduled transition date')->setValue(date('m-d-Y', strtotime($date)));
+    $assert->fieldExists('Scheduled transition time')->setValue(date('g:i:sA', strtotime($time)));
   }
 
   /**

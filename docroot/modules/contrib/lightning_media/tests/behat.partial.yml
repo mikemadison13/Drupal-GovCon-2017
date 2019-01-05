@@ -3,6 +3,8 @@ default:
     default:
       paths:
         - '%paths.base%/features'
+      contexts:
+        - '\Drupal\Tests\lightning_media\FixtureContext'
   extensions:
     'DMore\ChromeExtension\Behat\ServiceContainer\ChromeExtension': ~
     'Drupal\DrupalExtension':

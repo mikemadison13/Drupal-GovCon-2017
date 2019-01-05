@@ -28,6 +28,9 @@ function test_10a21ffe_install() {
  * Implements hook_uninstall().
  */
 function test_10a21ffe_uninstall() {
-  FieldConfig::loadByName('node', 'page', 'field_hero_image')->delete();
-  field_purge_batch(10);
+  $field = FieldConfig::loadByName('node', 'page', 'field_hero_image');
+  if ($field) {
+    $field->delete();
+    field_purge_batch(10);
+  }
 }

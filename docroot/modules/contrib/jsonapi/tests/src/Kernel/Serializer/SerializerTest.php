@@ -11,7 +11,7 @@ use Drupal\Tests\jsonapi\Kernel\JsonapiKernelTestBase;
 use Drupal\user\Entity\User;
 
 /**
- * Tests the JSON API serializer.
+ * Tests the JSON:API serializer.
  *
  * @coversClass \Drupal\jsonapi\Serializer\Serializer
  * @group jsonapi
@@ -79,7 +79,8 @@ class SerializerTest extends JsonapiKernelTestBase {
       'uid' => $this->user->id(),
     ]);
     $this->node->save();
-    $this->sut = $this->container->get('jsonapi.serializer_do_not_use_removal_imminent');
+    $this->container->setAlias('sut', 'jsonapi.serializer_do_not_use_removal_imminent');
+    $this->sut = $this->container->get('sut');
   }
 
   /**
@@ -101,7 +102,7 @@ class SerializerTest extends JsonapiKernelTestBase {
     $value = $this->sut->normalize($traversableObject, 'api_json', $context);
     $this->assertEquals($traversableObject->property, $value);
 
-    // When wrapped in an array, we should still be using the JSON API
+    // When wrapped in an array, we should still be using the JSON:API
     // serializer.
     $value = $this->sut->normalize($nested_field, 'api_json', $context);
     $this->assertTrue($value[0] instanceof FieldNormalizerValue);

@@ -116,8 +116,10 @@ function lightning_media_field_widget_form_alter(array &$element, FormStateInter
  */
 function lightning_media_field_widget_entity_browser_entity_reference_form_alter(array &$element, FormStateInterface $form_state, array $context) {
   // Move the remaining number of selections to the details summary.
-  $element['#description'] .= $element['current']['#prefix'];
-  unset($element['current']['#prefix']);
+  if (isset($element['current']['#prefix'])) {
+    $element['#description'] .= $element['current']['#prefix'];
+    unset($element['current']['#prefix']);
+  }
 
   /** @var \Drupal\Core\Field\FieldItemListInterface $items */
   $items = $context['items'];
@@ -154,55 +156,6 @@ function lightning_media_modules_installed(array $modules) {
         'use text format rich_text',
         'access media_browser entity browser pages',
       ]);
-  }
-
-  if (in_array('lightning_dev', $modules)) {
-    \Drupal::service('module_installer')->install([
-      'image_widget_crop',
-      'lightning_page',
-      'pathauto',
-    ]);
-
-    module_load_install('lightning_media_image');
-    lightning_media_image_install();
-
-    $config = Config::forModule('lightning_media')->optional();
-    $config->getEntity('user_role', 'media_creator')->save();
-    $config->getEntity('user_role', 'media_manager')->save();
-
-    user_role_grant_permissions('media_creator', [
-      'access content',
-      'access content overview',
-      'access image_browser entity browser pages',
-      'create page content',
-      'edit own page content',
-      'use text format rich_text',
-      'view own unpublished content',
-    ]);
-
-    \Drupal::service('theme_installer')->install(['bartik', 'seven']);
-
-    $config_factory = \Drupal::configFactory();
-
-    $config_factory->getEditable('system.theme')
-      ->set('default', 'bartik')
-      ->set('admin', 'seven')
-      ->save();
-
-    $config_factory->getEditable('node.settings')
-      ->set('use_admin_theme', TRUE)
-      ->save();
-
-    // Sentence-case the label of the media browser's embed code widget. Yes,
-    // not doing this can cause tests to fail.
-    $config_factory->getEditable('entity_browser.browser.media_browser')
-      ->set('widgets.8b142f33-59d1-47b1-9e3a-4ae85d8376fa.label', 'Create embed')
-      ->save();
-
-    $GLOBALS['install_state'] = [];
-    $view = entity_load('view', 'media');
-    lightning_media_view_insert($view);
-    unset($GLOBALS['install_state']);
   }
 }
 

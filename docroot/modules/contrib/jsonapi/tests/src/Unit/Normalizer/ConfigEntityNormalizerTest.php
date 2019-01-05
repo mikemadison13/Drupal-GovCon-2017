@@ -3,7 +3,9 @@
 namespace Drupal\Tests\jsonapi\Unit\Normalizer;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldTypePluginManagerInterface;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepository;
 use Drupal\jsonapi\Normalizer\ConfigEntityNormalizer;
@@ -32,7 +34,16 @@ class ConfigEntityNormalizerTest extends UnitTestCase {
   public function setUp() {
     $link_manager = $this->prophesize(LinkManager::class);
 
-    $resource_type = new ResourceType('dolor', 'sid', NULL);
+    $field_mapping = array_fill_keys([
+      'lorem',
+      'ipsum',
+      'dolor',
+      'sid',
+      'amet',
+      'ra',
+      'foo',
+    ], TRUE);
+    $resource_type = new ResourceType('dolor', 'sid', NULL, FALSE, TRUE, TRUE, $field_mapping);
     $resource_type->setRelatableResourceTypes([]);
     $resource_type_repository = $this->prophesize(ResourceTypeRepository::class);
     $resource_type_repository->get(Argument::type('string'), Argument::type('string'))
@@ -41,7 +52,9 @@ class ConfigEntityNormalizerTest extends UnitTestCase {
     $this->normalizer = new ConfigEntityNormalizer(
       $link_manager->reveal(),
       $resource_type_repository->reveal(),
-      $this->prophesize(EntityTypeManagerInterface::class)->reveal()
+      $this->prophesize(EntityTypeManagerInterface::class)->reveal(),
+      $this->prophesize(EntityFieldManagerInterface::class)->reveal(),
+      $this->prophesize(FieldTypePluginManagerInterface::class)->reveal()
     );
   }
 

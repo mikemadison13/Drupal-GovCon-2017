@@ -9,19 +9,17 @@ use Drupal\Core\Url;
 use Drupal\jsonapi\Normalizer\HttpExceptionNormalizer;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
-use Drupal\Tests\rest\Functional\BcTimestampNormalizerUnixTestTrait;
 use Drupal\Tests\jsonapi\Traits\CommonCollectionFilterAccessTestPatternsTrait;
 use Drupal\user\Entity\User;
 use GuzzleHttp\RequestOptions;
 
 /**
- * JSON API integration test for the "Node" content entity type.
+ * JSON:API integration test for the "Node" content entity type.
  *
  * @group jsonapi
  */
 class NodeTest extends ResourceTestBase {
 
-  use BcTimestampNormalizerUnixTestTrait;
   use CommonCollectionFilterAccessTestPatternsTrait;
 
   /**
@@ -103,7 +101,7 @@ class NodeTest extends ResourceTestBase {
     $node = Node::create(['type' => 'camelids']);
     $node->setTitle('Llama')
       ->setOwnerId($this->account->id())
-      ->setPublished(TRUE)
+      ->setPublished()
       ->setCreatedTime(123456789)
       ->setChangedTime(123456789)
       ->setRevisionCreationTime(123456789)
@@ -119,34 +117,29 @@ class NodeTest extends ResourceTestBase {
   protected function getExpectedDocument() {
     $author = User::load($this->entity->getOwnerId());
     $self_url = Url::fromUri('base:/jsonapi/node/camelids/' . $this->entity->uuid())->setAbsolute()->toString(TRUE)->getGeneratedUrl();
-    $normalization = [
+    return [
       'jsonapi' => [
         'meta' => [
           'links' => [
-            'self' => 'http://jsonapi.org/format/1.0/',
+            'self' => ['href' => 'http://jsonapi.org/format/1.0/'],
           ],
         ],
         'version' => '1.0',
       ],
       'links' => [
-        'self' => $self_url,
+        'self' => ['href' => $self_url],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'node--camelids',
         'links' => [
-          'self' => $self_url,
+          'self' => ['href' => $self_url],
         ],
         'attributes' => [
-          'created' => 123456789,
-          // @todo uncomment this in https://www.drupal.org/project/jsonapi/issues/2929932
-          /* 'created' => $this->formatExpectedTimestampItemValues(123456789), */
-          'changed' => $this->entity->getChangedTime(),
-          // @todo uncomment this in https://www.drupal.org/project/jsonapi/issues/2929932
-          /* 'changed' => $this->formatExpectedTimestampItemValues($this->entity->getChangedTime()), */
+          'created' => '1973-11-29T21:33:09+00:00',
+          'changed' => (new \DateTime())->setTimestamp($this->entity->getChangedTime())->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::RFC3339),
           'default_langcode' => TRUE,
           'langcode' => 'en',
-          'nid' => 1,
           'path' => [
             'alias' => '/llama',
             'pid' => 1,
@@ -154,26 +147,24 @@ class NodeTest extends ResourceTestBase {
           ],
           'promote' => TRUE,
           'revision_log' => NULL,
-          'revision_timestamp' => 123456789,
-          // @todo uncomment this in https://www.drupal.org/project/jsonapi/issues/2929932
-          /* 'revision_timestamp' => $this->formatExpectedTimestampItemValues(123456789), */
+          'revision_timestamp' => '1973-11-29T21:33:09+00:00',
           // @todo Attempt to remove this in https://www.drupal.org/project/drupal/issues/2933518.
           'revision_translation_affected' => TRUE,
           'status' => TRUE,
           'sticky' => FALSE,
           'title' => 'Llama',
-          'uuid' => $this->entity->uuid(),
-          'vid' => 1,
+          'drupal_internal__nid' => 1,
+          'drupal_internal__vid' => 1,
         ],
         'relationships' => [
-          'type' => [
+          'node_type' => [
             'data' => [
               'id' => NodeType::load('camelids')->uuid(),
               'type' => 'node_type--node_type',
             ],
             'links' => [
-              'related' => $self_url . '/type',
-              'self' => $self_url . '/relationships/type',
+              'related' => ['href' => $self_url . '/node_type'],
+              'self' => ['href' => $self_url . '/relationships/node_type'],
             ],
           ],
           'uid' => [
@@ -182,8 +173,8 @@ class NodeTest extends ResourceTestBase {
               'type' => 'user--user',
             ],
             'links' => [
-              'related' => $self_url . '/uid',
-              'self' => $self_url . '/relationships/uid',
+              'related' => ['href' => $self_url . '/uid'],
+              'self' => ['href' => $self_url . '/relationships/uid'],
             ],
           ],
           'revision_uid' => [
@@ -192,18 +183,13 @@ class NodeTest extends ResourceTestBase {
               'type' => 'user--user',
             ],
             'links' => [
-              'related' => $self_url . '/revision_uid',
-              'self' => $self_url . '/relationships/revision_uid',
+              'related' => ['href' => $self_url . '/revision_uid'],
+              'self' => ['href' => $self_url . '/relationships/revision_uid'],
             ],
           ],
         ],
       ],
     ];
-    // @todo Remove this modification when JSON API requires Drupal 8.5 or newer, and do an early return above instead.
-    if (floatval(\Drupal::VERSION) < 8.5) {
-      unset($normalization['data']['attributes']['revision_default']);
-    }
-    return $normalization;
   }
 
   /**
@@ -249,7 +235,7 @@ class NodeTest extends ResourceTestBase {
     $this->setUpAuthorization('PATCH');
 
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
-    $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), [static::$entityTypeId => $this->entity->uuid()]);
+    $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()]);
     /* $url = $this->entity->toUrl('jsonapi'); */
 
     // GET node's current normalization.
@@ -261,22 +247,23 @@ class NodeTest extends ResourceTestBase {
 
     // Create node PATCH request.
     $request_options = $this->getAuthenticationRequestOptions();
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
     $request_options[RequestOptions::BODY] = Json::encode($normalization);
 
     // PATCH request: 403 when creating URL aliases unauthorized.
     $response = $this->request('PATCH', $url, $request_options);
     // @todo Remove $expected + assertResourceResponse() in favor of the commented line below once https://www.drupal.org/project/jsonapi/issues/2943176 lands.
     $expected_document = [
+      'jsonapi' => static::$jsonApiMember,
       'errors' => [
         [
           'title' => 'Forbidden',
           'status' => 403,
           'detail' => "The current user is not allowed to PATCH the selected field (path). The following permissions are required: 'create url aliases' OR 'administer url aliases'.",
           'links' => [
-            'info' => HttpExceptionNormalizer::getInfoUrl(403),
+            'info' => ['href' => HttpExceptionNormalizer::getInfoUrl(403)],
+            'via' => ['href' => $url->setAbsolute()->toString()],
           ],
-          'code' => 0,
-          'id' => '/node--camelids/' . $this->entity->uuid(),
           'source' => [
             'pointer' => '/data/attributes/path',
           ],
@@ -306,7 +293,7 @@ class NodeTest extends ResourceTestBase {
     $this->entity->setUnpublished()->save();
 
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
-    $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), [static::$entityTypeId => $this->entity->uuid()]);
+    $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()]);
     /* $url = $this->entity->toUrl('jsonapi'); */
     $request_options = $this->getAuthenticationRequestOptions();
 
@@ -314,23 +301,31 @@ class NodeTest extends ResourceTestBase {
     $response = $this->request('GET', $url, $request_options);
     // @todo Remove $expected + assertResourceResponse() in favor of the commented line below once https://www.drupal.org/project/jsonapi/issues/2943176 lands.
     $expected_document = [
+      'jsonapi' => static::$jsonApiMember,
       'errors' => [
         [
           'title' => 'Forbidden',
           'status' => 403,
           'detail' => 'The current user is not allowed to GET the selected resource.',
           'links' => [
-            'info' => HttpExceptionNormalizer::getInfoUrl(403),
+            'info' => ['href' => HttpExceptionNormalizer::getInfoUrl(403)],
+            'via' => ['href' => $url->setAbsolute()->toString()],
           ],
-          'code' => 0,
-          'id' => '/node--camelids/' . $this->entity->uuid(),
           'source' => [
             'pointer' => '/data',
           ],
         ],
       ],
     ];
-    $this->assertResourceResponse(403, $expected_document, $response);
+    $this->assertResourceResponse(
+      403,
+      $expected_document,
+      $response,
+      ['4xx-response', 'http_response', 'node:1'],
+      ['user.permissions'],
+      FALSE,
+      'MISS'
+    );
     /* $this->assertResourceErrorResponse(403, 'The current user is not allowed to GET the selected resource.', $response, '/data'); */
 
     // 200 after granting permission.
@@ -348,9 +343,51 @@ class NodeTest extends ResourceTestBase {
    */
   protected static function getIncludePermissions() {
     return [
-      'uid.type' => ['administer users'],
+      'uid.node_type' => ['administer users'],
       'uid.roles' => ['administer permissions'],
     ];
+  }
+
+  /**
+   * Creating relationships to missing resources should be 404 per JSON:API 1.1.
+   *
+   * @see https://github.com/json-api/json-api/issues/1033
+   */
+  public function testPostNonExistingAuthor() {
+    $this->setUpAuthorization('POST');
+    $this->grantPermissionsToTestedRole(['administer nodes']);
+
+    $random_uuid = \Drupal::service('uuid')->generate();
+    $doc = $this->getPostDocument();
+    $doc['data']['relationships']['uid']['data'] = [
+      'type' => 'user--user',
+      'id' => $random_uuid,
+    ];
+
+    // Create node POST request.
+    $url = Url::fromRoute(sprintf('jsonapi.%s.collection.post', static::$resourceTypeName));
+    $request_options = $this->getAuthenticationRequestOptions();
+    $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
+    $request_options[RequestOptions::BODY] = Json::encode($doc);
+
+    // POST request: 404 when adding relationships to non-existing resources.
+    $response = $this->request('POST', $url, $request_options);
+    $expected_document = [
+      'errors' => [
+        0 => [
+          'status' => 404,
+          'title' => 'Not Found',
+          'detail' => "The resource identified by `user--user:$random_uuid` (given as a relationship item) could not be found.",
+          'links' => [
+            'info' => ['href' => HttpExceptionNormalizer::getInfoUrl(404)],
+            'via' => ['href' => $url->setAbsolute()->toString()],
+          ],
+        ],
+      ],
+      'jsonapi' => static::$jsonApiMember,
+    ];
+    $this->assertResourceResponse(404, $expected_document, $response);
   }
 
   /**

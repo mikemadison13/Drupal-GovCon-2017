@@ -2,6 +2,7 @@
 
 namespace Acquia\LightningExtension\Context;
 
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Drupal\Component\Utility\Random;
 use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 use Drupal\workflows\StateInterface;
@@ -110,7 +111,12 @@ final class ModerationContext extends DrupalSubContextBase {
 
     $this->visitPath($this->node->toUrl()->toString());
     $assert = $this->assertSession();
-    $assert->statusCodeEquals(200);
+    try {
+      $assert->statusCodeEquals(200);
+    }
+    catch (UnsupportedDriverActionException $e) {
+      // This isn't an important assertion, so just swallow the exception.
+    }
     $assert->pageTextContains($this->node->getTitle());
   }
 

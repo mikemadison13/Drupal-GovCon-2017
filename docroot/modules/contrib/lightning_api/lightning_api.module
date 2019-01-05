@@ -3,25 +3,8 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\views\ViewEntityInterface;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
-
-/**
- * Implements hook_modules_installed().
- */
-function lightning_api_modules_installed(array $modules) {
-  // Don't change config during a sync.
-  if (\Drupal::isConfigSyncing()) {
-    return;
-  }
-
-  if (in_array('lightning_dev', $modules, TRUE)) {
-    \Drupal::configFactory()
-      ->getEditable('lightning_api.settings')
-      ->set('entity_json', TRUE)
-      ->set('bundle_docs', TRUE)
-      ->save();
-  }
-}
 
 /**
  * Implements hook_entity_insert().
@@ -34,6 +17,35 @@ function lightning_api_entity_insert(EntityInterface $entity) {
   }
 }
 
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function lightning_api_view_presave(ViewEntityInterface $view) {
+  if (Drupal::isConfigSyncing()) {
+    return;
+  }
+  elseif ($view->id() === 'content' && $view->isNew()) {
+    $display = &$view->getDisplay('default');
+
+    // If the Operations field's 'Include destination' switch is enabled, it
+    // will force every operation to have the 'destination' query parameter,
+    // which breaks JSON API 2.0, causing the 'View JSON' operation to throw a
+    // BadRequestHttpException.
+    if (isset($display['display_options']['fields']['operations']['destination'])) {
+      $display['display_options']['fields']['operations']['destination'] = FALSE;
+    }
+  }
+}
+
+/**
+ * Determines the URL of the JSON API representation of an entity.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity.
+ *
+ * @return \Drupal\Core\Url
+ *   The URL to the JSON API representation of the entity.
+ */
 function lightning_api_entity_json(EntityInterface $entity) {
   $allowed = \Drupal::config('lightning_api.settings')->get('entity_json');
 
@@ -56,7 +68,7 @@ function lightning_api_entity_json(EntityInterface $entity) {
       \Drupal::service('router.route_provider')->getRouteByName($route);
 
       return Url::fromRoute($route, [
-        $resource_type->getEntityTypeId() => $uuid,
+        'entity' => $uuid,
       ]);
     }
     catch (RouteNotFoundException $e) {

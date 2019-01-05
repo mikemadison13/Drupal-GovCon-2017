@@ -10,6 +10,7 @@ use Drupal\Tests\UnitTestCase;
  *
  * @group lightning_core
  * @group lightning
+ * @group orca_public
  */
 class ElementTest extends UnitTestCase {
 

@@ -6,8 +6,8 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
 use Drupal\file\Entity\File;
+use Drupal\jsonapi\BackwardCompatibility\tests\Traits\EntityReferenceTestTrait;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\BrowserTestBase;
@@ -18,7 +18,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 
 /**
- * Provides helper methods for the JSON API module's functional tests.
+ * Provides helper methods for the JSON:API module's functional tests.
  *
  * @internal
  */

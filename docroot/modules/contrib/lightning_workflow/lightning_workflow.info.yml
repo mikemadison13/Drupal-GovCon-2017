@@ -9,8 +9,8 @@ dependencies:
 components:
   - lightning_scheduler
 
-# Information added by Drupal.org packaging script on 2018-09-28
-version: '8.x-3.1'
+# Information added by Drupal.org packaging script on 2018-12-20
+version: '8.x-3.2'
 core: '8.x'
 project: 'lightning_workflow'
-datestamp: 1538155385
+datestamp: 1545276795

@@ -36,26 +36,6 @@ function lightning_layout_modules_installed(array $modules) {
         'administer panelizer node ? layout',
       ]);
   }
-
-  if (in_array('lightning_dev', $modules, TRUE)) {
-    Drupal::service('module_installer')->install(['lightning_roles', 'pathauto']);
-
-    // Grant permissions needed for testing.
-    Role::load('landing_page_creator')
-      ->grantPermission('access user profiles')
-      ->grantPermission('set panelizer default')
-      ->grantPermission('use editorial transition create_new_draft')
-      ->grantPermission('use editorial transition publish')
-      ->save();
-
-    // Use Bartik for testing.
-    \Drupal::service('theme_installer')->install(['seven', 'bartik']);
-    \Drupal::configFactory()
-      ->getEditable('system.theme')
-      ->set('admin', 'seven')
-      ->set('default', 'bartik')
-      ->save();
-  }
 }
 
 /**

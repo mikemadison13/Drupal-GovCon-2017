@@ -2,6 +2,7 @@
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Url;
+use Drupal\views\Entity\View;
 
 /**
  * Implements hook_install().
@@ -29,6 +30,11 @@ function lightning_api_install() {
         '/api-docs'
       );
     }
+  }
+
+  // Disable the content view's 'Include destination' switch.
+  if (!\Drupal::isConfigSyncing()) {
+    lightning_api_update_8301();
   }
 }
 
@@ -88,6 +94,31 @@ function lightning_api_update_8300() {
     'openapi_ui_swagger',
     'openapi_ui_redoc',
   ]);
+}
+
+/**
+ * Changes the 'Content' view's 'Operations' field's 'Include destination'
+ * setting to FALSE.
+ *
+ * @see lightning_api_view_presave()
+ */
+function lightning_api_update_8301() {
+  if (! Drupal::moduleHandler()->moduleExists('views')) {
+    return;
+  }
+
+  $view = View::load('content');
+  if ($view) {
+    lightning_api_view_presave($view->enforceIsNew());
+    $view->enforceIsNew(FALSE)->save();
+  }
+}
+
+/**
+ * Installs Lightning Core.
+ */
+function lightning_api_update_8302() {
+  Drupal::service('module_installer')->install(['lightning_core']);
 }
 
 /**

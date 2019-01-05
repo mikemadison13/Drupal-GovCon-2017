@@ -30,6 +30,8 @@ events:
             - chmod +w docroot/sites/default/settings.php
             # Setup settings file and codebase with minimum required for cloud.
             - lightning configure:cloud layoutnightly standard
-            # Alias a cloud-compatible version of Drush.
-            - composer require drush/drush:"8.1.16 as 9.2.1" --no-update
-            - composer update drush/drush --with-all-dependencies
+            # Remove the Drush binary and package so it doesn't interfere with
+            # cloud versions. Doing this the proper way with Composer can cause
+            # timeouts.
+            - rm ./vendor/bin/drush
+            - rm -rf ./vendor/drush

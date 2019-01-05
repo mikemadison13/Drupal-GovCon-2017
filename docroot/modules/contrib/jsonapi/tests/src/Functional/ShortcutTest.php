@@ -12,7 +12,7 @@ use Drupal\Tests\jsonapi\Traits\CommonCollectionFilterAccessTestPatternsTrait;
 use GuzzleHttp\RequestOptions;
 
 /**
- * JSON API integration test for the "Shortcut" content entity type.
+ * JSON:API integration test for the "Shortcut" content entity type.
  *
  * @group jsonapi
  */
@@ -80,23 +80,21 @@ class ShortcutTest extends ResourceTestBase {
       'jsonapi' => [
         'meta' => [
           'links' => [
-            'self' => 'http://jsonapi.org/format/1.0/',
+            'self' => ['href' => 'http://jsonapi.org/format/1.0/'],
           ],
         ],
         'version' => '1.0',
       ],
       'links' => [
-        'self' => $self_url,
+        'self' => ['href' => $self_url],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'shortcut--default',
         'links' => [
-          'self' => $self_url,
+          'self' => ['href' => $self_url],
         ],
         'attributes' => [
-          'uuid' => $this->entity->uuid(),
-          'id' => (int) $this->entity->id(),
           'title' => 'Comments',
           'link' => [
             'uri' => 'internal:/user/logout',
@@ -106,6 +104,7 @@ class ShortcutTest extends ResourceTestBase {
           'langcode' => 'en',
           'default_langcode' => TRUE,
           'weight' => -20,
+          'drupal_internal__id' => (int) $this->entity->id(),
         ],
         'relationships' => [
           'shortcut_set' => [
@@ -114,8 +113,8 @@ class ShortcutTest extends ResourceTestBase {
               'id' => ShortcutSet::load('default')->uuid(),
             ],
             'links' => [
-              'related' => $self_url . '/shortcut_set',
-              'self' => $self_url . '/relationships/shortcut_set',
+              'related' => ['href' => $self_url . '/shortcut_set'],
+              'self' => ['href' => $self_url . '/relationships/shortcut_set'],
             ],
           ],
         ],

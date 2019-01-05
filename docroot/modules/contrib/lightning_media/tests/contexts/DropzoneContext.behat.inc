@@ -8,13 +8,8 @@ use Drupal\DrupalExtension\Context\MinkContext;
 
 /**
  * Contains step definitions for interacting with DropzoneJS widgets.
- *
- * @internal
- * This class is part of Lightning's internal testing code. It is not an API and
- * should not be extended. This class will be marked final, and all protected
- * members will be made private, in Lightning Media 3.x.
  */
-class DropzoneContext extends DrupalSubContextBase {
+final class DropzoneContext extends DrupalSubContextBase {
 
   /**
    * Attaches a file to a dropzone.

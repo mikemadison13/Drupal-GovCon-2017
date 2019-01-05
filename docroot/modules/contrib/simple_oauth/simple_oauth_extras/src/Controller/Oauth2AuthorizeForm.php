@@ -2,19 +2,13 @@
 
 namespace Drupal\simple_oauth_extras\Controller;
 
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\TrustedRedirectResponse;
-use Drupal\Core\Url;
-use Drupal\simple_oauth\Entities\UserEntity;
 use Drupal\simple_oauth\KnownClientsRepositoryInterface;
 use Drupal\simple_oauth\Plugin\Oauth2GrantManagerInterface;
-use GuzzleHttp\Psr7\Response;
-use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
@@ -123,18 +117,12 @@ class Oauth2AuthorizeForm extends FormBase {
    *
    * @return array
    *   The form structure.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \League\OAuth2\Server\Exception\OAuthServerException
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    if (!$this->currentUser()->isAuthenticated()) {
-      $form['redirect_params'] = ['#type' => 'hidden', '#value' => $this->getRequest()->getQueryString()];
-      $form['description'] = [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#value' => $this->t('An external client application is requesting access to your data in this site. Please log in first to authorize the operation.'),
-      ];
-      $form['submit'] = ['#type' => 'submit', '#value' => $this->t('Login')];
-      return $form;
-    }
     $request = $this->getRequest();
     if ($request->get('response_type') == 'code') {
       $grant_type = 'code';
@@ -227,41 +215,17 @@ class Oauth2AuthorizeForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     if ($auth_request = $form_state->get('auth_request')) {
-      // Once the user has logged in set the user on the AuthorizationRequest.
-      $user_entity = new UserEntity();
-      $user_entity->setIdentifier($this->currentUser()->id());
-      $auth_request->setUser($user_entity);
-      // Once the user has approved or denied the client update the status
-      // (true = approved, false = denied).
-      $can_grant_codes = $this->currentUser()->hasPermission('grant simple_oauth codes');
-      $auth_request->setAuthorizationApproved((bool) $form_state->getValue('submit') && $can_grant_codes);
-      // Return the HTTP redirect response.
-      $response = $this->server->completeAuthorizationRequest($auth_request, new Response());
-      // Get the location and return a secure redirect response.
-      $redirect_response = TrustedRedirectResponse::create(
-        $response->getHeaderLine('location'),
-        $response->getStatusCode(),
-        $response->getHeaders()
+      $can_grant_codes = $this->currentUser()
+        ->hasPermission('grant simple_oauth codes');
+      $redirect_response = Oauth2AuthorizeController::redirectToCallback(
+        $auth_request,
+        $this->server,
+        $this->currentUser(),
+        (bool) $form_state->getValue('submit') && $can_grant_codes,
+        (bool) $this->configFactory->get('simple_oauth.settings')->get('remember_clients'),
+        $this->knownClientRepository
       );
       $form_state->setResponse($redirect_response);
-
-      $scopes = array_map(function (ScopeEntityInterface $scope) {
-        return $scope->getIdentifier();
-      }, $auth_request->getScopes());
-
-      if ($this->configFactory->get('simple_oauth.settings')->get('remember_clients')) {
-        $this->knownClientRepository->rememberClient($this->currentUser()->id(), $auth_request->getClient()->getIdentifier(), $scopes);
-      }
-    }
-    elseif ($params = $form_state->getValue('redirect_params')) {
-      $url = Url::fromRoute('user.login');
-      $destination = Url::fromRoute('oauth2_token_extras.authorize', [], [
-        'query' => UrlHelper::parse('/?' . $params)['query'],
-      ]);
-      $url->setOption('query', [
-        'destination' => $destination->toString(),
-      ]);
-      $form_state->setRedirectUrl($url);
     }
   }
 

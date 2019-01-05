@@ -8,19 +8,16 @@ use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\jsonapi\Normalizer\HttpExceptionNormalizer;
-use Drupal\Tests\rest\Functional\BcTimestampNormalizerUnixTestTrait;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 use GuzzleHttp\RequestOptions;
 
 /**
- * JSON API integration test for the "User" content entity type.
+ * JSON:API integration test for the "User" content entity type.
  *
  * @group jsonapi
  */
 class UserTest extends ResourceTestBase {
-
-  use BcTimestampNormalizerUnixTestTrait;
 
   /**
    * {@inheritdoc}
@@ -43,6 +40,11 @@ class UserTest extends ResourceTestBase {
   protected static $patchProtectedFieldNames = [
     'changed' => NULL,
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $anonymousUsersCanViewLabels = TRUE;
 
   /**
    * {@inheritdoc}
@@ -121,32 +123,27 @@ class UserTest extends ResourceTestBase {
       'jsonapi' => [
         'meta' => [
           'links' => [
-            'self' => 'http://jsonapi.org/format/1.0/',
+            'self' => ['href' => 'http://jsonapi.org/format/1.0/'],
           ],
         ],
         'version' => '1.0',
       ],
       'links' => [
-        'self' => $self_url,
+        'self' => ['href' => $self_url],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'user--user',
         'links' => [
-          'self' => $self_url,
+          'self' => ['href' => $self_url],
         ],
         'attributes' => [
-          'created' => 123456789,
-          // @todo uncomment this in https://www.drupal.org/project/jsonapi/issues/2929932
-          // 'created' => $this->formatExpectedTimestampItemValues(123456789),
-          'changed' => $this->entity->getChangedTime(),
-          // @todo uncomment this in https://www.drupal.org/project/jsonapi/issues/2929932
-          // 'changed' => $this->formatExpectedTimestampItemValues($this->entity->getChangedTime()),
+          'created' => '1973-11-29T21:33:09+00:00',
+          'changed' => (new \DateTime())->setTimestamp($this->entity->getChangedTime())->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::RFC3339),
           'default_langcode' => TRUE,
           'langcode' => 'en',
           'name' => 'Llama',
-          'uid' => 3,
-          'uuid' => $this->entity->uuid(),
+          'drupal_internal__uid' => 3,
         ],
       ],
     ];
@@ -190,7 +187,7 @@ class UserTest extends ResourceTestBase {
    */
   public function testPatchDxForSecuritySensitiveBaseFields() {
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
-    $url = Url::fromRoute(sprintf('jsonapi.user--user.individual'), ['user' => $this->account->uuid()]);
+    $url = Url::fromRoute(sprintf('jsonapi.user--user.individual'), ['entity' => $this->account->uuid()]);
     /* $url = $this->account->toUrl('jsonapi'); */
 
     $original_normalization = $this->normalize($this->account, $url);
@@ -204,6 +201,7 @@ class UserTest extends ResourceTestBase {
     // we must use $this->account, not $this->entity.
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
 
     // Test case 1: changing email.
@@ -215,12 +213,12 @@ class UserTest extends ResourceTestBase {
     $response = $this->request('PATCH', $url, $request_options);
     // @todo Remove $expected + assertResourceResponse() in favor of the commented line below once https://www.drupal.org/project/jsonapi/issues/2943176 lands.
     $expected_document = [
+      'jsonapi' => static::$jsonApiMember,
       'errors' => [
         [
           'title' => 'Unprocessable Entity',
           'status' => 422,
           'detail' => 'mail: Your current password is missing or incorrect; it\'s required to change the Email.',
-          'code' => 0,
           'source' => [
             'pointer' => '/data/attributes/mail',
           ],
@@ -255,12 +253,12 @@ class UserTest extends ResourceTestBase {
     $response = $this->request('PATCH', $url, $request_options);
     // @todo Remove $expected + assertResourceResponse() in favor of the commented line below once https://www.drupal.org/project/jsonapi/issues/2943176 lands.
     $expected_document = [
+      'jsonapi' => static::$jsonApiMember,
       'errors' => [
         [
           'title' => 'Unprocessable Entity',
           'status' => 422,
           'detail' => 'pass: Your current password is missing or incorrect; it\'s required to change the Password.',
-          'code' => 0,
           'source' => [
             'pointer' => '/data/attributes/pass',
           ],
@@ -284,6 +282,7 @@ class UserTest extends ResourceTestBase {
     $this->account->passRaw = $new_password;
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
 
     // Test case 3: changing name.
@@ -297,16 +296,16 @@ class UserTest extends ResourceTestBase {
     $response = $this->request('PATCH', $url, $request_options);
     // @todo Remove $expected + assertResourceResponse() in favor of the commented line below once https://www.drupal.org/project/jsonapi/issues/2943176 lands.
     $expected_document = [
+      'jsonapi' => static::$jsonApiMember,
       'errors' => [
         [
           'title' => 'Forbidden',
           'status' => 403,
           'detail' => 'The current user is not allowed to PATCH the selected field (name).',
           'links' => [
-            'info' => HttpExceptionNormalizer::getInfoUrl(403),
+            'info' => ['href' => HttpExceptionNormalizer::getInfoUrl(403)],
+            'via' => ['href' => $url->setAbsolute()->toString()],
           ],
-          'code' => 0,
-          'id' => '/user--user/' . $this->account->uuid(),
           'source' => [
             'pointer' => '/data/attributes/name',
           ],
@@ -352,7 +351,7 @@ class UserTest extends ResourceTestBase {
    */
   public function testPatchSecurityOtherUser() {
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
-    $url = Url::fromRoute(sprintf('jsonapi.user--user.individual'), ['user' => $this->account->uuid()]);
+    $url = Url::fromRoute(sprintf('jsonapi.user--user.individual'), ['entity' => $this->account->uuid()]);
     /* $url = $this->account->toUrl('jsonapi'); */
 
     $original_normalization = $this->normalize($this->account, $url);
@@ -384,9 +383,9 @@ class UserTest extends ResourceTestBase {
           'status' => 403,
           'detail' => 'The current user is not allowed to PATCH the selected field (uid). The entity ID cannot be changed',
           'links' => [
-            'info' => HttpExceptionNormalizer::getInfoUrl(403),
+            'info' => ['href' => HttpExceptionNormalizer::getInfoUrl(403)],
+            'via' => ['href' => $url->setAbsolute()->toString()],
           ],
-          'code' => 0,
           'id' => '/user--user/' . $this->account->uuid(),
           'source' => [
             'pointer' => '/data/attributes/uid',
@@ -422,7 +421,7 @@ class UserTest extends ResourceTestBase {
 
     $collection_url = Url::fromRoute('jsonapi.user--user.collection');
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
-    $user_a_url = Url::fromRoute(sprintf('jsonapi.user--user.individual'), ['user' => $user_a->uuid()]);
+    $user_a_url = Url::fromRoute(sprintf('jsonapi.user--user.individual'), ['entity' => $user_a->uuid()]);
     /* $user_a_url = $user_a->toUrl('jsonapi'); */
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
@@ -435,7 +434,9 @@ class UserTest extends ResourceTestBase {
     // Also when looking at the collection.
     $response = $this->request('GET', $collection_url, $request_options);
     $doc = Json::decode((string) $response->getBody());
-    $this->assertArrayHasKey('mail', $doc['data'][1]['attributes']);
+    $this->assertSame($user_a->uuid(), $doc['data']['2']['id']);
+    $this->assertArrayHasKey('mail', $doc['data'][2]['attributes'], "Own user--user resource's 'mail' field is visible.");
+    $this->assertSame($user_b->uuid(), $doc['data'][count($doc['data']) - 1]['id']);
     $this->assertArrayNotHasKey('mail', $doc['data'][count($doc['data']) - 1]['attributes']);
 
     // Now request the same URLs, but as user B (same roles/permissions).
@@ -448,7 +449,9 @@ class UserTest extends ResourceTestBase {
     // Also when looking at the collection.
     $response = $this->request('GET', $collection_url, $request_options);
     $doc = Json::decode((string) $response->getBody());
-    $this->assertArrayNotHasKey('mail', $doc['data'][1]['attributes']);
+    $this->assertSame($user_a->uuid(), $doc['data']['2']['id']);
+    $this->assertArrayNotHasKey('mail', $doc['data'][2]['attributes']);
+    $this->assertSame($user_b->uuid(), $doc['data'][count($doc['data']) - 1]['id']);
     $this->assertArrayHasKey('mail', $doc['data'][count($doc['data']) - 1]['attributes']);
   }
 
@@ -458,7 +461,7 @@ class UserTest extends ResourceTestBase {
   public function testQueryInvolvingRoles() {
     $this->setUpAuthorization('GET');
 
-    $collection_url = Url::fromRoute('jsonapi.user--user.collection', [], ['query' => ['filter[roles.uuid][value]' => 'e9b1de3f-9517-4c27-bef0-0301229de792']]);
+    $collection_url = Url::fromRoute('jsonapi.user--user.collection', [], ['query' => ['filter[roles.id][value]' => 'e9b1de3f-9517-4c27-bef0-0301229de792']]);
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
@@ -467,7 +470,24 @@ class UserTest extends ResourceTestBase {
     $this->grantPermissionsToTestedRole(['administer users']);
 
     $response = $this->request('GET', $collection_url, $request_options);
-    $this->assertResourceErrorResponse(400, "Filtering on config entities is not supported by Drupal's entity API. You tried to filter on a Role config entity.", $response);
+    $this->assertResourceErrorResponse(400, "Filtering on config entities is not supported by Drupal's entity API. You tried to filter on a Role config entity.", $collection_url, $response, FALSE, ['4xx-response', 'http_response'], ['url.path', 'url.query_args:filter'], FALSE, 'MISS');
+  }
+
+  /**
+   * Tests that the collection contains the anonymous user.
+   */
+  public function testCollectionContainsAnonymousUser() {
+    $url = Url::fromRoute('jsonapi.user--user.collection');
+    $request_options = [];
+    $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
+
+    $response = $this->request('GET', $url, $request_options);
+    $doc = Json::decode((string) $response->getBody());
+
+    $this->assertCount(4, $doc['data']);
+    $this->assertSame(User::load(0)->uuid(), $doc['data'][0]['id']);
+    $this->assertSame('Anonymous', $doc['data'][0]['attributes']['name']);
   }
 
   /**
@@ -518,14 +538,14 @@ class UserTest extends ResourceTestBase {
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
-    // ?filter[uid.uuid]=OWN_UUID requires no permissions: 1 result.
-    $response = $this->request('GET', $collection_url->setOption('query', ['filter[uid.uuid]' => $this->account->uuid()]), $request_options);
+    // ?filter[uid.id]=OWN_UUID requires no permissions: 1 result.
+    $response = $this->request('GET', $collection_url->setOption('query', ['filter[uid.id]' => $this->account->uuid()]), $request_options);
     $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'user.permissions');
     $doc = Json::decode((string) $response->getBody());
     $this->assertCount(1, $doc['data']);
     $this->assertSame($node_auth_1->uuid(), $doc['data'][0]['id']);
     // ?filter[uid.id]=ANONYMOUS_UUID: 0 results.
-    $response = $this->request('GET', $collection_url->setOption('query', ['filter[uid.uuid]' => User::load(0)->uuid()]), $request_options);
+    $response = $this->request('GET', $collection_url->setOption('query', ['filter[uid.id]' => User::load(0)->uuid()]), $request_options);
     $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'user.permissions');
     $doc = Json::decode((string) $response->getBody());
     $this->assertCount(0, $doc['data']);
@@ -533,16 +553,15 @@ class UserTest extends ResourceTestBase {
     $response = $this->request('GET', $collection_url->setOption('query', ['filter[uid.name]' => 'A']), $request_options);
     $doc = Json::decode((string) $response->getBody());
     $this->assertCount(0, $doc['data']);
-    // /jsonapi/user/user?filter[field_favorite_animal]: 0 results/meta errors.
+    // /jsonapi/user/user?filter[field_favorite_animal]: 0 results.
     $response = $this->request('GET', $favorite_animal_test_url, $request_options);
     $this->assertSame(200, $response->getStatusCode());
     $doc = Json::decode((string) $response->getBody());
     $this->assertCount(0, $doc['data']);
-    $this->assertArrayNotHasKey('meta', $doc);
     // Grant "view" permission.
     $this->grantPermissionsToTestedRole(['access user profiles']);
-    // ?filter[uid.uuid]=ANONYMOUS_UUID: 0 results.
-    $response = $this->request('GET', $collection_url->setOption('query', ['filter[uid.uuid]' => User::load(0)->uuid()]), $request_options);
+    // ?filter[uid.id]=ANONYMOUS_UUID: 0 results.
+    $response = $this->request('GET', $collection_url->setOption('query', ['filter[uid.id]' => User::load(0)->uuid()]), $request_options);
     $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'user.permissions');
     $doc = Json::decode((string) $response->getBody());
     $this->assertCount(0, $doc['data']);
@@ -557,12 +576,11 @@ class UserTest extends ResourceTestBase {
     $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'user.permissions');
     $doc = Json::decode((string) $response->getBody());
     $this->assertCount(0, $doc['data']);
-    // /jsonapi/user/user?filter[field_favorite_animal]: 0 results/meta errors.
+    // /jsonapi/user/user?filter[field_favorite_animal]: 0 results.
     $response = $this->request('GET', $favorite_animal_test_url, $request_options);
     $this->assertSame(200, $response->getStatusCode());
     $doc = Json::decode((string) $response->getBody());
     $this->assertCount(0, $doc['data']);
-    $this->assertArrayNotHasKey('meta', $doc);
     // Grant "admin" permission.
     $this->grantPermissionsToTestedRole(['administer users']);
     // ?filter[uid.name]=B: 1 result.

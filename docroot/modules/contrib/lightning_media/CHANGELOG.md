@@ -1,3 +1,20 @@
+## 3.4.0
+* Many changes to internal testing infrastructure, but nothing that affects
+  users of Lightning Media.
+
+## 3.3.0
+* Behat test now check for existence of FixtureContext prior to invoking its
+  methods. (Issue #3020990)
+
+## 3.2.0
+* Updated Lightning Core to 3.4.
+* Changed the testing infrastructure, sealed all subcontexts, refactored most
+  of the Behat tests into PHPUnit.
+* Updated Media Entity Instagram to 2.0-alpha2.
+* Added namespaces to dependencies.
+* Warning messages are not double escaped anymore.
+* Updated Entity Browser to 2.0.
+
 ## 3.1.0
 * Added a new component, Media Slideshow, which allows you to create
   slideshows and carousels of assets from your media library using the

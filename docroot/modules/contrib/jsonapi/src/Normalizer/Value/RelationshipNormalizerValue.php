@@ -5,7 +5,7 @@ namespace Drupal\jsonapi\Normalizer\Value;
 use Drupal\Core\Access\AccessResultInterface;
 
 /**
- * Helps normalize relationships in compliance with the JSON API spec.
+ * Helps normalize relationships in compliance with the JSON:API spec.
  *
  * @internal
  */
@@ -19,7 +19,7 @@ class RelationshipNormalizerValue extends FieldNormalizerValue {
   protected $linkManager;
 
   /**
-   * The JSON API resource type.
+   * The JSON:API resource type.
    *
    * @var \Drupal\jsonapi\ResourceType\ResourceType
    */
@@ -88,7 +88,7 @@ class RelationshipNormalizerValue extends FieldNormalizerValue {
   /**
    * Ensures each resource identifier object is unique.
    *
-   * The official JSON API JSON-Schema document requires that no two resource
+   * The official JSON:API JSON-Schema document requires that no two resource
    * identifier objects are duplicated.
    *
    * This adds an @code arity @endcode member to each object's
@@ -97,17 +97,17 @@ class RelationshipNormalizerValue extends FieldNormalizerValue {
    * sharing a common @code type @endcode and @code id @endcode.
    *
    * @param array $resource_identifier_objects
-   *   A list of JSON API resource identifier objects.
+   *   A list of JSON:API resource identifier objects.
    *
    * @return array
-   *   A set of JSON API resource identifier objects, with those having multiple
+   *   A set of JSON:API resource identifier objects, with those having multiple
    *   occurrences getting [meta][arity].
    *
    * @see http://jsonapi.org/format/#document-resource-object-relationships
    * @see https://github.com/json-api/json-api/pull/1156#issuecomment-325377995
    * @see https://www.drupal.org/project/jsonapi/issues/2864680
    */
-  protected static function ensureUniqueResourceIdentifierObjects(array $resource_identifier_objects) {
+  public static function ensureUniqueResourceIdentifierObjects(array $resource_identifier_objects) {
     if (count($resource_identifier_objects) <= 1) {
       return $resource_identifier_objects;
     }
@@ -149,22 +149,23 @@ class RelationshipNormalizerValue extends FieldNormalizerValue {
    *   An array of links to be rasterized.
    */
   protected function getLinks($field_name) {
+    $relationship_field_name = $this->resourceType->getPublicName($field_name);
     $route_parameters = [
-      'related' => $this->resourceType->getPublicName($field_name),
+      'related' => $relationship_field_name,
     ];
-    $links['self'] = $this->linkManager->getEntityLink(
+    $links['self']['href'] = $this->linkManager->getEntityLink(
       $this->hostEntityId,
       $this->resourceType,
       $route_parameters,
-      'relationship'
+      "$relationship_field_name.relationship.get"
     );
     $resource_types = $this->resourceType->getRelatableResourceTypesByField($field_name);
     if (static::hasNonInternalResourceType($resource_types)) {
-      $links['related'] = $this->linkManager->getEntityLink(
+      $links['related']['href'] = $this->linkManager->getEntityLink(
         $this->hostEntityId,
         $this->resourceType,
         $route_parameters,
-        'related'
+        "$relationship_field_name.related"
       );
     }
     return $links;
@@ -174,7 +175,7 @@ class RelationshipNormalizerValue extends FieldNormalizerValue {
    * Determines if a given list of resource types contains a non-internal type.
    *
    * @param \Drupal\jsonapi\ResourceType\ResourceType[] $resource_types
-   *   The JSON API resource types to evaluate.
+   *   The JSON:API resource types to evaluate.
    *
    * @return bool
    *   FALSE if every resource type is internal, TRUE otherwise.

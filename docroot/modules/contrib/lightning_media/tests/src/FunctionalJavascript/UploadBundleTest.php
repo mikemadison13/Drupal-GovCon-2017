@@ -6,7 +6,6 @@ use Drupal\entity_browser\Element\EntityBrowserElement;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
-use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 
@@ -93,41 +92,37 @@ class UploadBundleTest extends WebDriverTestBase {
    */
   public function testUpload() {
     $session = $this->getSession();
-    $web_assert = $this->assertSession();
 
     // Create an article with a media via the upload widget.
     $this->drupalGet('node/add/article');
-    $web_assert->fieldExists('Title')->setValue('Foo');
+    $this->assertSession()->fieldExists('Title')->setValue('Foo');
 
     $session->switchToIFrame('entity_browser_iframe_media_browser');
     $uri = $this->getRandomGenerator()->image('public://test_image.png', '240x240', '640x480');
     $path = $this->container->get('file_system')->realpath($uri);
-    $web_assert->fieldExists('input_file')->attachFile($path);
-    $web_assert->waitForField('Bundle')->selectOption('Picture');
-    $web_assert->waitForField('Name')->setValue('Bar');
-    $web_assert->fieldExists('Alternative text')->setValue('Baz');
-    $web_assert->buttonExists('Place')->click();
-    $web_assert->waitForButton('Remove');
 
-    $session->switchToWindow();
-    $web_assert->buttonExists('Save')->click();
+    $this->assertSession()->fieldExists('input_file')->attachFile($path);
+    $this->assertSession()->waitForField('Bundle')->selectOption('Picture');
+    $this->assertSession()->waitForField('Name')->setValue('Bar');
+    $this->assertSession()->fieldExists('Alternative text')->setValue('Baz');
+    $this->assertSession()->buttonExists('Place')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    sleep(1);
+
+    $session->switchToIFrame();
+    $this->assertSession()->waitForButton('Remove');
+    $this->assertSession()->buttonExists('Save')->press();
 
     // Assert the correct entities are created.
-    $nodes = Node::loadMultiple();
-    $this->assertCount(1, $nodes);
+    $node = Node::load(1);
+    $this->assertInstanceOf(Node::class, $node);
     /** @var \Drupal\node\NodeInterface $node */
-    $node = reset($nodes);
     $this->assertSame('Foo', $node->getTitle());
-
-    $medias = Media::loadMultiple();
-    $this->assertCount(1, $medias);
-    /** @var \Drupal\media\MediaInterface $media */
-    $media = reset($medias);
-    $this->assertEquals($node->field_media->target_id, $media->id());
-    $this->assertSame('picture', $media->bundle());
-    $this->assertSame('Bar', $media->getName());
-    $this->assertSame('Baz', $media->field_media_image->alt);
-    $this->assertSame('test_image_0.png', $media->field_media_image->entity->getFilename());
+    $this->assertFalse($node->get('field_media')->isEmpty());
+    $this->assertSame('picture', $node->field_media->entity->bundle());
+    $this->assertSame('Bar', $node->field_media->entity->getName());
+    $this->assertSame('Baz', $node->field_media->entity->field_media_image->alt);
+    $this->assertSame('test_image_0.png', $node->field_media->entity->field_media_image->entity->getFilename());
   }
 
   /**
@@ -136,46 +131,45 @@ class UploadBundleTest extends WebDriverTestBase {
   public function testWrongExtension() {
     $this->drupalGet('node/add/article');
     $this->getSession()->switchToIFrame('entity_browser_iframe_media_browser');
-    $web_assert = $this->assertSession();
 
     // Alert is displayed when uploading a .txt file.
     file_put_contents('public://test_text.txt', $this->getRandomGenerator()->paragraphs());
     $path = $this->container->get('file_system')->realpath('public://test_text.txt');
-    $web_assert->fieldExists('input_file')->attachFile($path);
-    $error_message = $web_assert->waitForElement('css', 'div[role="alert"]')->getText();
-    $this->assertSame('Error message Only files with the following extensions are allowed: <em class="placeholder">png gif jpg jpeg</em>.', $error_message);
+    $this->assertSession()->fieldExists('input_file')->attachFile($path);
+    $this->assertSession()->waitForElement('css', '[role="alert"]');
+    $this->assertSession()->pageTextContains('Error message Only files with the following extensions are allowed');
 
     // Previous alert gets hidden after uploading .png file.
     $this->getRandomGenerator()->image('public://test_image.png', '240x240', '640x480');
     $path = $this->container->get('file_system')->realpath('public://test_image.png');
-    $web_assert->fieldExists('input_file')->attachFile($path);
-    $web_assert->waitForField('Bundle');
-    $web_assert->elementNotExists('css', 'div[role="alert"]');
+    $this->assertSession()->fieldExists('input_file')->attachFile($path);
+    $this->assertSession()->waitForField('Bundle');
+    $this->assertSession()->elementNotExists('css', '[role="alert"]');
   }
 
   /**
    * Tests that image resolution changes after selecting bundle.
    */
   public function testResolutionChange() {
-    FieldConfig::load('media.image.image')
+    FieldConfig::loadByName('media', 'image', 'image')
       ->setSetting('max_resolution', '100x100')
       ->save();
 
     $this->drupalGet('node/add/article');
     $this->getSession()->switchToIFrame('entity_browser_iframe_media_browser');
-    $web_assert = $this->assertSession();
 
     // Upload a 200x200 image.
     $this->getRandomGenerator()->image('public://test_image.png', '200x200', '200x200');
     $path = $this->container->get('file_system')->realpath('public://test_image.png');
-    $web_assert->fieldExists('input_file')->attachFile($path);
-    $bundle = $web_assert->waitForField('Bundle');
-    $web_assert->elementNotExists('css', 'div[role="contentinfo"]');
-    $bundle->selectOption('Image');
+    $this->assertSession()->fieldExists('input_file')->attachFile($path);
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->elementNotExists('css', '[role="contentinfo"]');
+    $this->assertSession()->selectExists('Bundle')->selectOption('Image');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    sleep(1);
 
     // Assert the image resolution is changed to 100x100.
-    $status_message = $web_assert->waitForElement('css', 'div[role="contentinfo"]')->getText();
-    $this->assertSame('Status message The image was resized to fit within the maximum allowed dimensions of 100x100 pixels. The new dimensions of the resized image are 100x100 pixels.', $status_message);
+    $this->assertSession()->pageTextContains('Status message The image was resized to fit within the maximum allowed dimensions of 100x100 pixels. The new dimensions of the resized image are 100x100 pixels.');
   }
 
 }

@@ -284,7 +284,7 @@ final class ElementContext extends DrupalSubContextBase {
    * Asserts the existence of a <details> element by its summary text.
    *
    * @param string $summary
-   *   The exact summary text.
+   *   The summary text (case-insensitive).
    * @param ElementInterface $container
    *   The element in which to search for the <details> element.
    *
@@ -292,9 +292,13 @@ final class ElementContext extends DrupalSubContextBase {
    *   The <details> element, or FALSE if it was not found.
    */
   private function findDetails($summary, ElementInterface $container) {
+    $lowercase_summary = mb_strtolower($summary);
+
     /** @var \Behat\Mink\Element\NodeElement $element */
     foreach ($container->findAll('css', 'details > summary') as $element) {
-      if ($element->getText() == $summary) {
+      $lowercase_element_text = mb_strtolower($element->getText());
+
+      if ($lowercase_element_text === $lowercase_summary) {
         return $element->getParent();
       }
     }

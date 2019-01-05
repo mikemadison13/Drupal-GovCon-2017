@@ -84,16 +84,15 @@ class MediaHelper {
    *   A media bundle that can accept the input value.
    *
    * @throws \Drupal\lightning_media\Exception\IndeterminateBundleException if
-   * no bundle can be matched to the input value.
+     * the input value cannot be matched to exactly one media type.
    */
   public function getBundleFromInput($value, $check_access = TRUE, array $bundles = []) {
     $media_types = $this->getBundlesFromInput($value, $check_access, $bundles);
 
-    if (!$media_types) {
-      throw new IndeterminateBundleException($value);
+    if (count($media_types) === 1) {
+      return reset($media_types);
     }
-
-    return reset($media_types);
+    throw new IndeterminateBundleException($value, 0, NULL, $media_types);
   }
 
   /**

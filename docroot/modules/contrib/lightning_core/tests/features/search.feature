@@ -1,10 +1,10 @@
-@lightning @core @search @api @errors
+@lightning @api @lightning_search @orca_public
 Feature: Site search
 
-  @page @e4c5b23b
+  @e4c5b23b
   Scenario: Unpublished content does not appear in search results
     Given I am an anonymous user
-    And page content:
+    And test content:
       | title    | status | body                                                                   |
       | Zombie 1 | 0      | Zombie ipsum reversus ab viral inferno, nam rick grimes malum cerebro. |
       | Zombie 2 | 0      | De carne lumbering animata corpora quaeritis.                          |

@@ -26,6 +26,7 @@ class InteractiveUpload extends FormElement {
       '#process' => [
         [static::class, 'process'],
       ],
+      '#required' => FALSE,
       '#upload_location' => 'public://',
       '#upload_validators' => [],
     ];
@@ -79,6 +80,7 @@ class InteractiveUpload extends FormElement {
       $element['file'] = [
         '#type' => 'upload',
         '#title' => $element['#title'],
+        '#required' => $element['#required'],
         '#upload_location' => $element['#upload_location'],
         '#upload_validators' => $element['#upload_validators'],
       ];

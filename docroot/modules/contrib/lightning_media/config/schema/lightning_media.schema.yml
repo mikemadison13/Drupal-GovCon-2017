@@ -14,6 +14,12 @@ entity_browser.browser.widget.embed_code:
   type: mapping
   label: 'Embed code widget settings'
   mapping:
+    target_bundles:
+      type: sequence
+      label: 'Allowed media types'
+      sequence:
+        type: string
+        label: 'Media type ID'
     submit_text:
       type: string
       label: 'Submit button text'
@@ -25,6 +31,21 @@ entity_browser.browser.widget.file_upload:
   type: mapping
   label: 'Upload widget settings'
   mapping:
+    target_bundles:
+      type: sequence
+      label: 'Allowed media types'
+      sequence:
+        type: string
+        label: 'Media type ID'
+    upload_validators:
+      type: mapping
+      label: 'Upload validators'
+      mapping:
+        type: sequence
+        label: 'Validator arguments'
+        sequence:
+          type: ignore
+          label: 'Argument value'
     submit_text:
       type: string
       label: 'Submit button text'

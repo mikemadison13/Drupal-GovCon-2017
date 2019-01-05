@@ -1,11 +1,9 @@
-@lightning @lightning_media @image @api @javascript @errors
+@lightning @lightning_media @api @javascript
 Feature: An entity browser for image fields
-
-  Background:
-    Given I am logged in as a user with the media_creator role
 
   @10a21ffe @with-module:test_10a21ffe
   Scenario: Uploading an image through the image browser
+    Given I am logged in as a user with the media_creator role
     When I visit "/node/add/page"
     And I open the "Hero Image" image browser
     And I switch to the "Upload" Entity Browser tab

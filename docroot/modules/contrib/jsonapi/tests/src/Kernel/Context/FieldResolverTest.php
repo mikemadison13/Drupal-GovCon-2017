@@ -2,11 +2,11 @@
 
 namespace Drupal\Tests\jsonapi\Kernel\Context;
 
+use Drupal\Core\Http\Exception\CacheableBadRequestHttpException;
 use Drupal\entity_test\Entity\EntityTestBundle;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Tests\jsonapi\Kernel\JsonapiKernelTestBase;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @coversDefaultClass \Drupal\jsonapi\Context\FieldResolver
@@ -34,7 +34,7 @@ class FieldResolverTest extends JsonapiKernelTestBase {
   protected $sut;
 
   /**
-   * The JSON API resource type repository.
+   * The JSON:API resource type repository.
    *
    * @var \Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface
    */
@@ -113,7 +113,7 @@ class FieldResolverTest extends JsonapiKernelTestBase {
    */
   public function testResolveInternalIncludePathError($entity_type, $bundle, $external_path, $expected_message = '') {
     $path_parts = explode('.', $external_path);
-    $this->setExpectedException(BadRequestHttpException::class, $expected_message);
+    $this->setExpectedException(CacheableBadRequestHttpException::class, $expected_message);
     $resource_type = $this->resourceTypeRepository->get($entity_type, $bundle);
     $this->sut->resolveInternalIncludePath($resource_type, $path_parts);
   }
@@ -161,9 +161,9 @@ class FieldResolverTest extends JsonapiKernelTestBase {
   public function resolveInternalEntityQueryPathProvider() {
     return [
       'config entity as base' => [
-        'uuid', 'uuid', 'entity_test_bundle', 'entity_test_bundle',
+        'uuid', 'id', 'entity_test_bundle', 'entity_test_bundle',
       ],
-      'config entity as target' => ['type.entity:entity_test_bundle.uuid', 'type.uuid'],
+      'config entity as target' => ['type.entity:entity_test_bundle.uuid', 'type.id'],
 
       'primitive field; variation A' => ['field_test1', 'field_test1'],
       'primitive field; variation B' => ['field_test2', 'field_test2'],
@@ -171,23 +171,18 @@ class FieldResolverTest extends JsonapiKernelTestBase {
       'entity reference then a primitive field; variation A' => ['field_test_ref2.entity:entity_test_with_bundle.field_test1', 'field_test_ref2.field_test1'],
       'entity reference then a primitive field; variation B' => ['field_test_ref2.entity:entity_test_with_bundle.field_test2', 'field_test_ref2.field_test2'],
 
-      'entity reference then a complex field with no property specifier' => ['field_test_ref2.entity:entity_test_with_bundle.field_test_text', 'field_test_ref2.field_test_text'],
       'entity reference then a complex field with property specifier `value`' => ['field_test_ref2.entity:entity_test_with_bundle.field_test_text.value', 'field_test_ref2.field_test_text.value'],
       'entity reference then a complex field with property specifier `format`' => ['field_test_ref2.entity:entity_test_with_bundle.field_test_text.format', 'field_test_ref2.field_test_text.format'],
 
-      'entity reference then no delta with property specifier `target_id`' => ['field_test_ref1.target_id', 'field_test_ref1.target_id'],
-      'entity reference then delta 0 with property specifier `target_id`' => ['field_test_ref1.0.target_id', 'field_test_ref1.0.target_id'],
-      'entity reference then delta 1 with property specifier `target_id`' => ['field_test_ref1.1.target_id', 'field_test_ref1.1.target_id'],
-
-      'entity reference then no reference property then a complex field' => ['field_test_ref1.entity:entity_test_with_bundle.field_test_text', 'field_test_ref1.field_test_text'],
-      'entity reference then reference property then a complex field' => ['field_test_ref1.entity.field_test_text', 'field_test_ref1.entity.field_test_text'],
+      'entity reference then no delta with property specifier `id`' => ['field_test_ref1.entity:entity_test_with_bundle.uuid', 'field_test_ref1.id'],
+      'entity reference then delta 0 with property specifier `id`' => ['field_test_ref1.0.entity:entity_test_with_bundle.uuid', 'field_test_ref1.0.id'],
+      'entity reference then delta 1 with property specifier `id`' => ['field_test_ref1.1.entity:entity_test_with_bundle.uuid', 'field_test_ref1.1.id'],
 
       'entity reference then no reference property and a complex field with property specifier `value`' => ['field_test_ref1.entity:entity_test_with_bundle.field_test_text.value', 'field_test_ref1.field_test_text.value'],
       'entity reference then a reference property and a complex field with property specifier `value`' => ['field_test_ref1.entity.field_test_text.value', 'field_test_ref1.entity.field_test_text.value'],
       'entity reference then no reference property and a complex field with property specifier `format`' => ['field_test_ref1.entity:entity_test_with_bundle.field_test_text.format', 'field_test_ref1.field_test_text.format'],
       'entity reference then a reference property and a complex field with property specifier `format`' => ['field_test_ref1.entity.field_test_text.format', 'field_test_ref1.entity.field_test_text.format'],
 
-      'entity reference then property specifier `entity:entity_test_with_bundle` then a complex field' => ['field_test_ref1.entity:entity_test_with_bundle.field_test_text', 'field_test_ref1.entity:entity_test_with_bundle.field_test_text'],
       'entity reference then property specifier `entity:entity_test_with_bundle` then a complex field with property specifier `value`' => ['field_test_ref1.entity:entity_test_with_bundle.field_test_text.value', 'field_test_ref1.entity:entity_test_with_bundle.field_test_text.value'],
 
       'entity reference with a delta and no reference property then a complex field and property specifier `value`' => ['field_test_ref1.0.entity:entity_test_with_bundle.field_test_text.value', 'field_test_ref1.0.field_test_text.value'],
@@ -237,7 +232,7 @@ class FieldResolverTest extends JsonapiKernelTestBase {
    * @dataProvider resolveInternalEntityQueryPathErrorProvider
    */
   public function testResolveInternalEntityQueryPathError($entity_type, $bundle, $external_path, $expected_message = '') {
-    $this->setExpectedException(BadRequestHttpException::class, $expected_message);
+    $this->setExpectedException(CacheableBadRequestHttpException::class, $expected_message);
     $this->sut->resolveInternalEntityQueryPath($entity_type, $bundle, $external_path);
   }
 
@@ -281,6 +276,46 @@ class FieldResolverTest extends JsonapiKernelTestBase {
         'entity_test_with_bundle', 'bundle2',
         'field_test_ref1.entity:entity_test_with_bundle.field_test2',
         'Invalid nested filtering. The field `field_test_ref1`, given in the path `field_test_ref1.entity:entity_test_with_bundle.field_test2`, does not exist.',
+      ],
+
+      'entity reference then a complex field with no property specifier' => [
+        'entity_test_with_bundle', 'bundle1',
+        'field_test_ref2.field_test_text',
+        'Invalid nested filtering. The field `field_test_text`, given in the path `field_test_ref2.field_test_text` is incomplete, it must end with one of the following specifiers: `value`, `format`, `processed`.',
+      ],
+
+      'entity reference then no delta with property specifier `target_id`' => [
+        'entity_test_with_bundle', 'bundle1',
+        'field_test_ref1.target_id',
+        'Invalid nested filtering. The property `target_id`, given in the path `field_test_ref1.target_id`, does not exist. Filter by `field_test_ref1`, not `field_test_ref1.target_id` (the JSON:API module elides property names from single-property fields).',
+      ],
+      'entity reference then delta 0 with property specifier `target_id`' => [
+        'entity_test_with_bundle', 'bundle1',
+        'field_test_ref1.0.target_id',
+        'Invalid nested filtering. The property `target_id`, given in the path `field_test_ref1.0.target_id`, does not exist. Filter by `field_test_ref1.0`, not `field_test_ref1.0.target_id` (the JSON:API module elides property names from single-property fields).',
+      ],
+      'entity reference then delta 1 with property specifier `target_id`' => [
+        'entity_test_with_bundle', 'bundle1',
+        'field_test_ref1.1.target_id',
+        'Invalid nested filtering. The property `target_id`, given in the path `field_test_ref1.1.target_id`, does not exist. Filter by `field_test_ref1.1`, not `field_test_ref1.1.target_id` (the JSON:API module elides property names from single-property fields).',
+      ],
+
+      'entity reference then no reference property then a complex field' => [
+        'entity_test_with_bundle', 'bundle1',
+        'field_test_ref1.field_test_text',
+        'Invalid nested filtering. The field `field_test_text`, given in the path `field_test_ref1.field_test_text` is incomplete, it must end with one of the following specifiers: `value`, `format`, `processed`.',
+
+      ],
+      'entity reference then reference property then a complex field' => [
+        'entity_test_with_bundle', 'bundle1',
+        'field_test_ref1.entity.field_test_text',
+        'Invalid nested filtering. The field `field_test_text`, given in the path `field_test_ref1.entity.field_test_text` is incomplete, it must end with one of the following specifiers: `value`, `format`, `processed`.',
+      ],
+
+      'entity reference then property specifier `entity:entity_test_with_bundle` then a complex field' => [
+        'entity_test_with_bundle', 'bundle1',
+        'field_test_ref1.entity:entity_test_with_bundle.field_test_text',
+        'Invalid nested filtering. The field `field_test_text`, given in the path `field_test_ref1.entity:entity_test_with_bundle.field_test_text` is incomplete, it must end with one of the following specifiers: `value`, `format`, `processed`.',
       ],
     ];
   }

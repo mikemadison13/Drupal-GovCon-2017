@@ -7,11 +7,15 @@
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Utility\UpdateException;
 use Drupal\editor\Entity\Editor;
 use Drupal\embed\Entity\EmbedButton;
 use Drupal\entity_browser\Entity\EntityBrowser;
 use Drupal\file\Entity\File;
 use Drupal\lightning_core\ConfigHelper as Config;
+use Drupal\lightning_core\Entity\EntityViewMode;
+use Drupal\media\Entity\MediaType;
 use Drupal\views\Entity\View;
 
 /**
@@ -309,10 +313,45 @@ function lightning_media_update_8018() {
 }
 
 /**
- * Installs the core Media Library module.
+ * Installs the core Media library module.
  */
 function lightning_media_update_8019() {
+  // Lightning used to provide a Media Library view mode in the past.
+  // This is conflicting with the module's Media library view mode.
+  $view_mode = EntityViewMode::load('media.media_library');
+  if ($view_mode && !Drupal::moduleHandler()->moduleExists('media_library')) {
+    $label = $view_mode->label();
+    throw new UpdateException("Can't install Media library, because the media.media_library view mode ($label) already exists.");
+  }
+
   Drupal::service('module_installer')->install(['media_library']);
+
+  foreach (MediaType::loadMultiple() as $media_type) {
+    $bundle = $media_type->id();
+
+    if (EntityViewDisplay::load("media.$bundle.media_library")) {
+      continue;
+    }
+
+    // If the Media library view mode doesn't already exist create one
+    // containing only the thumbnail field.
+    $display = EntityViewDisplay::create([
+      'targetEntityType' => 'media',
+      'bundle' => $bundle,
+      'mode' => 'media_library',
+      'status' => TRUE,
+    ]);
+    $display->set('content', []);
+    $display->setComponent('thumbnail', [
+      'type' => 'image',
+      'region' => 'content',
+      'label' => 'hidden',
+      'settings' => [
+        'image_style' => 'thumbnail',
+      ],
+    ]);
+    $display->save();
+  }
 }
 
 /**

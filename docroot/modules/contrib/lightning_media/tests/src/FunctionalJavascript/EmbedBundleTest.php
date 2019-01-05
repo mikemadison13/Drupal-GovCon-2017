@@ -6,7 +6,6 @@ use Drupal\entity_browser\Element\EntityBrowserElement;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
-use Drupal\media\Entity\Media;
 use Drupal\node\Entity\Node;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 
@@ -93,75 +92,84 @@ class EmbedBundleTest extends WebDriverTestBase {
    */
   public function testEmbed() {
     $session = $this->getSession();
-    $web_assert = $this->assertSession();
 
     // Create an article with a media via the embed widget.
     $this->drupalGet('node/add/article');
-    $web_assert->fieldExists('Title')->setValue('Foo');
+    $this->assertSession()->fieldExists('Title')->setValue('Foo');
 
     $session->switchToIFrame('entity_browser_iframe_media_browser');
-    $web_assert->elementExists('named', ['link', 'Create embed'])->click();
+    $this->assertSession()->elementExists('named', ['link', 'Create embed'])->click();
     $video_url = 'https://www.youtube.com/watch?v=zQ1_IbFFbzA';
-    $web_assert->fieldExists('input')->setValue($video_url);
-    $web_assert->assertWaitOnAjaxRequest();
-    // There are 2 ajax requests, wait for the second one with sleep.
+    $this->assertSession()->fieldExists('input')->setValue($video_url);
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    // There are 2 AJAX requests, wait for the second one with sleep.
     sleep(1);
-    $web_assert->waitForField('Bundle')->selectOption('Advertisement');
-    $web_assert->waitForField('Video Url');
-    $web_assert->fieldExists('Name')->setValue('Bar');
-    $web_assert->buttonExists('Place')->click();
-    $web_assert->waitForButton('Remove');
-
-    $session->switchToWindow();
-    $web_assert->buttonExists('Save')->click();
+    $this->assertSession()->selectExists('Bundle')->selectOption('Advertisement');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->fieldExists('Video Url');
+    $this->assertSession()->fieldExists('Name')->setValue('Bar');
+    $this->assertSession()->buttonExists('Place')->press();
+    $session->switchToIFrame();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->buttonExists('Remove');
+    $this->assertSession()->buttonExists('Save')->press();
 
     // Assert the correct entities are created.
-    $nodes = Node::loadMultiple();
-    $this->assertCount(1, $nodes);
-    /** @var \Drupal\node\NodeInterface $node */
-    $node = reset($nodes);
+    $node = Node::load(1);
     $this->assertSame('Foo', $node->getTitle());
-
-    $medias = Media::loadMultiple();
-    $this->assertCount(1, $medias);
-    /** @var \Drupal\media\MediaInterface $media */
-    $media = reset($medias);
-    $this->assertEquals($node->field_media->target_id, $media->id());
-    $this->assertSame('advertisement', $media->bundle());
-    $this->assertSame('Bar', $media->getName());
-    $this->assertSame($video_url, $media->field_media_video_embed_field->value);
+    $this->assertSame('advertisement', $node->field_media->entity->bundle());
+    $this->assertSame('Bar', $node->field_media->entity->label());
+    $this->assertSame($video_url, $node->field_media->entity->field_media_video_embed_field->value);
   }
 
   /**
-   * Tests that an error message is displayed for malformed urls.
+   * Tests that an error message is displayed for malformed URLs.
    */
   public function testErrorMessages() {
     $this->drupalGet('node/add/article');
-    $web_assert = $this->assertSession();
     $this->getSession()->switchToIFrame('entity_browser_iframe_media_browser');
 
-    // Error message is displayed for malformed urls.
-    $web_assert->elementExists('named', ['link', 'Create embed'])->click();
-    $web_assert->fieldExists('input')->setValue('Foo');
-    $web_assert->assertWaitOnAjaxRequest();
-    $error_message = $web_assert->elementExists('css', 'div[role="alert"]')->getText();
-    $this->assertSame("Error message Could not match any bundles to input: 'Foo'", $error_message);
-    $web_assert->fieldExists('input')->setValue('');
-    $web_assert->assertWaitOnAjaxRequest();
-    $error_message = $web_assert->elementExists('css', 'div[role="alert"]')->getText();
-    $this->assertSame('Error message You must enter a URL or embed code.', $error_message);
+    // Error message is displayed for malformed URLs.
+    $this->assertSession()->elementExists('named', ['link', 'Create embed'])->click();
+    $this->assertSession()->fieldExists('input')->setValue('Foo');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->fieldNotExists('Bundle');
+    $this->assertError("Error message Input did not match any media types: 'Foo'");
 
-    // Error message is hidden when url is correct.
-    $web_assert->fieldExists('input')->setValue('https://www.youtube.com/watch?v=zQ1_IbFFbzA');
-    $web_assert->assertWaitOnAjaxRequest();
-    $web_assert->waitForField('Bundle');
-    $web_assert->elementNotExists('css', 'div[role="alert"]');
+    $this->assertSession()->fieldExists('input')->setValue('');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->fieldNotExists('Bundle');
+    $this->assertNoErrors();
 
-    // Rerender the form if url is changed.
-    $web_assert->fieldExists('input')->setValue('Bar');
-    $web_assert->assertWaitOnAjaxRequest();
-    $web_assert->waitForElement('css', 'div[role="alert"]');
-    $web_assert->fieldNotExists('Bundle');
+    // No error message when URL is valid.
+    $this->assertSession()->fieldExists('input')->setValue('https://www.youtube.com/watch?v=zQ1_IbFFbzA');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->selectExists('Bundle');
+    $this->assertNoErrors();
+
+    // Rerender the form if URL is changed.
+    $this->assertSession()->fieldExists('input')->setValue('Bar');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertError("Error message Input did not match any media types: 'Bar'");
+    $this->assertSession()->fieldNotExists('Bundle');
+  }
+
+  /**
+   * Asserts that an error message is present on the page.
+   *
+   * @param string $message
+   *   The message to look for.
+   */
+  private function assertError($message) {
+    $this->assertSession()->elementExists('css', '[role="alert"]');
+    $this->assertSession()->pageTextContains($message);
+  }
+
+  /**
+   * Asserts that there are no error messages present on the page.
+   */
+  private function assertNoErrors() {
+    $this->assertSession()->elementNotExists('css', '[role="alert"]');
   }
 
 }

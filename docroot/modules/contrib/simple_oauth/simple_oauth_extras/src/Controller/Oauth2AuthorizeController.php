@@ -3,17 +3,22 @@
 namespace Drupal\simple_oauth_extras\Controller;
 
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\simple_oauth\Entities\UserEntity;
 use Drupal\simple_oauth\KnownClientsRepositoryInterface;
 use Drupal\simple_oauth\Plugin\Oauth2GrantManagerInterface;
 use GuzzleHttp\Psr7\Response;
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -138,9 +143,21 @@ class Oauth2AuthorizeController extends ControllerBase {
       $scopes = explode(' ', $request->query->get('scope'));
     }
 
-    // Login user may skip the grant step if the client is not third party or
-    // known.
-    if ($this->currentUser()->isAuthenticated() && !$is_third_party || $this->isKnownClient($client_uuid, $scopes)) {
+    if ($this->currentUser()->isAnonymous()) {
+      $this->messenger->addStatus($this->t('An external client application is requesting access to your data in this site. Please log in first to authorize the operation.'));
+      // If the user is not logged in.
+      $destination = Url::fromRoute('oauth2_token_extras.authorize', [], [
+        'query' => UrlHelper::parse('/?' . $request->getQueryString())['query'],
+      ]);
+      $url = Url::fromRoute('user.login', [], [
+        'query' => ['destination' => $destination->toString()],
+      ]);
+      // Client ID and secret may be passed as Basic Auth. Copy the headers.
+      return RedirectResponse::create($url->toString(), 302, $request->headers->all());
+    }
+    elseif (!$is_third_party || $this->isKnownClient($client_uuid, $scopes)) {
+      // Login user may skip the grant step if the client is not third party or
+      // known.
       if ($request->get('response_type') == 'code') {
         $grant_type = 'code';
       }
@@ -161,24 +178,79 @@ class Oauth2AuthorizeController extends ControllerBase {
         return RedirectResponse::create(Url::fromRoute('<front>')->toString());
       }
       if ($auth_request) {
-        $user_entity = new UserEntity();
-        $user_entity->setIdentifier($this->currentUser()->id());
-        $auth_request->setUser($user_entity);
         $can_grant_codes = $this->currentUser()
           ->hasPermission('grant simple_oauth codes');
-        $auth_request->setAuthorizationApproved($can_grant_codes);
-        $response = $server->completeAuthorizationRequest($auth_request,
-          new Response());
-        $redirect_response = TrustedRedirectResponse::create(
-          $response->getHeaderLine('location'),
-          $response->getStatusCode(),
-          $response->getHeaders()
+        return static::redirectToCallback(
+          $auth_request,
+          $server,
+          $this->currentUser,
+          $can_grant_codes
         );
-
-        return $redirect_response;
       }
     }
     return $this->formBuilder->getForm('Drupal\simple_oauth_extras\Controller\Oauth2AuthorizeForm');
+  }
+
+  /**
+   * Generates a redirection response to the consumer callback.
+   *
+   * @param \League\OAuth2\Server\RequestTypes\AuthorizationRequest $auth_request
+   *   The auth request.
+   * @param \League\OAuth2\Server\AuthorizationServer $server
+   *   The authorization server.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The user to be logged in.
+   * @param bool $can_grant_codes
+   *   Weather or not the user can grant codes.
+   * @param bool $remembers_clients
+   *   Weather or not the sites remembers consumers that were previously
+   *   granted access.
+   * @param \Drupal\simple_oauth\KnownClientsRepositoryInterface|null $known_clients_repository
+   *   The known clients repository.
+   *
+   * @return \Drupal\Core\Routing\TrustedRedirectResponse
+   *   The response.
+   */
+  public static function redirectToCallback(
+    AuthorizationRequest $auth_request,
+    AuthorizationServer $server,
+    AccountInterface $current_user,
+    $can_grant_codes,
+    $remembers_clients = FALSE,
+    KnownClientsRepositoryInterface $known_clients_repository = NULL
+  ) {
+    // Once the user has logged in set the user on the AuthorizationRequest.
+    $user_entity = new UserEntity();
+    $user_entity->setIdentifier($current_user->id());
+    $auth_request->setUser($user_entity);
+    // Once the user has approved or denied the client update the status
+    // (true = approved, false = denied).
+    $auth_request->setAuthorizationApproved($can_grant_codes);
+    // Return the HTTP redirect response.
+    $response = $server->completeAuthorizationRequest($auth_request, new Response());
+
+    // Remembers the choice for the current user.
+    if ($remembers_clients) {
+      $scopes = array_map(function (ScopeEntityInterface $scope) {
+        return $scope->getIdentifier();
+      }, $auth_request->getScopes());
+      $known_clients_repository = $known_clients_repository instanceof KnownClientsRepositoryInterface
+        ? $known_clients_repository
+        : \Drupal::service('simple_oauth.known_clients');
+
+      $known_clients_repository->rememberClient(
+        $current_user->id(),
+        $auth_request->getClient()->getIdentifier(),
+        $scopes
+      );
+    }
+
+    // Get the location and return a secure redirect response.
+    return TrustedRedirectResponse::create(
+      $response->getHeaderLine('location'),
+      $response->getStatusCode(),
+      $response->getHeaders()
+    );
   }
 
   /**

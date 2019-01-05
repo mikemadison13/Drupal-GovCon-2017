@@ -13,6 +13,7 @@ use GuzzleHttp\Exception\ClientException;
  * @group lightning_api
  * @group headless
  * @group api_test
+ * @group orca_public
  */
 class ApiTest extends ApiTestBase {
 
@@ -89,11 +90,16 @@ class ApiTest extends ApiTestBase {
     // Cannot get unauthorized data (not in role/scope) even when authenticated.
     $response = $this->request('/jsonapi/user_role/user_role', 'get', $this->token);
     $body = $this->decodeResponse($response);
-    $this->assertArrayHasKey('errors', $body['meta']);
-    foreach ($body['meta']['errors'] as $error) {
-      // This user/client should not have access to any of the roles' data. JSON
-      // API will still return a 200, but with a list of 403 errors in the body.
-      $this->assertEquals(403, $error['status']);
+    $this->assertInternalType('array', $body['meta']['omitted']['links']);
+    $this->assertNotEmpty($body['meta']['omitted']['links']);
+    unset($body['meta']['omitted']['links']['help']);
+
+    foreach ($body['meta']['omitted']['links'] as $link) {
+      // This user/client should not have access to any of the roles' data.
+      $this->assertEquals(
+        "The current user is not allowed to GET the selected resource. The 'administer permissions' permission is required.",
+        $link['meta']['detail']
+      );
     }
 
     // Cannot get unauthorized data anonymously.

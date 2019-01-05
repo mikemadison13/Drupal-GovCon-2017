@@ -30,25 +30,12 @@ class EmbeddedMediaLabelTest extends BrowserTestBase {
   protected $strictConfigSchema = FALSE;
 
   /**
-   * ID of the content type created for this test.
-   *
-   * @var string
-   */
-  protected $nodeType;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-    $this->nodeType = $this->drupalCreateContentType()->id();
-  }
-
-  /**
    * Tests that the label of an embedded media item does not appear in the
    * rendered host entity.
    */
   public function testEmbeddedMediaItem() {
+    $node_type = $this->drupalCreateContentType()->id();
+
     $media = Media::create([
       'bundle' => 'tweet',
       'name' => 'Here be dragons',
@@ -58,7 +45,7 @@ class EmbeddedMediaLabelTest extends BrowserTestBase {
     $media->save();
 
     $node = Node::create([
-      'type' => $this->nodeType,
+      'type' => $node_type,
       'body' => '<drupal-entity data-embed-button="media_browser" data-entity-embed-display="view_mode:media.embedded" data-entity-type="media" data-entity-uuid="' . $media->uuid() . '"></drupal-entity>',
       'title' => $this->getRandomGenerator()->word(16),
     ]);

@@ -7,7 +7,7 @@ default:
         - '\Drupal\DrupalExtension\Context\MessageContext'
         - '\Drupal\Tests\lightning_core\FixtureContext'
       paths:
-        - 'tests/features'
+        - 'docroot/modules/contrib/acquia/lightning_core/tests/features'
   extensions:
     Behat\MinkExtension:
       base_url: 'http://127.0.0.1:8080'
