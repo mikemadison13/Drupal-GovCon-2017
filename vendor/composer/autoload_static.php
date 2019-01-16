@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e
+class ComposerStaticInit831d25dd975629b2c4e0dc8ff8b659eb
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -73,6 +73,7 @@ class ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e
             'Twig\\' => 5,
             'TravisCarden\\BehatTableComparison\\' => 34,
             'Tivie\\OS\\' => 9,
+            'TYPO3\\PharStreamWrapper\\' => 24,
         ),
         'S' => 
         array (
@@ -268,6 +269,10 @@ class ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e
         'Tivie\\OS\\' => 
         array (
             0 => __DIR__ . '/..' . '/tivie/php-os-detector/src',
+        ),
+        'TYPO3\\PharStreamWrapper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src',
         ),
         'Symfony\\Polyfill\\Php70\\' => 
         array (
@@ -3599,6 +3604,7 @@ class ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e
         'Drupal\\Core\\Routing\\UrlGeneratorInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Routing/UrlGeneratorInterface.php',
         'Drupal\\Core\\Routing\\UrlGeneratorTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Routing/UrlGeneratorTrait.php',
         'Drupal\\Core\\Routing\\UrlMatcher' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Routing/UrlMatcher.php',
+        'Drupal\\Core\\Security\\PharExtensionInterceptor' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Security/PharExtensionInterceptor.php',
         'Drupal\\Core\\Security\\RequestSanitizer' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Security/RequestSanitizer.php',
         'Drupal\\Core\\Serialization\\Yaml' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Serialization/Yaml.php',
         'Drupal\\Core\\Session\\AccountInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Session/AccountInterface.php',
@@ -7126,6 +7132,13 @@ class ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e
         'Symfony\\Polyfill\\Iconv\\Iconv' => __DIR__ . '/..' . '/symfony/polyfill-iconv/Iconv.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
+        'TYPO3\\PharStreamWrapper\\Assertable' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Assertable.php',
+        'TYPO3\\PharStreamWrapper\\Behavior' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Behavior.php',
+        'TYPO3\\PharStreamWrapper\\Exception' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Exception.php',
+        'TYPO3\\PharStreamWrapper\\Helper' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Helper.php',
+        'TYPO3\\PharStreamWrapper\\Interceptor\\PharExtensionInterceptor' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Interceptor/PharExtensionInterceptor.php',
+        'TYPO3\\PharStreamWrapper\\Manager' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Manager.php',
+        'TYPO3\\PharStreamWrapper\\PharStreamWrapper' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/PharStreamWrapper.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
         'TheSeer\\Tokenizer\\Exception' => __DIR__ . '/..' . '/theseer/tokenizer/src/Exception.php',
         'TheSeer\\Tokenizer\\NamespaceUri' => __DIR__ . '/..' . '/theseer/tokenizer/src/NamespaceUri.php',
@@ -7859,10 +7872,10 @@ class ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit0bbb3ffadab3019f8a31a2ddf193bf2e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit831d25dd975629b2c4e0dc8ff8b659eb::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit831d25dd975629b2c4e0dc8ff8b659eb::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit831d25dd975629b2c4e0dc8ff8b659eb::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit831d25dd975629b2c4e0dc8ff8b659eb::$classMap;
 
         }, null, ClassLoader::class);
     }
