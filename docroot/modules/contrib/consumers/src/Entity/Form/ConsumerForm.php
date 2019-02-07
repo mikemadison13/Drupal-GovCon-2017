@@ -13,6 +13,15 @@ class ConsumerForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
+  public function form(array $form, FormStateInterface $form_state) {
+    $form = parent::form($form, $form_state);
+    $form['is_default']['#access'] = FALSE;
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function save(array $form, FormStateInterface $form_state) {
     $status = $this->entity->save();
     $label = $this->entity->label();

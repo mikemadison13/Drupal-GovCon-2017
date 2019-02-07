@@ -8,7 +8,9 @@ use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Url;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\shortcut\Entity\Shortcut;
@@ -631,6 +633,215 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
     $this->assertSame($doc['data'][0]['id'], $shortcut->uuid());
     $this->assertSame($doc['data'][0]['attributes']['drupal_internal__id'], (int) $shortcut->id());
     $this->assertSame($doc['data'][0]['attributes']['title'], $shortcut->label());
+  }
+
+  /**
+   * Ensures datetime fields are normalized using the correct timezone.
+   *
+   * @see https://www.drupal.org/project/jsonapi/issues/2999438
+   */
+  public function testPatchingDateTimeNormalizedWrongTimeZoneIssue3021194() {
+    // Set up data model.
+    $this->assertTrue($this->container->get('module_installer')->install(['datetime'], TRUE), 'Installed modules.');
+    $this->drupalCreateContentType(['type' => 'page']);
+    $this->rebuildAll();
+    FieldStorageConfig::create([
+      'field_name' => 'when',
+      'type' => 'datetime',
+      'entity_type' => 'node',
+      'settings' => ['datetime_type' => DateTimeItem::DATETIME_TYPE_DATETIME],
+    ])
+      ->save();
+    FieldConfig::create([
+      'field_name' => 'when',
+      'entity_type' => 'node',
+      'bundle' => 'page',
+    ])
+      ->save();
+
+    // Create data.
+    $page = Node::create([
+      'title' => 'Stegosaurus',
+      'type' => 'page',
+      'when' => [
+        'value' => '2018-09-16T12:00:00',
+      ],
+    ]);
+    $page->save();
+
+    // Test.
+    $user = $this->drupalCreateUser([
+      'access content',
+    ]);
+    $response = $this->request('GET', Url::fromUri('internal:/jsonapi/node/page/' . $page->uuid()), [
+      RequestOptions::AUTH => [
+        $user->getUsername(),
+        $user->pass_raw,
+      ],
+    ]);
+    $this->assertSame(200, $response->getStatusCode());
+    $doc = Json::decode((string) $response->getBody());
+    $this->assertSame('2018-09-16T22:00:00+10:00', $doc['data']['attributes']['when']);
+  }
+
+  /**
+   * Ensures PATCHing datetime (both date-only & date+time) fields is possible.
+   *
+   * @see https://www.drupal.org/project/jsonapi/issues/3021194
+   */
+  public function testPatchingDateTimeFieldsFromIssue3021194() {
+    // Set up data model.
+    $this->assertTrue($this->container->get('module_installer')->install(['datetime'], TRUE), 'Installed modules.');
+    $this->drupalCreateContentType(['type' => 'page']);
+    $this->rebuildAll();
+    FieldStorageConfig::create([
+      'field_name' => 'when',
+      'type' => 'datetime',
+      'entity_type' => 'node',
+      'settings' => ['datetime_type' => DateTimeItem::DATETIME_TYPE_DATE],
+    ])
+      ->save();
+    FieldConfig::create([
+      'field_name' => 'when',
+      'entity_type' => 'node',
+      'bundle' => 'page',
+    ])
+      ->save();
+    FieldStorageConfig::create([
+      'field_name' => 'when_exactly',
+      'type' => 'datetime',
+      'entity_type' => 'node',
+      'settings' => ['datetime_type' => DateTimeItem::DATETIME_TYPE_DATETIME],
+    ])
+      ->save();
+    FieldConfig::create([
+      'field_name' => 'when_exactly',
+      'entity_type' => 'node',
+      'bundle' => 'page',
+    ])
+      ->save();
+
+    // Create data.
+    $page = Node::create([
+      'title' => 'Stegosaurus',
+      'type' => 'page',
+      'when' => [
+        'value' => '2018-12-19',
+      ],
+      'when_exactly' => [
+        'value' => '2018-12-19T17:00:00',
+      ],
+    ]);
+    $page->save();
+
+    // Test.
+    $user = $this->drupalCreateUser([
+      'access content',
+      'edit any page content',
+    ]);
+    $request_options = [
+      RequestOptions::AUTH => [
+        $user->getUsername(),
+        $user->pass_raw,
+      ],
+      RequestOptions::HEADERS => [
+        'Content-Type' => 'application/vnd.api+json',
+        'Accept' => 'application/vnd.api+json',
+      ],
+    ];
+    $node_url = Url::fromUri('internal:/jsonapi/node/page/' . $page->uuid());
+    $response = $this->request('GET', $node_url, $request_options);
+    $this->assertSame(200, $response->getStatusCode());
+    $doc = Json::decode((string) $response->getBody());
+    $this->assertSame('2018-12-19', $doc['data']['attributes']['when']);
+    $this->assertSame('2018-12-20T04:00:00+11:00', $doc['data']['attributes']['when_exactly']);
+    $doc['data']['attributes']['when'] = '2018-12-20';
+    $doc['data']['attributes']['when_exactly'] = '2018-12-19T19:00:00+01:00';
+    $request_options = $request_options + [RequestOptions::JSON => $doc];
+    $response = $this->request('PATCH', $node_url, $request_options);
+    $this->assertSame(200, $response->getStatusCode());
+    $doc = Json::decode((string) $response->getBody());
+    $this->assertSame('2018-12-20', $doc['data']['attributes']['when']);
+    $this->assertSame('2018-12-20T05:00:00+11:00', $doc['data']['attributes']['when_exactly']);
+  }
+
+  /**
+   * Ensure includes are respected even when POSTing.
+   *
+   * @see https://www.drupal.org/project/jsonapi/issues/3026030
+   */
+  public function testPostToIncludeUrlDoesNotReturnIncludeFromIssue3026030() {
+    // Set up data model.
+    $this->drupalCreateContentType(['type' => 'page']);
+    $this->rebuildAll();
+
+    // Test.
+    $user = $this->drupalCreateUser(['bypass node access']);
+    $url = Url::fromUri('internal:/jsonapi/node/page?include=uid');
+    $request_options = [
+      RequestOptions::HEADERS => [
+        'Content-Type' => 'application/vnd.api+json',
+        'Accept' => 'application/vnd.api+json',
+      ],
+      RequestOptions::AUTH => [$user->getUsername(), $user->pass_raw],
+      RequestOptions::JSON => [
+        'data' => [
+          'type' => 'node--page',
+          'attributes' => [
+            'title' => 'test',
+          ],
+        ],
+      ],
+    ];
+    $response = $this->request('POST', $url, $request_options);
+    $this->assertSame(201, $response->getStatusCode());
+    $doc = Json::decode((string) $response->getBody());
+    $this->assertArrayHasKey('included', $doc);
+    $this->assertSame($user->label(), $doc['included'][0]['attributes']['name']);
+  }
+
+  /**
+   * Ensure includes are respected even when PATCHing.
+   *
+   * @see https://www.drupal.org/project/jsonapi/issues/3026030
+   */
+  public function testPatchToIncludeUrlDoesNotReturnIncludeFromIssue3026030() {
+    // Set up data model.
+    $this->drupalCreateContentType(['type' => 'page']);
+    $this->rebuildAll();
+
+    // Create data.
+    $user = $this->drupalCreateUser(['bypass node access']);
+    $page = Node::create([
+      'title' => 'original',
+      'type' => 'page',
+      'uid' => $user->id(),
+    ]);
+    $page->save();
+
+    // Test.
+    $url = Url::fromUri(sprintf('internal:/jsonapi/node/page/%s/?include=uid', $page->uuid()));
+    $request_options = [
+      RequestOptions::HEADERS => [
+        'Content-Type' => 'application/vnd.api+json',
+        'Accept' => 'application/vnd.api+json',
+      ],
+      RequestOptions::AUTH => [$user->getUsername(), $user->pass_raw],
+      RequestOptions::JSON => [
+        'data' => [
+          'type' => 'node--page',
+          'id' => $page->uuid(),
+          'attributes' => [
+            'title' => 'modified',
+          ],
+        ],
+      ],
+    ];
+    $response = $this->request('PATCH', $url, $request_options);
+    $this->assertSame(200, $response->getStatusCode());
+    $doc = Json::decode((string) $response->getBody());
+    $this->assertArrayHasKey('included', $doc);
+    $this->assertSame($user->label(), $doc['included'][0]['attributes']['name']);
   }
 
 }

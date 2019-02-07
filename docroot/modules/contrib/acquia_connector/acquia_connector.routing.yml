@@ -37,22 +37,13 @@ acquia_connector.status:
   options:
     _maintenance_access: TRUE
 
-acquia_connector.send_module_data:
-  path: '/system/acquia-connector-send-module-data'
-  defaults:
-    _controller: '\Drupal\acquia_connector\Controller\ModuleDataController::sendModuleData'
-  requirements:
-    _custom_access: '\Drupal\acquia_connector\Controller\ModuleDataController::access'
-  options:
-    _maintenance_access: TRUE
-    datatype: plaintext
-
 acquia_connector.refresh_status:
   path: '/admin/config/system/acquia-connector/refresh-status'
   defaults:
     _controller: '\Drupal\acquia_connector\Controller\StatusController::refresh'
     _title: 'Manual update check'
   requirements:
+    _csrf_token: 'TRUE'
     _permission: 'administer site configuration'
 
 acquia_connector.send:

@@ -12,7 +12,7 @@ php:
 
 env:
   - VERSION=HEAD
-  - VERSION=3.2.0
+  - VERSION=3.3.0
   # The final CI slot should be used to test the update path from the oldest
   # available database fixture.
   - VERSION=1.0.0-rc2
@@ -21,51 +21,41 @@ addons:
   chrome: stable
 
 before_install:
-  - phpenv config-rm xdebug.ini
+  # Tweak PHP configuration.
+  - phpenv config-add ./tests/travis.php.ini
+  - phpenv rehash
+
   - composer self-update
   - composer --version
   - google-chrome-stable --version
 
+  - ORCA=$TRAVIS_BUILD_DIR/../orca
+  - ORCA_FIXTURE=$ORCA-build
+  - ORCA_SUT=drupal/lightning_workflow
+
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - export PATH="$ORCA/bin:$PATH"
+  - export PATH="$ORCA/vendor/bin:$PATH"
+  - export PATH="$ORCA_FIXTURE/vendor/bin:$PATH"
+
 install:
-  # Add Composer's local bin directory to the PATH so that we will be running
-  # our installed versions of Drush, Behat, etc.
-  - export PATH="$HOME/.composer/vendor/bin:$TRAVIS_BUILD_DIR/vendor/bin:$PATH"
-  # composer install should fail on bad patches.
-  - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
-  # Require Prestissimo to speed up Composer.
-  - composer global require hirak/prestissimo
+  # Install ORCA so that we can build the fixture using that.
+  - git clone --depth 1 git@github.com:acquia/orca.git ../orca
+  - $ORCA/bin/travis/install
 
-  # Install the PECL YAML extension for strict parsing. yes is used to
-  # acknowledge all prompts.
-  - yes '' | pecl install yaml
-  # Tweak PHP configuration.
-  - echo 'max_execution_time = 120' >> drupal.php.ini;
-  - echo 'sendmail_path = /bin/true' >> drupal.php.ini;
-  - phpenv config-add drupal.php.ini
-  - phpenv rehash
-
-  # Build the code base. There is no lock file in the repo, so dependencies will
-  # always be renegotiated.
-  - composer install
-  # Install on top of minimal for testing.
-  - lightning install --no-dev --from-config "sqlite\://db.sqlite" minimal "http://127.0.0.1:8080"
-  # Restore database fixture from the version we're testing and run database and
-  # and Lightning config updates.
-  - lightning update $VERSION
-  - cp -f phpunit.xml docroot/core
+  # Use ORCA to build the code base.
+  - orca fixture:init --force --sut-only --sut $ORCA_SUT
+  - # Install dev dependencies.
+  - composer require --dev drupal/inline_entity_form --working-dir $ORCA_FIXTURE
 
 before_script:
-  # Remove any time zone stored in config by the update path.
-  - drush config:set system.date timezone.default '' --yes
+  - cd $ORCA_FIXTURE/docroot
+  - $TRAVIS_BUILD_DIR/update.sh $VERSION
   - drush runserver --default-server=builtin 8080 &>/dev/null &
-  - drush pm-enable lightning_roles toolbar --yes
   - chromedriver --port=4444 &
 
 script:
-  - composer validate composer.json --no-check-all --ansi --no-interaction
-  - phpunit --debug --configuration ./docroot/core --group lightning_workflow
-  - phpunit --debug --configuration ./docroot/core tests/src/ExistingSite
-  - behat
+  - orca tests:run --no-servers --sut-only --sut $ORCA_SUT
 
 after_failure:
   - cd docroot

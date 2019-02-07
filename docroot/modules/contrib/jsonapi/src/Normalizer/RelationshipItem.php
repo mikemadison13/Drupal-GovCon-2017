@@ -128,7 +128,7 @@ class RelationshipItem {
    *
    * Defaults to the entity ID.
    *
-   * @return string
+   * @return array
    *   The value of this relationship item.
    */
   public function getValue() {

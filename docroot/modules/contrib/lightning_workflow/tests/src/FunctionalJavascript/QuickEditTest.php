@@ -5,7 +5,6 @@ namespace Drupal\Tests\lightning_workflow\FunctionalJavascript;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 
 /**
- * @group lightning
  * @group lightning_workflow
  */
 class QuickEditTest extends WebDriverTestBase {

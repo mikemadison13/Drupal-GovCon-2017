@@ -10,7 +10,6 @@ use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
 
 /**
- * @group lightning
  * @group lightning_media
  */
 class RolesTest extends BrowserTestBase {

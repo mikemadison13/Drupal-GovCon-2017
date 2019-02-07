@@ -9,8 +9,6 @@ use Drupal\Tests\UnitTestCase;
  * @coversDefaultClass \Drupal\lightning_core\Element
  *
  * @group lightning_core
- * @group lightning
- * @group orca_public
  */
 class ElementTest extends UnitTestCase {
 

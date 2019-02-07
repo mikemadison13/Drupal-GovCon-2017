@@ -8,9 +8,7 @@ use Drupal\lightning_core\Element;
 /**
  * @coversDefaultClass \Drupal\lightning_core\Element
  *
- * @group lightning
  * @group lightning_core
- * @group orca_public
  */
 class ElementTest extends KernelTestBase {
 

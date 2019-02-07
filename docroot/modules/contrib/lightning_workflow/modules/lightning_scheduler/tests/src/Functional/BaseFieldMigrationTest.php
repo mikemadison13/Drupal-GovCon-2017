@@ -6,7 +6,6 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\node\NodeInterface;
 
 /**
- * @group lightning
  * @group lightning_workflow
  * @group lightning_scheduler
  */

@@ -6,12 +6,7 @@ if [ -e $FIXTURE ]; then
     drush sql:drop --yes
     php core/scripts/db-tools.php import $FIXTURE
 
-    # Forcibly uninstall Lightning Dev, since it is no longer needed, switch the
-    # profile from Standard to Minimal, and remove defunct config.
-    drush php:eval "Drupal::configFactory()->getEditable('core.extension')->clear('module.lightning_dev')->clear('module.standard')->set('module.minimal', 1000)->set('profile', 'minimal')->save();"
-    drush php:eval "Drupal::keyValue('system.schema')->deleteMultiple(['lightning_dev']);"
-    drush php:eval "Drupal::configFactory()->getEditable('entity_browser.browser.media_browser')->delete();"
-    drush php:eval "Drupal::configFactory()->getEditable('media.type.tweet')->delete();"
+    drush php:script $TRAVIS_BUILD_DIR/tests/update.php
 fi
 
 drush updatedb --yes

@@ -7,7 +7,6 @@ use Drupal\lightning_core\UpdateManager;
 
 /**
  * @group lightning_core
- * @group lightning
  */
 class Update8006Test extends KernelTestBase {
 

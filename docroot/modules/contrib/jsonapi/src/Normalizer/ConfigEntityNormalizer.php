@@ -2,10 +2,9 @@
 
 namespace Drupal\jsonapi\Normalizer;
 
-use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\jsonapi\Normalizer\Value\ConfigFieldItemNormalizerValue;
-use Drupal\jsonapi\Normalizer\Value\FieldNormalizerValue;
+use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
 use Drupal\jsonapi\ResourceType\ResourceType;
 
 /**
@@ -49,16 +48,10 @@ class ConfigEntityNormalizer extends EntityNormalizer {
    * {@inheritdoc}
    */
   protected function serializeField($field, array $context, $format) {
-    return new FieldNormalizerValue(
-      // Config entities have no concept of "fields", nor any concept of
-      // "field access". For practical reasons, JSON:API uses the same value
-      // object that it uses for content entities (FieldNormalizerValue), and
-      // that requires an access result. Therefore we can safely hardcode it.
-      AccessResult::allowed(),
-      [new ConfigFieldItemNormalizerValue($field)],
-      1,
-      'attributes'
-    );
+    // Config entities have no concept of "fields", nor any concept of
+    // "field access". For practical reasons, JSON:API uses this method to
+    // override the default behavior in EntityNormalizer.
+    return new CacheableNormalization(new CacheableMetadata(), $field);
   }
 
   /**

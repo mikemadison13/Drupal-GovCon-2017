@@ -1,7 +1,7 @@
-@lightning @lightning_layout @api @errors
+@lightning @lightning_layout @api
 Feature: Creating and editing landing pages visually
 
-  @landing-page @javascript @43f95224
+  @javascript @43f95224
   Scenario: One-off changes can be made to Landing Pages using the IPE out of the box.
     Given I am logged in as a landing_page_creator
     And landing_page content:
@@ -13,20 +13,7 @@ Feature: Creating and editing landing pages visually
     And I visit "/foobar"
     Then I should see a "views_block:who_s_online-who_s_online_block" block
 
-  @landing-page @javascript @e787aec5
-  Scenario: Quick-editing fields placed in an IPE layout
-    Given I am logged in as an administrator
-    And landing_page content:
-      | title  | path    | body                                 |
-      | Foobar | /foobar | How quickly deft jumping zebras vex. |
-    When I visit "/foobar"
-    And I place the "entity_field:node:body" block from the "Content" category
-    And I save the layout
-    And I reload the page
-    And I wait 5 seconds
-    Then I should see a "system_main_block" block with a "quickedit" contextual link
-
-  @landing-page @javascript @ccabe17e
+  @javascript @ccabe17e
   Scenario: Changing layouts through the IPE
     Given I am logged in as a landing_page_creator
     And landing_page content:

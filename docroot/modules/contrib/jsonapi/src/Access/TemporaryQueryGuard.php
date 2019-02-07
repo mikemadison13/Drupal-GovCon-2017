@@ -179,7 +179,7 @@ class TemporaryQueryGuard {
    *   The query to which access conditions should be applied.
    * @param string $entity_type_id
    *   The entity type for which to access conditions should be applied.
-   * @param string $field_prefix|null
+   * @param string|null $field_prefix
    *   A prefix to add before any query condition fields. NULL if no prefix
    *   should be added.
    * @param \Drupal\Core\Cache\CacheableMetadata $cacheability

@@ -1,4 +1,4 @@
-@lightning @api @lightning_api @orca_public
+@lightning @api @lightning_api
 Feature: JSON API for decoupled applications
 
   @23138ee5

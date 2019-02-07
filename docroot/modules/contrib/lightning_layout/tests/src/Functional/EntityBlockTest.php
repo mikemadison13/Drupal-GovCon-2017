@@ -7,7 +7,6 @@ use Drupal\Tests\BrowserTestBase;
 use Drupal\user\RoleInterface;
 
 /**
- * @group lightning
  * @group lightning_layout
  */
 class EntityBlockTest extends BrowserTestBase {

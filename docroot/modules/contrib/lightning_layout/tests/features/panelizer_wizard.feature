@@ -1,7 +1,7 @@
-@lightning @lightning_layout @api @errors
+@lightning @lightning_layout @api
 Feature: Panelizer wizard
 
-  @landing-page @javascript @7917f3ad
+  @javascript @7917f3ad
   Scenario: Switch between defined layouts.
     Given I am logged in as a user with the "landing_page_creator, layout_manager" roles
     And I visit "/admin/structure/panelizer/edit/node__landing_page__full__two_column/content"
@@ -22,7 +22,7 @@ Feature: Panelizer wizard
     And I visit "/admin/structure/panelizer/edit/node__landing_page__full__two_column/content"
     And I remove the "Authored by" block from the first panelizer region
 
-  @landing-page @javascript @20e106df
+  @javascript @20e106df
   Scenario: Create a new layout using the Panelizer wizard
     Given I am logged in as a user with the "administer panelizer, administer panelizer node landing_page defaults, administer node display" permissions
     When I go to "/admin/structure/panelizer/add/node/landing_page/full"

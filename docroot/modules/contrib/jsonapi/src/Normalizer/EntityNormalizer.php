@@ -2,13 +2,16 @@
 
 namespace Drupal\jsonapi\Normalizer;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldTypePluginManagerInterface;
 use Drupal\Core\TypedData\TypedDataInternalPropertiesHelper;
-use Drupal\jsonapi\Normalizer\Value\EntityNormalizerValue;
-use Drupal\jsonapi\Normalizer\Value\FieldNormalizerValueInterface;
+use Drupal\jsonapi\Normalizer\Value\CacheableDependenciesMergerTrait;
+use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
+use Drupal\jsonapi\Normalizer\Value\CacheableOmission;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\LinkManager\LinkManager;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
@@ -22,6 +25,8 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
  * @internal
  */
 class EntityNormalizer extends NormalizerBase implements DenormalizerInterface {
+
+  use CacheableDependenciesMergerTrait;
 
   /**
    * The interface or class that this Normalizer supports.
@@ -113,7 +118,6 @@ class EntityNormalizer extends NormalizerBase implements DenormalizerInterface {
     else {
       $field_names = $this->getFieldNames($entity, $bundle, $resource_type);
     }
-    /* @var Value\FieldNormalizerValueInterface[] $normalizer_values */
     $normalizer_values = [];
     foreach ($this->getFields($entity, $bundle, $resource_type) as $field_name => $field) {
       $in_sparse_fieldset = in_array($field_name, $field_names);
@@ -121,13 +125,25 @@ class EntityNormalizer extends NormalizerBase implements DenormalizerInterface {
       if (!$in_sparse_fieldset) {
         continue;
       }
-      $normalized_field = $this->serializeField($field, $context, $format);
-      assert($normalized_field instanceof FieldNormalizerValueInterface);
-      $normalizer_values[$field_name] = $normalized_field;
+      $normalizer_values[$field_name] = $this->serializeField($field, $context, $format);
     }
-
-    $link_context = ['link_manager' => $this->linkManager];
-    return new EntityNormalizerValue($normalizer_values, $context, $entity, $link_context);
+    // Create the array of normalized fields, starting with the URI.
+    $normalized = [
+      'type' => $resource_type->getTypeName(),
+      'id' => $entity->uuid(),
+    ];
+    $normalized['links']['self']['href'] = $this->linkManager->getEntityLink(
+      $normalized['id'],
+      $resource_type,
+      [],
+      'individual'
+    );
+    $relationship_field_names = array_keys($resource_type->getRelatableResourceTypes());
+    $attributes = CacheableNormalization::aggregate(array_diff_key($normalizer_values, array_flip($relationship_field_names)));
+    $relationships = CacheableNormalization::aggregate(array_intersect_key($normalizer_values, array_flip($relationship_field_names)));
+    $normalized['attributes'] = $attributes->getNormalization();
+    $normalized['relationships'] = $relationships->getNormalization();
+    return (new CacheableNormalization($entity, array_filter($normalized)))->withCacheableDependency($attributes)->withCacheableDependency($relationships);
   }
 
   /**
@@ -223,11 +239,24 @@ class EntityNormalizer extends NormalizerBase implements DenormalizerInterface {
    * @param string $format
    *   The serialization format.
    *
-   * @return Value\FieldNormalizerValueInterface
+   * @return Value\CacheableNormalization
    *   The normalized value.
    */
   protected function serializeField($field, array $context, $format) {
-    return $this->serializer->normalize($field, $format, $context);
+    // Only content entities return FieldItemListInterface fields from
+    // ::getFields(). Since config entities do not have "real" fields and
+    // therefore do not have field access restrictions.
+    if ($field instanceof FieldItemListInterface) {
+      $field_access_result = $field->access('view', $context['account'], TRUE);
+      if (!$field_access_result->isAllowed()) {
+        return new CacheableOmission(CacheableMetadata::createFromObject($field_access_result));
+      }
+    }
+    $normalized_field = $this->serializer->normalize($field, $format, $context);
+    assert($normalized_field instanceof CacheableNormalization);
+    return isset($field_access_result)
+      ? $normalized_field->withCacheableDependency(CacheableMetadata::createFromObject($field_access_result))
+      : $normalized_field;
   }
 
   /**

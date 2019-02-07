@@ -13,17 +13,20 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\jsonapi\Access\EntityAccessChecker;
+use Drupal\jsonapi\Entity\EntityValidationTrait;
 use Drupal\jsonapi\Access\TemporaryQueryGuard;
 use Drupal\jsonapi\Exception\EntityAccessDeniedHttpException;
-use Drupal\jsonapi\Exception\UnprocessableHttpEntityException;
 use Drupal\jsonapi\IncludeResolver;
+use Drupal\jsonapi\JsonApiResource\LinkCollection;
 use Drupal\jsonapi\JsonApiResource\NullEntityCollection;
 use Drupal\jsonapi\JsonApiResource\ResourceIdentifier;
-use Drupal\jsonapi\LabelOnlyEntity;
+use Drupal\jsonapi\JsonApiResource\Link;
 use Drupal\jsonapi\Query\Filter;
 use Drupal\jsonapi\Query\Sort;
 use Drupal\jsonapi\Query\OffsetPage;
@@ -33,6 +36,7 @@ use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Drupal\jsonapi\ResourceResponse;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
+use Drupal\jsonapi\Revisions\ResourceVersionRouteEnhancer;
 use Drupal\jsonapi\Routing\Routes;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -45,6 +49,8 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
  * @internal
  */
 class EntityResource {
+
+  use EntityValidationTrait;
 
   /**
    * The entity type manager.
@@ -96,6 +102,13 @@ class EntityResource {
   protected $includeResolver;
 
   /**
+   * The JSON:API entity access checker.
+   *
+   * @var \Drupal\jsonapi\Access\EntityAccessChecker
+   */
+  protected $entityAccessChecker;
+
+  /**
    * Instantiates a EntityResource object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -112,8 +125,10 @@ class EntityResource {
    *   The entity repository.
    * @param \Drupal\jsonapi\IncludeResolver $include_resolver
    *   The include resolver.
+   * @param \Drupal\jsonapi\Access\EntityAccessChecker $entity_access_checker
+   *   The JSON:API entity access checker.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $field_manager, LinkManager $link_manager, ResourceTypeRepositoryInterface $resource_type_repository, RendererInterface $renderer, EntityRepositoryInterface $entity_repository, IncludeResolver $include_resolver) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $field_manager, LinkManager $link_manager, ResourceTypeRepositoryInterface $resource_type_repository, RendererInterface $renderer, EntityRepositoryInterface $entity_repository, IncludeResolver $include_resolver, EntityAccessChecker $entity_access_checker) {
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldManager = $field_manager;
     $this->linkManager = $link_manager;
@@ -121,6 +136,7 @@ class EntityResource {
     $this->renderer = $renderer;
     $this->entityRepository = $entity_repository;
     $this->includeResolver = $include_resolver;
+    $this->entityAccessChecker = $entity_access_checker;
   }
 
   /**
@@ -138,57 +154,12 @@ class EntityResource {
    *   Thrown when access to the entity is not allowed.
    */
   public function getIndividual(EntityInterface $entity, Request $request) {
-    $entity = static::getAccessCheckedEntity($entity);
+    $entity = $this->entityAccessChecker->getAccessCheckedEntity($entity);
     if ($entity instanceof EntityAccessDeniedHttpException) {
       throw $entity;
     }
     $response = $this->buildWrappedResponse($entity, $request, $this->getIncludes($request, $entity));
     return $response;
-  }
-
-  /**
-   * Verifies that the whole entity does not violate any validation constraints.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity object.
-   * @param string[] $field_names
-   *   (optional) An array of field names. If specified, filters the violations
-   *   list to include only this set of fields. Defaults to NULL,
-   *   which means that all violations will be reported.
-   *
-   * @throws \Drupal\jsonapi\Exception\UnprocessableHttpEntityException
-   *   Thrown when violations remain after filtering.
-   *
-   * @see \Drupal\rest\Plugin\rest\resource\EntityResourceValidationTrait::validate()
-   */
-  protected function validate(EntityInterface $entity, array $field_names = NULL) {
-    if (!$entity instanceof FieldableEntityInterface) {
-      return;
-    }
-
-    $violations = $entity->validate();
-
-    // Remove violations of inaccessible fields as they cannot stem from our
-    // changes.
-    $violations->filterByFieldAccess();
-
-    // Filter violations based on the given fields.
-    if ($field_names !== NULL) {
-      $violations->filterByFields(
-        array_diff(array_keys($entity->getFieldDefinitions()), $field_names)
-      );
-    }
-
-    if (count($violations) > 0) {
-      // Instead of returning a generic 400 response we use the more specific
-      // 422 Unprocessable Entity code from RFC 4918. That way clients can
-      // distinguish between general syntax errors in bad serializations (code
-      // 400) and semantic errors in well-formed requests (code 422).
-      // @see \Drupal\jsonapi\Normalizer\UnprocessableHttpEntityExceptionNormalizer
-      $exception = new UnprocessableHttpEntityException();
-      $exception->setViolations($violations);
-      throw $exception;
-    }
   }
 
   /**
@@ -206,6 +177,8 @@ class EntityResource {
    *
    * @throws \Symfony\Component\HttpKernel\Exception\ConflictHttpException
    *   Thrown when the entity already exists.
+   * @throws \Drupal\jsonapi\Exception\UnprocessableHttpEntityException
+   *   Thrown when the entity does not pass validation.
    */
   public function createIndividual(ResourceType $resource_type, EntityInterface $parsed_entity, Request $request) {
     if ($parsed_entity instanceof FieldableEntityInterface) {
@@ -236,7 +209,7 @@ class EntityResource {
       }
     }
 
-    $this->validate($parsed_entity);
+    static::validate($parsed_entity);
 
     // Return a 409 Conflict response in accordance with the JSON:API spec. See
     // http://jsonapi.org/format/#crud-creating-responses-409.
@@ -247,7 +220,7 @@ class EntityResource {
     $parsed_entity->save();
 
     // Build response object.
-    $response = $this->buildWrappedResponse($parsed_entity, $request, new NullEntityCollection(), 201);
+    $response = $this->buildWrappedResponse($parsed_entity, $request, $this->getIncludes($request, $parsed_entity), 201);
 
     // According to JSON:API specification, when a new entity was created
     // we should send "Location" header to the frontend.
@@ -282,6 +255,8 @@ class EntityResource {
    *
    * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
    *   Thrown when the selected entity does not match the id in th payload.
+   * @throws \Drupal\jsonapi\Exception\UnprocessableHttpEntityException
+   *   Thrown when the patched entity does not pass validation.
    */
   public function patchIndividual(ResourceType $resource_type, EntityInterface $entity, EntityInterface $parsed_entity, Request $request) {
     $body = Json::decode($request->getContent());
@@ -301,9 +276,9 @@ class EntityResource {
       return $destination;
     }, $entity);
 
-    $this->validate($entity, $field_names);
+    static::validate($entity, $field_names);
     $entity->save();
-    return $this->buildWrappedResponse($entity, $request, new NullEntityCollection());
+    return $this->buildWrappedResponse($entity, $request, $this->getIncludes($request, $entity));
   }
 
   /**
@@ -342,6 +317,11 @@ class EntityResource {
     $query_cacheability = new CacheableMetadata();
     $query = $this->getCollectionQuery($resource_type, $params, $query_cacheability);
 
+    // If the request is for the latest revision, toggle it on entity query.
+    if ($request->get(ResourceVersionRouteEnhancer::WORKING_COPIES_REQUESTED, FALSE)) {
+      $query->latestRevision();
+    }
+
     try {
       $results = $this->executeQueryInRenderContext(
         $query,
@@ -372,7 +352,7 @@ class EntityResource {
     }
     // Each item of the collection data contains an array with 'entity' and
     // 'access' elements.
-    $collection_data = $this->loadEntitiesWithAccess($storage, $results);
+    $collection_data = $this->loadEntitiesWithAccess($storage, $results, $request->get(ResourceVersionRouteEnhancer::WORKING_COPIES_REQUESTED, FALSE));
     $entity_collection = new EntityCollection($collection_data);
     $entity_collection->setHasNextPage($has_next_page);
 
@@ -392,6 +372,16 @@ class EntityResource {
 
     $response->addCacheableDependency($query_cacheability);
     $response->addCacheableDependency($count_query_cacheability);
+    $response->addCacheableDependency((new CacheableMetadata())
+      ->addCacheContexts([
+        'url.query_args:filter',
+        'url.query_args:sort',
+        'url.query_args:page',
+      ]));
+
+    if ($resource_type->isVersionable()) {
+      $response->addCacheableDependency((new CacheableMetadata())->addCacheContexts([ResourceVersionRouteEnhancer::CACHE_CONTEXT]));
+    }
 
     return $response;
   }
@@ -460,7 +450,7 @@ class EntityResource {
     );
     $collection_data = [];
     foreach ($referenced_entities as $referenced_entity) {
-      $collection_data[] = static::getAccessCheckedEntity($referenced_entity);
+      $collection_data[] = $this->entityAccessChecker->getAccessCheckedEntity($referenced_entity);
     }
     $entity_collection = new EntityCollection($collection_data, $field_list->getFieldDefinition()->getFieldStorageDefinition()->getCardinality());
     $response = $this->buildWrappedResponse($entity_collection, $request, $this->getIncludes($request, $entity_collection, $related));
@@ -522,6 +512,8 @@ class EntityResource {
    *   Thrown when POSTing to a "to-one" relationship.
    * @throws \Drupal\Core\Entity\EntityStorageException
    *   Thrown when the underlying entity cannot be saved.
+   * @throws \Drupal\jsonapi\Exception\UnprocessableHttpEntityException
+   *   Thrown when the updated entity does not pass validation.
    */
   public function addToRelationshipData(ResourceType $resource_type, FieldableEntityInterface $entity, $related, array $resource_identifiers, Request $request) {
     $related = $resource_type->getInternalName($related);
@@ -586,6 +578,8 @@ class EntityResource {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    *   Thrown when the underlying entity cannot be saved.
+   * @throws \Drupal\jsonapi\Exception\UnprocessableHttpEntityException
+   *   Thrown when the updated entity does not pass validation.
    */
   public function replaceRelationshipData(ResourceType $resource_type, EntityInterface $entity, $related, array $resource_identifiers, Request $request) {
     $related = $resource_type->getInternalName($related);
@@ -707,7 +701,7 @@ class EntityResource {
     }
 
     // Save the entity and return the response object.
-    $this->validate($entity);
+    static::validate($entity);
     $entity->save();
     return $this->getRelationship($resource_type, $entity, $related, $request, 204);
   }
@@ -848,7 +842,7 @@ class EntityResource {
    *   The response code.
    * @param array $headers
    *   An array of response headers.
-   * @param string[] $links
+   * @param \Drupal\jsonapi\JsonApiResource\LinkCollection $links
    *   The URLs to which to link. A 'self' link is added automatically.
    * @param array $meta
    *   (optional) The top-level metadata.
@@ -856,8 +850,9 @@ class EntityResource {
    * @return \Drupal\jsonapi\ResourceResponse
    *   The response.
    */
-  protected function buildWrappedResponse($data, Request $request, EntityCollection $includes, $response_code = 200, array $headers = [], array $links = [], array $meta = []) {
-    $links['self']['href'] = $this->linkManager->getRequestLink($request);
+  protected function buildWrappedResponse($data, Request $request, EntityCollection $includes, $response_code = 200, array $headers = [], LinkCollection $links = NULL, array $meta = []) {
+    $self_link = new Link(new CacheableMetadata(), $this->linkManager->getRequestLink($request), ['self']);
+    $links = ($links ?: new LinkCollection([]))->withLink('self', $self_link);
     return new ResourceResponse(new JsonApiDocumentTopLevel($data, $includes, $links, $meta), $response_code, $headers);
   }
 
@@ -1011,49 +1006,27 @@ class EntityResource {
    * @param \Drupal\Core\Entity\EntityStorageInterface $storage
    *   The entity storage to load the entities from.
    * @param int[] $ids
-   *   Array of entity IDs.
+   *   An array of entity IDs, keyed by revision ID if the entity type is
+   *   revisionable.
+   * @param bool $load_latest_revisions
+   *   Whether to load the latest revisions instead of the defaults.
    *
    * @return array
    *   An array of loaded entities and/or an access exceptions.
    */
-  protected function loadEntitiesWithAccess(EntityStorageInterface $storage, array $ids) {
+  protected function loadEntitiesWithAccess(EntityStorageInterface $storage, array $ids, $load_latest_revisions) {
     $output = [];
-    foreach ($storage->loadMultiple($ids) as $entity) {
-      $output[$entity->id()] = static::getAccessCheckedEntity($entity);
+    if ($load_latest_revisions) {
+      assert($storage instanceof RevisionableStorageInterface);
+      $entities = $storage->loadMultipleRevisions(array_keys($ids));
+    }
+    else {
+      $entities = $storage->loadMultiple($ids);
+    }
+    foreach ($entities as $entity) {
+      $output[$entity->id()] = $this->entityAccessChecker->getAccessCheckedEntity($entity);
     }
     return array_values($output);
-  }
-
-  /**
-   * Get the object to normalize and the access based on the provided entity.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity to test access for.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\jsonapi\LabelOnlyEntity|\Drupal\jsonapi\Exception\EntityAccessDeniedHttpException
-   *   The loaded entity, a label only version of that entity or an
-   *   EntityAccessDeniedHttpException object if neither is accessible. All
-   *   three possible return values carry the access result cacheability.
-   */
-  public static function getAccessCheckedEntity(EntityInterface $entity) {
-    /** @var \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository */
-    $entity_repository = \Drupal::service('entity.repository');
-    $entity = $entity_repository->getTranslationFromContext($entity, NULL, ['operation' => 'entity_upcast']);
-    $access = $entity->access('view', NULL, TRUE);
-    $entity->addCacheableDependency($access);
-    if (!$access->isAllowed()) {
-      $label_access = $entity->access('view label', NULL, TRUE);
-      $entity->addCacheableDependency($label_access);
-      if ($label_access->isAllowed()) {
-        return new LabelOnlyEntity($entity);
-      }
-      else {
-        // Pass an exception to the list of things to normalize.
-        return new EntityAccessDeniedHttpException($entity, $access->orIf($label_access), '/data', 'The current user is not allowed to GET the selected resource.');
-      }
-    }
-
-    return $entity;
   }
 
   /**

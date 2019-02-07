@@ -2,13 +2,10 @@
 
 namespace Drupal\jsonapi\Normalizer;
 
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\jsonapi\JsonApiResource\ResourceIdentifier;
-use Drupal\jsonapi\Normalizer\Value\RelationshipNormalizerValue;
+use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
 use Drupal\jsonapi\ResourceType\ResourceType;
-use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
 use Drupal\jsonapi\LinkManager\LinkManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -38,13 +35,6 @@ class RelationshipNormalizer extends NormalizerBase implements DenormalizerInter
   protected $formats = ['api_json'];
 
   /**
-   * The JSON:API resource type repository.
-   *
-   * @var \Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface
-   */
-  protected $resourceTypeRepository;
-
-  /**
    * The link manager.
    *
    * @var \Drupal\jsonapi\LinkManager\LinkManager
@@ -59,29 +49,16 @@ class RelationshipNormalizer extends NormalizerBase implements DenormalizerInter
   protected $fieldManager;
 
   /**
-   * The entity repository.
-   *
-   * @var \Drupal\Core\Entity\EntityRepositoryInterface
-   */
-  protected $entityRepository;
-
-  /**
    * RelationshipNormalizer constructor.
    *
-   * @param \Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface $resource_type_repository
-   *   The JSON:API resource type repository.
    * @param \Drupal\jsonapi\LinkManager\LinkManager $link_manager
    *   The link manager.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager
    *   The entity field manager.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The entity repository.
    */
-  public function __construct(ResourceTypeRepositoryInterface $resource_type_repository, LinkManager $link_manager, EntityFieldManagerInterface $field_manager, EntityRepositoryInterface $entity_repository) {
-    $this->resourceTypeRepository = $resource_type_repository;
+  public function __construct(LinkManager $link_manager, EntityFieldManagerInterface $field_manager) {
     $this->linkManager = $link_manager;
     $this->fieldManager = $field_manager;
-    $this->entityRepository = $entity_repository;
   }
 
   /**
@@ -176,7 +153,7 @@ class RelationshipNormalizer extends NormalizerBase implements DenormalizerInter
    * @param array $context
    *   The context array.
    *
-   * @return \Drupal\jsonapi\Normalizer\Value\RelationshipNormalizerValue
+   * @return \Drupal\jsonapi\Normalizer\Value\CacheableNormalization
    *   The array of normalized field items.
    */
   public function normalize($relationship, $format = NULL, array $context = []) {
@@ -193,20 +170,126 @@ class RelationshipNormalizer extends NormalizerBase implements DenormalizerInter
     $cardinality = $relationship->getCardinality();
     assert($context['resource_type'] instanceof ResourceType);
     $resource_type = $context['resource_type'];
-    $link_context = [
-      'host_entity_id' => $relationship->getHostEntity()->uuid(),
-      'field_name' => $resource_type->getPublicName($relationship->getPropertyName()),
-      'link_manager' => $this->linkManager,
-      'resource_type' => $resource_type,
+    $field_name = $resource_type->getPublicName($relationship->getPropertyName());
+    $links = $this->getLinks($resource_type, $field_name, $relationship->getHostEntity()->uuid());
+    $data = CacheableNormalization::aggregate($normalizer_items);
+    $rasterized = $data->getNormalization();
+    return (new CacheableNormalization($relationship, [
+      // Empty 'to-one' relationships must be NULL.
+      // Empty 'to-many' relationships must be an empty array.
+      // @link http://jsonapi.org/format/#document-resource-object-linkage
+      'data' => $cardinality === 1 ? array_shift($rasterized) : static::ensureUniqueResourceIdentifierObjects($rasterized),
+      'links' => $links,
+    ]))->withCacheableDependency($data);
+  }
+
+  /**
+   * Ensures each resource identifier object is unique.
+   *
+   * The official JSON:API JSON-Schema document requires that no two resource
+   * identifier objects are duplicated.
+   *
+   * This adds an @code arity @endcode member to each object's
+   * @code meta @endcode member. The value of this member is an integer that is
+   * incremented by 1 (starting from 0) for each repeated resource identifier
+   * sharing a common @code type @endcode and @code id @endcode.
+   *
+   * @param array $resource_identifier_objects
+   *   A list of JSON:API resource identifier objects.
+   *
+   * @return array
+   *   A set of JSON:API resource identifier objects, with those having multiple
+   *   occurrences getting [meta][arity].
+   *
+   * @see http://jsonapi.org/format/#document-resource-object-relationships
+   * @see https://github.com/json-api/json-api/pull/1156#issuecomment-325377995
+   * @see https://www.drupal.org/project/jsonapi/issues/2864680
+   */
+  public static function ensureUniqueResourceIdentifierObjects(array $resource_identifier_objects) {
+    if (count($resource_identifier_objects) <= 1) {
+      return $resource_identifier_objects;
+    }
+
+    // Count each repeated resource identifier and track their array indices.
+    $analysis = [];
+    foreach ($resource_identifier_objects as $index => $rio) {
+      $composite_key = $rio['type'] . ':' . $rio['id'];
+
+      $analysis[$composite_key]['count'] = isset($analysis[$composite_key])
+        ? $analysis[$composite_key]['count'] + 1
+        : 0;
+
+      // The index will later be used to assign an arity to repeated resource
+      // identifier objects. Doing this in two phases prevents adding an arity
+      // to objects which only occur once.
+      $analysis[$composite_key]['indices'][] = $index;
+    }
+
+    // Assign an arity to objects whose type + ID pair occurred more than once.
+    foreach ($analysis as $computed) {
+      if ($computed['count'] > 0) {
+        foreach ($computed['indices'] as $arity => $index) {
+          $resource_identifier_objects[$index]['meta']['arity'] = $arity;
+        }
+      }
+    }
+
+    return $resource_identifier_objects;
+  }
+
+  /**
+   * Gets the links for the relationship.
+   *
+   * @param \Drupal\jsonapi\ResourceType\ResourceType $resource_type
+   *   The JSON:API resource type on which the relationship being normalized
+   *   resides.
+   * @param string $field_name
+   *   The field name for the relationship.
+   * @param string $host_entity_id
+   *   The ID of the entity on which the relationship resides.
+   *
+   * @return array
+   *   An array of links to be rasterized.
+   */
+  protected function getLinks(ResourceType $resource_type, $field_name, $host_entity_id) {
+    $relationship_field_name = $resource_type->getPublicName($field_name);
+    $route_parameters = [
+      'related' => $relationship_field_name,
     ];
-    // If this is called, access to the Relationship field is allowed. The
-    // cacheability of the access result is carried by the Relationship value
-    // object. Therefore, we can safely construct an access result object here.
-    // Access to the targeted related resources will be checked separately.
-    // @see \Drupal\jsonapi\Normalizer\EntityReferenceFieldNormalizer::normalize()
-    // @see \Drupal\jsonapi\Normalizer\RelationshipItemNormalizer::normalize()
-    $relationship_access = AccessResult::allowed()->addCacheableDependency($relationship);
-    return new RelationshipNormalizerValue($relationship_access, $normalizer_items, $cardinality, $link_context);
+    $links['self']['href'] = $this->linkManager->getEntityLink(
+      $host_entity_id,
+      $resource_type,
+      $route_parameters,
+      "$relationship_field_name.relationship.get"
+    );
+    $resource_types = $resource_type->getRelatableResourceTypesByField($field_name);
+    if (static::hasNonInternalResourceType($resource_types)) {
+      $links['related']['href'] = $this->linkManager->getEntityLink(
+        $host_entity_id,
+        $resource_type,
+        $route_parameters,
+        "$relationship_field_name.related"
+      );
+    }
+    return $links;
+  }
+
+  /**
+   * Determines if a given list of resource types contains a non-internal type.
+   *
+   * @param \Drupal\jsonapi\ResourceType\ResourceType[] $resource_types
+   *   The JSON:API resource types to evaluate.
+   *
+   * @return bool
+   *   FALSE if every resource type is internal, TRUE otherwise.
+   */
+  protected static function hasNonInternalResourceType(array $resource_types) {
+    foreach ($resource_types as $resource_type) {
+      if (!$resource_type->isInternal()) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
 }

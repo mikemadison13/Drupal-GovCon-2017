@@ -5,7 +5,6 @@ namespace Drupal\jsonapi\Routing;
 use Drupal\Core\Routing\EnhancerInterface;
 use Drupal\jsonapi\Exception\UnprocessableHttpEntityException;
 use Drupal\jsonapi\Query\OffsetPage;
-use Drupal\jsonapi\Query\Filter;
 use Drupal\jsonapi\Query\Sort;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;

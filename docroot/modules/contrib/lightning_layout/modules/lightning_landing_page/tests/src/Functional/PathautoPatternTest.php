@@ -7,7 +7,6 @@ use Drupal\node\NodeInterface;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * @group lightning
  * @group lightning_layout
  * @group lightning_landing_page
  */

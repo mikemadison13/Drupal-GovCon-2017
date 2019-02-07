@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\TypedData\TypedDataInternalPropertiesHelper;
-use Drupal\jsonapi\Normalizer\Value\NullFieldNormalizerValue;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
 use Drupal\jsonapi\JsonApiResource\EntityCollection;
 use Drupal\serialization\Normalizer\CacheableNormalizerInterface;
@@ -49,14 +48,7 @@ class EntityReferenceFieldNormalizer extends FieldNormalizer {
    */
   public function normalize($field, $format = NULL, array $context = []) {
     /* @var \Drupal\Core\Field\FieldItemListInterface $field */
-
-    $field_access = $field->access('view', $context['account'], TRUE);
-    if (!$field_access->isAllowed()) {
-      return new NullFieldNormalizerValue($field_access, 'relationships');
-    }
-
-    $cacheabilty = CacheableMetadata::createFromObject($field_access);
-
+    $cacheability = new CacheableMetadata();
     // Build the relationship object based on the Entity Reference and normalize
     // that object instead.
     $main_property = $field->getItemDefinition()->getMainPropertyName();
@@ -118,11 +110,16 @@ class EntityReferenceFieldNormalizer extends FieldNormalizer {
           $metadata[$property_key] = $this->serializer->normalize($property, $format, $context);
         }
       }
-      $cacheabilty = $cacheabilty->merge($context[CacheableNormalizerInterface::SERIALIZATION_CONTEXT_CACHEABILITY]);
+      $cacheability = $cacheability->merge($context[CacheableNormalizerInterface::SERIALIZATION_CONTEXT_CACHEABILITY]);
       unset($context[CacheableNormalizerInterface::SERIALIZATION_CONTEXT_CACHEABILITY]);
       $entity_list_metadata[] = $metadata;
 
       // Get the referenced entity.
+      // TODO: We are always loading the referenced entity. Even if it is not
+      // going to be included. That may be a performance issue. We do it because
+      // we need to know the entity type and bundle to load the JSON:API
+      // resource type for the relationship item. We need a better way of
+      // finding about this.
       $entity = $item->get('entity')->getValue();
 
       if ($this->isInternalResourceType($entity)) {
@@ -133,7 +130,7 @@ class EntityReferenceFieldNormalizer extends FieldNormalizer {
       $entity_list[] = $this->entityRepository->getTranslationFromContext($entity);
     }
     $entity_collection = new EntityCollection($entity_list, $cardinality);
-    $relationship = new Relationship($this->resourceTypeRepository, $field->getName(), $entity_collection, $field->getEntity(), $cacheabilty, $cardinality, $main_property, $entity_list_metadata);
+    $relationship = new Relationship($this->resourceTypeRepository, $field->getName(), $entity_collection, $field->getEntity(), $cacheability, $cardinality, $main_property, $entity_list_metadata);
     return $this->serializer->normalize($relationship, $format, $context);
   }
 

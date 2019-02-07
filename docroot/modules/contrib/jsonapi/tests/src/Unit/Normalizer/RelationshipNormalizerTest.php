@@ -96,10 +96,8 @@ class RelationshipNormalizerTest extends UnitTestCase {
       ->willReturn($entity->reveal());
 
     $this->normalizer = new RelationshipNormalizer(
-      $resource_type_repository->reveal(),
       $link_manager->reveal(),
-      $field_manager->reveal(),
-      $entity_repository->reveal()
+      $field_manager->reveal()
     );
   }
 

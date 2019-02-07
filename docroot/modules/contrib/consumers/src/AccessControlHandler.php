@@ -20,21 +20,29 @@ class AccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    if ($admin_permission = $this->entityType->getAdminPermission()) {
-      return AccessResult::allowedIfHasPermission($account, $admin_permission);
+    /** @var \Drupal\consumers\Entity\Consumer $entity */
+    $admin_permission = $this->entityType->getAdminPermission();
+    if ($account->hasPermission($admin_permission)) {
+      return AccessResult::allowed()->cachePerPermissions();
     }
+
     // Permissions only apply to own entities.
-    $is_owner = $account->id() == $entity->get('auth_user_id')->target_id;
+    $is_owner = ($account->id() && $account->id() === $entity->getOwnerId());
     $is_owner_access = AccessResult::allowedIf($is_owner)
       ->addCacheableDependency($entity);
-    if (!in_array($operation, ['view', 'update', 'delete'])) {
-      return AccessResult::neutral();
+    $operations = ['view', 'update', 'delete'];
+    if (!in_array($operation, $operations)) {
+      $reason = sprintf(
+        'Supported operations on the entity are %s',
+        implode(', ', $operations)
+      );
+      return AccessResult::neutral($reason);
     }
 
     return $is_owner_access->andIf(AccessResult::allowedIfHasPermission(
       $account,
       sprintf('%s own %s entities', $operation, static::$name)
-    ));
+    )->cachePerPermissions());
   }
 
   /**

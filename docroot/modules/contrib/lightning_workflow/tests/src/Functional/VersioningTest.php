@@ -5,7 +5,6 @@ namespace Drupal\Tests\lightning_workflow\Functional;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * @group lightning
  * @group lightning_workflow
  */
 class VersioningTest extends BrowserTestBase {

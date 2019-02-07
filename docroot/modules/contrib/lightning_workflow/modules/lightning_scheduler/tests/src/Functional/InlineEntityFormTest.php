@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\lightning_scheduler\Functional;
 
-use Drupal\Component\Serialization\Json;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
 use Drupal\workflows\Entity\Workflow;
 
 /**
@@ -13,6 +13,8 @@ use Drupal\workflows\Entity\Workflow;
  * @requires inline_entity_form
  */
 class InlineEntityFormTest extends BrowserTestBase {
+
+  use SchedulerUiTrait;
 
   /**
    * {@inheritdoc}
@@ -115,59 +117,58 @@ class InlineEntityFormTest extends BrowserTestBase {
       ->elementExists('css', '#edit-field-inline-entity-wrapper');
   }
 
-  public function test() {
-    $assert = $this->assertSession();
-
+  public function testHostEntityWithoutModeration() {
     // Test with an un-moderated host entity.
     $this->drupalGet('/user/' . $this->rootUser->id() . '/edit');
-    $assert->statusCodeEquals(200);
+    $this->assertSession()->statusCodeEquals(200);
     $inline_entity_form = $this->assertInlineEntityForm();
-    $assert->fieldExists('Title', $inline_entity_form)->setValue('Kaboom?');
-    $assert->fieldExists('field_inline_entity[0][inline_entity_form][moderation_state][0][state]');
-    $assert->buttonExists('Save')->press();
-    $assert->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('Title', $inline_entity_form)->setValue('Kaboom?');
+    $this->assertSession()->selectExists('field_inline_entity[0][inline_entity_form][moderation_state][0][state]', $inline_entity_form);
+    $this->assertSession()->buttonExists('Save')->press();
+    $this->assertSession()->statusCodeEquals(200);
+  }
 
+  /**
+   * @depends testHostEntityWithoutModeration
+   */
+  public function testHostEntityWithModeration() {
     // Test with a moderated host entity.
     $this->drupalGet('node/add/alpha');
-    $assert->fieldExists('title[0][value]')->setValue('Foobar');
+    $this->assertSession()->fieldExists('Title')->setValue('Foobar');
     $inline_entity_form = $this->assertInlineEntityForm();
-    $assert->fieldExists('Title', $inline_entity_form)->setValue('Foobaz');
+    $this->assertSession()->fieldExists('Title', $inline_entity_form)->setValue('Foobaz');
 
-    $host_transitions_field = 'moderation_state[0][scheduled_transitions][data]';
-    $inline_transitions_field = 'field_inline_entity[0][inline_entity_form][moderation_state][0][scheduled_transitions][data]';
+    $host_field = 'moderation_state[0][scheduled_transitions][data]';
+    $inline_field = 'field_inline_entity[0][inline_entity_form][moderation_state][0][scheduled_transitions][data]';
 
-    $transition_1 = Json::encode([
+    $transition_1 = [
       [
         'state' => 'published',
-        'when' => gmdate('c', time() + 100),
+        'when' => time() + 100,
       ],
-    ]);
-    $transition_2 = Json::encode([
+    ];
+    $transition_2 = [
       [
         'state' => 'published',
-        'when' => gmdate('c', time() + 200),
+        'when' => time() + 200,
       ],
-    ]);
-    $assert->hiddenFieldExists($host_transitions_field)->setValue($transition_1);
-    $assert->hiddenFieldExists($inline_transitions_field, $inline_entity_form)->setValue($transition_2);
-    $assert->buttonExists('Save')->press();
+    ];
+    $this->setTransitionData($host_field, $transition_1);
+    $this->setTransitionData($inline_field, $transition_2);
+    $this->assertSession()->buttonExists('Save')->press();
 
-    /** @var \Drupal\Core\Entity\EntityStorageInterface $node_storage */
-    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $alpha = $node_storage->loadByProperties([
-      'type' => 'alpha',
-    ]);
-    $beta = $node_storage->loadByProperties([
-      'type' => 'beta',
-    ]);
+    /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
+    $storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $alpha = $storage->loadByProperties(['type' => 'alpha']);
+    $beta = $storage->loadByProperties(['type' => 'beta']);
     $this->assertCount(1, $alpha);
     $this->assertCount(1, $beta);
 
     $this->drupalGet(reset($alpha)->toUrl('edit-form'));
-    $assert->hiddenFieldValueEquals($host_transitions_field, $transition_1);
+    $this->assertTransitionData($host_field, $transition_1);
 
     $this->drupalGet(reset($beta)->toUrl('edit-form'));
-    $assert->hiddenFieldValueEquals($host_transitions_field, $transition_2);
+    $this->assertTransitionData($host_field, $transition_2);
   }
 
 }

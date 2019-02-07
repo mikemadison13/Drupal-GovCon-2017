@@ -64,6 +64,13 @@ class ResourceType {
   protected $isMutable;
 
   /**
+   * Whether this resource type's resources are versionable.
+   *
+   * @var bool
+   */
+  protected $isVersionable;
+
+  /**
    * The list of fields on the underlying entity type + bundle.
    *
    * @var string[]
@@ -270,6 +277,16 @@ class ResourceType {
   }
 
   /**
+   * Whether resources of this resource type are versionable.
+   *
+   * @return bool
+   *   TRUE if the resource type's resources are versionable. FALSE otherwise.
+   */
+  public function isVersionable() {
+    return $this->isVersionable;
+  }
+
+  /**
    * Instantiates a ResourceType object.
    *
    * @param string $entity_type_id
@@ -284,16 +301,19 @@ class ResourceType {
    *   (optional) Whether the resource type is locatable.
    * @param bool $is_mutable
    *   (optional) Whether the resource type is mutable.
+   * @param bool $is_versionable
+   *   (optional) Whether the resource type is versionable.
    * @param array $field_mapping
    *   (optional) The field mapping to use.
    */
-  public function __construct($entity_type_id, $bundle, $deserialization_target_class, $internal = FALSE, $is_locatable = TRUE, $is_mutable = TRUE, array $field_mapping = []) {
+  public function __construct($entity_type_id, $bundle, $deserialization_target_class, $internal = FALSE, $is_locatable = TRUE, $is_mutable = TRUE, $is_versionable = FALSE, array $field_mapping = []) {
     $this->entityTypeId = $entity_type_id;
     $this->bundle = $bundle;
     $this->deserializationTargetClass = $deserialization_target_class;
     $this->internal = $internal;
     $this->isLocatable = $is_locatable;
     $this->isMutable = $is_mutable;
+    $this->isVersionable = $is_versionable;
 
     $this->typeName = $this->bundle === '?'
       ? 'unknown'

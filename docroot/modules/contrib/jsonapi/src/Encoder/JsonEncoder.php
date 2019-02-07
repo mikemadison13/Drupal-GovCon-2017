@@ -2,7 +2,7 @@
 
 namespace Drupal\jsonapi\Encoder;
 
-use Drupal\jsonapi\Normalizer\Value\ValueExtractorInterface;
+use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
 use Drupal\serialization\Encoder\JsonEncoder as SerializationJsonEncoder;
 
 /**
@@ -28,8 +28,8 @@ class JsonEncoder extends SerializationJsonEncoder {
     // Make sure that any auto-normalizable object gets normalized before
     // encoding. This is specially important to generate the errors in partial
     // success responses.
-    if ($data instanceof ValueExtractorInterface) {
-      $data = $data->rasterizeValue();
+    if ($data instanceof CacheableNormalization) {
+      $data = $data->getNormalization();
     }
     return parent::encode($data, $format, $context);
   }

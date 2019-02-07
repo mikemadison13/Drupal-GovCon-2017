@@ -7,8 +7,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
+use Drupal\jsonapi\Access\EntityAccessChecker;
 use Drupal\jsonapi\Context\FieldResolver;
-use Drupal\jsonapi\Controller\EntityResource;
 use Drupal\jsonapi\Exception\EntityAccessDeniedHttpException;
 use Drupal\jsonapi\JsonApiResource\EntityCollection;
 use Drupal\jsonapi\ResourceType\ResourceType;
@@ -28,10 +28,18 @@ class IncludeResolver {
   protected $entityTypeManager;
 
   /**
+   * The JSON:API entity access checker.
+   *
+   * @var \Drupal\jsonapi\Access\EntityAccessChecker
+   */
+  protected $entityAccessChecker;
+
+  /**
    * IncludeResolver constructor.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityAccessChecker $entity_access_checker) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->entityAccessChecker = $entity_access_checker;
   }
 
   /**
@@ -129,7 +137,7 @@ class IncludeResolver {
         $entity_storage = $this->entityTypeManager->getStorage($target_type);
         $targeted_entities = $entity_storage->loadMultiple(array_unique($ids));
         $access_checked_entities = array_map(function (EntityInterface $entity) {
-          return EntityResource::getAccessCheckedEntity($entity);
+          return $this->entityAccessChecker->getAccessCheckedEntity($entity);
         }, $targeted_entities);
         $targeted_collection = new EntityCollection($access_checked_entities);
         $includes = static::resolveIncludeTree($children, $targeted_collection, EntityCollection::merge($includes, $targeted_collection));

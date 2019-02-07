@@ -62,13 +62,13 @@ display:
       row:
         type: fields
       fields:
-        uid:
-          id: uid
-          table: node_field_revision
-          field: uid
+        revision_uid:
+          id: revision_uid
+          table: node_revision
+          field: revision_uid
           relationship: none
           group_type: group
-          admin_label: 'Authored by'
+          admin_label: ''
           label: ''
           exclude: true
           alter:
@@ -125,15 +125,15 @@ display:
           separator: ', '
           field_api_classes: false
           entity_type: node
-          entity_field: uid
+          entity_field: revision_uid
           plugin_id: field
-        created:
-          id: created
-          table: node_field_revision
-          field: created
+        revision_timestamp:
+          id: revision_timestamp
+          table: node_revision
+          field: revision_timestamp
           relationship: none
           group_type: group
-          admin_label: 'Authored on'
+          admin_label: ''
           label: ''
           exclude: true
           alter:
@@ -192,7 +192,7 @@ display:
           separator: ', '
           field_api_classes: false
           entity_type: node
-          entity_field: created
+          entity_field: revision_timestamp
           plugin_id: field
         moderation_state:
           id: moderation_state
@@ -205,7 +205,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: 'Set to <strong>{{ moderation_state }}</strong> on {{ created }} by {{ uid }}'
+            text: 'Set to <strong>{{ moderation_state }}</strong> on {{ revision_timestamp }} by {{ revision_uid }}'
             make_link: false
             path: ''
             absolute: false
@@ -289,6 +289,17 @@ display:
           admin_label: 'Moderation state'
           required: true
           entity_type: node
+          plugin_id: standard
+        revision_uid:
+          id: revision_uid
+          table: node_revision
+          field: revision_uid
+          relationship: none
+          group_type: group
+          admin_label: 'revision user'
+          required: false
+          entity_type: node
+          entity_field: revision_uid
           plugin_id: standard
       arguments:
         nid:

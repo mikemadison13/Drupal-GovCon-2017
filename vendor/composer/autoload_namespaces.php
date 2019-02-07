@@ -8,9 +8,10 @@ $baseDir = dirname($vendorDir);
 return array(
     'WebDriver' => array($vendorDir . '/instaclick/php-webdriver/lib'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
-    'Sunra\\PhpSimple\\HtmlDomParser' => array($vendorDir . '/sunra/php-simple-html-dom-parser/Src'),
     'Stack' => array($vendorDir . '/stack/builder/src'),
+    'Solarium\\' => array($vendorDir . '/solarium/solarium/library'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
+    'KubAT\\PhpSimple\\HtmlDomParser' => array($vendorDir . '/kub-at/php-simple-html-dom-parser/src'),
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
     'Egulias\\' => array($vendorDir . '/egulias/email-validator/src'),
     'EasyRdf_' => array($vendorDir . '/easyrdf/easyrdf/lib'),

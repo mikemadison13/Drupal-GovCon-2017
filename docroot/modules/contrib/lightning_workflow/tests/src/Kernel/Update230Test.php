@@ -12,7 +12,6 @@ use Prophecy\Argument;
 use Symfony\Component\Console\Style\StyleInterface;
 
 /**
- * @group lightning
  * @group lightning_workflow
  *
  * @coversDefaultClass \Drupal\lightning_workflow\Update\Update230

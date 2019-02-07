@@ -4,7 +4,7 @@ namespace Drupal\jsonapi\EventSubscriber;
 
 use Drupal\Core\Cache\CacheableResponse;
 use Drupal\Core\Cache\CacheableResponseInterface;
-use Drupal\jsonapi\Normalizer\Value\JsonApiDocumentTopLevelNormalizerValue;
+use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
 use Drupal\jsonapi\ResourceResponse;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -29,8 +29,8 @@ use Symfony\Component\Serializer\SerializerInterface;
  *    injected instead of @serializer
  * 2. It has the @current_route_match service no longer injected
  * 3. It hardcodes the format to 'api_json'
- * 4. It adds the JsonApiDocumentTopLevelNormalizerValue value object returned
- *    by JSON:API normalization to the response object.
+ * 4. It adds the CacheableNormalization object returned by JSON:API
+ *    normalization to the response object.
  * 5. It flattens only to a cacheable response if the HTTP method is cacheable.
  */
 class ResourceResponseSubscriber implements EventSubscriberInterface {
@@ -117,7 +117,7 @@ class ResourceResponseSubscriber implements EventSubscriberInterface {
       $jsonapi_doc_object = $serializer->normalize($data, $format, $context);
       // Having just normalized the data, we can associate its cacheability with
       // the response object.
-      assert($jsonapi_doc_object instanceof JsonApiDocumentTopLevelNormalizerValue);
+      assert($jsonapi_doc_object instanceof CacheableNormalization);
       $response->addCacheableDependency($jsonapi_doc_object);
       // Finally, encode the normalized data (JSON:API's encoder rasterizes it
       // automatically).

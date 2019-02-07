@@ -16,6 +16,16 @@ abstract class MigrationTestBase extends UpdatePathTestBase {
   }
 
   public function test() {
+    // Forcibly uninstall Lightning Dev. It is mentioned in the fixture, but not
+    // physically present in ORCA fixtures.
+    $this->config('core.extension')
+      ->clear('module.lightning_dev')
+      ->save();
+    $this->container
+      ->get('keyvalue')
+      ->get('system.schema')
+      ->deleteMultiple(['lightning_dev']);
+
     $this->runUpdates();
 
     $migrations = $this->container->get('state')->get('lightning_scheduler.migrations');

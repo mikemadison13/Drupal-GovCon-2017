@@ -6,9 +6,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\lightning_core\UpdateManager;
 
 /**
- * @group lightning
  * @group lightning_core
- * @group orca_public
  */
 class ModuleInstallTest extends KernelTestBase {
 

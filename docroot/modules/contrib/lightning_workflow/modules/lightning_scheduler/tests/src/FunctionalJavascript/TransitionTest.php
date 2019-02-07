@@ -3,6 +3,7 @@
 namespace Drupal\Tests\lightning_scheduler\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
 use Drupal\Tests\Traits\Core\CronRunTrait;
 
 /**
@@ -13,6 +14,7 @@ use Drupal\Tests\Traits\Core\CronRunTrait;
 class TransitionTest extends WebDriverTestBase {
 
   use CronRunTrait;
+  use SchedulerUiTrait;
 
   /**
    * {@inheritdoc}
@@ -23,13 +25,6 @@ class TransitionTest extends WebDriverTestBase {
     'lightning_scheduler',
     'lightning_workflow',
   ];
-
-  /**
-   * Today's date, to be entered into scheduled transition date fields.
-   *
-   * @var string
-   */
-  private $today;
 
   /**
    * {@inheritdoc}
@@ -52,26 +47,14 @@ class TransitionTest extends WebDriverTestBase {
       'administer nodes',
     ]);
     $this->drupalLogin($account);
-
-    // Functional tests normally run in the Sydney, Australia time zone in order
-    // to catch time zone-related edge cases and bugs. However, the scheduler UI
-    // is very sensitive to time zones, so it's best to set it, for the purposes
-    // of this test, to the time zone configured in php.ini.
-    $this->config('system.date')
-      ->set('timezone.default', ini_get('date.timezone'))
-      ->save();
-
-    $this->today = date('mdY');
+    $this->setUpTimeZone();
+    $this->setTimeStep();
   }
 
   public function testPublishInPast() {
     $this->drupalGet('/node/add/page');
     $this->assertSession()->fieldExists('Title')->setValue($this->randomString());
-    $this->assertSession()->elementExists('named', ['link', 'Schedule a status change'])->click();
-    $this->assertSession()->fieldExists('Scheduled moderation state')->selectOption('Published');
-    $this->assertSession()->fieldExists('Scheduled transition date')->setValue($this->today);
-    $this->assertSession()->fieldExists('Scheduled transition time')->setValue(date('H:i:s', time() - 10));
-    $this->assertSession()->buttonExists('Save transition')->press();
+    $this->createTransition('Published', time() - 10);
     $this->assertSession()->buttonExists('Save')->press();
     $this->cronRun();
     $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
@@ -85,18 +68,8 @@ class TransitionTest extends WebDriverTestBase {
   public function testSkipInvalidTransition() {
     $this->drupalGet('/node/add/page');
     $this->assertSession()->fieldExists('Title')->setValue($this->randomString());
-    $this->assertSession()->elementExists('named', ['link', 'Schedule a status change'])->click();
-    $this->assertSession()->fieldExists('Scheduled moderation state')->selectOption('Published');
-    $this->assertSession()->fieldExists('Scheduled transition date')->setValue($this->today);
-    $this->assertSession()->fieldExists('Scheduled transition time')->setValue(date('H:i:s', time() - 20));
-    $this->assertSession()->buttonExists('Save transition')->press();
-
-    $this->assertSession()->elementExists('named', ['link', 'add another'])->click();
-    $this->assertSession()->fieldExists('Scheduled moderation state')->selectOption('Archived');
-    $this->assertSession()->fieldExists('Scheduled transition date')->setValue($this->today);
-    $this->assertSession()->fieldExists('Scheduled transition time')->setValue(date('H:i:s', time() - 10));
-    $this->assertSession()->buttonExists('Save transition')->press();
-
+    $this->createTransition('Published', time() - 20);
+    $this->createTransition('Archived', time() - 10);
     $this->assertSession()->buttonExists('Save')->press();
     $this->cronRun();
     $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
@@ -112,12 +85,7 @@ class TransitionTest extends WebDriverTestBase {
     $this->assertSession()->selectExists('moderation_state[0][state]')->selectOption('In review');
     $this->assertSession()->buttonExists('Save')->press();
     $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
-
-    $this->assertSession()->elementExists('named', ['link', 'Schedule a status change'])->click();
-    $this->assertSession()->fieldExists('Scheduled moderation state')->selectOption('Published');
-    $this->assertSession()->fieldExists('Scheduled transition date')->setValue($this->today);
-    $this->assertSession()->fieldExists('Scheduled transition time')->setValue(date('H:i:s', time() + 8));
-    $this->assertSession()->buttonExists('Save transition')->press();
+    $this->createTransition('Published', time() + 8);
     $this->assertSession()->buttonExists('Save')->press();
     sleep(10);
     $this->cronRun();
@@ -141,11 +109,7 @@ class TransitionTest extends WebDriverTestBase {
     $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
     $this->assertSession()->fieldExists('Title')->setValue('MC Hammer');
     $this->assertSession()->selectExists('moderation_state[0][state]')->selectOption('Draft');
-    $this->assertSession()->elementExists('named', ['link', 'Schedule a status change'])->click();
-    $this->assertSession()->fieldExists('Scheduled moderation state')->selectOption('Published');
-    $this->assertSession()->fieldExists('Scheduled transition date')->setValue($this->today);
-    $this->assertSession()->fieldExists('Scheduled transition time')->setValue(date('H:i:s', time() + 8));
-    $this->assertSession()->buttonExists('Save transition')->press();
+    $this->createTransition('Published', time() + 8);
     $this->assertSession()->buttonExists('Save')->press();
     sleep(10);
     $this->cronRun();

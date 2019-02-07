@@ -6,7 +6,6 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
- * @group lightning
  * @group lightning_workflow
  */
 class ModerationControlTest extends KernelTestBase {

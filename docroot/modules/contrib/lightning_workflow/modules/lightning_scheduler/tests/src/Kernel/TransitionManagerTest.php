@@ -97,22 +97,22 @@ class TransitionManagerTest extends KernelTestBase {
         [],
         FALSE,
       ],
-      'valid time, missing date' => [
+      'time' => [
         [
           'when' => '08:57',
         ],
         TRUE,
       ],
-      'valid date, missing time' => [
+      'date' => [
         [
           [
             'state' => 'fubar',
             'when' => '1984-09-19',
           ],
         ],
-        FALSE,
+        TRUE,
       ],
-      'valid time, invalid date' => [
+      'date and time' => [
         [
           [
             'when' => '1938-37-12 08:57',
@@ -120,31 +120,15 @@ class TransitionManagerTest extends KernelTestBase {
         ],
         TRUE,
       ],
-      'valid date, invalid time' => [
-        [
-          [
-            'when' => '1984-09-19 26:39',
-          ],
-        ],
-        TRUE,
-      ],
-      'invalid date and time' => [
-        [
-          [
-            'when' => '1938-37-12 26:39',
-          ],
-        ],
-        TRUE,
-      ],
-      'valid date and time, invalid order' => [
+      'valid different time stamps, invalid order' => [
         [
           [
             'state' => 'fubar',
-            'when' => '2018-11-05 15:42',
+            'when' => mktime(15, 42, 0, 11, 5, 2018),
           ],
           [
             'state' => 'fubar',
-            'when' => '2018-09-04 02:30',
+            'when' => mktime(2, 30, 0, 9, 4, 2018),
           ],
         ],
         TRUE,
@@ -153,11 +137,11 @@ class TransitionManagerTest extends KernelTestBase {
         [
           [
             'state' => 'fubar',
-            'when' => '2022-09-19 06:30',
+            'when' => mktime(6, 30, 0, 9, 19, 2022),
           ],
           [
             'state' => 'fubar',
-            'when' => '2022-09-19 04:46',
+            'when' => mktime(4, 46, 0, 9, 19, 2022),
           ],
         ],
         TRUE,
@@ -166,11 +150,11 @@ class TransitionManagerTest extends KernelTestBase {
         [
           [
             'state' => 'fubar',
-            'when' => '2022-09-04 02:30',
+            'when' => mktime(2, 30, 0, 9, 4, 2022),
           ],
           [
             'state' => 'fubar',
-            'when' => '2022-11-05 15:42',
+            'when' => mktime(15, 42, 0, 11, 5, 2022),
           ],
         ],
         FALSE,
@@ -179,11 +163,11 @@ class TransitionManagerTest extends KernelTestBase {
         [
           [
             'state' => 'fubar',
-            'when' => '2022-09-19 02:30',
+            'when' => mktime(2, 30, 0, 9, 19, 2022),
           ],
           [
             'state' => 'fubar',
-            'when' => '2022-09-19 15:42',
+            'when' => mktime(15, 42, 0, 9, 19, 2022),
           ],
         ],
         FALSE,

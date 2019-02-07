@@ -2,7 +2,6 @@
 
 namespace Drupal\lightning_core\Commands;
 
-use Drupal\Core\Plugin\CachedDiscoveryClearerInterface;
 use Drush\Commands\DrushCommands;
 
 /**
@@ -11,34 +10,18 @@ use Drush\Commands\DrushCommands;
 class Hooks extends DrushCommands {
 
   /**
-   * The plugin cache clearer service.
+   * Clears all caches before database updates begin.
    *
-   * @var \Drupal\Core\Plugin\CachedDiscoveryClearerInterface
-   */
-  protected $pluginCacheClearer;
-
-  /**
-   * Hooks constructor.
-   *
-   * @param \Drupal\Core\Plugin\CachedDiscoveryClearerInterface $plugin_cache_clearer
-   *   The plugin cache clearer service.
-   */
-  public function __construct(CachedDiscoveryClearerInterface $plugin_cache_clearer) {
-    $this->pluginCacheClearer = $plugin_cache_clearer;
-  }
-
-  /**
-   * Clears all plugin discovery caches before database updates begin.
-   *
-   * A common cause of errors during database updates is update hooks referring
-   * to new or changed plugin definitions. Clearing all plugin caches before
-   * updates begin ensures that the plugin system always has the latest plugin
-   * definitions to work with.
+   * A common cause of errors during database updates is update hooks
+   * inadvertently using stale data from the myriad caches in Drupal core and
+   * contributed modules. Clearing all caches before updates begin ensures that
+   * the system always has the freshest and most accurate data to work with,
+   * which is especially helpful during major surgery like a database update.
    *
    * @hook pre-command updatedb
    */
   public function preUpdate() {
-    $this->pluginCacheClearer->clearCachedDefinitions();
+    drupal_flush_all_caches();
   }
 
 }

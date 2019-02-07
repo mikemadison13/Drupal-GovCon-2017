@@ -8,12 +8,12 @@
 use Drupal\Core\Access\AccessResult;
 
 /**
- * @defgroup jsonapi_normalizer_architecture JSON:API Normalizer Architecture
+ * @defgroup jsonapi_architecture JSON:API Architecture
  * @{
  *
  * @section overview Overview
  * The JSON:API module is a Drupal-centric implementation of the JSON:API
- * specification. By its own definition, the JSON:API specification is "is a
+ * specification. By its own definition, the JSON:API specification "is a
  * specification for how a client should request that resources be fetched or
  * modified, and how a server should respond to those requests. [It] is designed
  * to minimize both the number of requests and the amount of data transmitted
@@ -71,6 +71,81 @@ use Drupal\Core\Access\AccessResult;
  *
  * A benefit of implementing normalizers at this lower level is that they will
  * work automatically for both the JSON:API module and core's REST module.
+ *
+ *
+ * @section revisions Resource Versioning
+ * The JSON:API module exposes entity revisions in a manner inspired by RFC5829:
+ * Link Relation Types for Simple Version Navigation between Web Resources.
+ *
+ * Revision support is not an official part of the JSON:API specification.
+ * However, a number of "profiles" are being developed (also not officially part
+ * in the spec, but already committed to JSON:API v1.1) to standardize any
+ * custom behaviors that the JSON:API module has developed (all of which are
+ * still specification compliant).
+ *
+ * @see https://github.com/json-api/json-api/pull/1268
+ * @see https://github.com/json-api/json-api/pull/1311
+ * @see https://www.drupal.org/project/jsonapi/issues/2955020
+ *
+ * In doing so, JSON:API module should be maximally compatible with other
+ * systems.
+ *
+ * A "version" in the JSON:API module is any revision that was previously, or is
+ * currently, a default revision. Not all revisions are considered to be a
+ * "version". Revisions that are not marked as a "default" revision are
+ * considered "working copies" since they are not usually publicly available
+ * and are the revisions to which most new work is applied.
+ *
+ * When the Content Moderation module is installed, it is possible that the
+ * most recent default revision is *not* the latest revision.
+ *
+ * Requesting a resource version is done via a URL query parameter. It has the
+ * following form:
+ *
+ * @code
+ *              version-identifier
+ *                    __|__
+ *                   /     \
+ * ?resource_version=foo:bar
+ *                   \_/ \_/
+ *                    |   |
+ *    version-negotiator  |
+ *                version-argument
+ * @endcode
+ *
+ * A version identifier is a string with enough information to load a
+ * particular revision. The version negotiator component names the negotiation
+ * mechanism for loading a revision. Currently, this can be either @code id
+ * @endcode or @code rel @endcode. The @code id @endcode negotiator takes a
+ * version argument which is the desired revision ID. The @code rel @endcode
+ * negotiator takes a version argument which is either the string @code
+ * latest-version @endcode or the string @code working-copy @endcode.
+ *
+ * In future, other negotiators may be developed. For instance, a negotiator
+ * which is UUID, timestamp or workspace based.
+ *
+ * To illustrate how a particular entity revision is requested, imagine a node
+ * that has a "Published" revision and a subsequent "Draft" revision.
+ *
+ * Using JSON:API, one could request the "Published" node by requesting
+ * @code /jsonapi/node/page/{{uuid}}?resource_version=rel:latest-version
+ * @endcode.
+ *
+ * To preview an entity that is still a work-in-progress (i.e. the "Draft"
+ * revision) one could request
+ * @code /jsonapi/node/page/{{uuid}}?resource_version=rel:working-copy
+ * @endcode.
+ *
+ * To request a specific revision ID, one can request
+ * @code /jsonapi/node/page/{{uuid}}?resource_version=id:{{revision_id}}
+ * @endcode.
+ *
+ * It is not yet possible to request a collection of revisions. This is still
+ * under development in issue [#3009588].
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3009588.
+ *
+ * @see https://tools.ietf.org/html/rfc5829
  *
  *
  * @section api API
@@ -132,7 +207,7 @@ use Drupal\Core\Access\AccessResult;
  * To help develop compatible clients, every response indicates the version of
  * the JSON:API specification used under its "jsonapi" key. Future releases
  * *may* increment the minor version number if the module implements features of
- * a later specification. Remember that he specification stipulates that future
+ * a later specification. Remember that the specification stipulates that future
  * versions *will* remain backwards compatible as only additions may be
  * released.
  *

@@ -175,7 +175,7 @@ class BlockTest extends ResourceTestBase {
         'http_response',
         'user:2',
       ])
-      ->setCacheContexts(['user.roles']);
+      ->setCacheContexts(['url.site', 'user.roles']);
   }
 
   /**

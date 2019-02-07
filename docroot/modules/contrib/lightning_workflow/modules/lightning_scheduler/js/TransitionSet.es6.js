@@ -189,7 +189,19 @@ export default class extends Component
             });
         };
 
-        const value = dateFormat(this.state.edit.when, 'isoTime');
+        let format;
+
+        if (this.props.step >= 3600) {
+            format = 'HH:00';
+        }
+        else if (this.props.step >= 60) {
+            format = 'HH:MM';
+        }
+        else {
+            format = 'isoTime';
+        }
+
+        const value = dateFormat(this.state.edit.when, format);
 
         return (
             <label>
@@ -247,15 +259,13 @@ export default class extends Component
      */
     render ()
     {
-        const transitions = this.state.transitions;
-
         const elements = [
             createElement('input', {
                 type: 'hidden',
                 name: this.props.input,
-                value: JSON.stringify(transitions),
+                value: JSON.stringify(this),
             }),
-            transitions.map((t, i) => this.renderSaved(t, i))
+            this.state.transitions.map((t, i) => this.renderSaved(t, i))
         ];
 
         // If we're currently editing a transition, render the form. Otherwise,
@@ -263,6 +273,16 @@ export default class extends Component
         elements.push( this.state.edit ? this.renderForm() : this.renderAddLink() );
 
         return elements;
+    }
+
+    toJSON ()
+    {
+        return this.state.transitions.map(t => {
+            return {
+              when: t.when.getTime() / 1000,
+              state: t.state,
+            };
+        });
     }
 
     renderAddLink ()

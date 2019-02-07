@@ -30,6 +30,3 @@ events:
             - chmod +w docroot/sites/default/settings.php
             # Setup settings file and codebase with minimum required for cloud.
             - lightning configure:cloud workflownightly standard
-            # Remove dev tools from the Cloud build.
-            - composer require drush/drush:"8.1.16 as 9.2.1" --no-update
-            - composer update drush/drush --with-all-dependencies

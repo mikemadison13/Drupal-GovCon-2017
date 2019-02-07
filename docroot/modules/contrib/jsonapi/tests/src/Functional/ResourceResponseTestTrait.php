@@ -508,7 +508,7 @@ trait ResourceResponseTestTrait {
       'jsonapi' => static::$jsonApiMember,
       'errors' => [$error],
     ], 403))
-      ->addCacheableDependency((new CacheableMetadata())->addCacheTags(['4xx-response', 'http_response']))
+      ->addCacheableDependency((new CacheableMetadata())->addCacheTags(['4xx-response', 'http_response'])->addCacheContexts(['url.site']))
       ->addCacheableDependency($access);
   }
 
@@ -524,14 +524,26 @@ trait ResourceResponseTestTrait {
    * @return \Drupal\jsonapi\ResourceResponse
    *   The empty collection ResourceResponse.
    */
-  protected static function getEmptyCollectionResponse($cardinality, $self_link) {
-    return new ResourceResponse([
+  protected function getEmptyCollectionResponse($cardinality, $self_link) {
+    // If the entity type is revisionable, add a resource version cache context.
+    $cache_contexts = Cache::mergeContexts([
+      // Cache contexts for JSON:API URL query parameters.
+      'url.query_args:fields',
+      'url.query_args:filter',
+      'url.query_args:include',
+      'url.query_args:page',
+      'url.query_args:sort',
+      // Drupal defaults.
+      'url.site',
+    ], $this->entity->getEntityType()->isRevisionable() ? ['url.query_args:resourceVersion'] : []);
+    $cacheability = (new CacheableMetadata())->addCacheContexts($cache_contexts)->addCacheTags(['http_response']);
+    return (new ResourceResponse([
       // Empty to-one relationships should be NULL and empty to-many
       // relationships should be an empty array.
       'data' => $cardinality === 1 ? NULL : [],
       'jsonapi' => static::$jsonApiMember,
       'links' => ['self' => ['href' => $self_link]],
-    ]);
+    ]))->addCacheableDependency($cacheability);
   }
 
   /**

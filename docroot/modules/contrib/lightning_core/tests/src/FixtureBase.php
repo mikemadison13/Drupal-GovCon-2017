@@ -153,6 +153,10 @@ abstract class FixtureBase implements Context, ContainerAwareInterface {
    *   TRUE if the module was installed, FALSE otherwise.
    */
   protected function installModule($module) {
+    // The container may contain stale data, so we need to update our reference
+    // to it.
+    $this->resetContainer();
+
     if ($this->container->get('module_handler')->moduleExists($module)) {
       return FALSE;
     }
@@ -163,10 +167,17 @@ abstract class FixtureBase implements Context, ContainerAwareInterface {
 
       // The container has changed after module installation, so we need to
       // update our reference to it.
-      $container = $this->container->get('kernel')->getContainer();
-      $this->setContainer($container);
+      $this->resetContainer();
     }
     return $installed;
+  }
+
+  /**
+   * Updates the container.
+   */
+  protected function resetContainer() {
+    $container = $this->container->get('kernel')->getContainer();
+    $this->setContainer($container);
   }
 
   /**

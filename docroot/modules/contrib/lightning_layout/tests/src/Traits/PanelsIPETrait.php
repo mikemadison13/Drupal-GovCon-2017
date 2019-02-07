@@ -5,6 +5,14 @@ namespace Drupal\Tests\lightning_layout\Traits;
 trait PanelsIPETrait {
 
   /**
+   * Saves the Panels IPE layout.
+   */
+  protected function saveLayout() {
+    $this->assertSession()->elementExists('named', ['link', 'Save'], $this->getTray())->click();
+    $this->assertSession()->waitForElement('css', '#panels-ipe-tray:not(.unsaved)');
+  }
+
+  /**
    * Opens the form to add a block to the Panels IPE layout.
    *
    * @param string $plugin_id

@@ -3,6 +3,7 @@
 namespace Drupal\Tests\lightning_scheduler\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
 
 /**
  * @group lightning
@@ -10,6 +11,8 @@ use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
  * @group lightning_scheduler
  */
 class UiTest extends WebDriverTestBase {
+
+  use SchedulerUiTrait;
 
   /**
    * {@inheritdoc}
@@ -27,14 +30,8 @@ class UiTest extends WebDriverTestBase {
   protected function setUp() {
     parent::setUp();
     $this->drupalPlaceBlock('local_tasks_block');
-
-    // Functional tests normally run in the Sydney, Australia time zone in order
-    // to catch time zone-related edge cases and bugs. However, the scheduler UI
-    // is very sensitive to time zones, so it's best to set it, for the purposes
-    // of this test, to the time zone configured in php.ini.
-    $this->config('system.date')
-      ->set('timezone.default', ini_get('date.timezone'))
-      ->save();
+    $this->setUpTimeZone();
+    $this->setTimeStep();
   }
 
   public function testUiNotPresentWithoutModeration() {
@@ -61,19 +58,8 @@ class UiTest extends WebDriverTestBase {
     $this->drupalGet('/node/add/page');
     $this->assertSession()->fieldExists('Title')->setValue($this->randomString());
 
-    $this->assertSession()->elementExists('named', ['link', 'Schedule a status change'])->click();
-    $this->assertSession()->fieldExists('Scheduled moderation state')->selectOption('Published');
-    $this->assertSession()->fieldExists('Scheduled transition date')->setValue('5-4-2038');
-    $this->assertSession()->fieldExists('Scheduled transition time')->setValue('6:00:00PM');
-    $this->assertSession()->buttonExists('Save transition')->press();
-    $this->assertSession()->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
-
-    $this->assertSession()->elementExists('named', ['link', 'add another'])->click();
-    $this->assertSession()->fieldExists('Scheduled moderation state')->selectOption('Archived');
-    $this->assertSession()->fieldExists('Scheduled transition date')->setValue('9-19-2038');
-    $this->assertSession()->fieldExists('Scheduled transition time')->setValue('8:57:00AM');
-    $this->assertSession()->buttonExists('Save transition')->press();
-    $this->assertSession()->pageTextContains("Change to Archived on September 19, 2038 at 8:57 AM");
+    $this->createTransition('Published', mktime(18, 0, 0, 5, 4, 2038));
+    $this->createTransition('Archived', mktime(8, 57, 0, 9, 19, 2038));
 
     $this->assertSession()->buttonExists('Save')->press();
     $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
@@ -89,10 +75,7 @@ class UiTest extends WebDriverTestBase {
     $this->assertSession()->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
     $this->assertSession()->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
 
-    $this->assertSession()->elementExists('named', ['link', 'add another'])->click();
-    $this->assertSession()->fieldExists('Scheduled moderation state')->selectOption('Archived');
-    $this->assertSession()->fieldExists('Scheduled transition date')->setValue('9-19-2038');
-    $this->assertSession()->fieldExists('Scheduled transition time')->setValue('8:57:00AM');
+    $this->createTransition('Archived', mktime(8, 57, 0, 9, 19, 2038), FALSE);
     $this->assertSession()->elementExists('named', ['link', 'Cancel transition']);
     $this->assertSession()->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
     $this->assertSession()->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");

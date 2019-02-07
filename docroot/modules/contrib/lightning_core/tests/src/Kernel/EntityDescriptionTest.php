@@ -6,9 +6,7 @@ use Drupal\Core\Entity\EntityDescriptionInterface;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
- * @group lightning
  * @group lightning_core
- * @group orca_public
  */
 class EntityDescriptionTest extends KernelTestBase {
 

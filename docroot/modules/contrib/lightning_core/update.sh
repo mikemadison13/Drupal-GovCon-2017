@@ -6,11 +6,7 @@ if [ -f $FIXTURE ]; then
     drush sql:drop --yes
     php core/scripts/db-tools.php import $FIXTURE
 
-    # Forcibly uninstall Lightning Dev.
-    drush php:eval "Drupal::configFactory()->getEditable('core.extension')->clear('module.lightning_dev')->save();"
-    drush php:eval "Drupal::keyValue('system.schema')->deleteMultiple(['lightning_dev']);"
-    # Remove Lightning Workflow-related settings.
-    drush php:eval "entity_load('node_type', 'page')->unsetThirdPartySetting('lightning_workflow', 'workflow')->save();"
+    drush php:script $TRAVIS_BUILD_DIR/tests/update.php
     # Ensure menu_ui is installed.
     drush pm-enable menu_ui --yes
 fi

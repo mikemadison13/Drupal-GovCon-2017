@@ -6,7 +6,6 @@ use Drupal\lightning_core\UpdateManager;
 
 /**
  * @group lightning_core
- * @group lightning
  */
 class Update8007Test extends Update8006Test {
 

@@ -8,7 +8,6 @@ use Drupal\Tests\token\Kernel\KernelTestBase;
 use Drupal\user\Entity\Role;
 
 /**
- * @group lightning
  * @group lightning_layout
  */
 class ContentTypePermissionsTest extends KernelTestBase {

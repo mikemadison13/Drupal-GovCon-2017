@@ -7,7 +7,6 @@ use Drupal\node\Entity\Node;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * @group lightning
  * @group lightning_media
  */
 class EmbeddedMediaLabelTest extends BrowserTestBase {

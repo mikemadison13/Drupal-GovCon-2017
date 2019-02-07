@@ -5,7 +5,6 @@ namespace Drupal\Tests\lightning_layout\Functional;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * @group lightning
  * @group lightning_layout
  */
 class ViewModeCustomizationTest extends BrowserTestBase {

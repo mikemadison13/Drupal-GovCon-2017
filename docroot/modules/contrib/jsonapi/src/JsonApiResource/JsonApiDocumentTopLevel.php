@@ -2,8 +2,6 @@
 
 namespace Drupal\jsonapi\JsonApiResource;
 
-use Drupal\Component\Assertion\Inspector;
-
 /**
  * Represents a JSON:API document's "top level".
  *
@@ -32,7 +30,7 @@ class JsonApiDocumentTopLevel {
   /**
    * The links.
    *
-   * @var string[]
+   * @var \Drupal\jsonapi\JsonApiResource\LinkCollection
    */
   protected $links;
 
@@ -52,21 +50,16 @@ class JsonApiDocumentTopLevel {
    * @param \Drupal\jsonapi\JsonApiResource\EntityCollection $includes
    *   An EntityCollection object containing resources to be included in the
    *   response document or NULL if there should not be includes.
-   * @param string[] $links
-   *   The URLs to which the top-level document should link. Keys are strings.
-   *   Values are URLs.
+   * @param \Drupal\jsonapi\JsonApiResource\LinkCollection $links
+   *   A collection of links to resources related to the top-level document.
    * @param array $meta
    *   (optional) The metadata to normalize.
    */
-  public function __construct($data, EntityCollection $includes, array $links, array $meta = []) {
+  public function __construct($data, EntityCollection $includes, LinkCollection $links, array $meta = []) {
     assert(!$data instanceof ErrorCollection || $includes instanceof NullEntityCollection);
-    assert(Inspector::assertAll(function ($link) {
-      return is_array($link) || isset($link['href']) && is_string($link['href']);
-    }, $links));
-
     $this->data = $data;
     $this->includes = $includes;
-    $this->links = $links;
+    $this->links = $links->withContext($this);
     $this->meta = $meta;
   }
 
@@ -83,7 +76,7 @@ class JsonApiDocumentTopLevel {
   /**
    * Gets the links.
    *
-   * @return string[]
+   * @return \Drupal\jsonapi\JsonApiResource\LinkCollection
    *   The top-level links.
    */
   public function getLinks() {

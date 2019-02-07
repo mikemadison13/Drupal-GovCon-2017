@@ -6,7 +6,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\TypedData\FieldItemDataDefinitionInterface;
 use Drupal\Core\TypedData\TypedDataInternalPropertiesHelper;
-use Drupal\jsonapi\Normalizer\Value\FieldItemNormalizerValue;
+use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
 use Drupal\serialization\Normalizer\CacheableNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
@@ -42,7 +42,7 @@ class FieldItemNormalizer extends NormalizerBase implements DenormalizerInterfac
   public function normalize($field_item, $format = NULL, array $context = []) {
     /** @var \Drupal\Core\TypedData\TypedDataInterface $property */
     $values = [];
-    // We normalize each individual property, so each can do their own casting,
+    // We normalize each individual value, so each can do their own casting,
     // if needed.
     $field_properties = !empty($field_item->getProperties(TRUE))
       ? TypedDataInternalPropertiesHelper::getNonInternalProperties($field_item)
@@ -57,9 +57,12 @@ class FieldItemNormalizer extends NormalizerBase implements DenormalizerInterfac
     if (isset($context['langcode'])) {
       $values['lang'] = $context['langcode'];
     }
-    $value = new FieldItemNormalizerValue($values, $context[CacheableNormalizerInterface::SERIALIZATION_CONTEXT_CACHEABILITY]);
+    $normalization = new CacheableNormalization(
+      $context[CacheableNormalizerInterface::SERIALIZATION_CONTEXT_CACHEABILITY],
+      static::rasterizeValueRecursive(count($values) == 1 ? reset($values) : $values)
+    );
     unset($context[CacheableNormalizerInterface::SERIALIZATION_CONTEXT_CACHEABILITY]);
-    return $value;
+    return $normalization;
   }
 
   /**
@@ -96,6 +99,42 @@ class FieldItemNormalizer extends NormalizerBase implements DenormalizerInterfac
     }
 
     return $data_internal;
+  }
+
+  /**
+   * Rasterizes a value recursively.
+   *
+   * This is mainly for configuration entities where a field can be a tree of
+   * values to rasterize.
+   *
+   * @param mixed $value
+   *   Either a scalar, an array or a rasterizable object.
+   *
+   * @return mixed
+   *   The rasterized value.
+   */
+  protected static function rasterizeValueRecursive($value) {
+    if (!$value || is_scalar($value)) {
+      return $value;
+    }
+    if (is_array($value)) {
+      $output = [];
+      foreach ($value as $key => $item) {
+        $output[$key] = static::rasterizeValueRecursive($item);
+      }
+
+      return $output;
+    }
+    if ($value instanceof CacheableNormalization) {
+      return $value->getNormalization();
+    }
+    // If the object can be turned into a string it's better than nothing.
+    if (method_exists($value, '__toString')) {
+      return $value->__toString();
+    }
+
+    // We give up, since we do not know how to rasterize this.
+    return NULL;
   }
 
 }

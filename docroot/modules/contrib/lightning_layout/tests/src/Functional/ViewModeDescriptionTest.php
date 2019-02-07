@@ -6,7 +6,6 @@ use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * @group lightning
  * @group lightning_layout
  */
 class ViewModeDescriptionTest extends BrowserTestBase {

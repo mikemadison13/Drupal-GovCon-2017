@@ -9,11 +9,9 @@ use GuzzleHttp\Exception\ClientException;
  * Tests that OAuth and json:api are working together to authenticate, authorize
  * and allow/forbid interaction with entities as designed.
  *
- * @group lightning
  * @group lightning_api
  * @group headless
  * @group api_test
- * @group orca_public
  */
 class ApiTest extends ApiTestBase {
 

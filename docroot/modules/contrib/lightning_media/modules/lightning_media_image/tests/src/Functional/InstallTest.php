@@ -5,7 +5,6 @@ namespace Drupal\Tests\lightning_media_image\Functional;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * @group lightning
  * @group lightning_media
  * @group lightning_media_image
  */

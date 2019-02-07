@@ -10,7 +10,6 @@ use Drupal\node\Entity\Node;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 
 /**
- * @group lightning
  * @group lightning_media
  */
 class EmbedBundleTest extends WebDriverTestBase {

@@ -40,7 +40,17 @@ class JsonapiServiceProvider implements ServiceModifierInterface, ServiceProvide
         ->addMethodCall('registerFormat', [
           'api_json',
           ['application/vnd.api+json'],
+        ])
+        ->addMethodCall('registerFormat', [
+          'bin',
+          ['application/octet-stream'],
         ]);
+    }
+
+    // @todo Remove this when JSON:API requires Drupal >=8.6, see https://www.drupal.org/node/1927648.
+    if (floatval(\Drupal::VERSION) < 8.6) {
+      $container->removeDefinition('jsonapi.file_upload');
+      $container->removeDefinition('file.uploader');
     }
   }
 

@@ -83,6 +83,16 @@ function lightning_scheduler_update_8002() {
 }
 
 /**
+ * Creates the lightning_scheduler.settings config object.
+ */
+function lightning_scheduler_update_8003() {
+  Drupal::configFactory()
+    ->getEditable('lightning_scheduler.settings')
+    ->set('time_step', 60)
+    ->save();
+}
+
+/**
  * Implements hook_update_dependencies().
  */
 function lightning_scheduler_update_dependencies() {

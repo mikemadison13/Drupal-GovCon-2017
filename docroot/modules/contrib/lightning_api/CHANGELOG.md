@@ -1,3 +1,9 @@
+## 3.2.0
+* Updated Lightning Core to 2.12 or 3.5, which security update Drupal core to
+  8.5.9 and 8.6.6, respectively.
+* Changes were made to the internal testing infrastructure, but nothing that 
+  will affect users of Lightning API.
+
 ## 3.1.0
 * Security updated JSON API to 2.0-rc4.
 

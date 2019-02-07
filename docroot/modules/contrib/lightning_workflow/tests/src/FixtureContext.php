@@ -12,13 +12,6 @@ use Drupal\views\Entity\View;
 final class FixtureContext extends FixtureBase {
 
   /**
-   * Whether BigPipe was installed before the scenario set-up.
-   *
-   * @var bool
-   */
-  private $disableBigPipe;
-
-  /**
    * @BeforeScenario
    */
   public function setUp() {
@@ -50,17 +43,6 @@ final class FixtureContext extends FixtureBase {
     $this->installModule('lightning_roles');
     $this->installModule('pathauto');
     $this->installModule('views');
-
-    $this->disableBigPipe = $this->container->get('module_handler')
-      ->moduleExists('big_pipe');
-
-    // BigPipe breaks a couple of non-JS tests which expect to find local task
-    // links, but receive BigPipe placeholders instead. This is a bit of a
-    // sledgehammer approach, but until it's possible to disable a module during
-    // a single test, it's the best we can do.
-    if ($this->disableBigPipe) {
-      $this->container->get('module_installer')->uninstall(['big_pipe']);
-    }
 
     // Cache the original state of the editorial workflow.
     $this->config('workflows.workflow.editorial');
@@ -101,15 +83,13 @@ final class FixtureContext extends FixtureBase {
 
     $this->installTheme('seven');
     $this->config('system.theme')->set('admin', 'seven')->save();
+    $this->config('lightning_scheduler.settings')->set('time_step', 1)->save();
   }
 
   /**
    * @AfterScenario
    */
   public function tearDown() {
-    if ($this->disableBigPipe) {
-      $this->container->get('module_installer')->install(['big_pipe']);
-    }
     parent::tearDown();
   }
 

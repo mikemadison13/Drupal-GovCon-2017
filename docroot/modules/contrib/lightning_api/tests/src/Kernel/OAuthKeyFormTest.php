@@ -8,9 +8,7 @@ use Drupal\lightning_api\Form\OAuthKeyForm;
 use Drupal\lightning_api\OAuthKey;
 
 /**
- * @group lightning
  * @group lightning_api
- * @group orca_public
  */
 class OAuthKeyFormTest extends KernelTestBase {
 

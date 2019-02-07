@@ -470,7 +470,8 @@ class UserTest extends ResourceTestBase {
     $this->grantPermissionsToTestedRole(['administer users']);
 
     $response = $this->request('GET', $collection_url, $request_options);
-    $this->assertResourceErrorResponse(400, "Filtering on config entities is not supported by Drupal's entity API. You tried to filter on a Role config entity.", $collection_url, $response, FALSE, ['4xx-response', 'http_response'], ['url.path', 'url.query_args:filter'], FALSE, 'MISS');
+    $expected_cache_contexts = ['url.path', 'url.query_args:filter', 'url.site'];
+    $this->assertResourceErrorResponse(400, "Filtering on config entities is not supported by Drupal's entity API. You tried to filter on a Role config entity.", $collection_url, $response, FALSE, ['4xx-response', 'http_response'], $expected_cache_contexts, FALSE, 'MISS');
   }
 
   /**

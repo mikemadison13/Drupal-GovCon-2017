@@ -7,7 +7,6 @@ use Drupal\KernelTests\KernelTestBase;
 /**
  * Tests available libraries required by Lightning Media.
  *
- * @group lightning
  * @group lightning_media
  */
 class MediaJsLibrariesTest extends KernelTestBase {

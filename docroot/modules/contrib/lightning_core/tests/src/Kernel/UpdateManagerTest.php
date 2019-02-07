@@ -9,9 +9,7 @@ use Drupal\lightning_core\UpdateManager;
 /**
  * @coversDefaultClass \Drupal\lightning_core\UpdateManager
  *
- * @group lightning
  * @group lightning_core
- * @group orca_public
  */
 class UpdateManagerTest extends KernelTestBase {
 

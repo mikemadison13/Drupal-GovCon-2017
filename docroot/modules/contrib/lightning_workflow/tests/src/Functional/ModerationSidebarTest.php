@@ -6,7 +6,6 @@ use Drupal\Tests\BrowserTestBase;
 use Drupal\user\Entity\Role;
 
 /**
- * @group lightning
  * @group lightning_workflow
  */
 class ModerationSidebarTest extends BrowserTestBase {

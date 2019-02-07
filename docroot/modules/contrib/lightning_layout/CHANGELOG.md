@@ -1,3 +1,9 @@
+## 1.6.0
+* Updated Lightning Core to 2.12 or 3.5, which security update to Drupal core to
+  8.5.9 and 8.6.6, respectively.
+* Changes were made to the internal testing infrastructure, but nothing that
+  will affect users of Lightning Layout.
+
 ## 1.5.0
 * Many internal changes to testing infrastructure, but nothing that affects
   users of Lightning Layout.
@@ -30,4 +36,3 @@
 ## 1.0.0-rc1
 * Fixed a configuration problem that caused an unneeded dependency on the
   Lightning profile. (Issue #2933445)
- 

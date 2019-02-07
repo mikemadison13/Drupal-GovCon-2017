@@ -127,9 +127,6 @@ class TransitionManager {
     }
 
     $minimum_date = NULL;
-    $format_options = [
-      'timezone' => drupal_get_user_timezone(),
-    ];
 
     foreach ($data as $transition) {
       if (empty($transition['when'])) {
@@ -137,8 +134,7 @@ class TransitionManager {
         return;
       }
 
-      $date_time = new DrupalDateTime($transition['when'], 'UTC');
-      if ($date_time->hasErrors()) {
+      if (! is_numeric($transition['when'])) {
         $variables = [
           '%when' => $transition['when'],
         ];
@@ -147,15 +143,15 @@ class TransitionManager {
       }
 
       // The transition must take place after $minimum_date.
-      if ($minimum_date instanceof DrupalDateTime && $date_time->getTimestamp() < $minimum_date->getTimestamp()) {
+      if (isset($minimum_date) && $transition['when'] < $minimum_date) {
         $variables = [
-          '@date' => $minimum_date->format('F j, Y', $format_options),
-          '@time' => $minimum_date->format('g:i A', $format_options),
+          '@date' => date('F j, Y', $minimum_date),
+          '@time' => date('g:i A', $minimum_date),
         ];
         $form_state->setError($element, t('You cannot schedule a transition to take place before @time on @date.', $variables));
         return;
       }
-      $minimum_date = $date_time;
+      $minimum_date = $transition['when'];
     }
   }
 

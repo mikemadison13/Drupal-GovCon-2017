@@ -1,11 +1,12 @@
 imports:
-  - 'docroot/modules/contrib/acquia/lightning_core/behat.yml'
+  - 'docroot/modules/contrib/lightning_core/tests/drupal.behat.yml'
+  - 'docroot/modules/contrib/lightning_core/tests/mink.behat.yml'
 
 default:
   suites:
     lightning_api:
       paths:
-        - 'docroot/modules/contrib/acquia/lightning_api/tests/features'
+        - 'tests/features'
       contexts:
         - '\Drupal\DrupalExtension\Context\DrupalContext'
         - '\Drupal\DrupalExtension\Context\MinkContext'

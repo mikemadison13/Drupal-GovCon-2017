@@ -3,7 +3,7 @@
 namespace Drupal\jsonapi\Normalizer;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\jsonapi\Normalizer\Value\RelationshipItemNormalizerValue;
+use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
 
 /**
@@ -41,22 +41,28 @@ class RelationshipItemNormalizer extends FieldItemNormalizer {
    * {@inheritdoc}
    */
   public function normalize($relationship_item, $format = NULL, array $context = []) {
-    /* @var $relationship_item \Drupal\jsonapi\Normalizer\RelationshipItem */
-    // TODO: We are always loading the referenced entity. Even if it is not
-    // going to be included. That may be a performance issue. We do it because
-    // we need to know the entity type and bundle to load the JSON:API resource
-    // type for the relationship item. We need a better way of finding about
-    // this.
+    assert($relationship_item instanceof RelationshipItem);
     $values = $relationship_item->getValue();
     if (isset($context['langcode'])) {
       $values['lang'] = $context['langcode'];
     }
 
-    return new RelationshipItemNormalizerValue(
-      $values,
-      new CacheableMetadata(),
-      $relationship_item->getTargetResourceType()
-    );
+    $value = static::rasterizeValueRecursive(count($values) == 1 ? reset($values) : $values);
+    if (!$value) {
+      $normalized = $value;
+    }
+    else {
+      $normalized = [
+        'type' => $relationship_item->getTargetResourceType()->getTypeName(),
+        'id' => empty($value['target_uuid']) ? $value : $value['target_uuid'],
+      ];
+
+      if (!empty($value['meta'])) {
+        $normalized['meta'] = $value['meta'];
+      }
+    }
+
+    return new CacheableNormalization(new CacheableMetadata(), $normalized);
   }
 
 }

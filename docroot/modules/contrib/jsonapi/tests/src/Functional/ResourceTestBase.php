@@ -2,10 +2,10 @@
 
 namespace Drupal\Tests\jsonapi\Functional;
 
-use Behat\Mink\Driver\BrowserKitDriver;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Random;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultReasonInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -15,6 +15,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\ContentEntityNullStorage;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem;
@@ -25,7 +26,10 @@ use Drupal\Core\TypedData\TypedDataInternalPropertiesHelper;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\jsonapi\BackwardCompatibility\tests\Traits\ContentModerationTestTrait;
+use Drupal\jsonapi\JsonApiResource\LinkCollection;
 use Drupal\jsonapi\JsonApiResource\NullEntityCollection;
+use Drupal\jsonapi\JsonApiResource\Link;
 use Drupal\jsonapi\Normalizer\HttpExceptionNormalizer;
 use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Drupal\jsonapi\ResourceResponse;
@@ -45,6 +49,8 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class ResourceTestBase extends BrowserTestBase {
 
   use ResourceResponseTestTrait;
+  use ContentModerationTestTrait;
+  use JsonApiRequestTestTrait;
 
   /**
    * {@inheritdoc}
@@ -344,15 +350,12 @@ abstract class ResourceTestBase extends BrowserTestBase {
    *   The JSON:API normalization for the given entity.
    */
   protected function normalize(EntityInterface $entity, Url $url) {
-    $doc = new JsonApiDocumentTopLevel($entity, new NullEntityCollection(), [
-      'self' => [
-        'href' => $url->toString(TRUE)->getGeneratedUrl(),
-      ],
-    ]);
+    $self_link = new Link(new CacheableMetadata(), $url, ['self']);
+    $doc = new JsonApiDocumentTopLevel($entity, new NullEntityCollection(), new LinkCollection(['self' => $self_link]));
     return $this->serializer->normalize($doc, 'api_json', [
       'resource_type' => $this->container->get('jsonapi.resource_type.repository')->getByTypeName(static::$resourceTypeName),
       'account' => $this->account,
-    ])->rasterizeValue();
+    ])->getNormalization();
   }
 
   /**
@@ -444,7 +447,11 @@ abstract class ResourceTestBase extends BrowserTestBase {
   protected function getExpectedUnauthorizedAccessCacheability() {
     return (new CacheableMetadata())
       ->setCacheTags(['4xx-response', 'http_response'])
-      ->setCacheContexts(['user.permissions']);
+      ->setCacheContexts(['url.site', 'user.permissions'])
+      ->addCacheContexts($this->entity->getEntityType()->isRevisionable()
+        ? ['url.query_args:resourceVersion']
+        : []
+      );
   }
 
   /**
@@ -479,17 +486,16 @@ abstract class ResourceTestBase extends BrowserTestBase {
    * @see ::testGetIndividual()
    */
   protected function getExpectedCacheContexts(array $sparse_fieldset = NULL) {
-    return [
+    $cache_contexts = [
       // Cache contexts for JSON:API URL query parameters.
       'url.query_args:fields',
-      'url.query_args:filter',
       'url.query_args:include',
-      'url.query_args:page',
-      'url.query_args:sort',
       // Drupal defaults.
       'url.site',
       'user.permissions',
     ];
+    $entity_type = $this->entity->getEntityType();
+    return Cache::mergeContexts($cache_contexts, $entity_type->isRevisionable() ? ['url.query_args:resourceVersion'] : []);
   }
 
   /**
@@ -539,9 +545,10 @@ abstract class ResourceTestBase extends BrowserTestBase {
       }
       return $cacheability;
     }, new CacheableMetadata());
+    $entity_type = reset($collection)->getEntityType();
     $cacheability->addCacheTags(['http_response']);
-    $cacheability->addCacheTags(reset($collection)->getEntityType()->getListCacheTags());
-    $cacheability->addCacheContexts([
+    $cacheability->addCacheTags($entity_type->getListCacheTags());
+    $cache_contexts = [
       // Cache contexts for JSON:API URL query parameters.
       'url.query_args:fields',
       'url.query_args:filter',
@@ -550,7 +557,10 @@ abstract class ResourceTestBase extends BrowserTestBase {
       'url.query_args:sort',
       // Drupal defaults.
       'url.site',
-    ]);
+    ];
+    // If the entity type is revisionable, add a resource version cache context.
+    $cache_contexts = Cache::mergeContexts($cache_contexts, $entity_type->isRevisionable() ? ['url.query_args:resourceVersion'] : []);
+    $cacheability->addCacheContexts($cache_contexts);
     return $cacheability;
   }
 
@@ -574,6 +584,19 @@ abstract class ResourceTestBase extends BrowserTestBase {
    * @see ::grantPermissionsToAuthenticatedRole()
    */
   abstract protected function setUpAuthorization($method);
+
+  /**
+   * Sets up the necessary authorization for handling revisions.
+   *
+   * @param string $method
+   *   The HTTP method for which to set up authentication.
+   *
+   * @see ::testRevisions()
+   */
+  protected function setUpRevisionAuthorization($method) {
+    assert($method === 'GET', 'Only read operations on revisions are supported.');
+    $this->setUpAuthorization($method);
+  }
 
   /**
    * Return the expected error message.
@@ -615,38 +638,6 @@ abstract class ResourceTestBase extends BrowserTestBase {
       $role->revokePermission($permission);
     }
     $role->trustData()->save();
-  }
-
-  /**
-   * Performs a HTTP request. Wraps the Guzzle HTTP client.
-   *
-   * Why wrap the Guzzle HTTP client? Because we want to keep the actual test
-   * code as simple as possible, and hence not require them to specify the
-   * 'http_errors = FALSE' request option, nor do we want them to have to
-   * convert Drupal Url objects to strings.
-   *
-   * We also don't want to follow redirects automatically, to ensure these tests
-   * are able to detect when redirects are added or removed.
-   *
-   * @param string $method
-   *   HTTP method.
-   * @param \Drupal\Core\Url $url
-   *   URL to request.
-   * @param array $request_options
-   *   Request options to apply.
-   *
-   * @return \Psr\Http\Message\ResponseInterface
-   *   The response.
-   *
-   * @see \GuzzleHttp\ClientInterface::request()
-   */
-  protected function request($method, Url $url, array $request_options) {
-    $this->refreshVariables();
-    $request_options[RequestOptions::HTTP_ERRORS] = FALSE;
-    $request_options[RequestOptions::ALLOW_REDIRECTS] = FALSE;
-    $request_options = $this->decorateWithXdebugCookie($request_options);
-    $client = $this->getSession()->getDriver()->getClient()->getClient();
-    return $client->request($method, $url->setAbsolute(TRUE)->toString(), $request_options);
   }
 
   /**
@@ -830,32 +821,6 @@ abstract class ResourceTestBase extends BrowserTestBase {
   }
 
   /**
-   * Adds the Xdebug cookie to the request options.
-   *
-   * @param array $request_options
-   *   The request options.
-   *
-   * @return array
-   *   Request options updated with the Xdebug cookie if present.
-   */
-  protected function decorateWithXdebugCookie(array $request_options) {
-    $session = $this->getSession();
-    $driver = $session->getDriver();
-    if ($driver instanceof BrowserKitDriver) {
-      $client = $driver->getClient();
-      foreach ($client->getCookieJar()->all() as $cookie) {
-        if (isset($request_options[RequestOptions::HEADERS]['Cookie'])) {
-          $request_options[RequestOptions::HEADERS]['Cookie'] .= '; ' . $cookie->getName() . '=' . $cookie->getValue();
-        }
-        else {
-          $request_options[RequestOptions::HEADERS]['Cookie'] = $cookie->getName() . '=' . $cookie->getValue();
-        }
-      }
-    }
-    return $request_options;
-  }
-
-  /**
    * Makes the JSON:API document violate the spec by omitting the resource type.
    *
    * @param array $document
@@ -961,7 +926,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
         ],
       ],
     ];
-    $this->assertResourceResponse(400, $expected_document, $response, ['4xx-response', 'http_response'], ['url.query_args'], FALSE, 'MISS');
+    $this->assertResourceResponse(400, $expected_document, $response, ['4xx-response', 'http_response'], ['url.query_args', 'url.site'], FALSE, 'MISS');
 
     // 200 for well-formed HEAD request.
     $response = $this->request('HEAD', $url, $request_options);
@@ -1053,12 +1018,12 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $message_url = clone $url;
     $path = str_replace($random_uuid, '{entity}', $message_url->setAbsolute()->setOptions(['base_url' => '', 'query' => []])->toString());
     $message = 'The "entity" parameter was not converted for the path "' . $path . '" (route name: "jsonapi.' . static::$resourceTypeName . '.individual")';
-    $this->assertResourceErrorResponse(404, $message, $url, $response, FALSE, ['4xx-response', 'http_response'], [''], FALSE, 'UNCACHEABLE');
+    $this->assertResourceErrorResponse(404, $message, $url, $response, FALSE, ['4xx-response', 'http_response'], ['url.site'], FALSE, 'UNCACHEABLE');
 
     // DX: when Accept request header is missing, still 404, same response.
     unset($request_options[RequestOptions::HEADERS]['Accept']);
     $response = $this->request('GET', $url, $request_options);
-    $this->assertResourceErrorResponse(404, $message, $url, $response, FALSE, ['4xx-response', 'http_response'], [''], FALSE, 'UNCACHEABLE');
+    $this->assertResourceErrorResponse(404, $message, $url, $response, FALSE, ['4xx-response', 'http_response'], ['url.site'], FALSE, 'UNCACHEABLE');
   }
 
   /**
@@ -1119,6 +1084,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
       $expected_cache_contexts = [
         'url.query_args:filter',
         'url.query_args:sort',
+        'url.site',
         'user.permissions',
       ];
       $this->assertResourceErrorResponse(403, $expected_error_message, $unauthorized_filter_url, $response, FALSE, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
@@ -1667,7 +1633,8 @@ abstract class ResourceTestBase extends BrowserTestBase {
    */
   protected function getExpectedGetRelationshipResponse($relationship_field_name, EntityInterface $entity = NULL) {
     $entity = $entity ?: $this->entity;
-    $access = static::entityFieldAccess($entity, $this->resourceType->getInternalName($relationship_field_name), 'view', $this->account);
+    $access = AccessResult::neutral()->addCacheContexts($entity->getEntityType()->isRevisionable() ? ['url.query_args:resourceVersion'] : []);
+    $access = $access->orIf(static::entityFieldAccess($entity, $this->resourceType->getInternalName($relationship_field_name), 'view', $this->account));
     if (!$access->isAllowed()) {
       $via_link = Url::fromRoute(
         sprintf('jsonapi.%s.%s.relationship.get', static::$resourceTypeName, $relationship_field_name),
@@ -1675,9 +1642,9 @@ abstract class ResourceTestBase extends BrowserTestBase {
       );
       return static::getAccessDeniedResponse($this->entity, $access, $via_link, $relationship_field_name, 'The current user is not allowed to view this relationship.', FALSE);
     }
-    $expected_document = $this->getExpectedGetRelationshipDocument($relationship_field_name);
+    $expected_document = $this->getExpectedGetRelationshipDocument($relationship_field_name, $entity);
     $expected_cacheability = (new CacheableMetadata())
-      ->addCacheTags($this->getExpectedCacheTags([]))
+      ->addCacheTags(['http_response'])
       ->addCacheContexts(['url.site'])
       ->addCacheableDependency($entity)
       ->addCacheableDependency($access);
@@ -1759,71 +1726,97 @@ abstract class ResourceTestBase extends BrowserTestBase {
    * @param \Drupal\Core\Entity\EntityInterface|null $entity
    *   (optional) The entity for which to get expected related resources.
    *
-   * @return mixed
-   *   An array of expected ResourceResponses, keyed by thier relationship field
+   * @return \Drupal\jsonapi\ResourceResponse[]
+   *   An array of expected ResourceResponses, keyed by their relationship field
    *   name.
    *
    * @see \GuzzleHttp\ClientInterface::request()
    */
   protected function getExpectedRelatedResponses(array $relationship_field_names, array $request_options, EntityInterface $entity = NULL) {
     $entity = $entity ?: $this->entity;
+    return array_map(function ($relationship_field_name) use ($entity, $request_options) {
+      return $this->getExpectedRelatedResponse($relationship_field_name, $request_options, $entity);
+    }, array_combine($relationship_field_names, $relationship_field_names));
+  }
+
+  /**
+   * Builds an expected related ResourceResponse for the given field.
+   *
+   * @param string $relationship_field_name
+   *   The relationship field name for which to build an expected
+   *   ResourceResponse.
+   * @param array $request_options
+   *   Request options to apply.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity for which to get expected related resources.
+   *
+   * @return \Drupal\jsonapi\ResourceResponse
+   *   An expected ResourceResponse.
+   *
+   * @see \GuzzleHttp\ClientInterface::request()
+   */
+  protected function getExpectedRelatedResponse($relationship_field_name, array $request_options, EntityInterface $entity) {
     // Get the relationships responses which contain resource identifiers for
     // every related resource.
-    $relationship_responses = array_map(function ($relationship_field_name) use ($entity) {
-      return $this->getExpectedGetRelationshipResponse($relationship_field_name, $entity);
-    }, array_combine($relationship_field_names, $relationship_field_names));
+    /* @var \Drupal\jsonapi\ResourceResponse[] $relationship_responses */
     $base_resource_identifier = static::toResourceIdentifier($entity);
-    $expected_related_responses = [];
-    foreach ($relationship_field_names as $relationship_field_name) {
-      $internal_name = $this->resourceType->getInternalName($relationship_field_name);
-      $access = static::entityFieldAccess($entity, $internal_name, 'view', $this->account);
-      if (!$access->isAllowed()) {
-        $detail = 'The current user is not allowed to view this relationship.';
-        if (!$entity->access('view') && $entity->access('view label') && $access instanceof AccessResultReasonInterface && empty($access->getReason())) {
-          $access->setReason("The user only has authorization for the 'view label' operation.");
-          // @todo Remove when we stop supporting Drupal 8.5.
-          if (floatval(\Drupal::VERSION) < 8.6 && $relationship_field_name === 'roles' && static::$entityTypeId === 'user' && $access->getCacheContexts() === ['user.permissions']) {
-            $access = $access->setReason('');
-          }
+    $internal_name = $this->resourceType->getInternalName($relationship_field_name);
+    $access = AccessResult::neutral()->addCacheContexts($entity->getEntityType()->isRevisionable() ? ['url.query_args:resourceVersion'] : []);
+    $access = $access->orIf(static::entityFieldAccess($entity, $internal_name, 'view', $this->account));
+    if (!$access->isAllowed()) {
+      $detail = 'The current user is not allowed to view this relationship.';
+      if (!$entity->access('view') && $entity->access('view label') && $access instanceof AccessResultReasonInterface && empty($access->getReason())) {
+        $access->setReason("The user only has authorization for the 'view label' operation.");
+        // @todo Remove when we stop supporting Drupal 8.5.
+        if (floatval(\Drupal::VERSION) < 8.6 && $relationship_field_name === 'roles' && static::$entityTypeId === 'user' && $access->getCacheContexts() === ['user.permissions']) {
+          $access = $access->setReason('');
         }
-        $via_link = Url::fromRoute(
-          sprintf('jsonapi.%s.%s.related', $base_resource_identifier['type'], $relationship_field_name),
-          ['entity' => $base_resource_identifier['id']]
-        );
-        $related_response = static::getAccessDeniedResponse($entity, $access, $via_link, $relationship_field_name, $detail, FALSE);
+      }
+      $via_link = Url::fromRoute(
+        sprintf('jsonapi.%s.%s.related', $base_resource_identifier['type'], $relationship_field_name),
+        ['entity' => $base_resource_identifier['id']]
+      );
+      $related_response = static::getAccessDeniedResponse($entity, $access, $via_link, $relationship_field_name, $detail, FALSE);
+    }
+    else {
+      $self_link = static::getRelatedLink($base_resource_identifier, $relationship_field_name);
+      $relationship_response = $this->getExpectedGetRelationshipResponse($relationship_field_name, $entity);
+      $relationship_document = $relationship_response->getResponseData();
+      // The relationships may be empty, in which case we shouldn't attempt to
+      // fetch the individual identified resources.
+      if (empty($relationship_document['data'])) {
+        $cache_contexts = Cache::mergeContexts([
+          // Cache contexts for JSON:API URL query parameters.
+          'url.query_args:fields',
+          'url.query_args:include',
+          // Drupal defaults.
+          'url.site',
+        ], $this->entity->getEntityType()->isRevisionable() ? ['url.query_args:resourceVersion'] : []);
+        $cacheability = (new CacheableMetadata())->addCacheContexts($cache_contexts)->addCacheTags(['http_response']);
+        $related_response = isset($relationship_document['errors'])
+          ? $relationship_response
+          : (new ResourceResponse(static::getEmptyCollectionResponse(!is_null($relationship_document['data']), $self_link)->getResponseData()))->addCacheableDependency($cacheability);
       }
       else {
-        $self_link = static::getRelatedLink($base_resource_identifier, $relationship_field_name);
-        $relationship_response = $relationship_responses[$relationship_field_name];
-        $relationship_document = $relationship_response->getResponseData();
-        // The relationships may be empty, in which case we shouldn't attempt to
-        // fetch the individual identified resources.
-        if (empty($relationship_document['data'])) {
-          $related_response = isset($relationship_document['errors'])
-            ? $relationship_response
-            : static::getEmptyCollectionResponse(!is_null($relationship_document['data']), $self_link);
+        $is_to_one_relationship = static::isResourceIdentifier($relationship_document['data']);
+        $resource_identifiers = $is_to_one_relationship
+          ? [$relationship_document['data']]
+          : $relationship_document['data'];
+        // Remove any relationships to 'virtual' resources.
+        $resource_identifiers = array_filter($resource_identifiers, function ($resource_identifier) {
+          return $resource_identifier['id'] !== 'virtual';
+        });
+        if (!empty($resource_identifiers)) {
+          $individual_responses = static::toResourceResponses($this->getResponses(static::getResourceLinks($resource_identifiers), $request_options));
+          $related_response = static::toCollectionResourceResponse($individual_responses, $self_link, !$is_to_one_relationship);
         }
         else {
-          $is_to_one_relationship = static::isResourceIdentifier($relationship_document['data']);
-          $resource_identifiers = $is_to_one_relationship
-            ? [$relationship_document['data']]
-            : $relationship_document['data'];
-          // Remove any relationships to 'virtual' resources.
-          $resource_identifiers = array_filter($resource_identifiers, function ($resource_identifier) {
-            return $resource_identifier['id'] !== 'virtual';
-          });
-          if (!empty($resource_identifiers)) {
-            $individual_responses = static::toResourceResponses($this->getResponses(static::getResourceLinks($resource_identifiers), $request_options));
-            $related_response = static::toCollectionResourceResponse($individual_responses, $self_link, !$is_to_one_relationship);
-          }
-          else {
-            $related_response = static::getEmptyCollectionResponse(!$is_to_one_relationship, $self_link);
-          }
+          $related_response = static::getEmptyCollectionResponse(!$is_to_one_relationship, $self_link);
         }
       }
-      $expected_related_responses[$relationship_field_name] = $related_response;
+      $related_response->addCacheableDependency($relationship_response->getCacheableMetadata());
     }
-    return $expected_related_responses ?: [];
+    return $related_response;
   }
 
   /**
@@ -2609,6 +2602,398 @@ abstract class ResourceTestBase extends BrowserTestBase {
   }
 
   /**
+   * Tests individual and collection revisions.
+   */
+  public function testRevisions() {
+    if (!$this->entity->getEntityType()->isRevisionable() || !$this->entity instanceof FieldableEntityInterface) {
+      return;
+    }
+    assert($this->entity instanceof RevisionableInterface);
+
+    // JSON:API will only support node and media revisions until Drupal core has
+    // a generic revision access API.
+    if (!in_array($this->entity->getEntityTypeId(), ['node', 'media'])) {
+      $this->setUpRevisionAuthorization('GET');
+      $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()])->setAbsolute();
+      $url->setOption('query', ['resourceVersion' => 'id:' . $this->entity->getRevisionId()]);
+      $request_options = [];
+      $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+      $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
+      $response = $this->request('GET', $url, $request_options);
+      $detail = 'JSON:API does not yet support resource versioning for this resource type.';
+      $detail .= ' For context, see https://www.drupal.org/project/jsonapi/issues/2992833#comment-12818258.';
+      $detail .= ' To contribute, see https://www.drupal.org/project/drupal/issues/2350939 and https://www.drupal.org/project/drupal/issues/2809177.';
+      $expected_cache_contexts = [
+        'url.path',
+        'url.query_args:resourceVersion',
+        'url.site',
+      ];
+      $this->assertResourceErrorResponse(501, $detail, $url, $response, FALSE, ['http_response'], $expected_cache_contexts);
+      return;
+    }
+
+    // Add a field to modify in order to test revisions.
+    FieldStorageConfig::create([
+      'entity_type' => static::$entityTypeId,
+      'field_name' => 'field_revisionable_number',
+      'type' => 'integer',
+    ])->setCardinality(1)->save();
+    FieldConfig::create([
+      'entity_type' => static::$entityTypeId,
+      'field_name' => 'field_revisionable_number',
+      'bundle' => $this->entity->bundle(),
+    ])->setLabel('Revisionable text field')->setTranslatable(FALSE)->save();
+
+    // Reload entity so that it has the new field.
+    $entity = $this->entityStorage->loadUnchanged($this->entity->id());
+
+    // Set up test data.
+    /* @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
+    $entity->set('field_revisionable_number', 42);
+    $entity->save();
+    $original_revision_id = (int) $entity->getRevisionId();
+
+    $entity->set('field_revisionable_number', 99);
+    $entity->setNewRevision();
+    $entity->save();
+    $latest_revision_id = (int) $entity->getRevisionId();
+
+    // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
+    $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()])->setAbsolute();
+    $collection_url = Url::fromRoute(sprintf('jsonapi.%s.collection', static::$resourceTypeName))->setAbsolute();
+    $relationship_url = Url::fromRoute(sprintf('jsonapi.%s.%s.relationship.get', static::$resourceTypeName, 'field_jsonapi_test_entity_ref'), ['entity' => $this->entity->uuid()])->setAbsolute();
+    $related_url = Url::fromRoute(sprintf('jsonapi.%s.%s.related', static::$resourceTypeName, 'field_jsonapi_test_entity_ref'), ['entity' => $this->entity->uuid()])->setAbsolute();
+    /* $url = $this->entity->toUrl('jsonapi'); */
+    $original_revision_id_url = clone $url;
+    $original_revision_id_url->setOption('query', ['resourceVersion' => "id:$original_revision_id"]);
+    $original_revision_id_relationship_url = clone $relationship_url;
+    $original_revision_id_relationship_url->setOption('query', ['resourceVersion' => "id:$original_revision_id"]);
+    $original_revision_id_related_url = clone $related_url;
+    $original_revision_id_related_url->setOption('query', ['resourceVersion' => "id:$original_revision_id"]);
+    $latest_revision_id_url = clone $url;
+    $latest_revision_id_url->setOption('query', ['resourceVersion' => "id:$latest_revision_id"]);
+    $latest_revision_id_relationship_url = clone $relationship_url;
+    $latest_revision_id_relationship_url->setOption('query', ['resourceVersion' => "id:$latest_revision_id"]);
+    $latest_revision_id_related_url = clone $related_url;
+    $latest_revision_id_related_url->setOption('query', ['resourceVersion' => "id:$latest_revision_id"]);
+    $rel_latest_version_url = clone $url;
+    $rel_latest_version_url->setOption('query', ['resourceVersion' => 'rel:latest-version']);
+    $rel_latest_version_relationship_url = clone $relationship_url;
+    $rel_latest_version_relationship_url->setOption('query', ['resourceVersion' => 'rel:latest-version']);
+    $rel_latest_version_related_url = clone $related_url;
+    $rel_latest_version_related_url->setOption('query', ['resourceVersion' => 'rel:latest-version']);
+    $rel_latest_version_collection_url = clone $collection_url;
+    $rel_latest_version_collection_url->setOption('query', ['resourceVersion' => 'rel:latest-version']);
+    $rel_working_copy_url = clone $url;
+    $rel_working_copy_url->setOption('query', ['resourceVersion' => 'rel:working-copy']);
+    $rel_working_copy_relationship_url = clone $relationship_url;
+    $rel_working_copy_relationship_url->setOption('query', ['resourceVersion' => 'rel:working-copy']);
+    $rel_working_copy_related_url = clone $related_url;
+    $rel_working_copy_related_url->setOption('query', ['resourceVersion' => 'rel:working-copy']);
+    $rel_working_copy_collection_url = clone $collection_url;
+    $rel_working_copy_collection_url->setOption('query', ['resourceVersion' => 'rel:working-copy']);
+    $rel_invalid_collection_url = clone $collection_url;
+    $rel_invalid_collection_url->setOption('query', ['resourceVersion' => 'rel:invalid']);
+    $revision_id_key = 'drupal_internal__' . $this->entity->getEntityType()->getKey('revision');
+    $published_key = $this->entity->getEntityType()->getKey('published');
+    $revision_translation_affected_key = $this->entity->getEntityType()->getKey('revision_translation_affected');
+
+    $request_options = [];
+    $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
+    $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
+
+    // Ensure 403 forbidden on typical GET.
+    $actual_response = $this->request('GET', $url, $request_options);
+    $expected_cacheability = $this->getExpectedUnauthorizedAccessCacheability();
+    $result = $entity->access('view', $this->account, TRUE);
+    $detail = 'The current user is not allowed to GET the selected resource.';
+    if ($result instanceof AccessResultReasonInterface && ($reason = $result->getReason()) && !empty($reason)) {
+      $detail .= ' ' . $reason;
+    }
+    $this->assertResourceErrorResponse(403, $detail, $url, $actual_response, '/data', $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+
+    // Ensure that targeting a revision does not bypass access.
+    $actual_response = $this->request('GET', $original_revision_id_url, $request_options);
+    $expected_cacheability = $this->getExpectedUnauthorizedAccessCacheability();
+    $detail = 'The current user is not allowed to GET the selected resource. The user does not have access to the requested version.';
+    if ($result instanceof AccessResultReasonInterface && ($reason = $result->getReason()) && !empty($reason)) {
+      $detail .= ' ' . $reason;
+    }
+    $this->assertResourceErrorResponse(403, $detail, $url, $actual_response, '/data', $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+
+    $this->setUpRevisionAuthorization('GET');
+
+    // Ensure that the URL without a `resourceVersion` query parameter returns
+    // the default revision. This is always the latest revision when
+    // content_moderation is not installed.
+    $actual_response = $this->request('GET', $url, $request_options);
+    $expected_document = $this->getExpectedDocument();
+    // Resource objects always link to their specific revision by revision ID.
+    $expected_document['data']['attributes'][$revision_id_key] = $latest_revision_id;
+    $expected_document['data']['attributes']['field_revisionable_number'] = 99;
+    $expected_cache_tags = $this->getExpectedCacheTags();
+    $expected_cache_contexts = $this->getExpectedCacheContexts();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+    // Fetch the same revision using its revision ID.
+    $actual_response = $this->request('GET', $latest_revision_id_url, $request_options);
+    // The top-level document object's `self` link should always link to the
+    // request URL.
+    $expected_document['links']['self']['href'] = $latest_revision_id_url->setAbsolute()->toString();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+    // Ensure dynamic cache HIT on second request when using a version
+    // negotiator.
+    $actual_response = $this->request('GET', $latest_revision_id_url, $request_options);
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'HIT');
+    // Fetch the same revision using the `latest-version` link relation type
+    // negotiator. Without content_moderation, this is always the most recent
+    // revision.
+    $actual_response = $this->request('GET', $rel_latest_version_url, $request_options);
+    $expected_document['links']['self']['href'] = $rel_latest_version_url->setAbsolute()->toString();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+    // Fetch the same revision using the `working-copy` link relation type
+    // negotiator. Without content_moderation, this is always the most recent
+    // revision.
+    $actual_response = $this->request('GET', $rel_working_copy_url, $request_options);
+    $expected_document['links']['self']['href'] = $rel_working_copy_url->setAbsolute()->toString();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+
+    // Fetch the prior revision.
+    $actual_response = $this->request('GET', $original_revision_id_url, $request_options);
+    $expected_document['data']['attributes'][$revision_id_key] = $original_revision_id;
+    $expected_document['data']['attributes']['field_revisionable_number'] = 42;
+    $expected_document['links']['self']['href'] = $original_revision_id_url->setAbsolute()->toString();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+
+    // Install content_moderation module.
+    $this->assertTrue($this->container->get('module_installer')->install(['content_moderation'], TRUE), 'Installed modules.');
+
+    // Set up an editorial workflow.
+    $workflow = floatval(\Drupal::VERSION) > 8.5
+      ? $this->createEditorialWorkflow()
+      // @todo Remove when we stop supporting Drupal 8.5.
+      : entity_load('workflow', 'editorial');
+    $workflow->getTypePlugin()->addEntityTypeAndBundle(static::$entityTypeId, $this->entity->bundle());
+    $workflow->save();
+
+    // Ensure the test entity has content_moderation fields attached to it.
+    /* @var \Drupal\Core\Entity\FieldableEntityInterface|\Drupal\Core\Entity\TranslatableRevisionableInterface $entity */
+    $entity = $this->entityStorage->load($entity->id());
+
+    // Set the published moderation state on the test entity.
+    $entity->set('moderation_state', 'published');
+    $entity->setNewRevision();
+    $entity->save();
+    $published_revision_id = (int) $entity->getRevisionId();
+
+    // Fetch the published revision by using the `rel` version negotiator and
+    // the `latest-version` version argument. With content_moderation, this is
+    // now the most recent revision where the moderation state was the 'default'
+    // one.
+    $actual_response = $this->request('GET', $rel_latest_version_url, $request_options);
+    $expected_document['data']['attributes'][$revision_id_key] = $published_revision_id;
+    $expected_document['data']['attributes']['moderation_state'] = 'published';
+    $expected_document['data']['attributes'][$published_key] = TRUE;
+    $expected_document['data']['attributes']['field_revisionable_number'] = 99;
+    $expected_document['links']['self']['href'] = $rel_latest_version_url->toString();
+    $expected_document['data']['attributes'][$revision_translation_affected_key] = $entity->isRevisionTranslationAffected();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+    // Fetch the collection URL using the `latest-version` version argument.
+    $actual_response = $this->request('GET', $rel_latest_version_collection_url, $request_options);
+    $expected_response = $this->getExpectedCollectionResponse([$entity], $rel_latest_version_collection_url->toString(), $request_options);
+    $expected_collection_document = $expected_response->getResponseData();
+    $expected_cacheability = $expected_response->getCacheableMetadata();
+    $this->assertResourceResponse(200, $expected_collection_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+    // Fetch the published revision by using the `working-copy` version
+    // argument. With content_moderation, this is always the most recent
+    // revision regardless of moderation state.
+    $actual_response = $this->request('GET', $rel_working_copy_url, $request_options);
+    $expected_document['links']['self']['href'] = $rel_working_copy_url->toString();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+    // Fetch the collection URL using the `working-copy` version argument.
+    $actual_response = $this->request('GET', $rel_working_copy_collection_url, $request_options);
+    $expected_collection_document['links']['self']['href'] = $rel_working_copy_collection_url->toString();
+    $this->assertResourceResponse(200, $expected_collection_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+    // @todo: remove the next assertion when Drupal core supports entity query access control on revisions.
+    $rel_working_copy_collection_url_filtered = clone $rel_working_copy_collection_url;
+    $rel_working_copy_collection_url_filtered->setOption('query', ['filter[foo]' => 'bar'] + $rel_working_copy_collection_url->getOption('query'));
+    $actual_response = $this->request('GET', $rel_working_copy_collection_url_filtered, $request_options);
+    $filtered_collection_expected_cache_contexts = [
+      'url.path',
+      'url.query_args:filter',
+      'url.query_args:resourceVersion',
+      'url.site',
+    ];
+    $this->assertResourceErrorResponse(501, 'JSON:API does not support filtering on revisions other than the latest version because a secure Drupal core API does not yet exist to do so.', $rel_working_copy_collection_url_filtered, $actual_response, FALSE, ['http_response'], $filtered_collection_expected_cache_contexts);
+    // Fetch the collection URL using an invalid version identifier.
+    $actual_response = $this->request('GET', $rel_invalid_collection_url, $request_options);
+    $invalid_version_expected_cache_contexts = [
+      'url.path',
+      'url.query_args:resourceVersion',
+      'url.site',
+    ];
+    $this->assertResourceErrorResponse(400, 'Collection resources only support the following resource version identifiers: rel:latest-version, rel:working-copy', $rel_invalid_collection_url, $actual_response, FALSE, ['4xx-response', 'http_response'], $invalid_version_expected_cache_contexts);
+
+    // Move the entity to its draft moderation state.
+    $entity->set('field_revisionable_number', 42);
+    // Change a relationship field so revisions can be tested on related and
+    // relationship routes.
+    $new_user = $this->createUser();
+    $new_user->save();
+    $entity->set('field_jsonapi_test_entity_ref', ['target_id' => $new_user->id()]);
+    $entity->set('moderation_state', 'draft');
+    $entity->setNewRevision();
+    $entity->save();
+    $draft_revision_id = (int) $entity->getRevisionId();
+
+    // The `latest-version` link should *still* reference the same revision
+    // since a draft is not a default revision.
+    $actual_response = $this->request('GET', $rel_latest_version_url, $request_options);
+    $expected_document['links']['self']['href'] = $rel_latest_version_url->toString();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+    // And the same should be true for collections.
+    $actual_response = $this->request('GET', $rel_latest_version_collection_url, $request_options);
+    $expected_collection_document['data'][0] = $expected_document['data'];
+    $expected_collection_document['links']['self']['href'] = $rel_latest_version_collection_url->toString();
+    $this->assertResourceResponse(200, $expected_collection_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+    // Ensure that the `latest-version` response is same as the default link,
+    // aside from the document's `self` link.
+    $actual_response = $this->request('GET', $url, $request_options);
+    $expected_document['links']['self']['href'] = $url->toString();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+    // And the same should be true for collections.
+    $actual_response = $this->request('GET', $collection_url, $request_options);
+    $expected_collection_document['links']['self']['href'] = $collection_url->toString();
+    $this->assertResourceResponse(200, $expected_collection_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+    // Now, the `working-copy` link should reference the draft revision. This
+    // is significant because without content_moderation, the two responses
+    // would still been the same.
+    //
+    // Access is checked before any special permissions are granted. This
+    // asserts a 403 forbidden if the user is not allowed to see unpublished
+    // content.
+    $result = $entity->access('view', $this->account, TRUE);
+    if (!$result->isAllowed()) {
+      $actual_response = $this->request('GET', $rel_working_copy_url, $request_options);
+      $expected_cacheability = $this->getExpectedUnauthorizedAccessCacheability();
+      $expected_cache_tags = Cache::mergeTags($expected_cacheability->getCacheTags(), $entity->getCacheTags());
+      $expected_cache_contexts = $expected_cacheability->getCacheContexts();
+      $detail = 'The current user is not allowed to GET the selected resource. The user does not have access to the requested version.';
+      $message = $result instanceof AccessResultReasonInterface ? trim($detail . ' ' . $result->getReason()) : $detail;
+      $this->assertResourceErrorResponse(403, $message, $url, $actual_response, '/data', $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+      // On the collection URL, we should expect to see the draft omitted from
+      // the collection.
+      $actual_response = $this->request('GET', $rel_working_copy_collection_url, $request_options);
+      $expected_response = static::getExpectedCollectionResponse([$entity], $rel_working_copy_collection_url->toString(), $request_options);
+      $expected_collection_document = $expected_response->getResponseData();
+      $expected_collection_document['data'] = [];
+      $expected_cacheability = $expected_response->getCacheableMetadata();
+      $access_denied_response = static::getAccessDeniedResponse($entity, $result, $url, NULL, $detail)->getResponseData();
+      static::addOmittedObject($expected_collection_document, static::errorsToOmittedObject($access_denied_response['errors']));
+      $this->assertResourceResponse(200, $expected_collection_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+    }
+
+    // Since additional permissions are required to see 'draft' entities,
+    // grant those permissions.
+    $this->grantPermissionsToTestedRole($this->getEditorialPermissions());
+
+    // Now, the `working-copy` link should be latest revision and be accessible.
+    $actual_response = $this->request('GET', $rel_working_copy_url, $request_options);
+    $expected_document['data']['attributes'][$revision_id_key] = $draft_revision_id;
+    $expected_document['data']['attributes']['moderation_state'] = 'draft';
+    $expected_document['data']['attributes'][$published_key] = FALSE;
+    $expected_document['data']['attributes']['field_revisionable_number'] = 42;
+    $expected_document['links']['self']['href'] = $rel_working_copy_url->setAbsolute()->toString();
+    $expected_document['data']['attributes'][$revision_translation_affected_key] = $entity->isRevisionTranslationAffected();
+    $expected_cache_tags = $this->getExpectedCacheTags();
+    $expected_cache_contexts = $this->getExpectedCacheContexts();
+    $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
+    // And the collection response should also have the latest revision.
+    $actual_response = $this->request('GET', $rel_working_copy_collection_url, $request_options);
+    $expected_response = static::getExpectedCollectionResponse([$entity], $rel_working_copy_collection_url->toString(), $request_options);
+    $expected_collection_document = $expected_response->getResponseData();
+    $expected_collection_document['data'] = [$expected_document['data']];
+    $expected_cacheability = $expected_response->getCacheableMetadata();
+    $this->assertResourceResponse(200, $expected_collection_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+
+    // Test relationship responses.
+    // Fetch the prior revision's relationship URL.
+    $test_relationship_urls = [
+      [
+        NULL,
+        $relationship_url,
+        $related_url,
+      ],
+      [
+        $original_revision_id,
+        $original_revision_id_relationship_url,
+        $original_revision_id_related_url,
+      ],
+      [
+        $latest_revision_id,
+        $latest_revision_id_relationship_url,
+        $latest_revision_id_related_url,
+      ],
+      [
+        $published_revision_id,
+        $rel_latest_version_relationship_url,
+        $rel_latest_version_related_url,
+      ],
+      [
+        $draft_revision_id,
+        $rel_working_copy_relationship_url,
+        $rel_working_copy_related_url,
+      ],
+    ];
+    foreach ($test_relationship_urls as $revision_case) {
+      list($revision_id, $relationship_url, $related_url) = $revision_case;
+      // Load the revision that will be requested.
+      $this->entityStorage->resetCache([$entity->id()]);
+      $revision = is_null($revision_id)
+        ? $this->entityStorage->load($entity->id())
+        : $this->entityStorage->loadRevision($revision_id);
+      // Request the relationship resource without access to the relationship
+      // field.
+      $actual_response = $this->request('GET', $relationship_url, $request_options);
+      $expected_response = $this->getExpectedGetRelationshipResponse('field_jsonapi_test_entity_ref', $revision);
+      $expected_document = $expected_response->getResponseData();
+      $expected_cacheability = $expected_response->getCacheableMetadata();
+      $expected_document['errors'][0]['links']['via']['href'] = $relationship_url->toString();
+      $this->assertResourceResponse(403, $expected_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts());
+      // Request the related route.
+      $actual_response = $this->request('GET', $related_url, $request_options);
+      // @todo: refactor self::getExpectedRelatedResponses() into a function which returns a single response.
+      $expected_response = $this->getExpectedRelatedResponses(['field_jsonapi_test_entity_ref'], $request_options, $revision)['field_jsonapi_test_entity_ref'];
+      $expected_document = $expected_response->getResponseData();
+      $expected_cacheability = $expected_response->getCacheableMetadata();
+      $expected_document['errors'][0]['links']['via']['href'] = $related_url->toString();
+      $this->assertResourceResponse(403, $expected_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts());
+    }
+    $this->grantPermissionsToTestedRole(['field_jsonapi_test_entity_ref view access']);
+    foreach ($test_relationship_urls as $revision_case) {
+      list($revision_id, $relationship_url, $related_url) = $revision_case;
+      // Load the revision that will be requested.
+      $this->entityStorage->resetCache([$entity->id()]);
+      $revision = is_null($revision_id)
+        ? $this->entityStorage->load($entity->id())
+        : $this->entityStorage->loadRevision($revision_id);
+      // Request the relationship resource after granting access to the
+      // relationship field.
+      $actual_response = $this->request('GET', $relationship_url, $request_options);
+      $expected_response = $this->getExpectedGetRelationshipResponse('field_jsonapi_test_entity_ref', $revision);
+      $expected_document = $expected_response->getResponseData();
+      $expected_cacheability = $expected_response->getCacheableMetadata();
+      $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+      // Request the related route.
+      $actual_response = $this->request('GET', $related_url, $request_options);
+      $expected_response = $this->getExpectedRelatedResponse('field_jsonapi_test_entity_ref', $request_options, $revision);
+      $expected_document = $expected_response->getResponseData();
+      $expected_cacheability = $expected_response->getCacheableMetadata();
+      $expected_document['links']['self']['href'] = $related_url->toString();
+      $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, 'MISS');
+    }
+  }
+
+  /**
    * Decorates the expected response with included data and cache metadata.
    *
    * This adds the expected includes to the expected document and also builds
@@ -2722,6 +3107,16 @@ abstract class ResourceTestBase extends BrowserTestBase {
    */
   protected static function getIncludePermissions() {
     return [];
+  }
+
+  /**
+   * Gets an array of permissions required to view and update any tested entity.
+   *
+   * @return string[]
+   *   An array of permission names.
+   */
+  protected function getEditorialPermissions() {
+    return ['view latest version', "view any unpublished content"];
   }
 
   /**

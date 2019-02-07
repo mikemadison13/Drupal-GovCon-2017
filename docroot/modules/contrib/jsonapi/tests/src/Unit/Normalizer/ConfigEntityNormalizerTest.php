@@ -64,6 +64,7 @@ class ConfigEntityNormalizerTest extends UnitTestCase {
    */
   public function testNormalize($input, $expected) {
     $entity = $this->prophesize(ConfigEntityInterface::class);
+    $entity->uuid()->willReturn('foo');
     $entity->toArray()->willReturn(['amet' => $input]);
     $entity->getCacheContexts()->willReturn([]);
     $entity->getCacheTags()->willReturn([]);
@@ -71,9 +72,7 @@ class ConfigEntityNormalizerTest extends UnitTestCase {
     $entity->getEntityTypeId()->willReturn('');
     $entity->bundle()->willReturn('');
     $normalized = $this->normalizer->normalize($entity->reveal(), 'api_json', []);
-    $first = $normalized->getValues();
-    $first = reset($first);
-    $this->assertSame($expected, $first->rasterizeValue());
+    $this->assertSame($expected, $normalized->getNormalization()['attributes']['amet']);
   }
 
   /**

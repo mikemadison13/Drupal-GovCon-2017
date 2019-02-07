@@ -6,7 +6,6 @@ use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 
 /**
- * @group lightning
  * @group lightning_media
  */
 class MediaBrowserTest extends BrowserTestBase {

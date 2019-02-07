@@ -2,9 +2,10 @@
 
 namespace Drupal\jsonapi\Normalizer;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\jsonapi\LabelOnlyEntity;
-use Drupal\jsonapi\Normalizer\Value\EntityNormalizerValue;
 use Drupal\jsonapi\LinkManager\LinkManager;
+use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
 
@@ -75,17 +76,22 @@ class LabelOnlyEntityNormalizer extends NormalizerBase {
     $public_field_label_name = $resource_type->getPublicName($label_field_name);
 
     // Perform the default entity normalization, extract all values from the
-    // resulting EntityNormalizerValue object.
+    // resulting CacheableNormalization object.
     // @see \Drupal\jsonapi\Normalizer\EntityNormalizer::normalize()
-    $full_normalized_entity = $this->serializer->normalize($entity, $format, $context);
-    assert($full_normalized_entity instanceof EntityNormalizerValue);
-    $all_values = $full_normalized_entity->getValues();
+    $normalized = $this->serializer->normalize($entity, $format, $context);
+    assert($normalized instanceof CacheableNormalization);
+    $rasterized = $normalized->getNormalization();
 
-    // Reconstruct an EntityNormalizerValue object, this time with only the
+    // Reconstruct a CacheableNormalization object, this time with only the
     // label field.
-    $label_only_values = [$public_field_label_name => $all_values[$public_field_label_name]];
-    $link_context = ['link_manager' => $this->linkManager];
-    return new EntityNormalizerValue($label_only_values, $context, $entity, $link_context);
+    $label_only_attributes = [$public_field_label_name => $rasterized['attributes'][$public_field_label_name]];
+    $rasterized['attributes'] = $label_only_attributes;
+    // This associates the cacheability of all normalized fields with the
+    // returned CacheableNormalization. This is not necessary and can result in
+    // unwanted cache invalidations. Only the cacheability of the entity and its
+    // label field is truly required.
+    // @todo: ensure precise and correct cacheability is returned in https://www.drupal.org/project/jsonapi/issues/3015438.
+    return new CacheableNormalization(CacheableMetadata::createFromObject($normalized), $rasterized);
   }
 
 }

@@ -11,9 +11,7 @@ use Drupal\Tests\UnitTestCase;
 /**
  * @coversDefaultClass \Drupal\lightning_core\DisplayHelper
  *
- * @group lightning
  * @group lightning_core
- * @group orca_public
  */
 class DisplayHelperTest extends UnitTestCase {
 

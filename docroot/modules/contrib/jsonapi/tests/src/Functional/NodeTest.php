@@ -88,6 +88,14 @@ class NodeTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
+  protected function setUpRevisionAuthorization($method) {
+    parent::setUpRevisionAuthorization($method);
+    $this->grantPermissionsToTestedRole(['view all revisions']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function createEntity() {
     if (!NodeType::load('camelids')) {
       // Create a "Camelids" node type.
@@ -322,7 +330,7 @@ class NodeTest extends ResourceTestBase {
       $expected_document,
       $response,
       ['4xx-response', 'http_response', 'node:1'],
-      ['user.permissions'],
+      ['url.query_args:resourceVersion', 'url.site', 'user.permissions'],
       FALSE,
       'MISS'
     );

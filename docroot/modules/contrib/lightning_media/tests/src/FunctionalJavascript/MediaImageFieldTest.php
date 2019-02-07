@@ -5,7 +5,6 @@ namespace Drupal\Tests\lightning_media\FunctionalJavascript;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 
 /**
- * @group lightning
  * @group lightning_media
  */
 class MediaImageFieldTest extends WebDriverTestBase {

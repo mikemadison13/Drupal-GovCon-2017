@@ -9,7 +9,6 @@ use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 /**
  * Tests of API-level Lightning functionality related to media types.
  *
- * @group lightning
  * @group lightning_media
  */
 class MediaTypeTest extends KernelTestBase {

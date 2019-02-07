@@ -2,19 +2,19 @@
 
 namespace Drupal\Tests\lightning_scheduler\Functional;
 
-use Drupal\Component\Serialization\Json;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
 use Drupal\Tests\Traits\Core\CronRunTrait;
 use Drupal\workflows\Entity\Workflow;
 
 /**
- * @group lightning
  * @group lightning_workflow
  * @group lightning_scheduler
  */
 class ScheduledTransitionTest extends BrowserTestBase {
 
   use CronRunTrait;
+  use SchedulerUiTrait;
 
   /**
    * {@inheritdoc}
@@ -63,12 +63,6 @@ class ScheduledTransitionTest extends BrowserTestBase {
       'schedule editorial transition archive',
     ]);
     $this->drupalLogin($account);
-
-    $account->set('timezone', 'America/New_York')->save();
-    $this->config('system.date')
-      ->set('timezone.default', 'America/New_York')
-      ->save();
-    date_default_timezone_set('UTC');
   }
 
   /**
@@ -122,16 +116,13 @@ class ScheduledTransitionTest extends BrowserTestBase {
     $this->drupalGet('/node/add/page');
     $assert->statusCodeEquals(200);
 
-    $transitions = Json::encode([
+    $assert->fieldExists('Title')->setValue('Schedule This');
+    $this->setTransitionData('moderation_state[0][scheduled_transitions][data]', [
       [
-        'when' => date('c', time() + $offset),
+        'when' => time() + $offset,
         'state' => $to_state,
       ],
     ]);
-
-    $assert->fieldExists('Title')->setValue('Schedule This');
-    $field = $assert->elementExists('css', 'input[name="moderation_state[0][scheduled_transitions][data]"]');
-    $field->setValue($transitions);
     $assert->buttonExists('Save')->press();
 
     $assert->addressMatches('/^\/node\/[0-9]+$/');
@@ -155,20 +146,17 @@ class ScheduledTransitionTest extends BrowserTestBase {
     $this->drupalGet('/node/add/page');
     $assert->statusCodeEquals(200);
 
-    $transitions = Json::encode([
+    $assert->fieldExists('Title')->setValue('Schedule This');
+    $this->setTransitionData('moderation_state[0][scheduled_transitions][data]', [
       [
-        'when' => date('c', time() + 10),
+        'when' => time() + 10,
         'state' => 'published',
       ],
       [
-        'when' => date('c', time() + 20),
+        'when' => time() + 20,
         'state' => 'archived',
       ]
     ]);
-
-    $assert->fieldExists('Title')->setValue('Schedule This');
-    $field = $assert->elementExists('css', 'input[name="moderation_state[0][scheduled_transitions][data]"]');
-    $field->setValue($transitions);
     $assert->buttonExists('Save')->press();
 
     $assert->addressMatches('/^\/node\/[0-9]+$/');
@@ -195,20 +183,17 @@ class ScheduledTransitionTest extends BrowserTestBase {
     $this->drupalGet('/node/add/page');
     $assert->statusCodeEquals(200);
 
-    $transitions = Json::encode([
+    $assert->fieldExists('Title')->setValue('Schedule This');
+    $this->setTransitionData('moderation_state[0][scheduled_transitions][data]', [
       [
-        'when' => date('c', time() - 20),
+        'when' => time() - 20,
         'state' => 'published',
       ],
       [
-        'when' => date('c', time() - 10),
+        'when' => time() - 10,
         'state' => 'archived',
       ]
     ]);
-
-    $assert->fieldExists('Title')->setValue('Schedule This');
-    $field = $assert->elementExists('css', 'input[name="moderation_state[0][scheduled_transitions][data]"]');
-    $field->setValue($transitions);
     $assert->buttonExists('Save')->press();
 
     $assert->addressMatches('/^\/node\/[0-9]+$/');
@@ -241,15 +226,12 @@ class ScheduledTransitionTest extends BrowserTestBase {
     $assert->fieldExists('Title')->setValue('MC Hammer');
     $assert->fieldExists('moderation_state[0][state]')->selectOption('Draft');
 
-    $transitions = Json::encode([
+    $this->setTransitionData('moderation_state[0][scheduled_transitions][data]', [
       [
-        'when' => date('c', time() + 10),
+        'when' => time() + 10,
         'state' => 'published',
       ],
     ]);
-
-    $field = $assert->elementExists('css', 'input[name="moderation_state[0][scheduled_transitions][data]"]');
-    $field->setValue($transitions);
     $assert->buttonExists('Save')->press();
 
     sleep(12);

@@ -10,11 +10,9 @@ use Drupal\consumers\Entity\Consumer;
  * Tests the ability to Create, Read, and Update config and config entities via
  * the API.
  *
- * @group lightning
  * @group lightning_api
  * @group headless
  * @group api_test
- * @group orca_public
  */
 class EntityCrudTest extends ApiTestBase {
 

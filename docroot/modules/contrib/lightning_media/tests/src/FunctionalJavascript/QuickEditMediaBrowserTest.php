@@ -10,7 +10,6 @@ use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 use Drupal\Tests\quickedit\FunctionalJavascript\QuickEditJavascriptTestBase;
 
 /**
- * @group lightning
  * @group lightning_media
  */
 class QuickEditMediaBrowserTest extends QuickEditJavascriptTestBase {

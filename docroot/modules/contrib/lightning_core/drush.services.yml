@@ -1,8 +1,6 @@
 services:
   lightning_core.hooks:
     class: '\Drupal\lightning_core\Commands\Hooks'
-    arguments:
-      - '@plugin.cache_clearer'
     tags:
       - { name: drush.command }
 

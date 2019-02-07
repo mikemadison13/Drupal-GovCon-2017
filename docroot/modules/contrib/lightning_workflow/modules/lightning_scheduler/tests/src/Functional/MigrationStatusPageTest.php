@@ -3,7 +3,6 @@
 namespace Drupal\Tests\lightning_scheduler\Functional;
 
 /**
- * @group lightning
  * @group lightning_workflow
  * @group lightning_scheduler
  */
