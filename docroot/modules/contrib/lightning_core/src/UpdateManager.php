@@ -212,14 +212,13 @@ class UpdateManager {
     }
     $style->text("Executing all available updates...");
 
-    $module_info = system_rebuild_module_data();
     $provider = NULL;
     $versions = $this->configFactory->getEditable(static::CONFIG_NAME);
 
     foreach ($updates as $update) {
       if ($update['provider'] != $provider) {
         $provider = $update['provider'];
-        $style->text($module_info[$provider]->info['name'] . ' ' . $update['id']);
+        $style->text($provider . ' ' . $update['id']);
       }
 
       $handler = $this->classResolver

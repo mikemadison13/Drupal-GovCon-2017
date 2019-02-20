@@ -12,11 +12,16 @@ php:
   - 7.1
 
 env:
-  - VERSION=HEAD
-  - VERSION=3.2.0
-  # The final CI slot should be used to test the update path from the oldest
-  # available database fixture.
+  - VERSION=HEAD ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
+  - VERSION=1.0.0-rc1 ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
   - VERSION=1.0.0-rc1
+  - VERSION=1.0.0-rc1 ORCA_FIXTURE_FLAGS=--dev
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: VERSION=1.0.0-rc1
+    - env: VERSION=1.0.0-rc1 ORCA_FIXTURE_FLAGS=--dev
 
 addons:
   chrome: stable
@@ -47,14 +52,14 @@ install:
   - orca static-analysis:run ./
 
   # Use ORCA to build the code base.
-  - orca fixture:init -f --sut $ORCA_SUT --sut-only
+  - orca fixture:init -f --sut $ORCA_SUT $ORCA_FIXTURE_FLAGS
 
 before_script:
   - cd $ORCA_FIXTURE/docroot
   - $TRAVIS_BUILD_DIR/update.sh $VERSION
 
 script:
-  - orca tests:run --sut-only --sut $ORCA_SUT
+  - orca tests:run --sut $ORCA_SUT $ORCA_TEST_FLAGS
 
 after_failure:
   - drush watchdog:show --count=100 --severity=Error --extended

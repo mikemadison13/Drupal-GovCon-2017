@@ -13,7 +13,7 @@ type_settings:
   display_plugins:
     - 'entity_reference:entity_reference_entity_view'
     - media_image
-  entity_browser: media_browser
+  entity_browser: ckeditor_media_browser
   entity_browser_settings:
     display_review: false
 icon_uuid: null

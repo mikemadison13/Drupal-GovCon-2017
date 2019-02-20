@@ -79,7 +79,7 @@ class MediaBrowserTest extends BrowserTestBase {
 
     $this->createMediaType('image');
 
-    $this->drupalGet('/entity-browser/iframe/media_browser');
+    $this->drupalGet('/entity-browser/modal/media_browser');
     $this->assertSession()->statusCodeEquals(200);
 
     // The widget should require a file.
@@ -108,7 +108,7 @@ class MediaBrowserTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($account);
 
-    $this->drupalGet('/entity-browser/iframe/media_browser');
+    $this->drupalGet('/entity-browser/modal/media_browser');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->buttonExists('Create embed')->press();
 

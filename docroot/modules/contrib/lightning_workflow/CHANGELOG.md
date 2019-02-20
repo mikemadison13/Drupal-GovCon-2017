@@ -1,3 +1,7 @@
+## 3.4.0
+* Changes were made to internal testing infrastructure, but nothing that will
+  affect users of Lightning Workflow.
+
 ## 3.3.0
 * Updated Lightning Core to 3.5, which security updates Drupal core to 8.6.6.
 * Made the time steps in Lightning Scheduler's UI configurable. (Issue #2981050)

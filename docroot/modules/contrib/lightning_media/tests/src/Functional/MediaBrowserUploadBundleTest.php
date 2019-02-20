@@ -100,7 +100,7 @@ class MediaBrowserUploadBundleTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($account);
 
-    $this->drupalGet('/entity-browser/iframe/media_browser');
+    $this->drupalGet('/entity-browser/modal/media_browser');
     $this->assertSession()->statusCodeEquals(200);
 
     $file_field = $this->assertSession()->elementExists('css', '.js-form-managed-file');
@@ -126,11 +126,11 @@ class MediaBrowserUploadBundleTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     $uuid = $this->assertSession()
-      ->elementExists('named', ['link', 'Select entities'])
+      ->buttonExists('Add media')
       ->getAttribute('data-uuid');
     $this->assertNotEmpty($uuid);
 
-    $this->drupalGet("/entity-browser/iframe/media_browser", [
+    $this->drupalGet("/entity-browser/modal/media_browser", [
       'query' => [
         'uuid' => $uuid,
       ],

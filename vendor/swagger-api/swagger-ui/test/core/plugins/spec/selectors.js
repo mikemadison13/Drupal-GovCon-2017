@@ -9,18 +9,15 @@ import {
   operationScheme,
   specJsonWithResolvedSubtrees,
   producesOptionsFor,
-} from "corePlugins/spec/selectors"
-
-import Petstore from "./assets/petstore.json"
-import {
   operationWithMeta,
   parameterWithMeta,
   parameterWithMetaByIdentity,
   parameterInclusionSettingFor,
-  consumesOptionsFor
-} from "../../../../src/core/plugins/spec/selectors"
+  consumesOptionsFor,
+  taggedOperations
+} from "corePlugins/spec/selectors"
 
-describe("spec plugin - selectors", function(){
+import Petstore from "./assets/petstore.json"
 
   describe("definitions", function(){
     it("should return definitions by default", function(){
@@ -497,7 +494,7 @@ describe("spec plugin - selectors", function(){
   })
 
   describe("operationWithMeta", function() {
-    it("should support merging in name+in keyed param metadata", function () {
+    it("should support merging in {in}.{name} keyed param metadata", function () {
       const state = fromJS({
         json: {
           paths: {
@@ -505,7 +502,7 @@ describe("spec plugin - selectors", function(){
               "get": {
                 parameters: [
                   {
-                    name: "body",
+                    name: "myBody",
                     in: "body"
                   }
                 ]
@@ -518,7 +515,7 @@ describe("spec plugin - selectors", function(){
             "/": {
               "get": {
                 parameters: {
-                  "body.body": {
+                  "body.myBody": {
                     value: "abc123"
                   }
                 }
@@ -533,7 +530,7 @@ describe("spec plugin - selectors", function(){
       expect(result.toJS()).toEqual({
         parameters: [
           {
-            name: "body",
+            name: "myBody",
             in: "body",
             value: "abc123"
           }
@@ -542,7 +539,7 @@ describe("spec plugin - selectors", function(){
     })
     it("should support merging in hash-keyed param metadata", function () {
       const bodyParam = fromJS({
-        name: "body",
+        name: "myBody",
         in: "body"
       })
 
@@ -563,7 +560,7 @@ describe("spec plugin - selectors", function(){
             "/": {
               "get": {
                 parameters: {
-                  [`body.body.hash-${bodyParam.hashCode()}`]: {
+                  [`body.myBody.hash-${bodyParam.hashCode()}`]: {
                     value: "abc123"
                   }
                 }
@@ -578,7 +575,7 @@ describe("spec plugin - selectors", function(){
       expect(result.toJS()).toEqual({
         parameters: [
           {
-            name: "body",
+            name: "myBody",
             in: "body",
             value: "abc123"
           }
@@ -587,7 +584,7 @@ describe("spec plugin - selectors", function(){
     })
   })
   describe("parameterWithMeta", function() {
-    it("should support merging in name+in keyed param metadata", function () {
+    it("should support merging in {in}.{name} keyed param metadata", function () {
       const state = fromJS({
         json: {
           paths: {
@@ -595,7 +592,7 @@ describe("spec plugin - selectors", function(){
               "get": {
                 parameters: [
                   {
-                    name: "body",
+                    name: "myBody",
                     in: "body"
                   }
                 ]
@@ -608,7 +605,7 @@ describe("spec plugin - selectors", function(){
             "/": {
               "get": {
                 parameters: {
-                  "body.body": {
+                  "body.myBody": {
                     value: "abc123"
                   }
                 }
@@ -618,17 +615,17 @@ describe("spec plugin - selectors", function(){
         }
       })
 
-      const result = parameterWithMeta(state, ["/", "get"], "body", "body")
+      const result = parameterWithMeta(state, ["/", "get"], "myBody", "body")
 
       expect(result.toJS()).toEqual({
-        name: "body",
+        name: "myBody",
         in: "body",
         value: "abc123"
       })
     })
     it("should give best-effort when encountering hash-keyed param metadata", function () {
       const bodyParam = fromJS({
-        name: "body",
+        name: "myBody",
         in: "body"
       })
 
@@ -649,7 +646,7 @@ describe("spec plugin - selectors", function(){
             "/": {
               "get": {
                 parameters: {
-                  [`body.body.hash-${bodyParam.hashCode()}`]: {
+                  [`body.myBody.hash-${bodyParam.hashCode()}`]: {
                     value: "abc123"
                   }
                 }
@@ -659,10 +656,10 @@ describe("spec plugin - selectors", function(){
         }
       })
 
-      const result = parameterWithMeta(state, ["/", "get"], "body", "body")
+      const result = parameterWithMeta(state, ["/", "get"], "myBody", "body")
 
       expect(result.toJS()).toEqual({
-        name: "body",
+        name: "myBody",
         in: "body",
         value: "abc123"
       })
@@ -670,9 +667,9 @@ describe("spec plugin - selectors", function(){
 
   })
   describe("parameterWithMetaByIdentity", function() {
-    it("should support merging in name+in keyed param metadata", function () {
+    it("should support merging in {in}.{name} keyed param metadata", function () {
       const bodyParam = fromJS({
-        name: "body",
+        name: "myBody",
         in: "body"
       })
 
@@ -691,7 +688,7 @@ describe("spec plugin - selectors", function(){
             "/": {
               "get": {
                 parameters: {
-                  "body.body": {
+                  "body.myBody": {
                     value: "abc123"
                   }
                 }
@@ -704,14 +701,14 @@ describe("spec plugin - selectors", function(){
       const result = parameterWithMetaByIdentity(state, ["/", "get"], bodyParam)
 
       expect(result.toJS()).toEqual({
-        name: "body",
+        name: "myBody",
         in: "body",
         value: "abc123"
       })
     })
     it("should support merging in hash-keyed param metadata", function () {
       const bodyParam = fromJS({
-        name: "body",
+        name: "myBody",
         in: "body"
       })
 
@@ -732,7 +729,7 @@ describe("spec plugin - selectors", function(){
             "/": {
               "get": {
                 parameters: {
-                  [`body.body.hash-${bodyParam.hashCode()}`]: {
+                  [`body.myBody.hash-${bodyParam.hashCode()}`]: {
                     value: "abc123"
                   }
                 }
@@ -745,14 +742,14 @@ describe("spec plugin - selectors", function(){
       const result = parameterWithMetaByIdentity(state, ["/", "get"], bodyParam)
 
       expect(result.toJS()).toEqual({
-        name: "body",
+        name: "myBody",
         in: "body",
         value: "abc123"
       })
     })
   })
   describe("parameterInclusionSettingFor", function() {
-    it("should support getting name+in param inclusion settings", function () {
+    it("should support getting {in}.{name} param inclusion settings", function () {
       const param = fromJS({
         name: "param",
         in: "query",
@@ -776,7 +773,7 @@ describe("spec plugin - selectors", function(){
             "/": {
               "get": {
                 "parameter_inclusions": {
-                  [`param.query`]: true
+                  [`query.param`]: true
                 }
               }
             }
@@ -1049,4 +1046,169 @@ describe("spec plugin - selectors", function(){
       ])
     })
   })
-})
+  describe("taggedOperations", function () {
+    it("should return a List of ad-hoc tagged operations", function () {
+      const system = {
+        getConfigs: () => ({})
+      }
+      const state = fromJS({
+        json: {
+          // tags: [
+          //   "myTag"
+          // ],
+          paths: {
+            "/": {
+              "get": {
+                produces: [],
+                tags: ["myTag"],
+                description: "my operation",
+                consumes: [
+                  "operation/one",
+                  "operation/two",
+                ]
+              }
+            }
+          }
+        }
+      })
+
+      const result = taggedOperations(state)(system)
+
+      const op = state.getIn(["json", "paths", "/", "get"]).toJS()
+
+      expect(result.toJS()).toEqual({
+        myTag: {
+          tagDetails: undefined,
+          operations: [{
+            id: "get-/",
+            method: "get",
+            path: "/",
+            operation: op
+          }]
+        }
+      })
+    })
+    it("should return a List of defined tagged operations", function () {
+      const system = {
+        getConfigs: () => ({})
+      }
+      const state = fromJS({
+        json: {
+          tags: [
+            {
+              name: "myTag"
+            }
+          ],
+          paths: {
+            "/": {
+              "get": {
+                produces: [],
+                tags: ["myTag"],
+                description: "my operation",
+                consumes: [
+                  "operation/one",
+                  "operation/two",
+                ]
+              }
+            }
+          }
+        }
+      })
+
+      const result = taggedOperations(state)(system)
+
+      const op = state.getIn(["json", "paths", "/", "get"]).toJS()
+
+      expect(result.toJS()).toEqual({
+        myTag: {
+          tagDetails: {
+            name: "myTag"
+          },
+          operations: [{
+            id: "get-/",
+            method: "get",
+            path: "/",
+            operation: op
+          }]
+        }
+      })
+    })
+    it("should gracefully handle a malformed global tags array", function () {
+      const system = {
+        getConfigs: () => ({})
+      }
+      const state = fromJS({
+        json: {
+          tags: [null],
+          paths: {
+            "/": {
+              "get": {
+                produces: [],
+                tags: ["myTag"],
+                description: "my operation",
+                consumes: [
+                  "operation/one",
+                  "operation/two",
+                ]
+              }
+            }
+          }
+        }
+      })
+
+      const result = taggedOperations(state)(system)
+
+      const op = state.getIn(["json", "paths", "/", "get"]).toJS()
+
+      expect(result.toJS()).toEqual({
+        myTag: {
+          tagDetails: undefined,
+          operations: [{
+            id: "get-/",
+            method: "get",
+            path: "/",
+            operation: op
+          }]
+        }
+      })
+    })
+    it("should gracefully handle a non-array global tags entry", function () {
+      const system = {
+        getConfigs: () => ({})
+      }
+      const state = fromJS({
+        json: {
+          tags: "asdf",
+          paths: {
+            "/": {
+              "get": {
+                produces: [],
+                tags: ["myTag"],
+                description: "my operation",
+                consumes: [
+                  "operation/one",
+                  "operation/two",
+                ]
+              }
+            }
+          }
+        }
+      })
+
+      const result = taggedOperations(state)(system)
+
+      const op = state.getIn(["json", "paths", "/", "get"]).toJS()
+
+      expect(result.toJS()).toEqual({
+        myTag: {
+          tagDetails: undefined,
+          operations: [{
+            id: "get-/",
+            method: "get",
+            path: "/",
+            operation: op
+          }]
+        }
+      })
+    })
+  })

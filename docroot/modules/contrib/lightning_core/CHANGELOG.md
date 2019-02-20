@@ -1,3 +1,16 @@
+## 3.6.0
+* Lightning Core now supports attaching pictures to user accounts, and includes
+  a Compact display which displays the user's picture and name, both optionally
+  linked to the user's profile. (Issue #3026959)
+* Lightning Core now includes a "Long (12-hour)" date format, which formats
+  dates and times like "April 1, 2019 at 4:20 PM".
+* Fixed a bug where Lightning's utility to convert descendant profiles to the
+  Drupal 8.6-compatible format would fail if the active profile was itself a
+  descendant profile. (Issue #2997990)
+* Fixed an "undefined index" bug that could happen when processing form
+  elements which can have legends. (Issue #3018499)
+* Namespaced all declared dependencies. (Issue #2995711)
+
 ## 3.5.0
 * Security updated Drupal core to 8.6.6.
 * Lightning Core will now automatically clear all persistent caches _before_

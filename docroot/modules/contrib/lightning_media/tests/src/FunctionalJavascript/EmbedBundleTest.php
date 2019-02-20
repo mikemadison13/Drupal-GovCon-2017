@@ -90,31 +90,34 @@ class EmbedBundleTest extends WebDriverTestBase {
    * Tests that select is shown when media bundle is ambiguous.
    */
   public function testEmbed() {
+    $assert_session = $this->assertSession();
     $session = $this->getSession();
+    $page = $session->getPage();
 
     // Create an article with a media via the embed widget.
     $this->drupalGet('node/add/article');
-    $this->assertSession()->fieldExists('Title')->setValue('Foo');
+    $page->fillField('Title', 'Foo');
+    $this->openMediaBrowser();
 
-    $session->switchToIFrame('entity_browser_iframe_media_browser');
-    $this->assertSession()->elementExists('named', ['link', 'Create embed'])->click();
+    $page->clickLink('Create embed');
     $video_url = 'https://www.youtube.com/watch?v=zQ1_IbFFbzA';
-    $this->assertSession()->fieldExists('input')->setValue($video_url);
-    $this->assertSession()->assertWaitOnAjaxRequest();
+    $page->fillField('input', $video_url);
+    $assert_session->assertWaitOnAjaxRequest();
     // There are 2 AJAX requests, wait for the second one with sleep.
     sleep(1);
-    $this->assertSession()->selectExists('Bundle')->selectOption('Advertisement');
-    $this->assertSession()->assertWaitOnAjaxRequest();
-    $this->assertSession()->fieldExists('Video Url');
-    $this->assertSession()->fieldExists('Name')->setValue('Bar');
-    $this->assertSession()->buttonExists('Place')->press();
+    $page->selectFieldOption('Bundle', 'Advertisement');
+    $assert_session->assertWaitOnAjaxRequest();
+    $assert_session->fieldExists('Video Url');
+    $page->fillField('Name', 'Bar');
+    $page->pressButton('Place');
     $session->switchToIFrame();
-    $this->assertSession()->assertWaitOnAjaxRequest();
-    $this->assertSession()->buttonExists('Remove');
-    $this->assertSession()->buttonExists('Save')->press();
+    $assert_session->assertWaitOnAjaxRequest();
+    $assert_session->buttonExists('Remove');
+    $page->pressButton('Save');
 
     // Assert the correct entities are created.
     $node = Node::load(1);
+    $this->assertInstanceOf(Node::class, $node);
     $this->assertSame('Foo', $node->getTitle());
     $this->assertSame('advertisement', $node->field_media->entity->bundle());
     $this->assertSame('Bar', $node->field_media->entity->label());
@@ -126,7 +129,7 @@ class EmbedBundleTest extends WebDriverTestBase {
    */
   public function testErrorMessages() {
     $this->drupalGet('node/add/article');
-    $this->getSession()->switchToIFrame('entity_browser_iframe_media_browser');
+    $this->openMediaBrowser();
 
     // Error message is displayed for malformed URLs.
     $this->assertSession()->elementExists('named', ['link', 'Create embed'])->click();
@@ -151,6 +154,22 @@ class EmbedBundleTest extends WebDriverTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
     $this->assertError("Error message Input did not match any media types: 'Bar'");
     $this->assertSession()->fieldNotExists('Bundle');
+  }
+
+  /**
+   * Opens the media browser.
+   *
+   * @param bool $switch
+   *   (optional) If TRUE, switch into the entity browser frame. Defaults to
+   *   TRUE.
+   */
+  private function openMediaBrowser($switch = TRUE) {
+    $this->assertSession()->buttonExists('Add media')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    if ($switch) {
+      $this->getSession()->switchToIFrame('entity_browser_iframe_media_browser');
+    }
   }
 
   /**

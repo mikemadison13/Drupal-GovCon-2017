@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\lightning_core\ConfigHelper as Config;
 use Drupal\lightning_core\UpdateManager;
 
 /**
@@ -128,4 +129,13 @@ function lightning_core_update_8007() {
     $new->setData($new->get() + $old->get())->save();
     $old->delete();
   }
+}
+
+/**
+ * Creates the Long (12-hour) date format if it does not already exist.
+ */
+function lightning_core_update_8008() {
+  Config::forModule('lightning_core')
+    ->getEntity('date_format', 'long_12h')
+    ->save();
 }

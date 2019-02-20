@@ -11,8 +11,9 @@ use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\jsonapi\Exception\EntityAccessDeniedHttpException;
+use Drupal\jsonapi\JsonApiResource\LabelOnlyResourceObject;
+use Drupal\jsonapi\JsonApiResource\ResourceObject;
 use Drupal\jsonapi\JsonApiSpec;
-use Drupal\jsonapi\LabelOnlyEntity;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
 use Drupal\media\Access\MediaRevisionAccessCheck;
 use Drupal\media\MediaInterface;
@@ -155,13 +156,14 @@ class EntityAccessChecker {
    *   (optional) The account with which access should be checked. Defaults to
    *   the current user.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\jsonapi\LabelOnlyEntity|\Drupal\jsonapi\Exception\EntityAccessDeniedHttpException
-   *   The loaded entity, a label only version of that entity or an
+   * @return \Drupal\jsonapi\JsonApiResource\ResourceObject|\Drupal\jsonapi\JsonApiResource\LabelOnlyResourceObject|\Drupal\jsonapi\Exception\EntityAccessDeniedHttpException
+   *   The ResourceObject, a LabelOnlyResourceObject or an
    *   EntityAccessDeniedHttpException object if neither is accessible. All
    *   three possible return values carry the access result cacheability.
    */
-  public function getAccessCheckedEntity(EntityInterface $entity, AccountInterface $account = NULL) {
+  public function getAccessCheckedResourceObject(EntityInterface $entity, AccountInterface $account = NULL) {
     $account = $account ?: $this->currentUser;
+    $resource_type = $this->resourceTypeRepository->get($entity->getEntityTypeId(), $entity->bundle());
     $entity = $this->entityRepository->getTranslationFromContext($entity, NULL, ['operation' => 'entity_upcast']);
     $access = $this->checkEntityAccess($entity, 'view', $account);
     $entity->addCacheableDependency($access);
@@ -172,13 +174,13 @@ class EntityAccessChecker {
         $label_access = $entity->access('view label', NULL, TRUE);
         $entity->addCacheableDependency($label_access);
         if ($label_access->isAllowed()) {
-          return new LabelOnlyEntity($entity);
+          return new LabelOnlyResourceObject($resource_type, $entity);
         }
         $access = $access->orIf($label_access);
       }
       return new EntityAccessDeniedHttpException($entity, $access, '/data', 'The current user is not allowed to GET the selected resource.');
     }
-    return $entity;
+    return new ResourceObject($resource_type, $entity);
   }
 
   /**

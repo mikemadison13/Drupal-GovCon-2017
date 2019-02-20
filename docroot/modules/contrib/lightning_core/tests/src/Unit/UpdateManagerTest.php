@@ -10,6 +10,7 @@ use Symfony\Component\Console\Style\StyleInterface;
  * @coversDefaultClass \Drupal\lightning_core\UpdateManager
  *
  * @group lightning_core
+ * @group orca_public
  */
 class UpdateManagerTest extends UnitTestCase {
 

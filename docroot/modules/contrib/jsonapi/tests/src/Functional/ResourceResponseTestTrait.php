@@ -99,7 +99,9 @@ trait ResourceResponseTestTrait {
       ];
     }
     // All collections should be 200, without regard for the status of the
-    // individual resources in those collections.
+    // individual resources in those collections, which means any '4xx-response'
+    // cache tags on the individual responses should also be omitted.
+    $merged_cacheability->setCacheTags(array_diff($merged_cacheability->getCacheTags(), ['4xx-response']));
     return (new ResourceResponse($merged_document, 200))->addCacheableDependency($merged_cacheability);
   }
 
@@ -189,7 +191,11 @@ trait ResourceResponseTestTrait {
       ];
     }
 
-    return static::decorateExpectedResponseForIncludedFields(ResourceResponse::create($individual_document), $resource_data['responses']);
+    $basic_cacheability = (new CacheableMetadata())
+      ->addCacheTags($this->getExpectedCacheTags())
+      ->addCacheContexts($this->getExpectedCacheContexts());
+    return static::decorateExpectedResponseForIncludedFields(ResourceResponse::create($individual_document), $resource_data['responses'])
+      ->addCacheableDependency($basic_cacheability);
   }
 
   /**
@@ -529,10 +535,7 @@ trait ResourceResponseTestTrait {
     $cache_contexts = Cache::mergeContexts([
       // Cache contexts for JSON:API URL query parameters.
       'url.query_args:fields',
-      'url.query_args:filter',
       'url.query_args:include',
-      'url.query_args:page',
-      'url.query_args:sort',
       // Drupal defaults.
       'url.site',
     ], $this->entity->getEntityType()->isRevisionable() ? ['url.query_args:resourceVersion'] : []);

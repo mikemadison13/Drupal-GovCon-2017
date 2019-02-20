@@ -23,13 +23,6 @@ class FieldNormalizer extends NormalizerBase implements DenormalizerInterface {
   protected $supportedInterfaceOrClass = FieldItemListInterface::class;
 
   /**
-   * The formats that the Normalizer can handle.
-   *
-   * @var array
-   */
-  protected $formats = ['api_json'];
-
-  /**
    * {@inheritdoc}
    */
   public function normalize($field, $format = NULL, array $context = []) {

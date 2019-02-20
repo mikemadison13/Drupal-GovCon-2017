@@ -132,7 +132,7 @@ class Element {
    *   The processed element.
    */
   public static function processLegend(array $element) {
-    if ($element['#legend']) {
+    if (!empty($element['#legend'])) {
       foreach (RenderElement::children($element) as $key) {
         if (is_callable($element['#legend'])) {
           $element[$key]['#description'] = $element['#legend']($element[$key]);

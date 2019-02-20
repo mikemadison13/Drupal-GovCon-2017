@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitaac2e85a89ec0aa29025f0dde1048924
+class ComposerStaticInite16b6195d6f48fad4f86aa094f7f7f2c
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -4013,10 +4013,13 @@ class ComposerStaticInitaac2e85a89ec0aa29025f0dde1048924
         'Drupal\\Tests\\lightning_core\\Functional\\RoleDescriptionTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Functional/RoleDescriptionTest.php',
         'Drupal\\Tests\\lightning_core\\Functional\\Update\\Update8006Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Functional/Update/Update8006Test.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\Access\\AdministrativeRoleCheckTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/Access/AdministrativeRoleCheckTest.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\CompactUserRenderTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/CompactUserRenderTest.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\DefaultUserImageTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/DefaultUserImageTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\ElementTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/ElementTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\EntityDescriptionTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/EntityDescriptionTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\ModuleInstallTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/ModuleInstallTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\UpdateManagerTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/UpdateManagerTest.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\Update\\Update360Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/Update/Update360Test.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\Update\\Update8006Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/Update/Update8006Test.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\Update\\Update8007Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/Update/Update8007Test.php',
         'Drupal\\Tests\\lightning_core\\Unit\\DisplayHelperTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Unit/DisplayHelperTest.php',
@@ -4047,6 +4050,7 @@ class ComposerStaticInitaac2e85a89ec0aa29025f0dde1048924
         'Drupal\\Tests\\lightning_media\\Functional\\MediaTypeDisambiguationTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/MediaTypeDisambiguationTest.php',
         'Drupal\\Tests\\lightning_media\\Functional\\PathautoPatternTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/PathautoPatternTest.php',
         'Drupal\\Tests\\lightning_media\\Functional\\RolesTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/RolesTest.php',
+        'Drupal\\Tests\\lightning_media\\Functional\\Update360Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/Update360Test.php',
         'Drupal\\Tests\\lightning_media\\Kernel\\EntityFormDisplayPresaveTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Kernel/EntityFormDisplayPresaveTest.php',
         'Drupal\\Tests\\lightning_media\\Kernel\\MediaJsLibrariesTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Kernel/MediaJsLibrariesTest.php',
         'Drupal\\Tests\\lightning_media\\Kernel\\MediaTypeTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Kernel/MediaTypeTest.php',
@@ -4736,6 +4740,7 @@ class ComposerStaticInitaac2e85a89ec0aa29025f0dde1048924
         'League\\OAuth2\\Server\\Entities\\Traits\\ClientTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/ClientTrait.php',
         'League\\OAuth2\\Server\\Entities\\Traits\\EntityTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/EntityTrait.php',
         'League\\OAuth2\\Server\\Entities\\Traits\\RefreshTokenTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/RefreshTokenTrait.php',
+        'League\\OAuth2\\Server\\Entities\\Traits\\ScopeTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/ScopeTrait.php',
         'League\\OAuth2\\Server\\Entities\\Traits\\TokenEntityTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/TokenEntityTrait.php',
         'League\\OAuth2\\Server\\Entities\\UserEntityInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/UserEntityInterface.php',
         'League\\OAuth2\\Server\\Exception\\OAuthServerException' => __DIR__ . '/..' . '/league/oauth2-server/src/Exception/OAuthServerException.php',
@@ -8083,10 +8088,10 @@ class ComposerStaticInitaac2e85a89ec0aa29025f0dde1048924
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitaac2e85a89ec0aa29025f0dde1048924::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitaac2e85a89ec0aa29025f0dde1048924::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitaac2e85a89ec0aa29025f0dde1048924::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitaac2e85a89ec0aa29025f0dde1048924::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInite16b6195d6f48fad4f86aa094f7f7f2c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInite16b6195d6f48fad4f86aa094f7f7f2c::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInite16b6195d6f48fad4f86aa094f7f7f2c::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInite16b6195d6f48fad4f86aa094f7f7f2c::$classMap;
 
         }, null, ClassLoader::class);
     }

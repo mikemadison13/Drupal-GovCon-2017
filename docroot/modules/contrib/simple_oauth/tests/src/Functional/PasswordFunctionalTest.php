@@ -27,39 +27,35 @@ class PasswordFunctionalTest extends TokenBearerFunctionalTestBase {
       'password' => $this->user->pass_raw,
       'scope' => $this->scope,
     ];
-    $response = $this->request('POST', $this->url, [
-      'form_params' => $valid_payload,
-    ]);
-    $response = $this->assertValidTokenResponse($response, TRUE);
+    $response = $this->post($this->url, $valid_payload);
+    $this->assertValidTokenResponse($response, TRUE);
     // Repeat the request but pass an obtained access token as a header in
     // order to check the authentication in parallel, which will precede
     // the creation of a new token.
-    $this->assertValidTokenResponse($this->request('POST', $this->url, [
-      'form_params' => $valid_payload,
-      'headers' => [
-        'Authorization' => 'Bearer ' . $response['access_token'],
-      ],
-    ]), TRUE);
+    $parsed = Json::decode((string) $response->getBody());
+    $response = $this->post($this->url, $valid_payload, [
+      'headers' => ['Authorization' => 'Bearer ' . $parsed['access_token']],
+    ]);
+    $this->assertValidTokenResponse($response, TRUE);
 
     // 2. Test the valid request without scopes.
     $payload_no_scope = $valid_payload;
     unset($payload_no_scope['scope']);
-    $response = $this->request('POST', $this->url, [
-      'form_params' => $payload_no_scope,
-    ]);
+    $response = $this->post($this->url, $payload_no_scope);
     $this->assertValidTokenResponse($response, TRUE);
 
     // 3. Test valid request using HTTP Basic Auth.
     $payload_no_client = $valid_payload;
     unset($payload_no_client['client_id']);
     unset($payload_no_client['client_secret']);
-    $response = $this->request('POST', $this->url, [
-      'form_params' => $payload_no_scope,
-      'auth' => [
-        $this->client->uuid(),
-        $this->clientSecret,
-      ],
-    ]);
+    $response = $this->post($this->url, $payload_no_scope,
+      [
+        'auth' => [
+          $this->client->uuid(),
+          $this->clientSecret,
+        ],
+      ]
+    );
     $this->assertValidTokenResponse($response, TRUE);
   }
 
@@ -101,9 +97,7 @@ class PasswordFunctionalTest extends TokenBearerFunctionalTestBase {
     foreach ($data as $key => $value) {
       $invalid_payload = $valid_payload;
       unset($invalid_payload[$key]);
-      $response = $this->request('POST', $this->url, [
-        'form_params' => $invalid_payload,
-      ]);
+      $response = $this->post($this->url, $invalid_payload);
       $parsed_response = Json::decode((string) $response->getBody());
       $this->assertSame($value['error'], $parsed_response['error'], sprintf('Correct error code %s for %s.', $value['error'], $key));
       $this->assertSame($value['code'], $response->getStatusCode(), sprintf('Correct status code %d for %s.', $value['code'], $key));
@@ -148,9 +142,7 @@ class PasswordFunctionalTest extends TokenBearerFunctionalTestBase {
     foreach ($data as $key => $value) {
       $invalid_payload = $valid_payload;
       $invalid_payload[$key] = $this->getRandomGenerator()->string();
-      $response = $this->request('POST', $this->url, [
-        'form_params' => $invalid_payload,
-      ]);
+      $response = $this->post($this->url, $invalid_payload);
       $parsed_response = Json::decode((string) $response->getBody());
       $this->assertSame($value['error'], $parsed_response['error'], sprintf('Correct error code %s for %s.', $value['error'], $key));
       $this->assertSame($value['code'], $response->getStatusCode(), sprintf('Correct status code %d for %s.', $value['code'], $key));

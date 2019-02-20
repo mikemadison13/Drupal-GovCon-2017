@@ -1,6 +1,6 @@
 <?php
 /**
- * Public/private key encryption.
+ * Encrypt/decrypt with encryptionKey.
  *
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -12,54 +12,65 @@
 namespace League\OAuth2\Server;
 
 use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
+use Exception;
+use LogicException;
 
 trait CryptTrait
 {
     /**
-     * @var string
+     * @var string|Key
      */
     protected $encryptionKey;
 
     /**
-     * Encrypt data with a private key.
+     * Encrypt data with encryptionKey.
      *
      * @param string $unencryptedData
      *
-     * @throws \LogicException
+     * @throws LogicException
      *
      * @return string
      */
     protected function encrypt($unencryptedData)
     {
         try {
+            if ($this->encryptionKey instanceof Key) {
+                return Crypto::encrypt($unencryptedData, $this->encryptionKey);
+            }
+
             return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
-        } catch (\Exception $e) {
-            throw new \LogicException($e->getMessage());
+        } catch (Exception $e) {
+            throw new LogicException($e->getMessage(), null, $e);
         }
     }
 
     /**
-     * Decrypt data with a public key.
+     * Decrypt data with encryptionKey.
      *
      * @param string $encryptedData
      *
-     * @throws \LogicException
+     * @throws LogicException
      *
      * @return string
      */
     protected function decrypt($encryptedData)
     {
         try {
+            if ($this->encryptionKey instanceof Key) {
+                return Crypto::decrypt($encryptedData, $this->encryptionKey);
+            }
+
             return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
-        } catch (\Exception $e) {
-            throw new \LogicException($e->getMessage());
+        } catch (Exception $e) {
+            throw new LogicException($e->getMessage(), null, $e);
         }
     }
 
     /**
      * Set the encryption key
      *
-     * @param string $key
+     * @param string|Key $key
      */
     public function setEncryptionKey($key = null)
     {

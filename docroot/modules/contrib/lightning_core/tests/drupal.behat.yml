@@ -14,7 +14,3 @@ default:
         error_message_selector: '.messages [role="alert"]'
         warning_message_selector: .messages--warning
         login_form_selector: '#user-login-form'
-      subcontexts:
-        # These paths are relative to the Drupal root.
-        paths:
-          - 'modules/contrib'

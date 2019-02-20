@@ -292,6 +292,10 @@ END;
    *   The entity browser ID.
    */
   private function switchJS($id) {
+    $this->assertSession()
+      ->elementExists('named', ['button', 'Add media'])
+      ->press();
+
     $iframe_id = $this
       ->awaitElement('iframe[name="entity_browser_iframe_' . $id . '"]', 30)
       ->getAttribute('id');

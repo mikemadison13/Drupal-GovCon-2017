@@ -7,6 +7,8 @@ if [ -e $FIXTURE ]; then
     php core/scripts/db-tools.php import $FIXTURE
 
     drush php:script $TRAVIS_BUILD_DIR/tests/update.php
+    # Reinstall modules which were blown away by the database restore.
+    orca fixture:enable-modules
 fi
 
 drush updatedb --yes

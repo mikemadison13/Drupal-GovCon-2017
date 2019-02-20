@@ -64,6 +64,7 @@ class CKEditorMediaBrowserTest extends WebDriverTestBase {
       'access media overview',
       'create ' . $this->nodeType->id() . ' content',
       'edit own ' . $this->nodeType->id() . ' content',
+      'access ckeditor_media_browser entity browser pages',
       'access media_browser entity browser pages',
       'use text format rich_text',
     ]);
@@ -324,7 +325,7 @@ class CKEditorMediaBrowserTest extends WebDriverTestBase {
     sleep(3);
 
     if ($switch) {
-      $session->switchToIFrame('entity_browser_iframe_media_browser');
+      $session->switchToIFrame('entity_browser_iframe_ckeditor_media_browser');
     }
   }
 

@@ -10,6 +10,7 @@ use Drupal\workflows\Entity\Workflow;
 /**
  * @group lightning_workflow
  * @group lightning_scheduler
+ * @group orca_public
  */
 class ScheduledTransitionTest extends BrowserTestBase {
 

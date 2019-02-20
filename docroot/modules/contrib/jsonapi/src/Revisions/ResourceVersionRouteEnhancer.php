@@ -44,19 +44,19 @@ final class ResourceVersionRouteEnhancer implements EnhancerInterface {
    * The cache context by which vary the loaded entity revision.
    *
    * @var string
+   *
+   * @todo When D8 requires PHP >=5.6, convert to expression using the RESOURCE_VERSION_QUERY_PARAMETER constant.
    */
-  const CACHE_CONTEXT = 'url.query_args:' . self::RESOURCE_VERSION_QUERY_PARAMETER;
+  const CACHE_CONTEXT = 'url.query_args:resourceVersion';
 
   /**
    * Resource version validation regex.
    *
    * @var string
+   *
+   * @todo When D8 requires PHP >=5.6, convert to expression using the VersionNegotiator::SEPARATOR constant.
    */
-  const VERSION_IDENTIFIER_VALIDATOR = '/^[a-z]+[a-z_]*[a-z]+'
-  . VersionNegotiator::SEPARATOR
-  . '[a-zA-Z0-9\-]+('
-  . VersionNegotiator::SEPARATOR
-  . '[a-zA-Z0-9\-]+)*$/';
+  const VERSION_IDENTIFIER_VALIDATOR = '/^[a-z]+[a-z_]*[a-z]+:[a-zA-Z0-9\-]+(:[a-zA-Z0-9\-]+)*$/';
 
   /**
    * The revision ID negotiator.

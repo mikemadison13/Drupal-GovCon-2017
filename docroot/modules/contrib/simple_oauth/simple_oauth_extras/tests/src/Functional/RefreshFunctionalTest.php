@@ -36,9 +36,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
       'password' => $this->user->pass_raw,
       'scope' => $this->scope,
     ];
-    $response = $this->request('POST', $this->url, [
-      'form_params' => $valid_payload,
-    ]);
+    $response = $this->post($this->url, $valid_payload);
     $body = (string) $response->getBody();
     $parsed_response = Json::decode($body);
     $this->refreshToken = $parsed_response['refresh_token'];
@@ -56,14 +54,11 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
       'refresh_token' => $this->refreshToken,
       'scope' => $this->scope,
     ];
-    $response = $this->request('POST', $this->url, [
-      'form_params' => $valid_payload,
-    ]);
+    $response = $this->post($this->url, $valid_payload);
     $this->assertValidTokenResponse($response, TRUE);
 
     // 2. Test the valid without scopes.
     // We need to use the new refresh token, the old one is revoked.
-    $response->getBody()->rewind();
     $parsed_response = Json::decode((string) $response->getBody());
     $valid_payload = [
       'grant_type' => 'refresh_token',
@@ -72,9 +67,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
       'refresh_token' => $parsed_response['refresh_token'],
       'scope' => $this->scope,
     ];
-    $response = $this->request('POST', $this->url, [
-      'form_params' => $valid_payload,
-    ]);
+    $response = $this->post($this->url, $valid_payload);
     $this->assertValidTokenResponse($response, TRUE);
 
     // 3. Test that the token token was revoked.
@@ -84,9 +77,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
       'client_secret' => $this->clientSecret,
       'refresh_token' => $this->refreshToken,
     ];
-    $response = $this->request('POST', $this->url, [
-      'form_params' => $valid_payload,
-    ]);
+    $response = $this->post($this->url, $valid_payload);
     $parsed_response = Json::decode((string) $response->getBody());
     $this->assertSame(401, $response->getStatusCode());
     $this->assertSame('invalid_request', $parsed_response['error']);
@@ -125,9 +116,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
     foreach ($data as $key => $value) {
       $invalid_payload = $valid_payload;
       unset($invalid_payload[$key]);
-      $response = $this->request('POST', $this->url, [
-        'form_params' => $invalid_payload,
-      ]);
+      $response = $this->post($this->url, $invalid_payload);
       $parsed_response = Json::decode((string) $response->getBody());
       $this->assertSame($value['error'], $parsed_response['error'], sprintf('Correct error code %s for %s.', $value['error'], $key));
       $this->assertSame($value['code'], $response->getStatusCode(), sprintf('Correct status code %d for %s.', $value['code'], $key));
@@ -167,9 +156,7 @@ class RefreshFunctionalTest extends TokenBearerFunctionalTestBase {
     foreach ($data as $key => $value) {
       $invalid_payload = $valid_payload;
       $invalid_payload[$key] = $this->getRandomGenerator()->string();
-      $response = $this->request('POST', $this->url, [
-        'form_params' => $invalid_payload,
-      ]);
+      $response = $this->post($this->url, $invalid_payload);
       $parsed_response = Json::decode((string) $response->getBody());
       $this->assertSame($value['error'], $parsed_response['error'], sprintf('Correct error code %s for %s.', $value['error'], $key));
       $this->assertSame($value['code'], $response->getStatusCode(), sprintf('Correct status code %d for %s.', $value['code'], $key));

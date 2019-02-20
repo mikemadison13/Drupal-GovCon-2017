@@ -71,17 +71,12 @@ class LinkManagerTest extends UnitTestCase {
     }, $pages);
 
     $request = $this->prophesize(Request::class);
-    // Have the request return the desired page parameter.
-    $page_param = $this->prophesize(OffsetPage::class);
-    $page_param->getOffset()->willReturn($offset);
-    $page_param->getSize()->willReturn($size);
     $request->getUri()->willReturn('https://example.com/drupal/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72?amet=pax');
     $request->getBaseUrl()->willReturn('/drupal');
     $request->getPathInfo()->willReturn('');
     $request->getSchemeAndHttpHost()->willReturn('https://example.com');
     $request->getBaseUrl()->willReturn('/drupal');
     $request->getPathInfo()->willReturn('/jsonapi/node/article/07c870e9-491b-4173-8e2b-4e059400af72');
-    $request->get('_json_api_params')->willReturn(['page' => $page_param->reveal()]);
     $request->query = new ParameterBag(['amet' => 'pax']);
 
     $context = ['has_next_page' => $has_next_page];
@@ -89,7 +84,7 @@ class LinkManagerTest extends UnitTestCase {
       $context['total_count'] = $total;
     }
 
-    $pager_links = $this->linkManager->getPagerLinks($request->reveal(), $context);
+    $pager_links = $this->linkManager->getPagerLinks($request->reveal(), new OffsetPage($offset, $size), $context);
     $mock_context = $this->prophesize(JsonApiDocumentTopLevel::class)->reveal();
     $links = array_map(function ($links) {
       return ['href' => reset($links)->getHref()];

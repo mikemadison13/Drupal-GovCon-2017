@@ -16,8 +16,8 @@ use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Drupal\jsonapi\JsonApiResource\Link;
 use Drupal\jsonapi\JsonApiResource\LinkCollection;
 use Drupal\jsonapi\JsonApiResource\NullEntityCollection;
+use Drupal\jsonapi\JsonApiResource\ResourceObject;
 use Drupal\jsonapi\ResourceResponse;
-use Drupal\jsonapi\LinkManager\LinkManager;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\ForwardCompatibility\FileFieldUploader;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
@@ -66,13 +66,6 @@ class FileUpload {
   protected $httpKernel;
 
   /**
-   * The link manager service.
-   *
-   * @var \Drupal\jsonapi\LinkManager\LinkManager
-   */
-  protected $linkManager;
-
-  /**
    * Creates a new FileUpload instance.
    *
    * @param \Drupal\Core\Session\AccountInterface $current_user
@@ -83,15 +76,12 @@ class FileUpload {
    *   The file uploader.
    * @param \Symfony\Component\HttpKernel\HttpKernelInterface $http_kernel
    *   An HTTP kernel for making subrequests.
-   * @param \Drupal\jsonapi\LinkManager\LinkManager $link_manager
-   *   The link manager service.
    */
-  public function __construct(AccountInterface $current_user, EntityFieldManagerInterface $field_manager, FileFieldUploader $file_uploader, HttpKernelInterface $http_kernel, LinkManager $link_manager) {
+  public function __construct(AccountInterface $current_user, EntityFieldManagerInterface $field_manager, FileFieldUploader $file_uploader, HttpKernelInterface $http_kernel) {
     $this->currentUser = $current_user;
     $this->fieldManager = $field_manager;
     $this->fileUploader = $file_uploader;
     $this->httpKernel = $http_kernel;
-    $this->linkManager = $link_manager;
   }
 
   /**
@@ -192,7 +182,9 @@ class FileUpload {
     /* $self_link = new Link(new CacheableMetadata(), $this->entity->toUrl('jsonapi'), ['self']); */
     $links = new LinkCollection(['self' => $self_link]);
 
-    return new ResourceResponse(new JsonApiDocumentTopLevel($file, new NullEntityCollection(), $links), 201, []);
+    $relatable_resource_types = $resource_type->getRelatableResourceTypesByField($file_field_name);
+    $file_resource_type = reset($relatable_resource_types);
+    return new ResourceResponse(new JsonApiDocumentTopLevel(new ResourceObject($file_resource_type, $file), new NullEntityCollection(), $links), 201, []);
   }
 
   /**

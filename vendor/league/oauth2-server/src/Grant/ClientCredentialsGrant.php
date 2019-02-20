@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
+use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -25,7 +27,7 @@ class ClientCredentialsGrant extends AbstractGrant
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        DateInterval $accessTokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);
@@ -36,6 +38,9 @@ class ClientCredentialsGrant extends AbstractGrant
 
         // Issue and persist access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
+
+        // Send event to emitter
+        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
 
         // Inject access token into response type
         $responseType->setAccessToken($accessToken);

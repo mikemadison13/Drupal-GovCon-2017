@@ -19,14 +19,17 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\jsonapi\Access\EntityAccessChecker;
+use Drupal\jsonapi\Context\FieldResolver;
 use Drupal\jsonapi\Entity\EntityValidationTrait;
 use Drupal\jsonapi\Access\TemporaryQueryGuard;
 use Drupal\jsonapi\Exception\EntityAccessDeniedHttpException;
+use Drupal\jsonapi\Exception\UnprocessableHttpEntityException;
 use Drupal\jsonapi\IncludeResolver;
 use Drupal\jsonapi\JsonApiResource\LinkCollection;
 use Drupal\jsonapi\JsonApiResource\NullEntityCollection;
 use Drupal\jsonapi\JsonApiResource\ResourceIdentifier;
 use Drupal\jsonapi\JsonApiResource\Link;
+use Drupal\jsonapi\JsonApiResource\ResourceObject;
 use Drupal\jsonapi\Query\Filter;
 use Drupal\jsonapi\Query\Sort;
 use Drupal\jsonapi\Query\OffsetPage;
@@ -37,11 +40,13 @@ use Drupal\jsonapi\ResourceResponse;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
 use Drupal\jsonapi\Revisions\ResourceVersionRouteEnhancer;
-use Drupal\jsonapi\Routing\Routes;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Drupal\Core\Http\Exception\CacheableBadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\Serializer\Exception\InvalidArgumentException;
+use Symfony\Component\Serializer\Exception\UnexpectedValueException;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Process all entity requests.
@@ -109,6 +114,20 @@ class EntityResource {
   protected $entityAccessChecker;
 
   /**
+   * The JSON:API field resolver.
+   *
+   * @var \Drupal\jsonapi\Context\FieldResolver
+   */
+  protected $fieldResolver;
+
+  /**
+   * The JSON:API serializer.
+   *
+   * @var \Symfony\Component\Serializer\SerializerInterface|\Symfony\Component\Serializer\Normalizer\DenormalizerInterface
+   */
+  protected $serializer;
+
+  /**
    * Instantiates a EntityResource object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -127,8 +146,12 @@ class EntityResource {
    *   The include resolver.
    * @param \Drupal\jsonapi\Access\EntityAccessChecker $entity_access_checker
    *   The JSON:API entity access checker.
+   * @param \Drupal\jsonapi\Context\FieldResolver $field_resolver
+   *   The JSON:API field resolver.
+   * @param \Symfony\Component\Serializer\SerializerInterface|\Symfony\Component\Serializer\Normalizer\DenormalizerInterface $serializer
+   *   The JSON:API serializer.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $field_manager, LinkManager $link_manager, ResourceTypeRepositoryInterface $resource_type_repository, RendererInterface $renderer, EntityRepositoryInterface $entity_repository, IncludeResolver $include_resolver, EntityAccessChecker $entity_access_checker) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $field_manager, LinkManager $link_manager, ResourceTypeRepositoryInterface $resource_type_repository, RendererInterface $renderer, EntityRepositoryInterface $entity_repository, IncludeResolver $include_resolver, EntityAccessChecker $entity_access_checker, FieldResolver $field_resolver, SerializerInterface $serializer) {
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldManager = $field_manager;
     $this->linkManager = $link_manager;
@@ -137,6 +160,8 @@ class EntityResource {
     $this->entityRepository = $entity_repository;
     $this->includeResolver = $include_resolver;
     $this->entityAccessChecker = $entity_access_checker;
+    $this->fieldResolver = $field_resolver;
+    $this->serializer = $serializer;
   }
 
   /**
@@ -154,11 +179,11 @@ class EntityResource {
    *   Thrown when access to the entity is not allowed.
    */
   public function getIndividual(EntityInterface $entity, Request $request) {
-    $entity = $this->entityAccessChecker->getAccessCheckedEntity($entity);
-    if ($entity instanceof EntityAccessDeniedHttpException) {
-      throw $entity;
+    $resource_object = $this->entityAccessChecker->getAccessCheckedResourceObject($entity);
+    if ($resource_object instanceof EntityAccessDeniedHttpException) {
+      throw $resource_object;
     }
-    $response = $this->buildWrappedResponse($entity, $request, $this->getIncludes($request, $entity));
+    $response = $this->buildWrappedResponse($resource_object, $request, $this->getIncludes($request, $resource_object));
     return $response;
   }
 
@@ -167,8 +192,6 @@ class EntityResource {
    *
    * @param \Drupal\jsonapi\ResourceType\ResourceType $resource_type
    *   The JSON:API resource type for the request to be served.
-   * @param \Drupal\Core\Entity\EntityInterface $parsed_entity
-   *   The loaded entity.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    *
@@ -180,30 +203,27 @@ class EntityResource {
    * @throws \Drupal\jsonapi\Exception\UnprocessableHttpEntityException
    *   Thrown when the entity does not pass validation.
    */
-  public function createIndividual(ResourceType $resource_type, EntityInterface $parsed_entity, Request $request) {
+  public function createIndividual(ResourceType $resource_type, Request $request) {
+    $parsed_entity = $this->deserialize($resource_type, $request, JsonApiDocumentTopLevel::class);
+
     if ($parsed_entity instanceof FieldableEntityInterface) {
       // Only check 'edit' permissions for fields that were actually submitted
       // by the user. Field access makes no distinction between 'create' and
       // 'update', so the 'edit' operation is used here.
       $document = Json::decode($request->getContent());
-      if (isset($document['data']['attributes'])) {
-        $received_attributes = array_keys($document['data']['attributes']);
-        foreach ($received_attributes as $field_name) {
-          $internal_field_name = $resource_type->getInternalName($field_name);
-          $field_access = $parsed_entity->get($internal_field_name)
-            ->access('edit', NULL, TRUE);
-          if (!$field_access->isAllowed()) {
-            throw new EntityAccessDeniedHttpException(NULL, $field_access, '/data/attributes/' . $field_name, sprintf('The current user is not allowed to POST the selected field (%s).', $field_name));
-          }
-        }
-      }
-      if (isset($document['data']['relationships'])) {
-        $received_relationships = array_keys($document['data']['relationships']);
-        foreach ($received_relationships as $field_name) {
-          $internal_field_name = $resource_type->getInternalName($field_name);
-          $field_access = $parsed_entity->get($internal_field_name)->access('edit', NULL, TRUE);
-          if (!$field_access->isAllowed()) {
-            throw new EntityAccessDeniedHttpException(NULL, $field_access, '/data/relationships/' . $field_name, sprintf('The current user is not allowed to POST the selected field (%s).', $field_name));
+      foreach (['attributes', 'relationships'] as $data_member_name) {
+        if (isset($document['data'][$data_member_name])) {
+          $valid_names = array_filter(array_map(function ($public_field_name) use ($resource_type) {
+            return $resource_type->getInternalName($public_field_name);
+          }, array_keys($document['data'][$data_member_name])), function ($internal_field_name) use ($resource_type) {
+            return $resource_type->hasField($internal_field_name);
+          });
+          foreach ($valid_names as $field_name) {
+            $field_access = $parsed_entity->get($field_name)->access('edit', NULL, TRUE);
+            if (!$field_access->isAllowed()) {
+              $public_field_name = $resource_type->getPublicName($field_name);
+              throw new EntityAccessDeniedHttpException(NULL, $field_access, "/data/$data_member_name/$public_field_name", sprintf('The current user is not allowed to POST the selected field (%s).', $public_field_name));
+            }
           }
         }
       }
@@ -220,18 +240,15 @@ class EntityResource {
     $parsed_entity->save();
 
     // Build response object.
-    $response = $this->buildWrappedResponse($parsed_entity, $request, $this->getIncludes($request, $parsed_entity), 201);
+    $resource_object = new ResourceObject($resource_type, $parsed_entity);
+    $response = $this->buildWrappedResponse($resource_object, $request, $this->getIncludes($request, $resource_object), 201);
 
     // According to JSON:API specification, when a new entity was created
     // we should send "Location" header to the frontend.
-    $entity_url = $this->linkManager->getEntityLink(
-      $parsed_entity->uuid(),
-      $resource_type,
-      [],
-      'individual'
-    );
-    if ($entity_url) {
-      $response->headers->set('Location', $entity_url);
+    if ($resource_type->isLocatable()) {
+      $url = $resource_object->toUrl()->setAbsolute()->toString(TRUE);
+      $response->addCacheableDependency($url);
+      $response->headers->set('Location', $url->getGeneratedUrl());
     }
 
     // Return response object with updated headers info.
@@ -245,8 +262,6 @@ class EntityResource {
    *   The JSON:API resource type for the request to be served.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The loaded entity.
-   * @param \Drupal\Core\Entity\EntityInterface $parsed_entity
-   *   The entity with the new data.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    *
@@ -258,7 +273,9 @@ class EntityResource {
    * @throws \Drupal\jsonapi\Exception\UnprocessableHttpEntityException
    *   Thrown when the patched entity does not pass validation.
    */
-  public function patchIndividual(ResourceType $resource_type, EntityInterface $entity, EntityInterface $parsed_entity, Request $request) {
+  public function patchIndividual(ResourceType $resource_type, EntityInterface $entity, Request $request) {
+    $parsed_entity = $this->deserialize($resource_type, $request, JsonApiDocumentTopLevel::class);
+
     $body = Json::decode($request->getContent());
     $data = $body['data'];
     if ($data['id'] != $entity->uuid()) {
@@ -278,7 +295,8 @@ class EntityResource {
 
     static::validate($entity, $field_names);
     $entity->save();
-    return $this->buildWrappedResponse($entity, $request, $this->getIncludes($request, $entity));
+    $resource_object = new ResourceObject($resource_type, $entity);
+    return $this->buildWrappedResponse($resource_object, $request, $this->getIncludes($request, $resource_object));
   }
 
   /**
@@ -313,7 +331,7 @@ class EntityResource {
     // Instantiate the query for the filtering.
     $entity_type_id = $resource_type->getEntityTypeId();
 
-    $params = static::getJsonApiParams($request, $resource_type);
+    $params = $this->getJsonApiParams($request, $resource_type);
     $query_cacheability = new CacheableMetadata();
     $query = $this->getCollectionQuery($resource_type, $params, $query_cacheability);
 
@@ -330,7 +348,9 @@ class EntityResource {
     }
     catch (\LogicException $e) {
       // Ensure good DX when an entity query involves a config entity type.
-      // @todo Core should throw a better exception.
+      // For example: getting users with a particular role, which is a config
+      // entity type: https://www.drupal.org/project/jsonapi/issues/2959445.
+      // @todo Remove the message parsing in https://www.drupal.org/project/drupal/issues/3028967.
       if (strpos($e->getMessage(), 'Getting the base fields is not supported for entity type') === 0) {
         preg_match('/entity type (.*)\./', $e->getMessage(), $matches);
         $config_entity_type_id = $matches[1];
@@ -368,7 +388,7 @@ class EntityResource {
       $entity_collection->setTotalCount($total_results);
     }
 
-    $response = $this->respondWithCollection($entity_collection, $this->getIncludes($request, $entity_collection), $request, $resource_type);
+    $response = $this->respondWithCollection($entity_collection, $this->getIncludes($request, $entity_collection), $request, $resource_type, $params[OffsetPage::KEY_NAME]);
 
     $response->addCacheableDependency($query_cacheability);
     $response->addCacheableDependency($count_query_cacheability);
@@ -402,8 +422,7 @@ class EntityResource {
    * @see node_query_node_access_alter()
    * @see https://www.drupal.org/project/drupal/issues/2557815
    * @see https://www.drupal.org/project/drupal/issues/2794385
-   * @todo Remove this when the query sytems's return value is able to carry
-   * cacheability.
+   * @todo Remove this after https://www.drupal.org/project/drupal/issues/3028976 is fixed.
    */
   protected function executeQueryInRenderContext(QueryInterface $query, CacheableMetadata $query_cacheability) {
     $context = new RenderContext();
@@ -450,10 +469,10 @@ class EntityResource {
     );
     $collection_data = [];
     foreach ($referenced_entities as $referenced_entity) {
-      $collection_data[] = $this->entityAccessChecker->getAccessCheckedEntity($referenced_entity);
+      $collection_data[] = $this->entityAccessChecker->getAccessCheckedResourceObject($referenced_entity);
     }
     $entity_collection = new EntityCollection($collection_data, $field_list->getFieldDefinition()->getFieldStorageDefinition()->getCardinality());
-    $response = $this->buildWrappedResponse($entity_collection, $request, $this->getIncludes($request, $entity_collection, $related));
+    $response = $this->buildWrappedResponse($entity_collection, $request, $this->getIncludes($request, $entity_collection));
 
     // $response does not contain the entity list cache tag. We add the
     // cacheable metadata for the finite list of entities in the relationship.
@@ -482,7 +501,10 @@ class EntityResource {
   public function getRelationship(ResourceType $resource_type, FieldableEntityInterface $entity, $related, Request $request, $response_code = 200) {
     /* @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $field_list */
     $field_list = $entity->get($resource_type->getInternalName($related));
-    $response = $this->buildWrappedResponse($field_list, $request, $this->getIncludes($request, $entity), $response_code);
+    // Access will have already been checked by the RelationshipFieldAccess
+    // service, so we don't need to call ::getAccessCheckedResourceObject().
+    $resource_object = new ResourceObject($resource_type, $entity);
+    $response = $this->buildWrappedResponse($field_list, $request, $this->getIncludes($request, $resource_object), $response_code);
     // Add the host entity as a cacheable dependency.
     $response->addCacheableDependency($entity);
     return $response;
@@ -497,8 +519,6 @@ class EntityResource {
    *   The requested entity.
    * @param string $related
    *   The related field name.
-   * @param \Drupal\jsonapi\JsonApiResource\ResourceIdentifier[] $resource_identifiers
-   *   The received resource identifiers.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    *
@@ -515,7 +535,8 @@ class EntityResource {
    * @throws \Drupal\jsonapi\Exception\UnprocessableHttpEntityException
    *   Thrown when the updated entity does not pass validation.
    */
-  public function addToRelationshipData(ResourceType $resource_type, FieldableEntityInterface $entity, $related, array $resource_identifiers, Request $request) {
+  public function addToRelationshipData(ResourceType $resource_type, FieldableEntityInterface $entity, $related, Request $request) {
+    $resource_identifiers = $this->deserialize($resource_type, $request, ResourceIdentifier::class, $related);
     $related = $resource_type->getInternalName($related);
     // According to the specification, you are only allowed to POST to a
     // relationship if it is a to-many relationship.
@@ -528,7 +549,7 @@ class EntityResource {
       throw new ConflictHttpException(sprintf('You can only POST to to-many relationships. %s is a to-one relationship.', $related));
     }
 
-    $original_resource_identifiers = ResourceIdentifier::toResourceIdentifiers($field_list);
+    $original_resource_identifiers = ResourceIdentifier::toResourceIdentifiersWithArityRequired($field_list);
     $new_resource_identifiers = array_udiff(
       ResourceIdentifier::deduplicate(array_merge($original_resource_identifiers, $resource_identifiers)),
       $original_resource_identifiers,
@@ -553,7 +574,7 @@ class EntityResource {
     $this->validate($entity);
     $entity->save();
 
-    $final_resource_identifiers = ResourceIdentifier::toResourceIdentifiers($field_list);
+    $final_resource_identifiers = ResourceIdentifier::toResourceIdentifiersWithArityRequired($field_list);
     $status = static::relationshipResponseRequiresBody($resource_identifiers, $final_resource_identifiers) ? 200 : 204;
     return $this->getRelationship($resource_type, $entity, $related, $request, $status);
   }
@@ -567,9 +588,6 @@ class EntityResource {
    *   The requested entity.
    * @param string $related
    *   The related field name.
-   * @param \Drupal\jsonapi\JsonApiResource\ResourceIdentifier[] $resource_identifiers
-   *   The client-sent resource identifiers which should be set on the given
-   *   entity.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    *
@@ -581,7 +599,8 @@ class EntityResource {
    * @throws \Drupal\jsonapi\Exception\UnprocessableHttpEntityException
    *   Thrown when the updated entity does not pass validation.
    */
-  public function replaceRelationshipData(ResourceType $resource_type, EntityInterface $entity, $related, array $resource_identifiers, Request $request) {
+  public function replaceRelationshipData(ResourceType $resource_type, EntityInterface $entity, $related, Request $request) {
+    $resource_identifiers = $this->deserialize($resource_type, $request, ResourceIdentifier::class, $related);
     $related = $resource_type->getInternalName($related);
     /* @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $resource_identifiers */
     // According to the specification, PATCH works a little bit different if the
@@ -594,7 +613,7 @@ class EntityResource {
     $this->{$method}($entity, $resource_identifiers, $field_definition);
     $this->validate($entity);
     $entity->save();
-    $requires_response = static::relationshipResponseRequiresBody($resource_identifiers, ResourceIdentifier::toResourceIdentifiers($field_list));
+    $requires_response = static::relationshipResponseRequiresBody($resource_identifiers, ResourceIdentifier::toResourceIdentifiersWithArityRequired($field_list));
     return $this->getRelationship($resource_type, $entity, $related, $request, $requires_response ? 200 : 204);
   }
 
@@ -650,9 +669,6 @@ class EntityResource {
    *   The requested entity.
    * @param string $related
    *   The related field name.
-   * @param \Drupal\jsonapi\JsonApiResource\ResourceIdentifier[]|\Symfony\Component\HttpFoundation\Request $resource_identifiers
-   *   The client-sent resource identifiers which should be removed from the
-   *   relationship, if they exist.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    *
@@ -666,11 +682,8 @@ class EntityResource {
    * @throws \Drupal\Core\Entity\EntityStorageException
    *   Thrown when the underlying entity cannot be saved.
    */
-  public function removeFromRelationshipData(ResourceType $resource_type, EntityInterface $entity, $related, array $resource_identifiers, Request $request) {
-    if ($resource_identifiers instanceof Request) {
-      // This usually means that there was not body provided.
-      throw new BadRequestHttpException(sprintf('You need to provide a body for DELETE operations on a relationship (%s).', $related));
-    }
+  public function removeFromRelationshipData(ResourceType $resource_type, EntityInterface $entity, $related, Request $request) {
+    $resource_identifiers = $this->deserialize($resource_type, $request, ResourceIdentifier::class, $related);
     /* @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $field_list */
     $field_list = $entity->{$related};
     $is_multiple = $field_list->getFieldDefinition()
@@ -681,7 +694,7 @@ class EntityResource {
     }
 
     // Compute the list of current values and remove the ones in the payload.
-    $original_resource_identifiers = ResourceIdentifier::toResourceIdentifiers($field_list);
+    $original_resource_identifiers = ResourceIdentifier::toResourceIdentifiersWithArityRequired($field_list);
     $removed_resource_identifiers = array_uintersect($resource_identifiers, $original_resource_identifiers, [ResourceIdentifier::class, 'compare']);
     $deltas_to_be_removed = [];
     foreach ($removed_resource_identifiers as $removed_resource_identifier) {
@@ -704,6 +717,69 @@ class EntityResource {
     static::validate($entity);
     $entity->save();
     return $this->getRelationship($resource_type, $entity, $related, $request, 204);
+  }
+
+  /**
+   * Deserializes a request body, if any.
+   *
+   * @param \Drupal\jsonapi\ResourceType\ResourceType $resource_type
+   *   The JSON:API resource type for the current request.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request object.
+   * @param string $class
+   *   The class into which the request data needs to be deserialized.
+   * @param string $relationship_field_name
+   *   The public relationship field name of the data to be deserialized if the
+   *   incoming request is for a relationship update. Not required for non-
+   *   relationship requests.
+   *
+   * @return array
+   *   An object normalization.
+   *
+   * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+   *   Thrown if the request body cannot be decoded, or when no request body was
+   *   provided with a POST or PATCH request.
+   * @throws \Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException
+   *   Thrown if the request body cannot be denormalized.
+   */
+  protected function deserialize(ResourceType $resource_type, Request $request, $class, $relationship_field_name = NULL) {
+    assert($class === JsonApiDocumentTopLevel::class || $class === ResourceIdentifier::class && !empty($relationship_field_name) && is_string($relationship_field_name));
+    $received = (string) $request->getContent();
+    if (!$received) {
+      assert($request->isMethod('POST') || $request->isMethod('PATCH') || $request->isMethod('DELETE'));
+      if ($request->isMethod('DELETE') && $relationship_field_name) {
+        throw new BadRequestHttpException(sprintf('You need to provide a body for DELETE operations on a relationship (%s).', $relationship_field_name));
+      }
+      else {
+        throw new BadRequestHttpException('Empty request body.');
+      }
+    }
+    // First decode the request data. We can then determine if the serialized
+    // data was malformed.
+    try {
+      $decoded = $this->serializer->decode($received, 'api_json');
+    }
+    catch (UnexpectedValueException $e) {
+      // If an exception was thrown at this stage, there was a problem decoding
+      // the data. Throw a 400 HTTP exception.
+      throw new BadRequestHttpException($e->getMessage());
+    }
+
+    try {
+      $context = ['resource_type' => $resource_type];
+      if ($relationship_field_name) {
+        $context['related'] = $resource_type->getInternalName($relationship_field_name);
+      }
+      return $this->serializer->denormalize($decoded, $class, 'api_json', $context);
+    }
+    // These two serialization exception types mean there was a problem with
+    // the structure of the decoded data and it's not valid.
+    catch (UnexpectedValueException $e) {
+      throw new UnprocessableHttpEntityException($e->getMessage());
+    }
+    catch (InvalidArgumentException $e) {
+      throw new UnprocessableHttpEntityException($e->getMessage());
+    }
   }
 
   /**
@@ -739,7 +815,7 @@ class EntityResource {
     // Apply any sorts to the entity query.
     if (isset($params[Sort::KEY_NAME]) && $sort = $params[Sort::KEY_NAME]) {
       foreach ($sort->fields() as $field) {
-        $path = $field[Sort::PATH_KEY];
+        $path = $this->fieldResolver->resolveInternalEntityQueryPath($resource_type->getEntityTypeId(), $resource_type->getBundle(), $field[Sort::PATH_KEY]);
         $direction = isset($field[Sort::DIRECTION_KEY]) ? $field[Sort::DIRECTION_KEY] : 'ASC';
         $langcode = isset($field[Sort::LANGUAGE_KEY]) ? $field[Sort::LANGUAGE_KEY] : NULL;
         $query->sort($path, $direction, $langcode);
@@ -852,8 +928,17 @@ class EntityResource {
    */
   protected function buildWrappedResponse($data, Request $request, EntityCollection $includes, $response_code = 200, array $headers = [], LinkCollection $links = NULL, array $meta = []) {
     $self_link = new Link(new CacheableMetadata(), $this->linkManager->getRequestLink($request), ['self']);
-    $links = ($links ?: new LinkCollection([]))->withLink('self', $self_link);
-    return new ResourceResponse(new JsonApiDocumentTopLevel($data, $includes, $links, $meta), $response_code, $headers);
+    $links = ($links ?: new LinkCollection([]));
+    $links = $links->withLink('self', $self_link);
+    $response = new ResourceResponse(new JsonApiDocumentTopLevel($data, $includes, $links, $meta), $response_code, $headers);
+    $cacheability = (new CacheableMetadata())->addCacheContexts([
+      // Make sure that different sparse fieldsets are cached differently.
+      'url.query_args:fields',
+      // Make sure that different sets of includes are cached differently.
+      'url.query_args:include',
+    ]);
+    $response->addCacheableDependency($cacheability);
+    return $response;
   }
 
   /**
@@ -867,11 +952,13 @@ class EntityResource {
    *   The request object.
    * @param \Drupal\jsonapi\ResourceType\ResourceType $resource_type
    *   The base JSON:API resource type for the request to be served.
+   * @param \Drupal\jsonapi\Query\OffsetPage $page_param
+   *   The pagination parameter for the requested collection.
    *
    * @return \Drupal\jsonapi\ResourceResponse
    *   The response.
    */
-  protected function respondWithCollection(EntityCollection $entity_collection, EntityCollection $includes, Request $request, ResourceType $resource_type) {
+  protected function respondWithCollection(EntityCollection $entity_collection, EntityCollection $includes, Request $request, ResourceType $resource_type, OffsetPage $page_param) {
     $link_context = [
       'has_next_page' => $entity_collection->hasNextPage(),
     ];
@@ -879,7 +966,7 @@ class EntityResource {
     if ($resource_type->includeCount()) {
       $link_context['total_count'] = $meta['count'] = $entity_collection->getTotalCount();
     }
-    $collection_links = $this->linkManager->getPagerLinks(\Drupal::request(), $link_context);
+    $collection_links = $this->linkManager->getPagerLinks(\Drupal::request(), $page_param, $link_context);
     $response = $this->buildWrappedResponse($entity_collection, $request, $includes, 200, [], $collection_links, $meta);
 
     // When a new change to any entity in the resource happens, we cannot ensure
@@ -937,9 +1024,6 @@ class EntityResource {
    *   The request object.
    * @param \Drupal\Core\Entity\EntityInterface|\Drupal\jsonapi\JsonApiResource\EntityCollection $data
    *   The response data from which to resolve includes.
-   * @param string $related
-   *   (optional) The relationship field name to be given for getting includes
-   *   on a related route.
    *
    * @return \Drupal\jsonapi\JsonApiResource\EntityCollection
    *   An EntityCollection to be included or a NullEntityCollection if the
@@ -948,9 +1032,9 @@ class EntityResource {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getIncludes(Request $request, $data, $related = NULL) {
+  public function getIncludes(Request $request, $data) {
     return $request->query->has('include') && ($include_parameter = $request->query->get('include')) && !empty($include_parameter)
-      ? $this->includeResolver->resolve($request->get(Routes::RESOURCE_TYPE_KEY), $data, $include_parameter, $related)
+      ? $this->includeResolver->resolve($data, $include_parameter)
       : new NullEntityCollection();
   }
 
@@ -1024,7 +1108,7 @@ class EntityResource {
       $entities = $storage->loadMultiple($ids);
     }
     foreach ($entities as $entity) {
-      $output[$entity->id()] = $this->entityAccessChecker->getAccessCheckedEntity($entity);
+      $output[$entity->id()] = $this->entityAccessChecker->getAccessCheckedResourceObject($entity);
     }
     return array_values($output);
   }
@@ -1051,18 +1135,23 @@ class EntityResource {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    * @param \Drupal\jsonapi\ResourceType\ResourceType $resource_type
-   *   The current JSON:API resoure type.
+   *   The JSON:API resource type.
    *
    * @return array
    *   An array of JSON:API parameters like `sort` and `filter`.
    */
-  protected static function getJsonApiParams(Request $request, ResourceType $resource_type) {
-    $route_params = $request->attributes->get('_route_params');
-    $params = isset($route_params['_json_api_params']) ? $route_params['_json_api_params'] : [];
+  protected function getJsonApiParams(Request $request, ResourceType $resource_type) {
     if ($request->query->has('filter')) {
-      $serializer = \Drupal::service('jsonapi.serializer_do_not_use_removal_imminent');
-      $context = ['entity_type_id' => $resource_type->getEntityTypeId(), 'bundle' => $resource_type->getBundle()];
-      $params[Filter::KEY_NAME] = $serializer->denormalize($request->query->get('filter'), Filter::class, NULL, $context);
+      $params[Filter::KEY_NAME] = Filter::createFromQueryParameter($request->query->get('filter'), $resource_type, $this->fieldResolver);
+    }
+    if ($request->query->has('sort')) {
+      $params[Sort::KEY_NAME] = Sort::createFromQueryParameter($request->query->get('sort'));
+    }
+    if ($request->query->has('page')) {
+      $params[OffsetPage::KEY_NAME] = OffsetPage::createFromQueryParameter($request->query->get('page'));
+    }
+    else {
+      $params[OffsetPage::KEY_NAME] = OffsetPage::createFromQueryParameter(['page' => ['offset' => OffsetPage::DEFAULT_OFFSET, 'limit' => OffsetPage::SIZE_MAX]]);
     }
     return $params;
   }

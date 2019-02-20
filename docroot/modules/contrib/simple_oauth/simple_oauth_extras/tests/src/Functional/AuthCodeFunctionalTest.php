@@ -272,10 +272,9 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
       'client_secret' => $this->clientSecret,
       'code' => $code,
       'scope' => $scopes,
+      'redirect_uri' => $this->redirectUri,
     ];
-    return $this->request('POST', $this->url, [
-      'form_params' => $valid_payload,
-    ]);
+    return $this->post($this->url, $valid_payload);
   }
 
 }

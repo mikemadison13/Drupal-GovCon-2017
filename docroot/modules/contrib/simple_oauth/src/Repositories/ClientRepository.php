@@ -30,7 +30,7 @@ class ClientRepository implements ClientRepositoryInterface {
   /**
    * {@inheritdoc}
    */
-  public function getClientEntity($client_identifier, $grant_type, $client_secret = NULL, $must_validate_secret = TRUE) {
+  public function getClientEntity($client_identifier, $grant_type = NULL, $client_secret = NULL, $must_validate_secret = TRUE) {
     $client_drupal_entities = $this->entityTypeManager
       ->getStorage('consumer')
       ->loadByProperties(['uuid' => $client_identifier]);

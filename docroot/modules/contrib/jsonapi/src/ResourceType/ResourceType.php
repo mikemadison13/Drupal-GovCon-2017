@@ -10,7 +10,7 @@ namespace Drupal\jsonapi\ResourceType;
  *
  * @see \Drupal\jsonapi\ResourceType\ResourceTypeRepository
  *
- * @deprecated
+ * @internal
  */
 class ResourceType {
 
@@ -185,7 +185,7 @@ class ResourceType {
    * represented here because it is impossible to determine them without an
    * instance of config available.
    *
-   * @todo Refactor this in Drupal 9 if https://www.drupal.org/project/drupal/issues/2949021 lands, then `config_export` will be guaranteed to exist, and this won't need an instance anymore.
+   * @todo Refactor this in Drupal 9, because thanks to https://www.drupal.org/project/drupal/issues/2949021, `config_export` will be guaranteed to exist, and this won't need an instance anymore.
    *
    * @param string $field_name
    *   The internal field name.

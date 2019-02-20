@@ -1,3 +1,10 @@
+## 3.6.0
+* The media browser is now displayed in a modal dialog by default, which is
+  activated by pressing the "Add media" button. When embedding media in the
+  WYSIWYG editor, the media browser is unchanged (the entity browser used for
+  WYSIWYG has been split out into a completely separate entity browser
+  configuration in order to facilitate this). (GitHub #80)
+
 ## 3.5.0
 * Updated Lightning Core to 3.5, which security updates Drupal core to 8.6.6.
 * Added a configuration option to control whether newly-created media fields 

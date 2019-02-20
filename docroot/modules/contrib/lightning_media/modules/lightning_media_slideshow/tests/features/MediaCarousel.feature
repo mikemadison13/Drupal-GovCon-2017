@@ -1,7 +1,7 @@
 @lightning @lightning_media @lightning_media_slideshow @api
 Feature: Media slideshow blocks
 
-  @6189e839 @javascript
+  @6189e839 @javascript @orca_public
   Scenario: Creating a media slideshow block
     Given I am logged in as a user with the "access content, access media_browser entity browser pages, access media overview, view media, create media, update media, administer blocks" permissions
     And I have items in the media library

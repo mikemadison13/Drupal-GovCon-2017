@@ -18,7 +18,7 @@ use Drupal\Core\Http\Exception\CacheableBadRequestHttpException;
  * @deprecated
  * @internal
  *
- * @todo Make this take cacheability into account in https://www.drupal.org/project/jsonapi/issues/2952714.
+ * @todo Remove this as part of https://www.drupal.org/project/jsonapi/issues/2994193
  */
 class LinkManager {
 
@@ -93,33 +93,24 @@ class LinkManager {
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
+   * @param \Drupal\jsonapi\Query\OffsetPage $page_param
+   *   The current pagination parameter for the requested collection.
    * @param array $link_context
    *   An associative array with extra data to build the links.
-   *
-   * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-   *   When the offset and size are invalid.
    *
    * @return \Drupal\jsonapi\JsonApiResource\LinkCollection
    *   An LinkCollection, with:
    *   - a 'next' key if it is not the last page;
    *   - 'prev' and 'first' keys if it's not the first page.
    */
-  public function getPagerLinks(Request $request, array $link_context = []) {
+  public function getPagerLinks(Request $request, OffsetPage $page_param, array $link_context = []) {
     $pager_links = new LinkCollection([]);
     if (!empty($link_context['total_count']) && !$total = (int) $link_context['total_count']) {
       return $pager_links;
     }
-    $params = $request->get('_json_api_params');
-    if ($page_param = $params[OffsetPage::KEY_NAME]) {
-      /* @var \Drupal\jsonapi\Query\OffsetPage $page_param */
-      $offset = $page_param->getOffset();
-      $size = $page_param->getSize();
-    }
-    else {
-      // Apply the defaults.
-      $offset = OffsetPage::DEFAULT_OFFSET;
-      $size = OffsetPage::SIZE_MAX;
-    }
+    /* @var \Drupal\jsonapi\Query\OffsetPage $page_param */
+    $offset = $page_param->getOffset();
+    $size = $page_param->getSize();
     if ($size <= 0) {
       $cacheability = (new CacheableMetadata())->addCacheContexts(['url.query_args:page']);
       throw new CacheableBadRequestHttpException($cacheability, sprintf('The page size needs to be a positive integer.'));

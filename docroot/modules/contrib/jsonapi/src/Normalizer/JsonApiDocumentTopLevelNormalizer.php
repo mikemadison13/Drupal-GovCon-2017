@@ -11,10 +11,10 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\jsonapi\Exception\EntityAccessDeniedHttpException;
 use Drupal\jsonapi\JsonApiResource\ErrorCollection;
+use Drupal\jsonapi\JsonApiResource\ResourceObject;
 use Drupal\jsonapi\JsonApiSpec;
 use Drupal\jsonapi\Normalizer\Value\HttpExceptionNormalizerValue;
 use Drupal\jsonapi\JsonApiResource\EntityCollection;
-use Drupal\jsonapi\LinkManager\LinkManager;
 use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
 use Drupal\jsonapi\ResourceType\ResourceType;
@@ -41,13 +41,6 @@ class JsonApiDocumentTopLevelNormalizer extends NormalizerBase implements Denorm
   protected $supportedInterfaceOrClass = JsonApiDocumentTopLevel::class;
 
   /**
-   * The link manager to get the links.
-   *
-   * @var \Drupal\jsonapi\LinkManager\LinkManager
-   */
-  protected $linkManager;
-
-  /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -64,15 +57,12 @@ class JsonApiDocumentTopLevelNormalizer extends NormalizerBase implements Denorm
   /**
    * Constructs a JsonApiDocumentTopLevelNormalizer object.
    *
-   * @param \Drupal\jsonapi\LinkManager\LinkManager $link_manager
-   *   The link manager to get the links.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface $resource_type_repository
    *   The JSON:API resource type repository.
    */
-  public function __construct(LinkManager $link_manager, EntityTypeManagerInterface $entity_type_manager, ResourceTypeRepositoryInterface $resource_type_repository) {
-    $this->linkManager = $link_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ResourceTypeRepositoryInterface $resource_type_repository) {
     $this->entityTypeManager = $entity_type_manager;
     $this->resourceTypeRepository = $resource_type_repository;
   }
@@ -134,7 +124,9 @@ class JsonApiDocumentTopLevelNormalizer extends NormalizerBase implements Denorm
         }
         // In order to maintain the order ($delta) of the relationships, we need
         // to load the entities and create a mapping between id and uuid.
-        $related_entities = array_values($entity_storage->loadByProperties(['uuid' => $id_list]));
+        $uuid_key = $this->entityTypeManager
+          ->getDefinition($entity_type_id)->getKey('uuid');
+        $related_entities = array_values($entity_storage->loadByProperties([$uuid_key => $id_list]));
         $map = [];
         foreach ($related_entities as $related_entity) {
           $map[$related_entity->uuid()] = $related_entity->id();
@@ -229,9 +221,13 @@ class JsonApiDocumentTopLevelNormalizer extends NormalizerBase implements Denorm
    */
   protected function normalizeEntityReferenceFieldItemList(JsonApiDocumentTopLevel $document, $format, array $context = []) {
     $data = $document->getData();
+    $parent_entity = $data->getEntity();
+    $resource_type = $this->resourceTypeRepository->get($parent_entity->getEntityTypeId(), $parent_entity->bundle());
+    $context['resource_object'] = new ResourceObject($resource_type, $parent_entity);
     $normalizer_values = [
       $this->serializer->normalize($data, $format, $context),
     ];
+    unset($context['resource_object']);
     return $this->normalizeValues($document, $normalizer_values, $format, $context);
   }
 
@@ -252,17 +248,11 @@ class JsonApiDocumentTopLevelNormalizer extends NormalizerBase implements Denorm
     $data = $document->getData();
     $is_collection = $data instanceof EntityCollection;
     // To improve the logical workflow deal with an array at all times.
-    $entities = $is_collection ? $data->toArray() : [$data];
+    $resource_objects = $is_collection ? $data->toArray() : [$data];
     $normalizer_values = array_map(function ($entity) use ($format, $context) {
       return $this->serializer->normalize($entity, $format, $context);
-    }, $entities);
-    $normalized = $this->normalizeValues($document, $normalizer_values, $format, $context);
-    // @todo This should be applied in relationship collections in https://www.drupal.org/project/jsonapi/issues/2965056.
-    // Make sure that different sparse fieldsets are cached differently.
-    $cache_contexts = array_map(function ($query_parameter_name) {
-      return sprintf('url.query_args:%s', $query_parameter_name);
-    }, ['fields', 'include']);
-    return $normalized->withCacheableDependency((new CacheableMetadata())->addCacheContexts($cache_contexts));
+    }, $resource_objects);
+    return $this->normalizeValues($document, $normalizer_values, $format, $context);
   }
 
   /**
@@ -282,6 +272,7 @@ class JsonApiDocumentTopLevelNormalizer extends NormalizerBase implements Denorm
    */
   protected function normalizeIncludesAndOmissions(EntityCollection $collection, $format, array $context = []) {
     $includes = $omissions = [];
+    /* @var \Drupal\jsonapi\JsonApiResource\ResourceIdentifierInterface $resource_object */
     foreach ($collection as $resource_object) {
       $resource_object instanceof EntityAccessDeniedHttpException
         ? $omissions[] = $this->serializer->normalize($resource_object, $format, $context)

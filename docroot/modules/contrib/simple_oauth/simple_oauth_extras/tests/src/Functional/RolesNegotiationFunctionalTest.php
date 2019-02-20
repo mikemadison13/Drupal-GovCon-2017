@@ -117,8 +117,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     $access_token = $this->getAccessToken(['foo', 'bar']);
 
     // Get detailed information about the authenticated user.
-    $response = $this->request(
-      'GET',
+    $response = $this->get(
       $this->tokenTestUrl,
       [
         'query' => ['_format' => 'json'],
@@ -139,8 +138,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     // We have edited the user, but there was a non-expired existing token for
     // that user. Even though the TokenUser has the roles assigned, the
     // underlying user doesn't, so access should not be granted.
-    $response = $this->request(
-      'GET',
+    $response = $this->get(
       $this->tokenTestUrl,
       [
         'query' => ['_format' => 'json'],
@@ -160,8 +158,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     // Request the access token again. This time the user doesn't have the role
     // requested at the time of generating the token.
     $access_token = $this->getAccessToken(['foo', 'bar']);
-    $response = $this->request(
-      'GET',
+    $response = $this->get(
       $this->tokenTestUrl,
       [
         'query' => ['_format' => 'json'],
@@ -185,8 +182,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     $access_token = $this->getAccessToken(['oof']);
 
     // Get detailed information about the authenticated user.
-    $response = $this->request(
-      'GET',
+    $response = $this->get(
       $this->tokenTestUrl,
       [
         'query' => ['_format' => 'json'],
@@ -207,8 +203,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     // User should NOT have access to view own simple_oauth entities,
     // because the scope is indicated in the token request, but
     // missing from the client content entity.
-    $response = $this->request(
-      'GET',
+    $response = $this->get(
       $this->tokenTestUrl,
       [
         'query' => ['_format' => 'json'],
@@ -226,8 +221,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
 
     $access_token = $this->getAccessToken(['oof']);
     // Get detailed information about the authenticated user.
-    $response = $this->request(
-      'GET',
+    $response = $this->get(
       $this->tokenTestUrl,
       [
         'query' => ['_format' => 'json'],
@@ -248,8 +242,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
   public function testRequestWithMissingScope() {
     $access_token = $this->getAccessToken();
 
-    $response = $this->request(
-      'GET',
+    $response = $this->get(
       $this->tokenTestUrl,
       [
         'query' => ['_format' => 'json'],
@@ -282,11 +275,7 @@ class RolesNegotiationFunctionalTest extends BrowserTestBase {
     if (!empty($scopes)) {
       $valid_payload['scope'] = implode(' ', $scopes);
     }
-    $response = $this->request(
-      'POST',
-      $this->url,
-      ['form_params' => $valid_payload]
-    );
+    $response = $this->post($this->url, $valid_payload);
     $parsed_response = Json::decode((string) $response->getBody());
 
     return isset($parsed_response['access_token'])

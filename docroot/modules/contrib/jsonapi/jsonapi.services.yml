@@ -2,113 +2,80 @@ parameters:
   jsonapi.base_path: /jsonapi
 
 services:
-  jsonapi.serializer_do_not_use_removal_imminent:
+  jsonapi.serializer:
     class: Drupal\jsonapi\Serializer\Serializer
     calls:
       - [setFallbackNormalizer, ['@serializer']]
     arguments: [{  }, {  }]
-  serializer.normalizer.sort.jsonapi:
-    class: Drupal\jsonapi\Normalizer\SortNormalizer
-    arguments: ['@jsonapi.field_resolver']
-    tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
-  serializer.normalizer.offset_page.jsonapi:
-    class: Drupal\jsonapi\Normalizer\OffsetPageNormalizer
-    tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
-  serializer.normalizer.entity_condition.jsonapi:
-    class: Drupal\jsonapi\Normalizer\EntityConditionNormalizer
-    tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
-  serializer.normalizer.entity_condition_group.jsonapi:
-    class: Drupal\jsonapi\Normalizer\EntityConditionGroupNormalizer
-    tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
-  serializer.normalizer.filter.jsonapi:
-    class: Drupal\jsonapi\Normalizer\FilterNormalizer
-    arguments: ['@jsonapi.field_resolver', '@serializer.normalizer.entity_condition.jsonapi', '@serializer.normalizer.entity_condition_group.jsonapi']
-    tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
   serializer.normalizer.http_exception.jsonapi:
     class: Drupal\jsonapi\Normalizer\HttpExceptionNormalizer
     arguments: ['@current_user']
     tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
+      - { name: jsonapi_normalizer }
   serializer.normalizer.unprocessable_entity_exception.jsonapi:
     class: Drupal\jsonapi\Normalizer\UnprocessableHttpEntityExceptionNormalizer
     arguments: ['@current_user']
     tags:
       # This must have a higher priority than the 'serializer.normalizer.http_exception.jsonapi' to take effect.
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent, priority: 1 }
+      - { name: jsonapi_normalizer, priority: 1 }
   serializer.normalizer.entity_access_exception.jsonapi:
     class: Drupal\jsonapi\Normalizer\EntityAccessDeniedHttpExceptionNormalizer
     arguments: ['@current_user']
     tags:
       # This must have a higher priority than the 'serializer.normalizer.http_exception.jsonapi' to take effect.
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent, priority: 1 }
-  serializer.normalizer.entity_reference_item.jsonapi:
-    class: Drupal\jsonapi\Normalizer\RelationshipItemNormalizer
-    arguments: ['@jsonapi.resource_type.repository']
-    tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
+      - { name: jsonapi_normalizer, priority: 1 }
   serializer.normalizer.field_item.jsonapi:
     class: Drupal\jsonapi\Normalizer\FieldItemNormalizer
+    arguments: ['@entity_type.manager']
     tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
+      - { name: jsonapi_normalizer }
   serializer.normalizer.field.jsonapi:
     class: Drupal\jsonapi\Normalizer\FieldNormalizer
     tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
-  serializer.normalizer.relationship.jsonapi:
-    class: Drupal\jsonapi\Normalizer\RelationshipNormalizer
-    arguments: ['@jsonapi.link_manager', '@entity_field.manager']
+      - { name: jsonapi_normalizer }
+  serializer.normalizer.resource_identifier.jsonapi:
+    class: Drupal\jsonapi\Normalizer\ResourceIdentifierNormalizer
+    arguments: ['@entity_field.manager']
     tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
-  serializer.normalizer.entity.jsonapi:
-    class: Drupal\jsonapi\Normalizer\ContentEntityNormalizer
-    arguments: ['@jsonapi.link_manager', '@jsonapi.resource_type.repository', '@entity_type.manager', '@entity_field.manager', '@plugin.manager.field.field_type']
+      - { name: jsonapi_normalizer }
+  serializer.normalizer.resource_object.jsonapi:
+    class: Drupal\jsonapi\Normalizer\ResourceObjectNormalizer
     tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
-  serializer.normalizer.entity.label_only.jsonapi:
-    class: Drupal\jsonapi\Normalizer\LabelOnlyEntityNormalizer
-    arguments: ['@jsonapi.link_manager', '@jsonapi.resource_type.repository']
+      - { name: jsonapi_normalizer }
+  serializer.normalizer.content_entity.jsonapi:
+    class: Drupal\jsonapi\Normalizer\ContentEntityDenormalizer
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@plugin.manager.field.field_type']
     tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
+      - { name: jsonapi_normalizer }
   serializer.normalizer.config_entity.jsonapi:
-    class: Drupal\jsonapi\Normalizer\ConfigEntityNormalizer
-    arguments: ['@jsonapi.link_manager', '@jsonapi.resource_type.repository', '@entity_type.manager', '@entity_field.manager', '@plugin.manager.field.field_type']
+    class: Drupal\jsonapi\Normalizer\ConfigEntityDenormalizer
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@plugin.manager.field.field_type']
     tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
+      - { name: jsonapi_normalizer }
   serializer.normalizer.jsonapi_document_toplevel.jsonapi:
     class: Drupal\jsonapi\Normalizer\JsonApiDocumentTopLevelNormalizer
-    arguments: ['@jsonapi.link_manager', '@entity_type.manager', '@jsonapi.resource_type.repository']
+    arguments: ['@entity_type.manager', '@jsonapi.resource_type.repository']
     tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
+      - { name: jsonapi_normalizer }
   serializer.normalizer.link_collection.jsonapi:
     class: Drupal\jsonapi\Normalizer\LinkCollectionNormalizer
     tags:
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent }
+      - { name: jsonapi_normalizer }
   serializer.normalizer.entity_reference_field.jsonapi:
     class: Drupal\jsonapi\Normalizer\EntityReferenceFieldNormalizer
-    arguments: ['@jsonapi.resource_type.repository', '@entity.repository']
+    arguments: ['@jsonapi.link_manager']
     tags:
       # This must have a higher priority than the 'serializer.normalizer.field.jsonapi' to take effect.
-      - { name: jsonapi_normalizer_do_not_use_removal_imminent, priority: 1 }
+      - { name: jsonapi_normalizer, priority: 1 }
   serializer.encoder.jsonapi:
     class: Drupal\jsonapi\Encoder\JsonEncoder
     tags:
-      - { name: encoder, priority: 21, format: 'api_json' }
+      - { name: jsonapi_encoder, format: 'api_json' }
   jsonapi.resource_type.repository:
     class: Drupal\jsonapi\ResourceType\ResourceTypeRepository
     arguments: ['@entity_type.manager', '@entity_type.bundle.info', '@entity_field.manager', '@cache.jsonapi_resource_types']
   jsonapi.route_enhancer:
     class: Drupal\jsonapi\Routing\RouteEnhancer
-    tags:
-      - { name: route_enhancer }
-  jsonapi.params.enhancer:
-    class: Drupal\jsonapi\Routing\JsonApiParamEnhancer
-    calls:
-      - [setContainer, ['@service_container']]
     tags:
       - { name: route_enhancer }
   jsonapi.link_manager:
@@ -137,7 +104,7 @@ services:
     class: Drupal\jsonapi\EventSubscriber\DefaultExceptionSubscriber
     tags:
       - { name: event_subscriber }
-    arguments: ['@jsonapi.serializer_do_not_use_removal_imminent', '%serializer.formats%']
+    arguments: ['@jsonapi.serializer', '%serializer.formats%']
 
   logger.channel.jsonapi:
     parent: logger.channel_base
@@ -186,6 +153,8 @@ services:
       - '@entity.repository'
       - '@jsonapi.include_resolver'
       - '@jsonapi.entity_access_checker'
+      - '@jsonapi.field_resolver'
+      - '@jsonapi.serializer'
   jsonapi.file_upload:
     class: Drupal\jsonapi\Controller\FileUpload
     arguments:
@@ -193,7 +162,6 @@ services:
       - '@entity_field.manager'
       - '@jsonapi.file.uploader.field'
       - '@http_kernel'
-      - '@jsonapi.link_manager'
 
   # Event subscribers.
   jsonapi.custom_query_parameter_names_validator.subscriber:
@@ -202,12 +170,12 @@ services:
       - { name: event_subscriber }
   jsonapi.resource_response.subscriber:
     class: Drupal\jsonapi\EventSubscriber\ResourceResponseSubscriber
-    arguments: ['@jsonapi.serializer_do_not_use_removal_imminent']
+    arguments: ['@jsonapi.serializer']
     tags:
       - { name: event_subscriber }
   jsonapi.resource_response_validator.subscriber:
     class: Drupal\jsonapi\EventSubscriber\ResourceResponseValidator
-    arguments: ['@jsonapi.serializer_do_not_use_removal_imminent', '@logger.channel.jsonapi', '@module_handler', '@app.root']
+    arguments: ['@jsonapi.serializer', '@logger.channel.jsonapi', '@module_handler', '@app.root']
     calls:
       - [setValidator, []]
       - [setSchemaFactory, ['@?schemata.schema_factory']] # This is only injected when the service is available.

@@ -9,6 +9,9 @@ if [ -f $FIXTURE ]; then
     drush php:script $TRAVIS_BUILD_DIR/tests/update.php
     # Ensure menu_ui is installed.
     drush pm-enable menu_ui --yes
+
+    # Reinstall modules which were blown away by the database restore.
+    orca fixture:install-modules
 fi
 
 drush updatedb --yes

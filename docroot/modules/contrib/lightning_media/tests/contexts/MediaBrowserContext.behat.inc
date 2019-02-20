@@ -59,13 +59,17 @@ final class MediaBrowserContext extends DrupalSubContextBase {
    *
    * @param string $button
    *   (optional) The embed button ID.
+   * @param string $browser
+   *   (optional) The entity browser ID.
    */
-  private function openJS($button = 'media_browser') {
+  private function openJS($button = 'media_browser', $browser = 'ckeditor_media_browser') {
     $this
       ->getContext(CkEditorContext::class)
-      ->execute('editdrupalentity', NULL, ['id' => $button]);
+      ->execute('editdrupalentity', NULL, [
+        'id' => $button,
+      ]);
 
-    $frame = $this->awaitElement("iframe[name='entity_browser_iframe_$button']", 30)
+    $frame = $this->awaitElement("iframe[name='entity_browser_iframe_$browser']", 30)
       ->getAttribute('name');
 
     $this->getSession()->switchToIFrame($frame);
@@ -79,10 +83,10 @@ final class MediaBrowserContext extends DrupalSubContextBase {
    */
   private function openNoJS($browser_id = 'media_browser') {
     $uuid = $this->assertSession()
-      ->elementExists('named', ['link', 'Select entities'])
+      ->elementExists('named', ['button', 'Add media'])
       ->getAttribute('data-uuid');
 
-    $this->visitPath("/entity-browser/iframe/$browser_id?uuid=$uuid");
+    $this->visitPath("/entity-browser/modal/$browser_id?uuid=$uuid");
   }
 
   /**
@@ -200,7 +204,7 @@ END;
   public function createFromUpload($title, $file) {
     /** @var MinkContext $mink_context */
     $mink_context = $this->getContext(MinkContext::class);
-    $mink_context->assertAtPath('/entity-browser/iframe/media_browser');
+    $mink_context->assertAtPath('/entity-browser/modal/media_browser');
 
     $this->upload($file);
 
@@ -232,7 +236,7 @@ END;
   public function createFromEmbedCode($title, $embed_code) {
     /** @var MinkContext $mink_context */
     $mink_context = $this->getContext(MinkContext::class);
-    $mink_context->assertAtPath('/entity-browser/iframe/media_browser');
+    $mink_context->assertAtPath('/entity-browser/modal/media_browser');
 
     $assert = $this->assertSession();
     $assert->elementExists('named', ['button', 'Create embed'])->press();

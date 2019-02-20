@@ -10,7 +10,7 @@ Feature: Moderated content
       | Beta    | published        | 1       |
       | Charlie | draft            | 0       |
 
-  @03ebc3ee
+  @03ebc3ee @orca_public
   Scenario: Publishing moderated content
     Given I am logged in as a user with the "access content overview, view any unpublished content, use editorial transition review, use editorial transition publish, create page content, edit any page content, create url aliases" permissions
     When I visit "/admin/content"
@@ -22,7 +22,7 @@ Feature: Moderated content
     And I visit "/node"
     Then I should see the link "Alpha"
 
-  @c0c17d43
+  @c0c17d43 @orca_public
   Scenario: Unpublishing moderated content
     Given I am logged in as a user with the "access content overview, use editorial transition publish, use editorial transition archive, create page content, edit any page content, create url aliases" permissions
     And I visit "/admin/content"
@@ -34,7 +34,7 @@ Feature: Moderated content
     And I go to "/node"
     Then I should not see the link "Beta"
 
-  @cead87f0
+  @cead87f0 @orca_public
   Scenario: Filtering content by moderation state
     Given I am logged in as a user with the "access content overview" permission
     When I visit "/admin/content"

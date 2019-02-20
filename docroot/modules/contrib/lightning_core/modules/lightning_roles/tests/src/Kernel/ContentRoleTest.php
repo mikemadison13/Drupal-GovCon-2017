@@ -9,6 +9,7 @@ use Drupal\user\Entity\Role;
 /**
  * @group lightning
  * @group lightning_roles
+ * @group orca_public
  */
 class ContentRoleTest extends KernelTestBase {
 

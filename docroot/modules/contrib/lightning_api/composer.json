@@ -6,13 +6,14 @@
     "require": {
         "cweagans/composer-patches": "^1.6.4",
         "drupal-composer/drupal-scaffold": "^2.0.0",
-        "drupal/jsonapi": "^2.0.0-rc4",
-        "drupal/lightning_core": "^2.12 || ^3.5",
+        "drupal/jsonapi": "^2.1",
+        "drupal/lightning_core": "^2.12 || ^3.6",
         "drupal/openapi": "^1.0-beta2",
         "drupal/openapi_ui_redoc": "^1.0",
         "drupal/openapi_ui_swagger": "^1.0",
         "drupal/simple_oauth": "^3.8.0",
-        "oomphinc/composer-installers-extender": "^1.1"
+        "oomphinc/composer-installers-extender": "^1.1",
+        "drupal/consumers": "1.5"
     },
     "require-dev": {
         "acquia/lightning_dev": "dev-8.x-1.x",

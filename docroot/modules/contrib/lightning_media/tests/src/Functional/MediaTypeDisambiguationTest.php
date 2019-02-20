@@ -8,6 +8,7 @@ use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 
 /**
  * @group lightning_media
+ * @group orca_public
  */
 class MediaTypeDisambiguationTest extends BrowserTestBase {
 
@@ -54,7 +55,7 @@ class MediaTypeDisambiguationTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($account);
 
-    $this->drupalGet('/entity-browser/iframe/media_browser');
+    $this->drupalGet('/entity-browser/modal/media_browser');
     $this->assertSession()->statusCodeEquals(200);
   }
 

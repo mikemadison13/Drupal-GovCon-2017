@@ -5,6 +5,7 @@ namespace Drupal\jsonapi\Normalizer\Value;
 use Drupal\Component\Assertion\Inspector;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Cache\CacheableDependencyTrait;
+use Drupal\Core\Cache\CacheableMetadata;
 
 /**
  * Use to store normalized data and its cacheability.
@@ -13,7 +14,6 @@ use Drupal\Core\Cache\CacheableDependencyTrait;
  */
 class CacheableNormalization implements CacheableDependencyInterface {
 
-  use CacheableDependenciesMergerTrait;
   use CacheableDependencyTrait;
 
   /**
@@ -59,13 +59,13 @@ class CacheableNormalization implements CacheableDependencyInterface {
    *   dependency.
    */
   public function withCacheableDependency(CacheableDependencyInterface $dependency) {
-    return new static(static::mergeCacheableDependencies([$this, $dependency]), $this->normalization);
+    return new static(CacheableMetadata::createFromObject($this)->addCacheableDependency($dependency), $this->normalization);
   }
 
   /**
    * Collects an array of CacheableNormalizations into a single instance.
    *
-   * @param \Drupal\jsonapi\Normalizer\Value\CacheableNormalization[] $cacheable_arrays
+   * @param \Drupal\jsonapi\Normalizer\Value\CacheableNormalization[] $cacheable_normalizations
    *   An array of CacheableNormalizations.
    *
    * @return static
@@ -74,13 +74,15 @@ class CacheableNormalization implements CacheableDependencyInterface {
    *   normalization will be an array of the input's normalizations. This method
    *   does *not* behave like array_merge() or NestedArray::mergeDeep().
    */
-  public static function aggregate(array $cacheable_arrays) {
-    assert(Inspector::assertAllObjects($cacheable_arrays, CacheableNormalization::class));
+  public static function aggregate(array $cacheable_normalizations) {
+    assert(Inspector::assertAllObjects($cacheable_normalizations, CacheableNormalization::class));
     return new static(
-      static::mergeCacheableDependencies($cacheable_arrays),
-      array_reduce(array_keys($cacheable_arrays), function ($merged, $key) use ($cacheable_arrays) {
-        if (!$cacheable_arrays[$key] instanceof CacheableOmission) {
-          $merged[$key] = $cacheable_arrays[$key]->getNormalization();
+      array_reduce($cacheable_normalizations, function (CacheableMetadata $merged, CacheableNormalization $item) {
+        return $merged->addCacheableDependency($item);
+      }, new CacheableMetadata()),
+      array_reduce(array_keys($cacheable_normalizations), function ($merged, $key) use ($cacheable_normalizations) {
+        if (!$cacheable_normalizations[$key] instanceof CacheableOmission) {
+          $merged[$key] = $cacheable_normalizations[$key]->getNormalization();
         }
         return $merged;
       }, [])

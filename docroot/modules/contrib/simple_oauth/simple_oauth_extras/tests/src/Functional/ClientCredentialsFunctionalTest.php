@@ -25,17 +25,13 @@ class ClientCredentialsFunctionalTest extends TokenBearerFunctionalTestBase {
       'client_secret' => $this->clientSecret,
       'scope' => $this->scope,
     ];
-    $response = $this->request('POST', $this->url, [
-      'form_params' => $valid_payload,
-    ]);
+    $response = $this->post($this->url, $valid_payload);
     $this->assertValidTokenResponse($response, FALSE);
 
     // 2. Test the valid without scopes.
     $payload_no_scope = $valid_payload;
     unset($payload_no_scope['scope']);
-    $response = $this->request('POST', $this->url, [
-      'form_params' => $payload_no_scope,
-    ]);
+    $response = $this->post($this->url, $payload_no_scope);
     $this->assertValidTokenResponse($response, FALSE);
 
   }
@@ -68,9 +64,7 @@ class ClientCredentialsFunctionalTest extends TokenBearerFunctionalTestBase {
     foreach ($data as $key => $value) {
       $invalid_payload = $valid_payload;
       unset($invalid_payload[$key]);
-      $response = $this->request('POST', $this->url, [
-        'form_params' => $invalid_payload,
-      ]);
+      $response = $this->post($this->url, $invalid_payload);
       $parsed_response = Json::decode((string) $response->getBody());
       $this->assertSame($value['error'], $parsed_response['error'], sprintf('Correct error code %s for %s.', $value['error'], $key));
       $this->assertSame($value['code'], $response->getStatusCode(), sprintf('Correct status code %d for %s.', $value['code'], $key));
@@ -105,9 +99,7 @@ class ClientCredentialsFunctionalTest extends TokenBearerFunctionalTestBase {
     foreach ($data as $key => $value) {
       $invalid_payload = $valid_payload;
       $invalid_payload[$key] = $this->getRandomGenerator()->string();
-      $response = $this->request('POST', $this->url, [
-        'form_params' => $invalid_payload,
-      ]);
+      $response = $this->post($this->url, $invalid_payload);
       $parsed_response = Json::decode((string) $response->getBody());
       $this->assertSame($value['error'], $parsed_response['error'], sprintf('Correct error code %s for %s.', $value['error'], $key));
       $this->assertSame($value['code'], $response->getStatusCode(), sprintf('Correct status code %d for %s.', $value['code'], $key));

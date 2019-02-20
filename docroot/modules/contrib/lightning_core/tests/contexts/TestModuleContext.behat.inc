@@ -49,7 +49,11 @@ final class TestModuleContext extends DrupalSubContextBase {
     $modules = $this->getModules($scope);
 
     if ($modules) {
-      $this->getDriver()->bootstrap();
+      // Bootstrap Drupal if needed.
+      $driver = $this->getDriver();
+      if (! $driver->isBootstrapped()) {
+        $driver->bootstrap();
+      }
 
       // Ensure that test directories are scanned for modules.
       $settings = Settings::getAll();

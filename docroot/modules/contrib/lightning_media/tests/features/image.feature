@@ -19,5 +19,5 @@ Feature: Image media assets
     And I enter "Blorg" for "Name"
     And I uncheck the box "Show in media library"
     And I press "Save"
-    And I visit "/entity-browser/iframe/media_browser"
+    And I visit "/entity-browser/modal/media_browser"
     Then I should see "There are no media items to display."

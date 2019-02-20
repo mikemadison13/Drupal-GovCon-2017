@@ -4,7 +4,6 @@ namespace Drupal\simple_oauth\Repositories;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**

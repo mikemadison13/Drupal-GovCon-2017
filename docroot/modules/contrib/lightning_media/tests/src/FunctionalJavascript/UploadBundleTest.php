@@ -95,8 +95,8 @@ class UploadBundleTest extends WebDriverTestBase {
     // Create an article with a media via the upload widget.
     $this->drupalGet('node/add/article');
     $this->assertSession()->fieldExists('Title')->setValue('Foo');
+    $this->openMediaBrowser();
 
-    $session->switchToIFrame('entity_browser_iframe_media_browser');
     $uri = $this->getRandomGenerator()->image('public://test_image.png', '240x240', '640x480');
     $path = $this->container->get('file_system')->realpath($uri);
 
@@ -129,7 +129,7 @@ class UploadBundleTest extends WebDriverTestBase {
    */
   public function testWrongExtension() {
     $this->drupalGet('node/add/article');
-    $this->getSession()->switchToIFrame('entity_browser_iframe_media_browser');
+    $this->openMediaBrowser();
 
     // Alert is displayed when uploading a .txt file.
     file_put_contents('public://test_text.txt', $this->getRandomGenerator()->paragraphs());
@@ -155,7 +155,7 @@ class UploadBundleTest extends WebDriverTestBase {
       ->save();
 
     $this->drupalGet('node/add/article');
-    $this->getSession()->switchToIFrame('entity_browser_iframe_media_browser');
+    $this->openMediaBrowser();
 
     // Upload a 200x200 image.
     $this->getRandomGenerator()->image('public://test_image.png', '200x200', '200x200');
@@ -169,6 +169,22 @@ class UploadBundleTest extends WebDriverTestBase {
 
     // Assert the image resolution is changed to 100x100.
     $this->assertSession()->pageTextContains('Status message The image was resized to fit within the maximum allowed dimensions of 100x100 pixels. The new dimensions of the resized image are 100x100 pixels.');
+  }
+
+  /**
+   * Opens the media browser.
+   *
+   * @param bool $switch
+   *   (optional) If TRUE, switch into the entity browser frame. Defaults to
+   *   TRUE.
+   */
+  private function openMediaBrowser($switch = TRUE) {
+    $this->assertSession()->buttonExists('Add media')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    if ($switch) {
+      $this->getSession()->switchToIFrame('entity_browser_iframe_media_browser');
+    }
   }
 
 }

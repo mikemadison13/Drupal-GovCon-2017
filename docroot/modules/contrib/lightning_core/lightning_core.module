@@ -7,7 +7,10 @@
 
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\EntityDescriptionInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\field\FieldConfigInterface;
+use Drupal\file\Entity\File;
 use Drupal\lightning_core\Element as ElementHelper;
 use Drupal\lightning_core\Entity\EntityFormMode;
 use Drupal\lightning_core\Entity\EntityViewMode;
@@ -16,6 +19,16 @@ use Drupal\lightning_core\Form\RoleForm;
 use Drupal\lightning_core\OverrideHelper as Override;
 use Drupal\lightning_core\Plugin\views\filter\Bundle;
 use Drupal\lightning_core\UpdateManager;
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function lightning_core_entity_base_field_info_alter(array &$fields, EntityTypeInterface $entity_type) {
+  /** @var \Drupal\Core\Field\BaseFieldDefinition[] $fields */
+  if ($entity_type->id() === 'user') {
+    $fields['name']->setDisplayConfigurable('view', TRUE);
+  }
+}
 
 /**
  * Implements hook_local_tasks_alter().
@@ -202,4 +215,31 @@ function lightning_core_rebuild_container() {
  */
 function lightning_core_preprocess_block(array &$variables) {
   $variables['attributes']['data-block-plugin-id'] = $variables['elements']['#plugin_id'];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function lightning_core_field_config_presave(FieldConfigInterface $field) {
+  // Set the default image for user profiles.
+  if ($field->getTargetEntityTypeId() === 'user' && $field->getName() === 'user_picture' && $field->isNew() && !\Drupal::isConfigSyncing()) {
+    $source = drupal_get_path('module', 'lightning_core') . '/images/default-avatar.png';
+    $uri = 'public://default-avatar.png';
+
+    if (file_unmanaged_copy($source, $uri, FILE_EXISTS_ERROR)) {
+      $file = File::create([
+        'uri' => $uri,
+      ]);
+      $file->setPermanent();
+      $file->save();
+
+      $field->setSetting('default_image', [
+        'uuid' => $file->uuid(),
+        'alt' => (string) t('A generic silhouette of a person.'),
+        'title' => '',
+        'width' => 140,
+        'height' => 140,
+      ]);
+    }
+  }
 }

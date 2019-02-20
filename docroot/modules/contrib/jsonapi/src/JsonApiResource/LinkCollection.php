@@ -35,18 +35,19 @@ final class LinkCollection implements \IteratorAggregate {
    *
    * @param \Drupal\jsonapi\JsonApiResource\Link[] $links
    *   An associated array of key names and JSON:API Link objects.
-   * @param \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel $context
+   * @param \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject $context
    *   (internal use only) The context object. Use the self::withContext()
    *   method to establish a context. This should be done automatically when
    *   a LinkCollection is passed into a context object.
    */
-  public function __construct(array $links, JsonApiDocumentTopLevel $context = NULL) {
+  public function __construct(array $links, $context = NULL) {
     assert(Inspector::assertAll(function ($key) {
       return static::validKey($key);
     }, array_keys($links)));
     assert(Inspector::assertAll(function ($link) {
       return $link instanceof Link || is_array($link) && Inspector::assertAllObjects($link, Link::class);
     }, $links));
+    assert(is_null($context) || Inspector::assertAllObjects([$context], JsonApiDocumentTopLevel::class, ResourceObject::class));
     ksort($links);
     $this->links = array_map(function ($link) {
       return is_array($link) ? $link : [$link];
@@ -91,22 +92,35 @@ final class LinkCollection implements \IteratorAggregate {
   }
 
   /**
+   * Whether a link with the given key exists.
+   *
+   * @param string $key
+   *   The key.
+   *
+   * @return bool
+   *   TRUE if a link with the given key exist, FALSE otherwise.
+   */
+  public function hasLinkWithKey($key) {
+    return array_key_exists($key, $this->links);
+  }
+
+  /**
    * Establishes a new context for a LinkCollection.
    *
-   * @param \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel $context
+   * @param \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject $context
    *   The new context object.
    *
    * @return static
    *   A new LinkCollection with the given context.
    */
-  public function withContext(JsonApiDocumentTopLevel $context) {
+  public function withContext($context) {
     return new static($this->links, $context);
   }
 
   /**
    * Gets the LinkCollection's context object.
    *
-   * @return \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel
+   * @return \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject
    *   The LinkCollection's context.
    */
   public function getContext() {
@@ -152,11 +166,15 @@ final class LinkCollection implements \IteratorAggregate {
   public static function merge(LinkCollection $a, LinkCollection $b) {
     assert($a->getContext() === $b->getContext());
     $merged = new LinkCollection([], $a->getContext());
-    foreach ($a as $key => $link) {
-      $merged = $merged->withLink($key, $link);
+    foreach ($a as $key => $links) {
+      $merged = array_reduce($links, function (self $merged, Link $link) use ($key) {
+        return $merged->withLink($key, $link);
+      }, $merged);
     }
-    foreach ($b as $key => $link) {
-      $merged = $merged->withLink($key, $link);
+    foreach ($b as $key => $links) {
+      $merged = array_reduce($links, function (self $merged, Link $link) use ($key) {
+        return $merged->withLink($key, $link);
+      }, $merged);
     }
     return $merged;
   }

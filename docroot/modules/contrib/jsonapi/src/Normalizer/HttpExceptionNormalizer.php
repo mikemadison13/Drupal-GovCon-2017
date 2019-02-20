@@ -4,7 +4,6 @@ namespace Drupal\jsonapi\Normalizer;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\jsonapi\Normalizer\Value\CacheableDependenciesMergerTrait;
 use Drupal\jsonapi\Normalizer\Value\HttpExceptionNormalizerValue;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -17,8 +16,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * @internal
  */
 class HttpExceptionNormalizer extends NormalizerBase {
-
-  use CacheableDependenciesMergerTrait;
 
   /**
    * The interface or class that this Normalizer supports.

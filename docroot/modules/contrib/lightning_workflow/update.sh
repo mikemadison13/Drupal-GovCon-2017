@@ -7,6 +7,8 @@ if [ -e $FIXTURE ]; then
     php core/scripts/db-tools.php import $FIXTURE
 
     drush php:script $TRAVIS_BUILD_DIR/tests/update.php
+    # Reinstall modules which were blown away by the database restore.
+    orca fixture:enable-modules
 fi
 
 drush updatedb --yes
@@ -18,9 +20,3 @@ drush site:install --yes --existing-config
 
 # Big Pipe interferes with non-JavaScript functional tests, so uninstall it now.
 drush pm-uninstall big_pipe --yes
-
-# Clear any stored time zone.
-drush config:set system.date timezone.default '' --yes
-
-# Install Toolbar so ModerationSidebar.feature can pass.
-drush pm-enable toolbar --yes

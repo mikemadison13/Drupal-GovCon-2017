@@ -5,11 +5,9 @@ namespace Drupal\jsonapi\Routing;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\jsonapi\Access\RelationshipFieldAccess;
 use Drupal\jsonapi\Controller\EntryPoint;
-use Drupal\jsonapi\Normalizer\Relationship;
 use Drupal\jsonapi\ParamConverter\ResourceTypeConverter;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface;
-use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Route;
@@ -170,7 +168,6 @@ class Routes implements ContainerInjectionInterface {
       $collection_create_route = new Route("/{$resource_type->getPath()}");
       $collection_create_route->addDefaults([RouteObjectInterface::CONTROLLER_NAME => static::CONTROLLER_SERVICE_NAME . ':createIndividual']);
       $collection_create_route->setMethods(['POST']);
-      $collection_create_route->addDefaults(['serialization_class' => JsonApiDocumentTopLevel::class]);
       $create_requirement = sprintf("%s:%s", $resource_type->getEntityTypeId(), $resource_type->getBundle());
       $collection_create_route->setRequirement('_entity_create_access', $create_requirement);
       $collection_create_route->setRequirement('_csrf_request_header_token', 'TRUE');
@@ -303,7 +300,6 @@ class Routes implements ContainerInjectionInterface {
       $individual_update_route = new Route($individual_route->getPath());
       $individual_update_route->addDefaults([RouteObjectInterface::CONTROLLER_NAME => static::CONTROLLER_SERVICE_NAME . ':patchIndividual']);
       $individual_update_route->setMethods(['PATCH']);
-      $individual_update_route->addDefaults(['serialization_class' => JsonApiDocumentTopLevel::class]);
       $individual_update_route->setRequirement('_entity_access', "entity.update");
       $individual_update_route->setRequirement('_csrf_request_header_token', 'TRUE');
       $routes->add(static::getRouteName($resource_type, 'individual.patch'), $individual_update_route);
@@ -320,7 +316,6 @@ class Routes implements ContainerInjectionInterface {
       // other resources.
       $relationship_route = new Route("/{$path}/{entity}/relationships/{$relationship_field_name}");
       $relationship_route->addDefaults(['_on_relationship' => TRUE]);
-      $relationship_route->addDefaults(['serialization_class' => Relationship::class]);
       $relationship_route->addDefaults(['related' => $relationship_field_name]);
       $relationship_route->setRequirement(RelationshipFieldAccess::ROUTE_REQUIREMENT_KEY, $relationship_field_name);
       $relationship_route->setRequirement('_csrf_request_header_token', 'TRUE');
@@ -407,7 +402,7 @@ class Routes implements ContainerInjectionInterface {
    * @return string
    *   The generated route name.
    */
-  protected static function getRouteName(ResourceType $resource_type, $route_type) {
+  public static function getRouteName(ResourceType $resource_type, $route_type) {
     return sprintf('jsonapi.%s.%s', $resource_type->getTypeName(), $route_type);
   }
 

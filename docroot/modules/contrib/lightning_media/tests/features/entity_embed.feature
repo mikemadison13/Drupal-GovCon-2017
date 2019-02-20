@@ -29,7 +29,7 @@ Feature: Embedding entities in a WYSIWYG editor
       | tweet     | https://twitter.com/djphenaproxima/status/879739227617079296 |
       | instagram | https://www.instagram.com/p/lV3WqOoNDD                       |
 
-  @cd742161
+  @cd742161 @orca_public
   Scenario: Embedding an image with embed-specific alt text and image style
     Given a random image
     When I visit "/node/add/page"

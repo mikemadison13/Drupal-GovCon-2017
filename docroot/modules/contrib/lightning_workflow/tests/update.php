@@ -19,3 +19,12 @@ Drupal::configFactory()
 
 Drupal::configFactory()->getEditable('lightning_api.settings')->delete();
 Drupal::configFactory()->getEditable('media.type.tweet')->delete();
+
+Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
+
+$node_type = entity_load('node_type', 'page');
+if ($node_type) {
+  $node_type->delete();
+}
+
+user_role_revoke_permissions('authenticated', ['use text format basic_html']);

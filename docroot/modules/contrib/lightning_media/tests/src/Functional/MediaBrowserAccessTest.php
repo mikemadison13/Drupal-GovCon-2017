@@ -23,7 +23,7 @@ class MediaBrowserAccessTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($account);
 
-    $this->drupalGet('/entity-browser/iframe/media_browser');
+    $this->drupalGet('/entity-browser/modal/media_browser');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('No widgets are available.');
 
@@ -41,7 +41,7 @@ class MediaBrowserAccessTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($account);
 
-    $this->drupalGet('/entity-browser/iframe/media_browser');
+    $this->drupalGet('/entity-browser/modal/media_browser');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextNotContains('No widgets are available.');
     $this->assertSession()->buttonExists('Upload');

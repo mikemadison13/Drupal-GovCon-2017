@@ -8,6 +8,7 @@ use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
+use Drupal\jsonapi\JsonApiResource\ResourceObject;
 use Drupal\jsonapi\Normalizer\EntityReferenceFieldNormalizer;
 use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
 use Drupal\node\Entity\Node;
@@ -137,10 +138,9 @@ class EntityReferenceFieldNormalizerTest extends JsonapiKernelTestBase {
     // Set up the test dependencies.
     $this->referencingResourceType = $this->container->get('jsonapi.resource_type.repository')->get('node', 'referencer');
     $this->normalizer = new EntityReferenceFieldNormalizer(
-      $this->container->get('jsonapi.resource_type.repository'),
-      $this->container->get('entity.repository')
+      $this->container->get('jsonapi.link_manager')
     );
-    $this->normalizer->setSerializer($this->container->get('jsonapi.serializer_do_not_use_removal_imminent'));
+    $this->normalizer->setSerializer($this->container->get('jsonapi.serializer'));
   }
 
   /**
@@ -176,7 +176,10 @@ class EntityReferenceFieldNormalizerTest extends JsonapiKernelTestBase {
       return $value;
     }, $entity_property_names);
     // Normalize.
-    $actual = $this->normalizer->normalize($this->referencer->{$field_name}, 'api_json', ['account' => $this->account, 'resource_type' => $this->referencingResourceType]);
+    $actual = $this->normalizer->normalize($this->referencer->{$field_name}, 'api_json', [
+      'account' => $this->account,
+      'resource_object' => new ResourceObject($this->referencingResourceType, $this->referencer),
+    ]);
     // Assert.
     assert($actual instanceof CacheableNormalization);
     $this->assertEquals($expected, $actual->getNormalization());
