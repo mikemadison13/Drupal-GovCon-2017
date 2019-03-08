@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\node\Entity\NodeType;
+
 // Forcibly uninstall Lightning Dev, switch the installation profile from
 // Standard to Minimal, and delete defunct config objects.
 
@@ -31,7 +33,7 @@ Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
 
 // Delete all configuration associated with the Page content type, since certain
 // Behat fixture contexts reinstall Lightning Page.
-$node_type = entity_load('node_type', 'page');
+$node_type = NodeType::load('page');
 if ($node_type) {
   $node_type->delete();
 }

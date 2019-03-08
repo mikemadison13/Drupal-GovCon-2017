@@ -3,6 +3,7 @@
 namespace Drupal\Tests\lightning_api;
 
 use Drupal\Tests\lightning_core\FixtureBase;
+use Drupal\node\Entity\NodeType;
 
 /**
  * Performs set-up and tear-down tasks before and after each test scenario.
@@ -20,7 +21,7 @@ final class FixtureContext extends FixtureBase {
 
     // If Lightning Core's FixtureContext created the test content type before
     // now, react to it retroactively.
-    $node_type = entity_load('node_type', 'test');
+    $node_type = NodeType::load('test');
     if ($node_type) {
       lightning_api_entity_insert($node_type);
     }

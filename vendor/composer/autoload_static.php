@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
+class ComposerStaticInit0c46e10e0581ccbe4f5c6364990bcac3
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -187,6 +187,7 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
         ),
         'B' => 
         array (
+            'Brumann\\Polyfill\\' => 17,
             'Behat\\Mink\\Driver\\' => 18,
             'Behat\\Mink\\' => 11,
         ),
@@ -585,6 +586,10 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
         array (
             0 => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src',
         ),
+        'Brumann\\Polyfill\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/brumann/polyfill-unserialize/src',
+        ),
         'Behat\\Mink\\Driver\\' => 
         array (
             0 => __DIR__ . '/..' . '/behat/mink-browserkit-driver/src',
@@ -879,6 +884,7 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
         'Acquia\\Blt\\Robo\\Commands\\Tests\\SecurityUpdatesCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Tests/SecurityUpdatesCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Tests\\ServerCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Tests/ServerCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Tests\\TestsCommandBase' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Tests/TestsCommandBase.php',
+        'Acquia\\Blt\\Robo\\Commands\\Validate\\AcsfCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Validate/AcsfCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Validate\\AllCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Validate/AllCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Validate\\ComposerCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Validate/ComposerCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Validate\\DeprecatedCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Validate/DeprecatedCommand.php',
@@ -1556,6 +1562,7 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
         'Behat\\Testwork\\Translator\\ServiceContainer\\TranslatorExtension' => __DIR__ . '/..' . '/behat/behat/src/Behat/Testwork/Translator/ServiceContainer/TranslatorExtension.php',
         'Behat\\Transliterator\\SyncTool' => __DIR__ . '/..' . '/behat/transliterator/src/Behat/Transliterator/SyncTool.php',
         'Behat\\Transliterator\\Transliterator' => __DIR__ . '/..' . '/behat/transliterator/src/Behat/Transliterator/Transliterator.php',
+        'Brumann\\Polyfill\\Unserialize' => __DIR__ . '/..' . '/brumann/polyfill-unserialize/src/Unserialize.php',
         'Caxy\\HtmlDiff\\AbstractDiff' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/AbstractDiff.php',
         'Caxy\\HtmlDiff\\DiffCache' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/DiffCache.php',
         'Caxy\\HtmlDiff\\HtmlDiff' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/HtmlDiff.php',
@@ -1580,6 +1587,7 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
         'Caxy\\HtmlDiff\\Table\\TableMatch' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Table/TableMatch.php',
         'Caxy\\HtmlDiff\\Table\\TablePosition' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Table/TablePosition.php',
         'Caxy\\HtmlDiff\\Table\\TableRow' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Table/TableRow.php',
+        'Caxy\\HtmlDiff\\Util\\MbStringUtil' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Util/MbStringUtil.php',
         'CloudFlarePhpSdk\\ApiEndpoints\\CloudFlareAPI' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiEndpoints/CloudFlareAPI.php',
         'CloudFlarePhpSdk\\ApiEndpoints\\ZoneApi' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiEndpoints/ZoneApi.php',
         'CloudFlarePhpSdk\\ApiTypes\\CloudFlareApiResponse' => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src/ApiTypes/CloudFlareApiResponse.php',
@@ -1764,6 +1772,8 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
         'Consolidation\\AnnotatedCommand\\Parser\\Internal\\TagFactory' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/TagFactory.php',
         'Consolidation\\AnnotatedCommand\\ResultWriter' => __DIR__ . '/..' . '/consolidation/annotated-command/src/ResultWriter.php',
         'Consolidation\\Config\\Config' => __DIR__ . '/..' . '/consolidation/config/src/Config.php',
+        'Consolidation\\Config\\ConfigAwareInterface' => __DIR__ . '/..' . '/consolidation/config/src/ConfigAwareInterface.php',
+        'Consolidation\\Config\\ConfigAwareTrait' => __DIR__ . '/..' . '/consolidation/config/src/ConfigAwareTrait.php',
         'Consolidation\\Config\\ConfigInterface' => __DIR__ . '/..' . '/consolidation/config/src/ConfigInterface.php',
         'Consolidation\\Config\\GlobalOptionDefaultValuesInterface' => __DIR__ . '/..' . '/consolidation/config/src/GlobalOptionDefaultValuesInterface.php',
         'Consolidation\\Config\\Inject\\ConfigForCommand' => __DIR__ . '/..' . '/consolidation/config/src/Inject/ConfigForCommand.php',
@@ -1779,6 +1789,7 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
         'Consolidation\\Config\\Util\\ConfigInterpolatorTrait' => __DIR__ . '/..' . '/consolidation/config/src/Util/ConfigInterpolatorTrait.php',
         'Consolidation\\Config\\Util\\ConfigMerge' => __DIR__ . '/..' . '/consolidation/config/src/Util/ConfigMerge.php',
         'Consolidation\\Config\\Util\\ConfigOverlay' => __DIR__ . '/..' . '/consolidation/config/src/Util/ConfigOverlay.php',
+        'Consolidation\\Config\\Util\\ConfigRuntimeInterface' => __DIR__ . '/..' . '/consolidation/config/src/Util/ConfigRuntimeInterface.php',
         'Consolidation\\Config\\Util\\EnvConfig' => __DIR__ . '/..' . '/consolidation/config/src/Util/EnvConfig.php',
         'Consolidation\\Config\\Util\\Interpolator' => __DIR__ . '/..' . '/consolidation/config/src/Util/Interpolator.php',
         'Consolidation\\Log\\ConsoleLogLevel' => __DIR__ . '/..' . '/consolidation/log/src/ConsoleLogLevel.php',
@@ -2098,6 +2109,7 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Filter' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Filter.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\MenuLink' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/MenuLink.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Migrate\\Process' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Migrate/Process.php',
+        'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Migrate\\Source' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Migrate/Source.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\RestResource' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/RestResource.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Views\\ArgumentDefault' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Views/ArgumentDefault.php',
         'DrupalCodeGenerator\\Command\\Drupal_8\\Plugin\\Views\\Field' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Drupal_8/Plugin/Views/Field.php',
@@ -7350,11 +7362,24 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
         'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
         'TYPO3\\PharStreamWrapper\\Assertable' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Assertable.php',
         'TYPO3\\PharStreamWrapper\\Behavior' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Behavior.php',
+        'TYPO3\\PharStreamWrapper\\Collectable' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Collectable.php',
         'TYPO3\\PharStreamWrapper\\Exception' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Exception.php',
         'TYPO3\\PharStreamWrapper\\Helper' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Helper.php',
+        'TYPO3\\PharStreamWrapper\\Interceptor\\ConjunctionInterceptor' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Interceptor/ConjunctionInterceptor.php',
         'TYPO3\\PharStreamWrapper\\Interceptor\\PharExtensionInterceptor' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Interceptor/PharExtensionInterceptor.php',
+        'TYPO3\\PharStreamWrapper\\Interceptor\\PharMetaDataInterceptor' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Interceptor/PharMetaDataInterceptor.php',
         'TYPO3\\PharStreamWrapper\\Manager' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Manager.php',
         'TYPO3\\PharStreamWrapper\\PharStreamWrapper' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/PharStreamWrapper.php',
+        'TYPO3\\PharStreamWrapper\\Phar\\Container' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Phar/Container.php',
+        'TYPO3\\PharStreamWrapper\\Phar\\DeserializationException' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Phar/DeserializationException.php',
+        'TYPO3\\PharStreamWrapper\\Phar\\Manifest' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Phar/Manifest.php',
+        'TYPO3\\PharStreamWrapper\\Phar\\Reader' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Phar/Reader.php',
+        'TYPO3\\PharStreamWrapper\\Phar\\ReaderException' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Phar/ReaderException.php',
+        'TYPO3\\PharStreamWrapper\\Phar\\Stub' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Phar/Stub.php',
+        'TYPO3\\PharStreamWrapper\\Resolvable' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Resolvable.php',
+        'TYPO3\\PharStreamWrapper\\Resolver\\PharInvocation' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Resolver/PharInvocation.php',
+        'TYPO3\\PharStreamWrapper\\Resolver\\PharInvocationCollection' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Resolver/PharInvocationCollection.php',
+        'TYPO3\\PharStreamWrapper\\Resolver\\PharInvocationResolver' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Resolver/PharInvocationResolver.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
         'TheSeer\\Tokenizer\\Exception' => __DIR__ . '/..' . '/theseer/tokenizer/src/Exception.php',
         'TheSeer\\Tokenizer\\NamespaceUri' => __DIR__ . '/..' . '/theseer/tokenizer/src/NamespaceUri.php',
@@ -8088,10 +8113,10 @@ class ComposerStaticInit7190c715b6f619612e280c1be5ba4e86
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit7190c715b6f619612e280c1be5ba4e86::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit7190c715b6f619612e280c1be5ba4e86::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit7190c715b6f619612e280c1be5ba4e86::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit7190c715b6f619612e280c1be5ba4e86::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit0c46e10e0581ccbe4f5c6364990bcac3::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit0c46e10e0581ccbe4f5c6364990bcac3::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit0c46e10e0581ccbe4f5c6364990bcac3::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit0c46e10e0581ccbe4f5c6364990bcac3::$classMap;
 
         }, null, ClassLoader::class);
     }

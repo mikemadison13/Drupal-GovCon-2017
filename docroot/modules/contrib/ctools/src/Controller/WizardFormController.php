@@ -6,6 +6,7 @@ use Drupal\Core\Controller\ControllerResolverInterface;
 use Drupal\Core\Controller\FormController;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\ctools\Wizard\FormWizardInterface;
 use Drupal\ctools\Wizard\WizardFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -24,7 +25,7 @@ class WizardFormController extends FormController {
   /**
    * Tempstore Factory for keeping track of values in each step of the wizard.
    *
-   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
+   * @var \Drupal\user\SharedTempStoreFactory
    */
   protected $tempstore;
 

@@ -61,7 +61,7 @@ abstract class ApiTestBase extends BrowserTestBase {
     $url = Url::fromRoute('lightning_api.generate_keys');
     $this->drupalGet($url);
     $values = [
-      'dir' => drupal_realpath('temporary://'),
+      'dir' => \Drupal::service('file_system')->realpath('temporary://'),
       'private_key' => 'private.key',
       'public_key' => 'public.key',
     ];

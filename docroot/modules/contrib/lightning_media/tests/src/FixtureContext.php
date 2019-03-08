@@ -14,7 +14,6 @@ final class FixtureContext extends FixtureBase {
   public function setUp() {
     $this->installModule('image_widget_crop');
     $this->installModule('lightning_page');
-    $this->installModule('pathauto');
 
     // Ensure that the page content type and all related configuration will be
     // deleted when Lightning Page is uninstalled.

@@ -2,9 +2,10 @@
 
 namespace Drupal\ctools\Form;
 
+
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\ConfirmFormBase;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -13,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class ContextDelete extends ConfirmFormBase {
 
   /**
-   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
+   * @var \Drupal\user\SharedTempStoreFactory
    */
   protected $tempstore;
 

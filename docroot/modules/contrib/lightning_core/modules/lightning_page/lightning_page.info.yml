@@ -4,11 +4,11 @@ package: Lightning
 type: module
 description: 'Provides a "Basic Page" content type that is, indeed, very basic.'
 dependencies:
-  - lightning_core
-  - node
+  - lightning_core:lightning_core
+  - drupal:node
 
-# Information added by Drupal.org packaging script on 2019-02-14
-version: '8.x-3.6'
+# Information added by Drupal.org packaging script on 2019-02-20
+version: '8.x-3.7'
 core: '8.x'
 project: 'lightning_core'
-datestamp: 1550161106
+datestamp: 1550695305

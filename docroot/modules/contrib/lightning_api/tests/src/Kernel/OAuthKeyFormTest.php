@@ -21,7 +21,7 @@ class OAuthKeyFormTest extends KernelTestBase {
   ];
 
   public function testForm() {
-    $dir = drupal_realpath('temporary://');
+    $dir = \Drupal::service('file_system')->realpath('temporary://');
 
     $form_state = (new FormState)->setValues([
       'dir' => $dir,

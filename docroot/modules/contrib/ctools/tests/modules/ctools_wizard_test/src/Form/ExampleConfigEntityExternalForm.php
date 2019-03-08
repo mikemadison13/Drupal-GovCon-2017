@@ -5,7 +5,7 @@ namespace Drupal\ctools_wizard_test\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ExampleConfigEntityExternalForm extends FormBase {
@@ -13,7 +13,7 @@ class ExampleConfigEntityExternalForm extends FormBase {
   /**
    * Tempstore factory.
    *
-   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
+   * @var \Drupal\user\SharedTempStoreFactory
    */
   protected $tempstore;
 
