@@ -76,7 +76,7 @@ class ApiTest extends ApiTestBase {
     // the test database, so we don't need to worry about it.
     \Drupal::service('module_installer')->uninstall(['api_test']);
     $this->assertSame(1, (int) \Drupal::entityQuery('user')->condition('uid', 1, '>')->count()->execute());
-    $this->assertSame(0, (int) \Drupal::entityQuery('consumer')->count()->execute());
+    $this->assertSame(1, (int) \Drupal::entityQuery('consumer')->count()->execute());
     $this->assertSame(0, (int) \Drupal::entityQuery('node')->count()->execute());
   }
 

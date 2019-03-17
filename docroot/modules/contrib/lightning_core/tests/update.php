@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\node\Entity\NodeType;
+
 // Forcibly uninstall Lightning Dev.
 Drupal::configFactory()
   ->getEditable('core.extension')
@@ -9,6 +11,6 @@ Drupal::configFactory()
 Drupal::keyValue('system.schema')->deleteMultiple(['lightning_dev']);
 
 // Remove Workflow-related settings from the Page content type.
-entity_load('node_type', 'page')
+NodeType::load('page')
   ->unsetThirdPartySetting('lightning_workflow', 'workflow')
   ->save();

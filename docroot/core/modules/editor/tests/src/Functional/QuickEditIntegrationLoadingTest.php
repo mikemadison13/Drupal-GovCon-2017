@@ -4,6 +4,7 @@ namespace Drupal\Tests\editor\Functional;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
+use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\Tests\BrowserTestBase;
 
@@ -129,11 +130,20 @@ class QuickEditIntegrationLoadingTest extends BrowserTestBase {
     $this->testNode->isDefaultRevision(FALSE);
     $this->testNode->body->value = '<p>Content in a pending revision.</p>';
     $this->testNode->save();
+
     // Ensure the content from the latest revision is loaded from the quickedit
     // editor route.
-    $response = $this->drupalPost("editor/node/{$this->testNode->id()}/body/en/full", '', [], ['query' => [MainContentViewSubscriber::WRAPPER_FORMAT => 'drupal_ajax']]);
-    $this->setRawContent($response);
-    $this->assertRaw('Content in a pending revision.');
+    $url = Url::fromRoute('editor.field_untransformed_text')
+      ->setRouteParameter('entity_type', 'node')
+      ->setRouteParameter('entity', $this->testNode->id())
+      ->setRouteParameter('field_name', 'body')
+      ->setRouteParameter('langcode', 'en')
+      ->setRouteParameter('view_mode_id', 'full')
+      ->setOption('query', [
+        MainContentViewSubscriber::WRAPPER_FORMAT => 'drupal_ajax',
+      ]);
+    $this->drupalGet($url);
+    $this->assertSession()->responseContains('Content in a pending revision.');
   }
 
   /**

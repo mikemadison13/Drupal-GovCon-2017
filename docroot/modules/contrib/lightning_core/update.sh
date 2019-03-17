@@ -11,7 +11,7 @@ if [ -f $FIXTURE ]; then
     drush pm-enable menu_ui --yes
 
     # Reinstall modules which were blown away by the database restore.
-    orca fixture:install-modules
+    orca fixture:enable-modules
 fi
 
 drush updatedb --yes
@@ -24,4 +24,4 @@ drush site:install --yes --existing-config
 # Big Pipe interferes with non-JavaScript functional tests, so uninstall it now.
 drush pm-uninstall big_pipe --yes
 
-cd $ORCA_FIXTURE && git add . && git tag --force fresh-fixture
+orca fixture:backup --force

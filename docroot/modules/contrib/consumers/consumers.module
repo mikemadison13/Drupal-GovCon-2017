@@ -5,7 +5,10 @@
  * Module implementation file.
  */
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Implements hook_theme().
@@ -41,4 +44,19 @@ function template_preprocess_consumer(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
+}
+
+/**
+ * Implements hook_jsonapi_ENTITY_TYPE_filter_access().
+ */
+function consumers_jsonapi_consumer_filter_access(
+  EntityTypeInterface $entity_type,
+  AccountInterface $account
+) {
+  return [
+    JSONAPI_FILTER_AMONG_OWN => AccessResult::allowedIfHasPermission(
+      $account,
+      'view own consumer entities'
+    ),
+  ];
 }

@@ -4,6 +4,7 @@ services:
     arguments: ['@request_stack', '@entity.repository']
     calls:
       - [setLogger, ['@logger.channel.consumers']]
+      - [setEntityStorage, ['@entity_type.manager']]
 
   logger.channel.consumers:
     parent: logger.channel_base

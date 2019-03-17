@@ -2,12 +2,16 @@
 
 namespace Drupal\consumers\Entity;
 
+use Drupal\Core\Access\AccessException;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\user\EntityOwnerInterface;
+// @todo: Use Drupal\user\EntityOwnerInterface Drupal\user\EntityOwnerTrait when D8.7 is required.
+use Drupal\consumers\EntityOwnerTrait;
 
 /**
  * Defines the Consumer entity.
@@ -22,9 +26,10 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  *       "add" = "Drupal\consumers\Entity\Form\ConsumerForm",
  *       "edit" = "Drupal\consumers\Entity\Form\ConsumerForm",
  *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
+ *       "make-default" = "Drupal\consumers\Entity\Form\MakeDefaultForm",
  *     },
  *     "route_provider" = {
- *       "html" = "Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
+ *       "html" = "Drupal\consumers\Entity\Routing\HtmlRouteProvider",
  *     },
  *     "views_data" = "\Drupal\views\EntityViewsData",
  *     "access" = "Drupal\consumers\AccessControlHandler",
@@ -38,25 +43,41 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  *     "label" = "label",
  *     "uuid" = "uuid",
  *     "langcode" = "langcode",
+ *     "owner" = "owner_id",
  *   },
  *   links = {
  *     "canonical" = "/admin/config/services/consumer/{consumer}",
  *     "collection" = "/admin/config/services/consumer",
  *     "add-form" = "/admin/config/services/consumer/add",
  *     "edit-form" = "/admin/config/services/consumer/{consumer}/edit",
- *     "delete-form" = "/admin/config/services/consumer/{consumer}/delete"
+ *     "delete-form" = "/admin/config/services/consumer/{consumer}/delete",
+ *     "make-default-form" = "/admin/config/services/consumer/{consumer}/make-default",
  *   }
  * )
  */
-class Consumer extends ContentEntityBase {
+class Consumer extends ContentEntityBase implements EntityOwnerInterface {
 
   use EntityChangedTrait;
+  use EntityOwnerTrait;
 
   /**
    * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage) {
     parent::preSave($storage);
+    $was_not_default = is_null($this->original)
+      || !$this->original->get('is_default')->value;
+    if ($this->get('is_default')->value && $was_not_default) {
+      // If we are making this the new default consumer.
+      try {
+        $this->removeDefaultConsumerFlags();
+      }
+      catch (AccessException $exception) {
+        watchdog_exception('consumers', $exception);
+        \Drupal::messenger()->addError($exception->getMessage());
+        $this->set('is_default', FALSE);
+      }
+    }
 
     foreach (array_keys($this->getTranslationLanguages()) as $langcode) {
       $translation = $this->getTranslation($langcode);
@@ -73,23 +94,7 @@ class Consumer extends ContentEntityBase {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
-
-    $fields['owner_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(new TranslatableMarkup('Authored by'))
-      ->setDescription(new TranslatableMarkup('The username of the consumer author.'))
-      ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'user')
-      ->setDefaultValueCallback('Drupal\consumers\Entity\Consumer::getCurrentUserId')
-      ->setTranslatable(TRUE)
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'author',
-        'weight' => 0,
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'hidden',
-      ])
-      ->setDisplayConfigurable('form', TRUE);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
 
     $fields['label'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Label'))
@@ -160,19 +165,72 @@ class Consumer extends ContentEntityBase {
       ->setTranslatable(TRUE)
       ->setDefaultValue(TRUE);
 
+    $fields['is_default'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Is this the default consumer?'))
+      ->setDescription(new TranslatableMarkup('There can only be one default consumer. Mark this to use this consumer when none other applies.'))
+      ->setDisplayOptions('view', [
+        'label' => 'inline',
+        'type' => 'boolean',
+        'weight' => 4,
+      ])
+      ->setDisplayOptions('form', [
+        'weight' => 4,
+      ])
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setDefaultValue(FALSE);
+
     return $fields;
   }
 
   /**
-   * Default value callback for 'uid' base field definition.
+   * Removes the is_default flag from other consumers.
    *
-   * @see ::baseFieldDefinitions()
-   *
-   * @return array
-   *   An array of default values.
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * @throws \Drupal\Core\Access\AccessException
    */
-  public static function getCurrentUserId() {
-    return [\Drupal::currentUser()->id()];
+  protected function removeDefaultConsumerFlags() {
+    // Find the old defaults.
+    $entity_storage = $this->entityTypeManager()
+      ->getStorage($this->getEntityTypeId());
+    $entity_ids = $entity_storage
+      ->getQuery()
+      ->condition('is_default', TRUE)
+      ->condition('id', $this->id(), '!=')
+      ->execute();
+    $entity_ids = $entity_ids ? array_values($entity_ids) : [];
+    if (empty($entity_ids)) {
+      $default_entities = [];
+    }
+    else {
+      $default_entities = $entity_storage->loadMultiple($entity_ids);
+      $default_entities = array_map(
+        static::setDefaultTo(FALSE),
+        $default_entities
+      );
+      $invalid_entities = array_filter($default_entities, function (Consumer $consumer) {
+        return !$consumer->access('update', NULL, TRUE)->isAllowed();
+      });
+      if (count($invalid_entities)) {
+        throw new AccessException('Unable to change the current default consumer. Permission denied.');
+      }
+    }
+    array_map([$entity_storage, 'save'], $default_entities);
+  }
+
+  /**
+   * Gets closure that will set is_default to the selected value for an entity.
+   *
+   * @param boolean $value
+   *   The final value of the "is_default" field.
+   *
+   * @return \Closure
+   */
+  protected static function setDefaultTo($value) {
+    return function (Consumer $consumer) use ($value) {
+      $consumer->set('is_default', $value);
+      return $consumer;
+    };
   }
 
 }
