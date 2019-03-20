@@ -1234,17 +1234,17 @@
     },
     {
         "name": "composer/semver",
-        "version": "1.4.2",
-        "version_normalized": "1.4.2.0",
+        "version": "1.5.0",
+        "version_normalized": "1.5.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/composer/semver.git",
-            "reference": "c7cb9a2095a074d131b65a8a0cd294479d785573"
+            "reference": "46d9139568ccb8d9e7cdd4539cab7347568a5e2e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/composer/semver/zipball/c7cb9a2095a074d131b65a8a0cd294479d785573",
-            "reference": "c7cb9a2095a074d131b65a8a0cd294479d785573",
+            "url": "https://api.github.com/repos/composer/semver/zipball/46d9139568ccb8d9e7cdd4539cab7347568a5e2e",
+            "reference": "46d9139568ccb8d9e7cdd4539cab7347568a5e2e",
             "shasum": ""
         },
         "require": {
@@ -1254,7 +1254,7 @@
             "phpunit/phpunit": "^4.5 || ^5.0.5",
             "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
         },
-        "time": "2016-08-30T16:08:34+00:00",
+        "time": "2019-03-19T17:25:45+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -4518,17 +4518,17 @@
     },
     {
         "name": "drupal/core",
-        "version": "8.6.12",
-        "version_normalized": "8.6.12.0",
+        "version": "8.6.13",
+        "version_normalized": "8.6.13.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drupal/core.git",
-            "reference": "f81e50dd6145c1d35797eb522f841a96804e9869"
+            "reference": "8d5b80030ac3f13df2d66aeef0ea388fd9a90632"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/drupal/core/zipball/f81e50dd6145c1d35797eb522f841a96804e9869",
-            "reference": "f81e50dd6145c1d35797eb522f841a96804e9869",
+            "url": "https://api.github.com/repos/drupal/core/zipball/8d5b80030ac3f13df2d66aeef0ea388fd9a90632",
+            "reference": "8d5b80030ac3f13df2d66aeef0ea388fd9a90632",
             "shasum": ""
         },
         "require": {
@@ -4701,7 +4701,7 @@
             "symfony/debug": "^3.4.0",
             "symfony/phpunit-bridge": "^3.4.3"
         },
-        "time": "2019-03-14T22:08:21+00:00",
+        "time": "2019-03-20T06:01:19+00:00",
         "type": "drupal-core",
         "extra": {
             "merge-plugin": {
@@ -13423,17 +13423,17 @@
     },
     {
         "name": "squizlabs/php_codesniffer",
-        "version": "3.4.0",
-        "version_normalized": "3.4.0.0",
+        "version": "3.4.1",
+        "version_normalized": "3.4.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-            "reference": "379deb987e26c7cd103a7b387aea178baec96e48"
+            "reference": "5b4333b4010625d29580eb4a41f1e53251be6baa"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/379deb987e26c7cd103a7b387aea178baec96e48",
-            "reference": "379deb987e26c7cd103a7b387aea178baec96e48",
+            "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/5b4333b4010625d29580eb4a41f1e53251be6baa",
+            "reference": "5b4333b4010625d29580eb4a41f1e53251be6baa",
             "shasum": ""
         },
         "require": {
@@ -13445,7 +13445,7 @@
         "require-dev": {
             "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0"
         },
-        "time": "2018-12-19T23:57:18+00:00",
+        "time": "2019-03-19T03:22:27+00:00",
         "bin": [
             "bin/phpcs",
             "bin/phpcbf"
@@ -13468,7 +13468,7 @@
             }
         ],
         "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
-        "homepage": "http://www.squizlabs.com/php-codesniffer",
+        "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
         "keywords": [
             "phpcs",
             "standards"
