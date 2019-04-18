@@ -24,7 +24,8 @@ abstract class ApiTestBase extends BrowserTestBase {
    */
   protected function setUp() {
     parent::setUp();
-
+    // Allow writing via JSON:API.
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save();
     // Generate and store keys for use by OAuth.
     $this->generateKeys();
   }

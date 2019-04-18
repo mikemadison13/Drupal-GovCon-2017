@@ -63,7 +63,11 @@ use Drupal\Core\Http\Exception\CacheableBadRequestHttpException;
  *
  * *Note:* path expansion is *not* performed for @code include @endcode paths.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class FieldResolver {
 
@@ -193,7 +197,7 @@ class FieldResolver {
       try {
         // Each resource type may resolve the path differently and may return
         // multiple possible resolutions.
-        $resolved += static::resolveInternalIncludePath($relatable_resource_type, $remaining_parts, $depth + 1);
+        $resolved = array_merge($resolved, static::resolveInternalIncludePath($relatable_resource_type, $remaining_parts, $depth + 1));
       }
       catch (CacheableBadRequestHttpException $e) {
         $exceptions[] = $e;
@@ -210,11 +214,17 @@ class FieldResolver {
         : $previous_messages
       );
     }
-    // The resolved internal paths do not include the current field name because
-    // resolution happens in a recursive process.
-    return array_map(function ($possibility) use ($internal_field_name) {
-      return array_merge([$internal_field_name], $possibility);
+    // Remove duplicates by converting to strings and then using array_unique().
+    $resolved_as_strings = array_map(function ($possibility) {
+      return implode('.', $possibility);
     }, $resolved);
+    $resolved_as_strings = array_unique($resolved_as_strings);
+
+    // The resolved internal paths do not include the current field name because
+    // resolution happens in a recursive process. Convert back from strings.
+    return array_map(function ($possibility) use ($internal_field_name) {
+      return array_merge([$internal_field_name], explode('.', $possibility));
+    }, $resolved_as_strings);
   }
 
   /**

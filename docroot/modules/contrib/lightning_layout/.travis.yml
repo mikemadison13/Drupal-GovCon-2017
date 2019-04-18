@@ -3,7 +3,6 @@ language: php
 
 cache:
   bundler: true
-  apt: true
   directories:
     - "$HOME/.composer/cache"
     - "$HOME/.drush/cache"
@@ -12,11 +11,16 @@ php:
   - 7.1
 
 env:
-  - VERSION=HEAD
-  - VERSION=1.6.0
-  # The final CI slot should be used to test the update path from the oldest
-  # available database fixture.
+  - VERSION=HEAD ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
+  - VERSION=1.0.0 ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
   - VERSION=1.0.0
+  - VERSION=1.0.0 ORCA_FIXTURE_FLAGS=--dev
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: VERSION=1.0.0
+    - env: VERSION=1.0.0 ORCA_FIXTURE_FLAGS=--dev
 
 addons:
   chrome: stable
@@ -38,25 +42,28 @@ before_install:
   - export PATH="$ORCA/vendor/bin:$PATH"
   - export PATH="$ORCA_FIXTURE/vendor/bin:$PATH"
 
+  # Add the ORCA repository.
+  - composer config --global repositories.orca vcs "https://github.com/acquia/orca"
+  # Use a personal access token to authenticate with GitHub, to avoid being
+  # rate-limited. The token is configured in the Travis CI repository settings.
+  - composer config --global github-oauth.github.com $GITHUB_API_TOKEN
+
 install:
-  # Install ORCA so that we can build the fixture using that.
-  - git clone --depth 1 git@github.com:acquia/orca.git ../orca
+  - composer create-project --stability dev --no-dev acquia/orca $ORCA
   - "$ORCA/bin/travis/install 8.x-1.x"
 
   # Run ORCA static analysis tools.
   - orca static-analysis:run ./
 
   # Use ORCA to build the code base.
-  - orca fixture:init -f --sut $ORCA_SUT --sut-only
+  - orca fixture:init -f --sut $ORCA_SUT $ORCA_FIXTURE_FLAGS
 
 before_script:
   - cd $ORCA_FIXTURE/docroot
   - $TRAVIS_BUILD_DIR/update.sh $VERSION
-  - drush runserver --default-server=builtin 8080 &>/dev/null &
-  - chromedriver --port=4444 &
 
 script:
-  - orca tests:run --no-servers --sut-only --sut $ORCA_SUT
+  - orca tests:run --sut $ORCA_SUT $ORCA_TEST_FLAGS
 
 after_failure:
   - drush watchdog:show --count=100 --severity=Error --extended

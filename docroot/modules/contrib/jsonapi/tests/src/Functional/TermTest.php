@@ -275,6 +275,24 @@ class TermTest extends ResourceTestBase {
     if (floatval(\Drupal::VERSION) >= 8.6) {
       $expected_document['data']['attributes']['status'] = TRUE;
     }
+    if (floatval(\Drupal::VERSION) >= 8.7) {
+      $expected_document['data']['attributes']['drupal_internal__revision_id'] = 1;
+      $expected_document['data']['attributes']['revision_created'] = (new \DateTime())->setTimestamp($this->entity->getRevisionCreationTime())->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::RFC3339);
+      $expected_document['data']['attributes']['revision_log_message'] = NULL;
+      // @todo Attempt to remove this in https://www.drupal.org/project/drupal/issues/2933518.
+      $expected_document['data']['attributes']['revision_translation_affected'] = TRUE;
+      $expected_document['data']['relationships']['revision_user'] = [
+        'data' => NULL,
+        'links' => [
+          'related' => [
+            'href' => $self_url . '/revision_user',
+          ],
+          'self' => [
+            'href' => $self_url . '/relationships/revision_user',
+          ],
+        ],
+      ];
+    }
 
     return $expected_document;
   }
@@ -369,6 +387,7 @@ class TermTest extends ResourceTestBase {
   public function testPatchPath() {
     $this->setUpAuthorization('GET');
     $this->setUpAuthorization('PATCH');
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
 
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
     $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()]);
@@ -470,6 +489,13 @@ class TermTest extends ResourceTestBase {
         [3, 2],
       ],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function testRelated() {
+    $this->markTestSkipped('Remove this in https://www.drupal.org/project/jsonapi/issues/2940339');
   }
 
   /**

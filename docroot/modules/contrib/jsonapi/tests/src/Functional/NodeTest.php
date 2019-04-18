@@ -39,6 +39,16 @@ class NodeTest extends ResourceTestBase {
 
   /**
    * {@inheritdoc}
+   */
+  protected static $resourceTypeIsVersionable = TRUE;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $newRevisionsShouldBeAutomatic = TRUE;
+
+  /**
+   * {@inheritdoc}
    *
    * @var \Drupal\node\NodeInterface
    */
@@ -123,7 +133,11 @@ class NodeTest extends ResourceTestBase {
    */
   protected function getExpectedDocument() {
     $author = User::load($this->entity->getOwnerId());
-    $self_url = Url::fromUri('base:/jsonapi/node/camelids/' . $this->entity->uuid())->setAbsolute()->toString(TRUE)->getGeneratedUrl();
+    $base_url = Url::fromUri('base:/jsonapi/node/camelids/' . $this->entity->uuid())->setAbsolute();
+    $self_url = clone $base_url;
+    $version_identifier = 'id:' . $this->entity->getRevisionId();
+    $self_url = $self_url->setOption('query', ['resourceVersion' => $version_identifier]);
+    $version_query_string = '?resourceVersion=' . urlencode($version_identifier);
     return [
       'jsonapi' => [
         'meta' => [
@@ -134,13 +148,13 @@ class NodeTest extends ResourceTestBase {
         'version' => '1.0',
       ],
       'links' => [
-        'self' => ['href' => $self_url],
+        'self' => ['href' => $base_url->toString()],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'node--camelids',
         'links' => [
-          'self' => ['href' => $self_url],
+          'self' => ['href' => $self_url->toString()],
         ],
         'attributes' => [
           'created' => '1973-11-29T21:33:09+00:00',
@@ -170,8 +184,12 @@ class NodeTest extends ResourceTestBase {
               'type' => 'node_type--node_type',
             ],
             'links' => [
-              'related' => ['href' => $self_url . '/node_type'],
-              'self' => ['href' => $self_url . '/relationships/node_type'],
+              'related' => [
+                'href' => $base_url->toString() . '/node_type' . $version_query_string,
+              ],
+              'self' => [
+                'href' => $base_url->toString() . '/relationships/node_type' . $version_query_string,
+              ],
             ],
           ],
           'uid' => [
@@ -180,8 +198,12 @@ class NodeTest extends ResourceTestBase {
               'type' => 'user--user',
             ],
             'links' => [
-              'related' => ['href' => $self_url . '/uid'],
-              'self' => ['href' => $self_url . '/relationships/uid'],
+              'related' => [
+                'href' => $base_url->toString() . '/uid' . $version_query_string,
+              ],
+              'self' => [
+                'href' => $base_url->toString() . '/relationships/uid' . $version_query_string,
+              ],
             ],
           ],
           'revision_uid' => [
@@ -190,8 +212,12 @@ class NodeTest extends ResourceTestBase {
               'type' => 'user--user',
             ],
             'links' => [
-              'related' => ['href' => $self_url . '/revision_uid'],
-              'self' => ['href' => $self_url . '/relationships/revision_uid'],
+              'related' => [
+                'href' => $base_url->toString() . '/revision_uid' . $version_query_string,
+              ],
+              'self' => [
+                'href' => $base_url->toString() . '/relationships/revision_uid' . $version_query_string,
+              ],
             ],
           ],
         ],
@@ -219,13 +245,10 @@ class NodeTest extends ResourceTestBase {
   protected function getExpectedUnauthorizedAccessMessage($method) {
     switch ($method) {
       case 'GET':
+      case 'POST':
       case 'PATCH':
       case 'DELETE':
         return "The 'access content' permission is required.";
-
-      case 'POST':
-        // @see \Drupal\node\NodeAccessControlHandler::createAccess() forbids access without providing a reason if the user doe
-        return '';
     }
   }
 
@@ -240,6 +263,7 @@ class NodeTest extends ResourceTestBase {
   public function testPatchPath() {
     $this->setUpAuthorization('GET');
     $this->setUpAuthorization('PATCH');
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
 
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
     $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()]);
@@ -293,7 +317,7 @@ class NodeTest extends ResourceTestBase {
       'errors' => [
         [
           'title' => 'Forbidden',
-          'status' => 403,
+          'status' => '403',
           'detail' => 'The current user is not allowed to GET the selected resource.',
           'links' => [
             'info' => ['href' => HttpExceptionNormalizer::getInfoUrl(403)],
@@ -343,6 +367,7 @@ class NodeTest extends ResourceTestBase {
    */
   public function testPostNonExistingAuthor() {
     $this->setUpAuthorization('POST');
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
     $this->grantPermissionsToTestedRole(['administer nodes']);
 
     $random_uuid = \Drupal::service('uuid')->generate();
@@ -364,7 +389,7 @@ class NodeTest extends ResourceTestBase {
     $expected_document = [
       'errors' => [
         0 => [
-          'status' => 404,
+          'status' => '404',
           'title' => 'Not Found',
           'detail' => "The resource identified by `user--user:$random_uuid` (given as a relationship item) could not be found.",
           'links' => [

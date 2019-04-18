@@ -19,6 +19,7 @@ class FieldResolverTest extends JsonapiKernelTestBase {
 
   public static $modules = [
     'entity_test',
+    'jsonapi_test_field_aliasing',
     'jsonapi_test_field_filter_access',
     'serialization',
     'field',
@@ -46,6 +47,7 @@ class FieldResolverTest extends JsonapiKernelTestBase {
   protected function setUp() {
     parent::setUp();
 
+    $this->installEntitySchema('entity_test_with_bundle');
     $this->sut = \Drupal::service('jsonapi.field_resolver');
 
     $this->makeBundle('bundle1');
@@ -68,6 +70,11 @@ class FieldResolverTest extends JsonapiKernelTestBase {
 
     // Add a field with multiple properties.
     $this->makeField('text', 'field_test_text', 'entity_test_with_bundle', ['bundle1', 'bundle2']);
+
+    // Add two fields that have different internal names but have the same
+    // public name.
+    $this->makeField('entity_reference', 'field_test_alias_a', 'entity_test_with_bundle', ['bundle2'], $settings);
+    $this->makeField('entity_reference', 'field_test_alias_b', 'entity_test_with_bundle', ['bundle3'], $settings);
 
     $this->resourceTypeRepository = $this->container->get('jsonapi.resource_type.repository');
   }
@@ -92,6 +99,13 @@ class FieldResolverTest extends JsonapiKernelTestBase {
       'entity reference then another entity reference' => [
          [['field_test_ref1', 'field_test_ref3']],
         'field_test_ref1.field_test_ref3',
+      ],
+      'entity reference with multiple target bundles, each with different field, but the same public field name' => [
+        [
+          ['field_test_ref1', 'field_test_alias_a'],
+          ['field_test_ref1', 'field_test_alias_b'],
+        ],
+        'field_test_ref1.field_test_alias',
       ],
     ];
   }

@@ -12,7 +12,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 /**
  * Converts the Drupal entity object to a JSON:API array structure.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 abstract class EntityDenormalizerBase extends NormalizerBase implements DenormalizerInterface {
 

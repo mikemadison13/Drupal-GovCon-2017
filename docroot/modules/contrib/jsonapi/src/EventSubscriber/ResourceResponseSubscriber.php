@@ -16,8 +16,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * Response subscriber that serializes and removes ResourceResponses' data.
  *
- * @see \Drupal\rest\EventSubscriber\ResourceResponseSubscriber
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  *
  * This is 99% identical to:
  *
@@ -30,6 +33,8 @@ use Symfony\Component\Serializer\SerializerInterface;
  * 4. It adds the CacheableNormalization object returned by JSON:API
  *    normalization to the response object.
  * 5. It flattens only to a cacheable response if the HTTP method is cacheable.
+ *
+ * @see \Drupal\rest\EventSubscriber\ResourceResponseSubscriber
  */
 class ResourceResponseSubscriber implements EventSubscriberInterface {
 

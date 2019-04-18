@@ -61,7 +61,7 @@ class BlockContentTest extends ResourceTestBase {
       $block_content_type = BlockContentType::create([
         'id' => 'basic',
         'label' => 'basic',
-        'revision' => TRUE,
+        'revision' => FALSE,
       ]);
       $block_content_type->save();
       block_content_add_body_field($block_content_type->id());

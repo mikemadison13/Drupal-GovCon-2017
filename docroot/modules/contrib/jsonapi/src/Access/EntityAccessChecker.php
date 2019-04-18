@@ -28,7 +28,11 @@ use Symfony\Component\Routing\RouterInterface;
  * have non-standard access checking logic. This class centralizes entity access
  * checking logic.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class EntityAccessChecker {
 
@@ -174,13 +178,13 @@ class EntityAccessChecker {
         $label_access = $entity->access('view label', NULL, TRUE);
         $entity->addCacheableDependency($label_access);
         if ($label_access->isAllowed()) {
-          return new LabelOnlyResourceObject($resource_type, $entity);
+          return LabelOnlyResourceObject::createFromEntity($resource_type, $entity);
         }
         $access = $access->orIf($label_access);
       }
       return new EntityAccessDeniedHttpException($entity, $access, '/data', 'The current user is not allowed to GET the selected resource.');
     }
-    return new ResourceObject($resource_type, $entity);
+    return ResourceObject::createFromEntity($resource_type, $entity);
   }
 
   /**

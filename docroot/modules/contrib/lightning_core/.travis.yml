@@ -42,9 +42,14 @@ before_install:
   - export PATH="$ORCA/vendor/bin:$PATH"
   - export PATH="$ORCA_FIXTURE/vendor/bin:$PATH"
 
+  # Add the ORCA repository.
+  - composer config --global repositories.orca vcs "https://github.com/acquia/orca"
+  # Use a personal access token to authenticate with GitHub, to avoid being
+  # rate-limited. The token is configured in the Travis CI repository settings.
+  - composer config --global github-oauth.github.com $GITHUB_API_TOKEN
+
 install:
-  # Install ORCA so that we can build the fixture using that.
-  - git clone --depth 1 git@github.com:acquia/orca.git ../orca
+  - composer create-project --stability dev --no-dev acquia/orca $ORCA
   - "$ORCA/bin/travis/install 8.x-3.x"
 
   # Run ORCA static analysis tools.

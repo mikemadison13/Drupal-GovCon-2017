@@ -10,6 +10,7 @@ use Drupal\Tests\lightning_layout\Traits\PanelsIPETrait;
 
 /**
  * @group lightning_layout
+ * @group orca_public
  */
 class IpeQuickEditTest extends WebDriverTestBase {
 

@@ -14,9 +14,11 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * JSON:API does respect generic (non-JSON:API) DataType-level normalizers.
  *
- * @see jsonapi.api.php
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
  *
- * @internal
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class RegisterSerializationClassesCompilerPass extends DrupalRegisterSerializationClassesCompilerPass {
 

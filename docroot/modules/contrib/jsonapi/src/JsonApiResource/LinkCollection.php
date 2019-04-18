@@ -7,7 +7,11 @@ use Drupal\Component\Assertion\Inspector;
 /**
  * Contains a set of JSON:API Link objects.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 final class LinkCollection implements \IteratorAggregate {
 
@@ -24,7 +28,7 @@ final class LinkCollection implements \IteratorAggregate {
    * All links objects exist within a context object. Links form a relationship
    * between a source IRI and target IRI. A context is the link's source.
    *
-   * @var \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel
+   * @var \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject
    *
    * @see https://tools.ietf.org/html/rfc8288#section-3.2
    */

@@ -8,7 +8,12 @@ use Drupal\Core\TypedData\Plugin\DataType\Timestamp;
 /**
  * Converts values for the Timestamp data type to and from common formats.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
+ *
  * @see \Drupal\serialization\Normalizer\TimestampNormalizer
  * @todo Remove when JSON:API requires a version of Drupal core that includes https://www.drupal.org/project/drupal/issues/2926508.
  */

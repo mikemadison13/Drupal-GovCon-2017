@@ -38,6 +38,10 @@ services:
     arguments: ['@entity_field.manager']
     tags:
       - { name: jsonapi_normalizer }
+  serializer.normalizer.data.jsonapi:
+    class: Drupal\jsonapi\Normalizer\DataNormalizer
+    tags:
+      - { name: jsonapi_normalizer }
   serializer.normalizer.resource_object.jsonapi:
     class: Drupal\jsonapi\Normalizer\ResourceObjectNormalizer
     tags:
@@ -63,7 +67,6 @@ services:
       - { name: jsonapi_normalizer }
   serializer.normalizer.entity_reference_field.jsonapi:
     class: Drupal\jsonapi\Normalizer\EntityReferenceFieldNormalizer
-    arguments: ['@jsonapi.link_manager']
     tags:
       # This must have a higher priority than the 'serializer.normalizer.field.jsonapi' to take effect.
       - { name: jsonapi_normalizer, priority: 1 }
@@ -78,9 +81,6 @@ services:
     class: Drupal\jsonapi\Routing\RouteEnhancer
     tags:
       - { name: route_enhancer }
-  jsonapi.link_manager:
-    class: Drupal\jsonapi\LinkManager\LinkManager
-    arguments: ['@url_generator']
   jsonapi.field_resolver:
     class: Drupal\jsonapi\Context\FieldResolver
     arguments: ['@entity_type.manager', '@entity_field.manager', '@entity_type.bundle.info', '@jsonapi.resource_type.repository', '@module_handler']
@@ -92,6 +92,8 @@ services:
   paramconverter.jsonapi.entity_uuid:
     parent: paramconverter.entity
     class: Drupal\jsonapi\ParamConverter\EntityUuidConverter
+    calls:
+      - [setLanguageManager, ['@language_manager']]
     tags:
       # Priority 10, to ensure it runs before @paramconverter.entity.
       - { name: paramconverter, priority: 10 }
@@ -141,13 +143,19 @@ services:
     tags:
       - { name: access_check, applies_to: _jsonapi_relationship_field_access, needs_incoming_request: TRUE }
 
+  # Route filters.
+  method_filter.jsonapi:
+    public: false
+    class: Drupal\jsonapi\Routing\ReadOnlyModeMethodFilter
+    decorates: method_filter
+    arguments: ['@method_filter.jsonapi.inner', '@config.factory']
+
   # Controller.
   jsonapi.entity_resource:
-    class: \Drupal\jsonapi\Controller\EntityResource
+    class: Drupal\jsonapi\Controller\EntityResource
     arguments:
       - '@entity_type.manager'
       - '@entity_field.manager'
-      - '@jsonapi.link_manager'
       - '@jsonapi.resource_type.repository'
       - '@renderer'
       - '@entity.repository'
@@ -155,6 +163,8 @@ services:
       - '@jsonapi.entity_access_checker'
       - '@jsonapi.field_resolver'
       - '@jsonapi.serializer'
+      - '@datetime.time'
+      - '@current_user'
   jsonapi.file_upload:
     class: Drupal\jsonapi\Controller\FileUpload
     arguments:
@@ -227,8 +237,8 @@ services:
     tags:
       # Priority must be higher than serializer.normalizer.primitive_data.
       - { name: normalizer, priority: 20 }
-  # @todo Remove in Drupal 8.7 (assuming it contains https://www.drupal.org/project/drupal/issues/2940383)
+  # @todo Remove once https://www.drupal.org/project/drupal/issues/2940383 lands.
   jsonapi.file.uploader.field:
-    class: Drupal\jsonapi\ForwardCompatibility\FileFieldUploader
+    class: Drupal\jsonapi\Controller\TemporaryJsonapiFileFieldUploader
     public: false
     arguments: ['@logger.channel.file', '@file_system', '@file.mime_type.guesser', '@token', '@lock', '@config.factory']

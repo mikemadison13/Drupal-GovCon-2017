@@ -5,8 +5,10 @@ namespace Acquia\LightningExtension\Context;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Drupal\Component\Utility\Random;
 use Drupal\DrupalExtension\Context\DrupalSubContextBase;
+use Drupal\workflows\Entity\Workflow;
 use Drupal\workflows\StateInterface;
 use Webmozart\Assert\Assert;
+use Drupal\node\Entity\NodeType;
 
 /**
  * Contains miscellaneous step definitions for testing moderation UIs.
@@ -40,7 +42,7 @@ final class ModerationContext extends DrupalSubContextBase {
     }
 
     /** @var \Drupal\workflows\WorkflowInterface $workflow */
-    $workflow = entity_load('workflow', 'editorial');
+    $workflow = Workflow::load('editorial');
     Assert::isInstanceOf($workflow, '\Drupal\workflows\WorkflowInterface');
 
     while ($this->moderated) {
@@ -162,7 +164,7 @@ final class ModerationContext extends DrupalSubContextBase {
    */
   public function addModerationToContentType($node_type) {
     /** @var \Drupal\node\NodeTypeInterface $node_type */
-    $node_type = entity_load('node_type', $node_type);
+    $node_type = NodeType::load($node_type);
     $node_type->setThirdPartySetting('lightning_workflow', 'workflow', 'editorial');
     lightning_workflow_node_type_insert($node_type);
 

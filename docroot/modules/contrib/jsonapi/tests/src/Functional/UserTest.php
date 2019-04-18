@@ -185,10 +185,10 @@ class UserTest extends ResourceTestBase {
         return "The 'access user profiles' permission is required and the user must be active.";
 
       case 'PATCH':
-        return floatval(\Drupal::VERSION >= 8.7) ? "Users can only update their own account, unless they have the 'administer users' permission." : '';
+        return "Users can only update their own account, unless they have the 'administer users' permission.";
 
       case 'DELETE':
-        return floatval(\Drupal::VERSION >= 8.7) ? "The 'cancel account' permission is required." : '';
+        return "The 'cancel account' permission is required.";
 
       default:
         return parent::getExpectedUnauthorizedAccessMessage($method);
@@ -221,6 +221,13 @@ class UserTest extends ResourceTestBase {
     $normalization = $original_normalization;
     $normalization['data']['attributes']['mail'] = 'new-email@example.com';
     $request_options[RequestOptions::BODY] = Json::encode($normalization);
+
+    // DX: 405 when read-only mode is enabled.
+    $response = $this->request('PATCH', $url, $request_options);
+    $this->assertResourceErrorResponse(405, sprintf("JSON:API is configured to accept only read operations. Site administrators can configure this at %s.", Url::fromUri('base:/admin/config/services/jsonapi')->setAbsolute()->toString(TRUE)->getGeneratedUrl()), $url, $response);
+    $this->assertSame(['GET'], $response->getHeader('Allow'));
+
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
 
     // DX: 422 when changing email without providing the password.
     $response = $this->request('PATCH', $url, $request_options);
@@ -330,6 +337,13 @@ class UserTest extends ResourceTestBase {
     $normalization = $original_normalization;
     $normalization['data']['attributes']['mail'] = 'new-email@example.com';
     $request_options[RequestOptions::BODY] = Json::encode($normalization);
+
+    // DX: 405 when read-only mode is enabled.
+    $response = $this->request('PATCH', $url, $request_options);
+    $this->assertResourceErrorResponse(405, sprintf("JSON:API is configured to accept only read operations. Site administrators can configure this at %s.", Url::fromUri('base:/admin/config/services/jsonapi')->setAbsolute()->toString(TRUE)->getGeneratedUrl()), $url, $response);
+    $this->assertSame(['GET'], $response->getHeader('Allow'));
+
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
 
     // Try changing user 1's email.
     $user1 = $original_normalization;

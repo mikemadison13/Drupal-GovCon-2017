@@ -7,10 +7,14 @@ namespace Drupal\jsonapi\JsonApiResource;
  *
  * Implement this interface when an object is a stand-in for an Entity object.
  * For example, \Drupal\jsonapi\Exception\EntityAccessDeniedHttpException
- * implements this interface because it often replaces an entity in an
- * EntityCollection.
+ * implements this interface because it often replaces an entity in a JSON:API
+ * Data object.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 interface ResourceIdentifierInterface {
 

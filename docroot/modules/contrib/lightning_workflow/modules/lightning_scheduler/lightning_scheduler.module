@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Update\UpdateKernel;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\lightning_core\OverrideHelper;
 use Drupal\lightning_scheduler\Plugin\Field\FieldWidget\ModerationStateWidget;
@@ -42,6 +43,13 @@ function lightning_scheduler_system_info_alter(array &$info, Extension $extensio
  * Implements hook_cron().
  */
 function lightning_scheduler_cron() {
+  // Do not execute during database updates. This hook could be invoked if, for
+  // example, Automated Cron is triggered at the end of one of the many HTTP
+  // requests that are made during an update.php process.
+  if (Drupal::service('kernel') instanceof UpdateKernel) {
+    return;
+  }
+
   $field_map = Drupal::service('entity_field.manager')->getFieldMap();
 
   /** @var \Drupal\lightning_scheduler\TransitionManager $transition_manager */
@@ -76,6 +84,7 @@ function lightning_scheduler_cron() {
  */
 function lightning_scheduler_entity_base_field_info(EntityTypeInterface $entity_type) {
   $fields = [];
+  /** @var \Drupal\content_moderation\ModerationInformationInterface $moderation_info */
   $moderation_info = Drupal::service('content_moderation.moderation_information');
 
   $migrations = Drupal::service('lightning_scheduler.migrator')->getMigrations();

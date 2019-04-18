@@ -73,7 +73,7 @@ class MenuLinkContentTest extends ResourceTestBase {
    */
   protected function getExpectedDocument() {
     $self_url = Url::fromUri('base:/jsonapi/menu_link_content/menu_link_content/' . $this->entity->uuid())->setAbsolute()->toString(TRUE)->getGeneratedUrl();
-    return [
+    $expected_document = [
       'jsonapi' => [
         'meta' => [
           'links' => [
@@ -114,6 +114,27 @@ class MenuLinkContentTest extends ResourceTestBase {
         ],
       ],
     ];
+
+    if (floatval(\Drupal::VERSION) >= 8.7) {
+      $expected_document['data']['attributes']['drupal_internal__revision_id'] = 1;
+      $expected_document['data']['attributes']['revision_created'] = (new \DateTime())->setTimestamp($this->entity->getRevisionCreationTime())->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::RFC3339);
+      $expected_document['data']['attributes']['revision_log_message'] = NULL;
+      // @todo Attempt to remove this in https://www.drupal.org/project/drupal/issues/2933518.
+      $expected_document['data']['attributes']['revision_translation_affected'] = TRUE;
+      $expected_document['data']['relationships']['revision_user'] = [
+        'data' => NULL,
+        'links' => [
+          'related' => [
+            'href' => $self_url . '/revision_user',
+          ],
+          'self' => [
+            'href' => $self_url . '/relationships/revision_user',
+          ],
+        ],
+      ];
+    }
+
+    return $expected_document;
   }
 
   /**
@@ -139,11 +160,18 @@ class MenuLinkContentTest extends ResourceTestBase {
   protected function getExpectedUnauthorizedAccessMessage($method) {
     switch ($method) {
       case 'DELETE':
-        return floatval(\Drupal::VERSION >= 8.7) ? "The 'administer menu' permission is required." : '';
+        return "The 'administer menu' permission is required.";
 
       default:
         return parent::getExpectedUnauthorizedAccessMessage($method);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function testRelated() {
+    $this->markTestSkipped('Remove this in https://www.drupal.org/project/jsonapi/issues/2940339');
   }
 
   /**

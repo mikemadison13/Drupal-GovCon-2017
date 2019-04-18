@@ -8,9 +8,13 @@ namespace Drupal\jsonapi\ResourceType;
  * Used to generate routes (collection, individual, etcetera), generate
  * relationship links, and so on.
  *
- * @see \Drupal\jsonapi\ResourceType\ResourceTypeRepository
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
  *
- * @internal
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
+ *
+ * @see \Drupal\jsonapi\ResourceType\ResourceTypeRepository
  */
 class ResourceType {
 

@@ -4,7 +4,6 @@ namespace Drupal\jsonapi\EventSubscriber;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\jsonapi\ResourceResponse;
 use Drupal\jsonapi\Routing\Routes;
 use Drupal\schemata\SchemaFactory;
 use JsonSchema\Validator;
@@ -22,8 +21,13 @@ use Symfony\Component\Serializer\SerializerInterface;
  *
  * This must run after ResourceResponseSubscriber.
  *
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
+ *
  * @see \Drupal\rest\EventSubscriber\ResourceResponseSubscriber
- * @internal
  */
 class ResourceResponseValidator implements EventSubscriberInterface {
 
@@ -130,7 +134,7 @@ class ResourceResponseValidator implements EventSubscriberInterface {
    */
   public function onResponse(FilterResponseEvent $event) {
     $response = $event->getResponse();
-    if (!$response instanceof ResourceResponse) {
+    if (strpos($response->headers->get('Content-Type'), 'application/vnd.api+json') === FALSE) {
       return;
     }
 

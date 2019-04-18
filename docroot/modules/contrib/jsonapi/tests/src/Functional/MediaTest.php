@@ -36,6 +36,11 @@ class MediaTest extends ResourceTestBase {
 
   /**
    * {@inheritdoc}
+   */
+  protected static $resourceTypeIsVersionable = TRUE;
+
+  /**
+   * {@inheritdoc}
    *
    * @var \Drupal\media\MediaInterface
    */
@@ -144,7 +149,11 @@ class MediaTest extends ResourceTestBase {
     $file = File::load(1);
     $thumbnail = File::load(3);
     $author = User::load($this->entity->getOwnerId());
-    $self_url = Url::fromUri('base:/jsonapi/media/camelids/' . $this->entity->uuid())->setAbsolute()->toString(TRUE)->getGeneratedUrl();
+    $base_url = Url::fromUri('base:/jsonapi/media/camelids/' . $this->entity->uuid())->setAbsolute();
+    $self_url = clone $base_url;
+    $version_identifier = 'id:' . $this->entity->getRevisionId();
+    $self_url = $self_url->setOption('query', ['resourceVersion' => $version_identifier]);
+    $version_query_string = '?resourceVersion=' . urlencode($version_identifier);
     $data = [
       'jsonapi' => [
         'meta' => [
@@ -155,13 +164,13 @@ class MediaTest extends ResourceTestBase {
         'version' => '1.0',
       ],
       'links' => [
-        'self' => ['href' => $self_url],
+        'self' => ['href' => $base_url->toString()],
       ],
       'data' => [
         'id' => $this->entity->uuid(),
         'type' => 'media--camelids',
         'links' => [
-          'self' => ['href' => $self_url],
+          'self' => ['href' => $self_url->toString()],
         ],
         'attributes' => [
           'langcode' => 'en',
@@ -188,9 +197,11 @@ class MediaTest extends ResourceTestBase {
               'type' => 'file--file',
             ],
             'links' => [
-              'related' => ['href' => $self_url . '/field_media_file'],
+              'related' => [
+                'href' => $base_url->toString() . '/field_media_file' . $version_query_string,
+              ],
               'self' => [
-                'href' => $self_url . '/relationships/field_media_file',
+                'href' => $base_url->toString() . '/relationships/field_media_file' . $version_query_string,
               ],
             ],
           ],
@@ -206,8 +217,12 @@ class MediaTest extends ResourceTestBase {
               'type' => 'file--file',
             ],
             'links' => [
-              'related' => ['href' => $self_url . '/thumbnail'],
-              'self' => ['href' => $self_url . '/relationships/thumbnail'],
+              'related' => [
+                'href' => $base_url->toString() . '/thumbnail' . $version_query_string,
+              ],
+              'self' => [
+                'href' => $base_url->toString() . '/relationships/thumbnail' . $version_query_string,
+              ],
             ],
           ],
           'bundle' => [
@@ -216,8 +231,12 @@ class MediaTest extends ResourceTestBase {
               'type' => 'media_type--media_type',
             ],
             'links' => [
-              'related' => ['href' => $self_url . '/bundle'],
-              'self' => ['href' => $self_url . '/relationships/bundle'],
+              'related' => [
+                'href' => $base_url->toString() . '/bundle' . $version_query_string,
+              ],
+              'self' => [
+                'href' => $base_url->toString() . '/relationships/bundle' . $version_query_string,
+              ],
             ],
           ],
           'uid' => [
@@ -226,8 +245,12 @@ class MediaTest extends ResourceTestBase {
               'type' => 'user--user',
             ],
             'links' => [
-              'related' => ['href' => $self_url . '/uid'],
-              'self' => ['href' => $self_url . '/relationships/uid'],
+              'related' => [
+                'href' => $base_url->toString() . '/uid' . $version_query_string,
+              ],
+              'self' => [
+                'href' => $base_url->toString() . '/relationships/uid' . $version_query_string,
+              ],
             ],
           ],
           'revision_user' => [
@@ -236,8 +259,12 @@ class MediaTest extends ResourceTestBase {
               'type' => 'user--user',
             ],
             'links' => [
-              'related' => ['href' => $self_url . '/revision_user'],
-              'self' => ['href' => $self_url . '/relationships/revision_user'],
+              'related' => [
+                'href' => $base_url->toString() . '/revision_user' . $version_query_string,
+              ],
+              'self' => [
+                'href' => $base_url->toString() . '/relationships/revision_user' . $version_query_string,
+              ],
             ],
           ],
         ],
@@ -290,16 +317,10 @@ class MediaTest extends ResourceTestBase {
         return "The following permissions are required: 'administer media' OR 'create media' OR 'create camelids media'.";
 
       case 'PATCH':
-        // @todo Make this unconditional when JSON:API requires Drupal 8.6 or newer.
-        if (floatval(\Drupal::VERSION) >= 8.6) {
-          return "The following permissions are required: 'update any media' OR 'update own media' OR 'camelids: edit any media' OR 'camelids: edit own media'.";
-        }
+        return "The following permissions are required: 'update any media' OR 'update own media' OR 'camelids: edit any media' OR 'camelids: edit own media'.";
 
       case 'DELETE':
-        // @todo Make this unconditional when JSON:API requires Drupal 8.6 or newer.
-        if (floatval(\Drupal::VERSION) >= 8.6) {
-          return "The following permissions are required: 'delete any media' OR 'delete own media' OR 'camelids: delete any media' OR 'camelids: delete own media'.";
-        }
+        return "The following permissions are required: 'delete any media' OR 'delete own media' OR 'camelids: delete any media' OR 'camelids: delete own media'.";
 
       default:
         return '';

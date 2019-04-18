@@ -2,6 +2,8 @@
 
 namespace Drupal\jsonapi\Controller;
 
+use Drupal\Component\Assertion\Inspector;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -13,11 +15,16 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Entity\RevisionableEntityBundleInterface;
+use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
+use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Drupal\jsonapi\Access\EntityAccessChecker;
 use Drupal\jsonapi\Context\FieldResolver;
 use Drupal\jsonapi\Entity\EntityValidationTrait;
@@ -25,16 +32,18 @@ use Drupal\jsonapi\Access\TemporaryQueryGuard;
 use Drupal\jsonapi\Exception\EntityAccessDeniedHttpException;
 use Drupal\jsonapi\Exception\UnprocessableHttpEntityException;
 use Drupal\jsonapi\IncludeResolver;
+use Drupal\jsonapi\JsonApiResource\IncludedData;
 use Drupal\jsonapi\JsonApiResource\LinkCollection;
-use Drupal\jsonapi\JsonApiResource\NullEntityCollection;
+use Drupal\jsonapi\JsonApiResource\NullIncludedData;
 use Drupal\jsonapi\JsonApiResource\ResourceIdentifier;
 use Drupal\jsonapi\JsonApiResource\Link;
 use Drupal\jsonapi\JsonApiResource\ResourceObject;
+use Drupal\jsonapi\JsonApiResource\ResourceObjectData;
+use Drupal\jsonapi\Normalizer\EntityReferenceFieldNormalizer;
 use Drupal\jsonapi\Query\Filter;
 use Drupal\jsonapi\Query\Sort;
 use Drupal\jsonapi\Query\OffsetPage;
-use Drupal\jsonapi\LinkManager\LinkManager;
-use Drupal\jsonapi\JsonApiResource\EntityCollection;
+use Drupal\jsonapi\JsonApiResource\Data;
 use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Drupal\jsonapi\ResourceResponse;
 use Drupal\jsonapi\ResourceType\ResourceType;
@@ -51,7 +60,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 /**
  * Process all entity requests.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class EntityResource {
 
@@ -70,13 +83,6 @@ class EntityResource {
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected $fieldManager;
-
-  /**
-   * The link manager service.
-   *
-   * @var \Drupal\jsonapi\LinkManager\LinkManager
-   */
-  protected $linkManager;
 
   /**
    * The resource type repository.
@@ -128,16 +134,28 @@ class EntityResource {
   protected $serializer;
 
   /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
+   * The current user account.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $user;
+
+  /**
    * Instantiates a EntityResource object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager
    *   The entity type field manager.
-   * @param \Drupal\jsonapi\LinkManager\LinkManager $link_manager
-   *   The link manager service.
    * @param \Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface $resource_type_repository
-   *   The link manager service.
+   *   The JSON:API resource type repository.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
@@ -150,11 +168,14 @@ class EntityResource {
    *   The JSON:API field resolver.
    * @param \Symfony\Component\Serializer\SerializerInterface|\Symfony\Component\Serializer\Normalizer\DenormalizerInterface $serializer
    *   The JSON:API serializer.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   * @param \Drupal\Core\Session\AccountInterface $user
+   *   The current user account.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $field_manager, LinkManager $link_manager, ResourceTypeRepositoryInterface $resource_type_repository, RendererInterface $renderer, EntityRepositoryInterface $entity_repository, IncludeResolver $include_resolver, EntityAccessChecker $entity_access_checker, FieldResolver $field_resolver, SerializerInterface $serializer) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $field_manager, ResourceTypeRepositoryInterface $resource_type_repository, RendererInterface $renderer, EntityRepositoryInterface $entity_repository, IncludeResolver $include_resolver, EntityAccessChecker $entity_access_checker, FieldResolver $field_resolver, SerializerInterface $serializer, TimeInterface $time, AccountInterface $user) {
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldManager = $field_manager;
-    $this->linkManager = $link_manager;
     $this->resourceTypeRepository = $resource_type_repository;
     $this->renderer = $renderer;
     $this->entityRepository = $entity_repository;
@@ -162,6 +183,8 @@ class EntityResource {
     $this->entityAccessChecker = $entity_access_checker;
     $this->fieldResolver = $field_resolver;
     $this->serializer = $serializer;
+    $this->time = $time;
+    $this->user = $user;
   }
 
   /**
@@ -183,7 +206,8 @@ class EntityResource {
     if ($resource_object instanceof EntityAccessDeniedHttpException) {
       throw $resource_object;
     }
-    $response = $this->buildWrappedResponse($resource_object, $request, $this->getIncludes($request, $resource_object));
+    $primary_data = new ResourceObjectData([$resource_object], 1);
+    $response = $this->buildWrappedResponse($primary_data, $request, $this->getIncludes($request, $primary_data));
     return $response;
   }
 
@@ -240,8 +264,9 @@ class EntityResource {
     $parsed_entity->save();
 
     // Build response object.
-    $resource_object = new ResourceObject($resource_type, $parsed_entity);
-    $response = $this->buildWrappedResponse($resource_object, $request, $this->getIncludes($request, $resource_object), 201);
+    $resource_object = ResourceObject::createFromEntity($resource_type, $parsed_entity);
+    $primary_data = new ResourceObjectData([$resource_object], 1);
+    $response = $this->buildWrappedResponse($primary_data, $request, $this->getIncludes($request, $primary_data), 201);
 
     // According to JSON:API specification, when a new entity was created
     // we should send "Location" header to the frontend.
@@ -274,6 +299,10 @@ class EntityResource {
    *   Thrown when the patched entity does not pass validation.
    */
   public function patchIndividual(ResourceType $resource_type, EntityInterface $entity, Request $request) {
+    if ($entity instanceof RevisionableInterface && !($entity->isLatestRevision() && $entity->isDefaultRevision())) {
+      throw new BadRequestHttpException('Updating a resource object that has a working copy is not yet supported. See https://www.drupal.org/project/jsonapi/issues/2795279.');
+    }
+
     $parsed_entity = $this->deserialize($resource_type, $request, JsonApiDocumentTopLevel::class);
 
     $body = Json::decode($request->getContent());
@@ -294,9 +323,24 @@ class EntityResource {
     }, $entity);
 
     static::validate($entity, $field_names);
+
+    // Set revision data details for revisionable entities.
+    if ($entity->getEntityType()->isRevisionable()) {
+      if ($bundle_entity_type = $entity->getEntityType()->getBundleEntityType()) {
+        $bundle_entity = $this->entityTypeManager->getStorage($bundle_entity_type)->load($entity->bundle());
+        if ($bundle_entity instanceof RevisionableEntityBundleInterface) {
+          $entity->setNewRevision($bundle_entity->shouldCreateNewRevision());
+        }
+      }
+      if ($entity instanceof RevisionLogInterface && $entity->isNewRevision()) {
+        $entity->setRevisionUserId($this->user->id());
+        $entity->setRevisionCreationTime($this->time->getRequestTime());
+      }
+    }
+
     $entity->save();
-    $resource_object = new ResourceObject($resource_type, $entity);
-    return $this->buildWrappedResponse($resource_object, $request, $this->getIncludes($request, $resource_object));
+    $primary_data = new ResourceObjectData([ResourceObject::createFromEntity($resource_type, $entity)], 1);
+    return $this->buildWrappedResponse($primary_data, $request, $this->getIncludes($request, $primary_data));
   }
 
   /**
@@ -373,10 +417,10 @@ class EntityResource {
     // Each item of the collection data contains an array with 'entity' and
     // 'access' elements.
     $collection_data = $this->loadEntitiesWithAccess($storage, $results, $request->get(ResourceVersionRouteEnhancer::WORKING_COPIES_REQUESTED, FALSE));
-    $entity_collection = new EntityCollection($collection_data);
-    $entity_collection->setHasNextPage($has_next_page);
+    $primary_data = new ResourceObjectData($collection_data);
+    $primary_data->setHasNextPage($has_next_page);
 
-    // Calculate all the results and pass them to the EntityCollectionInterface.
+    // Calculate all the results and pass into a JSON:API Data object.
     $count_query_cacheability = new CacheableMetadata();
     if ($resource_type->includeCount()) {
       $count_query = $this->getCollectionCountQuery($resource_type, $params, $count_query_cacheability);
@@ -385,10 +429,10 @@ class EntityResource {
         $count_query_cacheability
       );
 
-      $entity_collection->setTotalCount($total_results);
+      $primary_data->setTotalCount($total_results);
     }
 
-    $response = $this->respondWithCollection($entity_collection, $this->getIncludes($request, $entity_collection), $request, $resource_type, $params[OffsetPage::KEY_NAME]);
+    $response = $this->respondWithCollection($primary_data, $this->getIncludes($request, $primary_data), $request, $resource_type, $params[OffsetPage::KEY_NAME]);
 
     $response->addCacheableDependency($query_cacheability);
     $response->addCacheableDependency($count_query_cacheability);
@@ -471,8 +515,8 @@ class EntityResource {
     foreach ($referenced_entities as $referenced_entity) {
       $collection_data[] = $this->entityAccessChecker->getAccessCheckedResourceObject($referenced_entity);
     }
-    $entity_collection = new EntityCollection($collection_data, $field_list->getFieldDefinition()->getFieldStorageDefinition()->getCardinality());
-    $response = $this->buildWrappedResponse($entity_collection, $request, $this->getIncludes($request, $entity_collection));
+    $primary_data = new ResourceObjectData($collection_data, $field_list->getFieldDefinition()->getFieldStorageDefinition()->getCardinality());
+    $response = $this->buildWrappedResponse($primary_data, $request, $this->getIncludes($request, $primary_data));
 
     // $response does not contain the entity list cache tag. We add the
     // cacheable metadata for the finite list of entities in the relationship.
@@ -503,8 +547,11 @@ class EntityResource {
     $field_list = $entity->get($resource_type->getInternalName($related));
     // Access will have already been checked by the RelationshipFieldAccess
     // service, so we don't need to call ::getAccessCheckedResourceObject().
-    $resource_object = new ResourceObject($resource_type, $entity);
-    $response = $this->buildWrappedResponse($field_list, $request, $this->getIncludes($request, $resource_object), $response_code);
+    $resource_object = ResourceObject::createFromEntity($resource_type, $entity);
+    $relationship_object_urls = EntityReferenceFieldNormalizer::getRelationshipLinks($resource_object, $related);
+    $response = $this->buildWrappedResponse($field_list, $request, $this->getIncludes($request, $resource_object), $response_code, [], array_reduce(array_keys($relationship_object_urls), function (LinkCollection $links, $key) use ($relationship_object_urls) {
+      return $links->withLink($key, new Link(new CacheableMetadata(), $relationship_object_urls[$key], [$key]));
+    }, new LinkCollection([])));
     // Add the host entity as a cacheable dependency.
     $response->addCacheableDependency($entity);
     return $response;
@@ -911,8 +958,8 @@ class EntityResource {
    *   The data to wrap.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
-   * @param \Drupal\jsonapi\JsonApiResource\EntityCollection $includes
-   *   The resources to be included in the document. Use NullEntityCollection if
+   * @param \Drupal\jsonapi\JsonApiResource\IncludedData $includes
+   *   The resources to be included in the document. Use NullData if
    *   there should be no included resources in the document.
    * @param int $response_code
    *   The response code.
@@ -926,10 +973,13 @@ class EntityResource {
    * @return \Drupal\jsonapi\ResourceResponse
    *   The response.
    */
-  protected function buildWrappedResponse($data, Request $request, EntityCollection $includes, $response_code = 200, array $headers = [], LinkCollection $links = NULL, array $meta = []) {
-    $self_link = new Link(new CacheableMetadata(), $this->linkManager->getRequestLink($request), ['self']);
+  protected function buildWrappedResponse($data, Request $request, IncludedData $includes, $response_code = 200, array $headers = [], LinkCollection $links = NULL, array $meta = []) {
+    assert($data instanceof Data || $data instanceof FieldItemListInterface);
     $links = ($links ?: new LinkCollection([]));
-    $links = $links->withLink('self', $self_link);
+    if (!$links->hasLinkWithKey('self')) {
+      $self_link = new Link(new CacheableMetadata(), self::getRequestLink($request), ['self']);
+      $links = $links->withLink('self', $self_link);
+    }
     $response = new ResourceResponse(new JsonApiDocumentTopLevel($data, $includes, $links, $meta), $response_code, $headers);
     $cacheability = (new CacheableMetadata())->addCacheContexts([
       // Make sure that different sparse fieldsets are cached differently.
@@ -944,9 +994,9 @@ class EntityResource {
   /**
    * Respond with an entity collection.
    *
-   * @param \Drupal\jsonapi\JsonApiResource\EntityCollection $entity_collection
+   * @param \Drupal\jsonapi\JsonApiResource\ResourceObjectData $primary_data
    *   The collection of entities.
-   * @param \Drupal\jsonapi\JsonApiResource\EntityCollection $includes
+   * @param \Drupal\jsonapi\JsonApiResource\IncludedData|\Drupal\jsonapi\JsonApiResource\NullIncludedData $includes
    *   The resources to be included in the document.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
@@ -958,23 +1008,24 @@ class EntityResource {
    * @return \Drupal\jsonapi\ResourceResponse
    *   The response.
    */
-  protected function respondWithCollection(EntityCollection $entity_collection, EntityCollection $includes, Request $request, ResourceType $resource_type, OffsetPage $page_param) {
+  protected function respondWithCollection(ResourceObjectData $primary_data, Data $includes, Request $request, ResourceType $resource_type, OffsetPage $page_param) {
+    assert(Inspector::assertAllObjects([$includes], IncludedData::class, NullIncludedData::class));
     $link_context = [
-      'has_next_page' => $entity_collection->hasNextPage(),
+      'has_next_page' => $primary_data->hasNextPage(),
     ];
     $meta = [];
     if ($resource_type->includeCount()) {
-      $link_context['total_count'] = $meta['count'] = $entity_collection->getTotalCount();
+      $link_context['total_count'] = $meta['count'] = $primary_data->getTotalCount();
     }
-    $collection_links = $this->linkManager->getPagerLinks(\Drupal::request(), $page_param, $link_context);
-    $response = $this->buildWrappedResponse($entity_collection, $request, $includes, 200, [], $collection_links, $meta);
+    $collection_links = self::getPagerLinks($request, $page_param, $link_context);
+    $response = $this->buildWrappedResponse($primary_data, $request, $includes, 200, [], $collection_links, $meta);
 
     // When a new change to any entity in the resource happens, we cannot ensure
     // the validity of this cached list. Add the list tag to deal with that.
     $list_tag = $this->entityTypeManager->getDefinition($resource_type->getEntityTypeId())
       ->getListCacheTags();
     $response->getCacheableMetadata()->addCacheTags($list_tag);
-    foreach ($entity_collection as $entity) {
+    foreach ($primary_data as $entity) {
       $response->addCacheableDependency($entity);
     }
     return $response;
@@ -1022,20 +1073,21 @@ class EntityResource {
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
-   * @param \Drupal\Core\Entity\EntityInterface|\Drupal\jsonapi\JsonApiResource\EntityCollection $data
+   * @param \Drupal\jsonapi\JsonApiResource\ResourceObject|\Drupal\jsonapi\JsonApiResource\ResourceObjectData $data
    *   The response data from which to resolve includes.
    *
-   * @return \Drupal\jsonapi\JsonApiResource\EntityCollection
-   *   An EntityCollection to be included or a NullEntityCollection if the
-   *   request does not specify any include paths.
+   * @return \Drupal\jsonapi\JsonApiResource\Data
+   *   A Data object to be included or a NullData object if the request does not
+   *   specify any include paths.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getIncludes(Request $request, $data) {
+    assert($data instanceof ResourceObject || $data instanceof ResourceObjectData);
     return $request->query->has('include') && ($include_parameter = $request->query->get('include')) && !empty($include_parameter)
       ? $this->includeResolver->resolve($data, $include_parameter)
-      : new NullEntityCollection();
+      : new NullIncludedData();
   }
 
   /**
@@ -1154,6 +1206,138 @@ class EntityResource {
       $params[OffsetPage::KEY_NAME] = OffsetPage::createFromQueryParameter(['page' => ['offset' => OffsetPage::DEFAULT_OFFSET, 'limit' => OffsetPage::SIZE_MAX]]);
     }
     return $params;
+  }
+
+  /**
+   * Get the full URL for a given request object.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request object.
+   * @param array|null $query
+   *   The query parameters to use. Leave it empty to get the query from the
+   *   request object.
+   *
+   * @return \Drupal\Core\Url
+   *   The full URL.
+   */
+  protected static function getRequestLink(Request $request, $query = NULL) {
+    if ($query === NULL) {
+      return Url::fromUri($request->getUri());
+    }
+
+    $uri_without_query_string = $request->getSchemeAndHttpHost() . $request->getBaseUrl() . $request->getPathInfo();
+    return Url::fromUri($uri_without_query_string)->setOption('query', $query);
+  }
+
+  /**
+   * Get the pager links for a given request object.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request object.
+   * @param \Drupal\jsonapi\Query\OffsetPage $page_param
+   *   The current pagination parameter for the requested collection.
+   * @param array $link_context
+   *   An associative array with extra data to build the links.
+   *
+   * @return \Drupal\jsonapi\JsonApiResource\LinkCollection
+   *   An LinkCollection, with:
+   *   - a 'next' key if it is not the last page;
+   *   - 'prev' and 'first' keys if it's not the first page.
+   */
+  protected static function getPagerLinks(Request $request, OffsetPage $page_param, array $link_context = []) {
+    $pager_links = new LinkCollection([]);
+    if (!empty($link_context['total_count']) && !$total = (int) $link_context['total_count']) {
+      return $pager_links;
+    }
+    /* @var \Drupal\jsonapi\Query\OffsetPage $page_param */
+    $offset = $page_param->getOffset();
+    $size = $page_param->getSize();
+    if ($size <= 0) {
+      $cacheability = (new CacheableMetadata())->addCacheContexts(['url.query_args:page']);
+      throw new CacheableBadRequestHttpException($cacheability, sprintf('The page size needs to be a positive integer.'));
+    }
+    $query = (array) $request->query->getIterator();
+    // Check if this is not the last page.
+    if ($link_context['has_next_page']) {
+      $next_url = static::getRequestLink($request, static::getPagerQueries('next', $offset, $size, $query));
+      $pager_links = $pager_links->withLink('next', new Link(new CacheableMetadata(), $next_url, ['next']));
+
+      if (!empty($total)) {
+        $last_url = static::getRequestLink($request, static::getPagerQueries('last', $offset, $size, $query, $total));
+        $pager_links = $pager_links->withLink('last', new Link(new CacheableMetadata(), $last_url, ['last']));
+      }
+    }
+
+    // Check if this is not the first page.
+    if ($offset > 0) {
+      $first_url = static::getRequestLink($request, static::getPagerQueries('first', $offset, $size, $query));
+      $pager_links = $pager_links->withLink('first', new Link(new CacheableMetadata(), $first_url, ['first']));
+      $prev_url = static::getRequestLink($request, static::getPagerQueries('prev', $offset, $size, $query));
+      $pager_links = $pager_links->withLink('prev', new Link(new CacheableMetadata(), $prev_url, ['prev']));
+    }
+
+    return $pager_links;
+  }
+
+  /**
+   * Get the query param array.
+   *
+   * @param string $link_id
+   *   The name of the pagination link requested.
+   * @param int $offset
+   *   The starting index.
+   * @param int $size
+   *   The pagination page size.
+   * @param array $query
+   *   The query parameters.
+   * @param int $total
+   *   The total size of the collection.
+   *
+   * @return array
+   *   The pagination query param array.
+   */
+  protected static function getPagerQueries($link_id, $offset, $size, array $query = [], $total = 0) {
+    $extra_query = [];
+    switch ($link_id) {
+      case 'next':
+        $extra_query = [
+          'page' => [
+            'offset' => $offset + $size,
+            'limit' => $size,
+          ],
+        ];
+        break;
+
+      case 'first':
+        $extra_query = [
+          'page' => [
+            'offset' => 0,
+            'limit' => $size,
+          ],
+        ];
+        break;
+
+      case 'last':
+        if ($total) {
+          $extra_query = [
+            'page' => [
+              'offset' => (ceil($total / $size) - 1) * $size,
+              'limit' => $size,
+            ],
+          ];
+        }
+        break;
+
+      case 'prev':
+        $extra_query = [
+          'page' => [
+            'offset' => max($offset - $size, 0),
+            'limit' => $size,
+          ],
+        ];
+        break;
+    }
+    return array_merge($query, $extra_query);
   }
 
 }

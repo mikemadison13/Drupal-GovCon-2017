@@ -14,9 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
  * string or an object with a __toString() method, which is not a requirement
  * for data used here.
  *
- * @see \Drupal\rest\ModifiedResourceResponse
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
  *
- * @internal
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
+ *
+ * @see \Drupal\rest\ModifiedResourceResponse
  */
 class ResourceResponse extends Response implements CacheableResponseInterface {
 

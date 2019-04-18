@@ -9,6 +9,7 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
+use Drupal\entity_test\Entity\EntityTestMapField;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\Node;
@@ -32,6 +33,13 @@ use GuzzleHttp\RequestOptions;
 class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
 
   use CommentTestTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static $modules = [
+    'basic_auth',
+  ];
 
   /**
    * Ensure filtering on relationships works with bundle-specific target types.
@@ -139,6 +147,8 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
    * @see https://www.drupal.org/project/jsonapi/issues/2976371
    */
   public function testBundlelessRelationshipMutationFromIssue2973681() {
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
     // Set up data model.
     $this->drupalCreateContentType(['type' => 'page']);
     $this->createEntityReferenceField(
@@ -224,6 +234,8 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
    * @see https://www.drupal.org/project/jsonapi/issues/2968972
    */
   public function testDanglingReferencesInAnEntityReferenceFieldFromIssue2968972() {
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
     // Set up data model.
     $this->drupalCreateContentType(['type' => 'journal_issue']);
     $this->drupalCreateContentType(['type' => 'journal_article']);
@@ -511,6 +523,8 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
    * @see https://www.drupal.org/project/jsonapi_extras/issues/3004582#comment-12817261
    */
   public function testDenormalizeAliasedRelationshipFromIssue2953207() {
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
     // Since the JSON:API module does not have an explicit mechanism to set up
     // field aliases, create a strange data model so that automatic aliasing
     // allows us to test aliased relationships.
@@ -690,6 +704,8 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
    * @see https://www.drupal.org/project/jsonapi/issues/3021194
    */
   public function testPatchingDateTimeFieldsFromIssue3021194() {
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
     // Set up data model.
     $this->assertTrue($this->container->get('module_installer')->install(['datetime'], TRUE), 'Installed modules.');
     $this->drupalCreateContentType(['type' => 'page']);
@@ -771,6 +787,8 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
    * @see https://www.drupal.org/project/jsonapi/issues/3026030
    */
   public function testPostToIncludeUrlDoesNotReturnIncludeFromIssue3026030() {
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
     // Set up data model.
     $this->drupalCreateContentType(['type' => 'page']);
     $this->rebuildAll();
@@ -806,6 +824,8 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
    * @see https://www.drupal.org/project/jsonapi/issues/3026030
    */
   public function testPatchToIncludeUrlDoesNotReturnIncludeFromIssue3026030() {
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
     // Set up data model.
     $this->drupalCreateContentType(['type' => 'page']);
     $this->rebuildAll();
@@ -842,6 +862,47 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
     $doc = Json::decode((string) $response->getBody());
     $this->assertArrayHasKey('included', $doc);
     $this->assertSame($user->label(), $doc['included'][0]['attributes']['name']);
+  }
+
+  /**
+   * Ensure `@FieldType=map` fields are normalized correctly.
+   *
+   * @see https://www.drupal.org/project/jsonapi/issues/3040590
+   */
+  public function testMapFieldTypeNormalizationFromIssue3040590() {
+    $this->assertTrue($this->container->get('module_installer')->install(['entity_test'], TRUE), 'Installed modules.');
+
+    // Create data.
+    $entity = EntityTestMapField::create([
+      'data' => [
+        'foo' => 'bar',
+        'baz' => 'qux',
+      ],
+    ]);
+    $entity->save();
+    $user = $this->drupalCreateUser([
+      'administer entity_test content',
+    ]);
+
+    // Test.
+    $url = Url::fromUri(sprintf('internal:/jsonapi/entity_test_map_field/entity_test_map_field', $entity->uuid()));
+    $request_options = [
+      RequestOptions::AUTH => [$user->getUsername(), $user->pass_raw],
+    ];
+    $response = $this->request('GET', $url, $request_options);
+    $this->assertSame(200, $response->getStatusCode());
+    $data = Json::decode((string) $response->getBody());
+    $this->assertSame([
+      'foo' => 'bar',
+      'baz' => 'qux',
+    ], $data['data'][0]['attributes']['data']);
+    $entity->set('data', [
+      'foo' => 'bar',
+    ])->save();
+    $response = $this->request('GET', $url, $request_options);
+    $this->assertSame(200, $response->getStatusCode());
+    $data = Json::decode((string) $response->getBody());
+    $this->assertSame(['foo' => 'bar'], $data['data'][0]['attributes']['data']);
   }
 
 }

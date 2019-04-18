@@ -8,7 +8,11 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 /**
  * To be used when the primary data is `errors`.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  *
  * (The spec says the top-level `data` and `errors` members MUST NOT coexist.)
  * @see http://jsonapi.org/format/#document-top-level

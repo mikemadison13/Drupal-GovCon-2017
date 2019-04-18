@@ -44,7 +44,6 @@ use Drupal\Core\Access\AccessResult;
  * This eliminates the need for another abstraction layer in order implement
  * certain features of the specification.
  *
- *
  * @section relationships Relationships
  * The specification defines semantics for the "relationships" between
  * resources. Since the JSON:API module defines every entity type + bundle as a
@@ -120,6 +119,15 @@ use Drupal\Core\Access\AccessResult;
  *
  * @see https://www.drupal.org/project/jsonapi/issues/3009588.
  * @see https://tools.ietf.org/html/rfc5829
+ * @see https://www.drupal.org/docs/8/modules/jsonapi/revisions
+ *
+ * @section translations Resource translations
+ *
+ * Some multilingual features currently do not work well with JSON:API. See
+ * JSON:API modules's multilingual support documentation online for more
+ * information on the current status of multilingual support.
+ *
+ * @see https://www.drupal.org/docs/8/modules/jsonapi/translations
  *
  * @section api API
  * The JSON:API module provides an HTTP API that adheres to the JSON:API
@@ -173,7 +181,9 @@ use Drupal\Core\Access\AccessResult;
  * HTTP API: URLs and JSON response structures are considered part of this
  * module's public API. However, inconsistencies with the JSON:API specification
  * will be considered bugs. Fixes which bring the module into compliance with
- * the specification are *not* guaranteed to be backwards-compatible.
+ * the specification are *not* guaranteed to be backwards-compatible. When
+ * compliance bugs are found, clients are expected to be made compatible with
+ * both the pre-fix and post-fix representations.
  *
  * What this means for developing consumers of the HTTP API is that *clients
  * should be implemented from the specification first and foremost.* This should

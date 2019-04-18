@@ -2,7 +2,6 @@
 
 namespace Drupal\jsonapi\Normalizer;
 
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\jsonapi\JsonApiResource\ResourceIdentifier;
 use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
@@ -16,7 +15,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
  * Normalizer class for relationship elements. A relationship can be anything
  * that points to an entity in a JSON:API resource.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class ResourceIdentifierNormalizer extends NormalizerBase implements DenormalizerInterface {
 
@@ -54,7 +57,7 @@ class ResourceIdentifierNormalizer extends NormalizerBase implements Denormalize
     if ($object->getMeta()) {
       $normalization['meta'] = $this->serializer->normalize($object->getMeta(), $format, $context);
     }
-    return new CacheableNormalization(new CacheableMetadata(), $normalization);
+    return CacheableNormalization::permanent($normalization);
   }
 
   /**

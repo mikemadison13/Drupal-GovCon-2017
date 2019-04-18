@@ -15,7 +15,11 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  *  The syntax of the request is correct.
  *  BUT was unable to process the contained instruction.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class UnprocessableHttpEntityException extends HttpException {
 

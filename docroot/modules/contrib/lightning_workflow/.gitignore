@@ -3,3 +3,4 @@ docroot/
 node_modules/
 vendor/
 /.behat.yml
+/.phpcs-cache

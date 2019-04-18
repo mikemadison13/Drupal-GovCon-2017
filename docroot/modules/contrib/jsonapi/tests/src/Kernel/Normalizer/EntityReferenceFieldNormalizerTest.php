@@ -137,9 +137,7 @@ class EntityReferenceFieldNormalizerTest extends JsonapiKernelTestBase {
 
     // Set up the test dependencies.
     $this->referencingResourceType = $this->container->get('jsonapi.resource_type.repository')->get('node', 'referencer');
-    $this->normalizer = new EntityReferenceFieldNormalizer(
-      $this->container->get('jsonapi.link_manager')
-    );
+    $this->normalizer = new EntityReferenceFieldNormalizer();
     $this->normalizer->setSerializer($this->container->get('jsonapi.serializer'));
   }
 
@@ -151,8 +149,8 @@ class EntityReferenceFieldNormalizerTest extends JsonapiKernelTestBase {
     // Links cannot be generated in the test provider because the container
     // has not yet been set.
     $expected['links'] = [
-      'self' => ['href' => Url::fromUri('base:/jsonapi/node/referencer/' . static::$referencerId . "/relationships/$field_name")->setAbsolute()->toString()],
-      'related' => ['href' => Url::fromUri('base:/jsonapi/node/referencer/' . static::$referencerId . "/$field_name")->setAbsolute()->toString()],
+      'self' => ['href' => Url::fromUri('base:/jsonapi/node/referencer/' . static::$referencerId . "/relationships/$field_name", ['query' => ['resourceVersion' => 'id:1']])->setAbsolute()->toString()],
+      'related' => ['href' => Url::fromUri('base:/jsonapi/node/referencer/' . static::$referencerId . "/$field_name", ['query' => ['resourceVersion' => 'id:1']])->setAbsolute()->toString()],
     ];
     // Set up different field values.
     $this->referencer->{$field_name} = array_map(function ($entity_property_name) {
@@ -178,7 +176,7 @@ class EntityReferenceFieldNormalizerTest extends JsonapiKernelTestBase {
     // Normalize.
     $actual = $this->normalizer->normalize($this->referencer->{$field_name}, 'api_json', [
       'account' => $this->account,
-      'resource_object' => new ResourceObject($this->referencingResourceType, $this->referencer),
+      'resource_object' => ResourceObject::createFromEntity($this->referencingResourceType, $this->referencer),
     ]);
     // Assert.
     assert($actual instanceof CacheableNormalization);

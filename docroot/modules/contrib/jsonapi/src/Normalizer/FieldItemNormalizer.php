@@ -17,7 +17,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 /**
  * Converts the Drupal field item object to a JSON:API array structure.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class FieldItemNormalizer extends NormalizerBase implements DenormalizerInterface {
 
@@ -58,24 +62,23 @@ class FieldItemNormalizer extends NormalizerBase implements DenormalizerInterfac
   public function normalize($field_item, $format = NULL, array $context = []) {
     /** @var \Drupal\Core\TypedData\TypedDataInterface $property */
     $values = [];
-    // We normalize each individual value, so each can do their own casting,
-    // if needed.
-    $field_properties = !empty($field_item->getProperties(TRUE))
-      ? TypedDataInternalPropertiesHelper::getNonInternalProperties($field_item)
-      : $field_item->getValue();
-
     $context[CacheableNormalizerInterface::SERIALIZATION_CONTEXT_CACHEABILITY] = new CacheableMetadata();
-
-    foreach ($field_properties as $property_name => $property) {
-      $values[$property_name] = $this->serializer->normalize($property, $format, $context);
+    if (!empty($field_item->getProperties(TRUE))) {
+      // We normalize each individual value, so each can do their own casting,
+      // if needed.
+      $field_properties = TypedDataInternalPropertiesHelper::getNonInternalProperties($field_item);
+      foreach ($field_properties as $property_name => $property) {
+        $values[$property_name] = $this->serializer->normalize($property, $format, $context);
+      }
+      // Flatten if there is only a single property to normalize.
+      $values = static::rasterizeValueRecursive(count($field_properties) == 1 ? reset($values) : $values);
     }
-
-    if (isset($context['langcode'])) {
-      $values['lang'] = $context['langcode'];
+    else {
+      $values = $field_item->getValue();
     }
     $normalization = new CacheableNormalization(
       $context[CacheableNormalizerInterface::SERIALIZATION_CONTEXT_CACHEABILITY],
-      static::rasterizeValueRecursive(count($values) == 1 ? reset($values) : $values)
+      $values
     );
     unset($context[CacheableNormalizerInterface::SERIALIZATION_CONTEXT_CACHEABILITY]);
     return $normalization;

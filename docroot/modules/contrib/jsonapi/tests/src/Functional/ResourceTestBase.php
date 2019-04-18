@@ -14,8 +14,10 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\ContentEntityNullStorage;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\RevisionableInterface;
+use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem;
@@ -27,9 +29,10 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\jsonapi\BackwardCompatibility\tests\Traits\ContentModerationTestTrait;
 use Drupal\jsonapi\JsonApiResource\LinkCollection;
-use Drupal\jsonapi\JsonApiResource\NullEntityCollection;
+use Drupal\jsonapi\JsonApiResource\NullIncludedData;
 use Drupal\jsonapi\JsonApiResource\Link;
 use Drupal\jsonapi\JsonApiResource\ResourceObject;
+use Drupal\jsonapi\JsonApiResource\ResourceObjectData;
 use Drupal\jsonapi\Normalizer\HttpExceptionNormalizer;
 use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Drupal\jsonapi\ResourceResponse;
@@ -76,6 +79,13 @@ abstract class ResourceTestBase extends BrowserTestBase {
    * @var string
    */
   protected static $resourceTypeName = NULL;
+
+  /**
+   * Whether the tested JSON:API resource is versionable.
+   *
+   * @var bool
+   */
+  protected static $resourceTypeIsVersionable = FALSE;
 
   /**
    * The JSON:API resource type for the tested entity type plus bundle.
@@ -136,6 +146,13 @@ abstract class ResourceTestBase extends BrowserTestBase {
    * @see ::getInvalidNormalizedEntityToCreate()
    */
   protected static $labelFieldName = NULL;
+
+  /**
+   * Whether new revisions of updated entities should be created by default.
+   *
+   * @var bool
+   */
+  protected static $newRevisionsShouldBeAutomatic = FALSE;
 
   /**
    * Whether anonymous users can view labels of this resource type.
@@ -317,7 +334,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
     \Drupal::service('router.builder')->rebuildIfNeeded();
 
     // Reload entity so that it has the new field.
-    $reloaded_entity = $this->entityStorage->loadUnchanged($entity->id());
+    $reloaded_entity = $this->entityLoadUnchanged($entity->id());
     // Some entity types are not stored, hence they cannot be reloaded.
     if ($reloaded_entity !== NULL) {
       $entity = $reloaded_entity;
@@ -340,7 +357,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  protected function getEntityCollection() {
+  protected function getData() {
     if ($this->entityStorage->getQuery()->count()->execute() < 2) {
       $this->createAnotherEntity('two');
     }
@@ -362,7 +379,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
   protected function normalize(EntityInterface $entity, Url $url) {
     $self_link = new Link(new CacheableMetadata(), $url, ['self']);
     $resource_type = $this->container->get('jsonapi.resource_type.repository')->getByTypeName(static::$resourceTypeName);
-    $doc = new JsonApiDocumentTopLevel(new ResourceObject($resource_type, $entity), new NullEntityCollection(), new LinkCollection(['self' => $self_link]));
+    $doc = new JsonApiDocumentTopLevel(new ResourceObjectData([ResourceObject::createFromEntity($resource_type, $entity)], 1), new NullIncludedData(), new LinkCollection(['self' => $self_link]));
     return $this->serializer->normalize($doc, 'api_json', [
       'resource_type' => $resource_type,
       'account' => $this->account,
@@ -810,7 +827,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
     if (!empty(Response::$statusTexts[$expected_status_code])) {
       $expected_error['title'] = Response::$statusTexts[$expected_status_code];
     }
-    $expected_error['status'] = $expected_status_code;
+    $expected_error['status'] = (string) $expected_status_code;
     $expected_error['detail'] = $expected_message;
     if ($via_link) {
       $expected_error['links']['via']['href'] = $via_link->setAbsolute()->toString();
@@ -930,7 +947,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
       'errors' => [
         [
           'title' => 'Bad Request',
-          'status' => 400,
+          'status' => '400',
           'detail' => "The following query parameters violate the JSON:API spec: 'foo'.",
           'links' => [
             'info' => ['href' => 'http://jsonapi.org/format/#query-parameters'],
@@ -1045,7 +1062,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
    * Tests GETting a collection of resources.
    */
   public function testCollection() {
-    $entity_collection = $this->getEntityCollection();
+    $entity_collection = $this->getData();
     assert(count($entity_collection) > 1, 'A collection must have more that one entity in it.');
 
     $collection_url = Url::fromRoute(sprintf('jsonapi.%s.collection', static::$resourceTypeName))->setAbsolute(TRUE);
@@ -1304,6 +1321,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $this->doTestRelationshipGet($request_options);
 
     // Test POST.
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
     $this->doTestRelationshipMutation($request_options);
     // Grant entity-level edit access.
     $this->setUpAuthorization('PATCH');
@@ -1696,15 +1714,21 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $entity_type_id = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
     $id = $entity->uuid();
-    $self_link = Url::fromUri("base:/jsonapi/$entity_type_id/$bundle/$id/relationships/$relationship_field_name")->setAbsolute()->toString(TRUE)->getGeneratedUrl();
-    $related_link = Url::fromUri("base:/jsonapi/$entity_type_id/$bundle/$id/$relationship_field_name")->setAbsolute()->toString(TRUE)->getGeneratedUrl();
+    $self_link = Url::fromUri("base:/jsonapi/$entity_type_id/$bundle/$id/relationships/$relationship_field_name")->setAbsolute();
+    $related_link = Url::fromUri("base:/jsonapi/$entity_type_id/$bundle/$id/$relationship_field_name")->setAbsolute();
+    if (static::$resourceTypeIsVersionable) {
+      assert($entity instanceof RevisionableInterface);
+      $version_query = ['resourceVersion' => 'id:' . $entity->getRevisionId()];
+      $self_link->setOption('query', $version_query);
+      $related_link->setOption('query', $version_query);
+    }
     $data = $this->getExpectedGetRelationshipDocumentData($relationship_field_name, $entity);
     return [
       'data' => $data,
       'jsonapi' => static::$jsonApiMember,
       'links' => [
-        'self' => ['href' => $self_link],
-        'related' => ['href' => $related_link],
+        'self' => ['href' => $self_link->toString(TRUE)->getGeneratedUrl()],
+        'related' => ['href' => $related_link->toString(TRUE)->getGeneratedUrl()],
       ],
     ];
   }
@@ -1875,6 +1899,18 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
 
+    // DX: 405 when read-only mode is enabled.
+    $response = $this->request('POST', $url, $request_options);
+    $this->assertResourceErrorResponse(405, sprintf("JSON:API is configured to accept only read operations. Site administrators can configure this at %s.", Url::fromUri('base:/admin/config/services/jsonapi')->setAbsolute()->toString(TRUE)->getGeneratedUrl()), $url, $response);
+    if ($this->resourceType->isLocatable()) {
+      $this->assertSame(['GET'], $response->getHeader('Allow'));
+    }
+    else {
+      $this->assertSame([''], $response->getHeader('Allow'));
+    }
+
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
     // DX: 415 when no Content-Type request header.
     $response = $this->request('POST', $url, $request_options);
     $this->assertSame(415, $response->getStatusCode());
@@ -1949,15 +1985,19 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $this->assertFalse($response->hasHeader('X-Drupal-Cache'));
     // If the entity is stored, perform extra checks.
     if (get_class($this->entityStorage) !== ContentEntityNullStorage::class) {
-      $uuid = $this->entityStorage->load(static::$firstCreatedEntityId)->uuid();
+      $created_entity = $this->entityLoadUnchanged(static::$firstCreatedEntityId);
+      $uuid = $created_entity->uuid();
       // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
-      $location = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $uuid])->setAbsolute(TRUE)->toString();
+      $location = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $uuid]);
+      if (static::$resourceTypeIsVersionable) {
+        assert($created_entity instanceof RevisionableInterface);
+        $location->setOption('query', ['resourceVersion' => 'id:' . $created_entity->getRevisionId()]);
+      }
       /* $location = $this->entityStorage->load(static::$firstCreatedEntityId)->toUrl('jsonapi')->setAbsolute(TRUE)->toString(); */
-      $this->assertSame([$location], $response->getHeader('Location'));
+      $this->assertSame([$location->setAbsolute()->toString()], $response->getHeader('Location'));
 
       // Assert that the entity was indeed created, and that the response body
       // contains the serialized created entity.
-      $created_entity = $this->entityStorage->loadUnchanged(static::$firstCreatedEntityId);
       $created_entity_document = $this->normalize($created_entity, $url);
       // @todo Remove this once JSON:API requires Drupal >=8.6.
       if (floatval(\Drupal::VERSION) >= 8.6) {
@@ -2000,11 +2040,16 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $this->assertFalse($response->hasHeader('X-Drupal-Cache'));
 
     if ($this->entity->getEntityType()->getStorageClass() !== ContentEntityNullStorage::class && $this->entity->getEntityType()->hasKey('uuid')) {
-      $uuid = $this->entityStorage->load(static::$secondCreatedEntityId)->uuid();
+      $second_created_entity = $this->entityStorage->load(static::$secondCreatedEntityId);
+      $uuid = $second_created_entity->uuid();
       // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
-      $location = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $uuid])->setAbsolute(TRUE)->toString();
+      $location = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $uuid]);
       /* $location = $this->entityStorage->load(static::$secondCreatedEntityId)->toUrl('jsonapi')->setAbsolute(TRUE)->toString(); */
-      $this->assertSame([$location], $response->getHeader('Location'));
+      if (static::$resourceTypeIsVersionable) {
+        assert($created_entity instanceof RevisionableInterface);
+        $location->setOption('query', ['resourceVersion' => 'id:' . $second_created_entity->getRevisionId()]);
+      }
+      $this->assertSame([$location->setAbsolute()->toString()], $response->getHeader('Location'));
 
       // 500 when creating an entity with a duplicate UUID.
       $doc = $this->getModifiedEntityForPostTesting();
@@ -2044,6 +2089,8 @@ abstract class ResourceTestBase extends BrowserTestBase {
       return;
     }
 
+    $prior_revision_id = (int) $this->entityLoadUnchanged($this->entity->id())->getRevisionId();
+
     // Patch testing requires that another entity of the same type exists.
     $this->anotherEntity = $this->createAnotherEntity('dupe');
 
@@ -2074,6 +2121,13 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
+
+    // DX: 405 when read-only mode is enabled.
+    $response = $this->request('PATCH', $url, $request_options);
+    $this->assertResourceErrorResponse(405, sprintf("JSON:API is configured to accept only read operations. Site administrators can configure this at %s.", Url::fromUri('base:/admin/config/services/jsonapi')->setAbsolute()->toString(TRUE)->getGeneratedUrl()), $url, $response);
+    $this->assertSame(['GET'], $response->getHeader('Allow'));
+
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
 
     // DX: 415 when no Content-Type request header.
     $response = $this->request('PATCH', $url, $request_options);
@@ -2167,6 +2221,9 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $request_options[RequestOptions::BODY] = Json::encode($valid_request_body);
     $response = $this->request('PATCH', $url, $request_options);
     $this->assertResourceResponse(200, FALSE, $response);
+    $updated_entity = $this->entityLoadUnchanged($this->entity->id());
+    $this->assertSame(static::$newRevisionsShouldBeAutomatic, $prior_revision_id < (int) $updated_entity->getRevisionId());
+    $prior_revision_id = (int) $updated_entity->getRevisionId();
 
     $request_options[RequestOptions::BODY] = $parseable_valid_request_body;
     $request_options[RequestOptions::HEADERS]['Content-Type'] = 'text/xml';
@@ -2183,9 +2240,19 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $this->assertFalse($response->hasHeader('X-Drupal-Cache'));
     // Assert that the entity was indeed updated, and that the response body
     // contains the serialized updated entity.
-    $updated_entity = $this->entityStorage->loadUnchanged($this->entity->id());
+    $updated_entity = $this->entityLoadUnchanged($this->entity->id());
+    $this->assertSame(static::$newRevisionsShouldBeAutomatic, $prior_revision_id < (int) $updated_entity->getRevisionId());
+    if ($this->entity instanceof RevisionLogInterface) {
+      if (static::$newRevisionsShouldBeAutomatic) {
+        $this->assertNotSame((int) $this->entity->getRevisionCreationTime(), (int) $updated_entity->getRevisionCreationTime());
+      }
+      else {
+        $this->assertSame((int) $this->entity->getRevisionCreationTime(), (int) $updated_entity->getRevisionCreationTime());
+      }
+    }
     $updated_entity_document = $this->normalize($updated_entity, $url);
     $this->assertSame($updated_entity_document, Json::decode((string) $response->getBody()));
+    $prior_revision_id = (int) $updated_entity->getRevisionId();
     // Assert that the entity was indeed created using the PATCHed values.
     foreach ($this->getPatchDocument()['data']['attributes'] as $field_name => $field_normalization) {
       // If the value is an array of properties, only verify that the sent
@@ -2220,7 +2287,10 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $request_options[RequestOptions::BODY] = Json::encode($doc_remove_item, 'api_json');
     $response = $this->request('PATCH', $url, $request_options);
     $this->assertResourceResponse(200, FALSE, $response);
-    $this->assertSame([0 => ['value' => 'Two']], $this->entityStorage->loadUnchanged($this->entity->id())->get('field_rest_test_multivalue')->getValue());
+    $updated_entity = $this->entityLoadUnchanged($this->entity->id());
+    $this->assertSame([0 => ['value' => 'Two']], $updated_entity->get('field_rest_test_multivalue')->getValue());
+    $this->assertSame(static::$newRevisionsShouldBeAutomatic, $prior_revision_id < (int) $updated_entity->getRevisionId());
+    $prior_revision_id = (int) $updated_entity->getRevisionId();
 
     // Multi-value field: add one item before the existing one, and one after.
     $doc_add_items = $doc_multi_value_tests;
@@ -2233,7 +2303,100 @@ abstract class ResourceTestBase extends BrowserTestBase {
       1 => ['value' => 'Two'],
       2 => ['value' => 'Three'],
     ];
-    $this->assertSame($expected_document, $this->entityStorage->loadUnchanged($this->entity->id())->get('field_rest_test_multivalue')->getValue());
+    $updated_entity = $this->entityLoadUnchanged($this->entity->id());
+    $this->assertSame($expected_document, $updated_entity->get('field_rest_test_multivalue')->getValue());
+    $this->assertSame(static::$newRevisionsShouldBeAutomatic, $prior_revision_id < (int) $updated_entity->getRevisionId());
+    $prior_revision_id = (int) $updated_entity->getRevisionId();
+
+    // Finally, assert that when Content Moderation is installed, a new revision
+    // is automatically created when PATCHing for entity types that have a
+    // moderation handler.
+    // @see \Drupal\content_moderation\Entity\Handler\ModerationHandler::onPresave()
+    // @see \Drupal\content_moderation\EntityTypeInfo::$moderationHandlers
+    if ($updated_entity instanceof EntityPublishedInterface) {
+      $updated_entity->setPublished()->save();
+    }
+    $this->assertTrue($this->container->get('module_installer')->install(['content_moderation'], TRUE), 'Installed modules.');
+
+    if (!\Drupal::service('content_moderation.moderation_information')->canModerateEntitiesOfEntityType($this->entity->getEntityType())) {
+      return;
+    }
+
+    $workflow = floatval(\Drupal::VERSION) > 8.5
+      ? $this->createEditorialWorkflow()
+      // @todo Remove when we stop supporting Drupal 8.5.
+      : entity_load('workflow', 'editorial');
+    $workflow->getTypePlugin()->addEntityTypeAndBundle(static::$entityTypeId, $this->entity->bundle());
+    $workflow->save();
+    $this->grantPermissionsToTestedRole(['use editorial transition publish']);
+    $doc_add_items['data']['attributes']['field_rest_test_multivalue'][2] = ['value' => '3'];
+    $request_options[RequestOptions::BODY] = Json::encode($doc_add_items);
+    $response = $this->request('PATCH', $url, $request_options);
+    $this->assertResourceResponse(200, FALSE, $response);
+    $expected_document = [
+      0 => ['value' => 'One'],
+      1 => ['value' => 'Two'],
+      2 => ['value' => '3'],
+    ];
+    $updated_entity = $this->entityLoadUnchanged($this->entity->id());
+    $this->assertSame($expected_document, $updated_entity->get('field_rest_test_multivalue')->getValue());
+    if ($this->entity->getEntityType()->hasHandlerClass('moderation')) {
+      $this->assertLessThan((int) $updated_entity->getRevisionId(), $prior_revision_id);
+    }
+    else {
+      $this->assertSame(static::$newRevisionsShouldBeAutomatic, $prior_revision_id < (int) $updated_entity->getRevisionId());
+    }
+
+    // Ensure that PATCHing an entity that is not the latest revision is
+    // unsupported.
+    if (!$this->entity->getEntityType()->isRevisionable() || !$this->entity instanceof FieldableEntityInterface) {
+      return;
+    }
+    assert($this->entity instanceof RevisionableInterface);
+
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
+    $request_options[RequestOptions::BODY] = Json::encode([
+      'data' => [
+        'type' => static::$resourceTypeName,
+        'id' => $this->entity->uuid(),
+      ],
+    ]);
+    $this->setUpAuthorization('PATCH');
+    $this->grantPermissionsToTestedRole([
+      'use editorial transition create_new_draft',
+      'use editorial transition archived_published',
+      'use editorial transition published',
+    ]);
+
+    // Disallow PATCHing an entity that has a pending revision.
+    $updated_entity->set('moderation_state', 'draft');
+    $updated_entity->setNewRevision();
+    $updated_entity->save();
+    $actual_response = $this->request('PATCH', $url, $request_options);
+    $this->assertResourceErrorResponse(400, 'Updating a resource object that has a working copy is not yet supported. See https://www.drupal.org/project/jsonapi/issues/2795279.', $url, $actual_response);
+
+    // Allow PATCHing an unpublished default revision.
+    $updated_entity->set('moderation_state', 'archived');
+    $updated_entity->setNewRevision();
+    $updated_entity->save();
+    $actual_response = $this->request('PATCH', $url, $request_options);
+    $this->assertSame(200, $actual_response->getStatusCode());
+
+    // Allow PATCHing an unpublished default revision. (An entity that
+    // transitions from archived to draft remains an unpublished default
+    // revision.)
+    $updated_entity->set('moderation_state', 'draft');
+    $updated_entity->setNewRevision();
+    $updated_entity->save();
+    $actual_response = $this->request('PATCH', $url, $request_options);
+    $this->assertSame(200, $actual_response->getStatusCode());
+
+    // Allow PATCHing a published default revision.
+    $updated_entity->set('moderation_state', 'published');
+    $updated_entity->setNewRevision();
+    $updated_entity->save();
+    $actual_response = $this->request('PATCH', $url, $request_options);
+    $this->assertSame(200, $actual_response->getStatusCode());
   }
 
   /**
@@ -2257,6 +2420,13 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
+
+    // DX: 405 when read-only mode is enabled.
+    $response = $this->request('DELETE', $url, $request_options);
+    $this->assertResourceErrorResponse(405, sprintf("JSON:API is configured to accept only read operations. Site administrators can configure this at %s.", Url::fromUri('base:/admin/config/services/jsonapi')->setAbsolute()->toString(TRUE)->getGeneratedUrl()), $url, $response);
+    $this->assertSame(['GET'], $response->getHeader('Allow'));
+
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
 
     // DX: 403 when unauthorized.
     $response = $this->request('DELETE', $url, $request_options);
@@ -2518,7 +2688,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
 
     // JSON:API will only support node and media revisions until Drupal core has
     // a generic revision access API.
-    if (!in_array($this->entity->getEntityTypeId(), ['node', 'media'])) {
+    if (!static::$resourceTypeIsVersionable) {
       $this->setUpRevisionAuthorization('GET');
       $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()])->setAbsolute();
       $url->setOption('query', ['resourceVersion' => 'id:' . $this->entity->getRevisionId()]);
@@ -2551,7 +2721,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
     ])->setLabel('Revisionable text field')->setTranslatable(FALSE)->save();
 
     // Reload entity so that it has the new field.
-    $entity = $this->entityStorage->loadUnchanged($this->entity->id());
+    $entity = $this->entityLoadUnchanged($this->entity->id());
 
     // Set up test data.
     /* @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
@@ -2604,6 +2774,17 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $published_key = $this->entity->getEntityType()->getKey('published');
     $revision_translation_affected_key = $this->entity->getEntityType()->getKey('revision_translation_affected');
 
+    $amend_relationship_urls = function (array &$document, $revision_id) {
+      if (!empty($document['data']['relationships'])) {
+        foreach ($document['data']['relationships'] as &$relationship) {
+          $pattern = '/resourceVersion=id%3A\d/';
+          $replacement = 'resourceVersion=' . urlencode("id:$revision_id");
+          $relationship['links']['self']['href'] = preg_replace($pattern, $replacement, $relationship['links']['self']['href']);
+          $relationship['links']['related']['href'] = preg_replace($pattern, $replacement, $relationship['links']['related']['href']);
+        }
+      }
+    };
+
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
@@ -2634,6 +2815,10 @@ abstract class ResourceTestBase extends BrowserTestBase {
     // content_moderation is not installed.
     $actual_response = $this->request('GET', $url, $request_options);
     $expected_document = $this->getExpectedDocument();
+    // The resource object should always links to the specific revision it
+    // represents.
+    $expected_document['data']['links']['self']['href'] = $latest_revision_id_url->setAbsolute()->toString();
+    $amend_relationship_urls($expected_document, $latest_revision_id);
     // Resource objects always link to their specific revision by revision ID.
     $expected_document['data']['attributes'][$revision_id_key] = $latest_revision_id;
     $expected_document['data']['attributes']['field_revisionable_number'] = 99;
@@ -2668,6 +2853,16 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $expected_document['data']['attributes'][$revision_id_key] = $original_revision_id;
     $expected_document['data']['attributes']['field_revisionable_number'] = 42;
     $expected_document['links']['self']['href'] = $original_revision_id_url->setAbsolute()->toString();
+    // The resource object should always links to the specific revision it
+    // represents.
+    $expected_document['data']['links']['self']['href'] = $original_revision_id_url->setAbsolute()->toString();
+    $amend_relationship_urls($expected_document, $original_revision_id);
+    // When the resource object is not the latest version or the working copy,
+    // a link should be provided that links to those versions. Therefore, the
+    // presence or absence of these links communicates the state of the resource
+    // object.
+    $expected_document['data']['links']['latest-version']['href'] = $rel_latest_version_url->setAbsolute()->toString();
+    $expected_document['data']['links']['working-copy']['href'] = $rel_working_copy_url->setAbsolute()->toString();
     $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
 
     // Install content_moderation module.
@@ -2689,19 +2884,28 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $entity->set('moderation_state', 'published');
     $entity->setNewRevision();
     $entity->save();
-    $published_revision_id = (int) $entity->getRevisionId();
+    $default_revision_id = (int) $entity->getRevisionId();
 
     // Fetch the published revision by using the `rel` version negotiator and
     // the `latest-version` version argument. With content_moderation, this is
     // now the most recent revision where the moderation state was the 'default'
     // one.
     $actual_response = $this->request('GET', $rel_latest_version_url, $request_options);
-    $expected_document['data']['attributes'][$revision_id_key] = $published_revision_id;
+    $expected_document['data']['attributes'][$revision_id_key] = $default_revision_id;
     $expected_document['data']['attributes']['moderation_state'] = 'published';
     $expected_document['data']['attributes'][$published_key] = TRUE;
     $expected_document['data']['attributes']['field_revisionable_number'] = 99;
     $expected_document['links']['self']['href'] = $rel_latest_version_url->toString();
     $expected_document['data']['attributes'][$revision_translation_affected_key] = $entity->isRevisionTranslationAffected();
+    // The resource object now must link to the new revision.
+    $default_revision_id_url = clone $url;
+    $default_revision_id_url = $default_revision_id_url->setOption('query', ['resourceVersion' => "id:$default_revision_id"]);
+    $expected_document['data']['links']['self']['href'] = $default_revision_id_url->setAbsolute()->toString();
+    $amend_relationship_urls($expected_document, $default_revision_id);
+    // Since the requested version is the latest version and working copy, there
+    // should be no links.
+    unset($expected_document['data']['links']['latest-version']);
+    unset($expected_document['data']['links']['working-copy']);
     $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
     // Fetch the collection URL using the `latest-version` version argument.
     $actual_response = $this->request('GET', $rel_latest_version_collection_url, $request_options);
@@ -2749,12 +2953,16 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $entity->set('moderation_state', 'draft');
     $entity->setNewRevision();
     $entity->save();
-    $draft_revision_id = (int) $entity->getRevisionId();
+    $forward_revision_id = (int) $entity->getRevisionId();
 
     // The `latest-version` link should *still* reference the same revision
     // since a draft is not a default revision.
     $actual_response = $this->request('GET', $rel_latest_version_url, $request_options);
     $expected_document['links']['self']['href'] = $rel_latest_version_url->toString();
+    // Since the latest version is no longer also the working copy, a
+    // `working-copy` link is required to indicate that there is a forward
+    // revision available.
+    $expected_document['data']['links']['working-copy']['href'] = $rel_working_copy_url->setAbsolute()->toString();
     $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
     // And the same should be true for collections.
     $actual_response = $this->request('GET', $rel_latest_version_collection_url, $request_options);
@@ -2804,12 +3012,22 @@ abstract class ResourceTestBase extends BrowserTestBase {
 
     // Now, the `working-copy` link should be latest revision and be accessible.
     $actual_response = $this->request('GET', $rel_working_copy_url, $request_options);
-    $expected_document['data']['attributes'][$revision_id_key] = $draft_revision_id;
+    $expected_document['data']['attributes'][$revision_id_key] = $forward_revision_id;
     $expected_document['data']['attributes']['moderation_state'] = 'draft';
     $expected_document['data']['attributes'][$published_key] = FALSE;
     $expected_document['data']['attributes']['field_revisionable_number'] = 42;
     $expected_document['links']['self']['href'] = $rel_working_copy_url->setAbsolute()->toString();
     $expected_document['data']['attributes'][$revision_translation_affected_key] = $entity->isRevisionTranslationAffected();
+    // The resource object now must link to the forward revision.
+    $forward_revision_id_url = clone $url;
+    $forward_revision_id_url = $forward_revision_id_url->setOption('query', ['resourceVersion' => "id:$forward_revision_id"]);
+    $expected_document['data']['links']['self']['href'] = $forward_revision_id_url->setAbsolute()->toString();
+    $amend_relationship_urls($expected_document, $forward_revision_id);
+    // Since the the working copy is not the default revision. A
+    // `latest-version` link is required to indicate that the requested version
+    // is not the default revision.
+    unset($expected_document['data']['links']['working-copy']);
+    $expected_document['data']['links']['latest-version']['href'] = $rel_latest_version_url->setAbsolute()->toString();
     $expected_cache_tags = $this->getExpectedCacheTags();
     $expected_cache_contexts = $this->getExpectedCacheContexts();
     $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cache_tags, $expected_cache_contexts, FALSE, 'MISS');
@@ -2840,12 +3058,12 @@ abstract class ResourceTestBase extends BrowserTestBase {
         $latest_revision_id_related_url,
       ],
       [
-        $published_revision_id,
+        $default_revision_id,
         $rel_latest_version_relationship_url,
         $rel_latest_version_related_url,
       ],
       [
-        $draft_revision_id,
+        $forward_revision_id,
         $rel_working_copy_relationship_url,
         $rel_working_copy_related_url,
       ],
@@ -2898,6 +3116,52 @@ abstract class ResourceTestBase extends BrowserTestBase {
       // MISS or UNCACHEABLE depends on data. It must not be HIT.
       $dynamic_cache = !empty(array_intersect(['user', 'session'], $expected_cacheability->getCacheContexts())) ? 'UNCACHEABLE' : 'MISS';
       $this->assertResourceResponse(200, $expected_document, $actual_response, $expected_cacheability->getCacheTags(), $expected_cacheability->getCacheContexts(), FALSE, $dynamic_cache);
+    }
+
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
+    // Ensures that PATCH and DELETE on individual resources with a
+    // `resourceVersion` query parameter is not supported.
+    $individual_urls = [
+      $original_revision_id_url,
+      $latest_revision_id_url,
+      $rel_latest_version_url,
+      $rel_working_copy_url,
+    ];
+    $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
+    foreach ($individual_urls as $url) {
+      foreach (['PATCH', 'DELETE'] as $method) {
+        $actual_response = $this->request($method, $url, $request_options);
+        $this->assertResourceErrorResponse(400, sprintf('%s requests with a `%s` query parameter are not supported.', $method, 'resourceVersion'), $url, $actual_response);
+      }
+    }
+
+    // Ensures that PATCH, POST and DELETE on relationship resources with a
+    // `resourceVersion` query parameter is not supported.
+    $relationship_urls = [
+      $original_revision_id_relationship_url,
+      $latest_revision_id_relationship_url,
+      $rel_latest_version_relationship_url,
+      $rel_working_copy_relationship_url,
+    ];
+    foreach ($relationship_urls as $url) {
+      foreach (['PATCH', 'POST', 'DELETE'] as $method) {
+        $actual_response = $this->request($method, $url, $request_options);
+        $this->assertResourceErrorResponse(400, sprintf('%s requests with a `%s` query parameter are not supported.', $method, 'resourceVersion'), $url, $actual_response);
+      }
+    }
+
+    // Ensures that POST on collection resources with a `resourceVersion` query
+    // parameter is not supported.
+    $collection_urls = [
+      $rel_latest_version_collection_url,
+      $rel_working_copy_collection_url,
+    ];
+    foreach ($collection_urls as $url) {
+      foreach (['POST'] as $method) {
+        $actual_response = $this->request($method, $url, $request_options);
+        $this->assertResourceErrorResponse(400, sprintf('%s requests with a `%s` query parameter are not supported.', $method, 'resourceVersion'), $url, $actual_response);
+      }
     }
   }
 
@@ -3134,6 +3398,22 @@ abstract class ResourceTestBase extends BrowserTestBase {
     // Always grant access to 'view' the test entity reference field.
     $flattened_permissions[] = 'field_jsonapi_test_entity_ref view access';
     $this->grantPermissionsToTestedRole($flattened_permissions);
+  }
+
+  /**
+   * Loads an entity in the test container, ignoring the static cache.
+   *
+   * @param int $id
+   *   The entity ID.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|null
+   *   The loaded entity.
+   *
+   * @todo Remove this after https://www.drupal.org/project/drupal/issues/3038706 lands.
+   */
+  protected function entityLoadUnchanged($id) {
+    $this->entityStorage->resetCache();
+    return $this->entityStorage->loadUnchanged($id);
   }
 
 }

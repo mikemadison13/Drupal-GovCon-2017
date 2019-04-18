@@ -11,7 +11,11 @@ use Drupal\jsonapi\Normalizer\Value\CacheableOmission;
 /**
  * Converts the JSON:API module ResourceObject into a JSON:API array structure.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class ResourceObjectNormalizer extends NormalizerBase {
 
@@ -54,20 +58,14 @@ class ResourceObjectNormalizer extends NormalizerBase {
       }
       $normalizer_values[$field_name] = $this->serializeField($field, $context, $format);
     }
-    // Create the array of normalized fields.
-    $normalized = [
-      'type' => $resource_type->getTypeName(),
-      'id' => $object->getId(),
-    ];
-    $links = $this->serializer->normalize($object->getLinks(), $format, $context);
-    assert($links instanceof CacheableNormalization);
-    $normalized['links'] = $links->getNormalization();
     $relationship_field_names = array_keys($resource_type->getRelatableResourceTypes());
-    $attributes = CacheableNormalization::aggregate(array_diff_key($normalizer_values, array_flip($relationship_field_names)));
-    $relationships = CacheableNormalization::aggregate(array_intersect_key($normalizer_values, array_flip($relationship_field_names)));
-    $normalized['attributes'] = $attributes->getNormalization();
-    $normalized['relationships'] = $relationships->getNormalization();
-    return (new CacheableNormalization($object, array_filter($normalized)))->withCacheableDependency($attributes)->withCacheableDependency($relationships)->withCacheableDependency($links);
+    return CacheableNormalization::aggregate([
+      'type' => CacheableNormalization::permanent($resource_type->getTypeName()),
+      'id' => CacheableNormalization::permanent($object->getId()),
+      'attributes' => CacheableNormalization::aggregate(array_diff_key($normalizer_values, array_flip($relationship_field_names)))->omitIfEmpty(),
+      'relationships' => CacheableNormalization::aggregate(array_intersect_key($normalizer_values, array_flip($relationship_field_names)))->omitIfEmpty(),
+      'links' => $this->serializer->normalize($object->getLinks(), $format, $context)->omitIfEmpty(),
+    ])->withCacheableDependency($object);
   }
 
   /**
@@ -99,7 +97,7 @@ class ResourceObjectNormalizer extends NormalizerBase {
     else {
       // Config "fields" in this case are arrays or primitives and do not need
       // to be normalized.
-      return new CacheableNormalization(new CacheableMetadata(), $field);
+      return CacheableNormalization::permanent($field);
     }
   }
 

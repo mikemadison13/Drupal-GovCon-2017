@@ -10,7 +10,11 @@ use Drupal\Core\Cache\CacheableMetadata;
 /**
  * Use to store normalized data and its cacheability.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class CacheableNormalization implements CacheableDependencyInterface {
 
@@ -39,6 +43,20 @@ class CacheableNormalization implements CacheableDependencyInterface {
   }
 
   /**
+   * Creates a CacheableNormalization instance without any special cacheability.
+   *
+   * @param array|string|int|float|bool|null $normalization
+   *   The normalized data. This value must not contain any
+   *   CacheableNormalizations.
+   *
+   * @return static
+   *   The CacheableNormalization.
+   */
+  public static function permanent($normalization) {
+    return new static(new CacheableMetadata(), $normalization);
+  }
+
+  /**
    * Gets the decorated normalization.
    *
    * @return array|string|int|float|bool|null
@@ -46,6 +64,17 @@ class CacheableNormalization implements CacheableDependencyInterface {
    */
   public function getNormalization() {
     return $this->normalization;
+  }
+
+  /**
+   * Converts the object to a CacheableOmission if the normalization is empty.
+   *
+   * @return self|\Drupal\jsonapi\Normalizer\Value\CacheableOmission
+   *   A CacheableOmission if the normalization is considered empty, self
+   *   otherwise.
+   */
+  public function omitIfEmpty() {
+    return empty($this->normalization) ? new CacheableOmission($this) : $this;
   }
 
   /**

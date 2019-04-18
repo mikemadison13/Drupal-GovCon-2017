@@ -13,9 +13,13 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * specification. A source pointer is added to help client applications report
  * which entity was access denied.
  *
- * @see http://jsonapi.org/format/#error-objects
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
  *
- * @internal
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
+ *
+ * @see http://jsonapi.org/format/#error-objects
  */
 class EntityAccessDeniedHttpExceptionNormalizer extends HttpExceptionNormalizer {
 

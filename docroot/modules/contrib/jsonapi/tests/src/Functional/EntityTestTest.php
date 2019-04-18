@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\jsonapi\Functional;
 
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\entity_test\Entity\EntityTest;
@@ -71,7 +72,10 @@ class EntityTestTest extends ResourceTestBase {
     // Set flag so that internal field 'internal_string_field' is created.
     // @see entity_test_entity_base_field_info()
     $this->container->get('state')->set('entity_test.internal_field', TRUE);
-    \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+    $field_storage_definition = BaseFieldDefinition::create('string')
+      ->setLabel('Internal field')
+      ->setInternal(TRUE);
+    \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('internal_string_field', 'entity_test', 'entity_test', $field_storage_definition);
 
     $entity_test = EntityTest::create([
       'name' => 'Llama',

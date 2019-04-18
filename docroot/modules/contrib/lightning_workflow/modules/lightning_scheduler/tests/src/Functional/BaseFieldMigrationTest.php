@@ -8,6 +8,7 @@ use Drupal\node\NodeInterface;
 /**
  * @group lightning_workflow
  * @group lightning_scheduler
+ * @group orca_ignore
  */
 class BaseFieldMigrationTest extends MigrationTestBase {
 

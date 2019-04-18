@@ -64,6 +64,8 @@ class ExternalNormalizersTest extends BrowserTestBase {
       ->grantPermission('create entity_test entity_test_with_bundle entities')
       ->save();
 
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
     FieldStorageConfig::create([
       'field_name' => 'field_test',
       'type' => 'string',

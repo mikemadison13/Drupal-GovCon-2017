@@ -14,7 +14,11 @@ use Symfony\Component\Serializer\Serializer as SymfonySerializer;
  *
  * @link https://www.drupal.org/project/jsonapi/issues/2923779#comment-12407443
  *
- * @internal
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 final class Serializer extends SymfonySerializer {
 

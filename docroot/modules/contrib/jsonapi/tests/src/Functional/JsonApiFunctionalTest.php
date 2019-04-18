@@ -18,6 +18,13 @@ use Drupal\node\Entity\Node;
 class JsonApiFunctionalTest extends JsonApiFunctionalTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  public static $modules = [
+    'basic_auth',
+  ];
+
+  /**
    * Test the GET method.
    */
   public function testRead() {
@@ -521,6 +528,8 @@ class JsonApiFunctionalTest extends JsonApiFunctionalTestBase {
    * Test POST, PATCH and DELETE.
    */
   public function testWrite() {
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
     $this->createDefaultContent(0, 3, FALSE, FALSE, static::IS_NOT_MULTILINGUAL, FALSE);
     // 1. Successful post.
     $collection_url = Url::fromRoute('jsonapi.node--article.collection.post');

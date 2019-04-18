@@ -12,11 +12,13 @@ use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\lightning_core\Element;
 use Drupal\lightning_core\Routing\RouteSubscriber;
 use Drupal\lightning_workflow\Plugin\views\field\NodeBulkForm;
 use Drupal\node\NodeTypeInterface;
+use Drupal\views\Entity\View;
 use Drupal\views\ViewEntityInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\workflows\Entity\Workflow;
@@ -42,10 +44,25 @@ function lightning_workflow_node_type_insert(NodeTypeInterface $node_type) {
 
   $plugin = $workflow->getTypePlugin();
   if ($plugin instanceof ContentModerationInterface) {
-    // We need to rebuild all routes because Content Moderation needs to ensure
-    // that edit forms load the latest revision.
     $plugin->addEntityTypeAndBundle('node', $node_type->id());
     $workflow->save();
+
+    // The moderation_history view depends on the existence of the
+    // moderation_state base field, which is only defined once a content type
+    // has been opted into moderation. Now that's done, so create the
+    // moderation_history view if it doesn't already exist.
+    if (Drupal::moduleHandler()->moduleExists('views')) {
+      $view = View::load('moderation_history');
+
+      if (empty($view)) {
+        $values = file_get_contents(__DIR__ . '/config/dynamic/views.view.moderation_history.yml');
+        $values = Yaml::decode($values);
+        View::create($values)->save();
+      }
+    }
+    // We need to rebuild all routes because Content Moderation needs to ensure
+    // that edit forms load the latest revision, and that the moderation_history
+    // view's routes are registered if needed.
     Drupal::service('router.builder')->rebuild();
   }
 }

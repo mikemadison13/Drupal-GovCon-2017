@@ -9,6 +9,7 @@ use Drupal\Core\Access\AccessResultReasonInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Url;
 use Drupal\jsonapi\Normalizer\HttpExceptionNormalizer;
 use Drupal\jsonapi\ResourceResponse;
@@ -178,14 +179,22 @@ trait ResourceResponseTestTrait {
 
     // The test entity reference field should always be present.
     if (!isset($individual_document['data']['relationships']['field_jsonapi_test_entity_ref'])) {
+      if (static::$resourceTypeIsVersionable) {
+        assert($this->entity instanceof RevisionableInterface);
+        $version_identifier = 'id:' . $this->entity->getRevisionId();
+        $version_query_string = '?resourceVersion=' . urlencode($version_identifier);
+      }
+      else {
+        $version_query_string = '';
+      }
       $individual_document['data']['relationships']['field_jsonapi_test_entity_ref'] = [
         'data' => [],
         'links' => [
           'related' => [
-            'href' => $expected_base_url->toString() . '/field_jsonapi_test_entity_ref',
+            'href' => $expected_base_url->toString() . '/field_jsonapi_test_entity_ref' . $version_query_string,
           ],
           'self' => [
-            'href' => $expected_base_url->toString() . '/relationships/field_jsonapi_test_entity_ref',
+            'href' => $expected_base_url->toString() . '/relationships/field_jsonapi_test_entity_ref' . $version_query_string,
           ],
         ],
       ];
@@ -496,7 +505,7 @@ trait ResourceResponseTestTrait {
       $detail .= ' ' . $reason;
     }
     $error = [
-      'status' => 403,
+      'status' => '403',
       'title' => 'Forbidden',
       'detail' => $detail,
       'links' => [

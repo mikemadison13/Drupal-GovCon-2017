@@ -7,8 +7,8 @@ dependencies:
   - lightning_layout
   - node
 
-# Information added by Drupal.org packaging script on 2019-01-16
-version: '8.x-1.6'
+# Information added by Drupal.org packaging script on 2019-03-18
+version: '8.x-1.7'
 core: '8.x'
 project: 'lightning_layout'
-datestamp: 1547668694
+datestamp: 1552942401

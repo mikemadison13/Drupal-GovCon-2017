@@ -30,8 +30,10 @@ abstract class JsonApiFunctionalTestBase extends BrowserTestBase {
   const IS_MULTILINGUAL = TRUE;
   const IS_NOT_MULTILINGUAL = FALSE;
 
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
-    'basic_auth',
     'jsonapi',
     'serialization',
     'node',

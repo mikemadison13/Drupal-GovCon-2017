@@ -21,22 +21,9 @@ class ModerationHistoryTest extends BrowserTestBase {
     'views',
   ];
 
-  /**
-   * The content type created during the test.
-   *
-   * @var \Drupal\node\NodeTypeInterface
-   */
-  private $nodeType;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-    $this->nodeType = $this->createContentType();
-  }
-
   public function testModerationHistory() {
+    $node_type = $this->createContentType();
+
     $user_permissions = [
       'administer nodes',
       'bypass node access',
@@ -48,10 +35,12 @@ class ModerationHistoryTest extends BrowserTestBase {
     $user_a = $this->createUser($user_permissions, 'userA');
     $user_b = $this->createUser($user_permissions, 'userB');
 
-    $this->enableModeration();
+    // Enable moderation for the content type.
+    $node_type->setThirdPartySetting('lightning_workflow', 'workflow', 'editorial');
+    lightning_workflow_node_type_insert($node_type);
 
     $node = $this->createNode([
-      'type' => $this->nodeType->id(),
+      'type' => $node_type->id(),
       'title' => 'Foo',
       'moderation_state' => 'draft',
     ]);
@@ -69,16 +58,6 @@ class ModerationHistoryTest extends BrowserTestBase {
     $date_formatter = \Drupal::service('date.formatter');
     $this->assertSession()->pageTextContainsOnce('Set to review on ' . $date_formatter->format($timestamp_a, 'long') . ' by ' . $user_a->getUsername());
     $this->assertSession()->pageTextContainsOnce('Set to published on ' . $date_formatter->format($timestamp_b, 'long') . ' by ' . $user_b->getUsername());
-  }
-
-  /**
-   * Enables moderation for the content type under test.
-   */
-  private function enableModeration() {
-    $this->nodeType->setThirdPartySetting('lightning_workflow', 'workflow', 'editorial');
-
-    \Drupal::moduleHandler()
-      ->invoke('lightning_workflow', 'node_type_insert', [ $this->nodeType ]);
   }
 
   /**

@@ -11,9 +11,13 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 /**
  * Normalizes an HttpException in compliance with the JSON:API specification.
  *
- * @see http://jsonapi.org/format/#error-objects
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
  *
- * @internal
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
+ *
+ * @see http://jsonapi.org/format/#error-objects
  */
 class HttpExceptionNormalizer extends NormalizerBase {
 
@@ -64,7 +68,7 @@ class HttpExceptionNormalizer extends NormalizerBase {
       $error['title'] = Response::$statusTexts[$status_code];
     }
     $error += [
-      'status' => $status_code,
+      'status' => (string) $status_code,
       'detail' => $exception->getMessage(),
     ];
     $error['links']['via']['href'] = \Drupal::request()->getUri();

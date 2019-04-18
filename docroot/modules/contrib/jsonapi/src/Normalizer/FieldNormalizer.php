@@ -2,7 +2,6 @@
 
 namespace Drupal\jsonapi\Normalizer;
 
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\jsonapi\Normalizer\Value\CacheableNormalization;
@@ -11,7 +10,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 /**
  * Converts the Drupal field structure to a JSON:API array structure.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API since its API is the HTTP API. This
+ *   class may change at any time and this will break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class FieldNormalizer extends NormalizerBase implements DenormalizerInterface {
 
@@ -34,7 +37,7 @@ class FieldNormalizer extends NormalizerBase implements DenormalizerInterface {
       ->getCardinality();
 
     return $cardinality === 1
-      ? array_shift($normalized_items) ?: new CacheableNormalization(new CacheableMetadata(), NULL)
+      ? array_shift($normalized_items) ?: CacheableNormalization::permanent(NULL)
       : CacheableNormalization::aggregate($normalized_items);
   }
 

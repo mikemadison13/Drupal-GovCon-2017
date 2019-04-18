@@ -11,7 +11,7 @@ use Drupal\jsonapi\JsonApiResource\ResourceIdentifier;
 use Drupal\jsonapi\JsonApiResource\ResourceObject;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\Controller\EntityResource;
-use Drupal\jsonapi\JsonApiResource\EntityCollection;
+use Drupal\jsonapi\JsonApiResource\Data;
 use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -190,14 +190,15 @@ class EntityResourceTest extends JsonapiKernelTestBase {
     return new EntityResource(
       $this->container->get('entity_type.manager'),
       $this->container->get('entity_field.manager'),
-      $this->container->get('jsonapi.link_manager'),
       $this->container->get('jsonapi.resource_type.repository'),
       $this->container->get('renderer'),
       $this->container->get('entity.repository'),
       $this->container->get('jsonapi.include_resolver'),
       $this->container->get('jsonapi.entity_access_checker'),
       $this->container->get('jsonapi.field_resolver'),
-      $this->container->get('jsonapi.serializer')
+      $this->container->get('jsonapi.serializer'),
+      $this->container->get('datetime.time'),
+      $this->container->get('current_user')
     );
   }
 
@@ -207,7 +208,8 @@ class EntityResourceTest extends JsonapiKernelTestBase {
   public function testGetIndividual() {
     $response = $this->entityResource->getIndividual($this->node, Request::create('/jsonapi/node/article'));
     $this->assertInstanceOf(JsonApiDocumentTopLevel::class, $response->getResponseData());
-    $this->assertEquals($this->node->uuid(), $response->getResponseData()->getData()->getId());
+    $resource_object = $response->getResponseData()->getData()->getIterator()->offsetGet(0);
+    $this->assertEquals($this->node->uuid(), $resource_object->getId());
   }
 
   /**
@@ -234,7 +236,7 @@ class EntityResourceTest extends JsonapiKernelTestBase {
 
     // Assertions.
     $this->assertInstanceOf(JsonApiDocumentTopLevel::class, $response->getResponseData());
-    $this->assertInstanceOf(EntityCollection::class, $response->getResponseData()->getData());
+    $this->assertInstanceOf(Data::class, $response->getResponseData()->getData());
     $this->assertEquals($this->node->uuid(), $response->getResponseData()->getData()->getIterator()->current()->getId());
     $this->assertEquals([
       'node:1',
@@ -260,7 +262,7 @@ class EntityResourceTest extends JsonapiKernelTestBase {
 
     // Assertions.
     $this->assertInstanceOf(JsonApiDocumentTopLevel::class, $response->getResponseData());
-    $this->assertInstanceOf(EntityCollection::class, $response->getResponseData()->getData());
+    $this->assertInstanceOf(Data::class, $response->getResponseData()->getData());
     $this->assertCount(1, $response->getResponseData()->getData());
     $expected_cache_tags = [
       'config:node.type.article',
@@ -284,7 +286,7 @@ class EntityResourceTest extends JsonapiKernelTestBase {
 
     // Assertions.
     $this->assertInstanceOf(JsonApiDocumentTopLevel::class, $response->getResponseData());
-    $this->assertInstanceOf(EntityCollection::class, $response->getResponseData()->getData());
+    $this->assertInstanceOf(Data::class, $response->getResponseData()->getData());
     $this->assertCount(2, $response->getResponseData()->getData());
     // `drupal_internal__type` is the alias for a node_type entity's ID field.
     $this->assertEquals($response->getResponseData()->getData()->toArray()[0]->getField('drupal_internal__type'), 'lorem');
@@ -317,7 +319,7 @@ class EntityResourceTest extends JsonapiKernelTestBase {
 
     // Assertions.
     $this->assertInstanceOf(JsonApiDocumentTopLevel::class, $response->getResponseData());
-    $this->assertInstanceOf(EntityCollection::class, $response->getResponseData()->getData());
+    $this->assertInstanceOf(Data::class, $response->getResponseData()->getData());
     $data = $response->getResponseData()->getData();
     $this->assertCount(1, $data);
     $this->assertEquals($this->node2->uuid(), $data->toArray()[0]->getId());
@@ -337,7 +339,7 @@ class EntityResourceTest extends JsonapiKernelTestBase {
 
     // Assertions.
     $this->assertInstanceOf(JsonApiDocumentTopLevel::class, $response->getResponseData());
-    $this->assertInstanceOf(EntityCollection::class, $response->getResponseData()->getData());
+    $this->assertInstanceOf(Data::class, $response->getResponseData()->getData());
     $this->assertEquals(0, $response->getResponseData()->getData()->count());
     $this->assertEquals(['node_list'], $response->getCacheableMetadata()->getCacheTags());
   }
@@ -362,7 +364,7 @@ class EntityResourceTest extends JsonapiKernelTestBase {
     $response = $this->entityResource->getRelated($resource_type, $this->node4, 'field_relationships', Request::create('/jsonapi/node/article/' . $this->node4->uuid(), '/field_relationships'));
     $this->assertInstanceOf(JsonApiDocumentTopLevel::class, $response
       ->getResponseData());
-    $this->assertInstanceOf(EntityCollection::class, $response
+    $this->assertInstanceOf(Data::class, $response
       ->getResponseData()
       ->getData());
     $this->assertEquals(['node:4'], $response->getCacheableMetadata()->getCacheTags());
@@ -420,7 +422,7 @@ class EntityResourceTest extends JsonapiKernelTestBase {
     $response = $this->entityResource->createIndividual($resource_type, $request);
     // As a side effect, the node will also be saved.
     $this->assertInstanceOf(JsonApiDocumentTopLevel::class, $response->getResponseData());
-    $this->assertTrue(entity_load_multiple_by_properties('node', ['uuid' => $response->getResponseData()->getData()->getId()]));
+    $this->assertTrue(entity_load_multiple_by_properties('node', ['uuid' => $response->getResponseData()->getData()->getIterator()->offsetGet(0)->getId()]));
     $this->assertEquals(201, $response->getStatusCode());
   }
 
@@ -509,7 +511,7 @@ class EntityResourceTest extends JsonapiKernelTestBase {
 
     // As a side effect, the node will also be saved.
     $this->assertInstanceOf(JsonApiDocumentTopLevel::class, $response->getResponseData());
-    $updated_node = $response->getResponseData()->getData();
+    $updated_node = $response->getResponseData()->getData()->getIterator()->offsetGet(0);
     $this->assertInstanceOf(ResourceObject::class, $updated_node);
     $this->assertSame('PATCHED', $this->node->getTitle());
     $this->assertSame([['target_id' => '1']], $this->node->get('field_relationships')->getValue());

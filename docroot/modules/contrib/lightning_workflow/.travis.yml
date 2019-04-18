@@ -6,7 +6,7 @@ cache:
   directories:
     - "$HOME/.composer/cache"
     - "$HOME/.drush/cache"
-    - "$HOME/.npm"
+
 php:
   - 7.1
 
@@ -26,30 +26,33 @@ addons:
   chrome: stable
 
 before_install:
-  # Tweak PHP configuration.
-  - phpenv config-add ./tests/travis.php.ini
-  - phpenv rehash
-
   - composer self-update
   - composer --version
   - google-chrome-stable --version
 
-  - ORCA=$TRAVIS_BUILD_DIR/../orca
-  - ORCA_FIXTURE=$ORCA-build
-  - ORCA_SUT=drupal/lightning_workflow
+  - export ORCA=$TRAVIS_BUILD_DIR/../orca
+  - export ORCA_FIXTURE=$ORCA-build
+  - export ORCA_SUT_NAME=drupal/lightning_workflow
+  - export ORCA_SUT_BRANCH=8.x-3.x
+  # - export ORCA_PACKAGES_CONFIG_ALTER=../lightning-workflow/tests/packages.yml
 
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - export PATH="$ORCA/bin:$PATH"
   - export PATH="$ORCA/vendor/bin:$PATH"
   - export PATH="$ORCA_FIXTURE/vendor/bin:$PATH"
 
+  # Install ORCA and prepare the environment.
+  - git clone --branch develop --depth 1 https://github.com/acquia/orca.git $ORCA
+  - $ORCA/bin/travis/before_install.sh
+
 install:
-  # Install ORCA so that we can build the fixture using that.
-  - git clone --depth 1 git@github.com:acquia/orca.git ../orca
-  - "$ORCA/bin/travis/install 8.x-3.x"
+  - $ORCA/bin/travis/install.sh
+
+  # Run ORCA static analysis tools.
+  - orca static-analysis:run ./
 
   # Use ORCA to build the code base.
-  - orca fixture:init -f --sut $ORCA_SUT $ORCA_FIXTURE_FLAGS
+  - orca fixture:init -f --sut $ORCA_SUT_NAME $ORCA_FIXTURE_FLAGS
   - # Install dev dependencies.
   - composer require --dev drupal/inline_entity_form --working-dir $ORCA_FIXTURE
 
@@ -58,7 +61,7 @@ before_script:
   - $TRAVIS_BUILD_DIR/update.sh $VERSION
 
 script:
-  - orca tests:run --sut $ORCA_SUT $ORCA_TEST_FLAGS
+  - orca tests:run --sut $ORCA_SUT_NAME $ORCA_TEST_FLAGS
 
 after_failure:
   - cd docroot

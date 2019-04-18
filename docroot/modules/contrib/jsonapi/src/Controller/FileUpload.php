@@ -15,11 +15,11 @@ use Drupal\jsonapi\Entity\EntityValidationTrait;
 use Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel;
 use Drupal\jsonapi\JsonApiResource\Link;
 use Drupal\jsonapi\JsonApiResource\LinkCollection;
-use Drupal\jsonapi\JsonApiResource\NullEntityCollection;
+use Drupal\jsonapi\JsonApiResource\NullIncludedData;
 use Drupal\jsonapi\JsonApiResource\ResourceObject;
+use Drupal\jsonapi\JsonApiResource\ResourceObjectData;
 use Drupal\jsonapi\ResourceResponse;
 use Drupal\jsonapi\ResourceType\ResourceType;
-use Drupal\jsonapi\ForwardCompatibility\FileFieldUploader;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -31,7 +31,11 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
 /**
  * Handles file upload requests.
  *
- * @internal
+ * @internal JSON:API maintains no PHP API. The API is the HTTP API. This class
+ *   may change at any time and could break any dependencies on it.
+ *
+ * @see https://www.drupal.org/project/jsonapi/issues/3032787
+ * @see jsonapi.api.php
  */
 class FileUpload {
 
@@ -54,7 +58,7 @@ class FileUpload {
   /**
    * The file uploader.
    *
-   * @var \Drupal\jsonapi\ForwardCompatibility\FileFieldUploader
+   * @var \Drupal\jsonapi\Controller\TemporaryJsonapiFileFieldUploader
    */
   protected $fileUploader;
 
@@ -72,12 +76,12 @@ class FileUpload {
    *   The current user.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager
    *   The entity field manager.
-   * @param \Drupal\jsonapi\ForwardCompatibility\FileFieldUploader $file_uploader
+   * @param \Drupal\jsonapi\Controller\TemporaryJsonapiFileFieldUploader $file_uploader
    *   The file uploader.
    * @param \Symfony\Component\HttpKernel\HttpKernelInterface $http_kernel
    *   An HTTP kernel for making subrequests.
    */
-  public function __construct(AccountInterface $current_user, EntityFieldManagerInterface $field_manager, FileFieldUploader $file_uploader, HttpKernelInterface $http_kernel) {
+  public function __construct(AccountInterface $current_user, EntityFieldManagerInterface $field_manager, TemporaryJsonapiFileFieldUploader $file_uploader, HttpKernelInterface $http_kernel) {
     $this->currentUser = $current_user;
     $this->fieldManager = $field_manager;
     $this->fileUploader = $file_uploader;
@@ -112,10 +116,8 @@ class FileUpload {
 
     static::ensureFileUploadAccess($this->currentUser, $field_definition, $entity);
 
-    $filename = FileFieldUploader::validateAndParseContentDispositionHeader($request);
-    $stream = FileFieldUploader::getUploadStream();
-    $file = $this->fileUploader->handleFileUploadForField($field_definition, $filename, $stream, $this->currentUser);
-    fclose($stream);
+    $filename = $this->fileUploader->validateAndParseContentDispositionHeader($request);
+    $file = $this->fileUploader->handleFileUploadForField($field_definition, $filename, $this->currentUser);
 
     if ($file instanceof EntityConstraintViolationListInterface) {
       $violations = $file;
@@ -163,10 +165,8 @@ class FileUpload {
 
     static::ensureFileUploadAccess($this->currentUser, $field_definition);
 
-    $filename = FileFieldUploader::validateAndParseContentDispositionHeader($request);
-    $stream = FileFieldUploader::getUploadStream();
-    $file = $this->fileUploader->handleFileUploadForField($field_definition, $filename, $stream, $this->currentUser);
-    fclose($stream);
+    $filename = $this->fileUploader->validateAndParseContentDispositionHeader($request);
+    $file = $this->fileUploader->handleFileUploadForField($field_definition, $filename, $this->currentUser);
 
     if ($file instanceof EntityConstraintViolationListInterface) {
       $violations = $file;
@@ -184,7 +184,8 @@ class FileUpload {
 
     $relatable_resource_types = $resource_type->getRelatableResourceTypesByField($file_field_name);
     $file_resource_type = reset($relatable_resource_types);
-    return new ResourceResponse(new JsonApiDocumentTopLevel(new ResourceObject($file_resource_type, $file), new NullEntityCollection(), $links), 201, []);
+    $resource_object = ResourceObject::createFromEntity($file_resource_type, $file);
+    return new ResourceResponse(new JsonApiDocumentTopLevel(new ResourceObjectData([$resource_object], 1), new NullIncludedData(), $links), 201, []);
   }
 
   /**
@@ -199,8 +200,8 @@ class FileUpload {
    */
   protected static function ensureFileUploadAccess(AccountInterface $account, FieldDefinitionInterface $field_definition, FieldableEntityInterface $entity = NULL) {
     $access_result = $entity
-      ? FileFieldUploader::checkFileUploadAccess($account, $field_definition, $entity)
-      : FileFieldUploader::checkFileUploadAccess($account, $field_definition);
+      ? TemporaryJsonapiFileFieldUploader::checkFileUploadAccess($account, $field_definition, $entity)
+      : TemporaryJsonapiFileFieldUploader::checkFileUploadAccess($account, $field_definition);
     if (!$access_result->isAllowed()) {
       $reason = 'The current user is not permitted to upload a file for this field.';
       if ($access_result instanceof AccessResultReasonInterface) {
