@@ -38,6 +38,7 @@ class TypeMapperPluginManager extends DefaultPluginManager implements FallbackPl
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/schemata_json_schema/type_mapper', $namespaces, $module_handler, TypeMapperInterface::class, TypeMapper::class);
+    $this->alterInfo('json_schema_type_mapper');
   }
 
   /**

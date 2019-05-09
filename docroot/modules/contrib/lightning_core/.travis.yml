@@ -1,64 +1,44 @@
-dist: trusty
+---
 language: php
 
-cache:
-  bundler: true
-  directories:
-    - "$HOME/.composer/cache"
-    - "$HOME/.drush/cache"
-
-php:
-  - 7.1
-
-env:
-  - VERSION=HEAD ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
-  - VERSION=2.0.0 ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
-  - VERSION=2.0.0
-  - VERSION=2.0.0 ORCA_FIXTURE_FLAGS=--dev
-
-matrix:
-  fast_finish: true
-  allow_failures:
-    - env: VERSION=2.0.0
-    - env: VERSION=2.0.0 ORCA_FIXTURE_FLAGS=--dev
+php: 7.1
 
 addons:
   chrome: stable
 
+cache:
+  directories:
+    - "$HOME/.composer/cache"
+    - "$HOME/.drush/cache"
+    - "$TMPDIR/phpstan/cache"
+
+env:
+  global:
+    - ORCA_SUT_NAME=drupal/lightning_core
+    - ORCA_SUT_BRANCH=8.x-3.x
+    - ORCA_VERSION=v1.0.0-alpha11
+
+matrix:
+  fast_finish: true
+  include:
+    # Standard ORCA jobs.
+    - { name: "Static code analysis", env: ORCA_JOB=STATIC_CODE_ANALYSIS }
+    - { name: "Previous minor version of Drupal core", env: ORCA_JOB=CORE_PREVIOUS }
+    # Custom job.
+    - { name: "Upgrade test", env: DB_FIXTURE=2.0.0 }
+
 before_install:
-  - composer self-update
-  - composer --version
-  - google-chrome-stable --version
-
-  - export ORCA=$TRAVIS_BUILD_DIR/../orca
-  - export ORCA_FIXTURE=$ORCA-build
-  - export ORCA_SUT_NAME=drupal/lightning_core
-  - export ORCA_SUT_BRANCH=8.x-3.x
-
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - export PATH="$ORCA/bin:$PATH"
-  - export PATH="$ORCA/vendor/bin:$PATH"
-  - export PATH="$ORCA_FIXTURE/vendor/bin:$PATH"
-
-  # Install ORCA and prepare the environment.
-  - git clone --branch develop --depth 1 https://github.com/acquia/orca.git $ORCA
-  - $ORCA/bin/travis/before_install.sh
+  - git clone --branch ${ORCA_VERSION} --depth 1 https://github.com/acquia/orca.git ../orca
+  - ../orca/bin/travis/before_install.sh
 
 install:
-  - $ORCA/bin/travis/install.sh
+  - ../orca/bin/travis/install.sh
+  - ./tests/travis/install.sh
 
-  # Run ORCA static analysis tools.
-  - orca static-analysis:run ./
-
-  # Use ORCA to build the code base.
-  - orca fixture:init -f --sut $ORCA_SUT_NAME $ORCA_FIXTURE_FLAGS
-
-before_script:
-  - cd $ORCA_FIXTURE/docroot
-  - $TRAVIS_BUILD_DIR/update.sh $VERSION
+before_script: ./tests/travis/before_script.sh
 
 script:
-  - orca tests:run --sut $ORCA_SUT_NAME $ORCA_TEST_FLAGS
+  - ../orca/bin/travis/script.sh
+  - ./tests/travis/script.sh
 
-after_failure:
-  - drush watchdog:show --count=100 --severity=Error --extended
+after_failure: ../orca/bin/travis/after_failure.sh

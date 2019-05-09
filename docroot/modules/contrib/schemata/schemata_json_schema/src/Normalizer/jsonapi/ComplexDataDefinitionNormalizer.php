@@ -21,7 +21,7 @@ class ComplexDataDefinitionNormalizer extends DataDefinitionNormalizer {
    *
    * @var string
    */
-  protected $supportedInterfaceOrClass = '\Drupal\Core\TypedData\ComplexDataDefinitionInterface';
+  protected $supportedInterfaceOrClass = ComplexDataDefinitionInterface::class;
 
   /**
    * {@inheritdoc}

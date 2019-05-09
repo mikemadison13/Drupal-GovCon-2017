@@ -35,7 +35,7 @@ class ContactForm extends FieldPluginBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('entity.manager')->getStorage('contact_form'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('entity_type.manager')->getStorage('contact_form'));
   }
 
   /**

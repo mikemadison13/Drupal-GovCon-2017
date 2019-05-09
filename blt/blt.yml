@@ -6,7 +6,7 @@ project:
     name: lightning
   local:
     protocol: http
-    hostname: '127.0.0.1:8888'
+    hostname: 'local.${project.machine_name}.com'
 git:
   default_branch: master
   remotes:

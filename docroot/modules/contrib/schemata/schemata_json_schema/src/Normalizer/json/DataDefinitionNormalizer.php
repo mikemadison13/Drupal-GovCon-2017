@@ -27,7 +27,7 @@ class DataDefinitionNormalizer extends JsonNormalizerBase {
    *
    * @var string
    */
-  protected $supportedInterfaceOrClass = '\Drupal\Core\TypedData\DataDefinitionInterface';
+  protected $supportedInterfaceOrClass = DataDefinitionInterface::class;
 
   /**
    * {@inheritdoc}

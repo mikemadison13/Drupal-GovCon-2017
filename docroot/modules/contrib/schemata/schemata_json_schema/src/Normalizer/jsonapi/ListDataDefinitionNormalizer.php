@@ -20,7 +20,7 @@ class ListDataDefinitionNormalizer extends DataDefinitionNormalizer {
    *
    * @var string
    */
-  protected $supportedInterfaceOrClass = '\Drupal\Core\TypedData\ListDataDefinitionInterface';
+  protected $supportedInterfaceOrClass = ListDataDefinitionInterface::class;
 
   /**
    * {@inheritdoc}

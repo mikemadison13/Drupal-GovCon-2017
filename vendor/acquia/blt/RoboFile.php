@@ -219,7 +219,7 @@ class RoboFile extends Tasks implements LoggerAwareInterface {
     // Push the change upstream.
     $this->_exec("git add CHANGELOG.md $this->bltRoot/src/Robo/Blt.php");
     $this->_exec("git commit -m 'Updating CHANGELOG.md and setting version for $tag.' -n");
-    $this->_exec("git push origin $current_branch");
+    $this->_exec("git push upstream $current_branch");
     $this->createGitHubRelease($current_branch, $tag, $release_notes, $github_token);
 
     return 0;
@@ -365,14 +365,13 @@ class RoboFile extends Tasks implements LoggerAwareInterface {
    */
   protected function getLastTagOnBranch($current_branch) {
     $output = $this->taskExecStack()
-      ->exec("git tag --merged $current_branch")
+      ->exec("git tag --sort=-v:refname --merged $current_branch")
       ->interactive(FALSE)
       ->silent(TRUE)
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
       ->run()
       ->getMessage();
-    $lines = explode("\n", $output);
-    $tags_on_branch = array_reverse($lines);
+    $tags_on_branch = explode("\n", $output);
     $prev_tag = reset($tags_on_branch);
 
     return $prev_tag;
@@ -450,12 +449,12 @@ class RoboFile extends Tasks implements LoggerAwareInterface {
       $labels = $this->getGitHubIssueLabels($issue_api, $github_issue_number);
       if ($labels) {
         foreach ($labels as $label) {
-          if ($label['name'] == 'enhancement') {
+          if (strtolower($label['name']) == 'enhancement') {
             $changes['enhancements'][] = $log_entry;
             $sorted = TRUE;
             break;
           }
-          elseif ($label['name'] == 'bug') {
+          elseif (strtolower($label['name']) == 'bug') {
             $changes['bugs'][] = $log_entry;
             $sorted = TRUE;
             break;
@@ -557,9 +556,9 @@ class RoboFile extends Tasks implements LoggerAwareInterface {
     $this->output()->writeln('');
     $this->say("Continuing will do the following:");
     $this->say("- <comment>Destroy any uncommitted work on the current branch.</comment>");
-    $this->say("- Hard reset to origin/$current_branch");
+    $this->say("- Hard reset to upstream/$current_branch");
     $this->say("- Update and <comment>commit</comment> CHANGELOG.md");
-    $this->say("- <comment>Push</comment> $current_branch to origin");
+    $this->say("- <comment>Push</comment> $current_branch to upstream");
     $this->say("- Create a $tag release in GitHub with release notes");
   }
 
@@ -613,7 +612,7 @@ class RoboFile extends Tasks implements LoggerAwareInterface {
     $this->taskGitStack()
       ->exec('clean -fd .')
       ->exec('remote update')
-      ->exec("reset --hard origin/$current_branch")
+      ->exec("reset --hard upstream/$current_branch")
       ->run();
   }
 
@@ -646,9 +645,9 @@ class RoboFile extends Tasks implements LoggerAwareInterface {
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   protected function assertBranchMatchesUpstream($current_branch) {
-    $branch_matches_upstream = $this->_exec("git diff $current_branch origin/$current_branch --quiet")->wasSuccessful();
+    $branch_matches_upstream = $this->_exec("git diff $current_branch upstream/$current_branch --quiet")->wasSuccessful();
     if (!$branch_matches_upstream) {
-      $this->logger->warning("$current_branch does not match origin/$current_branch.");
+      $this->logger->warning("$current_branch does not match upstream/$current_branch.");
       $this->logger->warning("Continuing will cause you to lose all local changes!");
       $continue = $this->confirm("Continue?");
       if (!$continue) {

@@ -74,14 +74,16 @@ class DeployCommand extends BltTasks {
   /**
    * Checks to see if current git branch has uncommitted changes.
    *
+   * @command deploy:check-dirty
+   *
    * @throws \Exception
    *   Thrown if deploy.git.failOnDirty is TRUE and there are uncommitted
    *   changes.
    */
-  protected function checkDirty($options) {
+  public function checkDirty($options = ['ignore-dirty' => FALSE]) {
     $result = $this->taskExec('git status --porcelain')
       ->printMetadata(FALSE)
-      ->printOutput(FALSE)
+      ->printOutput(TRUE)
       ->interactive(FALSE)
       ->run();
     if (!$options['ignore-dirty'] && !$result->wasSuccessful()) {
@@ -359,14 +361,6 @@ class DeployCommand extends BltTasks {
    * Copies files from source repo into artifact.
    */
   protected function buildCopy() {
-
-    if (!$this->getConfigValue('deploy.build-dependencies')) {
-      $this->logger->warning("Dependencies will not be built because deploy.build-dependencies is not enabled");
-      $this->logger->warning("You should define a custom deploy.exclude_file to ensure that dependencies are copied from the root repository.");
-
-      return FALSE;
-    }
-
     $exclude_list_file = $this->getExcludeListFile();
     $source = $this->getConfigValue('repo.root');
     $dest = $this->deployDir;
@@ -397,6 +391,12 @@ class DeployCommand extends BltTasks {
    * Installs composer dependencies for artifact.
    */
   protected function composerInstall() {
+    if (!$this->getConfigValue('deploy.build-dependencies')) {
+      $this->logger->warning("Dependencies will not be built because deploy.build-dependencies is not enabled");
+      $this->logger->warning("You should define a custom deploy.exclude_file to ensure that dependencies are copied from the root repository.");
+
+      return FALSE;
+    }
     $this->say("Rebuilding composer dependencies for production...");
     $this->taskDeleteDir([$this->deployDir . '/vendor'])
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
@@ -537,8 +537,9 @@ class DeployCommand extends BltTasks {
     $this->say("Committing artifact to <comment>{$this->branchName}</comment>...");
     $result = $this->taskExecStack()
       ->dir($this->deployDir)
+      ->exec("git rm -r --cached --ignore-unmatch --quiet .")
       ->exec("git add -A")
-      ->exec("git commit --quiet -m '{$this->commitMessage}'")
+      ->exec(["git commit --quiet -m", escapeshellarg($this->commitMessage)])
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
       ->run();
 

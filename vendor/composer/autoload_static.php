@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
+class ComposerStaticInit574772ec7e7b264c56f99f6f930224a0
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -104,6 +104,7 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
             'Symfony\\Cmf\\Component\\Routing\\' => 30,
             'Symfony\\Bridge\\Twig\\' => 20,
             'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
+            'SelfUpdate\\' => 11,
         ),
         'R' => 
         array (
@@ -382,6 +383,10 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
         'Symfony\\Bridge\\PsrHttpMessage\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/psr-http-message-bridge',
+        ),
+        'SelfUpdate\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/self-update/src',
         ),
         'Robo\\' => 
         array (
@@ -981,11 +986,17 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
         'Acquia\\LightningExtension\\AwaitTrait' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/AwaitTrait.php',
         'Acquia\\LightningExtension\\Context\\AwaitTrait' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/AwaitTrait.inc',
         'Acquia\\LightningExtension\\Context\\BlockContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/BlockContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\CkEditorContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/CkEditorContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\DebugContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/DebugContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\DisplayModeContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/DisplayModeContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\ElementContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/ElementContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\EntityContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/EntityContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\FieldApiContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/FieldApiContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\PanelsInPlaceContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/PanelsInPlaceContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\TestModuleContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/TestModuleContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\UndoContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/UndoContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\UtilityContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/UtilityContext.behat.inc',
+        'Acquia\\LightningExtension\\Context\\ViewsContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/ViewsContext.behat.inc',
         'Acquia\\LightningExtension\\DetailsTrait' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/DetailsTrait.php',
         'Acquia\\Lightning\\Composer\\AssetPackagist' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/Composer/AssetPackagist.php',
         'Acquia\\Lightning\\Composer\\Package' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/Composer/Package.php',
@@ -4100,6 +4111,7 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
         'Drupal\\Tests\\lightning_core\\Functional\\Update\\Update8006Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Functional/Update/Update8006Test.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\Access\\AdministrativeRoleCheckTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/Access/AdministrativeRoleCheckTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\CompactUserRenderTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/CompactUserRenderTest.php',
+        'Drupal\\Tests\\lightning_core\\Kernel\\ComponentDiscoveryTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/ComponentDiscoveryTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\DefaultUserImageTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/DefaultUserImageTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\ElementTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/ElementTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\EntityDescriptionTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/EntityDescriptionTest.php',
@@ -4119,7 +4131,8 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
         'Drupal\\Tests\\lightning_layout\\FunctionalJavascript\\PanelizerTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/FunctionalJavascript/PanelizerTest.php',
         'Drupal\\Tests\\lightning_layout\\FunctionalJavascript\\PanelizerWizardTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/FunctionalJavascript/PanelizerWizardTest.php',
         'Drupal\\Tests\\lightning_layout\\Functional\\EntityBlockTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Functional/EntityBlockTest.php',
-        'Drupal\\Tests\\lightning_layout\\Functional\\ViewModeTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Functional/ViewModeTest.php',
+        'Drupal\\Tests\\lightning_layout\\Functional\\ViewModeCustomizationTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Functional/ViewModeCustomizationTest.php',
+        'Drupal\\Tests\\lightning_layout\\Functional\\ViewModeDescriptionTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Functional/ViewModeDescriptionTest.php',
         'Drupal\\Tests\\lightning_layout\\Kernel\\ContentTypePermissionsTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Kernel/ContentTypePermissionsTest.php',
         'Drupal\\Tests\\lightning_layout\\Traits\\PanelsIPETrait' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Traits/PanelsIPETrait.php',
         'Drupal\\Tests\\lightning_media\\FixtureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FixtureContext.php',
@@ -5823,6 +5836,7 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
         'Robo\\Contract\\TaskInterface' => __DIR__ . '/..' . '/consolidation/robo/src/Contract/TaskInterface.php',
         'Robo\\Contract\\VerbosityThresholdInterface' => __DIR__ . '/..' . '/consolidation/robo/src/Contract/VerbosityThresholdInterface.php',
         'Robo\\Contract\\WrappedTaskInterface' => __DIR__ . '/..' . '/consolidation/robo/src/Contract/WrappedTaskInterface.php',
+        'Robo\\Exception\\AbortTasksException' => __DIR__ . '/..' . '/consolidation/robo/src/Exception/AbortTasksException.php',
         'Robo\\Exception\\TaskException' => __DIR__ . '/..' . '/consolidation/robo/src/Exception/TaskException.php',
         'Robo\\Exception\\TaskExitException' => __DIR__ . '/..' . '/consolidation/robo/src/Exception/TaskExitException.php',
         'Robo\\GlobalOptionsEventListener' => __DIR__ . '/..' . '/consolidation/robo/src/GlobalOptionsEventListener.php',
@@ -5835,7 +5849,6 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
         'Robo\\ResultData' => __DIR__ . '/..' . '/consolidation/robo/src/ResultData.php',
         'Robo\\Robo' => __DIR__ . '/..' . '/consolidation/robo/src/Robo.php',
         'Robo\\Runner' => __DIR__ . '/..' . '/consolidation/robo/src/Runner.php',
-        'Robo\\SelfUpdateCommand' => __DIR__ . '/..' . '/consolidation/robo/src/SelfUpdateCommand.php',
         'Robo\\State\\Consumer' => __DIR__ . '/..' . '/consolidation/robo/src/State/Consumer.php',
         'Robo\\State\\Data' => __DIR__ . '/..' . '/consolidation/robo/src/State/Data.php',
         'Robo\\State\\StateAwareInterface' => __DIR__ . '/..' . '/consolidation/robo/src/State/StateAwareInterface.php',
@@ -6030,6 +6043,7 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
         'SebastianBergmann\\RecursionContext\\InvalidArgumentException' => __DIR__ . '/..' . '/sebastian/recursion-context/src/InvalidArgumentException.php',
         'SebastianBergmann\\ResourceOperations\\ResourceOperations' => __DIR__ . '/..' . '/sebastian/resource-operations/src/ResourceOperations.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'SelfUpdate\\SelfUpdateCommand' => __DIR__ . '/..' . '/consolidation/self-update/src/SelfUpdateCommand.php',
         'SessionUpdateTimestampHandlerInterface' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/SessionUpdateTimestampHandlerInterface.php',
         'Solarium\\Autoloader' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Autoloader.php',
         'Solarium\\Client' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Client.php',
@@ -7607,6 +7621,7 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
         'Twig\\Test\\NodeTestCase' => __DIR__ . '/..' . '/twig/twig/src/Test/NodeTestCase.php',
         'Twig\\Token' => __DIR__ . '/..' . '/twig/twig/src/Token.php',
         'Twig\\TokenParser\\AbstractTokenParser' => __DIR__ . '/..' . '/twig/twig/src/TokenParser/AbstractTokenParser.php',
+        'Twig\\TokenParser\\ApplyTokenParser' => __DIR__ . '/..' . '/twig/twig/src/TokenParser/ApplyTokenParser.php',
         'Twig\\TokenParser\\AutoEscapeTokenParser' => __DIR__ . '/..' . '/twig/twig/src/TokenParser/AutoEscapeTokenParser.php',
         'Twig\\TokenParser\\BlockTokenParser' => __DIR__ . '/..' . '/twig/twig/src/TokenParser/BlockTokenParser.php',
         'Twig\\TokenParser\\DeprecatedTokenParser' => __DIR__ . '/..' . '/twig/twig/src/TokenParser/DeprecatedTokenParser.php',
@@ -7835,6 +7850,7 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
         'Twig_Util_TemplateDirIterator' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Util/TemplateDirIterator.php',
         'TwitterAPIExchange' => __DIR__ . '/..' . '/j7mbo/twitter-api-php/TwitterAPIExchange.php',
         'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
+        'WatchdogContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/WatchdogContext.behat.inc',
         'WebDriver\\AbstractWebDriver' => __DIR__ . '/..' . '/instaclick/php-webdriver/lib/WebDriver/AbstractWebDriver.php',
         'WebDriver\\AppCacheStatus' => __DIR__ . '/..' . '/instaclick/php-webdriver/lib/WebDriver/AppCacheStatus.php',
         'WebDriver\\ApplicationCache' => __DIR__ . '/..' . '/instaclick/php-webdriver/lib/WebDriver/ApplicationCache.php',
@@ -8180,10 +8196,10 @@ class ComposerStaticInitaa1211669b35ceeecf1dc320540c3303
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitaa1211669b35ceeecf1dc320540c3303::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitaa1211669b35ceeecf1dc320540c3303::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitaa1211669b35ceeecf1dc320540c3303::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitaa1211669b35ceeecf1dc320540c3303::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit574772ec7e7b264c56f99f6f930224a0::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit574772ec7e7b264c56f99f6f930224a0::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit574772ec7e7b264c56f99f6f930224a0::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit574772ec7e7b264c56f99f6f930224a0::$classMap;
 
         }, null, ClassLoader::class);
     }

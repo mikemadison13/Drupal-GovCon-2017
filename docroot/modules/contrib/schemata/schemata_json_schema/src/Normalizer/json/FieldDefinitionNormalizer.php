@@ -2,6 +2,7 @@
 
 namespace Drupal\schemata_json_schema\Normalizer\json;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
@@ -18,7 +19,7 @@ class FieldDefinitionNormalizer extends ListDataDefinitionNormalizer {
    *
    * @var string
    */
-  protected $supportedInterfaceOrClass = '\Drupal\Core\Field\FieldDefinitionInterface';
+  protected $supportedInterfaceOrClass = FieldDefinitionInterface::class;
 
   /**
    * {@inheritdoc}

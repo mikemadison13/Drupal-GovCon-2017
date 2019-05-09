@@ -21,8 +21,9 @@ class ContactStorageController extends ContactController {
     $config = $this->config('contact.settings');
 
     // Use the default form if no form has been passed.
+    $manager = $this->entityTypeManager();
     if (empty($contact_form)) {
-      $contact_form = $this->entityManager()
+      $contact_form = $manager
         ->getStorage('contact_form')
         ->load($config->get('default_form'));
       // If there are no forms, do not display the form.
@@ -38,7 +39,7 @@ class ContactStorageController extends ContactController {
       }
     }
 
-    $view_builder = $this->entityTypeManager()->getViewBuilder('contact_form');
+    $view_builder = $manager->getViewBuilder('contact_form');
     return $view_builder->view($contact_form, 'full', $contact_form->language());
   }
 

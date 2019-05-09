@@ -2,6 +2,7 @@
 
 namespace Drupal\schemata_json_schema\Normalizer\jsonapi;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
@@ -18,7 +19,7 @@ class FieldDefinitionNormalizer extends ListDataDefinitionNormalizer {
    *
    * @var string
    */
-  protected $supportedInterfaceOrClass = '\Drupal\Core\Field\FieldDefinitionInterface';
+  protected $supportedInterfaceOrClass = FieldDefinitionInterface::class;
 
   /**
    * {@inheritdoc}
@@ -32,8 +33,10 @@ class FieldDefinitionNormalizer extends ListDataDefinitionNormalizer {
     // Specify non-contextual default value as an example.
     $default_value = $entity->getDefaultValueLiteral();
     if (!empty($default_value)) {
+      $field_type = $entity -> getType();
       $default_value = $cardinality == 1 ? reset($default_value) : $default_value;
       $default_value = count($default_value) == 1 ? reset($default_value) : $default_value;
+      $default_value = $field_type == "boolean" ? boolval($default_value) : $default_value;
       $normalized['properties']['attributes']['properties'][$context['name']]['default'] = $default_value;
     }
 

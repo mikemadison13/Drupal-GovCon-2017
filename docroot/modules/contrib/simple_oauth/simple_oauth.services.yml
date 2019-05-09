@@ -64,12 +64,12 @@ services:
     tags:
       - { name: http_middleware }
 # Keys Generator Services
-  simple_oauth.filesystem:
-    class: Drupal\simple_oauth\Service\Filesystem\Filesystem
+  simple_oauth.filesystem_checker:
+    class: Drupal\simple_oauth\Service\Filesystem\FileSystemChecker
     arguments: ['@file_system']
   simple_oauth.key.generator:
     class: Drupal\simple_oauth\Service\KeyGeneratorService
-    arguments: ['@simple_oauth.filesystem']
+    arguments: ['@simple_oauth.filesystem_checker', '@file_system']
   simple_oauth.known_clients:
     class: \Drupal\simple_oauth\KnownClientsRepository
     arguments: ['@user.data']

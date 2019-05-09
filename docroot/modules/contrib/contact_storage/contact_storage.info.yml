@@ -13,8 +13,8 @@ dependencies:
   - drupal:system (>=8.2)
 configure: entity.contact_message.collection
 
-# Information added by Drupal.org packaging script on 2017-06-14
-version: '8.x-1.0-beta9'
+# Information added by Drupal.org packaging script on 2019-05-01
+version: '8.x-1.0-beta10'
 core: '8.x'
 project: 'contact_storage'
-datestamp: 1497478745
+datestamp: 1556703485

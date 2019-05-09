@@ -2,7 +2,8 @@
 
 namespace Drupal\simple_oauth\Service;
 
-use Drupal\simple_oauth\Service\Filesystem\FilesystemInterface;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\simple_oauth\Service\Filesystem\FileSystemChecker;
 use Drupal\simple_oauth\Service\Filesystem\FilesystemValidator;
 
 /**
@@ -11,9 +12,14 @@ use Drupal\simple_oauth\Service\Filesystem\FilesystemValidator;
 class KeyGeneratorService {
 
   /**
-   * @var \Drupal\simple_oauth\Service\Filesystem\Filesystem
+   * @var \Drupal\Core\File\FileSystemInterface
    */
   private $fileSystem;
+
+  /**
+   * @var \Drupal\simple_oauth\Service\Filesystem\FileSystemChecker
+   */
+  private $fileSystemChecker;
 
   /**
    * @var \Drupal\simple_oauth\Service\Filesystem\FilesystemValidator
@@ -21,13 +27,15 @@ class KeyGeneratorService {
   private $validator;
 
   /**
-   * CertificateGeneratorService constructor.
+   * KeyGeneratorService constructor.
    *
-   * @param \Drupal\simple_oauth\Service\Filesystem\FilesystemInterface $file_system
+   * @param \Drupal\simple_oauth\Service\Filesystem\FileSystemChecker $file_system_checker
+   * @param \Drupal\Core\File\FileSystemInterface $file_system
    */
-  public function __construct(FilesystemInterface $file_system) {
+  public function __construct(FileSystemChecker $file_system_checker, FileSystemInterface $file_system) {
+    $this->fileSystemChecker = $file_system_checker;
     $this->fileSystem = $file_system;
-    $this->validator = new FilesystemValidator($file_system);
+    $this->validator = new FilesystemValidator($file_system_checker);
   }
 
   /**
@@ -59,7 +67,7 @@ class KeyGeneratorService {
       // Remove old key.
       $this->fileSystem->unlink($key_uri);
       // Write key content to key file.
-      $this->fileSystem->write($key_uri, $keys[$name]);
+      $this->fileSystemChecker->write($key_uri, $keys[$name]);
       // Set correct permission to key file.
       $this->fileSystem->chmod($key_uri, 0600);
     }

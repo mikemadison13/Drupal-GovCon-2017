@@ -2,6 +2,10 @@
 
 namespace Drupal\schemata;
 
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\schemata\Schema\NodeSchema;
+use Drupal\schemata\Schema\Schema;
 use Psr\Log\LoggerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfo;
@@ -85,7 +89,6 @@ class SchemaFactory {
       return NULL;
     }
 
-    $entity_type_plugin = $this->entityTypeManager->getDefinition($entity_type, FALSE);
     if ($entity_type_plugin->getBundleEntityType()) {
       $bundles = $this->entityTypeBundleInfo->getBundleInfo($entity_type);
     }
@@ -96,17 +99,11 @@ class SchemaFactory {
       return NULL;
     }
 
-    $data_definition = empty($bundle) ?
-      $this->typedDataManager->createDataDefinition("entity:" . $entity_type) :
-      $this->typedDataManager->createDataDefinition("entity:" . $entity_type . ":" . $bundle);
+    $class = $entity_type === 'node' && !empty($bundle)
+      ? NodeSchema::class
+      : Schema::class;
 
-    if ($entity_type == 'node' && !empty($bundle)) {
-      $class = '\Drupal\schemata\Schema\NodeSchema';
-    }
-    else {
-      $class = '\Drupal\schemata\Schema\Schema';
-    }
-
+    $data_definition = $this->dataDefinitionFactory($entity_type, $bundle);
     $schema = new $class(
       $data_definition,
       $bundle,
@@ -122,6 +119,25 @@ class SchemaFactory {
   }
 
   /**
+   * Creates the data definition object.
+   *
+   * @param string $entity_type
+   *   The entity type ID.
+   * @param string $bundle
+   *   The bundle name.
+   *
+   * @return \Drupal\Core\Entity\TypedData\EntityDataDefinition
+   *   The data definition.
+   */
+  protected function dataDefinitionFactory($entity_type, $bundle) {
+    $key = sprintf('entity:%s', $entity_type);
+    if (!empty($bundle)) {
+      $key .= ':' . $bundle;
+    }
+    return $this->typedDataManager->createDataDefinition($key);
+  }
+
+  /**
    * Load the Entity Type Plugin to drive schema content.
    *
    * This method should incorporate any "validation" of the entity type.
@@ -131,7 +147,7 @@ class SchemaFactory {
    * @param string $entity_type_id
    *   Entity Type ID.
    *
-   * @return \Drupal\Entity\EntityTypeInterface
+   * @return \Drupal\Core\Entity\EntityTypeInterface
    *   The Entity Type plugin.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -144,7 +160,7 @@ class SchemaFactory {
    */
   public function getSourceEntityPlugin($entity_type_id) {
     $entity_type_plugin = $this->entityTypeManager->getDefinition($entity_type_id);
-    if (!($entity_type_plugin->isSubclassOf('\Drupal\Core\Entity\ContentEntityInterface'))) {
+    if (!($entity_type_plugin->entityClassImplements(ContentEntityInterface::class))) {
       throw new \InvalidArgumentException(sprintf('Entity Type %s is not a content entity. Only content entities are supported at this time.', $entity_type_id));
     }
 

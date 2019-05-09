@@ -4,7 +4,7 @@ namespace Drupal\Tests\lightning_core\Unit;
 
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\lightning_core\DisplayHelper;
 use Drupal\Tests\UnitTestCase;
 
@@ -42,7 +42,7 @@ class DisplayHelperTest extends UnitTestCase {
     $display->original = $original->reveal();
 
     $helper = new DisplayHelper(
-      $this->prophesize(QueryFactory::class)->reveal(),
+      $this->prophesize(EntityTypeManagerInterface::class)->reveal(),
       $this->prophesize(EntityFieldManagerInterface::class)->reveal()
     );
 

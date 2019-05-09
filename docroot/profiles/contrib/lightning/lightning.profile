@@ -8,7 +8,6 @@
 use Drupal\lightning_core\ConfigHelper as Config;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\RoleInterface;
-use Drupal\user\Entity\User;
 
 /**
  * Implements hook_install_tasks().
@@ -32,7 +31,7 @@ function lightning_install_tasks() {
  */
 function lightning_prepare_administrator() {
   /** @var \Drupal\user\UserInterface $account */
-  $account = User::load(1);
+  $account = entity_load('user', 1);
   if ($account) {
     $account->addRole('administrator');
     $account->save();

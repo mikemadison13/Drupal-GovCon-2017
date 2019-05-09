@@ -2,7 +2,10 @@
 
 namespace Drupal\schemata_json_schema\Normalizer\json;
 
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\TypedData\DataReferenceDefinitionInterface;
 
 /**
  * Normalizer for Entity References.
@@ -20,7 +23,7 @@ class DataReferenceDefinitionNormalizer extends DataDefinitionNormalizer {
    *
    * @var string
    */
-  protected $supportedInterfaceOrClass = '\Drupal\Core\TypedData\DataReferenceDefinitionInterface';
+  protected $supportedInterfaceOrClass = DataReferenceDefinitionInterface::class;
 
   /**
    * EntityTypeManager.
@@ -44,13 +47,15 @@ class DataReferenceDefinitionNormalizer extends DataDefinitionNormalizer {
    */
   public function normalize($entity, $format = NULL, array $context = []) {
     /* @var $entity \Drupal\Core\TypedData\DataReferenceDefinitionInterface */
-    if (!$this->validateEntity($entity)) {
-      return [];
+    try {
+      $is_valid = $this->validateEntity($entity);
     }
-
+    catch (PluginNotFoundException $exception) {
+      $is_valid = FALSE;
+    }
     // DataDefinitionNormalizer::normalize() results in extraneous structures
     // added to the schema for this field element (e.g., entity)
-    return $this->extractPropertyData($entity, $context);
+    return $is_valid ? $this->extractPropertyData($entity, $context) : [];
   }
 
   /**
@@ -63,6 +68,9 @@ class DataReferenceDefinitionNormalizer extends DataDefinitionNormalizer {
    *
    * @return bool
    *   TRUE if valid for use.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *   If the plugin could not be found.
    */
   protected function validateEntity($entity) {
     // Only entity references have a schema.
@@ -73,12 +81,8 @@ class DataReferenceDefinitionNormalizer extends DataDefinitionNormalizer {
     }
 
     $entity_type_plugin = $this->entityTypeManager->getDefinition($entity->getConstraint('EntityType'), FALSE);
-    if (empty($entity_type_plugin)
-      || !($entity_type_plugin->isSubclassOf('\Drupal\Core\Entity\ContentEntityInterface'))) {
-      return FALSE;
-    }
-
-    return TRUE;
+    return !empty($entity_type_plugin) && $entity_type_plugin
+        ->entityClassImplements(ContentEntityInterface::class);
   }
 
 }

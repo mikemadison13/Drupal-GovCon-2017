@@ -22,7 +22,7 @@ class RelationshipFieldDefinitionNormalizer extends ListDataDefinitionNormalizer
    *
    * @var string
    */
-  protected $supportedInterfaceOrClass = '\Drupal\Core\Field\FieldDefinitionInterface';
+  protected $supportedInterfaceOrClass = FieldDefinitionInterface::class;
 
   /**
    * The field type plugin manager.

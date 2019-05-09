@@ -30,7 +30,7 @@ final class EntityContext extends DrupalSubContextBase {
    *   The entity to save.
    */
   public function save(EntityInterface $entity) {
-    $uid = $this->getUser();
+    $uid = $this->getCurrentUserUid();
 
     if ($uid && $entity instanceof EntityOwnerInterface && $entity->getOwnerId() == 0) {
       $entity->setOwnerId($uid)->save();
@@ -238,14 +238,17 @@ final class EntityContext extends DrupalSubContextBase {
     $node = $scope->getEntity();
 
     if (! isset($node->uid)) {
-      $node->uid = $this->getUser();
+      $node->uid = $this->getCurrentUserUid();
     }
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the current user's UID.
+   *
+   * @return int
+   *   Returns the current user's UID if there is one or 0 if not.
    */
-  protected function getUser() {
+  protected function getCurrentUserUid() {
     $user = $this->getUserManager()->getCurrentUser();
     return $user ? $user->uid : 0;
   }

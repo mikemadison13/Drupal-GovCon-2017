@@ -11,17 +11,17 @@ use Drupal\simple_oauth\Service\Exception\ExtensionNotLoadedException;
 class FilesystemValidator {
 
   /**
-   * @var \Drupal\simple_oauth\Service\Filesystem\FilesystemInterface
+   * @var \Drupal\simple_oauth\Service\Filesystem\FileSystemChecker
    */
-  private $fileSystem;
+  private $fileSystemChecker;
 
   /**
    * FilesystemValidator constructor.
    *
-   * @param \Drupal\simple_oauth\Service\Filesystem\FilesystemInterface $file_system
+   * @param \Drupal\simple_oauth\Service\Filesystem\FileSystemChecker $file_system_checker
    */
-  public function __construct(FilesystemInterface $file_system) {
-    $this->fileSystem = $file_system;
+  public function __construct(FileSystemChecker $file_system_checker) {
+    $this->fileSystemChecker = $file_system_checker;
   }
 
   /**
@@ -33,7 +33,7 @@ class FilesystemValidator {
    * @throws \Drupal\simple_oauth\Service\Exception\ExtensionNotLoadedException
    */
   public function validateOpensslExtensionExist($ext_name) {
-    if (!$this->fileSystem->isExtensionEnabled($ext_name)) {
+    if (!$this->fileSystemChecker->isExtensionEnabled($ext_name)) {
       throw new ExtensionNotLoadedException(
         strtr('Extension "@ext" is not enabled.', ['@ext' => $ext_name])
       );
@@ -50,7 +50,7 @@ class FilesystemValidator {
    */
   public function validateAreDirs($paths) {
     foreach ($paths as $path) {
-      if (!$this->fileSystem->isDirectory($path)) {
+      if (!$this->fileSystemChecker->isDirectory($path)) {
         throw new FilesystemValidationException(
           strtr('Directory "@path" is not a valid directory.', ['@path' => $path])
         );
@@ -68,7 +68,7 @@ class FilesystemValidator {
    */
   public function validateAreWritable($paths) {
     foreach ($paths as $path) {
-      if (!$this->fileSystem->isWritable($path)) {
+      if (!$this->fileSystemChecker->isWritable($path)) {
         throw new FilesystemValidationException(
           strtr('Path "@path" is not writable.', ['@path' => $path])
         );

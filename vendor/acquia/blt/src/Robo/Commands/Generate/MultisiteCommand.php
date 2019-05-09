@@ -102,7 +102,7 @@ class MultisiteCommand extends BltTasks {
           'name' => $newDBSettings['username'],
           'host' => '%',
           'password' => $newDBSettings['password'],
-          'priv' => $newDBSettings['database'] . '*:ALL',
+          'priv' => $newDBSettings['database'] . '%.*:ALL',
         ];
       }
       file_put_contents($this->projectDrupalVmConfigFile,
@@ -254,7 +254,7 @@ class MultisiteCommand extends BltTasks {
    */
   protected function getNewSiteName($options) {
     if (empty($options['site-dir'])) {
-      $site_name = $this->askRequired("Site machine name");
+      $site_name = $this->askRequired("Site machine name (e.g. 'example')");
     }
     else {
       $site_name = $options['site-dir'];

@@ -35,7 +35,7 @@ class Update360Test extends KernelTestBase {
   public function test() {
     $this->assertFalse($this->container->get('module_handler')->moduleExists('image'));
     $this->assertNull(FieldConfig::loadByName('user', 'user', 'user_picture'));
-    $this->assertTrue(entity_get_display('user', 'user', 'compact')->isNew());
+    $this->assertTrue(lightning_core_entity_get_display('user', 'user', 'compact')->isNew());
 
     $this->container->get('class_resolver')
       ->getInstanceFromDefinition(Update360::class)
@@ -44,7 +44,7 @@ class Update360Test extends KernelTestBase {
     $this->assertTrue($this->container->get('module_handler')->moduleExists('image'));
     $this->assertInstanceOf(FieldConfig::class, FieldConfig::loadByName('user', 'user', 'user_picture'));
 
-    $display = entity_get_display('user', 'user', 'compact');
+    $display = lightning_core_entity_get_display('user', 'user', 'compact');
     $this->assertFalse($display->isNew());
     $this->assertInternalType('array', $display->getComponent('name'));
     $this->assertInternalType('array', $display->getComponent('user_picture'));
