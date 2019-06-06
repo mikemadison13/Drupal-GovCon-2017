@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="/mnt/tmp/local.prod/source/tests/phpunit" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.002758">
-    <testsuite name="My\Example\Project\Tests\ExampleTest" file="/mnt/tmp/local.prod/source/tests/phpunit/ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.002758">
-      <testcase name="testExample" class="My\Example\Project\Tests\ExampleTest" classname="My.Example.Project.Tests.ExampleTest" file="/mnt/tmp/local.prod/source/tests/phpunit/ExampleTest.php" line="13" assertions="1" time="0.002758"/>
+  <testsuite name="/mnt/tmp/local.prod/source/tests/phpunit" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.002399">
+    <testsuite name="My\Example\Project\Tests\ExampleTest" file="/mnt/tmp/local.prod/source/tests/phpunit/ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.002399">
+      <testcase name="testExample" class="My\Example\Project\Tests\ExampleTest" classname="My.Example.Project.Tests.ExampleTest" file="/mnt/tmp/local.prod/source/tests/phpunit/ExampleTest.php" line="13" assertions="1" time="0.002399"/>
     </testsuite>
   </testsuite>
 </testsuites>
