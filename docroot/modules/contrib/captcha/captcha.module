@@ -10,7 +10,6 @@
  */
 
 use Drupal\captcha\Entity\CaptchaPoint;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -253,12 +252,10 @@ function captcha_form_alter(array &$form, FormStateInterface $form_state, $form_
       $captcha_element['challenge'] = [
         '#type' => 'item',
         '#title' => t('Enabled challenge'),
-        '#markup' => t('<a href="@change">change</a>', [
-          '@change' => $captcha_point->url('edit-form', [
-            'query' => Drupal::destination()
-              ->getAsArray(),
-          ]),
-        ]),
+        '#markup' => $captcha_point->toLink(t('change'), 'edit-form', [
+          'query' => \Drupal::destination()
+            ->getAsArray(),
+        ])->toString(),
       ];
     }
     else {
@@ -267,7 +264,7 @@ function captcha_form_alter(array &$form, FormStateInterface $form_state, $form_
         '#markup' => Link::fromTextAndUrl(
           t('Place a CAPTCHA here for untrusted users.'),
           Url::fromRoute('captcha_point.add', [], [
-            'query' => Drupal::destination()
+            'query' => \Drupal::destination()
               ->getAsArray() + ['form_id' => $form_id],
           ])
         )->toString(),
@@ -317,7 +314,7 @@ function captcha_validate_strict_equality($solution, $response) {
  *   TRUE when case insensitive equal, FALSE otherwise.
  */
 function captcha_validate_case_insensitive_equality($solution, $response) {
-  return Unicode::strtolower($solution) === Unicode::strtolower($response);
+  return mb_strtolower($solution) === mb_strtolower($response);
 }
 
 /**
@@ -347,7 +344,7 @@ function captcha_validate_ignore_spaces($solution, $response) {
  *   TRUE when equal (ignoring spaces), FALSE otherwise.
  */
 function captcha_validate_case_insensitive_ignore_spaces($solution, $response) {
-  return preg_replace('/\s/', '', Unicode::strtolower($solution)) === preg_replace('/\s/', '', Unicode::strtolower($response));
+  return preg_replace('/\s/', '', mb_strtolower($solution)) === preg_replace('/\s/', '', mb_strtolower($response));
 }
 
 /**

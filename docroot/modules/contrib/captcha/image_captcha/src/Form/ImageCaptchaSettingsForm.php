@@ -72,10 +72,10 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
     // First some error checking.
     $setup_status = _image_captcha_check_setup(FALSE);
     if ($setup_status & IMAGE_CAPTCHA_ERROR_NO_GDLIB) {
-      drupal_set_message($this->t(
+      $this->messenger()->addError($this->t(
         'The Image CAPTCHA module can not generate images because your PHP setup does not support it (no <a href="!gdlib" target="_blank">GD library</a> with JPEG support).',
         ['!gdlib' => 'http://php.net/manual/en/book.image.php']
-      ), 'error');
+      ));
       // It is no use to continue building the rest of the settings form.
       return $form;
     }

@@ -3,7 +3,6 @@
 namespace Acquia\Blt\Robo\Commands\Blt;
 
 use Acquia\Blt\Robo\BltTasks;
-use Acquia\Blt\Robo\Common\ComposerMunge;
 use Acquia\Blt\Robo\Common\YamlMunge;
 use Acquia\Blt\Robo\Config\ConfigInitializer;
 use Acquia\Blt\Robo\Exceptions\BltException;
@@ -26,6 +25,19 @@ class UpdateCommand extends BltTasks {
    * @var string
    */
   protected $currentSchemaVersion;
+
+  /**
+   * @var array
+   * Files that exist in the BLT Project repo but aren't actually part of the
+   * project template. They are only used for testing, licensing, etc...
+   */
+  const BLT_PROJECT_EXCLUDE_FILES = [
+    '.test-packages.json',
+    '.travis.yml',
+    'LICENSE.txt',
+    'README.md',
+    'README-template.md',
+  ];
 
   /**
    * This hook will fire for all commands in this command file.
@@ -56,7 +68,7 @@ class UpdateCommand extends BltTasks {
     $this->displayArt();
     $this->yell("Your new BLT-based project has been created in {$this->getConfigValue('repo.root')}.");
     $this->say("Please continue by following the \"Creating a new project with BLT\" instructions:");
-    $this->say("<comment>http://blt.readthedocs.io/en/9.x/readme/creating-new-project/</comment>");
+    $this->say("<comment>https://docs.acquia.com/blt/install/creating-new-project//</comment>");
   }
 
   /**
@@ -69,6 +81,7 @@ class UpdateCommand extends BltTasks {
    * @hidden
    */
   public function addToProject() {
+    $this->rsyncTemplate();
     $this->initializeBlt();
     $this->displayArt();
     $this->yell("BLT has been added to your project.");
@@ -81,8 +94,12 @@ class UpdateCommand extends BltTasks {
    * Creates initial BLT files in their default state.
    */
   protected function initializeBlt() {
-    $this->updateRootProjectFiles();
-    $this->reInstallComposerPackages();
+    $this->updateSchemaVersionFile();
+    $this->taskExecStack()
+      ->dir($this->getConfigValue("repo.root"))
+      ->exec("composer drupal:scaffold")
+      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
+      ->run();
 
     // Reinitialize configuration now that project files exist.
     $config_initializer = new ConfigInitializer($this->getConfigValue('repo.root'), $this->input());
@@ -92,6 +109,13 @@ class UpdateCommand extends BltTasks {
     $this->invokeCommand('blt:init:settings');
     $this->invokeCommand('recipes:blt:init:command');
     $this->invokeCommand('blt:init:shell-alias');
+    if (DIRECTORY_SEPARATOR === '\\') {
+      // On Windows, during composer create-project,
+      // the wizard command fails when it reaches the interactive steps.
+      // Until this is fixed, go with the defaults.
+      // The user can run blt wizard any time later for changing defaults.
+      $this->input()->setInteractive(FALSE);
+    }
     if ($this->input()->isInteractive()) {
       $this->invokeCommand('wizard');
     }
@@ -127,6 +151,8 @@ class UpdateCommand extends BltTasks {
     $this->say("Removing deprecated files and directories...");
     $this->taskFilesystemStack()
       ->remove([
+        "blt/composer.required.json",
+        "blt/composer.suggested.json",
         "build",
         "docroot/sites/default/settings/apcu_fix.yml",
         "docroot/sites/default/settings/base.settings.php",
@@ -137,6 +163,7 @@ class UpdateCommand extends BltTasks {
         "docroot/sites/default/settings/travis.settings.php",
         "docroot/sites/default/settings/pipelines.settings.php",
         "docroot/sites/default/settings/tugboat.settings.php",
+        "docroot/sites/settings/global.settings.default.php",
         "tests/phpunit/blt",
         "tests/phpunit/Bolt",
         "scripts/blt",
@@ -162,6 +189,7 @@ class UpdateCommand extends BltTasks {
         "readme/repo-architecture.md",
         "readme/views.md",
         "drush/policy.drush.inc",
+        ".test-packages.json",
       ])
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
       ->run();
@@ -173,20 +201,27 @@ class UpdateCommand extends BltTasks {
    * @command internal:create-project:init-repo
    *
    * @hidden
+   *
+   * @validateGitConfig
    */
   public function initAndCommitRepo() {
-    $result = $this->taskExecStack()
-      ->dir($this->getConfigValue("repo.root"))
-      ->exec("git init")
-      ->exec('git add -A')
-      ->exec("git commit -m 'Initial commit.'")
-      ->interactive(FALSE)
-      ->printOutput(FALSE)
-      ->printMetadata(FALSE)
-      ->run();
+    // The .git dir will already exist if blt-project was created using a
+    // branch. Otherwise, it will not exist when using a tag.
+    if (!file_exists($this->getConfigValue("repo.root") . "/.git")) {
+      $result = $this->taskGit()
+        ->dir($this->getConfigValue("repo.root"))
+        ->exec("git init")
+        ->commit('Initial commit.', '--allow-empty')
+        ->add('-A')
+        ->commit('Created BLT project.')
+        ->interactive(FALSE)
+        ->printOutput(FALSE)
+        ->printMetadata(FALSE)
+        ->run();
 
-    if (!$result->wasSuccessful()) {
-      throw new BltException("Could not initialize new git repository.");
+      if (!$result->wasSuccessful()) {
+        throw new BltException("Could not initialize new git repository.");
+      }
     }
   }
 
@@ -206,56 +241,22 @@ class UpdateCommand extends BltTasks {
    * @return \Robo\Result
    */
   protected function cleanUpProjectTemplate() {
+    $repo_root = $this->getConfigValue('repo.root');
     // Remove files leftover from acquia/blt-project.
-    $result = $this->taskFilesystemStack()
-      ->remove($this->getConfigValue('repo.root') . '/.travis.yml')
-      ->remove($this->getConfigValue('repo.root') . '/LICENSE.txt')
-      ->remove($this->getConfigValue('repo.root') . '/README.md')
+    $cleanupTask = $this->taskFilesystemStack();
+    foreach (self::BLT_PROJECT_EXCLUDE_FILES as $file) {
+      if ($file != 'README-template.md') {
+        $cleanupTask->remove($repo_root . '/' . $file);
+      }
+    }
+    $result = $cleanupTask
+      ->rename($repo_root . '/README-template.md', $repo_root . '/README.md', TRUE)
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
       ->run();
 
     if (!$result->wasSuccessful()) {
       throw new BltException("Could not remove deprecated files provided by acquia/blt-project.");
     }
-  }
-
-  /**
-   * Prepares a brand new BLTed repository created by `composer create-project`.
-   *
-   * @return \Robo\Result
-   */
-  protected function reInstallComposerPackages() {
-    $this->say("Installing new Composer dependencies provided by BLT. This may take a while...");
-    $result = $this->taskFilesystemStack()
-      ->remove([
-        $this->getConfigValue('repo.root') . '/composer.lock',
-      ])
-      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
-      ->run();
-    if (!$result->wasSuccessful()) {
-      throw new BltException("Could not remove Composer files.");
-    }
-
-    $result = $this->taskExecStack()
-      ->dir($this->getConfigValue('repo.root'))
-      ->exec("composer update --no-interaction --ansi")
-      ->run();
-
-    if (!$result->wasSuccessful()) {
-      throw new BltException("Could not install Composer requirements.");
-    }
-  }
-
-  /**
-   * Updates root project files using BLT templated files.
-   *
-   * @return \Robo\Result
-   */
-  protected function updateRootProjectFiles() {
-    $this->updateSchemaVersionFile();
-    $this->rsyncTemplate();
-    $this->mungeComposerJson();
-    $this->mungeProjectYml();
   }
 
   /**
@@ -335,13 +336,26 @@ class UpdateCommand extends BltTasks {
    * @throws BltException
    */
   protected function rsyncTemplate() {
-    $source = $this->getConfigValue('blt.root') . '/template';
+    $source = $this->getConfigValue('blt.root') . '/subtree-splits/blt-project';
     $destination = $this->getConfigValue('repo.root');
+    // There is no native rsync on Windows.
+    // The most used one on Windows is https://itefix.net/cwrsync,
+    // which runs with cygwin, so doesn't cope with regular Windows paths.
+    if (DIRECTORY_SEPARATOR === '\\') {
+      $source = $this->convertWindowsPathToCygwinPath($source);
+      $destination = $this->convertWindowsPathToCygwinPath($destination);
+    }
     $exclude_from = $this->getConfigValue('blt.update.ignore-existing-file');
     $this->say("Copying files from BLT's template into your project...");
+    $rsync_command1 = "rsync -a --no-g '$source/' '$destination/' --exclude-from='$exclude_from'";
+    $rsync_command2 = "rsync -a --no-g '$source/' '$destination/' --include-from='$exclude_from' --ignore-existing";
+    foreach (self::BLT_PROJECT_EXCLUDE_FILES as $file) {
+      $rsync_command1 .= " --exclude=$file";
+      $rsync_command2 .= " --exclude=$file";
+    }
     $result = $this->taskExecStack()
-      ->exec("rsync -a --no-g '$source/' '$destination/' --exclude-from='$exclude_from'")
-      ->exec("rsync -a --no-g '$source/' '$destination/' --include-from='$exclude_from' --ignore-existing")
+      ->exec($rsync_command1)
+      ->exec($rsync_command2)
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
       ->run();
 
@@ -350,40 +364,8 @@ class UpdateCommand extends BltTasks {
     }
   }
 
-  /**
-   * Munges BLT's templated composer.json with project's composer.json.
-   */
-  protected function mungeComposerJson() {
-    // Merge in the extras configuration. This pulls in
-    // wikimedia/composer-merge-plugin and composer/installers settings.
-    $this->say("Merging default configuration into composer.json...");
-    $project_composer_json = $this->getConfigValue('repo.root') . '/composer.json';
-    $template_composer_json = $this->getConfigValue('blt.root') . '/template/composer.json';
-    $munged_json = ComposerMunge::mungeFiles($project_composer_json, $template_composer_json);
-    $bytes = file_put_contents($project_composer_json, $munged_json);
-    if (!$bytes) {
-      throw new BltException("Could not update $project_composer_json.");
-    }
-  }
-
-  /**
-   * Updates project BLT .yml files with new key value pairs from upstream.
-   *
-   * This WILL NOT overwrite existing values.
-   */
-  protected function mungeProjectYml() {
-    $this->say("Merging BLT's <comment>blt.yml</comment> template with your project's <comment>blt/blt.yml</comment>...");
-    // Values in the project's existing blt.yml file will be preserved and
-    // not overridden.
-    $repo_project_yml = $this->getConfigValue('blt.config-files.project');
-    $template_project_yml = $this->getConfigValue('blt.root') . '/template/blt/blt.yml';
-    $munged_yml = YamlMunge::mungeFiles($template_project_yml, $repo_project_yml);
-    try {
-      YamlMunge::writeFile($repo_project_yml, $munged_yml);
-    }
-    catch (\Exception $e) {
-      throw new BltException("Could not update $repo_project_yml.");
-    }
+  protected function convertWindowsPathToCygwinPath($path) {
+    return str_replace('\\', '/', preg_replace('/([A-Z]):/i', '/cygdrive/$1', $path));
   }
 
   /**

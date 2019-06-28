@@ -14,7 +14,7 @@ class Drupal8Post implements RequestMethod {
   /**
    * Submit the POST request with the specified parameters.
    *
-   * @param ReCaptcha\RequestParameters $params
+   * @param \ReCaptcha\ReCaptcha\RequestParameters $params
    *   Request parameters.
    *
    * @return string

@@ -2,6 +2,7 @@
 
 namespace Acquia\Blt\Composer;
 
+use Acquia\Blt\Robo\Common\ArrayManipulator;
 use Acquia\Blt\Update\Updater;
 use Composer\Script\Event;
 use Composer\Installer\PackageEvent;
@@ -74,13 +75,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     $this->composer = $composer;
     $this->io = $io;
     $this->eventDispatcher = $composer->getEventDispatcher();
-    if (self::isWindows() && $this->isInitialInstall()) {
-      $this->io->writeError(
-        '<error>BLT can be installed in Windows only under WSL. Please check https://blt.readthedocs.io/en/latest/windows-install/ for updates and workarounds.</error>'
-      );
-      throw new \Exception('BLT installation aborted');
-    }
-
     ProcessExecutor::setTimeout(3600);
     $this->executor = new ProcessExecutor($this->io);
   }
@@ -90,74 +84,32 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return array(
+      ScriptEvents::POST_AUTOLOAD_DUMP => "onPostAutoloadDump",
       PackageEvents::POST_PACKAGE_INSTALL => "onPostPackageEvent",
       PackageEvents::POST_PACKAGE_UPDATE => "onPostPackageEvent",
-      ScriptEvents::PRE_INSTALL_CMD => array(
-        array('scaffoldComposerIncludes', self::CALLBACK_PRIORITY),
-        array('checkInstallerPaths'),
-      ),
       ScriptEvents::POST_UPDATE_CMD => array(
-        array('scaffoldComposerIncludes', self::CALLBACK_PRIORITY),
         array('onPostCmdEvent'),
       ),
-      ScriptEvents::PRE_AUTOLOAD_DUMP => array(
-        array('scaffoldComposerIncludes', self::CALLBACK_PRIORITY),
-      ),
     );
   }
 
   /**
-   * Verify that composer.json contains correct values for installer-paths.
-   *
-   * Unfortunately, these values cannot be placed in composer.required.json.
-   *
-   * @see https://github.com/wikimedia/composer-merge-plugin/issues/139
+   * Modify vendor/composer/installed.json so that composer/installers is first.
    *
    * @param \Composer\Script\Event $event
    */
-  public function checkInstallerPaths(Event $event) {
-    $extra = $this->composer->getPackage()->getExtra();
-    if (empty($extra['installer-paths'])) {
-      $this->io->write('<error>Error: extra.installer-paths is missing from your composer.json file.</error>');
-    }
-    else {
-      $composer_required_json_filename = $this->getVendorPath() . '/acquia/blt/template/composer.json';
-      if (file_exists($composer_required_json_filename)) {
-        $composer_required_json = json_decode(file_get_contents($composer_required_json_filename), TRUE);
-        if ($composer_required_json['extra']['installer-paths'] != $extra['installer-paths']) {
-          $this->io->write('<warning>Warning: The value for extra.installer-paths in composer.json differs from BLT\'s recommended values.</warning>');
-          $this->io->write('<warning>See ' . $composer_required_json_filename . '</warning>');
-        }
+  public static function onPostAutoloadDump(Event $event) {
+    $composer = $event->getComposer();
+    $vendor_dir = $composer->getConfig()->get('vendor-dir');
+    $installed_json = realpath($vendor_dir) . "/composer/installed.json";
+    $installed = json_decode(file_get_contents($installed_json));
+    foreach ($installed as $key => $package) {
+      if ($package->name == 'composer/installers') {
+        unset($installed[$key]);
+        array_unshift($installed, $package);
       }
     }
-  }
-
-  /**
-   * Creates or updates composer include files.
-   *
-   * @param \Composer\Script\Event $event
-   */
-  public function scaffoldComposerIncludes(Event $event) {
-
-    $files = array(
-      'composer.required.json',
-      'composer.suggested.json',
-    );
-
-    $dir = $this->getRepoRoot() . DIRECTORY_SEPARATOR . self::BLT_DIR;
-    $package_dir = $this->getVendorPath() . DIRECTORY_SEPARATOR . self::PACKAGE_NAME;
-    if ($this->createDirectory($dir)) {
-      foreach ($files as $file) {
-        $source = $package_dir . DIRECTORY_SEPARATOR . $file;
-        $target = $dir . DIRECTORY_SEPARATOR . $file;
-        if (file_exists($source)) {
-          if (!file_exists($target) || md5_file($source) != md5_file($target)) {
-            $this->io->write("Copying $source to $target. Do not modify this file. To override BLT dependencies, see readme/dependency-management.md.");
-            copy($source, $target);
-          }
-        }
-      }
-    }
+    file_put_contents($installed_json, json_encode($installed, 448));
   }
 
   /**
@@ -226,7 +178,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
         $command = $this->getVendorPath() . '/acquia/blt/bin/blt internal:create-project --ansi';
       }
       else {
-        $command = $this->getVendorPath() . '/acquia/blt/bin/blt internal:add-to-project --ansi -y';
+        $command = $this->getVendorPath() . '/acquia/blt/bin/blt internal:add-to-project --ansi -n';
       }
       $success = $this->executeCommand($command, [], TRUE);
       if (!$success) {

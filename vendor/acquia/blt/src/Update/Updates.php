@@ -28,6 +28,8 @@ class Updates {
     $this->updater = $updater;
   }
 
+  // phpcs:disable Drupal.NamingConventions.ValidFunctionName
+
   /**
    * 8.5.1.
    *
@@ -564,7 +566,7 @@ class Updates {
     // Update composer.json to include new BLT required/suggested files.
     // Pulls in wikimedia/composer-merge-plugin and composer/installers settings.
     $project_composer_json = $this->updater->getRepoRoot() . '/composer.json';
-    $template_composer_json = $this->updater->getBltRoot() . '/template/composer.json';
+    $template_composer_json = $this->updater->getBltRoot() . '/subtree-splits/blt-project/composer.json';
     $munged_json = ComposerMunge::mungeFiles($project_composer_json, $template_composer_json);
     $bytes = file_put_contents($project_composer_json, $munged_json);
     if (!$bytes) {
@@ -629,48 +631,162 @@ class Updates {
   }
 
   /**
-   * 9.2.4.
+   * 10.0.0.
    *
    * @Update(
-   *    version = "9002004",
-   *    description = "Regenerate Pipelines file if it exists."
+   *    version = "10000000",
+   *    description = "10.x Updates."
    * )
    */
-  public function update_9002004() {
+  public function update_10000000() {
+    $composer_json = $this->updater->getComposerJson();
+    $template_composer_json = $this->updater->getTemplateComposerJson();
+    $blt_composer_json = json_decode(file_get_contents($this->updater->getBltRoot() . '/composer.json'), TRUE);
+    // Remove require-dev dependencies that are now defined in blt-require-dev.
+    $blt_require_dev_composer_json = json_decode(file_get_contents($this->updater->getBltRoot() . '/subtree-splits/blt-require-dev/composer.json'), TRUE);
+    foreach ($blt_require_dev_composer_json['require'] as $package_name => $version) {
+      unset($composer_json['require-dev'][$package_name]);
+    }
+
+    // Ensure that suggested packages do not go missing.
+    if (file_exists($this->updater->getRepoRoot() . "/blt/composer.suggested.json")) {
+      $merge_plugin_require = $composer_json['extra']['merge-plugin']['require'];
+      if (in_array("blt/composer.suggested.json", $merge_plugin_require)) {
+        $composer_suggested = json_decode(file_get_contents($this->updater->getRepoRoot() . "/blt/composer.suggested.json"), TRUE);
+        foreach ($composer_suggested['require'] as $package_name => $version_constraint) {
+          // If it IS in template composer.json but NOT in root composer.json,
+          // add it to root.
+          if (!array_key_exists($package_name, $composer_json['require']) &&
+              array_key_exists($package_name, $template_composer_json['require']) &&
+              !array_key_exists($package_name, $blt_composer_json['require'])) {
+            $composer_json['require'][$package_name] = $version_constraint;
+          }
+        }
+      }
+    }
+    unset($composer_json['extra']['merge-plugin']);
+
+    // Copy select config from composer.json template.
+    $sync_composer_keys = [
+      'autoload',
+      'autoload-dev',
+      'repositories',
+      'extra',
+      'scripts',
+      'config',
+    ];
+    foreach ($sync_composer_keys as $sync_composer_key) {
+      if (!array_key_exists($sync_composer_key, $composer_json)) {
+        $composer_json[$sync_composer_key] = [];
+      }
+      $composer_json[$sync_composer_key] = ArrayManipulator::arrayMergeRecursiveDistinct($composer_json[$sync_composer_key],
+        $template_composer_json[$sync_composer_key]);
+    }
+
+    // Require blt-require-dev.
+    $composer_json['require-dev']['acquia/blt-require-dev'] = $template_composer_json['require-dev']['acquia/blt-require-dev'];
+
+    $this->updater->writeComposerJson($composer_json);
+
+    // Remove vestigial files.
+    $this->updater->deleteFile([
+      $this->updater->getRepoRoot() . "/blt/composer.required.json",
+      $this->updater->getRepoRoot() . "/blt/composer.suggested.json",
+      $this->updater->getRepoRoot() . "/blt/composer.overrides.json",
+    ]);
+    $messages[] = "Your composer.json file has been modified to remove the Composer merge plugin.";
+    $messages[] = "You must execute `composer update --lock` to update your lock file.";
+
     // Updates to setting and configuration files for BLT 10.0.x.
-    $messages[] = "BLT 9.2.4 includes some changes to configuration files.";
-    $messages[] = "These will now be regenerated.";
+    $messages[] = "";
+    $messages[] = "BLT 10 includes many changes to configuration and settings files. These will now be regenerated.";
 
     // Check for presence of factory-hooks directory. Regenerate if present.
     if (file_exists($this->updater->getRepoRoot() . '/factory-hooks')) {
-      $messages[] = "factory-hooks have been updated. Review the resulting file(s) and ensure that any customizations have been re-added.";
-      $this->updater->executeCommand("./vendor/bin/blt recipes:acsf:init:hooks");
-    }
-    // Check for presence of cloud-hooks directory. Regenerate if present.
-    if (file_exists($this->updater->getRepoRoot() . '/hooks')) {
-      $messages[] = "cloud-hooks have been updated. Review the resulting file(s) and ensure that any customizations have been re-added.";
-      $this->updater->executeCommand("./vendor/bin/blt recipes:cloud-hooks:init");
+      $messages[] = "Factory Hooks (/factory-hooks) have been regenerated. Review the resulting file(s) and re-add any customizations.";
+      $this->updater::executeCommand("./vendor/bin/blt recipes:acsf:init:hooks", NULL, FALSE);
     }
 
-    // Check for presence of pipelines.yml files. Regenerate if present.
+    if ($this->updater->regenerateCloudHooks()) {
+      $messages[] = "Cloud Hooks (/hooks) have been regenerated. Review the resulting file(s) and re-add any customizations.";
+    }
+
+    // Check for presence of acquia-pipelines.yml file. Regenerate if present.
     if (file_exists($this->updater->getRepoRoot() . '/acquia-pipelines.yml')) {
-      $messages[] = "pipelines.yml has been updated. Review the resulting file(s) and ensure that any customizations have been re-added.";
-      $this->updater->executeCommand("./vendor/bin/blt recipes:ci:pipelines:init");
-
+      $messages[] = "acquia-pipelines.yml has been regenerated. Review the resulting file and re-add any customizations.";
+      $this->updater::executeCommand("./vendor/bin/blt recipes:ci:pipelines:init", NULL, FALSE);
     }
 
     // Check for presence of .travis.yml files. Regenerate if present.
     if (file_exists($this->updater->getRepoRoot() . '/.travis.yml')) {
-      $messages[] = ".travis.yml has been updated. Review the resulting file(s) and ensure that any customizations have been re-added.";
-      $this->updater->executeCommand("./vendor/bin/blt recipes:ci:travis:init");
+      $messages[] = ".travis.yml has been regenerated. Review the resulting file and re-add any customizations..";
+      $this->updater::executeCommand("./vendor/bin/blt recipes:ci:travis:init", NULL, FALSE);
     }
 
-    $messages[] = "Additionally, you may wish to regenerate your settings.php file(s) from the default templates by deleting them and then running `blt blt:init:settings`, especially if you receive CodeSniffer errors.";
+    // Regenerate local settings files.
+    $messages[] = "Local settings files have been regenerated. Review the resulting file(s) and re-add any customizations..";
+    $this->updater::executeCommand("./vendor/bin/blt blt:init:settings", NULL, FALSE);
 
     $formattedBlock = $this->updater->getFormatter()->formatBlock($messages, 'ice');
     $this->updater->getOutput()->writeln("");
     $this->updater->getOutput()->writeln($formattedBlock);
     $this->updater->getOutput()->writeln("");
+
+    $project_config = $this->updater->getProjectYml();
+    // Move 'reports' to subkey of 'tests'.
+    if (!empty($project_config['reports'])) {
+      $project_config['tests']['reports'] = $project_config['reports'];
+      unset($project_config['reports']);
+    }
+    // Move 'phpunit' to subkey of 'tests'.
+    if (!empty($project_config['phpunit'])) {
+      $project_config['tests']['phpunit'] = $project_config['phpunit'];
+      unset($project_config['phpunit']);
+    }
+    // Move 'behat.selenium' and 'behat.chrome' to subkey of 'tests'.
+    if (!empty($project_config['behat']['selenium'])) {
+      $project_config['tests']['selenium'] = $project_config['behat']['selenium'];
+      unset($project_config['behat']['selenium']);
+    }
+    if (!empty($project_config['behat']['chrome'])) {
+      $project_config['tests']['chrome'] = $project_config['behat']['chrome'];
+      unset($project_config['behat']['chrome']);
+    }
+    $this->updater->writeProjectYml($project_config);
+
+  }
+
+  /**
+   * 10.0.0.
+   *
+   * @Update(
+   *    version = "10000001",
+   *    description = "Move Drupal modules to project composer.json."
+   * )
+   */
+  public function update_10000001() {
+    $composer_json = $this->updater->getComposerJson();
+    $template_composer_json = $this->updater->getTemplateComposerJson();
+    foreach ($template_composer_json['require'] as $package_name => $package_version) {
+      if (empty($composer_json['require'][$package_name])) {
+        $composer_json['require'][$package_name] = $package_version;
+      }
+    }
+    $this->updater->writeComposerJson($composer_json);
+  }
+
+  /**
+   * 10.0.0.
+   *
+   * @Update(
+   *    version = "10000002",
+   *    description = "Regenerate cloud hooks if necessary."
+   * )
+   */
+  public function update_10000002() {
+    if ($this->updater->regenerateCloudHooks()) {
+      $this->updater->getOutput()->writeln("Cloud Hooks have been updated. Review the resulting file(s) and ensure that any customizations have been re-added.");
+    }
   }
 
 }

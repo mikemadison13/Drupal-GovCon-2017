@@ -12,6 +12,7 @@
  * install, with the environment, site, and uri CLI runtime arguments overriding
  * all other configuration.
  *
+ * phpcs:disable DrupalPractice.CodeAnalysis.VariableAnalysis
  */
 
 // Acquia hosting site / environment names.
@@ -69,7 +70,7 @@ shell_exec(sprintf('mkdir -p %s', escapeshellarg($cache_directory)));
 
 // Execute the updates.
 $command = sprintf(
-  'DRUSH_PATHS_CACHE_DIRECTORY=%s %s drupal:update --environment=%s --site=%s --define drush.uri=%s --verbose --yes --no-interaction',
+  'DRUSH_PATHS_CACHE_DIRECTORY=%s %s drupal:update --environment=%s --site=%s --define drush.uri=%s --verbose --no-interaction',
   escapeshellarg($cache_directory),
   escapeshellarg($blt),
   escapeshellarg($env),

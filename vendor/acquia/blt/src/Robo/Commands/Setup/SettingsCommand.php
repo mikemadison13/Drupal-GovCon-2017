@@ -30,7 +30,7 @@ class SettingsCommand extends BltTasks {
  * Do not include additional settings here. Instead, add them to settings
  * included by `blt.settings.php`. See BLT's documentation for more detail.
  *
- * @link http://blt.readthedocs.io
+ * @link https://docs.acquia.com/blt/
  */
 WARNING;
 
@@ -75,6 +75,9 @@ WARNING;
     $initial_site = $this->getConfigValue('site');
     $current_site = $initial_site;
 
+    $this->logger->debug("Multisites found: " . implode(',', $multisites));
+    $this->logger->debug("Initial site: $initial_site");
+
     foreach ($multisites as $multisite) {
       if ($current_site != $multisite) {
         $this->switchSiteContext($multisite);
@@ -95,9 +98,9 @@ WARNING;
       $blt_includes_settings_file = $this->getConfigValue('blt.root') . '/settings/default.includes.settings.php';
       $default_includes_settings_file = "$multisite_dir/settings/default.includes.settings.php";
 
-      // Generate sites/settings/global.settings.default.php.
-      $blt_glob_settings_file = $this->getConfigValue('blt.root') . '/settings/global.settings.default.php';
-      $default_glob_settings_file = $this->getConfigValue('docroot') . "/sites/settings/global.settings.default.php";
+      // Generate sites/settings/default.global.settings.php.
+      $blt_glob_settings_file = $this->getConfigValue('blt.root') . '/settings/default.global.settings.php';
+      $default_glob_settings_file = $this->getConfigValue('docroot') . "/sites/settings/default.global.settings.php";
 
       // Generate local.drush.yml.
       $blt_local_drush_file = $this->getConfigValue('blt.root') . '/settings/default.local.drush.yml';
@@ -190,8 +193,8 @@ WARNING;
    */
   public function behat() {
     $copy_map = [
-      $this->getConfigValue('blt.root') . '/template/tests/behat/behat.yml' => $this->getConfigValue('repo.root') . '/tests/behat/behat.yml',
-      $this->getConfigValue('blt.root') . '/template/tests/behat/example.local.yml' => $this->defaultBehatLocalConfigFile,
+      $this->getConfigValue('blt.root') . '/subtree-splits/blt-project/tests/behat/behat.yml' => $this->getConfigValue('repo.root') . '/tests/behat/behat.yml',
+      $this->getConfigValue('blt.root') . '/subtree-splits/blt-project/tests/behat/example.local.yml' => $this->defaultBehatLocalConfigFile,
       $this->defaultBehatLocalConfigFile => $this->projectBehatLocalConfigFile,
     ];
 

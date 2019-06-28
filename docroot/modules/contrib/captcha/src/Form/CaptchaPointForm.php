@@ -101,12 +101,12 @@ class CaptchaPointForm extends EntityForm {
     $status = $captcha_point->save();
 
     if ($status == SAVED_NEW) {
-      drupal_set_message($this->t('Captcha Point for %form_id form was created.', [
+      $this->messenger()->addMessage($this->t('Captcha Point for %form_id form was created.', [
         '%form_id' => $captcha_point->getFormId(),
       ]));
     }
     else {
-      drupal_set_message($this->t('Captcha Point for %form_id form was updated.', [
+      $this->messenger()->addMessage($this->t('Captcha Point for %form_id form was updated.', [
         '%form_id' => $captcha_point->getFormId(),
       ]));
     }

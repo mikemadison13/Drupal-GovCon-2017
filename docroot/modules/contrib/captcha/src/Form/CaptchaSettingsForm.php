@@ -98,7 +98,7 @@ class CaptchaSettingsForm extends ConfigFormBase {
     $form['form_protection']['enabled_default'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Default challenge on non-listed forms.'),
-      '#description' => $this->t('Enable CAPTCHA for every form not listed in "CAPTCHA points"'),
+      '#description' => $this->t('Enable CAPTCHA for every form not listed here'),
       '#default_value' => $config->get('enabled_default'),
     ];
     // Field for the CAPTCHA administration mode.
@@ -234,7 +234,7 @@ class CaptchaSettingsForm extends ConfigFormBase {
     $config->set('enable_stats', $form_state->getValue('enable_stats'));
     $config->set('log_wrong_responses', $form_state->getValue('log_wrong_responses'));
     $config->save();
-    drupal_set_message($this->t('The CAPTCHA settings have been saved.'), 'status');
+    $this->messenger()->addStatus($this->t('The CAPTCHA settings have been saved.'));
 
     parent::submitForm($form, $form_state);
   }
@@ -249,7 +249,7 @@ class CaptchaSettingsForm extends ConfigFormBase {
    */
   public function clearCaptchaPlacementCacheSubmit(array $form, FormStateInterface $form_state) {
     $this->cacheBackend->delete('captcha_placement_map_cache');
-    drupal_set_message($this->t('Cleared the CAPTCHA placement cache.'));
+    $this->messenger()->addMessage($this->t('Cleared the CAPTCHA placement cache.'));
   }
 
 }

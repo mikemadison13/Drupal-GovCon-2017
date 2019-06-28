@@ -114,12 +114,22 @@ class WebformSubmissionViewsData extends WebformSubmissionViewsDataBase {
       }
     }
 
-    // Add non-admin "view" and "edit" links.
+    // Add non-admin "view", "duplicate" and "edit" links.
     $data[$base_table]['webform_submission_user_submission_view'] = [
       'title' => $this->t('Non-admin view link'),
       'help' => $this->t('Link to view a webform submission for non-admin users.'),
       'field' => [
         'id' => 'webform_submission_user_submission_view_field',
+        'real field' => $this->entityType->getKey('id'),
+        'click sortable' => FALSE,
+      ],
+    ];
+
+    $data[$base_table]['webform_submission_user_submission_duplicate'] = [
+      'title' => $this->t('Non-admin duplicate link'),
+      'help' => $this->t('Link to duplicate a webform submission for non-admin users.'),
+      'field' => [
+        'id' => 'webform_submission_user_submission_duplicate_field',
         'real field' => $this->entityType->getKey('id'),
         'click sortable' => FALSE,
       ],
