@@ -6,6 +6,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_embed\Form\EntityEmbedDialog as BaseEntityEmbedDialog;
 use Drupal\media\MediaInterface;
 
+/**
+ * Overrides the entity embed dialog with specialized logic.
+ */
 class EntityEmbedDialog extends BaseEntityEmbedDialog {
 
   /**

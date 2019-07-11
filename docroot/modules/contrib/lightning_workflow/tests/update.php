@@ -1,7 +1,12 @@
 <?php
 
-// Forcibly uninstall Lightning Dev switch the installation profile from
-// Standard to Minimal, and delete defunct config objects.
+/**
+ * @file
+ * Prepares a fixture to be updated for testing.
+ *
+ * Forcibly uninstalls Lightning Dev, switches the installation profile from
+ * Standard to Minimal, and deletes defunct config objects.
+ */
 
 Drupal::configFactory()
   ->getEditable('core.extension')
@@ -22,7 +27,9 @@ Drupal::configFactory()->getEditable('media.type.tweet')->delete();
 
 Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
 
-$node_type = entity_load('node_type', 'page');
+$node_type = \Drupal::entityTypeManager()
+  ->getStorage('node_type')
+  ->load('page');
 if ($node_type) {
   $node_type->delete();
 }

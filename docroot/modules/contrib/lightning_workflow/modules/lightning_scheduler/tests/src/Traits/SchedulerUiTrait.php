@@ -40,28 +40,28 @@ trait SchedulerUiTrait {
    *   without saving. Defaults to TRUE.
    */
   protected function createTransition($to_state, $ts, $save = TRUE) {
-    $assert = $this->assertSession();
+    $page = $this->getSession()->getPage();
 
     try {
-      $assert->elementExists('named', ['link', 'add another'])->click();
+      $page->clickLink('add another');
     }
     catch (ElementNotFoundException $e) {
-      $assert->elementExists('named', ['link', 'Schedule a status change'])->click();
+      $page->clickLink('Schedule a status change');
     }
 
-    $assert->fieldExists('Scheduled moderation state')->selectOption($to_state);
-    $assert->fieldExists('Scheduled transition date')->setValue(date('mdY', $ts));
-    $assert->fieldExists('Scheduled transition time')->setValue(date('h:i:sA', $ts));
+    $page->selectFieldOption('Scheduled moderation state', $to_state);
+    $page->fillField('Scheduled transition date', date('mdY', $ts));
+    $page->fillField('Scheduled transition time', date('h:i:sA', $ts));
 
     if ($save) {
-      $assert->buttonExists('Save transition')->press();
+      $page->pressButton('Save transition');
 
       $text = sprintf(
         "Change to $to_state on %s at %s",
         date('F j, Y', $ts),
         date('g:i A', $ts)
       );
-      $assert->pageTextContains($text);
+      $this->assertSession()->pageTextContains($text);
     }
     $this->addToAssertionCount(1);
   }
@@ -104,6 +104,25 @@ trait SchedulerUiTrait {
     $this->config('lightning_scheduler.settings')
       ->set('time_step', $time_step)
       ->save();
+  }
+
+  /**
+   * Sets the time of the request, according to the datetime.time service.
+   *
+   * @param int $request_time
+   *   The time stamp to set.
+   */
+  protected function setRequestTime($request_time) {
+    $this->container->get('state')->set('lightning_scheduler.request_time', $request_time);
+  }
+
+  /**
+   * Clicks the link to the edit form for an entity.
+   */
+  protected function clickEditLink() {
+    $this->assertSession()
+      ->elementExists('named', ['link', 'edit-form'])
+      ->click();
   }
 
 }

@@ -16,3 +16,12 @@ Drupal::keyValue('system.schema')->deleteMultiple(['lightning_dev']);
 entity_load('node_type', 'landing_page')
   ->unsetThirdPartySetting('lightning_workflow', 'workflow')
   ->save();
+
+Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
+
+$node_type = entity_load('node_type', 'page');
+if ($node_type) {
+  $node_type->delete();
+}
+
+user_role_revoke_permissions('authenticated', ['use text format basic_html']);

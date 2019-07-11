@@ -279,7 +279,12 @@ export default class extends Component
     {
         return this.state.transitions.map(t => {
             return {
-              when: t.when.getTime() / 1000,
+              // JavaScript returns time stamps in millseconds, but PHP handles them
+              // in seconds. Divide by 1000 to convert to seconds, then round down to
+              // ensure we do not send a floating-point value back to the server. We
+              // always round down (instead of using Math.round()) to in order to
+              // prevent off-by-one-second timing failures in tests.
+              when: Math.floor(t.when.getTime() / 1000),
               state: t.state,
             };
         });

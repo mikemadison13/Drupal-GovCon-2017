@@ -33,7 +33,7 @@ class Update230Test extends KernelTestBase {
   /**
    * The update runner under test.
    *
-   * @var Update230
+   * @var \Drupal\lightning_workflow\Update\Update230
    */
   private $update;
 
@@ -143,13 +143,13 @@ END;
     $this->assertSame(SAVED_NEW, Workflow::create($workflow)->save());
 
     $io = $this->prophesize(StyleInterface::class);
-    $io->confirm( Argument::any() )->willReturn(TRUE);
+    $io->confirm(Argument::any())->willReturn(TRUE);
 
     $this->update->alterTransitions($io->reveal());
 
     $workflow = Workflow::load($workflow['id']);
     $this->assertInstanceOf(Workflow::class, $workflow);
-    /** @var Workflow $workflow */
+    /** @var \Drupal\workflows\Entity\Workflow $workflow */
 
     $plugin = $workflow->getTypePlugin();
 

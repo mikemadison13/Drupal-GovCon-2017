@@ -5,7 +5,6 @@ namespace Drupal\Tests\lightning_scheduler\Functional;
 /**
  * @group lightning_workflow
  * @group lightning_scheduler
- * @group orca_ignore
  */
 class MigrationStatusPageTest extends MigrationTestBase {
 

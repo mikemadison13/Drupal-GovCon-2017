@@ -45,6 +45,9 @@ class UiTest extends WebDriverTestBase {
   }
 
   public function testUi() {
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+
     $account = $this->createUser([
       'create page content',
       'view own unpublished content',
@@ -56,36 +59,36 @@ class UiTest extends WebDriverTestBase {
     $this->drupalLogin($account);
 
     $this->drupalGet('/node/add/page');
-    $this->assertSession()->fieldExists('Title')->setValue($this->randomString());
+    $page->fillField('Title', $this->randomString());
 
     $this->createTransition('Published', mktime(18, 0, 0, 5, 4, 2038));
     $this->createTransition('Archived', mktime(8, 57, 0, 9, 19, 2038));
 
-    $this->assertSession()->buttonExists('Save')->press();
-    $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
-    $this->assertSession()->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
-    $this->assertSession()->pageTextContains("Change to Archived on September 19, 2038 at 8:57 AM");
+    $page->pressButton('Save');
+    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $assert_session->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
+    $assert_session->pageTextContains("Change to Archived on September 19, 2038 at 8:57 AM");
 
-    $this->assertSession()->elementExists('named', ['link', 'Remove transition to Archived on September 19, 2038 at 8:57 AM'])->click();
-    $this->assertSession()->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
-    $this->assertSession()->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
-    $this->assertSession()->linkExists('add another');
-    $this->assertSession()->buttonExists('Save')->press();
-    $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
-    $this->assertSession()->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
-    $this->assertSession()->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
+    $page->clickLink('Remove transition to Archived on September 19, 2038 at 8:57 AM');
+    $assert_session->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
+    $assert_session->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
+    $assert_session->linkExists('add another');
+    $page->pressButton('Save');
+    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $assert_session->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
+    $assert_session->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
 
     $this->createTransition('Archived', mktime(8, 57, 0, 9, 19, 2038), FALSE);
-    $this->assertSession()->elementExists('named', ['link', 'Cancel transition']);
-    $this->assertSession()->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
-    $this->assertSession()->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
-    $this->assertSession()->buttonExists('Save')->press();
-    $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
-    $this->assertSession()->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
-    $this->assertSession()->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
-    $this->assertSession()->elementExists('named', ['link', 'Remove transition to Published on May 4, 2038 at 6:00 PM'])->click();
-    $this->assertSession()->pageTextNotContains("Change to Published on May 4, 2038 at 6:00 PM");
-    $this->assertSession()->linkExists('Schedule a status change');
+    $assert_session->linkExists('Cancel transition');
+    $assert_session->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
+    $assert_session->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
+    $page->pressButton('Save');
+    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $assert_session->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
+    $assert_session->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
+    $page->clickLink('Remove transition to Published on May 4, 2038 at 6:00 PM');
+    $assert_session->pageTextNotContains("Change to Published on May 4, 2038 at 6:00 PM");
+    $assert_session->linkExists('Schedule a status change');
   }
 
 }

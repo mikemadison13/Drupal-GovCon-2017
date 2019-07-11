@@ -4,7 +4,7 @@ dependencies:
   module:
     - lightning_media
 name: image_browser
-label: 'Image Browser'
+label: 'Image browser'
 display: modal
 display_configuration:
   width: ''

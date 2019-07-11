@@ -6,9 +6,9 @@
     "require": {
         "cweagans/composer-patches": "^1.6.4",
         "drupal-composer/drupal-scaffold": "^2.0.0",
-        "drupal/acquia_connector": "^1.1",
+        "drupal/acquia_connector": "*",
         "drupal/contact_storage": "^1.0",
-        "drupal/core": "~8.6.16",
+        "drupal/core": "~8.6.0",
         "drupal/metatag": "^1.8",
         "drupal/pathauto": "^1.3",
         "drupal/search_api": "^1.0",
@@ -110,6 +110,13 @@
             "@drupal-scaffold"
         ],
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "install-drupal": [
+            "rm -r -f ./docroot/sites/default/settings.php",
+            "drush site:install minimal --yes --config ./drush.yml",
+            "chmod +w ./docroot/sites/default ./docroot/sites/default/settings.php",
+            "drush pm:enable acquia_telemetry lightning_contact_form lightning_page lightning_roles lightning_search --yes",
+            "cp -f phpunit.xml ./docroot/core"
+        ],
         "nuke": "rm -r -f docroot vendor",
         "pull": "Acquia\\Lightning\\Commands\\FileCommands::pull",
         "push": "Acquia\\Lightning\\Commands\\FileCommands::push"

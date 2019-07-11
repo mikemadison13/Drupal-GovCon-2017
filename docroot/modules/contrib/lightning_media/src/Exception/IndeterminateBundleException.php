@@ -13,7 +13,7 @@ class IndeterminateBundleException extends \LogicException implements \IteratorA
   /**
    * The media types which matched the input value.
    *
-   * @var MediaTypeInterface[]
+   * @var \Drupal\media\MediaTypeInterface[]
    */
   private $types = [];
 
@@ -24,9 +24,9 @@ class IndeterminateBundleException extends \LogicException implements \IteratorA
    *   The input value.
    * @param int $code
    *   (optional) The error code.
-   * @param \Exception|NULL $previous
+   * @param \Exception $previous
    *   (optional) The previous exception, if any.
-   * @param MediaTypeInterface[] $types
+   * @param \Drupal\media\MediaTypeInterface[] $types
    *   (optional) The media types which matched the input value.
    */
   public function __construct($value, $code = 0, \Exception $previous = NULL, array $types = []) {
@@ -37,7 +37,7 @@ class IndeterminateBundleException extends \LogicException implements \IteratorA
       $value instanceof EntityInterface ? $value->label() : var_export($value, TRUE)
     );
 
-    /** @var MediaTypeInterface $media_type */
+    /** @var \Drupal\media\MediaTypeInterface $media_type */
     foreach ($types as $media_type) {
       $key = $media_type->id();
       $this->types[$key] = $media_type;

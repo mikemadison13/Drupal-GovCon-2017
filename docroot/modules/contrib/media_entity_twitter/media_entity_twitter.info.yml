@@ -6,8 +6,8 @@ package: Media
 dependencies:
   - drupal:media (>= 8.4)
 
-# Information added by Drupal.org packaging script on 2017-10-13
-version: '8.x-2.0-alpha2'
+# Information added by Drupal.org packaging script on 2019-03-14
+version: '8.x-2.0-alpha3'
 core: '8.x'
 project: 'media_entity_twitter'
-datestamp: 1507907346
+datestamp: 1552577892

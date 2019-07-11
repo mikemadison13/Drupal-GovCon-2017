@@ -3,6 +3,7 @@
 namespace Drupal\lightning_media;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\FileInterface;
 use Drupal\file\Plugin\Field\FieldType\FileItem;
 use Drupal\lightning_media\Exception\IndeterminateBundleException;
@@ -83,8 +84,8 @@ class MediaHelper {
    * @return \Drupal\media\MediaTypeInterface
    *   A media bundle that can accept the input value.
    *
-   * @throws \Drupal\lightning_media\Exception\IndeterminateBundleException if
-     * the input value cannot be matched to exactly one media type.
+   * @throws \Drupal\lightning_media\Exception\IndeterminateBundleException
+   *   If the input value cannot be matched to exactly one media type.
    */
   public function getBundleFromInput($value, $check_access = TRUE, array $bundles = []) {
     $media_types = $this->getBundlesFromInput($value, $check_access, $bundles);
@@ -201,22 +202,26 @@ class MediaHelper {
    *
    * @return string
    *   The destination directory URI.
-   *
-   * @throws \RuntimeException if the destination directory is not writable.
    */
   public static function prepareFileDestination(MediaInterface $entity) {
     /** @var \Drupal\file\Plugin\Field\FieldType\FileItem $item */
     $item = static::getSourceField($entity)->first();
 
-    $dir = $item->getUploadLocation();
-    $is_ready = file_prepare_directory($dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
+    $destination = $item->getUploadLocation();
 
-    if ($is_ready) {
-      return $dir;
+    // Support both Drupal 8.7's API and its antecedents. We need to call the
+    // deprecated symbols in an obscure way to prevent failures during
+    // deprecation testing.
+    if (version_compare(\Drupal::VERSION, '8.7.0', '>=')) {
+      $options = FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS;
+      \Drupal::service('file_system')->prepareDirectory($destination, $options);
     }
     else {
-      throw new \RuntimeException('Could not prepare ' . $dir . ' for writing');
+      $options = constant('FILE_CREATE_DIRECTORY') | constant('FILE_MODIFY_PERMISSIONS');
+      $function = 'file_prepare_directory';
+      $function($destination, $options);
     }
+    return $destination;
   }
 
   /**

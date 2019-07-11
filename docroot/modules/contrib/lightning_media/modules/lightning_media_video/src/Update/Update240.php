@@ -5,6 +5,8 @@ namespace Drupal\lightning_media_video\Update;
 use Drupal\lightning_core\ConfigHelper;
 
 /**
+ * Contains optional updates targeting Lightning Media Video 2.4.0.
+ *
  * @Update("2.4.0")
  */
 final class Update240 {

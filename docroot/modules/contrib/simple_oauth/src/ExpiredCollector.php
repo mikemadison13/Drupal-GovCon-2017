@@ -41,6 +41,8 @@ class ExpiredCollector {
    *   The entity type manager.
    * @param \Drupal\Component\Datetime\TimeInterface $date_time
    *   The date time service.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, TimeInterface $date_time) {
     $this->clientStorage = $entity_type_manager->getStorage('consumer');
@@ -51,12 +53,19 @@ class ExpiredCollector {
   /**
    * Collect all expired token ids.
    *
+   * @param int $limit
+   *   Number of tokens to fetch.
+   *
    * @return \Drupal\simple_oauth\Entity\Oauth2TokenInterface[]
    *   The expired tokens.
    */
-  public function collect() {
+  public function collect($limit = 0) {
     $query = $this->tokenStorage->getQuery();
     $query->condition('expire', $this->dateTime->getRequestTime(), '<');
+    // If limit available.
+    if (!empty($limit)) {
+      $query->range(0, $limit);
+    }
     if (!$results = $query->execute()) {
       return [];
     }

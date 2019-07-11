@@ -63,9 +63,9 @@ class ValidateSchemaTest extends SchemataBrowserTestBase {
     $this->assertTrue(!empty($json), 'Schema request should provide response content instead of a NULL value.');
 
     try {
-      $data = json_decode($json);
+      $data = json_decode($json, FALSE, 512, JSON_THROW_ON_ERROR);
     }
-    catch (Exception $e) {
+    catch (\JsonException $e) {
       $this->assertTrue(FALSE, "Could not decode JSON from schema response. Error: " . $e->getMessage());
     }
     $this->assertNotEmpty($data->{'$schema'}, 'JSON Schema should include a $schema reference to a defining schema.');

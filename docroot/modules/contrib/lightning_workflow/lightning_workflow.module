@@ -256,7 +256,7 @@ function lightning_workflow_entity_extra_field_info_alter(array &$info) {
   foreach ($info as &$entity_type) {
     foreach ($entity_type as &$bundle) {
       if (isset($bundle['display']['content_moderation_control'])) {
-        // Make moderation control pseudo fields hidden if Moderation Sidebar is enabled.
+        // Hide moderation pseudo-fields if Moderation Sidebar is enabled.
         $bundle['display']['content_moderation_control']['visible'] = !$moderation_sidebar_exists;
       }
     }

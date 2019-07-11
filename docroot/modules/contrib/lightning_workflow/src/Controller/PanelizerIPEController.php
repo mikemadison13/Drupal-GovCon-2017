@@ -23,9 +23,9 @@ class PanelizerIPEController extends PanelizerPanelsIPEController {
   /**
    * PanelizerIPEController constructor.
    *
-   * @param PanelizerInterface $panelizer
+   * @param \Drupal\panelizer\PanelizerInterface $panelizer
    *   The Panelizer service.
-   * @param ModerationInformationInterface $mod_info
+   * @param \Drupal\content_moderation\ModerationInformationInterface $mod_info
    *   The moderation information service.
    */
   public function __construct(PanelizerInterface $panelizer, ModerationInformationInterface $mod_info) {

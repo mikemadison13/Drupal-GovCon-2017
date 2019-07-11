@@ -16,8 +16,7 @@ use Drupal\Core\Url;
 use Drupal\lightning_core\Element;
 
 /**
- * This class is final because the migration is not an API and should not be
- * extended or re-used.
+ * The migration is not an API and should not be extended or re-used.
  */
 final class Migrator {
 
@@ -187,14 +186,14 @@ final class Migrator {
    *
    * @param string $entity_type_id
    *   The entity type ID.
-   * @param \stdClass $item
+   * @param object $item
    *   The relevant entity information, as returned from query(). This will
    *   include the entity ID and values of the scheduled_moderation_state and
    *   scheduled_publication fields. Will also include the revision ID and
    *   langcode, if the entity type is revisionable and translatable,
    *   respectively.
    */
-  public function migrate($entity_type_id, \stdClass $item) {
+  public function migrate($entity_type_id, $item) {
     $storage = $this->entityTypeManager->getStorage($entity_type_id);
 
     $entity = $this->load($storage, $item);
@@ -252,13 +251,13 @@ final class Migrator {
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $storage
    *   The entity storage handler.
-   * @param \stdClass $item
+   * @param object $item
    *   The relevant entity information. See ::migrate() for details.
    *
    * @return \Drupal\Core\Entity\ContentEntityInterface
    *   The loaded entity, with $entity->original set.
    */
-  protected function load(EntityStorageInterface $storage, \stdClass $item) {
+  protected function load(EntityStorageInterface $storage, $item) {
     $entity_type = $storage->getEntityType();
 
     $id_key = $entity_type->getKey('id');
@@ -320,10 +319,9 @@ final class Migrator {
   }
 
   /**
-   * Generates an informational message to be displayed before starting the
-   * migration for a set of entity types.
+   * Generates a message to be shown before migrating a set of entity types.
    *
-   * @param EntityTypeInterface[] $entity_types
+   * @param \Drupal\Core\Entity\EntityTypeInterface[] $entity_types
    *   The entity types that will be migrated.
    * @param bool $html
    *   Whether to include HTML tags in the message.
@@ -332,24 +330,22 @@ final class Migrator {
    *   The generated message.
    */
   public function generatePreMigrationMessage(array $entity_types, $html = TRUE) {
-    $message = 'You are about to migrate scheduled transitions for all @entity_types. This will modify your existing content and may take a long time if you have a huge site with tens of thousands of pieces of content. <strong>You cannot undo this</strong>, so you may want to <strong>back up your database</strong> and <a href=":maintenance_mode">switch to maintenance mode</a> before continuing.';
-    if ($html == FALSE) {
-      $message = strip_tags($message);
-    }
+    $entity_types = $this->entityTypeOptions($entity_types);
 
     $variables = [
-      '@entity_types' =>
-        Element::oxford($this->entityTypeOptions($entity_types)),
-      ':maintenance_mode' =>
-        Url::fromRoute('system.site_maintenance_mode')->toString(),
+      '@entity_types' => Element::oxford($entity_types),
+      ':maintenance_mode' => Url::fromRoute('system.site_maintenance_mode')->toString(),
     ];
-    return $this->t($message, $variables);
+
+    return $html
+      ? $this->t('You are about to migrate scheduled transitions for all @entity_types. This will modify your existing content and may take a long time if you have a huge site with tens of thousands of pieces of content. <strong>You cannot undo this</strong>, so you may want to <strong>back up your database</strong> and <a href=":maintenance_mode">switch to maintenance mode</a> before continuing.', $variables)
+      : $this->t('You are about to migrate scheduled transitions for all @entity_types. This will modify your existing content and may take a long time if you have a huge site with tens of thousands of pieces of content. You cannot undo this, so you may want to back up your database and switch to maintenance mode before continuing.', $variables);
   }
 
   /**
    * Converts a set of entity type definitions to key/value options.
    *
-   * @param EntityTypeInterface[] $entity_types
+   * @param \Drupal\Core\Entity\EntityTypeInterface[] $entity_types
    *   The entity type definitions.
    *
    * @return string[]

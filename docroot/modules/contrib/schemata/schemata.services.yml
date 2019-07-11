@@ -1,9 +1,4 @@
 services:
-  serializer.encoder.json_schema:
-    class: Drupal\schemata\Encoder\JsonSchemaEncoder
-    tags:
-      - { name: encoder, priority: 10, format: 'schema_json' }
-
   # Assemble Schemas based on entity type definitions. As a standalone class,
   # the SchemaFactory can be pulled in to custom menu routes, drush commands,
   # and REST plugins. The SchemaFactory::create() creates instances of

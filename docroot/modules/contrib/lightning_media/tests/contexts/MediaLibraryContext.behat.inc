@@ -63,7 +63,7 @@ final class MediaLibraryContext extends DrupalSubContextBase {
    * @When I visit the media library
    */
   public function visitLibrary() {
-    /** @var MinkContext $context */
+    /** @var \Drupal\DrupalExtension\Context\MinkContext $context */
     $context = $this->getContext(MinkContext::class);
     $context->assertAtPath('/admin/content/media-table');
   }

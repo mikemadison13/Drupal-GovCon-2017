@@ -17,6 +17,7 @@ class EntityFormDisplayPresaveTest extends KernelTestBase {
    */
   protected static $modules = [
     'system',
+    'user',
   ];
 
   /**
@@ -24,6 +25,7 @@ class EntityFormDisplayPresaveTest extends KernelTestBase {
    */
   protected function setUp() {
     parent::setUp();
+    $this->installEntitySchema('user');
 
     $this->container->get('module_installer')->install([
       'lightning_media_image',

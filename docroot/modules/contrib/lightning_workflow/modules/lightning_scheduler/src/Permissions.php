@@ -4,6 +4,9 @@ namespace Drupal\lightning_scheduler;
 
 use Drupal\content_moderation\Permissions as BasePermissions;
 
+/**
+ * Exposes permissions for scheduling moderation state changes.
+ */
 class Permissions extends BasePermissions {
 
   /**

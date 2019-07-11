@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\Utility\UpdateException;
 use Drupal\editor\Entity\Editor;
 use Drupal\embed\Entity\EmbedButton;
@@ -52,8 +53,6 @@ function lightning_media_install() {
  *
  * Formerly updated the media_library view, installs Services module, and
  * created the lightning_media service endpoint.
- *
- * @deprecated
  */
 function lightning_media_update_8001() {
 }
@@ -76,8 +75,6 @@ function lightning_media_update_8002() {
  * Removed in Lightning 8.x-2.06.
  *
  * Formerly created the media_creator and media_manager roles.
- *
- * @deprecated
  */
 function lightning_media_update_8003() {
 }
@@ -87,8 +84,6 @@ function lightning_media_update_8003() {
  *
  * Formerly granted the content-related roles access to the rich_text input
  * format.
- *
- * @deprecated
  */
 function lightning_media_update_8004() {
 }
@@ -109,17 +104,35 @@ function lightning_media_update_8005() {
  * Sets the icon for the media browser's embed button.
  */
 function lightning_media_update_8006() {
-  $icon = \Drupal::moduleHandler()->getModule('lightning_media')->getPath() . '/images/star.png';
-  $fs = \Drupal::service('file_system');
-  $destination = file_unmanaged_copy($icon, 'public://' . $fs->basename($icon));
+  $source = __DIR__ . '/images/star.png';
+  $destination = 'public://star.png';
+
+  // In Drupal 8.7.0 and later, we need to use FileSystemInterface::copy() to
+  // avoid deprecated code. But in previous versions of Drupal, we need to use
+  // file_unmanaged_copy(), which we need to invoke in an obscure way so that
+  // PHPStan doesn't get mad at us for calling a deprecated function.
+  if (version_compare(Drupal::VERSION, '8.7.0', '>=')) {
+    try {
+      $destination = Drupal::service('file_system')->copy($source, $destination);
+    }
+    catch (FileException $e) {
+      $destination = FALSE;
+    }
+  }
+  else {
+    $destination = call_user_func('file_unmanaged_copy', $source, $destination);
+  }
 
   if ($destination) {
     $file = File::create(['uri' => $destination]);
     $file->save();
 
-    EmbedButton::load('media_browser')
-      ->set('icon_uuid', $file->uuid())
-      ->save();
+    EmbedButton::load('media_browser')->set('icon_uuid', $file->uuid())->save();
+  }
+  else {
+    return t("Unable to copy @source to the public files directory.", [
+      '@source' => $source,
+    ]);
   }
 }
 
@@ -138,8 +151,6 @@ function lightning_media_update_8007() {
  * Removed in Lightning 8.x-2.21.
  *
  * Formerly created the media browser display of the media view.
- *
- * @deprecated
  *
  * @see lightning_media_view_insert()
  */
@@ -178,8 +189,6 @@ function lightning_media_update_8010() {
  *
  * Formerly granted the creator content role access to the rich_text input
  * format and the media browser.
- *
- * @deprecated
  */
 function lightning_media_update_8011() {
 }

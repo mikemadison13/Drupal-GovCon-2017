@@ -26,7 +26,7 @@ function lightning_api_install() {
         'openapi_generator' => 'jsonapi',
       ];
       $alias_storage->save(
-        Url::fromRoute('openapi.docs', $route_parameters)->toString(),
+        Url::fromRoute('openapi.documentation', $route_parameters)->toString(),
         '/api-docs'
       );
     }

@@ -2,6 +2,7 @@
 
 namespace Drupal\schemata_json_schema\Normalizer\jsonapi;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
@@ -24,26 +25,35 @@ class FieldDefinitionNormalizer extends ListDataDefinitionNormalizer {
   /**
    * {@inheritdoc}
    */
-  public function normalize($entity, $format = NULL, array $context = []) {
-    $cardinality = $entity->getFieldStorageDefinition()->getCardinality();
+  public function normalize($field_definition, $format = NULL, array $context = []) {
+    assert($field_definition instanceof FieldDefinitionInterface);
+    $cardinality = $field_definition->getFieldStorageDefinition()->getCardinality();
     $context['cardinality'] = $cardinality;
-    /* @var $entity \Drupal\Core\Field\FieldDefinitionInterface */
-    $normalized = parent::normalize($entity, $format, $context);
+    $normalized = parent::normalize($field_definition, $format, $context);
 
     // Specify non-contextual default value as an example.
-    $default_value = $entity->getDefaultValueLiteral();
+    $default_value = $field_definition->getDefaultValueLiteral();
+    $field_name = $context['name'];
     if (!empty($default_value)) {
-      $field_type = $entity -> getType();
+      $field_type = $field_definition->getType();
       $default_value = $cardinality == 1 ? reset($default_value) : $default_value;
       $default_value = count($default_value) == 1 ? reset($default_value) : $default_value;
       $default_value = $field_type == "boolean" ? boolval($default_value) : $default_value;
-      $normalized['properties']['attributes']['properties'][$context['name']]['default'] = $default_value;
+      NestedArray::setValue(
+        $normalized,
+        ['properties', 'attributes', 'properties', $field_name, 'default'],
+        $default_value
+      );
     }
 
     // The cardinality is the configured maximum number of values the field can
     // contain. If unlimited, we do not include a maxItems attribute.
     if ($cardinality != FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED && $cardinality != 1) {
-      $normalized['properties']['attributes']['properties'][$context['name']]['maxItems'] = $cardinality;
+      NestedArray::setValue(
+        $normalized,
+        ['properties', 'attributes', 'properties', $field_name, 'maxItems'],
+        $cardinality
+      );
     }
 
     return $normalized;

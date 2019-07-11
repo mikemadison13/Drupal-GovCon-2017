@@ -6,9 +6,7 @@ Feature: An entity browser for image fields
     Given I am logged in as a user with the media_creator role
     When I visit "/node/add/page"
     And I open the "Hero Image" image browser
-    And I switch to the "Upload" Entity Browser tab
-    And I attach the file "test.jpg" to "File"
-    And I wait for AJAX to finish
+    And I upload "test.jpg"
     # Cropping should be enabled.
     And I wait 1 second
     Then I should be able to crop the image

@@ -33,6 +33,7 @@ final class DropzoneContext extends DrupalSubContextBase {
    * Uploads multiple files into the media library using Dropzone.
    *
    * @param \Behat\Gherkin\Node\PyStringNode $files
+   *   A list of local file paths to upload.
    *
    * @When I upload the following files:
    */

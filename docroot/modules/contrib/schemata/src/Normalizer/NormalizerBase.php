@@ -3,6 +3,7 @@
 namespace Drupal\schemata\Normalizer;
 
 use Drupal\Core\TypedData\DataDefinitionInterface;
+use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\serialization\Normalizer\NormalizerBase as SerializationNormalizerBase;
 use Drupal\Component\Utility\NestedArray;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;

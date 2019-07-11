@@ -2,5 +2,5 @@
 docroot/
 node_modules/
 vendor/
-/.behat.yml
-/.phpcs-cache
+.idea/
+.DS_Store

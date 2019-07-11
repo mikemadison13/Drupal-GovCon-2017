@@ -11,11 +11,15 @@ use Drupal\simple_oauth\Service\Filesystem\FileSystemChecker;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * The settings form.
+ *
  * @internal
  */
 class Oauth2TokenSettingsForm extends ConfigFormBase {
 
   /**
+   * The file system checker.
+   *
    * @var \Drupal\simple_oauth\Service\Filesystem\FileSystemChecker
    */
   protected $fileSystemChecker;
@@ -26,7 +30,6 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
-
 
   /**
    * Oauth2TokenSettingsForm constructor.
@@ -45,7 +48,13 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Creates the form.
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The container.
+   *
+   * @return \Drupal\simple_oauth\Entity\Form\Oauth2TokenSettingsForm
+   *   The form.
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -84,6 +93,7 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
     $settings = $this->config('simple_oauth.settings');
     $settings->set('access_token_expiration', $form_state->getValue('access_token_expiration'));
     $settings->set('refresh_token_expiration', $form_state->getValue('refresh_token_expiration'));
+    $settings->set('token_cron_batch_size', $form_state->getValue('token_cron_batch_size'));
     $settings->set('public_key', $form_state->getValue('public_key'));
     $settings->set('private_key', $form_state->getValue('private_key'));
     $settings->set('remember_clients', $form_state->getValue('remember_clients'));
@@ -115,6 +125,12 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Refresh token expiration time'),
       '#description' => $this->t('The default value, in seconds, to be used as expiration time when creating new tokens.'),
       '#default_value' => $config->get('refresh_token_expiration'),
+    ];
+    $form['token_cron_batch_size'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Token batch size.'),
+      '#description' => $this->t('The number of expired token to delete per batch during cron cron.'),
+      '#default_value' => $config->get('token_cron_batch_size') ?: 0,
     ];
     $form['public_key'] = [
       '#type' => 'textfield',
@@ -189,7 +205,7 @@ class Oauth2TokenSettingsForm extends ConfigFormBase {
    * @param array $complete_form
    *   The complete form structure.
    */
-  public function validateExistingFile(&$element, FormStateInterface $form_state, &$complete_form) {
+  public function validateExistingFile(array &$element, FormStateInterface $form_state, array &$complete_form) {
     if (!empty($element['#value'])) {
       $path = $element['#value'];
       // Does the file exist?

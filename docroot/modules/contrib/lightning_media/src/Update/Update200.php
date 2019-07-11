@@ -9,6 +9,8 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional updates targeting Lightning Media 2.0.0.
+ *
  * @Update("2.0.0")
  */
 final class Update200 implements ContainerInjectionInterface {

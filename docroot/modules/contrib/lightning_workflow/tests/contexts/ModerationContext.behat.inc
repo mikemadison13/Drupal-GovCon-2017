@@ -98,10 +98,12 @@ final class ModerationContext extends DrupalSubContextBase {
    * @When I am viewing a :content_type in the :state_label state
    */
   public function assertAtContentInState($content_type, $state_label) {
-    $this->node = entity_create('node', [
-      'type' => $content_type,
-      'title' => (new Random)->string(),
-    ]);
+    $this->node = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->create([
+        'type' => $content_type,
+        'title' => (new Random)->string(),
+      ]);
     $current_user = $this->getUserManager()->getCurrentUser();
     if ($current_user) {
       $this->node->setOwnerId($current_user->uid);

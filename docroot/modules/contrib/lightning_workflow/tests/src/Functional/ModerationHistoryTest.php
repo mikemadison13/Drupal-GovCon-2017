@@ -56,18 +56,23 @@ class ModerationHistoryTest extends BrowserTestBase {
     $this->drupalGet('/node/' . $node->id() . '/moderation-history');
     $this->assertSession()->statusCodeEquals(200);
     $date_formatter = \Drupal::service('date.formatter');
-    $this->assertSession()->pageTextContainsOnce('Set to review on ' . $date_formatter->format($timestamp_a, 'long') . ' by ' . $user_a->getUsername());
-    $this->assertSession()->pageTextContainsOnce('Set to published on ' . $date_formatter->format($timestamp_b, 'long') . ' by ' . $user_b->getUsername());
+    $this->assertSession()->pageTextContainsOnce('Set to review on ' . $date_formatter->format($timestamp_a, 'long') . ' by ' . $user_a->getAccountName());
+    $this->assertSession()->pageTextContainsOnce('Set to published on ' . $date_formatter->format($timestamp_b, 'long') . ' by ' . $user_b->getAccountName());
   }
 
   /**
    * Creates a new revision of the given $node.
    *
    * @param \Drupal\node\NodeInterface $node
+   *   The node which should receive a new revision.
    * @param int $user_id
+   *   The ID of the user who created the revision.
    * @param int $timestamp
+   *   The time that the revision was created.
    * @param string $state
+   *   The desired moderation state.
    * @param string $revision_log
+   *   The revision log message.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */

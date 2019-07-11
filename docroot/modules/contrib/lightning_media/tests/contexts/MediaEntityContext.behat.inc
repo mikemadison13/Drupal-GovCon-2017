@@ -16,13 +16,15 @@ use Drupal\Tests\lightning_media\FixtureContext;
  */
 final class MediaEntityContext extends DrupalSubContextBase {
 
+  use AwaitTrait;
+
   /**
    * @BeforeScenario
    */
   public function setUp() {
     // Automatically delete all media items created by the user during this
     // scenario.
-    /** @var FixtureContext $fixtureContext */
+    /** @var \Drupal\Tests\lightning_media\FixtureContext $fixtureContext */
     if ($fixtureContext = $this->getContext(FixtureContext::class)) {
       $fixtureContext->trackUserContent($this->getUserManager(), 'media');
     }
@@ -173,6 +175,43 @@ final class MediaEntityContext extends DrupalSubContextBase {
     $assert = $this->assertSession();
     $assert->elementExists('css', 'button.slick-prev.slick-arrow');
     $assert->elementExists('css', 'button.slick-next.slick-arrow');
+  }
+
+  /**
+   * Asserts an entity embedding form for a non-image media item.
+   *
+   * @Then I should be able to embed the media item
+   */
+  public function assertGenericEntityEmbedForm() {
+    $assert_session = $this->assertSession();
+
+    $form = $assert_session->elementExists('css', '.entity-embed-dialog');
+    $assert_session->fieldNotExists('Image style', $form);
+    $assert_session->fieldNotExists('Alternate text', $form);
+    $assert_session->fieldNotExists('Title', $form);
+  }
+
+  /**
+   * Embeds a media item with a set of embedding options.
+   *
+   * @param \Behat\Gherkin\Node\TableNode $options
+   *   The embedding options. Only the first row of the table is used.
+   *
+   * @When I embed the media item with options:
+   */
+  public function embedEntity(TableNode $options) {
+    $assert_session = $this->assertSession();
+
+    $options = $options->getHash();
+
+    $form = $assert_session->elementExists('css', '.entity-embed-dialog');
+    foreach (current($options) as $field => $value) {
+      $assert_session->fieldExists($field, $form)->setValue($value);
+    }
+
+    $assert_session->elementExists('css', 'body > .ui-dialog .ui-dialog-buttonpane button.button--primary')
+      ->click();
+    $this->awaitAjax();
   }
 
 }

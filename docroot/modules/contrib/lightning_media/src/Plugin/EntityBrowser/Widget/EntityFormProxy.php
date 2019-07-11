@@ -27,8 +27,9 @@ abstract class EntityFormProxy extends WidgetBase {
     if (isset($form['actions'])) {
       $form['actions']['#weight'] = 100;
 
-      // Allow the form to be rebuilt without using AJAX interactions. This means
-      // we can do a lot of testing without JavaScript, which is WAY easier.
+      // Allow the form to be rebuilt without using AJAX interactions. This
+      // means we can do a lot of testing without JavaScript, which is WAY
+      // easier.
       $form['actions']['update'] = [
         '#type' => 'submit',
         '#value' => $this->t('Update'),
@@ -72,14 +73,25 @@ abstract class EntityFormProxy extends WidgetBase {
       $form['entity']['#bundle'] = $form['entity']['#default_value']->bundle();
 
       // Without this, IEF won't know where to hook into the widget. Don't pass
-      // $original_form as the second argument to addCallback(), because it's not
-      // just the entity browser part of the form, not the actual complete form.
+      // $original_form as the second argument to addCallback(), because it's
+      // not just the entity browser part of the form, not the actual complete
+      // form.
       ElementSubmit::addCallback($form['actions']['submit'], $form_state->getCompleteForm());
     }
 
     return $form;
   }
 
+  /**
+   * Returns a media entity created from the current input, if possible.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   *
+   * @return \Drupal\media\MediaInterface
+   *   A media entity created from the current input value, if there is one, or
+   *   NULL if no media entity can be created.
+   */
   protected function getCurrentEntity(FormStateInterface $form_state) {
     $value = $this->getCurrentValue($form_state);
     $types = $this->getCurrentTypes($form_state);
@@ -93,8 +105,18 @@ abstract class EntityFormProxy extends WidgetBase {
     if ($value && $type) {
       return $this->createMedia($value, $types[$type]);
     }
+    return NULL;
   }
 
+  /**
+   * Returns all media types that can apply to the current input.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
+   *
+   * @return \Drupal\media\MediaTypeInterface[]
+   *   The media types that can apply to the current input, if any.
+   */
   protected function getCurrentTypes(FormStateInterface $form_state) {
     $value = $this->getCurrentValue($form_state);
     return $value ? $this->getTypesByValue($value) : $this->getAllowedTypes();
@@ -158,7 +180,7 @@ abstract class EntityFormProxy extends WidgetBase {
    *
    * @param array $form
    *   The complete form.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    *
    * @return \Drupal\Core\Ajax\AjaxResponse
@@ -210,7 +232,7 @@ abstract class EntityFormProxy extends WidgetBase {
   /**
    * Returns the media types which can be used by this widget.
    *
-   * @return MediaTypeInterface[]
+   * @return \Drupal\media\MediaTypeInterface[]
    *   The media types which can be used by this widget.
    */
   protected function getAllowedTypes() {
@@ -264,7 +286,7 @@ abstract class EntityFormProxy extends WidgetBase {
    * @param mixed $value
    *   The input value.
    *
-   * @return MediaTypeInterface[]
+   * @return \Drupal\media\MediaTypeInterface[]
    *   The media types which can use the given value in their source field.
    */
   protected function getTypesByValue($value) {

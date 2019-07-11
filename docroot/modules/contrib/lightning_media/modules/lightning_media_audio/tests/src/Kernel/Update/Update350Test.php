@@ -19,7 +19,7 @@ class Update350Test extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system'];
+  protected static $modules = ['system', 'user'];
 
   /**
    * {@inheritdoc}

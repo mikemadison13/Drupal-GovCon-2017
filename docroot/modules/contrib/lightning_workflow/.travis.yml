@@ -1,68 +1,53 @@
-dist: trusty
+---
 language: php
 
-cache:
-  bundler: true
-  directories:
-    - "$HOME/.composer/cache"
-    - "$HOME/.drush/cache"
-
-php:
-  - 7.1
-
-env:
-  - VERSION=HEAD ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
-  - VERSION=1.0.0-rc2 ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
-  - VERSION=1.0.0-rc2
-  - VERSION=1.0.0-rc2 ORCA_FIXTURE_FLAGS=--dev
-
-matrix:
-  fast_finish: true
-  allow_failures:
-    - env: VERSION=1.0.0-rc2
-    - env: VERSION=1.0.0-rc2 ORCA_FIXTURE_FLAGS=--dev
+php: "7.1"
 
 addons:
   chrome: stable
 
+cache:
+  directories:
+    - "$HOME/.composer/cache"
+    - "$HOME/.drush/cache"
+    - "$TMPDIR/phpstan/cache"
+
+env:
+  global:
+    - ORCA_SUT_NAME=drupal/lightning_workflow
+    - ORCA_SUT_BRANCH=8.x-3.x
+    - ORCA_VERSION=v1.0.0-alpha17
+
+matrix:
+  fast_finish: true
+  include:
+    # Standard ORCA jobs.
+    - { name: "Static code analysis", env: ORCA_JOB=STATIC_CODE_ANALYSIS }
+    - { name: "Deprecated code scan", env: ORCA_JOB=DEPRECATED_CODE_SCAN_SUT }
+    - { name: "Isolated test w/ recommended package versions", env: ORCA_JOB=ISOLATED_RECOMMENDED }
+    - { name: "Integrated test w/ recommended package versions", env: ORCA_JOB=INTEGRATED_RECOMMENDED }
+    - { name: "Integrated test w/ recommended package versions & previous minor release of Drupal core", env: ORCA_JOB=CORE_PREVIOUS }
+    - { name: "Isolated test w/ dev package versions", env: ORCA_JOB=ISOLATED_DEV }
+    - { name: "Integrated test w/ dev package versions", env: ORCA_JOB=INTEGRATED_DEV }
+    - { name: "Integrated test w/ dev package versions & next minor dev version of Drupal core", env: ORCA_JOB=CORE_NEXT }
+    # Custom job.
+    - { name: "Upgrade test", env: ORCA_JOB=CUSTOM ORCA_CUSTOM_FIXTURE_INIT_ARGS="--sut-only --dev --no-site-install" ORCA_CUSTOM_TESTS_RUN_ARGS="--sut-only" DB_FIXTURE=1.0.0-rc2 }
+  allow_failures:
+    - env: ORCA_JOB=DEPRECATED_CODE_SCAN_CONTRIB
+    - env: ORCA_JOB=INTEGRATED_DEV
+    - env: ORCA_JOB=CORE_NEXT
+
 before_install:
-  - composer self-update
-  - composer --version
-  - google-chrome-stable --version
-
-  - export ORCA=$TRAVIS_BUILD_DIR/../orca
-  - export ORCA_FIXTURE=$ORCA-build
-  - export ORCA_SUT_NAME=drupal/lightning_workflow
-  - export ORCA_SUT_BRANCH=8.x-3.x
-  # - export ORCA_PACKAGES_CONFIG_ALTER=../lightning-workflow/tests/packages.yml
-
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - export PATH="$ORCA/bin:$PATH"
-  - export PATH="$ORCA/vendor/bin:$PATH"
-  - export PATH="$ORCA_FIXTURE/vendor/bin:$PATH"
-
-  # Install ORCA and prepare the environment.
-  - git clone --branch develop --depth 1 https://github.com/acquia/orca.git $ORCA
-  - $ORCA/bin/travis/before_install.sh
+  - git clone --branch ${ORCA_VERSION} --depth 1 https://github.com/acquia/orca.git ../orca
+  - curl https://github.com/acquia/orca/commit/278cfe3c1c3bf62c407cc2e5147d266ac3c2dd6c.patch | git -C ../orca apply
+  - ../orca/bin/travis/before_install.sh
 
 install:
-  - $ORCA/bin/travis/install.sh
+  - ../orca/bin/travis/install.sh
+  - ./tests/travis/install.sh
 
-  # Run ORCA static analysis tools.
-  - orca static-analysis:run ./
+before_script: ../orca/bin/travis/before_script.sh
 
-  # Use ORCA to build the code base.
-  - orca fixture:init -f --sut $ORCA_SUT_NAME $ORCA_FIXTURE_FLAGS
-  - # Install dev dependencies.
-  - composer require --dev drupal/inline_entity_form --working-dir $ORCA_FIXTURE
+script: ../orca/bin/travis/script.sh
 
-before_script:
-  - cd $ORCA_FIXTURE/docroot
-  - $TRAVIS_BUILD_DIR/update.sh $VERSION
-
-script:
-  - orca tests:run --sut $ORCA_SUT_NAME $ORCA_TEST_FLAGS
-
-after_failure:
-  - cd docroot
-  - drush watchdog:show --count=100 --severity=Error --extended
+after_failure: ../orca/bin/travis/after_failure.sh

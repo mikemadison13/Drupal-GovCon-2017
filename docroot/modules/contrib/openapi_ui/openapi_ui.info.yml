@@ -4,8 +4,8 @@ description: Provides plugin system for OpenAPI/Swagger Interface libraries.
 # core: 8.x
 package: OpenAPI
 
-# Information added by Drupal.org packaging script on 2018-07-22
-version: '8.x-1.0-rc1'
+# Information added by Drupal.org packaging script on 2019-06-18
+version: '8.x-1.0-rc2'
 core: '8.x'
 project: 'openapi_ui'
-datestamp: 1532303592
+datestamp: 1560864576

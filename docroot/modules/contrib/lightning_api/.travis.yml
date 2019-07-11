@@ -1,70 +1,51 @@
-dist: trusty
+---
 language: php
 
-cache:
-  bundler: true
-  apt: true
-  directories:
-    - "$HOME/.composer/cache"
-    - "$HOME/.drush/cache"
-    - "$HOME/.npm"
-php:
-  - 7.1
-
-env:
-  - VERSION=HEAD ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
-  - VERSION=1.0.0-rc1 ORCA_FIXTURE_FLAGS='--dev --sut-only' ORCA_TEST_FLAGS=--sut-only
-  - VERSION=1.0.0-rc1
-  - VERSION=1.0.0-rc1 ORCA_FIXTURE_FLAGS=--dev
-
-matrix:
-  fast_finish: true
-  allow_failures:
-    - env: VERSION=1.0.0-rc1
-    - env: VERSION=1.0.0-rc1 ORCA_FIXTURE_FLAGS=--dev
+php: 7.1
 
 addons:
   chrome: stable
 
+cache:
+  directories:
+    - "$HOME/.composer/cache"
+    - "$HOME/.drush/cache"
+    - "$TMPDIR/phpstan/cache"
+
+env:
+  global:
+    - ORCA_SUT_NAME=drupal/lightning_api
+    - ORCA_SUT_BRANCH=8.x-3.x
+    - ORCA_VERSION=v1.0.0-alpha16
+
+matrix:
+  fast_finish: true
+  include:
+    # Standard ORCA jobs.
+    - { name: "Static code analysis", env: ORCA_JOB=STATIC_CODE_ANALYSIS }
+    - { name: "Integrated test w/ recommended package versions & previous minor release of Drupal core", env: ORCA_JOB=CORE_PREVIOUS }
+    # Custom job.
+    - { name: "Upgrade test", env: DB_FIXTURE=1.0.0-rc1 }
+  allow_failures:
+    # Temporary allowances.
+    - env: ORCA_JOB=STATIC_CODE_ANALYSIS
+
 before_install:
-  - phpenv config-add ./tests/travis.php.ini
-  - phpenv rehash
-
-  - composer self-update
-  - composer --version
-  - google-chrome-stable --version
-
-  - export ORCA=$TRAVIS_BUILD_DIR/../orca
-  - export ORCA_FIXTURE=$ORCA-build
-  - export ORCA_SUT=drupal/lightning_api
-
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - export PATH="$ORCA/bin:$PATH"
-  - export PATH="$ORCA/vendor/bin:$PATH"
-  - export PATH="$ORCA_FIXTURE/vendor/bin:$PATH"
-
-  # Add the ORCA repository.
-  - composer config --global repositories.orca vcs "https://github.com/acquia/orca"
-  # Use a personal access token to authenticate with GitHub, to avoid being
-  # rate-limited. The token is configured in the Travis CI repository settings.
-  - composer config --global github-oauth.github.com $GITHUB_API_TOKEN
+  - git clone --branch ${ORCA_VERSION} --depth 1 https://github.com/acquia/orca.git ../orca
+  - ../orca/bin/travis/before_install.sh
 
 install:
-  - composer create-project --stability dev --no-dev acquia/orca $ORCA
-  - "$ORCA/bin/travis/install 8.x-3.x"
+  - ../orca/bin/travis/install.sh
+  - ./tests/travis/install.sh
 
-  # Run ORCA static analysis tools.
-  - orca static-analysis:run ./
+before_script: ../orca/bin/travis/before_script.sh
 
-  # Use ORCA to build the code base.
-  - orca fixture:init -f --sut $ORCA_SUT $ORCA_FIXTURE_FLAGS
+script: ../orca/bin/travis/script.sh
 
-before_script:
-  - cd $ORCA_FIXTURE/docroot
-  - $TRAVIS_BUILD_DIR/update.sh $VERSION
+before_cache: ../orca/bin/travis/before_cache.sh
 
-script:
-  - orca tests:run --sut $ORCA_SUT $ORCA_TEST_FLAGS
+after_success: ../orca/bin/travis/after_success.sh
 
-after_failure:
-  - drush watchdog:show --count=100 --severity=Error --extended
+after_failure: ../orca/bin/travis/after_failure.sh
+
+after_script: ../orca/bin/travis/after_script.sh

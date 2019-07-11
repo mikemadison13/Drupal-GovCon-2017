@@ -11,6 +11,8 @@ use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional updates targeting Lightning Media 3.6.0.
+ *
  * @Update("3.6.0")
  */
 final class Update360 implements ContainerInjectionInterface {

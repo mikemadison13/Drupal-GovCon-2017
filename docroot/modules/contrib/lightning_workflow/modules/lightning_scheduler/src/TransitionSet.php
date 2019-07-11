@@ -7,6 +7,9 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeFieldItemList;
 
+/**
+ * Represents a set of scheduled transitions for a single entity.
+ */
 class TransitionSet {
 
   /**
@@ -31,8 +34,8 @@ class TransitionSet {
    * @param \Drupal\Core\Field\FieldItemListInterface $state_list
    *   A set of scheduled workflow states for an entity.
    *
-   * @throws \InvalidArgumentException if the date list and state list are not
-   * of equal length.
+   * @throws \InvalidArgumentException
+   *   If the date list and state list are not of equal length.
    */
   public function __construct(DateTimeFieldItemList $date_list, FieldItemListInterface $state_list) {
     if (count($date_list) !== count($state_list)) {
@@ -71,7 +74,7 @@ class TransitionSet {
    *   - 'state': The targeted workflow state ID.
    *   - 'when': The UTC date and time of the transition in ISO 8601 format.
    */
-  public function toJSON() {
+  public function toJson() {
     $data = [];
 
     foreach ($this->dateList as $delta => $item) {
@@ -106,7 +109,7 @@ class TransitionSet {
     });
 
     if ($filtered_keys) {
-      return $data[ end($filtered_keys) ];
+      return $data[end($filtered_keys)];
     }
     return NULL;
   }

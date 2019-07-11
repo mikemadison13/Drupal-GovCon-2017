@@ -12,4 +12,4 @@
 cd "$(dirname "$0")"; source _includes.sh
 
 orca fixture:status
-orca tests:run --sut=drupal/lightning_core --sut-only
+orca qa:automated-tests --sut=drupal/lightning_core --sut-only

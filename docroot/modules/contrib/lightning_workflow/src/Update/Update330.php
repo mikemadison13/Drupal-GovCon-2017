@@ -2,6 +2,7 @@
 
 namespace Drupal\lightning_workflow\Update;
 
+use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -10,6 +11,8 @@ use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional updates targeting Lightning Workflow 3.3.0.
+ *
  * @Update("3.3.0")
  */
 final class Update330 implements ContainerInjectionInterface {
@@ -31,16 +34,26 @@ final class Update330 implements ContainerInjectionInterface {
   private $moduleHandler;
 
   /**
+   * The moderation information service.
+   *
+   * @var \Drupal\content_moderation\ModerationInformationInterface
+   */
+  private $moderationInformation;
+
+  /**
    * Update330 constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_information
+   *   The moderation information service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, ModerationInformationInterface $moderation_information) {
     $this->entityTypeManager = $entity_type_manager;
     $this->moduleHandler = $module_handler;
+    $this->moderationInformation = $moderation_information;
   }
 
   /**
@@ -49,21 +62,25 @@ final class Update330 implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('content_moderation.moderation_information')
     );
   }
 
   /**
-   * Rewrites the Moderation History View to fix timestamp and author
-   * references.
+   * Fixes timestamp and author references in the Moderation History view.
    *
-   * @param StyleInterface $io
+   * @param \Symfony\Component\Console\Style\StyleInterface $io
    *   The I/O style.
    *
    * @update
    */
   public function fixModerationHistory(StyleInterface $io) {
-    if (!$this->moduleHandler->moduleExists('views')) {
+    // If moderation is not enabled, the moderation_state field will not exist
+    // and there's nothing else to do. Or, if Views is not installed, the
+    // moderation_history view definitely will not exist, and there's nothing
+    // else to do.
+    if (!$this->isModerationEnabled() || !$this->moduleHandler->moduleExists('views')) {
       return;
     }
 
@@ -71,6 +88,8 @@ final class Update330 implements ContainerInjectionInterface {
     /** @var \Drupal\views\Entity\View $view */
     $view = $view_storage->load('moderation_history');
 
+    // If the moderation_history view is deleted or otherwise unavailable, don't
+    // even bother trying to update it.
     if (!$view) {
       return;
     }
@@ -120,6 +139,25 @@ final class Update330 implements ContainerInjectionInterface {
     }
 
     $view_storage->save($view);
+  }
+
+  /**
+   * Checks if moderation is enabled for content items.
+   *
+   * In Drupal 8.6 and earlier, this is TRUE if content _can_ be moderated, not
+   * necessarily if it actually _has_ been opted into moderation. In Drupal 8.7
+   * and later, this is TRUE only if at least one content type actually _has_
+   * opted into moderation.
+   *
+   * @return bool
+   *   TRUE if moderation is enabled for content items, FALSE otherwise.
+   */
+  private function isModerationEnabled() {
+    $entity_type = $this->entityTypeManager->getDefinition('node');
+
+    return version_compare(\Drupal::VERSION, '8.7.0', '>=')
+      ? $this->moderationInformation->isModeratedEntityType($entity_type)
+      : $this->moderationInformation->canModerateEntitiesOfEntityType($entity_type);
   }
 
 }

@@ -49,72 +49,79 @@ class TransitionTest extends WebDriverTestBase {
     $this->drupalLogin($account);
     $this->setUpTimeZone();
     $this->setTimeStep();
+
+    $this->drupalGet('/node/add/page');
+    $this->getSession()->getPage()->fillField('Title', $this->randomString());
   }
 
   public function testPublishInPast() {
-    $this->drupalGet('/node/add/page');
-    $this->assertSession()->fieldExists('Title')->setValue($this->randomString());
+    $assert_session = $this->assertSession();
+
     $this->createTransition('Published', time() - 10);
-    $this->assertSession()->buttonExists('Save')->press();
+    $this->getSession()->getPage()->pressButton('Save');
     $this->cronRun();
-    $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
-    $this->assertSession()->pageTextContains('Current state Published');
-    $this->assertSession()->elementNotExists('css', '.scheduled-transition');
+    $this->clickEditLink();
+    $assert_session->pageTextContains('Current state Published');
+    $assert_session->elementNotExists('css', '.scheduled-transition');
   }
 
   /**
    * @depends testPublishInPast
    */
   public function testSkipInvalidTransition() {
-    $this->drupalGet('/node/add/page');
-    $this->assertSession()->fieldExists('Title')->setValue($this->randomString());
+    $assert_session = $this->assertSession();
+
     $this->createTransition('Published', time() - 20);
     $this->createTransition('Archived', time() - 10);
-    $this->assertSession()->buttonExists('Save')->press();
+    $this->getSession()->getPage()->pressButton('Save');
     $this->cronRun();
-    $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     // It will still be in the draft state because the transition should resolve
     // to Draft -> Archived, which doesn't exist.
-    $this->assertSession()->pageTextContains('Current state Draft');
-    $this->assertSession()->elementNotExists('css', '.scheduled-transition');
+    $assert_session->pageTextContains('Current state Draft');
+    $assert_session->elementNotExists('css', '.scheduled-transition');
   }
 
   public function testClearCompletedTransitions() {
-    $this->drupalGet('/node/add/page');
-    $this->assertSession()->fieldExists('Title')->setValue($this->randomString());
-    $this->assertSession()->selectExists('moderation_state[0][state]')->selectOption('In review');
-    $this->assertSession()->buttonExists('Save')->press();
-    $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
-    $this->createTransition('Published', time() + 8);
-    $this->assertSession()->buttonExists('Save')->press();
-    sleep(10);
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+    $now = time();
+
+    $page->selectFieldOption('moderation_state[0][state]', 'In review');
+    $page->pressButton('Save');
+    $this->clickEditLink();
+    $this->createTransition('Published', $now + 8);
+    $page->pressButton('Save');
+    $this->setRequestTime($now + 10);
     $this->cronRun();
-    $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
-    $this->assertSession()->selectExists('moderation_state[0][state]')->selectOption('Archived');
-    $this->assertSession()->buttonExists('Save')->press();
+    $this->clickEditLink();
+    $page->selectFieldOption('moderation_state[0][state]', 'Archived');
+    $page->pressButton('Save');
     $this->cronRun();
-    $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
-    $this->assertSession()->pageTextContains('Current state Archived');
+    $this->clickEditLink();
+    $assert_session->pageTextContains('Current state Archived');
   }
 
   public function testPublishPendingRevision() {
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+    $now = time();
+
     $this->container->get('module_installer')->install(['views']);
 
-    $this->drupalGet('/node/add/page');
-    $this->assertSession()->fieldExists('Title')->setValue($this->randomString());
-    $this->assertSession()->selectExists('moderation_state[0][state]')->selectOption('Published');
-    $this->assertSession()->elementExists('named', ['link', 'Promotion options'])->click();
-    $this->assertSession()->fieldExists('Promoted to front page')->check();
-    $this->assertSession()->buttonExists('Save')->press();
-    $this->assertSession()->elementExists('css', 'a[rel="edit-form"]')->click();
-    $this->assertSession()->fieldExists('Title')->setValue('MC Hammer');
-    $this->assertSession()->selectExists('moderation_state[0][state]')->selectOption('Draft');
-    $this->createTransition('Published', time() + 8);
-    $this->assertSession()->buttonExists('Save')->press();
-    sleep(10);
+    $page->selectFieldOption('moderation_state[0][state]', 'Published');
+    $page->clickLink('Promotion options');
+    $page->checkField('Promoted to front page');
+    $page->pressButton('Save');
+    $this->clickEditLink();
+    $page->fillField('Title', 'MC Hammer');
+    $page->selectFieldOption('moderation_state[0][state]', 'Draft');
+    $this->createTransition('Published', $now + 8);
+    $page->pressButton('Save');
+    $this->setRequestTime($now + 10);
     $this->cronRun();
     $this->drupalGet('/node');
-    $this->assertSession()->linkExists('MC Hammer');
+    $assert_session->linkExists('MC Hammer');
   }
 
 }

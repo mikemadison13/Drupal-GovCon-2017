@@ -23,6 +23,9 @@ class TimeStepTest extends WebDriverTestBase {
    * Tests the time steps.
    */
   public function testTimeSteps() {
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+
     $steps = [
       '1 second' => [
         'time_step' => 1,
@@ -57,13 +60,16 @@ class TimeStepTest extends WebDriverTestBase {
 
     foreach ($steps as $step) {
       $this->drupalGet('/admin/config/system/lightning');
-      $this->assertSession()->elementExists('named', ['link', 'Scheduler'])->click();
-      $this->assertSession()->selectExists('time_step')->selectOption($step['time_step']);
-      $this->assertSession()->buttonExists('Save configuration')->click();
+      $page->clickLink('Scheduler');
+      $page->selectFieldOption('time_step', $step['time_step']);
+      $page->pressButton('Save configuration');
 
       $this->drupalGet('/node/add/page');
-      $this->assertSession()->waitForElement('named', ['link', 'Schedule a status change'])->click();
-      $field = $this->assertSession()->fieldExists('Scheduled transition time');
+      $link = $assert_session->waitForLink('Schedule a status change');
+      $this->assertNotEmpty($link);
+      $link->click();
+
+      $field = $assert_session->fieldExists('Scheduled transition time');
       $this->assertEquals($step['time_step'], $field->getAttribute('step'));
       $this->assertStringMatchesFormat($step['expected_format'], $field->getValue());
     }

@@ -2,6 +2,9 @@
 
 namespace Drupal\openapi\Plugin\openapi\OpenApiGenerator;
 
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\jsonapi\ResourceType\ResourceTypeRepository;
 use Drupal\openapi\Plugin\openapi\OpenApiGeneratorBase;
 use Drupal\Core\Authentication\AuthenticationCollectorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -94,11 +97,19 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    *   The module handler service.
    * @param \Drupal\Core\ParamConverter\ParamConverterManagerInterface $param_converter_manager
    *   The parameter converter manager service.
+   * @param \Drupal\jsonapi\ResourceType\ResourceTypeRepository $resource_type_repository
+   *   The resource type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, RouteProviderInterface $routing_provider, EntityFieldManagerInterface $field_manager, SchemaFactory $schema_factory, SerializerInterface $serializer, RequestStack $request_stack, ConfigFactoryInterface $config_factory, AuthenticationCollectorInterface $authentication_collector, ModuleHandlerInterface $module_handler, ParamConverterManagerInterface $param_converter_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, RouteProviderInterface $routing_provider, EntityFieldManagerInterface $field_manager, SchemaFactory $schema_factory, SerializerInterface $serializer, RequestStack $request_stack, ConfigFactoryInterface $config_factory, AuthenticationCollectorInterface $authentication_collector, ModuleHandlerInterface $module_handler, ParamConverterManagerInterface $param_converter_manager, ResourceTypeRepository $resource_type_repository) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $routing_provider, $field_manager, $schema_factory, $serializer, $request_stack, $config_factory, $authentication_collector);
     $this->moduleHandler = $module_handler;
     $this->paramConverterManager = $param_converter_manager;
+
+    // Remove the disabled resource types from the output.
+    $this->options['exclude'] = static::findDisabledMethods(
+      $entity_type_manager,
+      $resource_type_repository
+    );
   }
 
   /**
@@ -118,8 +129,47 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
       $container->get('config.factory'),
       $container->get('authentication_collector'),
       $container->get('module_handler'),
-      $container->get('paramconverter_manager')
+      $container->get('paramconverter_manager'),
+      $container->get('jsonapi.resource_type.repository')
     );
+  }
+
+  /**
+   * Introspects all the JSON API resource types and outputs the disabled ones.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\jsonapi\ResourceType\ResourceTypeRepository $resource_type_repository
+   *   The resource type manager.
+   *
+   * @return string[]
+   *   A list of resource keys to disable.
+   */
+  protected static function findDisabledMethods(
+    EntityTypeManagerInterface $entity_type_manager,
+    ResourceTypeRepository $resource_type_repository
+  ) {
+    $extract_resource_type_id = function (ResourceType $resource_type) use ($entity_type_manager) {
+      $entity_type = $entity_type_manager->getDefinition($resource_type->getEntityTypeId());
+      if (empty($entity_type->getKey('bundle'))) {
+        return $resource_type->getEntityTypeId();
+      }
+      return sprintf(
+        '%s%s%s',
+        $resource_type->getEntityTypeId(),
+        static::$DEFINITION_SEPARATOR,
+        $resource_type->getBundle()
+      );
+    };
+    $filter_disabled = function (ResourceType $resourceType) {
+      // If there is an isInternal method and the resource is marked as internal
+      // then consider it disabled. If not, then it's enabled.
+      return method_exists($resourceType, 'isInternal') && $resourceType->isInternal();
+    };
+    $all = $resource_type_repository->all();
+    $disabled_resources = array_filter($all, $filter_disabled);
+    $disabled = array_map($extract_resource_type_id, $disabled_resources);
+    return $disabled;
   }
 
   /**
@@ -136,13 +186,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    *   The url prefix used for all jsonapi resource endpoints.
    */
   public function getJsonApiBase() {
-    $root = '/jsonapi';
-    if ($this->moduleHandler->moduleExists('jsonapi_extras')) {
-      $root = '/' . $this->configFactory
-        ->get('jsonapi_extras.settings')
-        ->get('path_prefix');
-    }
-    return $root;
+    return \Drupal::getContainer()->getParameter('jsonapi.base_path');
   }
 
   /**
@@ -165,7 +209,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
         $method = strtolower($method);
         $path_method = [];
         $path_method['summary'] = $this->getRouteMethodSummary($route, $route_name, $method);
-        $path_method['description'] = '@todo Add descriptions';
+        $path_method['description'] = $this->getRouteMethodDescription($route_name, $method, $resource_type->getTypeName());
         $path_method['parameters'] = $this->getMethodParameters($route, $resource_type, $method);
         $path_method['tags'] = [$this->getBundleTag($entity_type_id, $bundle_name)];
         $path_method['responses'] = $this->getEntityResponses($entity_type_id, $method, $bundle_name, $route_name);
@@ -222,10 +266,67 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
   protected function getRouteMethodSummary(Route $route, $route_name, $method) {
     // @todo Make a better summary.
     if ($route_type = $this->getRoutTypeFromName($route_name)) {
-      return "$route_type $method";
+      return $this->t('@route @method', [
+        '@route' => ucfirst($route_type),
+        '@method' => strtoupper($method),
+      ]);
     }
     return '@todo';
+  }
 
+  /**
+   * Gets description of a method on a route.
+   *
+   * @param string $route_name
+   *   The route name.
+   * @param string $method
+   *   The method.
+   * @param string $resource_type_name
+   *   The resource type name
+   *
+   * @return string
+   *   The method description.
+   */
+  protected function getRouteMethodDescription($route_name, $method, $resource_type_name) {
+    $route_type = $this->getRoutTypeFromName($route_name);
+    if (!$route_type || $method !== 'get') {
+      return NULL;
+    }
+    if ($route_type === 'collection') {
+      $message = '%link_co for the @name resource type. Collections are a list';
+      $message .= ' of %link_ro for a particular resource type. In the JSON ';
+      $message .= 'API module for Drupal all collections are homogeneous, ';
+      $message .= 'which means that all the items in a collection are of the ';
+      $message .= 'same type.';
+      return $this->t($message, [
+        '%link_co' => Link::fromTextAndUrl(
+          $this->t('Collection endpoint'),
+          Url::fromUri('http://jsonapi.org/format/#fetching')
+        )->toString(),
+        '@name' => $resource_type_name,
+        '%link_ro' => Link::fromTextAndUrl(
+          $this->t('resource objects'),
+          Url::fromUri('http://jsonapi.org/format/#document-resource-objects')
+        )->toString(),
+      ]);
+    }
+    else if ($route_type === 'individual') {
+      $message = '%link_in for the @name resource type. The individual ';
+      $message .= 'endpoint contains a %link_ro with the data for a particular';
+      $message .= ' resource or entity.';
+      return $this->t($message, [
+        '%link_in' => Link::fromTextAndUrl(
+          $this->t('Individual endpoint'),
+          Url::fromUri('http://jsonapi.org/format/#fetching')
+        )->toString(),
+        '@name' => $resource_type_name,
+        '%link_ro' => Link::fromTextAndUrl(
+          $this->t('resource object'),
+          Url::fromUri('http://jsonapi.org/format/#document-resource-objects')
+        )->toString(),
+      ]);
+    }
+    return NULL;
   }
 
   /**
@@ -345,9 +446,15 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
         if ($definition_ref = $this->getDefinitionReference($entity_type_id, $bundle_name)) {
           $schema_response = [
             'schema' => [
-              'type' => 'array',
-              'items' => [
-                '$ref' => $definition_ref,
+              'type' => 'object',
+              'required' => ['data'],
+              'properties' => [
+                'data' => [
+                  'type' => 'array',
+                  'items' => [
+                    '$ref' => "$definition_ref/properties/data",
+                  ],
+                ],
               ],
             ],
           ];

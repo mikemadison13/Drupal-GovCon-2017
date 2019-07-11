@@ -22,15 +22,14 @@ class EmbeddedMediaLabelTest extends BrowserTestBase {
   /**
    * Slick Entity Reference has a schema error.
    *
-   * @todo Remove when depending on slick_entityreference 1.2 or later.
-   *
    * @var bool
+   *
+   * @todo Remove when depending on slick_entityreference 1.2 or later.
    */
   protected $strictConfigSchema = FALSE;
 
   /**
-   * Tests that the label of an embedded media item does not appear in the
-   * rendered host entity.
+   * The label of an embedded media item should not appear in the host entity.
    */
   public function testEmbeddedMediaItem() {
     $node_type = $this->drupalCreateContentType()->id();

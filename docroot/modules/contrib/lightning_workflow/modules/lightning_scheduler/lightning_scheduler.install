@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains installation and update hooks for Lightning Scheduler.
+ */
+
 use Drupal\Core\Url;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
@@ -68,7 +73,7 @@ function lightning_scheduler_update_8001() {
   }
 
   return t(
-    'Lightning Scheduler\'s new fields have been created. @link. Note that you must be logged in as the superuser (user 1) to do this.',
+    "Lightning Scheduler's new fields have been created. @link. Note that you must be logged in as the superuser (user 1) to do this.",
     [
       '@link' => $link,
     ]

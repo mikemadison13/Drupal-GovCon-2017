@@ -1,7 +1,7 @@
 @lightning @api @lightning_search
 Feature: Site search
 
-  @e4c5b23b @orca_public
+  @e4c5b23b
   Scenario: Searching for content as an anonymous user
     Given I am an anonymous user
     And test content:

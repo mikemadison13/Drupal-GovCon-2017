@@ -1,4 +1,10 @@
 services:
+  serializer.encoder.json_schema.json:
+    class: Drupal\schemata_json_schema\Encoder\JsonSchemaEncoder
+    arguments: ['@serializer.encoder.json']
+    tags:
+      - { name: encoder, priority: 10, format: 'schema_json:json' }
+
   # ----------------------------------------------------------------------------
   # - NORMALIZERS for each format.
   # ----------------------------------------------------------------------------
@@ -83,7 +89,7 @@ services:
   # - 3. HAL+JSON format.
   # ----------------------------------------------------------------------------
   # Note: The HAL+JSON version of the Data Reference normalizer depends on the
-  # HAL module and is in registered in SchemataHalServiceProvider.
+  # HAL module and is in registered in SchemataJsonSchemaServiceProvider.
 
   # Normalize complex data properties for HAL.
   # This services is primarily used to short-circuit merging normalization of

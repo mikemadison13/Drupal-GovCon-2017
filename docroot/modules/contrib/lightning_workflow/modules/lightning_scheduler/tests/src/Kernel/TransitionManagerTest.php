@@ -28,26 +28,11 @@ class TransitionManagerTest extends KernelTestBase {
   ];
 
   /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-    $this->installConfig('system');
-
-    // In order to prove that time zones are normalized correctly, set the
-    // system default and Drupal default time zones differently.
-    date_default_timezone_set('UTC');
-    $this->config('system.date')
-      ->set('timezone.default', 'America/New_York')
-      ->save();
-  }
-
-  /**
    * @covers ::validate
    *
    * @dataProvider providerValidate
    */
-  public function testValidate($value, $expect_errors) {
+  public function testValidate($value, $expected_error = NULL) {
     $element = [
       '#value' => Json::encode($value),
       '#name' => 'test_element',
@@ -59,58 +44,71 @@ class TransitionManagerTest extends KernelTestBase {
 
     TransitionManager::validate($element, $form_state);
 
-    $this->assertSame($expect_errors, FormState::hasAnyErrors());
+    $errors = $form_state->getErrors();
+    $errors = array_map('strval', $errors);
+    $errors = array_map('strip_tags', $errors);
+
+    if ($expected_error) {
+      $this->assertContains($expected_error, $errors);
+    }
+    else {
+      $this->assertEmpty($errors);
+    }
   }
 
   /**
    * Data provider for ::testValidate().
    *
-   * @return array
+   * @return array[]
+   *   Sets of arguments to pass to ::testValidate().
    */
   public function providerValidate() {
     return [
       'empty string' => [
         '',
-        TRUE,
+        'Expected scheduled transitions to be an array.',
       ],
       'null' => [
         NULL,
-        TRUE,
+        'Expected scheduled transitions to be an array.',
       ],
       'boolean false' => [
         FALSE,
-        TRUE,
+        'Expected scheduled transitions to be an array.',
       ],
       'boolean true' => [
         TRUE,
-        TRUE,
+        'Expected scheduled transitions to be an array.',
       ],
       'random string' => [
         $this->randomString(128),
-        TRUE,
+        'Expected scheduled transitions to be an array.',
       ],
       'integer' => [
         123,
-        TRUE,
+        'Expected scheduled transitions to be an array.',
+      ],
+      'float' => [
+        123.45,
+        'Expected scheduled transitions to be an array.',
       ],
       'empty array' => [
         [],
-        FALSE,
       ],
-      'time' => [
+      'time, no date' => [
         [
           'when' => '08:57',
         ],
-        TRUE,
+        'Scheduled transitions must have a date and time.',
       ],
-      'date' => [
+      'date, no time' => [
         [
           [
             'state' => 'fubar',
             'when' => '1984-09-19',
           ],
         ],
-        TRUE,
+        '"1984-09-19" is not a valid date and time.',
       ],
       'date and time' => [
         [
@@ -118,7 +116,16 @@ class TransitionManagerTest extends KernelTestBase {
             'when' => '1938-37-12 08:57',
           ],
         ],
-        TRUE,
+        '"1938-37-12 08:57" is not a valid date and time.',
+      ],
+      'date as float' => [
+        [
+          [
+            'state' => 'fubar',
+            'when' => '123.45',
+          ],
+        ],
+        '"123.45" is not a valid date and time.',
       ],
       'valid different time stamps, invalid order' => [
         [
@@ -131,7 +138,7 @@ class TransitionManagerTest extends KernelTestBase {
             'when' => mktime(2, 30, 0, 9, 4, 2018),
           ],
         ],
-        TRUE,
+        "You cannot schedule a transition to take place before 3:42 PM on November 5, 2018.",
       ],
       'valid same dates, valid times, invalid order' => [
         [
@@ -144,7 +151,7 @@ class TransitionManagerTest extends KernelTestBase {
             'when' => mktime(4, 46, 0, 9, 19, 2022),
           ],
         ],
-        TRUE,
+        "You cannot schedule a transition to take place before 6:30 AM on September 19, 2022.",
       ],
       'valid different dates' => [
         [
@@ -157,7 +164,6 @@ class TransitionManagerTest extends KernelTestBase {
             'when' => mktime(15, 42, 0, 11, 5, 2022),
           ],
         ],
-        FALSE,
       ],
       'valid same dates, different times' => [
         [
@@ -170,7 +176,6 @@ class TransitionManagerTest extends KernelTestBase {
             'when' => mktime(15, 42, 0, 9, 19, 2022),
           ],
         ],
-        FALSE,
       ],
     ];
   }

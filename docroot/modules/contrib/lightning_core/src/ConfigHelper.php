@@ -127,7 +127,7 @@ class ConfigHelper extends InstallStorage {
       if (mb_strpos($id, $prefix) === 0) {
         $entity = $this->getEntity(
           $entity_type,
-          mb_strpos($id, mb_strlen($prefix))
+          mb_substr($id, mb_strlen($prefix))
         );
         return $entity->delete();
       }

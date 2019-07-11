@@ -22,18 +22,11 @@ class TweetEmbedFormatterTest extends MediaFunctionalTestBase {
   ];
 
   /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-  }
-
-  /**
    * Tests adding and editing a twitter embed formatter.
    */
   public function testManageEmbedFormatter() {
     // Test and create one media type.
-    $bundle = $this->createMediaType(['bundle' => 'twitter'], 'twitter');
+    $bundle = $this->createMediaType('twitter', ['bundle' => 'twitter']);
 
     // We need to fix widget and formatter config for the default field.
     $source = $bundle->getSource();
@@ -41,6 +34,13 @@ class TweetEmbedFormatterTest extends MediaFunctionalTestBase {
     // Use the default widget and settings.
     $component = \Drupal::service('plugin.manager.field.widget')
       ->prepareConfiguration('string', []);
+
+    // Enable the conical URL.
+    \Drupal::configFactory()
+      ->getEditable('media.settings')
+      ->set('standalone_url', TRUE)
+      ->save(TRUE);
+    $this->container->get('router.builder')->rebuild();
 
     // @todo Replace entity_get_form_display() when #2367933 is done.
     // https://www.drupal.org/node/2872159.
@@ -80,7 +80,7 @@ class TweetEmbedFormatterTest extends MediaFunctionalTestBase {
     // saved.
     $this->drupalGet('admin/structure/media/manage/' . $bundle->id() . '/fields');
     $xpath = $this->xpath('//*[@id=:id]/td', [':id' => 'field-media-twitter']);
-    $this->assertEqual((string) $xpath[0]->getText(), 'Tweet Url');
+    $this->assertEqual((string) $xpath[0]->getText(), 'Tweet URL');
     $this->assertEqual((string) $xpath[1]->getText(), 'field_media_twitter');
     $this->assertEqual((string) $xpath[2]->find('css', 'a')->getText(), 'Text (plain)');
 
@@ -123,12 +123,13 @@ class TweetEmbedFormatterTest extends MediaFunctionalTestBase {
       'field_embed_code[0][value]' => $tweet,
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->drupalGet('media/1');
 
     // Assert that the media has been successfully saved.
     $this->assertText('Title');
 
     // Assert that the link url formatter exists on this page.
-    $this->assertText('Tweet Url');
+    $this->assertText('Tweet URL');
     $this->assertRaw('<a href="https://twitter.com/RamzyStinson/statuses/670650348319576064">', 'Link in embedded Tweet found.');
 
     // Assert that the string_long code formatter exists on this page.

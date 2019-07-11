@@ -27,9 +27,6 @@ final class ImageBrowserContext extends DrupalSubContextBase {
     $context->assertDetails($field)->pressButton('Select Image(s)');
     $this->awaitAjax();
     $context->enterFrame('entity_browser_iframe_image_browser');
-
-    // This might be vestigial.
-    sleep(10);
   }
 
   /**

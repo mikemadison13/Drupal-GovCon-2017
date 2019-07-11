@@ -75,7 +75,7 @@ class ImageBrowserCardinalityTest extends WebDriverTestBase {
       'label' => 'Unlimited Images',
     ])->save();
 
-    entity_get_form_display('node', $this->nodeType->id(), 'default')
+    lightning_media_entity_get_form_display('node', $this->nodeType->id())
       ->setComponent('field_multi_image', [
         'type' => 'entity_browser_file',
         'settings' => [
@@ -132,7 +132,7 @@ class ImageBrowserCardinalityTest extends WebDriverTestBase {
 
     $GLOBALS['install_state'] = [];
     /** @var \Drupal\views\ViewEntityInterface $view */
-    $view = entity_load('view', 'media');
+    $view = $this->container->get('entity_type.manager')->getStorage('view')->load('media');
     lightning_media_image_view_insert($view);
     unset($GLOBALS['install_state']);
 

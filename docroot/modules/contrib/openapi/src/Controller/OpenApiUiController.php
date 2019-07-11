@@ -24,9 +24,10 @@ class OpenApiUiController extends ControllerBase {
    */
   public function title(OpenApiUiInterface $openapi_ui, OpenApiGeneratorInterface $generator, Request $request) {
     return $this->t(
-      '%label OpenApi Docs UI',
+      '%generator OpenApi Documentation',
       [
-        '%label' => $generator->getLabel(),
+        '%generator' => $generator->getLabel(),
+        '%interface' => $openapi_ui->getLabel(),
       ]
     );
   }

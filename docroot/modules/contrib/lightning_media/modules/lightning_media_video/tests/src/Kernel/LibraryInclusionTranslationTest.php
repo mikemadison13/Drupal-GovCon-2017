@@ -16,13 +16,14 @@ class LibraryInclusionTranslationTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system'];
+  protected static $modules = ['system', 'user'];
 
   /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
+    $this->installEntitySchema('user');
 
     $this->container->get('module_installer')->install([
       'content_translation',

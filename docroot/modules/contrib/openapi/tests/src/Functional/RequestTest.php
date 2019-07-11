@@ -29,20 +29,12 @@ class RequestTest extends BrowserTestBase {
    */
   const EXPECTED_STRUCTURE = [
     'swagger' => 'swagger',
-    'schemes' => 'schema',
     'info' => [
       'description' => 'description',
       'version' => 'version',
       'title' => 'title',
     ],
-    'host' => 'host',
-    'basePath' => 'basePath',
-    'securityDefinitions' => 'securityDefinitions',
-    'tags' => 'tags',
-    'definitions' => 'definitions',
     'paths' => 'paths',
-    'consumes' => 'consumes',
-    'produces' => 'produces',
   ];
 
   const ENTITY_TEST_BUNDLES = [

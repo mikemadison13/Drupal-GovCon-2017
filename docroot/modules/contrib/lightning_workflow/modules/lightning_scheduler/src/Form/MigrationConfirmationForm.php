@@ -54,7 +54,7 @@ final class MigrationConfirmationForm extends ConfirmFormBase {
   /**
    * Performs access check.
    *
-   * @return AccessResult
+   * @return \Drupal\Core\Access\AccessResult
    *   Allowed if the current user is droot (Drupal root).
    */
   public function access() {
@@ -88,7 +88,7 @@ final class MigrationConfirmationForm extends ConfirmFormBase {
       '#type' => 'details',
       '#collapsible' => TRUE,
       '#title' => $this->t('Purge without migrating'),
-      '#description' => $this->t('Purging will allow you to discard existing scheduled transitions for a particular entity type without running the migration. This is useful if you don\'t have any scheduled transitions that you want to migrate. <strong>This will permanently delete scheduled transitions and cannot be undone.</strong>'),
+      '#description' => $this->t("Purging will allow you to discard existing scheduled transitions for a particular entity type without running the migration. This is useful if you don't have any scheduled transitions that you want to migrate. <strong>This will permanently delete scheduled transitions and cannot be undone.</strong>"),
       '#tree' => TRUE,
       'entity_type_id' => [
         '#type' => 'select',

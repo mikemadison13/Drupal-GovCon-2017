@@ -7,6 +7,8 @@ use Drupal\Core\Extension\ModuleInstallerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional updates targeting Lightning Media 3.1.0.
+ *
  * @Update("3.1.0")
  */
 final class Update310 implements ContainerInjectionInterface {

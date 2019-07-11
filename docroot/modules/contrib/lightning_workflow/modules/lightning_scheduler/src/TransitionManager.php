@@ -14,6 +14,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
+/**
+ * Executes scheduled transition changes.
+ */
 class TransitionManager {
 
   use StringTranslationTrait;
@@ -49,15 +52,15 @@ class TransitionManager {
   /**
    * TransitionManager constructor.
    *
-   * @param ModerationInformationInterface $moderation_information
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_information
    *   The moderation information service.
-   * @param AccountInterface $current_user
+   * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The currently logged-in user.
-   * @param EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
-   * @param LoggerChannelInterface $logger
+   * @param \Drupal\Core\Logger\LoggerChannelInterface $logger
    *   The logger channel.
-   * @param TranslationInterface $translation
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
    *   (optional) The string translation service.
    */
   public function __construct(ModerationInformationInterface $moderation_information, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, LoggerChannelInterface $logger, TranslationInterface $translation = NULL) {
@@ -94,7 +97,7 @@ class TransitionManager {
 
       if ($this->currentUser->hasPermission("schedule $base_permission") || $this->currentUser->hasPermission("use $base_permission")) {
         $to_state = $transition->to();
-        $states[ $to_state->id() ] = $to_state->label();
+        $states[$to_state->id()] = $to_state->label();
       }
     }
     return $states;
@@ -121,7 +124,7 @@ class TransitionManager {
       return;
     }
 
-    if (! is_array($data)) {
+    if (!is_array($data)) {
       $form_state->setError($element, t('Expected scheduled transitions to be an array.'));
       return;
     }
@@ -134,7 +137,7 @@ class TransitionManager {
         return;
       }
 
-      if (! is_numeric($transition['when'])) {
+      if (!preg_match('/^[0-9]+$/', $transition['when'])) {
         $variables = [
           '%when' => $transition['when'],
         ];
@@ -160,11 +163,11 @@ class TransitionManager {
    *
    * @param string $entity_type_id
    *   The entity type ID.
-   * @param DrupalDateTime $now
+   * @param \Drupal\Core\Datetime\DrupalDateTime $now
    *   The time that processing began.
    */
   public function process($entity_type_id, DrupalDateTime $now) {
-    /** @var ContentEntityInterface $entity */
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     foreach ($this->getTransitionable($entity_type_id, $now) as $entity) {
       $error_context = [
         'entity_type' => (string) $entity->getEntityType()->getSingularLabel(),
@@ -217,7 +220,7 @@ class TransitionManager {
    *
    * @param string $entity_type_id
    *   The entity type ID.
-   * @param DrupalDateTime $now
+   * @param \Drupal\Core\Datetime\DrupalDateTime $now
    *   The time that processing began.
    *
    * @return \Generator
@@ -231,13 +234,13 @@ class TransitionManager {
 
     // Entities are transitionable if its latest revision has any transitions
     // scheduled now or in the past.
-    $IDs = $storage->getQuery()
+    $ids = $storage->getQuery()
       ->latestRevision()
       ->accessCheck(FALSE)
       ->condition('scheduled_transition_date.value', $now, '<=')
       ->execute();
 
-    foreach (array_keys($IDs) as $revision_id) {
+    foreach (array_keys($ids) as $revision_id) {
       yield $storage->loadRevision($revision_id);
     }
   }

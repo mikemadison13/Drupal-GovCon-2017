@@ -22,8 +22,16 @@ use Drupal\user\RoleInterface;
 function simple_oauth_cron() {
   /** @var \Drupal\simple_oauth\ExpiredCollector $collector */
   $collector = \Drupal::service('simple_oauth.expired_collector');
-  // Collect all expired tokens and delete them.
-  $collector->deleteMultipleTokens($collector->collect());
+  $config = \Drupal::config('simple_oauth.settings');
+  $logger = \Drupal::logger('simple_oauth');
+  $token_cron_batch_size = $config->get('token_cron_batch_size');
+  // Deleting one batch of expired tokens.
+  if (!empty($expired_tokens = $collector->collect($token_cron_batch_size))) {
+    $collector->deleteMultipleTokens($expired_tokens);
+    $logger->notice('Deleted @limit expired tokens in cron.', [
+      '@limit' => $token_cron_batch_size,
+    ]);
+  }
 }
 
 /**

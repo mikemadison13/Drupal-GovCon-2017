@@ -11,5 +11,5 @@ default:
         - '\Drupal\DrupalExtension\Context\MessageContext'
         - '\Drupal\Tests\lightning_workflow\FixtureContext'
       paths:
-        - 'modules/lightning_scheduler/tests/features'
-        - 'tests/features'
+        - 'docroot/modules/contrib/lightning_workflow/modules/lightning_scheduler/tests/features'
+        - 'docroot/modules/contrib/lightning_workflow/tests/features'

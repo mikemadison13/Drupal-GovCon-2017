@@ -28,8 +28,7 @@ drush pm-enable menu_ui --yes
 drush updatedb --yes
 drush update:lightning --no-interaction --yes
 
-# Reinstall modules which were blown away by the database restore.
-orca fixture:enable-modules
+orca fixture:enable-extensions
 
 # Reinstall from exported configuration to prove that it's coherent.
 drush config:export --yes

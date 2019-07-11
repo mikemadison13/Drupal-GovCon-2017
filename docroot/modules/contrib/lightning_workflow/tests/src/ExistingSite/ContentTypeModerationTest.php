@@ -234,7 +234,7 @@ class ContentTypeModerationTest extends ExistingSiteBase {
 
     $this->container
       ->get('module_handler')
-      ->invoke('lightning_workflow', 'node_type_insert', [ $this->nodeType ]);
+      ->invoke('lightning_workflow', 'node_type_insert', [$this->nodeType]);
   }
 
 }

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains installation and update functions.
+ */
+
 use Drupal\entity_browser\Element\EntityBrowserElement;
 use Drupal\field\Entity\FieldConfig;
 
@@ -7,7 +12,7 @@ use Drupal\field\Entity\FieldConfig;
  * Implements hook_install().
  */
 function test_10a21ffe_install() {
-  entity_get_form_display('node', 'page', 'default')
+  lightning_media_entity_get_form_display('node', 'page')
     ->setComponent('field_hero_image', [
       'type' => 'entity_browser_file',
       'settings' => [

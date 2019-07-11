@@ -1,10 +1,9 @@
 {
-    "definitions": [],
     "paths": {
         "\/openapi_test_entity_type\/openapi_test_entity_type": {
             "get": {
-                "summary": "collection get",
-                "description": "@todo Add descriptions",
+                "summary": "Collection GET",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Collection endpoint<\/a><\/em> for the openapi_test_entity_type--openapi_test_entity_type resource type. Collections are a list of <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource objects<\/a><\/em> for a particular resource type. In the JSON API module for Drupal all collections are homogeneous, which means that all the items in a collection are of the same type.",
                 "parameters": [
                     {
                         "name": "filter",
@@ -30,21 +29,15 @@
                         "description": "successful operation"
                     }
                 }
-            },
-            "post": {
-                "summary": "collection post",
-                "description": "@todo Add descriptions",
-                "parameters": [],
-                "responses": []
             }
         },
-        "\/openapi_test_entity_type\/openapi_test_entity_type\/{openapi_test_entity_type}": {
+        "\/openapi_test_entity_type\/openapi_test_entity_type\/{entity}": {
             "get": {
-                "summary": "individual get",
-                "description": "@todo Add descriptions",
+                "summary": "Individual GET",
+                "description": "<em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#fetching\">Individual endpoint<\/a><\/em> for the openapi_test_entity_type--openapi_test_entity_type resource type. The individual endpoint contains a <em class=\"placeholder\"><a href=\"http:\/\/jsonapi.org\/format\/#document-resource-objects\">resource object<\/a><\/em> with the data for a particular resource or entity.",
                 "parameters": [
                     {
-                        "name": "openapi_test_entity_type",
+                        "name": "entity",
                         "required": true,
                         "in": "path",
                         "type": "uuid",
@@ -54,163 +47,6 @@
                 "responses": {
                     "200": {
                         "description": "successful operation"
-                    }
-                }
-            },
-            "patch": {
-                "summary": "individual patch",
-                "description": "@todo Add descriptions",
-                "parameters": [
-                    {
-                        "name": "openapi_test_entity_type",
-                        "required": true,
-                        "in": "path",
-                        "type": "uuid",
-                        "description": "The uuid of the openapi_test_entity_type openapi_test_entity_type"
-                    }
-                ],
-                "responses": []
-            },
-            "delete": {
-                "summary": "individual delete",
-                "description": "@todo Add descriptions",
-                "parameters": [
-                    {
-                        "name": "openapi_test_entity_type",
-                        "required": true,
-                        "in": "path",
-                        "type": "uuid",
-                        "description": "The uuid of the openapi_test_entity_type openapi_test_entity_type"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Entity deleted"
-                    }
-                }
-            }
-        },
-        "\/openapi_test_entity_type\/openapi_test_entity_type\/{openapi_test_entity_type}\/{related}": {
-            "get": {
-                "summary": "related get",
-                "description": "@todo Add descriptions",
-                "parameters": [
-                    {
-                        "name": "openapi_test_entity_type",
-                        "required": true,
-                        "in": "path",
-                        "type": "uuid",
-                        "description": "The uuid of the openapi_test_entity_type openapi_test_entity_type"
-                    },
-                    {
-                        "name": "related",
-                        "required": true,
-                        "in": "path",
-                        "type": "string",
-                        "description": "The relationship field name"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    }
-                }
-            }
-        },
-        "\/openapi_test_entity_type\/openapi_test_entity_type\/{openapi_test_entity_type}\/relationships\/{related}": {
-            "get": {
-                "summary": "relationship get",
-                "description": "@todo Add descriptions",
-                "parameters": [
-                    {
-                        "name": "openapi_test_entity_type",
-                        "required": true,
-                        "in": "path",
-                        "type": "uuid",
-                        "description": "The uuid of the openapi_test_entity_type openapi_test_entity_type"
-                    },
-                    {
-                        "name": "related",
-                        "required": true,
-                        "in": "path",
-                        "type": "string",
-                        "description": "The relationship field name"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation"
-                    }
-                }
-            },
-            "post": {
-                "summary": "relationship post",
-                "description": "@todo Add descriptions",
-                "parameters": [
-                    {
-                        "name": "openapi_test_entity_type",
-                        "required": true,
-                        "in": "path",
-                        "type": "uuid",
-                        "description": "The uuid of the openapi_test_entity_type openapi_test_entity_type"
-                    },
-                    {
-                        "name": "related",
-                        "required": true,
-                        "in": "path",
-                        "type": "string",
-                        "description": "The relationship field name"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Entity created"
-                    }
-                }
-            },
-            "patch": {
-                "summary": "relationship patch",
-                "description": "@todo Add descriptions",
-                "parameters": [
-                    {
-                        "name": "openapi_test_entity_type",
-                        "required": true,
-                        "in": "path",
-                        "type": "uuid",
-                        "description": "The uuid of the openapi_test_entity_type openapi_test_entity_type"
-                    },
-                    {
-                        "name": "related",
-                        "required": true,
-                        "in": "path",
-                        "type": "string",
-                        "description": "The relationship field name"
-                    }
-                ],
-                "responses": []
-            },
-            "delete": {
-                "summary": "relationship delete",
-                "description": "@todo Add descriptions",
-                "parameters": [
-                    {
-                        "name": "openapi_test_entity_type",
-                        "required": true,
-                        "in": "path",
-                        "type": "uuid",
-                        "description": "The uuid of the openapi_test_entity_type openapi_test_entity_type"
-                    },
-                    {
-                        "name": "related",
-                        "required": true,
-                        "in": "path",
-                        "type": "string",
-                        "description": "The relationship field name"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Entity deleted"
                     }
                 }
             }

@@ -23,10 +23,12 @@ final class MigrationCommands extends DrushCommands {
   protected $migrator;
 
   /**
-   * LightningSchedulerCommands constructor.
+   * MigrationCommands constructor.
    *
    * @param \Drupal\lightning_scheduler\Migrator $migrator
    *   The migrator service.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
+   *   (optional) The string translation service.
    */
   public function __construct(Migrator $migrator, TranslationInterface $translation = NULL) {
     $this->migrator = $migrator;
@@ -35,7 +37,7 @@ final class MigrationCommands extends DrushCommands {
   /**
    * Migrates scheduled transition data to the new base fields.
    *
-   * @param $entity_type_id
+   * @param string $entity_type_id
    *   (optional) The entity type ID to migrate.
    *
    * @command lightning:scheduler:migrate
@@ -83,7 +85,7 @@ final class MigrationCommands extends DrushCommands {
   /**
    * Deletes old scheduled transition data for an entity type without migrating.
    *
-   * @param $entity_type_id
+   * @param string $entity_type_id
    *   The entity type ID to migrate.
    *
    * @command lightning:scheduler:purge

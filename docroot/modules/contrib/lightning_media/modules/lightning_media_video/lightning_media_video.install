@@ -30,8 +30,8 @@ function lightning_media_video_update_8001() {
       ->setComponent('field_media_video_embed_field', [
         'type' => 'video_embed_field_textfield',
         'weight' => $old_component['weight'],
-        'settings' => array(),
-        'third_party_settings' => array(),
+        'settings' => [],
+        'third_party_settings' => [],
       ])
       ->save();
   }
@@ -54,7 +54,7 @@ function lightning_media_video_update_8001() {
             'height' => 480,
             'autoplay' => TRUE,
           ],
-          'third_party_settings' => array(),
+          'third_party_settings' => [],
         ])
         ->save();
     }

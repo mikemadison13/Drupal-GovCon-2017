@@ -87,16 +87,23 @@ class Upload extends FileElement {
    * {@inheritdoc}
    */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
+    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
+    $file_system = \Drupal::service('file_system');
+
     $id = implode('_', $element['#parents']);
 
     $upload = \Drupal::request()->files->get($id);
 
     if ($upload instanceof UploadedFile) {
-      $destination = \Drupal::service('file_system')
-        ->realPath($element['#upload_location']);
+      $destination = $file_system->realPath($element['#upload_location']);
 
       $name = file_munge_filename($upload->getClientOriginalName(), NULL);
-      $name = file_create_filename($name, $destination);
+      // Support both Drupal 8.7's FileSystemInterface API, and its earlier
+      // antecedents. We need to call file_create_filename() in an obscure way
+      // to prevent deprecation testing failures.
+      $name = version_compare(\Drupal::VERSION, '8.7.0', '>=')
+        ? $file_system->createFilename($name, $destination)
+        : call_user_func('file_create_filename', $name, $destination);
       $name = $upload->move($destination, $name)->getFilename();
 
       $uri = $element['#upload_location'];

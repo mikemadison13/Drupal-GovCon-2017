@@ -44,6 +44,24 @@
                     "minItems": 1,
                     "maxItems": 1
                 },
+                "revision_id": {
+                    "type": "array",
+                    "title": "Revision ID",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "integer",
+                                "title": "Integer value"
+                            }
+                        },
+                        "required": [
+                            "value"
+                        ]
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                },
                 "langcode": {
                     "type": "array",
                     "title": "Language",
@@ -79,6 +97,90 @@
                         ]
                     },
                     "minItems": 1,
+                    "maxItems": 1
+                },
+                "revision_created": {
+                    "type": "array",
+                    "title": "Revision create time",
+                    "description": "The time that the current revision was created.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "number",
+                                "title": "Timestamp value",
+                                "format": "utc-millisec"
+                            }
+                        },
+                        "required": [
+                            "value"
+                        ]
+                    },
+                    "maxItems": 1
+                },
+                "revision_user": {
+                    "type": "array",
+                    "title": "Revision user",
+                    "description": "The user ID of the author of the current revision.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "target_id": {
+                                "type": "integer",
+                                "title": "User ID"
+                            }
+                        },
+                        "required": [
+                            "target_id"
+                        ],
+                        "title": "User",
+                        "description": "The referenced entity"
+                    },
+                    "maxItems": 1
+                },
+                "revision_log_message": {
+                    "type": "array",
+                    "title": "Revision log message",
+                    "description": "Briefly describe the changes you have made.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "string",
+                                "title": "Text value"
+                            }
+                        },
+                        "required": [
+                            "value"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "value": ""
+                        }
+                    ],
+                    "maxItems": 1
+                },
+                "status": {
+                    "type": "array",
+                    "title": "Published",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "boolean",
+                                "title": "Boolean value"
+                            }
+                        },
+                        "required": [
+                            "value"
+                        ]
+                    },
+                    "default": [
+                        {
+                            "value": true
+                        }
+                    ],
                     "maxItems": 1
                 },
                 "name": {
@@ -204,13 +306,52 @@
                         }
                     ],
                     "maxItems": 1
+                },
+                "revision_default": {
+                    "type": "array",
+                    "title": "Default revision",
+                    "description": "A flag indicating whether this was a default revision when it was saved.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "boolean",
+                                "title": "Boolean value"
+                            }
+                        },
+                        "required": [
+                            "value"
+                        ]
+                    },
+                    "maxItems": 1
+                },
+                "revision_translation_affected": {
+                    "type": "array",
+                    "title": "Revision translation affected",
+                    "description": "Indicates if the last edit of a translation belongs to current revision.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "boolean",
+                                "title": "Boolean value"
+                            }
+                        },
+                        "required": [
+                            "value"
+                        ]
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
                 }
             },
             "required": [
                 "tid",
                 "uuid",
+                "revision_id",
                 "vid",
-                "name"
+                "name",
+                "revision_translation_affected"
             ],
             "discriminator": "vid"
         },
@@ -224,6 +365,25 @@
                     "title": "taxonomy_term:taxonomy_term_test Schema",
                     "description": "Describes the payload for 'taxonomy_term' entities of the 'taxonomy_term_test' bundle.",
                     "properties": {
+                        "parent": {
+                            "type": "array",
+                            "title": "Term Parents",
+                            "description": "The parents of this term.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "target_id": {
+                                        "type": "integer",
+                                        "title": "Taxonomy term ID"
+                                    }
+                                },
+                                "required": [
+                                    "target_id"
+                                ],
+                                "title": "Taxonomy term",
+                                "description": "The referenced entity"
+                            }
+                        },
                         "field_test_taxonomy_term": {
                             "type": "array",
                             "title": "Test field",
@@ -250,8 +410,10 @@
                     "required": [
                         "tid",
                         "uuid",
+                        "revision_id",
                         "vid",
-                        "name"
+                        "name",
+                        "revision_translation_affected"
                     ]
                 }
             ]

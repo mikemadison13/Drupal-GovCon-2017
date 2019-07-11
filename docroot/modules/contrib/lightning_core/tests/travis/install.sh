@@ -11,4 +11,4 @@
 
 cd "$(dirname "$0")"; source _includes.sh
 
-orca fixture:init -f --sut=drupal/lightning_core --sut-only --no-site-install
+orca fixture:init -f --sut drupal/lightning_core --sut-only --core ~8.6.0 --no-site-install

@@ -13,6 +13,16 @@ seckit.settings:
             checkbox:
               type: boolean
               label: 'Send HTTP response header'
+            vendor-prefix:
+              type: mapping
+              label: 'Vendor prefixed CSP headers'
+              mapping:
+                x:
+                  type: boolean
+                  label: 'Send X-Content-Security-Policy HTTP response header'
+                webkit:
+                  type: boolean
+                  label: 'Send X-WebKit-CSP HTTP response header'
             report-only:
               type: boolean
               label: 'Report only'
@@ -52,6 +62,9 @@ seckit.settings:
             report-uri:
               type: string
               label: 'Report URI'
+            upgrade-req:
+              type: boolean
+              label: 'Upgrade Insecure Requests'
             policy-uri:
               type: string
               label: 'Policy URI'
@@ -74,13 +87,6 @@ seckit.settings:
             select:
               type: integer
               label: 'Select'
-        x_content_type:
-          type: mapping
-          label: 'X-Content-Type-Options'
-          mapping:
-            checkbox:
-              type: boolean
-              label: 'Send HTTP response header'
     seckit_csrf:
       type: mapping
       label: 'CSRF'
@@ -106,7 +112,7 @@ seckit.settings:
           label: 'X-Frame'
         x_frame_allow_from:
           type: string
-          label: 'X-Frame-Allow-From'
+          label: 'X-Frame-ALLOW-FROM'
     seckit_ssl:
       type: mapping
       label: 'HTTP Strict Transport Security'
@@ -139,6 +145,16 @@ seckit.settings:
         enforce:
           type: boolean
           label: 'Enforce'
+    seckit_fp:
+      type: mapping
+      label: 'Feature policy'
+      mapping:
+        feature_policy:
+          type: boolean
+          label: 'Feature policy'
+        feature_policy_policy:
+          type: string
+          label: 'Policy'
     seckit_various:
       type: mapping
       label: 'Various'

@@ -100,8 +100,6 @@ function lightning_media_image_update_8002() {
  *
  * Formerly created the image browser display of the media view.
  *
- * @deprecated
- *
  * @see lightning_media_image_view_insert()
  */
 function lightning_media_image_update_8003() {
@@ -113,8 +111,6 @@ function lightning_media_image_update_8003() {
  * Formerly added the 'access image_browser entity browser pages' permission to
  * the media_creator and media_manager roles, as well as the creator content
  * role.
- *
- * @deprecated
  */
 function lightning_media_image_update_8004() {
 }
@@ -123,7 +119,7 @@ function lightning_media_image_update_8004() {
  * Removes the file link(s) and Remove button from the media_browser form.
  */
 function lightning_media_image_update_8005() {
-  $display = entity_get_form_display('media', 'image', 'media_browser');
+  $display = lightning_media_entity_get_form_display('media', 'image', 'media_browser');
 
   $component = $display->getComponent('image');
 

@@ -22,7 +22,7 @@ class DiffContext extends DrupalSubContextBase {
    */
   public function compareRevisions($a, $b) {
     $assert = $this->assertSession();
-    /** @var MinkContext $context */
+    /** @var \Drupal\DrupalExtension\Context\MinkContext $context */
     $context = $this->getContext(MinkContext::class);
 
     $re = '/^[0-9]+(st|nd|rd|th)$/i';

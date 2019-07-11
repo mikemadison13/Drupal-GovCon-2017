@@ -10,6 +10,8 @@ use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional updates targeting Lightning Workflow 3.1.0.
+ *
  * @Update("3.1.0")
  */
 final class Update310 implements ContainerInjectionInterface {
@@ -26,7 +28,7 @@ final class Update310 implements ContainerInjectionInterface {
   /**
    * The config factory service.
    *
-   * @var ConfigFactoryInterface
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   private $configFactory;
 
@@ -56,12 +58,12 @@ final class Update310 implements ContainerInjectionInterface {
   /**
    * Enables the Moderation Dashboard module.
    *
+   * @param \Symfony\Component\Console\Style\StyleInterface $io
+   *   The I/O handler.
+   *
    * @update
    *
    * @ask Do you want to enable the Moderation Dashboard module?
-   *
-   * @param \Symfony\Component\Console\Style\StyleInterface $io
-   *   The I/O handler.
    */
   public function enableModerationDashboard(StyleInterface $io) {
     $installed = $this->moduleInstaller->install(['moderation_dashboard']);

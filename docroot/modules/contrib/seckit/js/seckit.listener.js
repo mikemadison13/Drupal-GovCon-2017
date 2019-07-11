@@ -147,7 +147,7 @@ function seckit_listener_origin(context) {
  */
 function seckit_listener_clickjacking_x_frame(context) {
   (function ($) {
-    if ($('#edit-seckit-clickjacking-x-frame').find(":selected").text() == 'Allow-From') {
+    if ($('#edit-seckit-clickjacking-x-frame').find(":selected").text() == 'ALLOW-FROM') {
       $('#edit-seckit-clickjacking-x-frame-allow-from', context).removeAttr('disabled');
       $('label[for="edit-seckit-clickjacking-x-frame-allow-from"]', context).append('<span title="' + Drupal.t('This field is required.') + '" class="form-required">*</span>');
     }

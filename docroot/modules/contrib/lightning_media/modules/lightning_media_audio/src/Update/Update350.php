@@ -10,6 +10,8 @@ use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional updates targeting Lightning Media Audio 3.5.0.
+ *
  * @Update("3.5.0")
  */
 final class Update350 implements ContainerInjectionInterface {
@@ -63,10 +65,10 @@ final class Update350 implements ContainerInjectionInterface {
   /**
    * Makes field_media_in_library non-translatable.
    *
-   * @update
-   *
    * @param \Symfony\Component\Console\Style\StyleInterface $io
    *   The I/O handler.
+   *
+   * @update
    */
   public function removeAudioFileLibraryFieldTranslatability(StyleInterface $io) {
     /** @var \Drupal\field\Entity\FieldConfig $field */

@@ -40,7 +40,7 @@ class OAuthKeyFormTest extends KernelTestBase {
   private function assertKey($path) {
     $this->assertFileExists($path);
     $this->assertSame(OAuthKey::PERMISSIONS, fileperms($path) & 0777);
-    drupal_unlink($path);
+    $this->container->get('file_system')->unlink($path);
   }
 
 }

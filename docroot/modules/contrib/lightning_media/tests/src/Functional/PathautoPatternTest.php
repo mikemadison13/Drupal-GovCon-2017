@@ -31,11 +31,20 @@ class PathautoPatternTest extends BrowserTestBase {
   /**
    * Slick Entity Reference has a schema error.
    *
-   * @todo Remove when depending on slick_entityreference 1.2 or later.
-   *
    * @var bool
+   *
+   * @todo Remove when depending on slick_entityreference 1.2 or later.
    */
   protected $strictConfigSchema = FALSE;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+    $this->config('media.settings')->set('standalone_url', TRUE)->save();
+    drupal_flush_all_caches();
+  }
 
   /**
    * Tests media types that ship with Lightning.

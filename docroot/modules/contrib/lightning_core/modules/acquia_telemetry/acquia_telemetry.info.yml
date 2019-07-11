@@ -1,5 +1,5 @@
 name: 'Acquia Telemetry'
-# core: 8.x
+core: 8.x
 type: module
 package: Lightning
 description: "By installing the Acquia Telemetry module, you agree to allow it to send anonymized telemetry data to Acquia for the purposes and on the conditions set forth below. If you do not agree, do not install this software.
@@ -13,9 +13,3 @@ The Acquia Telemetry module sends anonymized data about Acquia product usage to 
 Acquia's collection of this anonymized telemetry data will be used in accordance with <a href=\"https://www.acquia.com/about-us/legal/privacy-policy\">Acquia's Privacy Policy</a>. You may opt out and disable the data collection feature by uninstalling the Acquia Telemetry module at any time."
 dependencies:
   - drupal:system (>= 8.6)
-
-# Information added by Drupal.org packaging script on 2019-05-08
-version: '8.x-3.11'
-core: '8.x'
-project: 'lightning_core'
-datestamp: 1557341591

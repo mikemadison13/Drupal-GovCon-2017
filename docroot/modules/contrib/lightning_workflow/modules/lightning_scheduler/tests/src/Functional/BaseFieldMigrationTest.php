@@ -8,7 +8,6 @@ use Drupal\node\NodeInterface;
 /**
  * @group lightning_workflow
  * @group lightning_scheduler
- * @group orca_ignore
  */
 class BaseFieldMigrationTest extends MigrationTestBase {
 
@@ -39,12 +38,13 @@ class BaseFieldMigrationTest extends MigrationTestBase {
     // backend, it loaded revision 5. On SQLite, it loads revision 4. Rather
     // than find an elaborate workaround, I'm just disabling this part of the
     // test for now and testing the actual revisions, one at a time.
-    /** @var NodeInterface $node */
-    // $node = $storage->load(1);
-    // $this->assertInstanceOf(NodeInterface::class, $node);
-    // $this->assertNode($node, '2018-09-19 08:57', 'published');
-    // $this->assertTrue($node->hasTranslation('fr'));
-    // $this->assertNode($node->getTranslation('fr'), '2018-09-04 20:15', 'published');
+    /** @var \Drupal\node\NodeInterface $node */
+    /* $node = $storage->load(1);
+    $this->assertInstanceOf(NodeInterface::class, $node);
+    $this->assertNode($node, '2018-09-19 08:57', 'published');
+    $this->assertTrue($node->hasTranslation('fr'));
+    $this->assertNode($node->getTranslation('fr'),
+    '2018-09-04 20:15', 'published'); */
 
     // Test the default revision, loaded explicitly.
     $node = $storage->loadRevision(5);

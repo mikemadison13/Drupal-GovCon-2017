@@ -12,6 +12,8 @@ use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional updates targeting Lightning Workflow 2.3.0.
+ *
  * @Update("2.3.0")
  */
 final class Update230 implements ContainerInjectionInterface {
@@ -44,11 +46,11 @@ final class Update230 implements ContainerInjectionInterface {
    *
    * @param \Drupal\Core\Extension\ModuleInstallerInterface $module_installer
    *   The module installer service.
-   * @param EntityStorageInterface $workflow_storage
+   * @param \Drupal\Core\Entity\EntityStorageInterface $workflow_storage
    *   The workflow entity storage handler.
-   * @param TranslationInterface $translation
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
    *   (optional) The string translation service.
-   * @param \Drupal\lightning_roles\ContentRoleManager
+   * @param \Drupal\lightning_roles\ContentRoleManager $content_role_manager
    *   (optional) The content role manager service.
    */
   public function __construct(ModuleInstallerInterface $module_installer, EntityStorageInterface $workflow_storage, TranslationInterface $translation = NULL, ContentRoleManager $content_role_manager = NULL) {
@@ -117,7 +119,7 @@ final class Update230 implements ContainerInjectionInterface {
     $configuration = $plugin->getConfiguration();
 
     if ($plugin->hasTransitionFromStateToState('draft', 'review')) {
-      $transition = $plugin->getTransitionFromStateToState('draft',  'review');
+      $transition = $plugin->getTransitionFromStateToState('draft', 'review');
 
       $question = $this->t('Do you want to rename the "@draft_review" editorial workflow transition to "Send to review"?', [
         '@draft_review' => $transition->label(),

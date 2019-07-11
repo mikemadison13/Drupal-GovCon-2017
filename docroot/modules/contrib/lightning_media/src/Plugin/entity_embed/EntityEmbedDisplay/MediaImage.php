@@ -54,10 +54,8 @@ class MediaImage extends ImageFieldFormatter {
     // Try to default to the alt and title attributes set on the field item, but
     // fall back to the entity label for both.
     return parent::getAttributeValues() + [
-      'alt' =>
-        $field->alt ?: $label,
-      'title' =>
-        $field->title ?: $label,
+      'alt' => $field->alt ?: $label,
+      'title' => $field->title ?: $label,
     ];
   }
 

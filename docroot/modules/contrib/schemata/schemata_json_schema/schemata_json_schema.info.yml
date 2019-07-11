@@ -6,8 +6,8 @@ package: Web services
 dependencies:
   - schemata:schemata
 
-# Information added by Drupal.org packaging script on 2019-04-30
-version: '8.x-1.0-alpha6'
+# Information added by Drupal.org packaging script on 2019-06-18
+version: '8.x-1.0-beta1'
 core: '8.x'
 project: 'schemata'
-datestamp: 1556654287
+datestamp: 1560865985

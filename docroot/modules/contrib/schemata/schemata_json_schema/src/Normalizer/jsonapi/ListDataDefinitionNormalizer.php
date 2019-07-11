@@ -25,17 +25,17 @@ class ListDataDefinitionNormalizer extends DataDefinitionNormalizer {
   /**
    * {@inheritdoc}
    */
-  public function normalize($entity, $format = NULL, array $context = []) {
-    /* @var $entity \Drupal\Core\TypedData\ListDataDefinitionInterface */
-    $context['parent'] = $entity;
-    $property = $this->extractPropertyData($entity, $context);
+  public function normalize($list_data_definition, $format = NULL, array $context = []) {
+    assert($list_data_definition instanceof ListDataDefinitionInterface);
+    $context['parent'] = $list_data_definition;
+    $property = $this->extractPropertyData($list_data_definition, $context);
     $property['type'] = 'array';
 
     // This retrieves the definition common to ever item in the list, and
     // serializes it so we can define how members of the array should look.
     // There are no lists that might contain items of different types.
     $property['items'] = $this->serializer->normalize(
-      $entity->getItemDefinition(),
+      $list_data_definition->getItemDefinition(),
       $format,
       $context
     );
@@ -43,7 +43,7 @@ class ListDataDefinitionNormalizer extends DataDefinitionNormalizer {
     // FieldDefinitionInterface::isRequired() explicitly indicates there must be
     // at least one item in the list. Extending this reasoning, the same must be
     // true of all ListDataDefinitions.
-    if ($this->requiredProperty($entity)) {
+    if ($this->requiredProperty($list_data_definition)) {
       $property['minItems'] = 1;
     }
 
@@ -61,9 +61,10 @@ class ListDataDefinitionNormalizer extends DataDefinitionNormalizer {
       'type' => 'object',
       'properties' => [],
     ];
-    $normalized['properties'][$context['name']] = $property;
-    if ($this->requiredProperty($entity)) {
-      $normalized['required'][] = $context['name'];
+    $public_name = $context['name'];
+    $normalized['properties'][$public_name] = $property;
+    if ($this->requiredProperty($list_data_definition)) {
+      $normalized['required'][] = $public_name;
     }
 
     return [

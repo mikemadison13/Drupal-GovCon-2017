@@ -8,7 +8,7 @@
   Drupal.behaviors.twitterMediaEntity = {
     attach: function (context) {
       function _init () {
-        twttr.widgets.load(context);
+        twttr.widgets.load((context && context.nodeType === 1) ? context : null);
       }
 
       // If the tweet is being embedded in a CKEditor's iFrame the widgets

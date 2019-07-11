@@ -8,7 +8,6 @@ use Drupal\node\NodeInterface;
 /**
  * @group lightning_workflow
  * @group lightning_scheduler
- * @group orca_ignore
  */
 class PurgeTest extends MigrationTestBase {
 
@@ -33,7 +32,7 @@ class PurgeTest extends MigrationTestBase {
 
     $storage = $this->postMigration('node');
 
-    /** @var NodeInterface $node */
+    /** @var \Drupal\node\NodeInterface $node */
     $node = $storage->load(1);
     $this->assertInstanceOf(NodeInterface::class, $node);
     $this->assertNode($node);

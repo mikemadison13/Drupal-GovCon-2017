@@ -1,7 +1,7 @@
 @lightning @lightning_layout @api
 Feature: Creating and editing landing pages visually
 
-  @javascript @43f95224
+  @javascript @43f95224 @orca_public
   Scenario: One-off changes can be made to Landing Pages using the IPE out of the box.
     Given I am logged in as a landing_page_creator
     And landing_page content:

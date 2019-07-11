@@ -10,7 +10,6 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\TypedData\TypedDataManagerInterface;
 use Drupal\Core\Url;
-use Drupal\ctools\TypedDataResolver;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class ManageContext extends FormBase {
@@ -37,13 +36,6 @@ abstract class ManageContext extends FormBase {
   protected $formBuilder;
 
   /**
-   * The typed data resolver.
-   *
-   * @var \Drupal\ctools\TypedDataResolver
-   */
-  protected $typedDataResolver;
-
-  /**
    * An array of property types that are eligible as relationships.
    *
    * @var array
@@ -58,31 +50,25 @@ abstract class ManageContext extends FormBase {
   protected $relationships = TRUE;
 
   /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('typed_data_manager'), $container->get('form_builder'));
+  }
+
+  /**
    * ManageContext constructor.
    *
    * @param \Drupal\Core\TypedData\TypedDataManagerInterface $typed_data_manager
    *   The typed data manager.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The form builder.
-   * @param \Drupal\ctools\TypedDataResolver $ctools_typed_data_resolver
-   *   The typed data resolver.
    */
-  public function __construct(TypedDataManagerInterface $typed_data_manager, FormBuilderInterface $form_builder, TypedDataResolver $ctools_typed_data_resolver) {
+  public function __construct(TypedDataManagerInterface $typed_data_manager, FormBuilderInterface $form_builder) {
     $this->typedDataManager = $typed_data_manager;
     $this->formBuilder = $form_builder;
-    $this->typedDataResolver = $ctools_typed_data_resolver;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('typed_data_manager'),
-      $container->get('form_builder'),
-      $container->get('ctools.typed_data.resolver')
-    );
-  }
 
   /**
    * {@inheritdoc}
@@ -174,14 +160,7 @@ abstract class ManageContext extends FormBase {
     $content['#attached']['library'][] = 'core/drupal.dialog.ajax';
     $cached_values = $form_state->getTemporaryValue('wizard');
     list(, $route_parameters) = $this->getContextOperationsRouteInfo($cached_values, $this->machine_name, $context);
-    $route_name = $this->getContextAddRoute($cached_values);
-    $route_options = [
-      'query' => [
-        FormBuilderInterface::AJAX_FORM_REQUEST => TRUE,
-      ],
-    ];
-    $url = Url::fromRoute($route_name, $route_parameters, $route_options);
-    $content['submit']['#attached']['drupalSettings']['ajax'][$content['submit']['#id']]['url'] = $url->toString();
+    $content['submit']['#attached']['drupalSettings']['ajax'][$content['submit']['#id']]['url'] = $this->url($this->getContextAddRoute($cached_values), $route_parameters, ['query' => [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]]);
     $response = new AjaxResponse();
     $response->addCommand(new OpenModalDialogCommand($this->t('Add new context'), $content, array('width' => '700')));
     return $response;
@@ -193,14 +172,7 @@ abstract class ManageContext extends FormBase {
     $content['#attached']['library'][] = 'core/drupal.dialog.ajax';
     $cached_values = $form_state->getTemporaryValue('wizard');
     list(, $route_parameters) = $this->getRelationshipOperationsRouteInfo($cached_values, $this->machine_name, $relationship);
-    $route_name = $this->getRelationshipAddRoute($cached_values);
-    $route_options = [
-      'query' => [
-        FormBuilderInterface::AJAX_FORM_REQUEST => TRUE,
-      ],
-    ];
-    $url = Url::fromRoute($route_name, $route_parameters, $route_options);
-    $content['submit']['#attached']['drupalSettings']['ajax'][$content['submit']['#id']]['url'] = $url->toString();
+    $content['submit']['#attached']['drupalSettings']['ajax'][$content['submit']['#id']]['url'] = $this->url($this->getRelationshipAddRoute($cached_values), $route_parameters, ['query' => [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]]);
     $response = new AjaxResponse();
     $response->addCommand(new OpenModalDialogCommand($this->t('Configure Relationship'), $content, array('width' => '700')));
     return $response;
@@ -208,7 +180,7 @@ abstract class ManageContext extends FormBase {
 
   protected function getAvailableRelationships($cached_values) {
     /** @var \Drupal\ctools\TypedDataResolver $resolver */
-    $resolver = $this->typedDataResolver;
+    $resolver = \Drupal::service('ctools.typed_data.resolver');
     return $resolver->getTokensForContexts($this->getContexts($cached_values));
   }
 

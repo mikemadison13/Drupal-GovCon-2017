@@ -11,6 +11,8 @@ use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional updates targeting Lightning Media Video 3.5.0.
+ *
  * @Update("3.5.0")
  */
 final class Update350 implements ContainerInjectionInterface {
@@ -64,10 +66,10 @@ final class Update350 implements ContainerInjectionInterface {
   /**
    * Makes field_media_in_library non-translatable in the video media type.
    *
-   * @update
-   *
    * @param \Symfony\Component\Console\Style\StyleInterface $io
    *   The I/O handler.
+   *
+   * @update
    */
   public function removeVideoLibraryFieldTranslatability(StyleInterface $io) {
     /** @var \Drupal\field\Entity\FieldConfig $field */
@@ -80,10 +82,10 @@ final class Update350 implements ContainerInjectionInterface {
   /**
    * Makes field_media_in_library non-translatable in the video_file media type.
    *
-   * @update
-   *
    * @param \Symfony\Component\Console\Style\StyleInterface $io
    *   The I/O handler.
+   *
+   * @update
    */
   public function removeVideoFileLibraryFieldTranslatability(StyleInterface $io) {
     /** @var \Drupal\field\Entity\FieldConfig $field */

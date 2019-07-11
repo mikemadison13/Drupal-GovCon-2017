@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\lightning_media_video\Kernel\Update;
+namespace Drupal\Tests\lightning_media_video\Kernel;
 
 use Drupal\field\Entity\FieldConfig;
 use Drupal\KernelTests\KernelTestBase;
@@ -19,7 +19,7 @@ class Update350Test extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system'];
+  protected static $modules = ['system', 'user'];
 
   /**
    * {@inheritdoc}

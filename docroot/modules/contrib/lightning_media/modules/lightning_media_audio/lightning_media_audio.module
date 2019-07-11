@@ -8,7 +8,6 @@
 use Drupal\lightning_core\OverrideHelper as Override;
 use Drupal\lightning_media_audio\Plugin\media\Source\AudioFile;
 
-
 /**
  * Implements hook_media_source_info_alter().
  */

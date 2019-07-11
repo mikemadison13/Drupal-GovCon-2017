@@ -1,7 +1,8 @@
 {
-    "name": "drupal/lightning_scheduler",
+    "name": "drupal/lightning_workflow-lightning_scheduler",
     "type": "drupal-module",
     "description": "Allows authors to schedule automatic transitions between workflow states.",
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Adam Globus-Hoenich",
@@ -21,5 +22,10 @@
                 "drush.services.yml": "^9"
             }
         }
+    },
+    "autoload": {
+        "classmap": [
+            "tests/contexts"
+        ]
     }
 }

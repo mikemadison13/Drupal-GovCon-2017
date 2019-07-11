@@ -10,19 +10,21 @@ use Drupal\DrupalExtension\Context\DrupalSubContextBase;
  */
 class QuickEditContext extends DrupalSubContextBase {
 
+  use AwaitTrait;
+
   /**
    * Asserts that Quick Edit is enabled for at least one entity on the page.
    *
-   * @throws \Behat\Mink\Exception\ExpectationException if Quick Edit is
-   * disabled on the current page.
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If Quick Edit is disabled on the current page.
    *
    * @Then Quick Edit should be enabled
    */
   public function assertEnabled() {
     $session = $this->getSession();
+    $this->awaitAjax();
 
     $victory = $session->wait(10000, 'Drupal.quickedit.collections.entities.length > 0');
-
     if (empty($victory)) {
       throw new ExpectationException('Expected Quick Edit to be enabled, but it is not.', $session->getDriver());
     }
@@ -31,8 +33,8 @@ class QuickEditContext extends DrupalSubContextBase {
   /**
    * Asserts that Quick Edit is not enabled for any entities on the page.
    *
-   * @throws \Behat\Mink\Exception\ExpectationException if Quick Edit is enabled
-   * on the current page.
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If Quick Edit is enabled on the current page.
    *
    * @Then Quick Edit should be disabled
    */

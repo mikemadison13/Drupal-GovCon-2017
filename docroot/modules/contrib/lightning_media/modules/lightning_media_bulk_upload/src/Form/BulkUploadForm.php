@@ -2,6 +2,7 @@
 
 namespace Drupal\lightning_media_bulk_upload\Form;
 
+use Drupal\Component\Utility\Environment;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -80,8 +81,15 @@ class BulkUploadForm extends FormBase {
       '#value' => $this->t('Continue'),
     ];
 
+    // Support both Drupal 8.7's API and its antecedents. We need to call
+    // file_upload_max_size() as a string in order to prevent deprecation
+    // testing failures.
+    $max_size = version_compare(\Drupal::VERSION, '8.7.0', '>=')
+      ? Environment::getUploadMaxSize()
+      : call_user_func('file_upload_max_size');
+
     $variables = [
-      '@max_size' => static::bytesToString(file_upload_max_size()),
+      '@max_size' => static::bytesToString($max_size),
       '@extensions' => Element::oxford($extensions),
     ];
     $form['dropzone']['#description'] = $this->t('You can upload as many files as you like. Each file can be up to @max_size in size. The following file extensions are accepted: @extensions', $variables);
@@ -129,7 +137,7 @@ class BulkUploadForm extends FormBase {
         $entity = $this->helper->createFromInput($file);
       }
       catch (IndeterminateBundleException $e) {
-        drupal_set_message('error', (string) $e);
+        $this->messenger()->addError((string) $e);
         continue;
       }
 

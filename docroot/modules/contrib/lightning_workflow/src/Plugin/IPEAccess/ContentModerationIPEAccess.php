@@ -9,6 +9,8 @@ use Drupal\panels_ipe\Plugin\IPEAccessBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Provides Panels IPE access logic for Content Moderation integration.
+ *
  * @IPEAccess(
  *   id = "content_moderation_ipe",
  *   label = @Translation("Content moderation")
@@ -27,9 +29,13 @@ class ContentModerationIPEAccess extends IPEAccessBase implements ContainerFacto
    * ContentModerationIPEAccess constructor.
    *
    * @param array $configuration
+   *   An array of plugin configuration options.
    * @param string $plugin_id
+   *   The plugin ID.
    * @param mixed $plugin_definition
+   *   The plugin definition.
    * @param \Drupal\content_moderation\ModerationInformationInterface $information
+   *   The moderation information service.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ModerationInformationInterface $information) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);

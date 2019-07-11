@@ -28,7 +28,8 @@ class ImageBrowserUploadValidationTest extends BrowserTestBase {
   /**
    * Data provider for testValidation().
    *
-   * @return array
+   * @return array[]
+   *   A set of argument arrays for testValidation().
    */
   public function providerValidation() {
     return [
@@ -71,10 +72,10 @@ class ImageBrowserUploadValidationTest extends BrowserTestBase {
       'label' => 'Lightweight Image',
       'settings' => [
         'max_filesize' => '5 KB',
-      ]
+      ],
     ])->save();
 
-    entity_get_form_display('node', $node_type->id(), 'default')
+    lightning_media_entity_get_form_display('node', $node_type->id())
       ->setComponent('field_lightweight_image', [
         'type' => 'entity_browser_file',
         'settings' => [

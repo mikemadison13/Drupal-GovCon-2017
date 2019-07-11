@@ -36,7 +36,8 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
  *   links = {
  *     "canonical" = "/admin/content/simple_oauth/{oauth2_token}",
  *     "delete-form" = "/admin/content/simple_oauth/{oauth2_token}/delete"
- *   }
+ *   },
+ *   list_cache_tags = { "oauth2_token" },
  * )
  */
 class Oauth2Token extends ContentEntityBase implements Oauth2TokenInterface {
@@ -217,6 +218,19 @@ class Oauth2Token extends ContentEntityBase implements Oauth2TokenInterface {
    */
   public function isRevoked() {
     return !$this->get('status')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    // It's feasible there are millions of OAuth2 tokens in rotation; they're
+    // used only for authentication, not for computing output. Hence it does not
+    // make sense for an OAuth2 token to be a cacheable dependency. Consequently
+    // generating a unique cache tag for every OAuth2 token entity should be
+    // avoided. Therefore a single cache tag is used for all OAuth2 token
+    // entities, including for lists.
+    return ['oauth2_token'];
   }
 
 }

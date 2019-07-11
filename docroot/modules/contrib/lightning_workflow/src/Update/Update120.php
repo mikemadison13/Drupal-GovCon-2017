@@ -12,6 +12,8 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional updates targeting Lightning Workflow 1.2.0.
+ *
  * @Update("1.2.0")
  */
 final class Update120 implements ContainerInjectionInterface, ContainerAwareInterface {
@@ -53,13 +55,13 @@ final class Update120 implements ContainerInjectionInterface, ContainerAwareInte
   /**
    * Grants the reviewer content role permissions to view unpublished content.
    *
-   * @param StyleInterface $io
+   * @param \Symfony\Component\Console\Style\StyleInterface $io
    *   The I/O style.
    *
    * @update
    */
   public function grantUnpublishedContentReviewerAccess(StyleInterface $io) {
-    if (! $this->moduleHandler->moduleExists('lightning_roles')) {
+    if (!$this->moduleHandler->moduleExists('lightning_roles')) {
       return;
     }
 

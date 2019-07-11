@@ -112,65 +112,69 @@ class ScheduledTransitionTest extends BrowserTestBase {
    * @dataProvider providerSingleTransition
    */
   public function testSingleTransition($offset, $to_state, $expected_state_label) {
-    $assert = $this->assertSession();
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+    $now = time();
 
     $this->drupalGet('/node/add/page');
-    $assert->statusCodeEquals(200);
+    $assert_session->statusCodeEquals(200);
 
-    $assert->fieldExists('Title')->setValue('Schedule This');
+    $page->fillField('Title', 'Schedule This');
     $this->setTransitionData('moderation_state[0][scheduled_transitions][data]', [
       [
-        'when' => time() + $offset,
+        'when' => $now + $offset,
         'state' => $to_state,
       ],
     ]);
-    $assert->buttonExists('Save')->press();
+    $page->pressButton('Save');
 
-    $assert->addressMatches('/^\/node\/[0-9]+$/');
+    $assert_session->addressMatches('/^\/node\/[0-9]+$/');
     $edit_url = $this->getUrl() . '/edit';
 
     if ($offset > 0) {
-      sleep($offset + 2);
+      $this->setRequestTime($now + $offset + 2);
     }
     $this->cronRun();
     $this->drupalGet($edit_url);
-    $assert->statusCodeEquals(200);
-    $assert->pageTextContains("Current state $expected_state_label");
+    $assert_session->statusCodeEquals(200);
+    $assert_session->pageTextContains("Current state $expected_state_label");
   }
 
   /**
    * Tests scheduling a series of valid transitions in the future.
    */
   public function testFutureSequence() {
-    $assert = $this->assertSession();
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+    $now = time();
 
     $this->drupalGet('/node/add/page');
-    $assert->statusCodeEquals(200);
+    $assert_session->statusCodeEquals(200);
 
-    $assert->fieldExists('Title')->setValue('Schedule This');
+    $page->fillField('Title', 'Schedule This');
     $this->setTransitionData('moderation_state[0][scheduled_transitions][data]', [
       [
-        'when' => time() + 10,
+        'when' => $now + 10,
         'state' => 'published',
       ],
       [
-        'when' => time() + 20,
+        'when' => $now + 20,
         'state' => 'archived',
-      ]
+      ],
     ]);
-    $assert->buttonExists('Save')->press();
+    $page->pressButton('Save');
 
-    $assert->addressMatches('/^\/node\/[0-9]+$/');
+    $assert_session->addressMatches('/^\/node\/[0-9]+$/');
     $edit_url = $this->getUrl() . '/edit';
 
-    sleep(12);
+    $this->setRequestTime($now + 12);
     $this->cronRun();
-    sleep(12);
+    $this->setRequestTime($now + 24);
     $this->cronRun();
 
     $this->drupalGet($edit_url);
-    $assert->statusCodeEquals(200);
-    $assert->pageTextContains("Current state Archived");
+    $assert_session->statusCodeEquals(200);
+    $assert_session->pageTextContains("Current state Archived");
   }
 
   /**
@@ -179,12 +183,13 @@ class ScheduledTransitionTest extends BrowserTestBase {
    * @depends testFutureSequence
    */
   public function testInvalidPastSequence() {
-    $assert = $this->assertSession();
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
 
     $this->drupalGet('/node/add/page');
-    $assert->statusCodeEquals(200);
+    $assert_session->statusCodeEquals(200);
 
-    $assert->fieldExists('Title')->setValue('Schedule This');
+    $page->fillField('Title', 'Schedule This');
     $this->setTransitionData('moderation_state[0][scheduled_transitions][data]', [
       [
         'when' => time() - 20,
@@ -193,17 +198,17 @@ class ScheduledTransitionTest extends BrowserTestBase {
       [
         'when' => time() - 10,
         'state' => 'archived',
-      ]
+      ],
     ]);
-    $assert->buttonExists('Save')->press();
+    $page->pressButton('Save');
 
-    $assert->addressMatches('/^\/node\/[0-9]+$/');
+    $assert_session->addressMatches('/^\/node\/[0-9]+$/');
     $edit_url = $this->getUrl() . '/edit';
 
     $this->cronRun();
     $this->drupalGet($edit_url);
-    $assert->statusCodeEquals(200);
-    $assert->pageTextContains("Current state Draft");
+    $assert_session->statusCodeEquals(200);
+    $assert_session->pageTextContains("Current state Draft");
   }
 
   /**
@@ -212,34 +217,36 @@ class ScheduledTransitionTest extends BrowserTestBase {
    * @depends testSingleTransition
    */
   public function testSingleTransitionWithPendingRevision() {
-    $assert = $this->assertSession();
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+    $now = time();
 
     $this->drupalGet('/node/add/page');
-    $assert->statusCodeEquals(200);
-    $assert->fieldExists('Title')->setValue('Schedule This');
-    $assert->fieldExists('moderation_state[0][state]')->selectOption('Published');
-    $assert->buttonExists('Save')->press();
+    $assert_session->statusCodeEquals(200);
+    $page->fillField('Title', 'Schedule This');
+    $page->selectFieldOption('moderation_state[0][state]', 'Published');
+    $page->pressButton('Save');
 
-    $assert->addressMatches('/^\/node\/[0-9]+$/');
+    $assert_session->addressMatches('/^\/node\/[0-9]+$/');
     $edit_url = $this->getUrl() . '/edit';
     $this->drupalGet($edit_url);
 
-    $assert->fieldExists('Title')->setValue('MC Hammer');
-    $assert->fieldExists('moderation_state[0][state]')->selectOption('Draft');
+    $page->fillField('Title', 'MC Hammer');
+    $page->selectFieldOption('moderation_state[0][state]', 'Draft');
 
     $this->setTransitionData('moderation_state[0][scheduled_transitions][data]', [
       [
-        'when' => time() + 10,
+        'when' => $now + 10,
         'state' => 'published',
       ],
     ]);
-    $assert->buttonExists('Save')->press();
+    $page->pressButton('Save');
 
-    sleep(12);
+    $this->setRequestTime($now + 12);
     $this->cronRun();
     $this->drupalGet($edit_url);
-    $assert->statusCodeEquals(200);
-    $assert->fieldValueEquals('Title', 'MC Hammer');
+    $assert_session->statusCodeEquals(200);
+    $assert_session->fieldValueEquals('Title', 'MC Hammer');
   }
 
 }
