@@ -6,6 +6,12 @@ use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
  * Contains step definitions to assist with debugging tests.
+ *
+ * @internal
+ *   This is an internal part of Lightning Core's testing system and may be
+ *   changed or removed at any time without warning. It should not be extended,
+ *   instantiated, or used in any way by external code! If you need to use this
+ *   functionality, you should copy the relevant code into your own project.
  */
 final class DebugContext extends DrupalSubContextBase {
 
@@ -33,7 +39,7 @@ final class DebugContext extends DrupalSubContextBase {
    *
    * @When I dump the HTML
    */
-  public function dumpHTML() {
+  public function dumpHtml() {
     print_r($this->getSession()->getPage()->getContent());
   }
 
@@ -43,7 +49,7 @@ final class DebugContext extends DrupalSubContextBase {
    * @param string $filename
    *   (optional) Ignored. The filename is based on a counter and prefixed with
    *   the name of the Mink browser.
-   * @param null $filepath
+   * @param mixed $filepath
    *   (optional) Ignored. The screenshot is saved in the directory above the
    *   Drupal root.
    *

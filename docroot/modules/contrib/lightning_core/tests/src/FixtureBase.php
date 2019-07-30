@@ -33,7 +33,7 @@ abstract class FixtureBase implements Context, ContainerAwareInterface {
   /**
    * Entities to be automatically deleted after the scenario.
    *
-   * @var EntityInterface[]
+   * @var \Drupal\Core\Entity\EntityInterface[]
    */
   private $entities = [];
 
@@ -47,7 +47,7 @@ abstract class FixtureBase implements Context, ContainerAwareInterface {
   /**
    * The Drupal Extension's user manager.
    *
-   * @var DrupalUserManagerInterface
+   * @var \Drupal\DrupalUserManagerInterface
    */
   private $userManager;
 
@@ -119,6 +119,7 @@ abstract class FixtureBase implements Context, ContainerAwareInterface {
    * @see ::tearDown()
    *
    * @return \Drupal\Core\Config\Config
+   *   The editable config object.
    */
   protected function config($id) {
     /** @var \Drupal\Core\Config\Config $config */

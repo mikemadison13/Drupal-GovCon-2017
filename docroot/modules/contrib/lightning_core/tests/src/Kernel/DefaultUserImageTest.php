@@ -12,11 +12,17 @@ use Drupal\KernelTests\KernelTestBase;
 class DefaultUserImageTest extends KernelTestBase {
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
-  protected static $modules = [
-    'system',
-  ];
+  protected static $modules = ['system', 'user'];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+    $this->installEntitySchema('user');
+  }
 
   /**
    * Tests that the default avatar is set.

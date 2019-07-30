@@ -9,12 +9,13 @@
 # DESCRIPTION
 #     Creates the test fixture.
 
-cd "$(dirname "$0")"; source _includes.sh
+cd "$(dirname "$0")"
+
+# Reuse ORCA's own includes.
+source ../../../orca/bin/travis/_includes.sh
 
 # Exit early if no DB fixture is specified.
 [[ "$DB_FIXTURE" ]] || exit 0
-
-orca fixture:init -f --sut drupal/lightning_api --sut-only --core ~8.6.0 --no-site-install
 
 cd "$ORCA_FIXTURE_DIR/docroot"
 

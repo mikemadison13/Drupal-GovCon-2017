@@ -9,6 +9,9 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\Routing\Route;
 
+/**
+ * Checks if the current user has any roles that are administrative (is_admin).
+ */
 class AdministrativeRoleCheck implements AccessInterface {
 
   /**

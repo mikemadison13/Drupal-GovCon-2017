@@ -12,6 +12,9 @@ use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\DocBlockFactoryInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 
+/**
+ * Discovers and manages optional configuration updates.
+ */
 class UpdateManager {
 
   /**
@@ -72,7 +75,7 @@ class UpdateManager {
    *   The class resolver service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
-   * @param \Drupal\Core\Extension\ModuleExtensionList
+   * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
    *   The module extension list.
    * @param \Drupal\Component\Plugin\Discovery\DiscoveryInterface $discovery
    *   (optional) The update discovery handler.
@@ -207,7 +210,7 @@ class UpdateManager {
   public function executeAllInConsole(StyleInterface $style) {
     $updates = $this->getAvailable();
 
-    if (sizeof($updates) === 0) {
+    if (count($updates) === 0) {
       return $style->text('There are no updates available.');
     }
     $style->text("Executing all available updates...");

@@ -5,6 +5,7 @@
  * Contains hook implementations for moderation_sidebar.
  */
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Url;
@@ -15,17 +16,14 @@ use Drupal\Core\Url;
 function moderation_sidebar_toolbar() {
   $items = [];
 
-  $items['moderation_sidebar'] = [
-    // @todo Can we set cache contexts based on the entity revision?
-    '#cache' => [
-      'max-age' => 0,
-      'contexts' => [
-        'user.permissions',
-      ],
-    ],
-  ];
+  // @todo Can we set cache contexts based on the entity revision?
+  $items['moderation_sidebar'] = [];
+  $cacheability = (new CacheableMetadata())
+    ->addCacheContexts(['route'])
+    ->addCacheContexts(['user.permissions']);
 
   if (!\Drupal::currentUser()->hasPermission('use moderation sidebar')) {
+    $cacheability->applyTo($items['moderation_sidebar']);
     return $items;
   }
 
@@ -37,8 +35,11 @@ function moderation_sidebar_toolbar() {
   $entity = \Drupal::routeMatch()->getParameter('node');
 
   if (!($entity instanceof ContentEntityInterface) || $admin_context->isAdminRoute()) {
+    $cacheability->applyTo($items['moderation_sidebar']);
     return $items;
   }
+
+  $cacheability->addCacheableDependency($entity);
 
   /** @var \Drupal\content_moderation\ModerationInformation $moderation_information */
   $moderation_information = \Drupal::service('content_moderation.moderation_information');
@@ -50,20 +51,16 @@ function moderation_sidebar_toolbar() {
 
   // We maintain two separate routes depending on what context we're viewing
   // the entity in.
-  $is_latest = $moderation_information->isLatestRevision($entity);
-  if ($is_latest) {
-    $url = Url::fromRoute('moderation_sidebar.sidebar_latest', $params);
+  if ($moderation_information->hasPendingRevision($entity) && $entity->isDefaultRevision()) {
+    $url = Url::fromRoute('moderation_sidebar.sidebar', $params);
   }
   else {
-    $url = Url::fromRoute('moderation_sidebar.sidebar', $params);
+    $url = Url::fromRoute('moderation_sidebar.sidebar_latest', $params);
   }
 
   // Grab the state label for the quick hover feature.
   $is_published = TRUE;
-  if ($moderation_information->isModeratedEntity($entity)) {
-    $is_published = $moderation_information->isLiveRevision($entity);
-  }
-  elseif ($entity instanceof EntityPublishedInterface) {
+  if ($entity instanceof EntityPublishedInterface) {
     $is_published = $entity->isPublished();
   }
 
@@ -78,7 +75,7 @@ function moderation_sidebar_toolbar() {
     $state_label = $is_published ? t('Published') : t('Draft');
   }
 
-  if (!$is_latest) {
+  if ($moderation_information->hasPendingRevision($entity) && $entity->isDefaultRevision()) {
     $state_label = t('Draft available');
     $label_class = 'moderation-label-draft-available';
   }
@@ -114,6 +111,7 @@ function moderation_sidebar_toolbar() {
     ],
   ];
 
+  $cacheability->applyTo($items['moderation_sidebar']);
   return $items;
 }
 
@@ -139,6 +137,13 @@ function moderation_sidebar_theme() {
         'revision_author' => NULL,
         'revision_author_link' => NULL,
         'revision_link' => NULL,
+      ],
+    ],
+    'moderation_sidebar_translations' => [
+      'variables' => [
+        'current_language' => NULL,
+        'translations' => NULL,
+        'view_all' => NULL,
       ],
     ],
   ];

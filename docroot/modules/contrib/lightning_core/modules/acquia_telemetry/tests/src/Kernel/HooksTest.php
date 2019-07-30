@@ -17,6 +17,11 @@ class HooksTest extends KernelTestBase {
    */
   protected static $modules = ['acquia_telemetry', 'system'];
 
+  /**
+   * The telemetry service under test.
+   *
+   * @var \Drupal\acquia_telemetry\Telemetry
+   */
   private $telemetry;
 
   /**

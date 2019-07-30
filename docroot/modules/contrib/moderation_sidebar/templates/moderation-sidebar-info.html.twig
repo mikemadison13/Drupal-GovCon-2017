@@ -17,7 +17,7 @@
  */
 #}
 <div class="moderation-sidebar-info">
-  <p>{{ 'Currently viewing' | t }} <strong>{{ state }}</strong> {{ 'state'|t }}</p>
+  <p>{% trans %}Status: <strong>{{ state }}</strong>{% endtrans %}</p>
   {% if revision_author_link %}
     <p>{{ 'Authored by' | t }} {{ revision_author_link }} {{ revision_time_pretty }}</p>
   {% endif %}

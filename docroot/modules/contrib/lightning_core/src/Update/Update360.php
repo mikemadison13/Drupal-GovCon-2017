@@ -8,6 +8,8 @@ use Drupal\lightning_core\ConfigHelper as Config;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Contains optional configuration updates targeting Lightning Core 3.6.0.
+ *
  * @Update("3.6.0")
  */
 final class Update360 implements ContainerInjectionInterface {
@@ -37,6 +39,8 @@ final class Update360 implements ContainerInjectionInterface {
   }
 
   /**
+   * Enables avatars for user accounts.
+   *
    * @update
    *
    * @ask Do you want to enable pictures for user accounts?

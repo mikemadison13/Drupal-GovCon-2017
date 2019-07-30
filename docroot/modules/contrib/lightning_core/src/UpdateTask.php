@@ -5,6 +5,9 @@ namespace Drupal\lightning_core;
 use phpDocumentor\Reflection\DocBlock;
 use Symfony\Component\Console\Style\StyleInterface;
 
+/**
+ * Defines a value object wrapping a single optional configuration update.
+ */
 class UpdateTask {
 
   /**

@@ -9,7 +9,7 @@ dependencies:
     - image.style.medium
     - media.type.instagram
   module:
-    - image
+    - svg_image
 id: media.instagram.thumbnail
 targetEntityType: media
 bundle: instagram
@@ -29,5 +29,4 @@ hidden:
   embed_code: true
   field_media_in_library: true
   name: true
-  scheduled_publication: true
   uid: true

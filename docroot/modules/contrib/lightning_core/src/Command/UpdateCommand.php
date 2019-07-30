@@ -8,6 +8,9 @@ use Drupal\lightning_core\UpdateManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Defines a console command to run optional configuration updates.
+ */
 class UpdateCommand extends Command {
 
   /**
@@ -20,7 +23,7 @@ class UpdateCommand extends Command {
   /**
    * UpdateCommand constructor.
    *
-   * @param UpdateManager $update_manager
+   * @param \Drupal\lightning_core\UpdateManager $update_manager
    *   The update manager service.
    */
   public function __construct(UpdateManager $update_manager) {

@@ -10,6 +10,8 @@ use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\EntityDescriptionInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\File\Exception\FileException;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\field\FieldConfigInterface;
 use Drupal\file\Entity\File;
@@ -143,12 +145,12 @@ function lightning_core_help($route_name, RouteMatchInterface $route_match) {
  */
 function lightning_core_modules_installed(array $modules) {
   // Don't do anything during config sync.
-  if (\Drupal::isConfigSyncing()) {
+  if (Drupal::isConfigSyncing()) {
     return;
   }
 
   // Record the semantic version of every module in config.
-  $versions = \Drupal::configFactory()->getEditable(UpdateManager::CONFIG_NAME);
+  $versions = Drupal::configFactory()->getEditable(UpdateManager::CONFIG_NAME);
 
   /** @var \Drupal\lightning_core\UpdateManager $update_manager */
   $update_manager = \Drupal::service('lightning.update_manager');
@@ -156,7 +158,10 @@ function lightning_core_modules_installed(array $modules) {
   foreach ($modules as $module) {
     $versions->set($module, $update_manager->getVersion($module));
   }
-  $versions->save();
+  // Sort the list by key.
+  $versions_sorted = $versions->getRawData();
+  ksort($versions_sorted);
+  $versions->setData($versions_sorted)->save();
 
   if (in_array('token', $modules, TRUE)) {
     $view_modes = [];
@@ -214,7 +219,7 @@ function lightning_core_form_system_modules_alter(array &$form) {
       '#tag' => 'style',
       '#value' => $css,
     ],
-    'acquia-telemetry-css'
+    'acquia-telemetry-css',
   ];
 }
 
@@ -244,10 +249,10 @@ function lightning_core_field_config_presave(FieldConfigInterface $field) {
     $source = drupal_get_path('module', 'lightning_core') . '/images/default-avatar.png';
     $uri = 'public://default-avatar.png';
 
-    if (file_unmanaged_copy($source, $uri, FILE_EXISTS_ERROR)) {
-      $file = File::create([
-        'uri' => $uri,
-      ]);
+    try {
+      \Drupal::service('file_system')->copy($source, $uri, FileSystemInterface::EXISTS_ERROR);
+
+      $file = File::create(['uri' => $uri]);
       $file->setPermanent();
       $file->save();
 
@@ -258,6 +263,9 @@ function lightning_core_field_config_presave(FieldConfigInterface $field) {
         'width' => 140,
         'height' => 140,
       ]);
+    }
+    catch (FileException $e) {
+      // Fail silently.
     }
   }
 }

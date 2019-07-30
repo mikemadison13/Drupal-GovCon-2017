@@ -63,7 +63,7 @@ class RouteSubscriber extends RouteSubscriberBase {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity.
-   * @param \Drupal\Core\Routing\RouteMatchInterface|NULL $route_match
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   (optional) The current route match.
    *
    * @return bool
@@ -74,9 +74,10 @@ class RouteSubscriber extends RouteSubscriberBase {
 
     $entity_type = $entity->getEntityTypeId();
 
-    return
+    return (
       $route_match->getRouteName() == "entity.$entity_type.canonical" &&
-      $route_match->getRawParameter($entity_type) == $entity->id();
+      $route_match->getRawParameter($entity_type) == $entity->id()
+    );
   }
 
   /**

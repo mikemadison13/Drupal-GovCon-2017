@@ -2,6 +2,7 @@
 
 namespace AcquiaCloudApi\CloudApi;
 
+use AcquiaCloudApi\Response\AccountResponse;
 use AcquiaCloudApi\Response\ApplicationResponse;
 use AcquiaCloudApi\Response\ApplicationsResponse;
 use AcquiaCloudApi\Response\BackupResponse;
@@ -90,6 +91,16 @@ class Client implements ClientInterface
     public function addQuery($name, $value)
     {
         $this->query = array_merge_recursive($this->query, [$name => $value]);
+    }
+
+    /**
+     * Returns details about your account.
+     *
+     * @return AccountResponse
+     */
+    public function account()
+    {
+        return new AccountResponse($this->connector->request('get', '/account', $this->query));
     }
 
     /**
@@ -248,7 +259,7 @@ class Client implements ClientInterface
     public function databaseDelete($applicationUuid, $name)
     {
         return new OperationResponse(
-            $this->connector->request('post', "/applications/${applicationUuid}/databases/${name}", $this->query)
+            $this->connector->request('delete', "/applications/${applicationUuid}/databases/${name}", $this->query)
         );
     }
 
@@ -292,15 +303,16 @@ class Client implements ClientInterface
      * Gets information about a database backup.
      *
      * @param string $environmentUuid
+     * @param string $dbName
      * @param int    $backupId
      * @return BackupResponse
      */
-    public function databaseBackup($environmentUuid, $backupId)
+    public function databaseBackup($environmentUuid, $dbName, $backupId)
     {
         return new BackupResponse(
             $this->connector->request(
                 'get',
-                "/environments/${environmentUuid}/database-backups/${backupId}",
+                "/environments/${environmentUuid}/databases/${dbName}/backups/${backupId}",
                 $this->query
             )
         );
@@ -310,15 +322,16 @@ class Client implements ClientInterface
      * Restores a database backup to a database in an environment.
      *
      * @param string $environmentUuid
+     * @param string $dbName
      * @param int    $backupId
      * @return OperationResponse
      */
-    public function restoreDatabaseBackup($environmentUuid, $backupId)
+    public function restoreDatabaseBackup($environmentUuid, $dbName, $backupId)
     {
         return new OperationResponse(
             $this->connector->request(
                 'post',
-                "/environments/${environmentUuid}/database-backups/${backupId}/actions/restore",
+                "/environments/${environmentUuid}/databases/${dbName}/backups/${backupId}/actions/restore",
                 $this->query
             )
         );

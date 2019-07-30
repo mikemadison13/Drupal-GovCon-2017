@@ -2,10 +2,7 @@
 
 namespace Drupal\openapi\Plugin\openapi\OpenApiGenerator;
 
-use Drupal\Core\Link;
-use Drupal\Core\Url;
-use Drupal\jsonapi\ResourceType\ResourceTypeRepository;
-use Drupal\openapi\Plugin\openapi\OpenApiGeneratorBase;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Authentication\AuthenticationCollectorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
@@ -13,16 +10,21 @@ use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Link;
+use Drupal\Core\ParamConverter\ParamConverterManagerInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\Core\Url;
+use Drupal\jsonapi\ResourceType\ResourceType;
+use Drupal\jsonapi\ResourceType\ResourceTypeRepository;
+use Drupal\jsonapi\Routing\Routes;
+use Drupal\jsonapi\Routing\Routes as JsonApiRoutes;
+use Drupal\openapi\Plugin\openapi\OpenApiGeneratorBase;
 use Drupal\schemata\SchemaFactory;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
-use Drupal\Core\ParamConverter\ParamConverterManagerInterface;
-use Drupal\jsonapi\ResourceType\ResourceType;
-use Drupal\jsonapi\Routing\Routes as JsonApiRoutes;
 
 /**
  * Defines an OpenApi Schema Generator for the JsonApi module.
@@ -207,12 +209,13 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
       $methods = $route->getMethods();
       foreach ($methods as $method) {
         $method = strtolower($method);
-        $path_method = [];
-        $path_method['summary'] = $this->getRouteMethodSummary($route, $route_name, $method);
-        $path_method['description'] = $this->getRouteMethodDescription($route_name, $method, $resource_type->getTypeName());
-        $path_method['parameters'] = $this->getMethodParameters($route, $resource_type, $method);
-        $path_method['tags'] = [$this->getBundleTag($entity_type_id, $bundle_name)];
-        $path_method['responses'] = $this->getEntityResponses($entity_type_id, $method, $bundle_name, $route_name);
+        $path_method = [
+          'summary' => $this->getRouteMethodSummary($route, $route_name, $method),
+          'description' => $this->getRouteMethodDescription($route, $route_name, $method, $resource_type->getTypeName()),
+          'parameters' => $this->getMethodParameters($route, $route_name, $resource_type, $method),
+          'tags' => [$this->getBundleTag($entity_type_id, $bundle_name)],
+          'responses' => $this->getEntityResponsesJsonApi($entity_type_id, $method, $bundle_name, $route_name, $route),
+        ];
         /*
          * @TODO: #2977109 - Calculate oauth scopes required.
          *
@@ -225,7 +228,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
       }
       // Each path contains the "base path" from a OpenAPI perspective.
       $path = str_replace($this->getJsonApiBase(), '', $route->getPath());
-      $api_paths[$path] = $api_path;
+      $api_paths[$path] = NestedArray::mergeDeep(empty($api_paths[$path]) ? [] : $api_paths[$path], $api_path);
     }
     return $api_paths;
   }
@@ -242,7 +245,9 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
     $jsonapi_base_path = $this->getJsonApiBase();
     /** @var \Symfony\Component\Routing\Route $route */
     foreach ($all_routes as $route_name => $route) {
-      if (!$route->getDefault(JsonApiRoutes::JSON_API_ROUTE_FLAG_KEY) || $route->getPath() == $jsonapi_base_path) {
+      $is_jsonapi = $route->getDefault(JsonApiRoutes::JSON_API_ROUTE_FLAG_KEY);
+      $is_entry_point = $route->getPath() === $jsonapi_base_path;
+      if (!$is_jsonapi || $is_entry_point) {
         continue;
       }
       $jsonapi_routes[$route_name] = $route;
@@ -264,19 +269,54 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    *   The method summary.
    */
   protected function getRouteMethodSummary(Route $route, $route_name, $method) {
-    // @todo Make a better summary.
-    if ($route_type = $this->getRoutTypeFromName($route_name)) {
-      return $this->t('@route @method', [
-        '@route' => ucfirst($route_type),
-        '@method' => strtoupper($method),
+    $resource_type = $this->getResourceType($route_name, $route);
+    $entity_type_id = $resource_type->getEntityTypeId();
+    $bundle = $resource_type->getBundle();
+    $tag = $this->getBundleTag($entity_type_id, $bundle);
+    $route_type = $this->getRoutTypeFromName($route_name);
+    if (in_array($route_type, ['related', 'relationship'])) {
+      $target_resource_type = $this->relatedResourceType($route_name, $route);
+      $target_tag = $this->getBundleTag(
+        $target_resource_type->getEntityTypeId(),
+        $target_resource_type->getBundle()
+      );
+      return $this->t('@route_type: @fieldName (@targetType)', [
+        '@route_type' => ucfirst($route_type),
+        '@fieldName' => explode('.', $route_name)[2],
+        '@targetType' => $target_tag,
+        '@tag' => $tag,
       ]);
     }
-    return '@todo';
+    if ($route_type === 'collection') {
+      if ($method === 'get') {
+        return $this->t('List (@tag)', ['@tag' => $tag]);
+      }
+      if ($method === 'post') {
+        return $this->t('Create (@tag)', ['@tag' => $tag]);
+      }
+    }
+    if ($route_type === 'individual') {
+      if ($method === 'get') {
+        return $this->t('View (@tag)', ['@tag' => $tag]);
+      }
+      if ($method === 'patch') {
+        return $this->t('Update (@tag)', ['@tag' => $tag]);
+      }
+      if ($method === 'delete') {
+        return $this->t('Remove (@tag)', ['@tag' => $tag]);
+      }
+    }
+    return $this->t('@route_type @method', [
+      '@route_type' => ucfirst($route_type),
+      '@method' => strtoupper($method),
+    ]);
   }
 
   /**
    * Gets description of a method on a route.
    *
+   * @param \Symfony\Component\Routing\Route $route
+   *   The route.
    * @param string $route_name
    *   The route name.
    * @param string $method
@@ -287,7 +327,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    * @return string
    *   The method description.
    */
-  protected function getRouteMethodDescription($route_name, $method, $resource_type_name) {
+  protected function getRouteMethodDescription($route, $route_name, $method, $resource_type_name) {
     $route_type = $this->getRoutTypeFromName($route_name);
     if (!$route_type || $method !== 'get') {
       return NULL;
@@ -310,7 +350,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
         )->toString(),
       ]);
     }
-    else if ($route_type === 'individual') {
+    elseif ($route_type === 'individual') {
       $message = '%link_in for the @name resource type. The individual ';
       $message .= 'endpoint contains a %link_ro with the data for a particular';
       $message .= ' resource or entity.';
@@ -323,6 +363,44 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
         '%link_ro' => Link::fromTextAndUrl(
           $this->t('resource object'),
           Url::fromUri('http://jsonapi.org/format/#document-resource-objects')
+        )->toString(),
+      ]);
+    }
+    elseif ($route_type === 'related') {
+      $message = '%link_related for the @target_name resource type through the';
+      $message .= ' %field_name relationship. The related endpoint contains a ';
+      $message .= '%link_ro with the data for a particular related resource or';
+      $message .= ' entity.';
+      $target_resource_type = $this->relatedResourceType($route_name, $route);
+      return $this->t($message, [
+        '%link_related' => Link::fromTextAndUrl(
+          $this->t('Related endpoint'),
+          Url::fromUri('http://jsonapi.org/format/#fetching')
+        )->toString(),
+        '@target_name' => $target_resource_type->getTypeName(),
+        '%field_name' => explode('.', $route_name)[2],
+        '%link_ro' => Link::fromTextAndUrl(
+          $this->t('resource object'),
+          Url::fromUri('http://jsonapi.org/format/#document-resource-objects')
+        )->toString(),
+      ]);
+    }
+    elseif ($route_type === 'relationship') {
+      $message = '%link_rel for the @target_name resource type through the';
+      $message .= ' %field_name relationship. The relationship endpoint ';
+      $message .= 'contains a %link_ri with the data for a particular ';
+      $message .= 'relationship.';
+      $target_resource_type = $this->relatedResourceType($route_name, $route);
+      return $this->t($message, [
+        '%link_rel' => Link::fromTextAndUrl(
+          $this->t('Relationship endpoint'),
+          Url::fromUri('https://jsonapi.org/format/#fetching-relationships')
+        )->toString(),
+        '@target_name' => $target_resource_type->getTypeName(),
+        '%field_name' => explode('.', $route_name)[2],
+        '%link_ri' => Link::fromTextAndUrl(
+          $this->t('resource identifier object'),
+          Url::fromUri('https://jsonapi.org/format/#document-resource-identifier-objects')
         )->toString(),
       ]);
     }
@@ -339,8 +417,39 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    *   The route type.
    */
   protected function getRoutTypeFromName($route_name) {
+    if (strpos($route_name, '.related') !== FALSE) {
+      return 'related';
+    }
+    if (strpos($route_name, '.relationship') !== FALSE) {
+      return 'relationship';
+    }
     $route_name_parts = explode('.', $route_name);
     return isset($route_name_parts[2]) ? $route_name_parts[2] : '';
+  }
+
+  /**
+   * Gets the related Resource Type.
+   *
+   * @param string $route_name
+   *   The JSON API route name for which the ResourceType is wanted.
+   * @param \Symfony\Component\Routing\Route $route
+   *   The JSON API route for which the ResourceType is wanted.
+   *
+   * @return \Drupal\jsonapi\ResourceType\ResourceType|null
+   *   Returns the ResourceType for the related JSON API resource.
+   */
+  protected function relatedResourceType($route_name, $route) {
+    if (!in_array(
+      $this->getRoutTypeFromName($route_name),
+      ['related', 'relationship'])
+    ) {
+      return NULL;
+    }
+    $resource_type = $this->getResourceType($route_name, $route);
+    $field_name = explode('.', $route_name)[2];
+    $target_resource_type = current($resource_type->getRelatableResourceTypesByField($field_name));
+    assert(is_a($target_resource_type, ResourceType::class));
+    return $target_resource_type;
   }
 
   /**
@@ -348,6 +457,8 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    *
    * @param \Symfony\Component\Routing\Route $route
    *   The route.
+   * @param string $route_name
+   *   The route name.
    * @param \Drupal\jsonapi\ResourceType\ResourceType $resource_type
    *   The JSON API resource type.
    * @param string $method
@@ -355,9 +466,28 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    *
    * @return array
    *   The parameters.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getMethodParameters(Route $route, ResourceType $resource_type, $method) {
+  protected function getMethodParameters(Route $route, $route_name, ResourceType $resource_type, $method) {
     $parameters = [];
+    if ($method === 'get' && $resource_type->isVersionable()) {
+      $parameters[] = [
+        'name' => 'resourceVersion',
+        'in' => 'query',
+        'type' => 'string',
+        'required' => FALSE,
+        'description' => $this->t(
+          'The JSON:API module exposes entity revisions as resource versions. @link.',
+          [
+            '@link' => Link::fromTextAndUrl(
+              'Learn more in the documentation',
+              Url::fromUri('https://www.drupal.org/docs/8/modules/jsonapi/revisions')
+            )->toString(),
+          ]
+        ),
+      ];
+    }
     $entity_type_id = $resource_type->getEntityTypeId();
     $bundle_name = $resource_type->getBundle();
     $option_parameters = $route->getOption('parameters');
@@ -368,7 +498,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
           'required' => TRUE,
           'in' => 'path',
         ];
-        if ($parameter_info['converter'] == static::JSON_API_UUID_CONVERTER) {
+        if ($parameter_info['converter'] === static::JSON_API_UUID_CONVERTER) {
           $parameter['type'] = 'uuid';
           $parameter['description'] = $this->t('The uuid of the @entity @bundle',
             [
@@ -390,46 +520,96 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
         ];
       }
     }
-    else {
-      if ($method == 'get') {
-        // If no route parameters and GET then this is collection route.
-        // @todo Add descriptions or link to documentation.
-        $parameters[] = [
-          'name' => 'filter',
-          'in' => 'query',
-          'type' => 'array',
-          'required' => FALSE,
-          // 'description' => '@todo Explain filtering: https://www.drupal.org/docs/8/modules/json-api/collections-filtering-sorting-and-paginating',
-        ];
-        $parameters[] = [
-          'name' => 'sort',
-          'in' => 'query',
-          'type' => 'array',
-          'required' => FALSE,
-          // 'description' => '@todo Explain sorting: https://www.drupal.org/docs/8/modules/json-api/collections-filtering-sorting-and-paginating',
-        ];
-        $parameters[] = [
-          'name' => 'page',
-          'in' => 'query',
-          'type' => 'array',
-          'required' => FALSE,
-          // 'description' => '@todo Explain sorting: https://www.drupal.org/docs/8/modules/json-api/collections-filtering-sorting-and-paginating',
-        ];
+    $route_type = $this->getRoutTypeFromName($route_name);
+    if ($method == 'get' && $route_type === 'collection' && $resource_type->isLocatable()) {
+      // If no route parameters and GET then this is collection route.
+      // @todo Add descriptions or link to documentation.
+      $parameters[] = [
+        'name' => 'filter',
+        'in' => 'query',
+        'type' => 'array',
+        'required' => FALSE,
+        'description' => $this->t('The JSON:API module has some of the most robust and feature-rich filtering features around. All of that power comes with a bit of a learning curve though. @link.', [
+            '@link' => Link::fromTextAndUrl(
+              'Learn more in the documentation',
+              Url::fromUri('https://www.drupal.org/docs/8/modules/jsonapi/filtering')
+            )->toString(),
+          ]
+        ),
+      ];
+      $parameters[] = [
+        'name' => 'sort',
+        'in' => 'query',
+        'type' => 'array',
+        'required' => FALSE,
+        'description' => $this->t('The JSON:API module allows you to sort collections based on properties in the resource or in nested resources. @link.', [
+            '@link' => Link::fromTextAndUrl(
+              'Learn more in the documentation',
+              Url::fromUri('https://www.drupal.org/docs/8/modules/jsonapi/sorting')
+            )->toString(),
+          ]
+        ),
+      ];
+      $parameters[] = [
+        'name' => 'page',
+        'in' => 'query',
+        'type' => 'array',
+        'required' => FALSE,
+        'description' => $this->t('Pagination can be a deceptively complex topic. It\'s easy to fall into traps and not follow best-practices. @link.', [
+            '@link' => Link::fromTextAndUrl(
+              'Learn more in the documentation',
+              Url::fromUri('https://www.drupal.org/docs/8/modules/jsonapi/pagination')
+            )->toString(),
+          ]
+        ),
+      ];
+      $parameters[] = [
+        'name' => 'include',
+        'in' => 'query',
+        'type' => 'string',
+        'required' => FALSE,
+        'description' => $this->t('Embed related entities in the response. For example: use a query string like <code>?include=comments.author</code> to include all the entities referenced by <code>comments</code> and all the entities referenced by <code>author</code> on those entities!. @link.', [
+            '@link' => Link::fromTextAndUrl(
+              'Learn more in the documentation',
+              Url::fromUri('https://www.drupal.org/docs/8/modules/jsonapi/includes')
+            )->toString(),
+          ]
+        ),
+      ];
+    }
+    elseif ($method == 'post' || $method == 'patch') {
+      // We need a parameter for the body.
+      $body_entity_type_id = $entity_type_id;
+      $body_bundle_name = $bundle_name;
+      if (in_array($route_type, ['related', 'relationship'])) {
+        $target_resource_type = $this->relatedResourceType($route_name, $route);
+        $body_entity_type_id = $target_resource_type->getEntityTypeId();
+        $body_bundle_name = $target_resource_type->getBundle();
       }
-      elseif ($method == 'post' || $method == 'patch') {
-        // Determine if it is ContentEntity.
-        if ($this->entityTypeManager->getDefinition($entity_type_id) instanceof ContentEntityTypeInterface) {
+      // Determine if it is mutable.
+      if ($resource_type->isMutable()) {
+        if ($route_type === 'relationship') {
+          $is_multiple = $this->isToManyRelationship($route_name, $resource_type);
+          // Relationships are completely different.
           $parameters[] = [
             'name' => 'body',
             'in' => 'body',
-            'description' => $this->t('The @label object', ['@label' => $entity_type_id]),
+            'description' => $this->t('The resource identifier object'),
+            'required' => TRUE,
+            'schema' => static::buildRelationshipSchema($is_multiple, $target_resource_type->getTypeName()),
+          ];
+        }
+        else {
+          $parameters[] = [
+            'name' => 'body',
+            'in' => 'body',
+            'description' => $this->t('The %label object', ['%label' => $body_entity_type_id]),
             'required' => TRUE,
             'schema' => [
-              '$ref' => $this->getDefinitionReference($entity_type_id, $bundle_name),
+              '$ref' => $this->getDefinitionReference($body_entity_type_id, $body_bundle_name),
             ],
           ];
         }
-
       }
     }
     return $parameters;
@@ -438,33 +618,71 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEntityResponses($entity_type_id, $method, $bundle_name = NULL, $route_name = NULL) {
+  protected function getEntityResponsesJsonApi($entity_type_id, $method, $bundle_name, $route_name, Route $route = NULL) {
     $route_type = $this->getRoutTypeFromName($route_name);
     if ($route_type === 'collection') {
       if ($method === 'get') {
         $schema_response = [];
         if ($definition_ref = $this->getDefinitionReference($entity_type_id, $bundle_name)) {
-          $schema_response = [
-            'schema' => [
-              'type' => 'object',
-              'required' => ['data'],
-              'properties' => [
-                'data' => [
-                  'type' => 'array',
-                  'items' => [
-                    '$ref' => "$definition_ref/properties/data",
-                  ],
-                ],
-              ],
-            ],
+          $definition_key = $this->getEntityDefinitionKey($entity_type_id, $bundle_name);
+          $definition = $this->getDefinitions()[$definition_key];
+          $ref = NestedArray::getValue($definition, ['definitions', 'data'])
+            ? "$definition_ref/definitions/data"
+            : "$definition_ref/properties/data";
+          $schema = $definition;
+          $schema['properties']['data'] = [
+            'type' => 'array',
+            'items' => ['$ref' => $ref],
           ];
+          $schema_response = ['schema' => $schema];
         }
         $responses['200'] = [
-          'description' => 'successful operation',
-        ] + $schema_response;
+            'description' => 'successful operation',
+          ] + $schema_response;
         return $responses;
       }
 
+    }
+    elseif (in_array($route_type, ['relationship', 'related'])) {
+      $resource_type = $this->getResourceType($route_name, $route);
+      $target_resource_type = $this->relatedResourceType($route_name, $route);
+      $is_multiple = $this->isToManyRelationship($route_name, $resource_type);
+      if ($route_type === 'relationship') {
+        $schema = static::buildRelationshipSchema($is_multiple, $target_resource_type->getTypeName());
+        if ($method === 'get') {
+          return [
+            200 => [
+              'description' => 'successful operation',
+              'schema' => $schema
+            ],
+          ];
+        }
+        elseif ($method === 'post') {
+          return [201 => ['description' => 'created', 'schema' => $schema]];
+        }
+        elseif ($method === 'patch') {
+          return [
+            200 => [
+              'description' => 'successful operation',
+              'schema' => $schema,
+            ],
+          ];
+        }
+        elseif ($method === 'delete') {
+          return [204 => ['description' => 'no content']];
+        }
+      }
+      else {
+        // Fake a route name that will yield the expected results for the related
+        // responses.
+        $target_route_name = Routes::getRouteName($target_resource_type, $is_multiple ? 'collection' : 'individual');
+        return $this->getEntityResponsesJsonApi(
+          $target_resource_type->getEntityTypeId(),
+          $method,
+          $target_resource_type->getBundle(),
+          $target_route_name
+        );
+      }
     }
     else {
       return parent::getEntityResponses($entity_type_id, $method, $bundle_name);
@@ -485,19 +703,47 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
             $bundles = $bundle_storage->loadMultiple();
             foreach ($bundles as $bundle_name => $bundle) {
               if ($this->includeEntityTypeBundle($entity_type->id(), $bundle_name)) {
-                $definitions[$this->getEntityDefinitionKey($entity_type->id(), $bundle_name)] = $this->getJsonSchema('api_json', $entity_type->id(), $bundle_name);
+                $definition_key = $this->getEntityDefinitionKey($entity_type->id(), $bundle_name);
+                $json_schema = $this->getJsonSchema('api_json', $entity_type->id(), $bundle_name);
+                $json_schema = $this->fixReferences($json_schema, '#/definitions/' . $definition_key);
+                $definitions[$definition_key] = $json_schema;
               }
             }
           }
           else {
             if ($this->includeEntityTypeBundle($entity_type->id())) {
-              $definitions[$this->getEntityDefinitionKey($entity_type->id())] = $this->getJsonSchema('api_json', $entity_type->id());
+              $definition_key = $this->getEntityDefinitionKey($entity_type->id());
+              $json_schema = $this->getJsonSchema('api_json', $entity_type->id());
+              $json_schema = $this->fixReferences($json_schema, '#/definitions/' . $definition_key);
+              $definitions[$definition_key] = $json_schema;
             }
           }
         }
       }
     }
     return $definitions;
+  }
+
+  /**
+   * When embedding JSON Schemas you need to make sure to fix any possible $ref
+   *
+   * @param array $schema
+   *   The schema to fix.
+   * @param $prefix
+   *   The prefix where this schema is embedded.
+   *
+   * @return array
+   */
+  private function fixReferences(array $schema, $prefix) {
+    foreach ($schema as $name => $item) {
+      if (is_array($item)) {
+        $schema[$name] = $this->fixReferences($item, $prefix);
+      }
+      if ($name === '$ref' && is_string($item) && strpos($item, '#/') !== FALSE) {
+        $schema[$name] = preg_replace('/#\//', $prefix . '/', $item);
+      }
+    }
+    return $schema;
   }
 
   /**
@@ -585,7 +831,8 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
       $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
       $tag = $entity_type->getLabel();
       if ($bundle_name && $bundle_type_id = $entity_type->getBundleEntityType()) {
-        $bundle_entity = $this->entityTypeManager->getStorage($bundle_type_id)->load($bundle_name);
+        $bundle_entity = $this->entityTypeManager->getStorage($bundle_type_id)
+          ->load($bundle_name);
         $tag .= ' - ' . $bundle_entity->label();
       }
       $tags[$entity_type_id][$bundle_name] = $tag;
@@ -615,7 +862,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    * {@inheritdoc}
    */
   protected function getApiDescription() {
-    return $this->t('This is a JSON API compliant implemenation');
+    return $this->t('This is a JSON API compliant implementation');
   }
 
   /**
@@ -668,6 +915,73 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    */
   protected function jsonApiPathHasRelated($path) {
     return strpos($path, '{related}') !== FALSE;
+  }
+
+  /**
+   * Builds the relationship schema.
+   *
+   * @param bool $is_multiple
+   *   Indicates if the relationship is to-many.
+   * @param string $resource_type_name
+   *   The resource type for the relationship.
+   *
+   * @return array
+   *   The schema definition.
+   *
+   * @todo: build this once and use '$ref' when necessary.
+   */
+  protected static function buildRelationshipSchema($is_multiple, $resource_type_name = NULL) {
+    $linkage_schema = [
+      'description' => 'The "type" and "id" to non-empty members.',
+      'type' => 'object',
+      'required' => ['type', 'id',],
+      'properties' => [
+        'type' => ['title' => t('Resource type name'), 'type' => 'string'],
+        'id' => ['title' => t('Resource ID'), 'type' => 'string', 'format' => 'uuid'],
+        'meta' => [
+          'description' => 'Non-standard meta-information that can not be represented as an attribute or relationship.',
+          'type' => 'object',
+          'additionalProperties' => TRUE,
+          'properties' => (object) [],
+        ],
+      ],
+      'additionalProperties' => FALSE,
+    ];
+    if ($resource_type_name) {
+      $linkage_schema['properties']['type']['enum'] = [$resource_type_name];
+    }
+    return [
+      'type' => 'object',
+      'properties' => [
+        'data' => $is_multiple
+          ? [
+            'description' => 'An array of objects each containing \"type\" and \"id\" members for to-many relationships.',
+            'type' => 'array',
+            'items' => $linkage_schema,
+            'uniqueItems' => TRUE,
+          ]
+          : $linkage_schema
+      ],
+    ];
+  }
+
+  /**
+   * Checks if the relationship is to-many.
+   *
+   * @param string $route_name
+   *   The route name.
+   * @param \Drupal\jsonapi\ResourceType\ResourceType $resource_type
+   *   The resource type.
+   *
+   * @return bool
+   *   Indicates if the relationship is multiple cardinality.
+   */
+  protected function isToManyRelationship($route_name, ResourceType $resource_type) {
+    $public_field_name = explode('.', $route_name)[2];
+    $internal_field_name = $resource_type->getInternalName($public_field_name);
+    $field_definitions = $this->fieldManager
+      ->getFieldDefinitions($resource_type->getEntityTypeId(), $resource_type->getBundle());
+    return $field_definitions[$internal_field_name]->getFieldStorageDefinition()->getCardinality() !== 1;
   }
 
 }

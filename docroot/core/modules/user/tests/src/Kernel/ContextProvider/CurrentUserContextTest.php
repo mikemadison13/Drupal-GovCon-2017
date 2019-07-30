@@ -5,7 +5,6 @@ namespace Drupal\Tests\user\Kernel\ContextProvider;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
-use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\user\ContextProvider\CurrentUserContext
@@ -45,7 +44,9 @@ class CurrentUserContextTest extends KernelTestBase {
 
     $contexts = $context_repository->getAvailableContexts();
     $this->assertArrayHasKey('@user.current_user_context:current_user', $contexts);
-    $this->assertInstanceOf(UserInterface::class, $contexts['@user.current_user_context:current_user']->getContextValue());
+    $this->assertSame('entity:user', $contexts['@user.current_user_context:current_user']->getContextDefinition()->getDataType());
+    $this->assertTrue($contexts['@user.current_user_context:current_user']->hasContextValue());
+    $this->assertTrue($contexts['@user.current_user_context:current_user']->getContextValue());
 
     // Test an anonymous account.
     $anonymous = $this->prophesize(AccountInterface::class);

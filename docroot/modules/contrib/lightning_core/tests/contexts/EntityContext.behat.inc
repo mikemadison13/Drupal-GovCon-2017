@@ -12,12 +12,19 @@ use Drupal\user\EntityOwnerInterface;
 
 /**
  * Contains miscellaneous step definitions for working with Drupal entities.
+ *
+ * @internal
+ *   This is an internal part of Lightning Core's testing system and may be
+ *   changed or removed at any time without warning. It should not be extended,
+ *   instantiated, or used in any way by external code! If you need to use this
+ *   functionality, you should copy the relevant code into your own project.
  */
 final class EntityContext extends DrupalSubContextBase {
 
   /**
-   * IDs of entities created during the scenario, divided into sets keyed by
-   * entity type ID.
+   * IDs of entities created during the scenario.
+   *
+   * The IDs are divided into groups, keyed by entity type ID.
    *
    * @var array
    */
@@ -66,11 +73,11 @@ final class EntityContext extends DrupalSubContextBase {
    * @afterScenario
    */
   public function tearDown() {
-    foreach ($this->trash as $entity_type => $IDs) {
+    foreach ($this->trash as $entity_type => $ids) {
       /** @var \Drupal\Core\Entity\EntityInterface[] $entities */
       $entities = \Drupal::entityTypeManager()
         ->getStorage($entity_type)
-        ->loadMultiple($IDs);
+        ->loadMultiple($ids);
 
       foreach ($entities as $entity) {
         $entity->delete();
@@ -86,7 +93,8 @@ final class EntityContext extends DrupalSubContextBase {
    * @param string $bundle
    *   (optional) The bundle.
    *
-   * @throws \Exception if there are no entities to visit.
+   * @throws \Exception
+   *   If there are no entities to visit.
    *
    * @When I visit (?:a|an) :entity_type
    * @When I visit (?:a|an) :bundle :entity_type
@@ -171,8 +179,8 @@ final class EntityContext extends DrupalSubContextBase {
    * @param string $bundle
    *   (optional) The bundle.
    *
-   * @throws \Behat\Mink\Exception\ExpectationException if the number of
-   * existing entities does not match the expected number.
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If the number of existing entities does not match the expected number.
    *
    * @Then 1 :entity_type entity should exist
    * @Then 1 :bundle :entity_type entity should exist
@@ -237,7 +245,7 @@ final class EntityContext extends DrupalSubContextBase {
   public function onNodeCreate(BeforeNodeCreateScope $scope) {
     $node = $scope->getEntity();
 
-    if (! isset($node->uid)) {
+    if (!isset($node->uid)) {
       $node->uid = $this->getCurrentUserUid();
     }
   }

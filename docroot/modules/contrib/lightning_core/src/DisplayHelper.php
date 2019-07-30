@@ -89,7 +89,7 @@ class DisplayHelper {
    *
    * @param \Drupal\Core\Entity\Display\EntityDisplayInterface $display
    *   The display config entity.
-   * @param callable|NULL $filter
+   * @param callable $filter
    *   (optional) The function on which to filter the fields, accepting the
    *   field storage definition as an argument.
    *

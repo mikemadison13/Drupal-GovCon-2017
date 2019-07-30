@@ -31,8 +31,6 @@ function lightning_core_install() {
  * Removed in Lightning 8.x-2.06.
  *
  * Formerly created the lightning_core settings object.
- *
- * @deprecated
  */
 function lightning_core_update_8001() {
 }

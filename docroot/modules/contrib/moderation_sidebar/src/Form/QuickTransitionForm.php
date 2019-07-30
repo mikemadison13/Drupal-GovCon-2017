@@ -83,10 +83,9 @@ class QuickTransitionForm extends FormBase {
       return [];
     }
 
-    // Allow users to discard Drafts.
-    if ($this->moderationInformation->isLatestRevision($entity)
-      && !$this->moderationInformation->isLiveRevision($entity)
-      && !$entity->isDefaultRevision()) {
+    // If this is not the default revision and is the latest translation
+    // affected revision, then show a discard draft button.
+    if (!$entity->isDefaultRevision() && $entity->isLatestTranslationAffectedRevision()) {
       $form['discard_draft'] = [
         '#type' => 'submit',
         '#id' => 'moderation-sidebar-discard-draft',
@@ -102,6 +101,10 @@ class QuickTransitionForm extends FormBase {
     $form_state->set('entity', $entity);
 
     $transitions = $this->validation->getValidTransitions($entity, $this->currentUser());
+    $workflow = $this->moderationInformation->getWorkFlowForEntity($entity);
+    $disabled_transitions = $this->configFactory()
+      ->getEditable('moderation_sidebar.settings')
+      ->get('workflows.' . $workflow->id() . '_workflow.disabled_transitions');
 
     // Exclude self-transitions.
     /** @var \Drupal\content_moderation\Entity\ContentModerationStateInterface $current_state */
@@ -112,18 +115,24 @@ class QuickTransitionForm extends FormBase {
       return $transition->to()->id() != $current_state->id();
     });
 
+    $is_transition_enabled = FALSE;
     foreach ($transitions as $transition) {
-      $form[$transition->id()] = [
-        '#type' => 'submit',
-        '#id' => $transition->id(),
-        '#value' => $transition->label(),
-        '#attributes' => [
-          'class' => ['moderation-sidebar-link', 'button--primary'],
-        ],
-      ];
+      // Exclude disabled transitions.
+      if (empty($disabled_transitions[$transition->id()])) {
+        $form[$transition->id()] = [
+          '#type' => 'submit',
+          '#id' => $transition->id(),
+          '#value' => $transition->label(),
+          '#attributes' => [
+            'class' => ['moderation-sidebar-link', 'button--primary'],
+          ],
+        ];
+        $is_transition_enabled = TRUE;
+      }
     }
 
-    if (!empty($transitions)) {
+    // Show only, if at least one transition is enabled.
+    if ($is_transition_enabled) {
       $form['revision_log_toggle'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Use custom log message'),
@@ -134,7 +143,7 @@ class QuickTransitionForm extends FormBase {
       ];
       $form['revision_log'] = [
         '#type' => 'textarea',
-        '#description' => $this->t('Briefly describe this state change.'),
+        '#placeholder' => $this->t('Briefly describe this state change.'),
         '#attributes' => [
           'class' => ['moderation-sidebar-revision-log'],
         ],

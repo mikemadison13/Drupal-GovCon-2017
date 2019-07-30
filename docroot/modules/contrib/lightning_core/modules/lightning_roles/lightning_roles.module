@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains hook implementations for Lightning Roles.
+ */
+
 use Drupal\node\NodeTypeInterface;
 use Drupal\user\Entity\Role;
 
@@ -28,12 +33,9 @@ function lightning_roles_node_type_insert(NodeTypeInterface $node_type) {
     $role_id = $node_type->id() . '_' . $key;
 
     $role = Role::load($role_id) ?: Role::create([
-      'id' =>
-        $role_id,
-      'label' =>
-        str_replace('?', $node_type->label(), $info['label']),
-      'is_admin' =>
-        FALSE,
+      'id' => $role_id,
+      'label' => str_replace('?', $node_type->label(), $info['label']),
+      'is_admin' => FALSE,
     ]);
 
     // Only grant permissions the role does not already have.

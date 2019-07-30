@@ -11,6 +11,12 @@ use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
  * Contains miscellaneous step definitions for working with HTML elements.
+ *
+ * @internal
+ *   This is an internal part of Lightning Core's testing system and may be
+ *   changed or removed at any time without warning. It should not be extended,
+ *   instantiated, or used in any way by external code! If you need to use this
+ *   functionality, you should copy the relevant code into your own project.
  */
 final class ElementContext extends DrupalSubContextBase {
 
@@ -20,7 +26,7 @@ final class ElementContext extends DrupalSubContextBase {
    * @param string $selector
    *   The element's CSS selector.
    *
-   * @throws ExpectationException
+   * @throws \Behat\Mink\Exception\ExpectationException
    *   If the element contains any HTML (leading and trailing white space is
    *   trimmed out).
    *
@@ -41,7 +47,7 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param string $field
    *   The field to clear.
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   (optional) The element that contains the field.
    *
    * @When I clear :field
@@ -186,7 +192,7 @@ final class ElementContext extends DrupalSubContextBase {
   /**
    * Asserts that vertical tab set exists.
    *
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   (optional) The element containing the vertical tab set.
    *
    * @return \Behat\Mink\Element\NodeElement
@@ -205,7 +211,7 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param string $tab
    *   The text of the tab.
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   (optional) The element containing the vertical tab set.
    *
    * @return \Behat\Mink\Element\NodeElement
@@ -229,11 +235,8 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param string $tab
    *   The text of the tab.
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   (optional) The element containing the vertical tab set.
-   *
-   * @return \Behat\Mink\Element\NodeElement
-   *   The vertical tab.
    *
    * @Then I should not see a :tab vertical tab
    * @Then I should not see the :tab vertical tab
@@ -253,7 +256,7 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param \Behat\Gherkin\Node\PyStringNode $tabs
    *   The text of the tabs, one per line.
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   (optional) The element containing the vertical tab set.
    *
    * @Then I should see (the )vertical tabs:
@@ -269,7 +272,7 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param \Behat\Gherkin\Node\PyStringNode $tabs
    *   The text of the tabs, one per line.
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   (optional) The element containing the vertical tab set.
    *
    * @Then I should not see (the )vertical tabs:
@@ -285,7 +288,7 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param string $summary
    *   The summary text (case-insensitive).
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   The element in which to search for the <details> element.
    *
    * @return \Behat\Mink\Element\NodeElement|bool
@@ -310,14 +313,14 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param string $summary
    *   The exact summary text.
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   (optional) The element in which to search for the <details> element.
    *
    * @return \Behat\Mink\Element\NodeElement
    *   The <details> element.
    *
-   * @throws \Behat\Mink\Exception\ElementNotFoundException if the element is
-   * not found in the container.
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   *   If the element is not found in the container.
    *
    * @Then I should see a(n) :summary details element
    */
@@ -338,18 +341,18 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param string $summary
    *   The exact summary text.
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   (optional) The element in which to search for the <details> element.
    *
-   * @throws \Behat\Mink\Exception\ExpectationException if the <details> element
-   * is closed.
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If the <details> element is closed.
    *
    * @Then I should see an open :summary details element
    */
   public function assertOpenDetails($summary, ElementInterface $container = NULL) {
     $open = $this->assertDetails($summary, $container)->hasAttribute('open');
 
-    if (! $open) {
+    if (!$open) {
       throw new ExpectationException(
         "Expected '$summary' details to be open, but it is closed.",
         $this->getSession()->getDriver()
@@ -362,11 +365,11 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param string $summary
    *   The exact summary text.
-   * @param ElementInterface $container
+   * @param \Behat\Mink\Element\ElementInterface $container
    *   (optional) The element in which to search for the <details> element.
    *
-   * @throws \Behat\Mink\Exception\ExpectationException if the <details> element
-   * is open.
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If the <details> element is open.
    *
    * @Then I should see a closed :summary details element
    */
@@ -425,8 +428,8 @@ final class ElementContext extends DrupalSubContextBase {
    * @param int $n
    *   The number of elements expected to match the selector.
    *
-   * @throws ExpectationException if the number of elements that match the
-   * selector is less than expected.
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If the fewer elements than expected match the selector.
    *
    * @Then at least :n element(s) should match :selector
    */
@@ -460,7 +463,7 @@ final class ElementContext extends DrupalSubContextBase {
    * @param string $plugin_id
    *   The block plugin ID.
    *
-   * @return ElementInterface
+   * @return \Behat\Mink\Element\ElementInterface
    *   The block element.
    *
    * @Then I should see a :plugin_id block
@@ -489,7 +492,7 @@ final class ElementContext extends DrupalSubContextBase {
    * @param \Behat\Mink\Element\ElementInterface $element
    *   The element which is expected to contain contextual links.
    *
-   * @return ElementInterface
+   * @return \Behat\Mink\Element\ElementInterface
    *   The list of contextual links.
    */
   private function assertContextualLinks(ElementInterface $element) {
@@ -502,10 +505,10 @@ final class ElementContext extends DrupalSubContextBase {
    *
    * @param \Behat\Mink\Element\ElementInterface $element
    *   The element which is expectd to contain the contextual link.
-   * @param (string) $link_class
+   * @param string $link_class
    *   The CSS class of the contextual link.
    *
-   * @return ElementInterface
+   * @return \Behat\Mink\Element\ElementInterface
    *   The contextual link.
    */
   private function assertContextualLink(ElementInterface $element, $link_class) {

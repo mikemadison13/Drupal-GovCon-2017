@@ -273,8 +273,26 @@ abstract class OpenApiGeneratorBase extends PluginBase implements OpenApiGenerat
         case 'oauth2':
           $def = [
             'type' => 'oauth2',
-            'flow' => 'password',
-            'tokenUrl' => $base_url . 'oauth/token',
+            'description' => 'For more information see https://developers.getbase.com/docs/rest/articles/oauth2/requests',
+            'flows' => [
+              'password' => [
+                'tokenUrl' => $base_url . 'oauth/token',
+                'refreshUrl' => $base_url . 'oauth/token',
+              ],
+              'authorizationCode' => [
+                'authorizationUrl' => $base_url . 'oauth/authorize',
+                'tokenUrl' => $base_url . 'oauth/token',
+                'refreshUrl' => $base_url . 'oauth/token',
+              ],
+              'implicit' => [
+                'authorizationUrl' => $base_url . 'oauth/authorize',
+                'refreshUrl' => $base_url . 'oauth/token',
+              ],
+              'clientCredentials' => [
+                'tokenUrl' => $base_url . 'oauth/token',
+                'refreshUrl' => $base_url . 'oauth/token',
+              ],
+            ],
           ];
           break;
         default:

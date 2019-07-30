@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Prepares a installed code base to run database updates for testing.
+ */
+
 use Drupal\node\Entity\NodeType;
 
 // Forcibly uninstall Lightning Dev.

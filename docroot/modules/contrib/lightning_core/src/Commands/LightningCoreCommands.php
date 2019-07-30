@@ -1,10 +1,14 @@
 <?php
+
 namespace Drupal\lightning_core\Commands;
 
 use Drupal\lightning_core\UpdateManager;
 use Drush\Commands\DrushCommands;
 use Drush\Style\DrushStyle;
 
+/**
+ * Exposes Drush commands provided by Lightning Core.
+ */
 class LightningCoreCommands extends DrushCommands {
 
   /**

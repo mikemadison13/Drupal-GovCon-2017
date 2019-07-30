@@ -2,3 +2,5 @@ docroot/
 vendor/
 /.behat.yml
 /composer.lock
+.idea/
+.DS_Store

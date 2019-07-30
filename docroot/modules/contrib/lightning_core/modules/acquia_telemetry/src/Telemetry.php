@@ -154,7 +154,7 @@ class Telemetry {
    *
    * @return array
    *   An array of extension info keyed by the extensions machine name. E.g.,
-   *  ['lightning_layout' => ['version' => '8.2.0', 'status' => 'enabled']].
+   *   ['lightning_layout' => ['version' => '8.2.0', 'status' => 'enabled']].
    */
   private function getExtensionInfo() {
     $all_modules = $this->moduleList->getAllAvailableInfo();
