@@ -1,9 +1,8 @@
 <?php
 
-/**
- * Contains \Drupal\acsf\AcsfSiteMissingIdentifierException.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * AcsfSiteMissingIdentifierException.
+ */
 class AcsfSiteMissingIdentifierException extends \Exception {}

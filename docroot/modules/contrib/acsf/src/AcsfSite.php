@@ -1,21 +1,34 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\AcsfSite.
- */
-
 namespace Drupal\acsf;
 
 use Drupal\acsf\Event\AcsfEvent;
 
+/**
+ * AcsfSite.
+ */
 class AcsfSite {
 
+  /**
+   * Instantiated (singleton) class.
+   *
+   * @var \Drupal\acsf\AcsfSite
+   */
   protected static $cache;
 
+  /**
+   * ACSF variable storage.
+   *
+   * @var \Drupal\acsf\AcsfVariableStorage
+   */
   protected $variableStorage;
 
-  protected $info = array();
+  /**
+   * The site information held by this instance.
+   *
+   * @var array
+   */
+  protected $info = [];
 
   /**
    * Factory: loads the current site.
@@ -40,7 +53,7 @@ class AcsfSite {
    */
   public function __construct($site_id = NULL) {
 
-    //@todo properly inject this?
+    // @todo properly inject this?
     $this->variableStorage = \Drupal::service('acsf.variable_storage');
 
     if (empty($site_id) && !empty($GLOBALS['gardens_site_settings']['conf']['acsf_site_id'])) {
@@ -131,17 +144,17 @@ class AcsfSite {
    * @return bool
    *   Returns TRUE if the data fetch was successful.
    */
-  public function refresh(array $data = array()) {
+  public function refresh(array $data = []) {
     if (function_exists('is_acquia_host') && !is_acquia_host()) {
       return FALSE;
     }
 
     try {
       $site_id = !empty($this->site_id) ? $this->site_id : $GLOBALS['gardens_site_settings']['conf']['acsf_site_id'];
-      $arguments = array(
+      $arguments = [
         'site_id' => $site_id,
         'site_data' => $data,
-      );
+      ];
       $message = new AcsfMessageRest('GET', 'site-api/v1/sync/' . $site_id, $arguments);
       $message->send();
       $site_info = $message->getResponseBody();
@@ -174,7 +187,7 @@ class AcsfSite {
    * that you are unaware of.
    */
   public function clean() {
-    $this->info = array();
+    $this->info = [];
     return $this->refresh();
   }
 
@@ -194,16 +207,48 @@ class AcsfSite {
    * Initializes the internal state of this site.
    */
   private function initStoredSiteInfo() {
-    $this->info = array();
+    $this->info = [];
 
     $site_info = $this->variableStorage->getGroup('site_info');
     foreach ($site_info as $key => $value) {
       if (!is_array($value)) {
-        $this->mergeSiteInfo(array($key => $value));
+        $this->mergeSiteInfo([$key => $value]);
       }
       else {
         $this->mergeSiteInfo($value);
       }
+    }
+  }
+
+  /**
+   * Gets the SAML keys used by Site Factory SSO.
+   */
+  public function initSamlKeyProperties() {
+    $sitegroup = $_ENV['AH_SITE_GROUP'];
+    $env = $_ENV['AH_SITE_ENVIRONMENT'];
+    $creds_path = "/mnt/files/$sitegroup.$env/nobackup/sf_shared_creds.ini";
+    $credentials = file_get_contents($creds_path);
+    $parsed_ini = parse_ini_string($credentials, TRUE);
+
+    $this->info['saml_keys'] = [];
+
+    if (isset($parsed_ini['saml']['tangle_key'])) {
+      $this->info['saml_keys']['sp_private_key'] = $parsed_ini['saml']['tangle_key'];
+    }
+    else {
+      $this->info['saml_keys']['sp_private_key'] = '';
+    }
+    if (isset($parsed_ini['saml']['tangle_cert'])) {
+      $this->info['saml_keys']['sp_x509_certificate'] = $parsed_ini['saml']['tangle_cert'];
+    }
+    else {
+      $this->info['saml_keys']['sp_x509_certificate'] = '';
+    }
+    if (isset($parsed_ini['saml']['factory_cert'])) {
+      $this->info['saml_keys']['idp_x509_certificate'] = $parsed_ini['saml']['factory_cert'];
+    }
+    else {
+      $this->info['saml_keys']['idp_x509_certificate'] = '';
     }
   }
 

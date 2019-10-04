@@ -1,8 +1,9 @@
 <?php
 
+namespace Drupal\acsf;
+
 /**
- * @file
- * Contains AcsfMessage.
+ * AcsfMessage.
  *
  * AcsfMessage defines a basic message interface between a Drupal site and the
  * Site Factory. It is composed of a AcsfConfig compatible object which defines
@@ -18,32 +19,53 @@
  * may be provided to customize the behavior - namely locating a special config
  * file or providing an anonymous callback function.
  *
- * $m = new AcsfMessageRest('GET', 'site-api/v1/sync/', array('site_id' => 406));
+ * $m = new AcsfMessageRest('GET', 'site-api/v1/sync/', [ 'site_id' => 406 ]);
  * $m->send();
  * $m->getResponseCode();
  * $m->getResponseBody();
  */
-
-namespace Drupal\acsf;
-
 abstract class AcsfMessage {
 
-  // The message endpoint on the remote server.
+  /**
+   * The message endpoint on the remote server.
+   *
+   * @var string
+   */
   protected $endpoint;
 
-  // An unstructured list of parameters to send with the request.
+  /**
+   * An unstructured list of parameters to send with the request.
+   *
+   * @var array
+   */
   protected $parameters;
 
-  // The AcsfMessageResponse object.
+  /**
+   * The AcsfMessageResponse object.
+   *
+   * @var \Drupal\acsf\AcsfMessageResponse
+   */
   protected $response;
 
-  // An optional Acquia Hosting sitegroup.
+  /**
+   * An optional Acquia Hosting sitegroup.
+   *
+   * @var string
+   */
   protected $ahSite;
 
-  // An optional Acquia Hosting environment.
+  /**
+   * An optional Acquia Hosting environment.
+   *
+   * @var string
+   */
   protected $ahEnv;
 
-  // An optional AcsfConfig object.
+  /**
+   * An optional AcsfConfig object.
+   *
+   * @var \Drupal\acsf\AcsfConfig
+   */
   private $config;
 
   /**
@@ -66,7 +88,7 @@ abstract class AcsfMessage {
    *
    * @throws AcsfMessageMissingCredsException
    */
-  public function __construct($method, $endpoint, array $parameters = array(), AcsfConfig $config = NULL, $ah_site = NULL, $ah_env = NULL, Closure $callback = NULL) {
+  public function __construct($method, $endpoint, array $parameters = [], AcsfConfig $config = NULL, $ah_site = NULL, $ah_env = NULL, Closure $callback = NULL) {
 
     // Use our default config if not specified.
     if (empty($config)) {

@@ -1,6 +1,9 @@
 services:
   lightning_core.hooks:
     class: '\Drupal\lightning_core\Commands\Hooks'
+    arguments:
+      - '@extension.list.profile'
+      - '%install_profile%'
     tags:
       - { name: drush.command }
 

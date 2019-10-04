@@ -1,22 +1,32 @@
 <?php
 
-/**
- * @file
- * This class is an implementation of our XML-RPC service.
- */
-
 namespace Drupal\acsf;
 
 use Drupal\Component\Utility\UrlHelper;
 
+/**
+ * This class is an implementation of our XML-RPC service.
+ */
 class AcsfMessageRest extends AcsfMessage {
+
+  /**
+   * Maximum amount of retries before giving up sending a message.
+   *
+   * @var int
+   */
   protected $retryMax = 3;
+
+  /**
+   * Number of seconds to wait before trying again after sending failed.
+   *
+   * @var int
+   */
   protected $retryWait = 5;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct($method, $endpoint, array $parameters = array(), AcsfConfig $config = NULL, $ah_site = NULL, $ah_env = NULL, Closure $callback = NULL) {
+  public function __construct($method, $endpoint, array $parameters = [], AcsfConfig $config = NULL, $ah_site = NULL, $ah_env = NULL, Closure $callback = NULL) {
     if (empty($config)) {
       $config = new AcsfConfigRest($ah_site, $ah_env);
     }
@@ -52,10 +62,10 @@ class AcsfMessageRest extends AcsfMessage {
     elseif (!empty($parameters)) {
       $data_string = json_encode($parameters);
       curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-      curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+      curl_setopt($curl, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
         'Content-Length: ' . strlen($data_string),
-      ));
+      ]);
     }
 
     $full_url = sprintf('%s/%s%s', $url, $endpoint, $query_string);

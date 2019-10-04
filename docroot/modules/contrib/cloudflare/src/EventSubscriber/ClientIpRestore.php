@@ -67,7 +67,7 @@ class ClientIpRestore implements EventSubscriberInterface {
   /**
    * Constructs a ClientIpRestore.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
    *   Cache backend.
@@ -76,10 +76,10 @@ class ClientIpRestore implements EventSubscriberInterface {
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    */
-  public function __construct(ConfigFactoryInterface $config, CacheBackendInterface $cache, ClientInterface $http_client, LoggerInterface $logger) {
+  public function __construct(ConfigFactoryInterface $config_factory, CacheBackendInterface $cache, ClientInterface $http_client, LoggerInterface $logger) {
     $this->httpClient = $http_client;
     $this->cache = $cache;
-    $this->config = $config->get('cloudflare.settings');
+    $this->config = $config_factory->get('cloudflare.settings');
     $this->logger = $logger;
     $this->isClientIpRestoreEnabled = $this->config->get(SELF::CLOUDFLARE_CLIENT_IP_RESTORE_ENABLED);
     $this->bypassHost = $this->config->get(SELF::CLOUDFLARE_BYPASS_HOST);
@@ -89,7 +89,7 @@ class ClientIpRestore implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events[KernelEvents::REQUEST][] = array('onRequest', 20);
+    $events[KernelEvents::REQUEST][] = ['onRequest', 20];
     return $events;
   }
 
@@ -139,6 +139,10 @@ class ClientIpRestore implements EventSubscriberInterface {
       return;
     }
 
+    // As the changed remote address will make it impossible to determine
+    // a trusted proxy, we need to make sure we set the right protocal as well.
+    // @see \Symfony\Component\HttpFoundation\Request::isSecure()
+    $event->getRequest()->server->set('HTTPS', $event->getRequest()->isSecure() ? 'on' : 'off');
     $event->getRequest()->server->set('REMOTE_ADDR', $cf_connecting_ip);
     $event->getRequest()->overrideGlobals();
   }

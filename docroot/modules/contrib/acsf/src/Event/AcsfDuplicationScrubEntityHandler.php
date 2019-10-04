@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfDuplicationScrubEntityHandler.
- */
-
 namespace Drupal\acsf\Event;
 
 /**
@@ -76,7 +71,7 @@ abstract class AcsfDuplicationScrubEntityHandler extends AcsfEventHandler {
    * Implements AcsfEventHandler::handle().
    */
   public function handle() {
-    drush_print(dt('Entered @class', array('@class' => get_class($this))));
+    drush_print(dt('Entered @class', ['@class' => get_class($this)]));
 
     $options = $this->event->context['scrub_options'];
     $limit = $options['batch_' . $this->entityTypeId];
@@ -95,9 +90,9 @@ abstract class AcsfDuplicationScrubEntityHandler extends AcsfEventHandler {
         ->execute();
 
       if ($ids) {
-        // Delete the entities, one by one. This may be slower than mass deleting
-        // them, but this way we can catch an exception without a mass delete
-        // being fully rolled back.
+        // Delete the entities, one by one. This may be slower than mass
+        // deleting them, but this way we can catch an exception without a mass
+        // delete being fully rolled back.
         $entities = $this->entityTypeManager->getStorage($this->entityTypeId)
           ->loadMultiple($ids);
         $this->deleteEntities($entities);
@@ -174,11 +169,14 @@ abstract class AcsfDuplicationScrubEntityHandler extends AcsfEventHandler {
    *   An indexed array of user IDs which should not be scrubbed.
    */
   protected function getPreservedUsers() {
-    $preserved = $this->getSiteAdmins(); // Preserve site admins.
+    // Preserve site admins.
+    $preserved = $this->getSiteAdmins();
     if (array_search(1, $preserved) === FALSE) {
-      $preserved[] = 1; // Preserve UID 1.
+      // Preserve UID 1.
+      $preserved[] = 1;
     }
-    $preserved[] = 0; // Preserve the anonymous user.
+    // Preserve the anonymous user.
+    $preserved[] = 0;
     $this->moduleHandler->alter('acsf_duplication_scrub_preserved_users', $preserved);
     return $preserved;
   }
@@ -190,7 +188,7 @@ abstract class AcsfDuplicationScrubEntityHandler extends AcsfEventHandler {
    *   An indexed array of user IDs representing site admins.
    */
   public function getSiteAdmins() {
-    $uids = array();
+    $uids = [];
 
     $admin_roles = $this->entityTypeManager->getStorage('user_role')->getQuery()
       ->condition('is_admin', TRUE)

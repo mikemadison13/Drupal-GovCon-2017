@@ -1,33 +1,59 @@
 <?php
 
-/**
- * @file
- * Provides an interface to define how our message configuration should work.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * Provides an interface to define how our message configuration should work.
+ */
 abstract class AcsfConfig {
 
-  // The URL of the remote service (factory).
+  /**
+   * The URL of the remote service (factory).
+   *
+   * @var string
+   */
   protected $url;
 
-  // The username of the remote service.
+  /**
+   * The username of the remote service.
+   *
+   * @var string
+   */
   protected $username;
 
-  // The password of the remote service.
+  /**
+   * The password of the remote service.
+   *
+   * @var string
+   */
   protected $password;
 
-  // The optional signup suffix of the Factory. See getUrlSuffix() for caveat.
+  /**
+   * The optional signup suffix of the Factory. See getUrlSuffix() for caveat.
+   *
+   * @var string
+   */
   protected $urlSuffix;
 
-  // The optional source URL of the factory which our sites were staged from.
+  /**
+   * The optional source URL of the factory which our sites were staged from.
+   *
+   * @var string
+   */
   protected $sourceUrl;
 
-  // An optional Acquia Hosting sitegroup.
+  /**
+   * An optional Acquia Hosting sitegroup.
+   *
+   * @var string
+   */
   protected $ahSite;
 
-  // An optional Acquia Hosting environment.
+  /**
+   * An optional Acquia Hosting environment.
+   *
+   * @var string
+   */
   protected $ahEnv;
 
   /**
@@ -58,7 +84,7 @@ abstract class AcsfConfig {
     $this->loadConfig();
 
     // Require the loadConfig implementation to set required values.
-    foreach (array('url', 'username', 'password') as $key) {
+    foreach (['url', 'username', 'password'] as $key) {
       if (empty($this->{$key})) {
         throw new AcsfConfigIncompleteException(sprintf('The ACSF configuration was incomplete, no value was found for %s.', $key));
       }

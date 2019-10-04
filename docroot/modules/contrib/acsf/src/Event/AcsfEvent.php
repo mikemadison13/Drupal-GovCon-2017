@@ -1,16 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfEvent.
- */
-
 namespace Drupal\acsf\Event;
 
 use Drupal\acsf\AcsfLog;
 use Drupal\acsf\AcsfSite;
 
 /**
+ * ACSFEvent.
+ *
  * An event within the ACSF framework encapsulates a dispatcher and a list of
  * event handlers. The event will contain an internal context that is accessible
  * from the handlers.
@@ -28,6 +25,11 @@ use Drupal\acsf\AcsfSite;
  */
 class AcsfEvent {
 
+  /**
+   * Internal list of handlers, stored by type: incomplete / complete / failed.
+   *
+   * @var array[]
+   */
   protected $handlers;
 
   /**
@@ -35,7 +37,7 @@ class AcsfEvent {
    *
    * @param AcsfEventDispatcher $dispatcher
    *   The event dispatcher object.
-   * @param AcsfLog $log
+   * @param \Drupal\acsf\AcsfLog $log
    *   The log object.
    * @param string $type
    *   The type of event to run.
@@ -43,7 +45,7 @@ class AcsfEvent {
    *   The registry from acsf_registry.
    * @param array $context
    *   An arbitrary context for handlers.
-   * @param AcsfSite $site
+   * @param \Drupal\acsf\AcsfSite $site
    *   The site being operated upon (optional).
    */
   public function __construct(AcsfEventDispatcher $dispatcher, AcsfLog $log, $type, array $registry, array $context, AcsfSite $site = NULL) {
@@ -53,15 +55,15 @@ class AcsfEvent {
     $this->site = $site;
     // Make sure 'events' has a value so code can always refer to it.
     if (!isset($registry['events'])) {
-      $registry['events'] = array();
+      $registry['events'] = [];
     }
     $this->registry = $registry;
     $this->context = $context;
-    $this->handlers = array(
-      'incomplete' => array(),
-      'complete' => array(),
-      'failed' => array(),
-    );
+    $this->handlers = [
+      'incomplete' => [],
+      'complete' => [],
+      'failed' => [],
+    ];
   }
 
   /**
@@ -75,7 +77,7 @@ class AcsfEvent {
    * @return static
    *   Returns an instance of this class.
    */
-  public static function create($type, array $context = array()) {
+  public static function create($type, array $context = []) {
     $registry = acsf_get_registry();
     $event = new static(
       new AcsfEventDispatcher(),
@@ -91,16 +93,16 @@ class AcsfEvent {
    * Produces data that can be used to track and debug an event.
    */
   public function debug() {
-    $debug = array();
+    $debug = [];
 
     foreach (array_keys($this->handlers) as $key) {
       foreach ($this->handlers[$key] as $handler) {
-        $debug['handlers'][$key][] = array(
+        $debug['handlers'][$key][] = [
           'class' => get_class($handler),
           'started' => $handler->started,
           'completed' => $handler->completed,
           'message' => $handler->message,
-        );
+        ];
       }
     }
 

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\EventSubscriber\AcsfMaintenanceModeSubscriber.
- */
-
 namespace Drupal\acsf\EventSubscriber;
 
 use Drupal\Core\State\StateInterface;

@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\AcsfVariableStorage.
- */
 namespace Drupal\acsf;
 
 use Drupal\Core\Database\Connection;
@@ -43,14 +39,14 @@ class AcsfVariableStorage {
    * @return int
    *   1 if an INSERT query was executed, 2 for UPDATE.
    */
-  function set($name, $value, $group = NULL) {
+  public function set($name, $value, $group = NULL) {
 
     return $this->connection->merge('acsf_variables')
-      ->keys(array('name' => $name))
-      ->fields(array(
+      ->keys(['name' => $name])
+      ->fields([
         'group_name' => $group,
         'value' => serialize($value),
-      ))
+      ])
       ->execute();
   }
 
@@ -65,10 +61,10 @@ class AcsfVariableStorage {
    * @return mixed
    *   The value of the variable.
    */
-  function get($name, $default = NULL) {
+  public function get($name, $default = NULL) {
 
     $record = $this->connection->select('acsf_variables', 'v')
-      ->fields('v', array('value'))
+      ->fields('v', ['value'])
       ->condition('name', $name, '=')
       ->execute()
       ->fetchAssoc();
@@ -91,11 +87,11 @@ class AcsfVariableStorage {
    *   An associative array holding the values of the variables, keyed by the
    *   variable names.
    */
-  function getMatch($match) {
-    $return = array();
+  public function getMatch($match) {
+    $return = [];
 
     $result = $this->connection->select('acsf_variables', 'v')
-      ->fields('v', array('name', 'value'))
+      ->fields('v', ['name', 'value'])
       ->condition('name', '%' . $match . '%', 'LIKE')
       ->execute();
 
@@ -118,11 +114,11 @@ class AcsfVariableStorage {
    *   An associative array holding the values of the group of variables, keyed
    *   by the variable names.
    */
-  function getGroup($group, $default = array()) {
-    $return = array();
+  public function getGroup($group, $default = []) {
+    $return = [];
 
     $result = $this->connection->select('acsf_variables', 'v')
-      ->fields('v', array('name', 'value'))
+      ->fields('v', ['name', 'value'])
       ->condition('group_name', $group, '=')
       ->execute();
 
@@ -147,7 +143,7 @@ class AcsfVariableStorage {
    * @return int
    *   The number of deleted rows.
    */
-  function delete($name) {
+  public function delete($name) {
     $result = $this->connection->delete('acsf_variables')
       ->condition('name', $name)
       ->execute();

@@ -2,175 +2,77 @@
 
 namespace Acquia\LightningExtension\Context;
 
-use Behat\Mink\Exception\UnsupportedDriverActionException;
-use Drupal\Component\Utility\Random;
-use Drupal\DrupalExtension\Context\DrupalSubContextBase;
-use Drupal\workflows\Entity\Workflow;
-use Drupal\workflows\StateInterface;
-use Webmozart\Assert\Assert;
-use Drupal\node\Entity\NodeType;
+use Behat\Mink\Element\DocumentElement;
+use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Exception\ExpectationException;
+use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\DrupalDriverManager;
+use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 
 /**
  * Contains miscellaneous step definitions for testing moderation UIs.
+ *
+ * @internal
+ *   This is an internal part of Lightning Workflow's testing system and may be
+ *   changed or removed at any time without warning. External code should not
+ *   extend, instantiate, or use this class in any way! If you want to use the
+ *   functionality of this class, you should copy the relevant code into your
+ *   own project.
  */
-final class ModerationContext extends DrupalSubContextBase {
-
-  use AwaitTrait;
+final class ModerationContext extends RawMinkContext implements DrupalSubContextInterface {
 
   /**
-   * The node created for the test.
-   *
-   * @var \Drupal\node\NodeInterface
+   * {@inheritdoc}
    */
-  private $node;
-
-  /**
-   * Content types which had moderation enabled during the scenario.
-   *
-   * @var string[]
-   */
-  private $moderated = [];
-
-  /**
-   * Cleans up after the scenario.
-   *
-   * @AfterScenario
-   */
-  public function tearDown() {
-    if ($this->node) {
-      $this->node->delete();
-    }
-
-    /** @var \Drupal\workflows\WorkflowInterface $workflow */
-    $workflow = Workflow::load('editorial');
-    Assert::isInstanceOf($workflow, '\Drupal\workflows\WorkflowInterface');
-
-    while ($this->moderated) {
-      $workflow->getTypePlugin()->removeEntityTypeAndBundle('node', array_pop($this->moderated));
-    }
-    $workflow->save();
+  public function __construct(DrupalDriverManager $drupal) {
   }
 
   /**
-   * Returns the workflow type plugin for the current node.
+   * Opens the moderation sidebar.
    *
-   * @return \Drupal\workflows\WorkflowTypeInterface
-   *   The workflow type plugin.
+   * @When I open the moderation sidebar
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   *   If the moderation sidebar does not appear on the page.
    */
-  private function getWorkflow() {
-    Assert::notEmpty($this->node);
+  public function openModerationSidebar() {
+    $this->assertSession()
+      ->elementExists('css', '#toolbar-bar')
+      ->clickLink('Tasks');
 
-    /** @var \Drupal\workflows\WorkflowInterface $workflow */
-    $workflow = \Drupal::service('content_moderation.moderation_information')
-      ->getWorkflowForEntity($this->node);
+    $session = $this->getSession();
 
-    Assert::notEmpty($workflow);
+    $sidebar = $session->getPage()
+      ->waitFor(10, function (DocumentElement $page) {
+        return $page->find('css', '.moderation-sidebar-container');
+      });
 
-    return $workflow->getTypePlugin();
-  }
-
-  /**
-   * Returns the workflow state ID matching a label.
-   *
-   * @param string $state_label
-   *   The state label.
-   *
-   * @return string
-   *   The state ID.
-   */
-  private function getStateId($state_label) {
-    $states = array_filter($this->getWorkflow()->getStates(), function (StateInterface $state) use ($state_label) {
-      return $state->label() === $state_label;
-    });
-    Assert::count($states, 1);
-
-    return reset($states)->id();
-  }
-
-  /**
-   * Creates a node in a specific workflow state and visits it.
-   *
-   * @param string $content_type
-   *   The content type of the node to create.
-   * @param string $state_label
-   *   The label of the workflow state in which to create the node.
-   *
-   * @When I am viewing a :content_type in the :state_label state
-   */
-  public function assertAtContentInState($content_type, $state_label) {
-    $this->node = \Drupal::entityTypeManager()
-      ->getStorage('node')
-      ->create([
-        'type' => $content_type,
-        'title' => (new Random)->string(),
-      ]);
-    $current_user = $this->getUserManager()->getCurrentUser();
-    if ($current_user) {
-      $this->node->setOwnerId($current_user->uid);
+    if (empty($sidebar)) {
+      throw new ElementNotFoundException($session->getDriver(), 'element', 'css', '.moderation-sidebar-container');
     }
-
-    $this->node
-      ->set('moderation_state', $this->getStateId($state_label))
-      ->save();
-
-    $this->visitPath($this->node->toUrl()->toString());
-    $assert = $this->assertSession();
-    try {
-      $assert->statusCodeEquals(200);
-    }
-    catch (UnsupportedDriverActionException $e) {
-      // This isn't an important assertion, so just swallow the exception.
-    }
-    $assert->pageTextContains($this->node->getTitle());
   }
 
   /**
-   * Asserts that the moderation sidebar works.
+   * Asserts that the "Tasks" toolbar link indicates a moderation state.
    *
-   * @param string $state_label
-   *   The label of the state to which to transition the node.
+   * @param string $state
+   *   The label of the expected moderation state.
    *
-   * @Then I should be able to transition to the :state_label state without leaving the page
+   * @Then the current moderation state should be :state
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If the current moderation state is not the expected one.
    */
-  public function assertInPlaceStateTransition($state_label) {
-    Assert::notEmpty($this->node);
+  public function assertCurrentModerationState($state) {
+    $assert_session = $this->assertSession();
+    $toolbar = $assert_session->elementExists('css', '#toolbar-bar');
+    $current_state = $assert_session->elementExists('named', ['link', 'Tasks'], $toolbar)
+      ->getAttribute('data-label');
 
-    $transition = $this->getWorkflow()
-      ->getTransitionFromStateToState($this->node->moderation_state->value, $this->getStateId($state_label));
-
-    $assert = $this->assertSession();
-    $toolbar = $assert->elementExists('css', '#toolbar-bar');
-    $toolbar->clickLink('Tasks');
-    $sidebar = $this->awaitElement('.moderation-sidebar-container');
-
-    // Assert that the review transition has the correct label.
-    // @see \Drupal\lightning_workflow\Update\Update230
-    // @see lightning_workflow_install()
-    $assert->elementExists('named', ['button', 'Send to review'], $sidebar);
-
-    $sidebar->pressButton($transition->label());
-
-    $assert->pageTextContains('The moderation state has been updated.');
-    $current_state = $assert->elementExists('named', ['link', 'Tasks'], $toolbar)->getAttribute('data-label');
-
-    Assert::same($current_state, $transition->to()->label());
-  }
-
-  /**
-   * Enables moderation for a content type.
-   *
-   * @param string $node_type
-   *   The machine name of the content type.
-   *
-   * @When I enable moderation for the :node_type content type
-   */
-  public function addModerationToContentType($node_type) {
-    /** @var \Drupal\node\NodeTypeInterface $node_type */
-    $node_type = NodeType::load($node_type);
-    $node_type->setThirdPartySetting('lightning_workflow', 'workflow', 'editorial');
-    lightning_workflow_node_type_insert($node_type);
-
-    array_push($this->moderated, $node_type->id());
+    if ($current_state !== $state) {
+      throw new ExpectationException("Expected the current moderation state to be $state, but it is $current_state.", $this->getSession()->getDriver());
+    }
   }
 
   /**
@@ -179,16 +81,171 @@ final class ModerationContext extends DrupalSubContextBase {
    * @Then I should see a dashboard for moderating content
    */
   public function assertModerationDashboard() {
-    $assert = $this->assertSession();
+    $this->assertBlock('views_block:content_moderation_dashboard_in_review-block_1');
+    $this->assertBlock('views_block:content_moderation_dashboard_in_review-block_2');
+    $this->assertBlock('moderation_dashboard_activity');
+    $this->assertBlock('views_block:moderation_dashboard_recently_created-block_1');
+    $this->assertBlock('views_block:content_moderation_dashboard_in_review-block_3');
+    $this->assertBlock('views_block:moderation_dashboard_recent_changes-block_1');
+    $this->assertBlock('views_block:moderation_dashboard_recent_changes-block_2');
+    $this->assertBlock('views_block:moderation_dashboard_recently_created-block_2');
+  }
 
-    $assert->elementExists('css', "[data-block-plugin-id='views_block:content_moderation_dashboard_in_review-block_1']");
-    $assert->elementExists('css', "[data-block-plugin-id='views_block:content_moderation_dashboard_in_review-block_2']");
-    $assert->elementExists('css', "[data-block-plugin-id='moderation_dashboard_activity']");
-    $assert->elementExists('css', "[data-block-plugin-id='views_block:moderation_dashboard_recently_created-block_1']");
-    $assert->elementExists('css', "[data-block-plugin-id='views_block:content_moderation_dashboard_in_review-block_3']");
-    $assert->elementExists('css', "[data-block-plugin-id='views_block:moderation_dashboard_recent_changes-block_1']");
-    $assert->elementExists('css', "[data-block-plugin-id='views_block:moderation_dashboard_recent_changes-block_2']");
-    $assert->elementExists('css', "[data-block-plugin-id='views_block:moderation_dashboard_recently_created-block_2']");
+  /**
+   * Autosaves the current form.
+   *
+   * @When I wait for my work to be autosaved
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If the autosave notification does not appear or disappear as expected.
+   */
+  public function awaitAutosave() {
+    $driver = $this->getSession()->getDriver();
+
+    $element = $this->assertSession()
+      ->elementExists('css', '#autosave-notification');
+
+    $is_visible = $element->waitFor(20, function (NodeElement $element) {
+      return $element->isVisible();
+    });
+    if ($is_visible == FALSE) {
+      throw new ExpectationException('Expected autosave notification to appear, but it did not.', $driver);
+    }
+
+    $is_hidden = $element->waitFor(10, function (NodeElement $element) {
+      return $element->isVisible() === FALSE;
+    });
+    if ($is_hidden == FALSE) {
+      throw new ExpectationException('Expected autosave notification to disappear after saving, but it did not.', $driver);
+    }
+  }
+
+  /**
+   * Restores autosaved work.
+   *
+   * @Then I should be able to restore my work
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   *   If the "Resume editing" button does not appear.
+   */
+  public function assertRestoreFromAutosave() {
+    $session = $this->getSession();
+
+    /** @var \Behat\Mink\Element\NodeElement $button */
+    $button = $session->getPage()
+      ->waitFor(10, function (DocumentElement $page) {
+        return $page->findButton('Resume editing');
+      });
+
+    if ($button) {
+      $button->press();
+    }
+    else {
+      throw new ElementNotFoundException($session->getDriver(), 'button', 'named', 'Resume editing');
+    }
+  }
+
+  /**
+   * Compares two revisions of a node.
+   *
+   * @param string $a
+   *   The one-based index of a revision to compare. 1st is oldest.
+   * @param string $b
+   *   The one-based index of a revision to compare. 1st is oldest.
+   *
+   * @When I compare the :a and :b revisions
+   */
+  public function compareRevisions($a, $b) {
+    $page = $this->getSession()->getPage();
+
+    $re = '/^[0-9]+(st|nd|rd|th)$/i';
+
+    if (preg_match($re, $a)) {
+      $a = substr($a, 0, -2);
+    }
+    if (preg_match($re, $b)) {
+      $b = substr($b, 0, -2);
+    }
+    $a = ((int) $a) - 1;
+    $b = ((int) $b) - 1;
+
+    $page->clickLink('Revisions');
+
+    /** @var \Behat\Mink\Element\NodeElement[] $rows */
+    $rows = $page->findAll('css', '.diff-revisions tbody tr');
+    $rows = array_reverse($rows);
+    $a = $rows[$a]->findField('radios_left')->getValue();
+    $b = $rows[$b]->findField('radios_right')->getValue();
+
+    $page->selectFieldOption('radios_left', $a);
+    $page->selectFieldOption('radios_right', $b);
+    $page->pressButton('Compare');
+  }
+
+  /**
+   * Asserts that Quick Edit is enabled for at least one entity on the page.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If Quick Edit is disabled on the current page.
+   *
+   * @Then Quick Edit should be enabled
+   */
+  public function assertQuickEditEnabled() {
+    $session = $this->getSession();
+
+    $is_enabled = $session->wait(10000, 'Drupal.quickedit.collections.entities.length > 0');
+
+    if (empty($is_enabled)) {
+      throw new ExpectationException('Expected Quick Edit to be enabled, but it is not.', $session->getDriver());
+    }
+  }
+
+  /**
+   * Asserts that Quick Edit is not enabled for any entities on the page.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If Quick Edit is enabled on the current page.
+   *
+   * @Then Quick Edit should be disabled
+   */
+  public function assertQuickEditDisabled() {
+    $session = $this->getSession();
+
+    $is_disabled = $session->wait(10000, 'Drupal.quickedit.collections.entities.length === 0');
+
+    if (empty($is_disabled)) {
+      throw new ExpectationException('Expected Quick Edit to be disabled, but it is not.', $session->getDriver());
+    }
+  }
+
+  /**
+   * Asserts that a block exists with a Quick Edit contextual link.
+   *
+   * @param string $plugin
+   *   The block plugin ID.
+   *
+   * @Then I should see a :plugin block with Quick Edit
+   */
+  public function assertQuickEditableBlock($plugin) {
+    $block = $this->assertBlock($plugin);
+
+    $assert = $this->assertSession();
+    $links = $assert->elementExists('css', 'ul.contextual-links', $block);
+    $assert->elementExists('named', ['link', 'Quick edit'], $links);
+  }
+
+  /**
+   * Asserts the presence of a particular block by its plugin ID.
+   *
+   * @param string $plugin_id
+   *   The block plugin ID.
+   *
+   * @return \Behat\Mink\Element\ElementInterface
+   *   The block element.
+   */
+  private function assertBlock($plugin_id) {
+    return $this->assertSession()
+      ->elementExists('css', '[data-block-plugin-id="' . $plugin_id . '"]');
   }
 
 }

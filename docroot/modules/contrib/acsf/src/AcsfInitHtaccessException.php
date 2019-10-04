@@ -1,10 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\acsf\AcsfInitHtaccessException.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * AcsfInitHtaccessException.
+ */
 class AcsfInitHtaccessException extends AcsfInitException {}

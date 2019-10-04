@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfDuplicationScrubFinalizeHandler.
- */
-
 namespace Drupal\acsf\Event;
 
 /**
@@ -16,17 +11,17 @@ class AcsfDuplicationScrubFinalizeHandler extends AcsfEventHandler {
    * Implements AcsfEventHandler::handle().
    */
   public function handle() {
-    drush_print(dt('Entered @class', array('@class' => get_class($this))));
+    drush_print(dt('Entered @class', ['@class' => get_class($this)]));
 
     // Clear the caches to ensure that the registries and other structural data
     // is rebuilt.
     drupal_flush_all_caches();
 
     // Clean up expirable key-value stores (form cache)
-    $bins = array(
+    $bins = [
       'form',
       'form_state',
-    );
+    ];
     foreach ($bins as $bin) {
       \Drupal::keyValueExpirable($bin)->deleteAll();
     }

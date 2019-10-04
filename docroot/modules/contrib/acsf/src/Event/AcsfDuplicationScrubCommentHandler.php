@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfDuplicationScrubCommentHandler.
- */
-
 namespace Drupal\acsf\Event;
 
 /**
@@ -31,7 +26,7 @@ class AcsfDuplicationScrubCommentHandler extends AcsfDuplicationScrubEntityHandl
     if ($options['retain_content']
             || !\Drupal::moduleHandler()->moduleExists('comment')) {
       // We still want to log that we were here.
-      drush_print(dt('Entered @class', array('@class' => get_class($this))));
+      drush_print(dt('Entered @class', ['@class' => get_class($this)]));
       return;
     }
 
@@ -71,7 +66,7 @@ class AcsfDuplicationScrubCommentHandler extends AcsfDuplicationScrubEntityHandl
         // long; processing isn't hugely expensive.)
         do {
           $orphaned_ids = $this->entityTypeManager->getStorage($this->entityTypeId)
-              ->deleteOrphanedItems($limit);
+            ->deleteOrphanedItems($limit);
         } while ($orphaned_ids);
       }
     }

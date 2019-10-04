@@ -6,6 +6,11 @@ use Drupal\node\Plugin\views\field\NodeBulkForm as BaseNodeBulkForm;
 
 /**
  * Extends the node_bulk_form field plugin to disallow certain options.
+ *
+ * @internal
+ *   This is an internal part of Lightning Workflow's integration with Views and
+ *   may be changed or removed at any time. External code should not use or
+ *   extend this class in any way!
  */
 class NodeBulkForm extends BaseNodeBulkForm {
 

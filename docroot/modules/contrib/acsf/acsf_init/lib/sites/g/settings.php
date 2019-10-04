@@ -2,13 +2,25 @@
 
 /**
  * @file
- * Drupal site-specific configuration file.
+ * Drupal configuration file for sites on Acquia Cloud Site Factory.
+ *
+ * This file is included from the site specific settings.php file for any site
+ * registered with Site Factory. If no site is found, sites/default/settings.php
+ * is read instead of this file (in normal circumstances).
  */
+
+// Acquia rules disallow 'include/require' with dynamic arguments. We extend the
+// exception over all pasted Drupal settings.php comments so that we don't need
+// to change the PHPDoc headers to end with a full stop, or change # to //.
+// phpcs:disable
 
 // Include custom settings.php code from factory-hooks/pre-settings-php.
 if (function_exists('acsf_hooks_includes')) {
-  foreach (acsf_hooks_includes('pre-settings-php') as $pre_hook) {
-    include $pre_hook;
+  foreach (acsf_hooks_includes('pre-settings-php') as $_acsf_include_file) {
+    // This should not use include_once / require_once. Some Drush versions do
+    // Drupal bootstrap multiple times, and include_once / require_once would
+    // make the hook modifications not be included on the second bootstrap.
+    include $_acsf_include_file;
   }
 }
 
@@ -71,40 +83,48 @@ if (function_exists('acsf_hooks_includes')) {
 # $config['system.performance']['fast_404']['paths'] = '/\.(?:txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i';
 # $config['system.performance']['fast_404']['html'] = '<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "@path" was not found on this server.</p></body></html>';
 
-/**
- * Load services definition file.
- */
-$settings['container_yamls'][] = __DIR__ . '/services.yml';
+// phpcs:enable
 
 /**
  * Acquia Cloud Site Factory specific settings.
  */
 if (file_exists('/var/www/site-php')) {
-  // The DB role will be the same as the gardens site directory name.
-  $request = \Drupal::hasRequest() ? \Drupal::request() : \Symfony\Component\HttpFoundation\Request::createFromGlobals();
-  $role = basename(\Drupal\Core\DrupalKernel::findSitePath($request));
-  // This global is set in sites.php. It's used to reference the
-  // live environment DB setting even when running on the update env.
-  $site_settings = !empty($GLOBALS['gardens_site_settings']) ? $GLOBALS['gardens_site_settings'] : array('site' => '', 'env' => '');
-  $site = $site_settings['site'];
+  // This global variable is set during the 'configuration' (sites.php)
+  // bootstrap phase. Notes:
+  // - The 'env' value contains the 'canonical environment' which (unlike
+  //   $_ENV['AH_SITE_ENVIRONMENT']) stays the same during code deployments
+  //   where sites are moved between two environments.
+  // - post-settings-php hooks should use $GLOBALS['gardens_site_settings']
+  //   rather than the below 'local' variables which are in principle not
+  //   guaranteed to stay defined. (We still define $env / $role for some
+  //   existing customers' post-settings-php hooks that already use them.)
+  $site_settings = !empty($GLOBALS['gardens_site_settings'])
+    ? $GLOBALS['gardens_site_settings']
+    : ['site' => '', 'env' => '', 'conf' => ['acsf_db_name' => '']];
   $env = $site_settings['env'];
+  $role = $site_settings['conf']['acsf_db_name'];
 
-  $settings_inc = "/var/www/site-php/{$site}.{$env}/D8-{$env}-{$role}-settings.inc";
-  if (file_exists($settings_inc)) {
-    include $settings_inc;
+  $_acsf_include_file = "/var/www/site-php/{$site_settings['site']}.{$site_settings['env']}/D8-{$site_settings['env']}-{$site_settings['conf']['acsf_db_name']}-settings.inc";
+  if (file_exists($_acsf_include_file)) {
+    // Acquia rules disallow 'include/require' with dynamic arguments.
+    // phpcs:disable
+    include $_acsf_include_file;
+    // phpcs:enable
     // Overwrite trusted_host_patterns setting, remove unnecessary hosts.
     // Allowed hosts for D8: https://www.drupal.org/node/2410395.
     // The overwrite doesn't cause any security problem because the valid hosts
     // were checked before in our sites.json registry.
-    $str = "^" . str_replace('.', '\.', $_SERVER['HTTP_HOST']);
-    $trusted_host = str_replace('*', '.+', $str) . "\$";
-    $settings['trusted_host_patterns'] = array($trusted_host);
+    $settings['trusted_host_patterns'] = [
+      '^' . str_replace('*', '.+',
+        str_replace('.', '\.', $_SERVER['HTTP_HOST'])
+      ) . '$',
+    ];
   }
   elseif (!isset($_SERVER['SERVER_SOFTWARE']) && (PHP_SAPI === 'cli' || (is_numeric($_SERVER['argc']) && $_SERVER['argc'] > 0))) {
-    throw new Exception('No database connection file was found for DB {$role}.');
+    throw new Exception("No database connection file was found for DB {$site_settings['conf']['acsf_db_name']}.");
   }
   else {
-    syslog(LOG_ERR, 'GardensError: AN-22471 - No database connection file was found for DB {$role}.');
+    syslog(LOG_ERR, "GardensError: AN-22471 - No database connection file was found for DB {$site_settings['conf']['acsf_db_name']}.");
     header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service unavailable');
     print 'The website encountered an unexpected error. Please try again later.';
     exit;
@@ -121,6 +141,9 @@ if (file_exists('/var/www/site-php')) {
   // We can't use an external cache if we are trying to invoke these hooks.
   $config['page_cache_invoke_hooks'] = FALSE;
 
+  // This section has been ported from D7 to D8 by mistake; the 'memcache_*'
+  // settings are not supposed to be set and the $config changes aren't generic.
+  // todo: reevaluate and possibly remove this.
   if (!empty($site_settings['flags']['memcache_enabled']) && !empty($site_settings['memcache_inc'])) {
     $config['cache_backends'][] = $site_settings['memcache_inc'];
     $config['cache_default_class'] = 'MemCacheDrupal';
@@ -135,9 +158,8 @@ if (file_exists('/var/www/site-php')) {
   // site, unless the site is being installed via install.php and the user has
   // the correct token to access it.
   if (PHP_SAPI !== 'cli' && !empty($site_settings['flags']['access_restricted']['enabled'])) {
-    $token_match = !empty($site_settings['flags']['access_restricted']['token']) && !empty($_GET['site_install_token']) && $_GET['site_install_token'] == $site_settings['flags']['access_restricted']['token'];
-    $path_match = $_SERVER['SCRIPT_NAME'] == $GLOBALS['base_path'] . 'install.php';
-    if (!$token_match || !$path_match) {
+    $_tmp = !empty($site_settings['flags']['access_restricted']['token']) && !empty($_GET['site_install_token']) && $_GET['site_install_token'] === $site_settings['flags']['access_restricted']['token'];
+    if (!$_tmp || $_SERVER['SCRIPT_NAME'] !== $GLOBALS['base_path'] . 'install.php') {
       header($_SERVER['SERVER_PROTOCOL'] . ' 503 Service unavailable');
       if (!empty($site_settings['flags']['access_restricted']['reason'])) {
         print $site_settings['flags']['access_restricted']['reason'];
@@ -160,10 +182,39 @@ if (file_exists('/var/www/site-php')) {
     $settings['file_private_path'] = $site_settings['file_private_path'];
   }
 
-  if (!empty($site_settings['conf'])) {
-    foreach ((array) $site_settings['conf'] as $key => $value) {
-      $config[$key] = $value;
-    }
+  // Propagate all configuration values in ACSF per-site storage into Drupal's
+  // configuration.
+  if (!empty($site_settings['conf']) && is_array($site_settings['conf'])) {
+    $config = $site_settings['conf'] + $config;
+  }
+
+  // Set the twig cache directory / change the default from Acquia Hosting:
+  // - Make it specific per site. The default is set based on the environment,
+  //   meaning it is the same for every site. This wouldn't cause twig caches
+  //   to be reused across multiple sites (at least not since D8.6), but:
+  //   - Cache clears on a single site would cause all sites' twig files to be
+  //     deleted;
+  //   - Concurrent cache clears could throw exceptions (when simultaneously
+  //     removing the same subdirectories).
+  // - Acquia Hosting has a feature where a 'deployment identifier' can be part
+  //   of the directory name, which allows a cleanup script to more easily
+  //   remove stale twig cache files lingering on multiple web nodes. Site
+  //   Factory does not include this deployment identifier, so a new code
+  //   deployment will not force twig caches for all hosted websites to be
+  //   regenerated at the exact same moment. This implies that the Site Factory
+  //   infrastructure is responsible for cleaning up stale twig cache files.
+  // - To not clash with the Acquia Hosting cleanup script (which shouldn't run
+  //   for us, but just to be sure...), make the base directory different from
+  //   Acquia Hosting's default of "php_storage". (Core uses "php".)
+  // - Don't include 'twig'. (FileStorage by definition already takes care of
+  //   dedicated storage for a specific bin (called "twig") inside this
+  //   directory, which in practice means "/twig" already gets appended.)
+  if (isset($_ENV['AH_SITE_GROUP']) && isset($_ENV['AH_SITE_ENVIRONMENT'])) {
+    // For completeness: we don't need to take care of creating the directory.
+    // We don't care if the 'directory' value was / wasn't defined already, or
+    // if the companion value 'secret' was somehow not defined; Core has a
+    // fallback for 'secret'.
+    $settings['php_storage']['twig']['directory'] = "/mnt/tmp/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/php_storage_acsf/{$site_settings['conf']['acsf_db_name']}";
   }
 }
 
@@ -198,8 +249,8 @@ if (isset($config_directories['vcs'])) {
   // @see https://backlog.acquia.com/browse/CL-11815
   // @see https://github.com/drush-ops/drush/pull/1711
   if (function_exists('drush_get_command')) {
-    $command = drush_get_command();
-    if (!empty($command['command']) && $command['command'] === 'site-install') {
+    $_tmp = drush_get_command();
+    if (!empty($_tmp['command']) && $_tmp['command'] === 'site-install') {
       unset($config_directories['vcs']);
     }
   }
@@ -207,7 +258,10 @@ if (isset($config_directories['vcs'])) {
 
 // Include custom settings.php code from factory-hooks/post-settings-php.
 if (function_exists('acsf_hooks_includes')) {
-  foreach (acsf_hooks_includes('post-settings-php') as $post_hook) {
-    include $post_hook;
+  foreach (acsf_hooks_includes('post-settings-php') as $_acsf_include_file) {
+    // Acquia rules disallow 'include/require' with dynamic arguments.
+    // phpcs:disable
+    include $_acsf_include_file;
+    // phpcs:enable
   }
 }

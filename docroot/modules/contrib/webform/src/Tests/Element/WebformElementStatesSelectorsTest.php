@@ -55,7 +55,7 @@ class WebformElementStatesSelectorsTest extends WebformElementTestBase {
       $webform = Webform::load($webform_id);
       $webform->setStatus(WebformInterface::STATUS_OPEN)->save();
 
-      $this->drupalGet('webform/' . $webform_id);
+      $this->drupalGet('/webform/' . $webform_id);
 
       $selectors = OptGroup::flattenOptions($webform->getElementsSelectorOptions());
       // Ignore text format and captcha selectors which are not available during
@@ -70,6 +70,16 @@ class WebformElementStatesSelectorsTest extends WebformElementTestBase {
         $this->assertCssSelect($selector);
       }
     }
+
+    $webform = Webform::load('test_example_elements');
+
+    // Check the value element is excluded.
+    $selectors = $webform->getElementsSelectorOptions();
+    $this->assert(!isset($selectors[':input[name="value"]']));
+
+    // Check the value element is included.
+    $selectors = $webform->getElementsSelectorOptions(['excluded_elements' => []]);
+    $this->assertEqual($selectors[':input[name="value"]'], 'Value [Value]');
   }
 
 }

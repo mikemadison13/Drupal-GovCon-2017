@@ -1,8 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+use Drupal\acsf\AcsfConfig;
 
-class AcsfConfigUnitTestMissingUsername extends \Drupal\acsf\AcsfConfig {
+/**
+ * AcsfConfigUnitTestMissingUsername.
+ */
+class AcsfConfigUnitTestMissingUsername extends AcsfConfig {
 
   /**
    * Implements AcsfConfig::loadConfig().
@@ -13,4 +16,3 @@ class AcsfConfigUnitTestMissingUsername extends \Drupal\acsf\AcsfConfig {
   }
 
 }
-

@@ -1,7 +1,8 @@
 <?php
+
 /**
- * A user who gets here is trying to visit a site that is not yet registered
- * with either the Site Factory or Hosting.
+ * @file
+ * Destination for sites that are not registered with Site Factory or Hosting.
  */
 
 // Don't run any of this code if we are drush or a CLI script.

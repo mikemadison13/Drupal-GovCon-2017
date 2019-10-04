@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfDuplicationScrubNodeHandler.
- */
-
 namespace Drupal\acsf\Event;
 
 /**
@@ -30,7 +25,7 @@ class AcsfDuplicationScrubNodeHandler extends AcsfDuplicationScrubEntityHandler 
     $options = $this->event->context['scrub_options'];
     if ($options['retain_content']) {
       // We still want to log that we were here.
-      drush_print(dt('Entered @class', array('@class' => get_class($this))));
+      drush_print(dt('Entered @class', ['@class' => get_class($this)]));
       return;
     }
 

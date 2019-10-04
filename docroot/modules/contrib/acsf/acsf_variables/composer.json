@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acsf_variables",
+    "type": "drupal-module",
+    "description": "Stores sensitive variables in a single place for easy scrubbing.",
+    "license": "GPL-2.0-or-later"
+}

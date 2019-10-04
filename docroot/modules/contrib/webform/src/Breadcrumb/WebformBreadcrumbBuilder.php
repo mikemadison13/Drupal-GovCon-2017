@@ -94,9 +94,6 @@ class WebformBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     elseif ($route_name === 'webform.reports_plugins.elements.test') {
       $this->type = 'webform_plugins_elements';
     }
-    elseif (strpos($route_name, 'webform.contribute') === 0) {
-      $this->type = 'webform_contribute';
-    }
     elseif (strpos($route_name, 'webform.help.') === 0) {
       $this->type = 'webform_help';
     }
@@ -189,7 +186,6 @@ class WebformBreadcrumbBuilder implements BreadcrumbBuilderInterface {
             $breadcrumb->addLink(Link::createFromRoute($this->t('Options'), 'entity.webform_options.collection'));
           }
           elseif (strpos($route_name, 'entity.webform_image_select_images') === 0 && $route_name !== 'entity.webform_image_select_imagess.collection') {
-            // @todo Refactor or move to webform_image_select.module.
             // @see webform_image_select.module.
             $breadcrumb->addLink(Link::createFromRoute($this->t('Images'), 'entity.webform_image_select_images.collection'));
           }

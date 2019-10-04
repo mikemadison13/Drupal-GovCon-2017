@@ -1,5 +1,5 @@
 name: 'Lightning Workflow'
-# core: 8.x
+core: 8.x
 type: module
 description: 'Tools to improve your content workflow.'
 package: Lightning
@@ -9,8 +9,7 @@ dependencies:
 components:
   - lightning_scheduler
 
-# Information added by Drupal.org packaging script on 2019-07-09
-version: '8.x-3.8'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2019-09-12
+version: '8.x-3.10'
 project: 'lightning_workflow'
-datestamp: 1562692998
+datestamp: 1568317389

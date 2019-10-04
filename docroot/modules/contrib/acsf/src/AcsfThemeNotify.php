@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\AcsfThemeNotify.
- */
-
 namespace Drupal\acsf;
 
 use Drupal\Core\Database\Connection;
@@ -12,7 +7,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
- * Manages theme notifications that need to be sent to the Factory,
+ * Manages theme notifications that need to be sent to the Factory.
  */
 class AcsfThemeNotify {
   use StringTranslationTrait;
@@ -83,22 +78,22 @@ class AcsfThemeNotify {
    */
   public function sendNotification($scope, $event_type, $nid = NULL, $theme = NULL, $timestamp = NULL, $store_failed_notification = TRUE) {
     if (!$this->isEnabled()) {
-      return array(
+      return [
         'code' => 500,
-        'data' => array('message' => $this->t('The theme change notification feature is not enabled.')),
-      );
+        'data' => ['message' => $this->t('The theme change notification feature is not enabled.')],
+      ];
     }
 
     try {
-      if (empty($nid) && in_array($scope, array('theme', 'site'))) {
+      if (empty($nid) && in_array($scope, ['theme', 'site'])) {
         $site = AcsfSite::load();
         $nid = $site->site_id;
       }
-      $parameters = array(
+      $parameters = [
         'scope' => $scope,
         'event' => $event_type,
         'nid' => $nid,
-      );
+      ];
       if ($theme) {
         $parameters['theme'] = $theme;
       }
@@ -107,23 +102,23 @@ class AcsfThemeNotify {
       }
       $message = new AcsfMessageRest('POST', 'site-api/v1/theme/notification', $parameters);
       $message->send();
-      $response = array(
+      $response = [
         'code' => $message->getResponseCode(),
         'data' => $message->getResponseBody(),
-      );
+      ];
     }
     catch (\Exception $e) {
-      $error_message = $this->t('AcsfThemeNotify failed with error: @message.', array('@message' => $e->getMessage()));
+      $error_message = $this->t('AcsfThemeNotify failed with error: @message.', ['@message' => $e->getMessage()]);
       syslog(LOG_ERR, $error_message);
 
       // Send a log message to the Factory.
       $acsf_log = new AcsfLog();
       $acsf_log->log('theme_notify', $error_message, LOG_ERR);
 
-      $response = array(
+      $response = [
         'code' => 500,
-        'data' => array('message' => $error_message),
-      );
+        'data' => ['message' => $error_message],
+      ];
     }
 
     if ($store_failed_notification && $response['code'] !== 200) {
@@ -157,7 +152,7 @@ class AcsfThemeNotify {
     foreach ($notifications as $notification) {
       // If this is a notification for an event that is not supported, it will
       // never get a 200 response so we need to remove it from storage.
-      if (!in_array($notification->event, array('create', 'modify', 'delete'))) {
+      if (!in_array($notification->event, ['create', 'modify', 'delete'])) {
         $this->removeNotification($notification);
         continue;
       }
@@ -214,7 +209,7 @@ class AcsfThemeNotify {
    */
   public function getNotifications($limit) {
     return $this->database->select('acsf_theme_notifications', 'n')
-      ->fields('n', array('id', 'event', 'theme', 'timestamp', 'attempts'))
+      ->fields('n', ['id', 'event', 'theme', 'timestamp', 'attempts'])
       ->orderBy('timestamp', 'ASC')
       ->range(0, $limit)
       ->execute()
@@ -234,12 +229,12 @@ class AcsfThemeNotify {
    */
   public function addNotification($event_type, $theme) {
     $this->database->insert('acsf_theme_notifications')
-      ->fields(array(
+      ->fields([
         'timestamp' => time(),
         'event' => $event_type,
         'theme' => $theme,
         'attempts' => 1,
-      ))
+      ])
       ->execute();
   }
 
@@ -251,9 +246,9 @@ class AcsfThemeNotify {
    */
   public function incrementNotificationAttempts($notification) {
     $this->database->update('acsf_theme_notifications')
-      ->fields(array(
+      ->fields([
         'attempts' => ++$notification->attempts,
-      ))
+      ])
       ->condition('id', $notification->id)
       ->execute();
   }

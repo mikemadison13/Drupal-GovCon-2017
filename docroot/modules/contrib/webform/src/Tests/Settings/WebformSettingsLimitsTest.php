@@ -25,7 +25,7 @@ class WebformSettingsLimitsTest extends WebformTestBase {
    *
    * @var array
    */
-  protected static $testWebforms = ['test_form_limit'];
+  protected static $testWebforms = ['test_form_limit', 'test_form_limit_wait'];
 
   /**
    * {@inheritdoc}
@@ -52,7 +52,7 @@ class WebformSettingsLimitsTest extends WebformTestBase {
 
     /**************************************************************************/
 
-    $this->drupalGet('webform/test_form_limit');
+    $this->drupalGet('/webform/test_form_limit');
 
     // Check webform available.
     $this->assertFieldByName('op', 'Submit');
@@ -63,11 +63,17 @@ class WebformSettingsLimitsTest extends WebformTestBase {
     $this->assertRaw('0 webform submission(s)');
     $this->assertRaw('4 webform limit (every minute)');
 
+    // Check submission limit tokens.
+    $this->assertRaw('limit:webform: 4');
+    $this->assertRaw('remaining:webform: 4');
+    $this->assertRaw('limit:user: 1');
+    $this->assertRaw('remaining:user: 1');
+
     $this->drupalLogin($own_submission_user);
 
     // Check that draft does not count toward limit.
     $this->postSubmission($webform_limit, [], t('Save Draft'));
-    $this->drupalGet('webform/test_form_limit');
+    $this->drupalGet('/webform/test_form_limit');
     $this->assertFieldByName('op', 'Submit');
     $this->assertRaw('A partially-completed form was found. Please complete the remaining portions.');
     $this->assertNoRaw('You are only allowed to have 1 submission for this webform.');
@@ -78,7 +84,7 @@ class WebformSettingsLimitsTest extends WebformTestBase {
 
     // Check limit reached and webform not available for authenticated user.
     $sid = $this->postSubmission($webform_limit);
-    $this->drupalGet('webform/test_form_limit');
+    $this->drupalGet('/webform/test_form_limit');
     $this->assertNoFieldByName('op', 'Submit');
     $this->assertRaw('You are only allowed to have 1 submission for this webform.');
 
@@ -100,6 +106,10 @@ class WebformSettingsLimitsTest extends WebformTestBase {
     $this->assertFieldByName('op', 'Save');
     $this->assertNoRaw('No more submissions are permitted.');
 
+    // Check submission limit tokens do count submission.
+    $this->assertRaw('remaining:webform: 2');
+    $this->assertRaw('remaining:user: 0');
+
     // Check submission limit blocks.
     $this->assertRaw('1 user submission(s)');
     $this->assertRaw('2 webform submission(s)');
@@ -112,7 +122,7 @@ class WebformSettingsLimitsTest extends WebformTestBase {
     $role->save();
 
     // Check webform is still available for anonymous users.
-    $this->drupalGet('webform/test_form_limit');
+    $this->drupalGet('/webform/test_form_limit');
     $this->assertFieldByName('op', 'Submit');
     $this->assertNoRaw('You are only allowed to have 1 submission for this webform.');
 
@@ -125,7 +135,7 @@ class WebformSettingsLimitsTest extends WebformTestBase {
     $this->assertRaw('3 webform submission(s)');
 
     // Check limit reached and webform not available for anonymous user.
-    $this->drupalGet('webform/test_form_limit');
+    $this->drupalGet('/webform/test_form_limit');
     $this->assertNoFieldByName('op', 'Submit');
     $this->assertRaw('You are only allowed to have 1 submission for this webform.');
 
@@ -141,7 +151,7 @@ class WebformSettingsLimitsTest extends WebformTestBase {
     $this->drupalLogout();
 
     // Check total limit.
-    $this->drupalGet('webform/test_form_limit');
+    $this->drupalGet('/webform/test_form_limit');
     $this->assertNoFieldByName('op', 'Submit');
     $this->assertRaw('Only 4 submissions are allowed.');
     $this->assertNoRaw('You are only allowed to have 1 submission for this webform.');
@@ -152,7 +162,7 @@ class WebformSettingsLimitsTest extends WebformTestBase {
 
     // Check admin can still post submissions.
     $this->drupalLogin($this->rootUser);
-    $this->drupalGet('webform/test_form_limit');
+    $this->drupalGet('/webform/test_form_limit');
     $this->assertFieldByName('op', 'Submit');
     $this->assertRaw('Only 4 submissions are allowed.');
     $this->assertRaw('Only submission administrators are allowed to access this webform and create new submissions.');
@@ -166,9 +176,20 @@ class WebformSettingsLimitsTest extends WebformTestBase {
 
     // Check submission limit blocks are removed because the submission
     // intervals have passed.
-    $this->drupalGet('webform/test_form_limit');
+    $this->drupalGet('/webform/test_form_limit');
     $this->assertRaw('0 user submission(s)');
     $this->assertRaw('0 webform submission(s)');
+
+    /**************************************************************************/
+    // Wait.
+    /**************************************************************************/
+
+    $webform_limit_wait = Webform::load('test_form_limit_wait');
+
+    $this->postSubmission($webform_limit_wait);
+
+    $this->drupalGet('/webform/test_form_limit_wait');
+    $this->assertPattern('/webform_submission:interval:user:wait =&gt; \d+ seconds/');
   }
 
 }

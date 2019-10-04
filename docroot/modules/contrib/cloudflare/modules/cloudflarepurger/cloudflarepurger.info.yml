@@ -5,11 +5,11 @@ description: CloudFlare CDN integration.
 package: Purge - reverse proxies & CDNs
 configure: cloudflare.admin_settings_form
 dependencies:
-  - cloudflare
-  - purge
+  - cloudflare:cloudflare
+  - purge:purge
 
-# Information added by Drupal.org packaging script on 2016-11-01
-version: '8.x-1.0-alpha7'
+# Information added by Drupal.org packaging script on 2019-03-15
+version: '8.x-1.0-alpha11'
 core: '8.x'
 project: 'cloudflare'
-datestamp: 1477961354
+datestamp: 1552652605

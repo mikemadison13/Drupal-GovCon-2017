@@ -1,10 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains AcsfConfigIncompleteException.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * AcsfConfigIncompleteException.
+ */
 class AcsfConfigIncompleteException extends \Exception {}

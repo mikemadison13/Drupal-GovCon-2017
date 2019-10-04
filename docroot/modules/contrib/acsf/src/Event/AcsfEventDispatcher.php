@@ -1,16 +1,14 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfEventDispatcher.
- *
- * This class defines the base event dispatcher. This will take a specified list
- * of handlers and execute them serially. Any handler has the option to
- * interrupt the execution of the event.
- */
-
 namespace Drupal\acsf\Event;
 
+/**
+ * AcsfEventDispatcher.
+ *
+ * This class defines the base event dispatcher. This will take a specified
+ * list of handlers and execute them serially. Any handler has the option to
+ * interrupt the execution of the event.
+ */
 class AcsfEventDispatcher {
 
   /**

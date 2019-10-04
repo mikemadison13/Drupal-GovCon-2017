@@ -9,52 +9,52 @@
  * Implements hook_drush_command().
  */
 function acsf_variables_drush_command() {
-  return array(
-    'acsf-vget' => array(
+  return [
+    'acsf-vget' => [
       'description' => dt('Retrieves a named ACSF variable.'),
-      'arguments' => array(
+      'arguments' => [
         'name' => dt('The name of the variable to retrieve.'),
-      ),
-      'options' => array(
-        'format' => array(
+      ],
+      'options' => [
+        'format' => [
           'description' => dt('Format to output the object. Use "var_export" for var_export (default), and "json" for JSON.'),
           'example-value' => 'json',
-        ),
+        ],
         'exact' => dt('Only retrieve the exact variable name specified.'),
-      ),
-    ),
-    'acsf-vset' => array(
+      ],
+    ],
+    'acsf-vset' => [
       'description' => dt('Sets a named ACSF variable with an optional group.'),
-      'arguments' => array(
+      'arguments' => [
         'name' => dt('The name of the variable to set.'),
         'value' => dt('The value of the variable to set.'),
-      ),
-      'options' => array(
+      ],
+      'options' => [
         'group' => dt('An optional group name for the variable.'),
-      ),
-    ),
-    'acsf-vget-group' => array(
+      ],
+    ],
+    'acsf-vget-group' => [
       'description' => dt('Retrieves a group of variables.'),
-      'arguments' => array(
+      'arguments' => [
         'group' => dt('The group name of the variable to retrieve.'),
-      ),
-      'options' => array(
-        'format' => array(
+      ],
+      'options' => [
+        'format' => [
           'description' => dt('Format to output the object. Use "var_export" for var_export (default), and "json" for JSON.'),
           'example-value' => 'json',
-        ),
-      ),
-    ),
-    'acsf-vdel' => array(
+        ],
+      ],
+    ],
+    'acsf-vdel' => [
       'description' => dt('Deletes a named variable.'),
-      'arguments' => array(
+      'arguments' => [
         'name' => dt('The name of the variable to delete.'),
-      ),
-    ),
-    'acsf-info' => array(
+      ],
+    ],
+    'acsf-info' => [
       'description' => dt('Retrieves info about a site.'),
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -87,16 +87,16 @@ function drush_acsf_variables_acsf_vget($name) {
         $value = drush_format($variable, NULL, $format);
       }
       else {
-        $value = dt('@name: !value', array(
+        $value = dt('@name: !value', [
           '@name' => $variable_name,
           '!value' => drush_format($variable, NULL, $format),
-        ));
+        ]);
       }
       drush_print($value);
     }
   }
   else {
-    return drush_set_error(dt('@name not found.', array('@name' => $name)));
+    return drush_set_error(dt('@name not found.', ['@name' => $name]));
   }
 }
 
@@ -116,7 +116,7 @@ function drush_acsf_variables_acsf_vset($name, $value) {
   }
 
   if (\Drupal::service('acsf.variable_storage')->set($name, $value, drush_get_option('group'))) {
-    drush_print(dt('@name was set to !value', array('@name' => $name, '!value' => $value)));
+    drush_print(dt('@name was set to !value', ['@name' => $name, '!value' => $value]));
   }
   else {
     return drush_set_error(dt('The @name variable could not be set.'));
@@ -142,15 +142,15 @@ function drush_acsf_variables_acsf_vget_group($group) {
       $value = drush_format($data, NULL, $format);
     }
     else {
-      $value = dt('@group: !value', array(
+      $value = dt('@group: !value', [
         '@group' => $group,
         '!value' => drush_format($data, NULL, $format),
-      ));
+      ]);
     }
     drush_print($value);
   }
   else {
-    return drush_set_error(dt('@group group not found.', array('@group' => $group)));
+    return drush_set_error(dt('@group group not found.', ['@group' => $group]));
   }
 }
 
@@ -169,14 +169,14 @@ function drush_acsf_variables_acsf_vdel($name) {
   $storage = \Drupal::service('acsf.variable_storage');
   if ($variable = $storage->get($name)) {
     if ($storage->delete($name)) {
-      drush_print(dt('@name was deleted.', array('@name' => $name)));
+      drush_print(dt('@name was deleted.', ['@name' => $name]));
     }
     else {
-      return drush_set_error(dt('Unable to delete the @name variable.', array('@name' => $name)));
+      return drush_set_error(dt('Unable to delete the @name variable.', ['@name' => $name]));
     }
   }
   else {
-    return drush_set_error(dt('@name not found.', array('@name' => $name)));
+    return drush_set_error(dt('@name not found.', ['@name' => $name]));
   }
 }
 

@@ -26,6 +26,13 @@ use Drupal\webform\WebformSubmissionInterface;
  * @ContentEntityType(
  *   id = "webform_submission",
  *   label = @Translation("Webform submission"),
+ *   label_collection = @Translation("Submissions"),
+ *   label_singular = @Translation("submission"),
+ *   label_plural = @Translation("submissions"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count submission",
+ *     plural = "@count submissions",
+ *   ),
  *   bundle_label = @Translation("Webform"),
  *   handlers = {
  *     "storage" = "Drupal\webform\WebformSubmissionStorage",
@@ -226,7 +233,10 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
   public function label() {
     $submission_label = $this->getWebform()->getSetting('submission_label')
       ?: \Drupal::config('webform.settings')->get('settings.default_submission_label');
-    return PlainTextOutput::renderFromHtml(\Drupal::service('webform.token_manager')->replace($submission_label, $this));
+
+    /** @var \Drupal\webform\WebformTokenManagerInterface $token_manager */
+    $token_manager = \Drupal::service('webform.token_manager');
+    return PlainTextOutput::renderFromHtml($token_manager->replaceNoRenderContext($submission_label, $this));
   }
 
   /**
@@ -384,6 +394,20 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
    */
   public function setData(array $data) {
     $this->data = $data;
+
+    // Set computed element values in to submission data.
+    $webform = $this->getWebform();
+    if ($webform->hasComputed()) {
+      /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
+      $element_manager = \Drupal::service('plugin.manager.webform.element');
+      $computed_elements = $webform->getElementsComputed();
+      foreach ($computed_elements as $computed_element_name) {
+        $computed_element = $webform->getElement($computed_element_name);
+        /** @var \Drupal\webform\Plugin\WebformElementComputedInterface $element_plugin */
+        $element_plugin = $element_manager->getElementInstance($computed_element);
+        $this->data[$computed_element_name] = $element_plugin->computeValue($computed_element, $this);
+      }
+    }
     return $this;
   }
 
@@ -587,12 +611,12 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
       return self::STATE_CONVERTED;
     }
     elseif ($this->isDraft()) {
-      return self::STATE_DRAFT;
+      return ($this->created->value === $this->changed->value) ? self::STATE_DRAFT_CREATED : self::STATE_DRAFT_UPDATED;
     }
     elseif ($this->isLocked()) {
       return self::STATE_LOCKED;
     }
-    elseif ($this->completed->value == $this->changed->value) {
+    elseif ($this->completed->value === $this->changed->value) {
       return self::STATE_COMPLETED;
     }
     else {
@@ -719,20 +743,31 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
    * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage) {
+    // Because the original data is not stored in the persistent entity storage
+    // cache we have to reset it for the original webform submission entity.
+    // @see \Drupal\Core\Entity\EntityStorageBase::doPreSave
+    // @see \Drupal\Core\Entity\ContentEntityStorageBase::getFromPersistentCache
+    if (isset($this->original)) {
+      $this->original->setData($this->originalData);
+      $this->original->setOriginalData($this->original->getData());
+    }
+
+    $request_time = \Drupal::time()->getRequestTime();
+
     // Set created.
     if (!$this->created->value) {
-      $this->created->value = REQUEST_TIME;
+      $this->created->value = $request_time;
     }
 
     // Set changed.
-    $this->changed->value = REQUEST_TIME;
+    $this->changed->value = $request_time;
 
     // Set completed.
     if ($this->isDraft()) {
       $this->completed->value = NULL;
     }
     elseif (!$this->isCompleted()) {
-      $this->completed->value = REQUEST_TIME;
+      $this->completed->value = $request_time;
     }
 
     parent::preSave($storage);

@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acsf_theme",
+    "type": "drupal-module",
+    "description": "Handles VCS-based themes on Acquia Cloud Site Factory.",
+    "license": "GPL-2.0-or-later"
+}

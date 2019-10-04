@@ -41,7 +41,7 @@ class WebformSettingsPreviewTest extends WebformTestBase {
     $webform_preview = Webform::load('test_form_preview');
 
     // Check webform with optional preview.
-    $this->drupalGet('webform/test_form_preview');
+    $this->drupalGet('/webform/test_form_preview');
     $this->assertFieldByName('op', 'Submit');
     $this->assertFieldByName('op', 'Preview');
 
@@ -57,7 +57,9 @@ class WebformSettingsPreviewTest extends WebformTestBase {
     $this->assertFieldByName('op', 'Submit');
     $this->assertFieldByName('op', '< Previous');
 
-    $this->assertRaw('<div class="webform-preview js-form-wrapper form-wrapper" data-drupal-selector="edit-preview" id="edit-preview"><fieldset class="format-attributes-class webform-container webform-container-type-fieldset js-form-item form-item js-form-wrapper form-wrapper" id="test_form_preview--fieldset">');
+    $this->assertRaw('<div class="webform-preview js-form-wrapper form-wrapper" data-drupal-selector="edit-preview" id="edit-preview">');
+    $this->assertRaw('<div data-drupal-selector="edit-submission" class="webform-submission-data webform-submission-data--webform-test-form-preview webform-submission-data--view-mode-preview">');
+    $this->assertRaw('<fieldset class="format-attributes-class webform-container webform-container-type-fieldset js-form-item form-item js-form-wrapper form-wrapper" id="test_form_preview--fieldset">');
     $this->assertRaw('<div class="format-attributes-class webform-element webform-element-type-textfield js-form-item form-item js-form-type-item form-type-item js-form-item-name form-item-name" id="test_form_preview--name">');
     $this->assertRaw('<label>Name</label>' . PHP_EOL . '        test');
 
@@ -132,7 +134,7 @@ class WebformSettingsPreviewTest extends WebformTestBase {
     $webform_preview->save();
 
     // Check special characters in form page title.
-    $this->drupalGet('webform/test_form_preview');
+    $this->drupalGet('/webform/test_form_preview');
     $this->assertRaw('<title>This has special characters. \'"& | Drupal</title>');
     $this->assertRaw('<h1 class="page-title">This has special characters. &#039;&lt;&gt;&quot;&amp;</h1>');
 
@@ -170,7 +172,7 @@ class WebformSettingsPreviewTest extends WebformTestBase {
     $this->assertNoRaw('<label>Email</label>');
     $this->assertRaw('<div class="preview-custom webform-preview js-form-wrapper form-wrapper" data-drupal-selector="edit-preview" id="edit-preview">');
 
-    $this->drupalGet('webform/test_form_preview');
+    $this->drupalGet('/webform/test_form_preview');
     $this->assertNoFieldByName('op', 'Submit');
     $this->assertFieldByName('op', '{Preview}');
 

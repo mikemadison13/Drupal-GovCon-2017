@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfDuplicationScrubUserHandler.
- */
-
 namespace Drupal\acsf\Event;
 
 /**
@@ -30,7 +25,7 @@ class AcsfDuplicationScrubUserHandler extends AcsfDuplicationScrubEntityHandler 
     $options = $this->event->context['scrub_options'];
     if ($options['retain_users']) {
       // We still want to log that we were here.
-      drush_print(dt('Entered @class', array('@class' => get_class($this))));
+      drush_print(dt('Entered @class', ['@class' => get_class($this)]));
       return;
     }
 
@@ -81,9 +76,9 @@ class AcsfDuplicationScrubUserHandler extends AcsfDuplicationScrubEntityHandler 
    */
   protected function reassignFiles($uid) {
     \Drupal::database()->update('file_managed')
-      ->fields(array(
+      ->fields([
         'uid' => 0,
-      ))
+      ])
       ->condition('uid', $uid)
       ->execute();
   }

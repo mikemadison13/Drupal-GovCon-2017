@@ -2,14 +2,13 @@ name: ACSF Single Sign On
 type: module
 description: 'Manages SSO settings.'
 package: Acquia Cloud Site Factory
-# core: 8.x
+core: 8.x
 
 dependencies:
  - acsf
  - samlauth (>= 8.x-2.0-alpha1)
 
-# Information added by Drupal.org packaging script on 2018-05-16
-version: '8.x-1.48'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2019-10-02
+version: '8.x-1.62'
 project: 'acsf'
-datestamp: 1526468599
+datestamp: 1570013303

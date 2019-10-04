@@ -1,12 +1,10 @@
 <?php
 
-/**
- * @file
- * Creates a config object using our custom INI file.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * Creates a config object using our custom INI file.
+ */
 class AcsfConfigDefault extends AcsfConfig {
 
   /**

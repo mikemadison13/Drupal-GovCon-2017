@@ -6,17 +6,15 @@
  */
 
 use Drupal\content_moderation\Plugin\WorkflowType\ContentModerationInterface;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Serialization\Yaml;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\lightning_core\Element;
+use Drupal\lightning_core\OverrideHelper as Override;
 use Drupal\lightning_core\Routing\RouteSubscriber;
 use Drupal\lightning_workflow\Plugin\views\field\NodeBulkForm;
+use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeTypeInterface;
 use Drupal\views\Entity\View;
 use Drupal\views\ViewEntityInterface;
@@ -28,16 +26,41 @@ use Drupal\workflows\Entity\Workflow;
  */
 function lightning_workflow_node_type_insert(NodeTypeInterface $node_type) {
   // Don't do anything during a config sync.
-  if (\Drupal::isConfigSyncing()) {
+  if (Drupal::isConfigSyncing()) {
     return;
   }
 
   $workflow = $node_type->getThirdPartySetting('lightning_workflow', 'workflow');
-  if (empty($workflow)) {
-    return;
+  if ($workflow) {
+    _lightning_workflow_moderate_content_type($node_type, $workflow);
   }
 
-  $workflow = Workflow::load($workflow);
+  // If autosave_form is present, enable it for this content type by default.
+  if (Drupal::moduleHandler()->moduleExists('autosave_form') && $node_type->getThirdPartySetting('lightning_workflow', 'autosave', TRUE)) {
+    $id = $node_type->id();
+
+    Drupal::configFactory()
+      ->getEditable('autosave_form.settings')
+      ->set("allowed_content_entity_types.node.bundles.$id", $id)
+      ->save();
+  }
+}
+
+/**
+ * Adds a content type to a moderation workflow.
+ *
+ * @param \Drupal\node\NodeTypeInterface $node_type
+ *   The content type.
+ * @param string $workflow_id
+ *   The workflow ID. The workflow must exist and use a plugin that implements
+ *   \Drupal\content_moderation\Plugin\WorkflowType\ContentModerationInterface.
+ *
+ * @internal
+ *   This function may be changed or removed at any time without warning. It
+ *   should NOT be called by external code!
+ */
+function _lightning_workflow_moderate_content_type(NodeTypeInterface $node_type, $workflow_id) {
+  $workflow = Workflow::load($workflow_id);
   if (empty($workflow)) {
     return;
   }
@@ -164,12 +187,12 @@ function lightning_workflow_view_presave(ViewEntityInterface $view) {
  */
 function lightning_workflow_modules_installed(array $modules) {
   // Don't do anything during config sync.
-  if (\Drupal::isConfigSyncing()) {
+  if (Drupal::isConfigSyncing()) {
     return;
   }
 
   if (in_array('lightning_roles', $modules, TRUE)) {
-    \Drupal::service('lightning.content_roles')
+    Drupal::service('lightning.content_roles')
       ->grantPermissions('creator', [
         'use editorial transition create_new_draft',
         'use editorial transition review',
@@ -187,6 +210,22 @@ function lightning_workflow_modules_installed(array $modules) {
         'use moderation sidebar',
       ]);
   }
+  if (in_array('autosave_form', $modules, TRUE)) {
+    // Find all content types that would like to opt into autosave by default,
+    // either implicitly or explicitly. I'm not sure this can be done with a
+    // simple entity query, since it's not clear if one can specify a condition
+    // that a third-party setting is "not FALSE".
+    $node_types = array_filter(NodeType::loadMultiple(), function (NodeTypeInterface $node_type) {
+      return $node_type->getThirdPartySetting('lightning_workflow', 'autosave', TRUE);
+    });
+    $node_types = array_keys($node_types);
+
+    Drupal::configFactory()
+      ->getEditable('autosave_form.settings')
+      ->set('interval', 20000)
+      ->set('allowed_content_entity_types.node.bundles', array_combine($node_types, $node_types))
+      ->save();
+  }
 }
 
 /**
@@ -201,31 +240,28 @@ function lightning_workflow_views_data_alter(array &$data) {
 }
 
 /**
+ * Implements hook_entity_type_alter().
+ */
+function lightning_workflow_entity_type_alter(array &$entity_types) {
+  // If autosave_form is installed, all entity types should use our special
+  // autosave handler which disables autosave in the Layout Builder UI.
+  if (Drupal::moduleHandler()->moduleExists('autosave_form')) {
+    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+    foreach ($entity_types as $entity_type) {
+      // We cannot use the ::class form here, because it will go kaboom if
+      // autosave_form is not installed.
+      Override::entityHandler($entity_type, 'autosave_form', '\Drupal\lightning_workflow\AutosaveEntityFormHandler');
+    }
+  }
+}
+
+/**
  * Implements hook_views_plugins_field_alter().
  */
 function lightning_workflow_views_plugins_field_alter(array &$plugins) {
   if (isset($plugins['node_bulk_form'])) {
     $plugins['node_bulk_form']['class'] = NodeBulkForm::class;
   }
-}
-
-/**
- * Implements hook_entity_field_access().
- *
- * Tests that rely on promoting a node to the front page cannot access the
- * "Promote to front page" checkbox without the "administer nodes" permission.
- * That totally sucks, so this hook will allow access to the field if
- * lightning_dev is enabled.
- */
-function lightning_workflow_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
-  return (
-    Drupal::moduleHandler()->moduleExists('lightning_dev') &&
-    $field_definition->getTargetEntityTypeId() === 'node' &&
-    $field_definition->getName() === 'promote' &&
-    $items
-  )
-    ? $items->getEntity()->access($operation === 'edit' ? 'update' : $operation, $account, TRUE)
-    : AccessResult::neutral();
 }
 
 /**

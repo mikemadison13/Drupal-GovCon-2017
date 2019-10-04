@@ -1,6 +1,13 @@
 <?php
 
+/**
+ * UnitTestDummyHandlerIncompatible.
+ */
 class UnitTestDummyHandlerIncompatible extends stdClass {
-  public function handle() {}
-}
 
+  /**
+   * Dummy handler.
+   */
+  public function handle() {}
+
+}

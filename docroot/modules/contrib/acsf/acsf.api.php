@@ -11,9 +11,9 @@
  * See api.md.
  */
 function hook_acsf_registry() {
-  return array(
-    'events' => array(
-      array(
+  return [
+    'events' => [
+      [
         'weight' => -1,
         'type' => 'acsf_install',
         // The below can be just 'YourClassName' if your code does not
@@ -21,9 +21,9 @@ function hook_acsf_registry() {
         'class' => '\Drupal\your_module\YourClassName',
         // 'path' is necessary only if the location is non-standard:
         'path' => drupal_get_path('module', 'your_module') . '/classes',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**
@@ -56,7 +56,7 @@ function hook_acsf_staging_scrub_admin_roles_alter(array &$admin_roles) {
  *   An indexed array of integer user IDs to preserve.
  */
 function hook_acsf_staging_scrub_preserved_users_alter(array &$preserved_uids) {
-  if ($uids = \Drupal::config('mymodule')->get('preserved_uids', array())) {
+  if ($uids = \Drupal::config('mymodule')->get('preserved_uids', [])) {
     $preserved_uids = array_merge($preserved_uids, $uids);
   }
 }

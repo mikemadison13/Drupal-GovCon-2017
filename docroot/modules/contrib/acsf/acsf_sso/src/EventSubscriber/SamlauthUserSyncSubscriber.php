@@ -56,6 +56,7 @@ class SamlauthUserSyncSubscriber implements EventSubscriberInterface {
    * Performs actions to synchronize users with Factory data on login.
    *
    * @param \Drupal\samlauth\Event\SamlauthUserSyncEvent $event
+   *   The user sync event.
    */
   public function onUserSync(SamlauthUserSyncEvent $event) {
     $attributes = $event->getAttributes();
@@ -94,11 +95,11 @@ class SamlauthUserSyncSubscriber implements EventSubscriberInterface {
           $account->addRole($role_machine_name);
           $event->markAccountChanged();
 
-          drupal_set_message(t('Site Factory assigned the "@role_name" role to the account.', array('@role_name' => $role->label())));
-          $this->logger->notice('Site Factory assigned the "@role" role to the account.', array('@role' => $role_machine_name));
+          drupal_set_message(t('Site Factory assigned the "@role_name" role to the account.', ['@role_name' => $role->label()]));
+          $this->logger->notice('Site Factory assigned the "@role" role to the account.', ['@role' => $role_machine_name]);
         }
         elseif (!$role) {
-          drupal_set_message(t('Automatic role assignment failed because the website does not have a "@role_name" role.', array('@role_name' => $role_machine_name)), 'warning');
+          drupal_set_message(t('Automatic role assignment failed because the website does not have a "@role_name" role.', ['@role_name' => $role_machine_name]), 'warning');
         }
       }
     }

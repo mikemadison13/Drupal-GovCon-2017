@@ -388,7 +388,7 @@ function _captcha_get_posted_captcha_info(array $element, FormStateInterface $fo
     // we should be extra cautious and filter this data.
     $input = &$form_state->getUserInput();
     $posted_form_id = isset($input['form_id']) ?
-      preg_replace("/[^a-z0-9_]/", "", (string) $input['form_id'])
+      preg_replace("/[^a-z0-9_-]/", "", (string) $input['form_id'])
       : NULL;
     $posted_captcha_sid = isset($input['captcha_sid']) ?
       (int) $input['captcha_sid']

@@ -6,12 +6,14 @@
  */
 
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\EntityDescriptionInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\field\FieldConfigInterface;
 use Drupal\file\Entity\File;
@@ -203,6 +205,24 @@ function lightning_core_form_user_form_alter(array &$form) {
       if ($role instanceof EntityDescriptionInterface) {
         $form['account']['roles']['#legend'][$id] = $role->getDescription();
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function lightning_core_form_alter(array &$form, FormStateInterface $form_state) {
+  $form_object = $form_state->getFormObject();
+
+  if ($form_object instanceof ContentEntityFormInterface && isset($form['revision_information']) && $form['revision_information']['#access']) {
+    // Load the form mode and show the revision information if the form mode
+    // allows the revision UI to be shown.
+    $form_display = $form_object->getFormDisplay($form_state);
+    $form_mode = $form_display->getTargetEntityTypeId() . '.' . $form_display->getMode();
+    $form_mode = EntityFormMode::load($form_mode);
+    if ($form_mode) {
+      $form['revision_information']['#access'] = $form_mode->getThirdPartySetting('lightning_core', 'revision_ui', TRUE);
     }
   }
 }

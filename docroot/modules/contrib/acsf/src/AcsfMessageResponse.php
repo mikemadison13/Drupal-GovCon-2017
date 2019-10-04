@@ -1,21 +1,31 @@
 <?php
 
-/**
- * @file
- * This simple interface defines the way that responses are constructed.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * AcsfMessageResponse.
+ */
 abstract class AcsfMessageResponse {
 
-  // The endpoint on the remote service.
+  /**
+   * The endpoint on the remote service.
+   *
+   * @var string
+   */
   public $endpoint;
 
-  // The response code from the remote call.
+  /**
+   * The response code from the remote call.
+   *
+   * @var mixed
+   */
   public $code;
 
-  // The body of the response.
+  /**
+   * The body of the response.
+   *
+   * @var mixed
+   */
   public $body;
 
   /**
@@ -44,4 +54,5 @@ abstract class AcsfMessageResponse {
    * Client code needs to analyze the response and determine failure.
    */
   abstract public function failed();
+
 }

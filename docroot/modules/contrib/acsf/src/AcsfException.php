@@ -1,10 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains AcsfException.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * AcsfException.
+ */
 class AcsfException extends \Exception {}

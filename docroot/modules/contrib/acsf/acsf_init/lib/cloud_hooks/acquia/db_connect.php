@@ -99,13 +99,16 @@ function url_to_connection_info($url) {
  *   If query was successful, retrieve all the rows into an array,
  *   otherwise return FALSE.
  */
-function execute_query($con, $query) {
+function execute_query(mysqli $con, $query) {
+  // Acquia rules disallow mysqli_query() with dynamic arguments.
+  // phpcs:disable
   $result = mysqli_query($con, $query);
+  // phpcs:enable
   // If query failed, return FALSE.
   if ($result === FALSE) {
     return FALSE;
   }
-  $rows = array();
+  $rows = [];
   while ($row = mysqli_fetch_assoc($result)) {
     $rows[] = $row;
   }

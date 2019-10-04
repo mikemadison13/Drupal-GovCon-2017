@@ -38,17 +38,19 @@ class WebformLibrariesTest extends WebformTestBase {
 
     $this->drupalLogin($this->rootUser);
 
-    // Enable jquery.chosen and jquery.icheck.
+    // Enable choices, jquery.chosen, and jquery.icheck.
     $edit = [
+      'excluded_libraries[choices]' => TRUE,
       'excluded_libraries[jquery.chosen]' => TRUE,
       'excluded_libraries[jquery.icheck]' => TRUE,
     ];
     $this->drupalPostForm('admin/structure/webform/config/libraries', $edit, t('Save configuration'));
 
     // Check optional libraries are included.
-    $this->drupalGet('webform/test_libraries_optional');
+    $this->drupalGet('/webform/test_libraries_optional');
     $this->assertRaw('/select2.min.js');
-    $this->assertRaw('/chosen.jquery.js');
+    $this->assertRaw('/choices.min.js');
+    $this->assertRaw('/chosen.jquery.min.js');
     $this->assertRaw('/textcounter.min.js');
     $this->assertRaw('/intlTelInput.min.js');
     $this->assertRaw('/jquery.inputmask.bundle.min.js');
@@ -68,6 +70,7 @@ class WebformLibrariesTest extends WebformTestBase {
       'excluded_libraries[ckeditor.image]' => FALSE,
       'excluded_libraries[ckeditor.link]' => FALSE,
       'excluded_libraries[codemirror]' => FALSE,
+      'excluded_libraries[choices]' => FALSE,
       'excluded_libraries[jquery.icheck]' => FALSE,
       'excluded_libraries[jquery.inputmask]' => FALSE,
       'excluded_libraries[jquery.intl-tel-input]' => FALSE,
@@ -79,9 +82,10 @@ class WebformLibrariesTest extends WebformTestBase {
     $this->drupalPostForm('admin/structure/webform/config/libraries', $edit, t('Save configuration'));
 
     // Check optional libraries are excluded.
-    $this->drupalGet('webform/test_libraries_optional');
+    $this->drupalGet('/webform/test_libraries_optional');
     $this->assertNoRaw('/select2.min.js');
-    $this->assertNoRaw('/chosen.jquery.js');
+    $this->assertNoRaw('/choices.min.js');
+    $this->assertNoRaw('/chosen.jquery.min.js');
     $this->assertNoRaw('/textcounter.min.js');
     $this->assertNoRaw('/intlTelInput.min.js');
     $this->assertNoRaw('/jquery.inputmask.bundle.min.js');
@@ -96,7 +100,7 @@ class WebformLibrariesTest extends WebformTestBase {
     }
 
     // Check that status report excludes optional libraries.
-    $this->drupalGet('admin/reports/status');
+    $this->drupalGet('/admin/reports/status');
     $this->assertNoText('CKEditor: Fakeobjects library ');
     $this->assertNoText('CKEditor: Image library ');
     $this->assertNoText('CKEditor: Link library ');
@@ -104,6 +108,7 @@ class WebformLibrariesTest extends WebformTestBase {
     $this->assertNoText('jQuery: iCheck library ');
     $this->assertNoText('jQuery: Input Mask library ');
     $this->assertNoText('jQuery: Select2 library ');
+    $this->assertNoText('jQuery: Choices library ');
     $this->assertNoText('jQuery: Chosen library ');
     $this->assertNoText('jQuery: Timepicker library ');
     $this->assertNoText('jQuery: Text Counter library ');
@@ -122,7 +127,7 @@ class WebformLibrariesTest extends WebformTestBase {
     $this->drupalPostForm('admin/structure/webform/config/elements', $edit, t('Save configuration'));
 
     // Check that status report excludes libraries required by element types.
-    $this->drupalGet('admin/reports/status');
+    $this->drupalGet('/admin/reports/status');
     $this->assertNoText('jQuery: Geocoding and Places Autocomplete Plugin library');
     $this->assertNoText('jQuery: Image Picker library');
     $this->assertNoText('jQuery: RateIt library');
@@ -130,13 +135,13 @@ class WebformLibrariesTest extends WebformTestBase {
     $this->assertNoText('Signature Pad library');
     */
 
-    // Check that chosen and select2 using webform's CDN URLs.
+    // Check that choices, chosen, and select2 using webform's CDN URLs.
     $edit = [
       'excluded_libraries[jquery.select2]' => TRUE,
       'excluded_libraries[jquery.chosen]' => TRUE,
     ];
     $this->drupalPostForm('admin/structure/webform/config/libraries', $edit, t('Save configuration'));
-    $this->drupalGet('webform/test_libraries_optional');
+    $this->drupalGet('/webform/test_libraries_optional');
     $this->assertRaw('https://cdnjs.cloudflare.com/ajax/libs/chosen');
     $this->assertRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
 
@@ -145,7 +150,7 @@ class WebformLibrariesTest extends WebformTestBase {
     drupal_flush_all_caches();
 
     // Check that chosen and select2 using module's path and not CDN.
-    $this->drupalGet('webform/test_libraries_optional');
+    $this->drupalGet('/webform/test_libraries_optional');
     $this->assertNoRaw('https://cdnjs.cloudflare.com/ajax/libs/chosen');
     $this->assertNoRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
     $this->assertRaw('/modules/contrib/chosen/css/chosen-drupal.css');

@@ -5,11 +5,22 @@
  * Provides PHPUnit tests for AcsfConfig.
  */
 
-class AcsfConfigTest extends PHPUnit_Framework_TestCase {
+use Drupal\acsf\AcsfConfigIncompleteException;
+use PHPUnit\Framework\Error\Notice;
+use PHPUnit\Framework\TestCase;
 
+/**
+ * Provides PHPUnit tests for AcsfConfig.
+ */
+class AcsfConfigTest extends TestCase {
+
+  /**
+   * Setup.
+   */
   public function setUp() {
-    $files = array(
-      __DIR__ . '/../vendor/autoload.php',
+    // The files in this directory can't be autoloaded as long as they don't
+    // match their classes' namespaces.
+    $files = [
       __DIR__ . '/AcsfConfigUnitTest.inc',
       __DIR__ . '/AcsfConfigUnitTestMissingPassword.inc',
       __DIR__ . '/AcsfConfigUnitTestMissingUrl.inc',
@@ -21,42 +32,42 @@ class AcsfConfigTest extends PHPUnit_Framework_TestCase {
       __DIR__ . '/AcsfMessageUnitTestMissingEndpoint.inc',
       __DIR__ . '/AcsfMessageUnitTestMissingResponse.inc',
       __DIR__ . '/AcsfMessageResponseUnitTest.inc',
-    );
+    ];
     foreach ($files as $file) {
+      // Acquia rules disallow 'include/require' with dynamic arguments.
+      // phpcs:disable
       require_once $file;
+      // phpcs:enable
     }
   }
 
   /**
    * Tests that a PHP error is thrown when no constructor params are provided.
-   *
-   * @expectedException PHPUnit_Framework_Error_Notice
-   * @expectedExceptionMessage AH_SITE_GROUP
    */
   public function testAcsfConfigMissingParameters() {
     // Intentionally avoid providing the required constructor parameters to
     // check that the environment variables are used.
+    $this->expectException(Notice::class);
+    $this->expectExceptionMessage('AH_SITE_GROUP');
     new AcsfConfigUnitTest();
   }
 
   /**
    * Tests that a PHP error is thrown when not enough params are provided.
-   *
-   * @expectedException PHPUnit_Framework_Error_Notice
-   * @expectedExceptionMessage AH_SITE_ENVIRONMENT
    */
   public function testAcsfConfigMissingEnvironment() {
+    $this->expectException(Notice::class);
+    $this->expectExceptionMessage('AH_SITE_ENVIRONMENT');
     new AcsfConfigUnitTest('ah_site_group');
   }
 
   /**
    * Tests that a PHP error is thrown when not enough params are provided.
-   *
-   * @expectedException PHPUnit_Framework_Error_Notice
-   * @expectedExceptionMessage AH_SITE_GROUP
    */
   public function testAcsfConfigMissingSiteGroup() {
-    new AcsfConfigUnitTest(null, 'ah_site_environment');
+    $this->expectException(Notice::class);
+    $this->expectExceptionMessage('AH_SITE_GROUP');
+    new AcsfConfigUnitTest(NULL, 'ah_site_environment');
   }
 
   /**
@@ -69,7 +80,7 @@ class AcsfConfigTest extends PHPUnit_Framework_TestCase {
       // triggered for missing environment variables.
       $config = new AcsfConfigUnitTest('ah_site_group', 'ah_site_environment');
     }
-    catch (PHPUnit_Framework_Error_Notice $e) {
+    catch (Notice $e) {
       $no_error = FALSE;
     }
     $this->assertTrue($no_error);
@@ -77,28 +88,25 @@ class AcsfConfigTest extends PHPUnit_Framework_TestCase {
 
   /**
    * Tests that a missing password triggers an exception.
-   *
-   * @expectedException \Drupal\acsf\AcsfConfigIncompleteException
    */
   public function testAcsfConfigMissingPassword() {
+    $this->expectException(AcsfConfigIncompleteException::class);
     new AcsfConfigUnitTestMissingPassword('unit_test_site', 'unit_test_env');
   }
 
   /**
    * Tests that a missing username triggers an exception.
-   *
-   * @expectedException \Drupal\acsf\AcsfConfigIncompleteException
    */
   public function testAcsfConfigMissingUsername() {
+    $this->expectException(AcsfConfigIncompleteException::class);
     new AcsfConfigUnitTestMissingUsername('unit_test_site', 'unit_test_env');
   }
 
   /**
    * Tests that a missing URL triggers an exception.
-   *
-   * @expectedException \Drupal\acsf\AcsfConfigIncompleteException
    */
   public function testAcsfConfigMissingUrl() {
+    $this->expectException(AcsfConfigIncompleteException::class);
     new AcsfConfigUnitTestMissingUrl('unit_test_site', 'unit_test_env');
   }
 

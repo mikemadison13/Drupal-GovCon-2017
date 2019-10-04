@@ -2,8 +2,8 @@
 
 namespace Drupal\lightning_core;
 
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\Entity\EntityTypeManagerInterface;

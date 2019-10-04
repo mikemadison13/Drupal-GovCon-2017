@@ -2,6 +2,7 @@
 /.travis.yml export-ignore
 /behat.yml export-ignore
 /drush.yml export-ignore
+/logs export-ignore
 /phpunit.xml export-ignore
 /settings.local.php export-ignore
 /*.sh export-ignore

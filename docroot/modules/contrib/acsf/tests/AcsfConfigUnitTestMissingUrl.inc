@@ -1,8 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+use Drupal\Acsf\AcsfConfig;
 
-class AcsfConfigUnitTestMissingUrl extends \Drupal\Acsf\AcsfConfig {
+/**
+ * AcsfConfigUnitTestMissingUrl.
+ */
+class AcsfConfigUnitTestMissingUrl extends AcsfConfig {
 
   /**
    * Implements AcsfConfig::loadConfig().
@@ -13,4 +16,3 @@ class AcsfConfigUnitTestMissingUrl extends \Drupal\Acsf\AcsfConfig {
   }
 
 }
-

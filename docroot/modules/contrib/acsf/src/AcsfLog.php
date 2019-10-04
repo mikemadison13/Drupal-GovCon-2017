@@ -1,13 +1,12 @@
 <?php
 
+namespace Drupal\acsf;
+
 /**
- * Contains AcsfLog.
+ * ACSF Log.
  *
  * Sends log messages to the Site Factory via REST API.
  */
-
-namespace Drupal\acsf;
-
 class AcsfLog {
 
   /**
@@ -41,13 +40,13 @@ class AcsfLog {
       $nid = $site->site_id;
     }
 
-    $record = array(
+    $record = [
       'type' => $type,
       'message' => $message,
       'level' => $level ?: LOG_NOTICE,
       'timestamp' => $timestamp,
       'nid' => $nid,
-    );
+    ];
 
     try {
       $message = new AcsfMessageRest('POST', 'site-api/v1/sf-log', $record);

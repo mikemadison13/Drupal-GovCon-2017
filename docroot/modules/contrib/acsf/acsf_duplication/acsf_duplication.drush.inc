@@ -5,21 +5,24 @@
  * Provides drush commands necessary for site duplication.
  */
 
+use Drupal\acsf\Event\AcsfDuplicationScrubCommentHandler;
+use Drupal\acsf\Event\AcsfDuplicationScrubNodeHandler;
+use Drupal\acsf\Event\AcsfDuplicationScrubUserHandler;
 use Drupal\acsf\Event\AcsfEvent;
 
 /**
  * Implements hook_drush_command().
  */
 function acsf_duplication_drush_command() {
-  $items = array();
+  $items = [];
 
-  $items['acsf-duplication-scrub-batch'] = array(
+  $items['acsf-duplication-scrub-batch'] = [
     'description' => dt('Runs one iteration of the batch scrubbing process on the duplicated site.'),
-    'arguments' => array(
+    'arguments' => [
       'site_name' => dt('The new name of the duplicated site.'),
       'standard_domain' => dt('The standard domain of the duplicated site.'),
-    ),
-    'options' => array(
+    ],
+    'options' => [
       'exact-copy' => dt('Indicates that the duplicated site is intended to be an exact copy of the source site (i.e. retain all content, users, and required configuration).'),
       'avoid-oom' => dt('The command should run just a single iteration of the batch process (the default is to loop until it runs out of memory). This is useful to keep the memory footprint low but you are expected to handle the looping externally.'),
       'batch' => dt('The number of items to process each iteration (defaults to 1000).'),
@@ -28,17 +31,17 @@ function acsf_duplication_drush_command() {
       'batch-user' => dt('The number of users to delete each iteration (defaults to --batch).'),
       'retain-content' => dt('Retain nodes and comments (defaults to --exact-copy).'),
       'retain-users' => dt('Retain users (defaults to --exact-copy).'),
-    ),
-  );
-  $items['acsf-duplication-scrub-progress'] = array(
+    ],
+  ];
+  $items['acsf-duplication-scrub-progress'] = [
     'description' => dt('Returns status information about the progress of the batch scrubbing process.'),
-    'options' => array(
-      'format' => array(
+    'options' => [
+      'format' => [
         'description' => dt('Format to output the object. Use "var_export" for var_export (default), "print-r" for print_r and "json" for JSON.'),
         'example-value' => 'json',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 
   return $items;
 }
@@ -73,13 +76,13 @@ function drush_acsf_duplication_scrub_batch($site_name, $standard_domain) {
     return drush_set_error(dt('The ACSF module must be enabled.'));
   }
 
-  $context = array(
+  $context = [
     'site_name' => $site_name,
     'standard_domain' => $standard_domain,
-    'scrub_options' => array(
+    'scrub_options' => [
       'avoid_oom' => drush_get_option('avoid-oom'),
-    ),
-  );
+    ],
+  ];
   \Drupal::moduleHandler()->alter('acsf_duplication_scrub_context', $context);
   ksort($context['scrub_options']);
 
@@ -109,13 +112,12 @@ function drush_acsf_duplication_scrub_progress() {
   // depending on whether we pass in a proper event/context; if it does, we'll
   // return bogus results.)
   $empty_event = AcsfEvent::create('site_duplication_scrub');
-  $data = array();
-  // PHP5.3 compatible syntax for now:
-  $handler = new \Drupal\acsf\Event\AcsfDuplicationScrubCommentHandler($empty_event);
+  $data = [];
+  $handler = new AcsfDuplicationScrubCommentHandler($empty_event);
   $data['comment_count'] = $handler->countRemaining();
-  $handler = new \Drupal\acsf\Event\AcsfDuplicationScrubNodeHandler($empty_event);
+  $handler = new AcsfDuplicationScrubNodeHandler($empty_event);
   $data['node_count'] = $handler->countRemaining();
-  $handler = new \Drupal\acsf\Event\AcsfDuplicationScrubUserHandler($empty_event);
+  $handler = new AcsfDuplicationScrubUserHandler($empty_event);
   $data['user_count'] = $handler->countRemaining();
 
   \Drupal::moduleHandler()->alter('acsf_duplication_scrub_remaining_counts', $data);

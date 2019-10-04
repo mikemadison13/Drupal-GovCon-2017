@@ -6,16 +6,22 @@
     "require": {
         "cweagans/composer-patches": "^1.6.4",
         "drupal-composer/drupal-scaffold": "^2.0.0",
+        "drupal/autosave_form": "^1.0",
+        "drupal/conflict": "2.0-alpha1",
         "drupal/diff": "^1.0",
         "drupal/lightning_core": "^3.11 || ^4.1 || 3.x-dev || 4.x-dev",
         "drupal/moderation_dashboard": "^1.0",
-        "drupal/moderation_sidebar": "^1.0",
+        "drupal/moderation_sidebar": "^1.2",
         "oomphinc/composer-installers-extender": "^1.1"
     },
     "require-dev": {
+        "drupal/drupal-extension": "^3.4",
         "drupal/inline_entity_form": "^1.0",
         "drupal/schema_metatag": "^1.3",
-        "webmozart/assert": "^1.3"
+        "drush/drush": "^9.7",
+        "webflo/drupal-core-require-dev": "*",
+        "webmozart/assert": "^1.3",
+        "weitzman/drupal-test-traits": "^1.2"
     },
     "config": {
         "preferred-install": {
@@ -81,13 +87,6 @@
             "@drupal-scaffold"
         ],
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
-        "install-drupal": [
-            "rm -r -f ./docroot/sites/default/settings.php",
-            "drush site:install minimal --yes --config ./drush.yml",
-            "chmod +w ./docroot/sites/default ./docroot/sites/default/settings.php",
-            "drush pm:enable lightning_workflow lightning_scheduler --yes",
-            "cp -f phpunit.xml ./docroot/core"
-        ],
         "nuke": "rm -r -f docroot vendor",
         "pull": "cp -R -f ./docroot/modules/contrib/lightning_workflow/* .",
         "push": [

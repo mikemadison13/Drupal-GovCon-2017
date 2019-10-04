@@ -1,12 +1,10 @@
 <?php
 
-/**
- * @file
- * Creates a config object using our REST API keys.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * Creates a config object using our REST API keys.
+ */
 class AcsfConfigRest extends AcsfConfigDefault {
 
   /**

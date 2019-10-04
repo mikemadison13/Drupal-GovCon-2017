@@ -1,12 +1,10 @@
 <?php
 
-/**
- * @file
- * Defines a response from AcsfMessageRest.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * Defines a response from AcsfMessageRest.
+ */
 class AcsfMessageResponseRest extends AcsfMessageResponse {
 
   /**
@@ -18,4 +16,5 @@ class AcsfMessageResponseRest extends AcsfMessageResponse {
     }
     return FALSE;
   }
+
 }

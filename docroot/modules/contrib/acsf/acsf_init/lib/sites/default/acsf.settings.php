@@ -4,8 +4,9 @@
  * @file
  * ACSF business logic to catch mistyped domains arriving to the infrastructure.
  *
- * This file is not intended to be modified. Any modification may result in the
- * release process failing.
+ * This file must not be modified. For a customized response / "site not found"
+ * page, change sites/default/settings.php instead (above the line that says
+ * "===== Added by acsf-init") and copy the below logic in there if necessary.
  */
 
 // Only execute the ACSF specific code when it is run on an ACSF infrastructure.
@@ -14,13 +15,12 @@ if (!empty($_ENV['AH_SITE_GROUP']) && !empty($_ENV['AH_SITE_ENVIRONMENT']) && fu
 
   // A user who gets here is trying to visit a site that is not yet registered
   // with either the Site Factory or Hosting.
-
   // Don't run any of this code if we are drush or a CLI script.
   if (function_exists('drush_main') || PHP_SAPI === 'cli') {
     if (!function_exists('drush_main')) {
       header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
     }
-    return;
+    return 'acsf-infrastructure';
   }
 
   // Print a 404 response and a small HTML page.

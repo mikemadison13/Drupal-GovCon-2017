@@ -9,6 +9,7 @@ use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\Plugin\WebformElementBase;
 use Drupal\webform\Plugin\WebformElementEntityReferenceInterface;
+use Drupal\webform\Plugin\WebformElementOtherInterface;
 use Drupal\webform\WebformSubmissionConditionsValidator;
 use Drupal\webform\WebformSubmissionInterface;
 
@@ -47,6 +48,7 @@ abstract class OptionsBase extends WebformElementBase {
     if (preg_match('/(tableselect|tableselect_sort|table_sort)$/', $this->getPluginId())) {
       unset($properties['title_display']);
       unset($properties['help']);
+      unset($properties['help_display']);
       unset($properties['description']);
       unset($properties['description_display']);
     }
@@ -231,6 +233,16 @@ abstract class OptionsBase extends WebformElementBase {
     if (!empty($element['#required']) && isset($element['#default_value']) && $element['#default_value'] === '') {
       unset($element['#default_value']);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function prepareElementValidateCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    if ($this->hasMultipleValues($element)) {
+      $element['#element_validate'][] = [get_class($this), 'validateMultipleOptions'];
+    }
+    parent::prepareElementValidateCallbacks($element, $webform_submission);
   }
 
   /**
@@ -439,7 +451,7 @@ abstract class OptionsBase extends WebformElementBase {
         $header[] = $title;
       }
       // Add 'Other' option to header.
-      if ($this instanceof WebformOtherInterface) {
+      if ($this instanceof WebformElementOtherInterface) {
         $header[] = ($options['options_item_format'] == 'key') ? 'other' : $this->t('Other');
       }
       return $this->prefixExportHeader($header, $element, $options);
@@ -481,7 +493,7 @@ abstract class OptionsBase extends WebformElementBase {
         }
       }
       // Add 'Other' option to record.
-      if ($this instanceof WebformOtherInterface) {
+      if ($this instanceof WebformElementOtherInterface) {
         $record[] = (is_array($value)) ? implode($export_options['multiple_delimiter'], $value) : $value;
       }
       return $record;
@@ -498,14 +510,13 @@ abstract class OptionsBase extends WebformElementBase {
    * Form API callback. Remove unchecked options from value array.
    */
   public static function validateMultipleOptions(array &$element, FormStateInterface $form_state, array &$completed_form) {
-    $name = $element['#name'];
-    $values = $form_state->getValue($name) ?: [];
+    $values = $element['#value'] ?: [];
     // Filter unchecked/unselected options whose value is 0.
     $values = array_filter($values, function ($value) {
       return $value !== 0;
     });
     $values = array_values($values);
-    $form_state->setValue($name, $values);
+    $form_state->setValueForElement($element, $values);
   }
 
   /**
@@ -566,7 +577,7 @@ abstract class OptionsBase extends WebformElementBase {
     $plugin_id = $this->getPluginId();
     $name = $element['#webform_key'];
     $options = OptGroup::flattenOptions($element['#options']);
-    if ($inputs = $this->getElementSelectorInputsOptions($element)) {
+    if ($this->getElementSelectorInputsOptions($element)) {
       $other_type = $this->getOptionsOtherType();
       $multiple = ($this->hasMultipleValues($element) && $other_type === 'select') ? '[]' : '';
       return [":input[name=\"{$name}[$other_type]$multiple\"]" => $options];
@@ -662,6 +673,7 @@ abstract class OptionsBase extends WebformElementBase {
         'two_columns' => $this->t('Two columns'),
         'three_columns' => $this->t('Three columns'),
         'side_by_side' => $this->t('Side by side'),
+        'buttons' => $this->t('Buttons'),
       ],
     ];
     $form['options']['options_display_container']['options_description_display'] = [

@@ -5,6 +5,9 @@
  * Documents hooks provided by the ACSF Duplication module.
  */
 
+use Drupal\acsf\Event\AcsfDuplicationScrubCommentHandler;
+use Drupal\acsf\Event\AcsfEvent;
+
 /**
  * Alters the counts reported by `drush acsf-duplication-scrub-progress`.
  *
@@ -15,8 +18,8 @@
  * @see drush_acsf_duplication_scrub_progress()
  */
 function hook_acsf_duplication_scrub_remaining_counts_alter(array &$data) {
-  $example_event = \Drupal\acsf\Event\AcsfEvent::create('site_duplication_scrub');
-  $data['node_count'] = (new \Drupal\acsf\Event\AcsfDuplicationScrubCommentHandler($example_event))
+  $example_event = AcsfEvent::create('site_duplication_scrub');
+  $data['node_count'] = (new AcsfDuplicationScrubCommentHandler($example_event))
     ->countRemaining();
 }
 
@@ -59,7 +62,7 @@ function hook_acsf_duplication_scrub_admin_roles_alter(array &$admin_roles) {
  * @see \Acquia\Acsf\AcsfDuplicationScrubUserHandler::getPreservedUsers()
  */
 function hook_acsf_duplication_scrub_preserved_users_alter(array &$preserved_uids) {
-  if ($uids = \Drupal::config('mymodule')->get('preserved_uids', array())) {
+  if ($uids = \Drupal::config('mymodule')->get('preserved_uids', [])) {
     $preserved_uids = array_merge($preserved_uids, $uids);
   }
 }

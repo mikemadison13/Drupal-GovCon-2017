@@ -1,0 +1,7 @@
+services:
+  logger.channel.acsf_sj:
+    parent: logger.channel_base
+    arguments: ['acsf_sj']
+  acsf_sj.client:
+    class: Drupal\acsf_sj\Api\SjApiClient
+    arguments: ['@request_stack', '@logger.channel.acsf_sj']

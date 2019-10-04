@@ -1,68 +1,68 @@
 <?php
 
-use Drupal\acsf\AcsfConfigDefault;
-use Drupal\acsf\Event\AcsfEvent;
-use Drupal\acsf\AcsfMessageFailedResponseException;
-use Drupal\acsf\AcsfMessageRest;
-use Drupal\acsf\AcsfSite;
-use Drupal\Core\Extension\InfoParser;
-
 /**
  * @file
  * Provides drush commands for site related operations.
  */
 
+use Drupal\acsf\AcsfConfigDefault;
+use Drupal\acsf\AcsfMessageFailedResponseException;
+use Drupal\acsf\AcsfMessageRest;
+use Drupal\acsf\AcsfSite;
+use Drupal\acsf\Event\AcsfEvent;
+use Drupal\Core\Extension\InfoParser;
+
 /**
  * Implements hook_drush_command().
  */
 function acsf_drush_command() {
-  return array(
-    'acsf-build-registry' => array(
+  return [
+    'acsf-build-registry' => [
       'description' => dt('Rebuilds the ACSF registry.'),
-    ),
-    'acsf-site-scrub' => array(
+    ],
+    'acsf-site-scrub' => [
       'description' => dt('Scrubs sensitive information regarding ACSF.'),
-    ),
-    'acsf-site-sync' => array(
+    ],
+    'acsf-site-sync' => [
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_DATABASE,
       'description' => dt('Synchronize data with the Factory.'),
-      'options' => array(
+      'options' => [
         'data' => dt('A base64 encoded php array describing the site generated from the Factory.'),
-      ),
-    ),
-    'acsf-get-factory-creds' => array(
+      ],
+    ],
+    'acsf-get-factory-creds' => [
       'description' => dt('Print credentials retrieved from the factory.'),
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
-    ),
-    'go-offline' => array(
+    ],
+    'go-offline' => [
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
       'description' => dt('Set a site offline.'),
-      'aliases' => array('go-off'),
-    ),
-    'go-online' => array(
+      'aliases' => ['go-off'],
+    ],
+    'go-online' => [
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
       'description' => dt('Set a site online.'),
-      'aliases' => array('go-on'),
-    ),
-    'report-complete-async-process' => array(
+      'aliases' => ['go-on'],
+    ],
+    'report-complete-async-process' => [
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
       'description' => dt('Send notice back to the Factory when a process completes.'),
-      'options' => array(
+      'options' => [
         'data' => dt('Serialized PHP data regarding the caller.'),
-      ),
-    ),
-    'acsf-version-get' => array(
+      ],
+    ],
+    'acsf-version-get' => [
       'description' => dt('Fetches the version of the acsf moduleset.'),
-      'arguments' => array(
+      'arguments' => [
         'path' => dt('The path to the acsf moduleset.'),
-      ),
+      ],
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
-    ),
-    'acsf-install-task-get' => array(
+    ],
+    'acsf-install-task-get' => [
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
       'description' => dt('Returns the last installation task that was completed.'),
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -93,11 +93,11 @@ function drush_acsf_site_scrub() {
   // Get a list of roles whose users should be preserved during staging
   // scrubbing.  Both lists are implemented as "alters" for consistency with
   // hook_acsf_duplication_scrub_preserved_users_alter.
-  $preserved_roles = array();
+  $preserved_roles = [];
   \Drupal::moduleHandler()->alter('acsf_staging_scrub_admin_roles', $preserved_roles);
 
   if (!empty($preserved_roles)) {
-    drush_print(dt('Preserving roles: @rids', array('@rids' => implode(', ', $preserved_roles))));
+    drush_print(dt('Preserving roles: @rids', ['@rids' => implode(', ', $preserved_roles)]));
   }
 
   // Get a list of UIDs to preserve during staging scrubbing.  UIDs are first
@@ -108,7 +108,7 @@ function drush_acsf_site_scrub() {
       ->execute();
   }
   else {
-    $preserved_users = array();
+    $preserved_users = [];
   }
   \Drupal::moduleHandler()->alter('acsf_staging_scrub_preserved_users', $preserved_users);
   // Always preserve the anonymous user.
@@ -116,7 +116,7 @@ function drush_acsf_site_scrub() {
   $preserved_users = array_unique($preserved_users);
 
   // The anonymous user makes the size of this array always at least 1.
-  drush_print(dt('Preserving users: @uids', array('@uids' => implode(', ', $preserved_users))));
+  drush_print(dt('Preserving users: @uids', ['@uids' => implode(', ', $preserved_users)]));
 
   // Avoid collisions between the Factory and site users when scrubbing.
   $connection->update('users_field_data')
@@ -138,28 +138,16 @@ function drush_acsf_site_scrub() {
   drush_acsf_site_sync();
   drush_log(dt('Executed acsf-site-sync to gather site data from factory and reset all acsf variables.'), 'ok');
 
-  if (\Drupal::moduleHandler()->moduleExists('acsf_sso')) {
-    // Repopulate/overwrite the subset of SAML auth data which is factory /
-    // sitegroup/env/factory-site-nid specific. Notes:
-    // - This indeed also overwrites values which have not changed, since the
-    //   site nid did not change - at least not if this is called while staging.
-    //   But we want to reuse code without introducing more granularity.)
-    // - We don't scrub the users' authmap data; it's fine if they retain the
-    //   IDs used in live site-factory communication.
-    module_load_include('install', 'acsf_sso');
-    acsf_sso_install_set_env_dependent_config();
-  }
-
   // Trigger a rebuild of router paths (formerly 'menu paths').
   \Drupal::service("router.builder")->rebuild();
 
   // Clear sessions and log tables that might have stale data, and whose
   // implementing classes have no dedicated 'clear()' or equivalent mechanism.
-  $truncate_tables = array(
+  $truncate_tables = [
     'sessions',
     'watchdog',
     'acsf_theme_notifications',
-  );
+  ];
   foreach ($truncate_tables as $table) {
     if ($connection->schema()->tableExists($table)) {
       $connection->truncate($table)->execute();
@@ -167,7 +155,7 @@ function drush_acsf_site_scrub() {
   }
 
   // Clear caches and key-value store.
-  $bins = array(
+  $bins = [
     'bootstrap',
     'config',
     'data',
@@ -180,16 +168,16 @@ function drush_acsf_site_scrub() {
     'render',
     'rest',
     'toolbar',
-  );
+  ];
   foreach ($bins as $bin) {
     if (\Drupal::hasService("cache.$bin")) {
       \Drupal::cache($bin)->deleteAll();
     }
   }
-  $bins = array(
+  $bins = [
     'form',
     'form_state',
-  );
+  ];
   foreach ($bins as $bin) {
     \Drupal::keyValueExpirable($bin)->deleteAll();
   }
@@ -200,7 +188,7 @@ function drush_acsf_site_scrub() {
 
   // Run the sql-sanitize which allows customers to use custom scrubbing. We
   // will handle email addresses and passwords ourselves.
-  drush_invoke_process('@self', 'sql-sanitize', array(), array('sanitize-email' => 'no', 'sanitize-password' => 'no'));
+  drush_invoke_process('@self', 'sql-sanitize', [], ['sanitize-email' => 'no', 'sanitize-password' => 'no']);
 
   // Mark this database as scrubbed.
   \Drupal::state()->set('acsf_site_scrubbed', 'scrubbed');
@@ -217,7 +205,7 @@ function drush_acsf_site_sync() {
   $data = drush_get_option('data', NULL);
 
   // Create an event to gather site stats to send to the Factory.
-  $context = array();
+  $context = [];
   $event = AcsfEvent::create('acsf_stats', $context);
   $event->run();
   $stats = $event->context;
@@ -264,12 +252,12 @@ function drush_acsf_get_factory_creds() {
     drush_set_error('Failed to get config: ' . $e->getMessage());
     exit(1);
   }
-  $creds = array(
+  $creds = [
     'url' => $config->getUrl(),
     'username' => $config->getUsername(),
     'password' => $config->getPassword(),
     'url_suffix' => $config->getUrlSuffix(),
-  );
+  ];
 
   $output = drush_format($creds, NULL, 'json');
   if (drush_get_context('DRUSH_PIPE')) {
@@ -286,12 +274,20 @@ function drush_acsf_get_factory_creds() {
  */
 function drush_acsf_go_offline() {
   $lock = \Drupal::lock();
+  $acsf_settings = \Drupal::configFactory()->getEditable('acsf.settings');
+
+  // Track if a site admin purposely put their site into maintenance.
+  $maintenance_mode = \Drupal::state()->get('system.maintenance_mode');
+  if ($maintenance_mode) {
+    // Site is in maintenance mode already. We need to keep that in mind.
+    $acsf_settings->set('site_owner_maintenance_mode', TRUE)->save();
+  }
 
   // For now hard-code a 10 minute expected offline time.
   $expected = time() + 10 * 60;
 
   \Drupal::state()->set('system.maintenance_mode', TRUE);
-  \Drupal::configFactory()->getEditable('acsf.settings')->set('maintenance_time', $expected)->save();
+  $acsf_settings->set('maintenance_time', $expected)->save();
 
   // Get the cron lock to prevent cron from running during an update.
   // Use a large lock timeout because an update can take a long time.
@@ -349,6 +345,8 @@ function drush_acsf_post_go_online() {
     }
     else {
       drush_log('Site has been left offline as set by the site owner.', 'success');
+      // Unset our maintenance mode setting.
+      \Drupal::configFactory()->getEditable('acsf.settings')->set('site_owner_maintenance_mode', FALSE)->save();
     }
   }
 }
@@ -379,12 +377,12 @@ function drush_acsf_report_complete_async_process() {
   require_once $data->acsf_path . '/src/AcsfMessageResponse.php';
   require_once $data->acsf_path . '/src/AcsfMessageResponseRest.php';
 
-  $arguments = array(
+  $arguments = [
     'wid' => $data->object_id,
     'signal' => 1,
     'state' => isset($data->state) ? $data->state : NULL,
     'data' => $data,
-  );
+  ];
 
   try {
     // We do not have a Drupal bootstrap at this point, so we need to use

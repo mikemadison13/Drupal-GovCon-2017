@@ -9,19 +9,19 @@
  * Implements hook_drush_command().
  */
 function acsf_theme_drush_command() {
-  return array(
-    'acsf-theme-notify' => array(
+  return [
+    'acsf-theme-notify' => [
       'description' => dt('Sends a notification to the Factory that a theme event has occurred.'),
-      'arguments' => array(
+      'arguments' => [
         'scope' => dt('The scope of the repository to send a notification for. Possible values are "theme", "site", "group", or "global".'),
-      ),
-      'options' => array(
+      ],
+      'options' => [
         'event' => dt('The type of theme event to notify the Factory about. Possible values are "create", "modify", or "delete". Defaults to "modify".'),
         'theme' => dt('The system name of the theme the event relates to. Only relevant for "theme" scope notifications.'),
         'nid' => dt('The node ID of the entity on the Factory the theme change is associated with. The node ID for "site" and "theme" scope notifications is automatically derived from the current site. Explicitly passing the --nid option for "site" and "theme" notifications overrides the one from the current site and should match the site node ID on the Factory. For "group" scope notifications, the nid cannot be automatically derived and is therefore required.'),
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**
@@ -37,10 +37,10 @@ function drush_acsf_theme_notify($scope) {
   if (empty($scope)) {
     return drush_set_error(dt('The scope argument is required. Possible values are "theme", "site", "group", or "global".'));
   }
-  if (!in_array($scope, array('theme', 'site', 'group', 'global'))) {
+  if (!in_array($scope, ['theme', 'site', 'group', 'global'])) {
     return drush_set_error(dt('The scope argument must be either "theme", "site", "group", or "global".'));
   }
-  if (!in_array($event, array('create', 'modify', 'delete'))) {
+  if (!in_array($event, ['create', 'modify', 'delete'])) {
     return drush_set_error(dt('Event type not supported. Possible values are "create", "modify", or "delete".'));
   }
   if ($scope === 'theme' && empty($theme)) {

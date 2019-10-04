@@ -11,6 +11,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides Panels IPE access logic for Content Moderation integration.
  *
+ * @internal
+ *   This is an internal part of Lightning Workflow's integration with Panels
+ *   and may be changed or removed at any time. External code should not use
+ *   or extend this class in any way!
+ *
  * @IPEAccess(
  *   id = "content_moderation_ipe",
  *   label = @Translation("Content moderation")

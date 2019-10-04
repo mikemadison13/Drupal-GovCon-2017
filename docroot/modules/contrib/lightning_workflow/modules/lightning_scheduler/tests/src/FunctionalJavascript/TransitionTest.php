@@ -33,6 +33,8 @@ class TransitionTest extends WebDriverTestBase {
     parent::setUp();
     $this->drupalPlaceBlock('local_tasks_block');
 
+    $this->setUpTimeZone();
+
     $account = $this->createUser([
       'create page content',
       'view own unpublished content',
@@ -47,7 +49,6 @@ class TransitionTest extends WebDriverTestBase {
       'administer nodes',
     ]);
     $this->drupalLogin($account);
-    $this->setUpTimeZone();
     $this->setTimeStep();
 
     $this->drupalGet('/node/add/page');
@@ -70,9 +71,10 @@ class TransitionTest extends WebDriverTestBase {
    */
   public function testSkipInvalidTransition() {
     $assert_session = $this->assertSession();
+    $now = time();
 
-    $this->createTransition('Published', time() - 20);
-    $this->createTransition('Archived', time() - 10);
+    $this->createTransition('Published', $now - 20);
+    $this->createTransition('Archived', $now - 10);
     $this->getSession()->getPage()->pressButton('Save');
     $this->cronRun();
     $this->clickEditLink();

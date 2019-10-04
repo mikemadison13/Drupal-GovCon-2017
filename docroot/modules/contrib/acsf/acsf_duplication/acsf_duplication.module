@@ -12,7 +12,7 @@
  * Implements hook_acsf_registry().
  */
 function acsf_duplication_acsf_registry() {
-  $scrub_handlers = array(
+  $scrub_handlers = [
     '\Drupal\acsf\Event\AcsfDuplicationScrubInitializeHandler'     => -100,
     '\Drupal\acsf\Event\AcsfDuplicationScrubConfigurationHandler'  => 10,
     '\Drupal\acsf\Event\AcsfDuplicationScrubCommentHandler'        => 20,
@@ -21,15 +21,15 @@ function acsf_duplication_acsf_registry() {
     '\Drupal\acsf\Event\AcsfDuplicationScrubTemporaryFilesHandler' => 50,
     '\Drupal\acsf\Event\AcsfDuplicationScrubTruncateTablesHandler' => 70,
     '\Drupal\acsf\Event\AcsfDuplicationScrubFinalizeHandler'       => 100,
-  );
+  ];
   foreach ($scrub_handlers as $class => $weight) {
-    $events[] = array(
+    $events[] = [
       'type' => 'site_duplication_scrub',
       'class' => $class,
       'weight' => $weight,
-    );
+    ];
   }
-  return array('events' => $events);
+  return ['events' => $events];
 }
 
 /**

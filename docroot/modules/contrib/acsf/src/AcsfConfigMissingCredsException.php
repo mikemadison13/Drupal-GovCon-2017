@@ -1,10 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains AcsfConfigMissingCredsException.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * AcsfConfigMissingCredsException.
+ */
 class AcsfConfigMissingCredsException extends \Exception {}

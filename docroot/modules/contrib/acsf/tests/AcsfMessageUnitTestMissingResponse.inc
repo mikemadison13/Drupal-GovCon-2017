@@ -1,8 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+use Drupal\acsf\AcsfMessage;
 
-class AcsfMessageUnitTestMissingResponse extends \Drupal\acsf\AcsfMessage {
+/**
+ * AcsfMessageUnitTestMissingResponse.
+ */
+class AcsfMessageUnitTestMissingResponse extends AcsfMessage {
 
   /**
    * Implements AcsfMessage::sendMessage().
@@ -12,4 +15,3 @@ class AcsfMessageUnitTestMissingResponse extends \Drupal\acsf\AcsfMessage {
   }
 
 }
-

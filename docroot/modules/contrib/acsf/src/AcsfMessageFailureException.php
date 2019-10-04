@@ -1,9 +1,8 @@
 <?php
 
-/**
- * Contains AcsfMessageFailureException.
- */
-
 namespace Drupal\acsf;
 
+/**
+ * AcsfMessageFailureException.
+ */
 class AcsfMessageFailureException extends \Exception {}

@@ -3,6 +3,7 @@
 namespace Drupal\Tests\webform\Functional;
 
 use Drupal\Tests\BrowserTestBase;
+use Drupal\user\Entity\User;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\WebformInterface;
@@ -72,12 +73,22 @@ class WebformSubmissionViewsAccessTest extends BrowserTestBase {
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('contact');
 
-    // Create any access user, own access user, and no (anonymous) access user.
-    $any_user = $this->drupalCreateUser([
+    // Create anonymous, any access user, own access user, and no (anonymous) access user.
+    $anonymous_user = User::getAnonymousUser();
+    user_role_grant_permissions('anonymous', [
+      'access webform overview',
+      'view own webform submission',
+    ]);
+    $own_webform_user = $this->drupalCreateUser([
+      'access webform overview',
+      'edit own webform',
+    ]);
+    $webform->setOwner($own_webform_user)->save();
+    $any_submission_user = $this->drupalCreateUser([
       'access webform overview',
       'view any webform submission',
     ]);
-    $own_user = $this->drupalCreateUser([
+    $own_submission_user = $this->drupalCreateUser([
       'access webform overview',
       'view own webform submission',
     ]);
@@ -88,8 +99,10 @@ class WebformSubmissionViewsAccessTest extends BrowserTestBase {
     // Create an array of the accounts.
     /** @var \Drupal\user\Entity\User[] $accounts */
     $accounts = [
-      'any_user' => $any_user,
-      'own_user' => $own_user,
+      'anonymous_user' => $anonymous_user,
+      'own_webform_user' => $own_webform_user,
+      'any_submission_user' => $any_submission_user,
+      'own_submission_user' => $own_submission_user,
       'without_access' => $without_access_user,
     ];
 
@@ -100,12 +113,18 @@ class WebformSubmissionViewsAccessTest extends BrowserTestBase {
     $this->checkUserSubmissionAccess($webform, $accounts);
 
     // Clear any and own permissions for all accounts.
-    foreach ($accounts as &$account) {
-      $roles = $account->getRoles(TRUE);
-      $rid = reset($roles);
+    foreach ($accounts as $account_type => &$account) {
+      if ($account_type === 'anonymous_user') {
+        $rid = 'anonymous';
+      }
+      else {
+        $roles = $account->getRoles(TRUE);
+        $rid = reset($roles);
+      }
       user_role_revoke_permissions($rid, [
         'view any webform submission',
         'view own webform submission',
+        'edit own webform',
       ]);
     }
 
@@ -142,6 +161,8 @@ class WebformSubmissionViewsAccessTest extends BrowserTestBase {
    *   The webform.
    * @param array $accounts
    *   An associative array of test users.
+   *
+   * @see \Drupal\webform_access\Tests\WebformAccessSubmissionViewsTest::checkUserSubmissionAccess
    */
   protected function checkUserSubmissionAccess(WebformInterface $webform, array $accounts) {
     /** @var \Drupal\webform\WebformSubmissionStorageInterface $webform_submission_storage */
@@ -155,12 +176,14 @@ class WebformSubmissionViewsAccessTest extends BrowserTestBase {
 
     foreach ($accounts as $account_type => $account) {
       // Login the current user.
-      $this->drupalLogin($account);
+      if ($account_type !== 'anonymous_user') {
+        $this->drupalLogin($account);
+      }
 
       // Get the webform_test_views_access view and the sid for each
       // displayed record.  Submission access is controlled via the query.
       // @see webform_query_webform_submission_access_alter()
-      $this->drupalGet('admin/structure/webform/test/views_access');
+      $this->drupalGet('/admin/structure/webform/test/views_access');
 
       $views_sids = [];
       foreach ($this->getSession()->getPage()->findAll('css', '.view .view-content tbody .views-field-sid') as $node) {
@@ -184,6 +207,10 @@ class WebformSubmissionViewsAccessTest extends BrowserTestBase {
 
       // Check that the views sids is equal to the expected sids.
       $this->assertSame($expected_sids, $views_sids, "User '" . $account_type . "' access has correct access through view on webform submission entity type.");
+
+      if ($account_type !== 'anonymous_user') {
+        $this->drupalLogout();
+      }
     }
   }
 

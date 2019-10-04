@@ -1,8 +1,15 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+use Drupal\acsf\Event\AcsfEventHandler;
 
-class UnitTestDummyHandler3 extends \Drupal\acsf\Event\AcsfEventHandler {
+/**
+ * UnitTestDummyHandler3.
+ */
+class UnitTestDummyHandler3 extends AcsfEventHandler {
+
+  /**
+   * Dummy handler.
+   */
   public function handle() {}
-}
 
+}

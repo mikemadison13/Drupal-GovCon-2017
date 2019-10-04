@@ -1,10 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfEventHandlerIncompatibleException.
- */
-
 namespace Drupal\acsf\Event;
 
+/**
+ * AcsfEventHandlerIncompatibleException.
+ */
 class AcsfEventHandlerIncompatibleException extends \Exception {}

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfDuplicationScrubCommentStorage.
- */
-
 namespace Drupal\acsf\Event;
 
 use Drupal\comment\CommentStorage;
@@ -92,11 +87,11 @@ class AcsfDuplicationScrubCommentStorage extends CommentStorage {
       // until rdf_comment_storage_load() processes the orphaned parent and
       // crashes.)
       $uid_and_entity_ok = array_filter($cids);
-      $child_cids = array();
+      $child_cids = [];
       if ($uid_and_entity_ok) {
         // Database statement copied/changed from $this->getChildCids():
         $child_cids = $this->database->select('comment_field_data', 'c')
-          ->fields('c', array('cid'))
+          ->fields('c', ['cid'])
           ->condition('pid', array_keys($uid_and_entity_ok), 'IN')
           ->condition('default_langcode', 1)
           ->execute()
@@ -113,7 +108,7 @@ class AcsfDuplicationScrubCommentStorage extends CommentStorage {
       //   - invokeFieldMethod('delete'): needs entity.
       //   - doDeleteFieldItems(): can be mimicked.
       $this->doDeleteFieldItemsById($cids);
-      //   - resetCache()
+      // - resetCache()
       $this->resetCache($cids);
       // - Comment::postDelete:
       //   - deletes child comments: done above.
@@ -149,12 +144,12 @@ class AcsfDuplicationScrubCommentStorage extends CommentStorage {
   protected function getOrphanedItems($limit = 0, $already_processed_min_id = -1) {
 
     if ($already_processed_min_id == 0) {
-      return array();
+      return [];
     }
 
     $where = "u.uid IS NULL OR (n.nid IS NULL and c.entity_type = 'node')
       OR (pc.cid IS NULL AND c.pid > 0)";
-    $args = array();
+    $args = [];
     if ($already_processed_min_id > 0) {
       $where = "($where) AND c.cid < :processed";
       $args[':processed'] = $already_processed_min_id;

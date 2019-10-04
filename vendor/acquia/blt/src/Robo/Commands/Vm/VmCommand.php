@@ -15,16 +15,82 @@ use Symfony\Component\Yaml\Yaml;
  * Defines commands in the "vm" namespace.
  */
 class VmCommand extends BltTasks {
+
+  /**
+   * Drupal VM alias.
+   *
+   * @var string
+   */
   protected $drupalVmAlias;
+
+  /**
+   * Drupal VM version.
+   *
+   * @var string
+   */
   protected $drupalVmVersionConstraint;
+
+  /**
+   * Drupal VM drush aliases.
+   *
+   * @var string
+   */
   protected $defaultDrupalVmDrushAliasesFile;
+
+  /**
+   * Drupal VM config.
+   *
+   * @var string
+   */
   protected $defaultDrupalVmConfigFile;
+
+  /**
+   * Drupal VM Vagrant.
+   *
+   * @var string
+   */
   protected $defaultDrupalVmVagrantfile;
+
+  /**
+   * Project drush aliases.
+   *
+   * @var string
+   */
   protected $projectDrushAliasesFile;
+
+  /**
+   * Drupal VM.
+   *
+   * @var string
+   */
   protected $projectDrupalVmConfigFile;
+
+  /**
+   * Drupal VM Vagrant.
+   *
+   * @var string
+   */
   protected $projectDrupalVmVagrantfile;
+
+  /**
+   * VM config directory.
+   *
+   * @var string
+   */
   protected $vmConfigDir;
+
+  /**
+   * VM config file.
+   *
+   * @var string
+   */
   protected $vmConfigFile;
+
+  /**
+   * VM directory.
+   *
+   * @var string
+   */
   protected $vmDir;
 
   /**
@@ -89,6 +155,7 @@ class VmCommand extends BltTasks {
    *
    * @command recipes:drupalvm:destroy
    * @aliases rdd vm:nuke
+   *
    * @throws \Exception
    */
   public function nuke() {
@@ -114,6 +181,7 @@ class VmCommand extends BltTasks {
 
   /**
    * Installs and configures default Drupal VM instance.
+   *
    * @throws \Exception
    */
   protected function install() {
@@ -169,6 +237,7 @@ class VmCommand extends BltTasks {
 
   /**
    * Boots a Drupal VM.
+   *
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   protected function boot() {
@@ -235,6 +304,7 @@ class VmCommand extends BltTasks {
    * Checks local system for Drupal VM requirements.
    *
    * Verifies that vagrant and its required plugins are installed.
+   *
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   protected function checkRequirements() {
@@ -264,7 +334,8 @@ class VmCommand extends BltTasks {
   /**
    * Sets the Drupal VM base box.
    *
-   * @param \Acquia\Blt\Robo\Config\BltConfig $config
+   * @param mixed $config
+   *   Config.
    */
   protected function setBaseBox($config) {
     $base_box = $this->askChoice(

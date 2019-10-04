@@ -13,7 +13,7 @@ use Drupal\user\Entity\User;
 /**
  * Content that we need to add to customers' .htaccess files.
  */
-define('ACSF_HTACCESS_PATCH', '  RewriteCond %{REQUEST_URI} !/sites/g/apc_rebuild.php$');
+define('ACSF_HTACCESS_PATCH', 'RewriteCond %{REQUEST_URI} !/sites/g/apc_rebuild.php$');
 
 /**
  * The marker that tells us where we need to add our .htaccess patch.
@@ -39,59 +39,59 @@ define('ACSF_INIT_CODE_DELIMITER_END', '// ===== Added by acsf-init, please do n
  * Implements hook_drush_command().
  */
 function acsf_init_drush_command() {
-  return array(
-    'acsf-init' => array(
+  return [
+    'acsf-init' => [
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
       'callback' => 'drush_acsf_init',
       'description' => dt('Installs/updates the non-standard Drupal components for this repository to be compatible with Acquia Site Factory. This command will update in place, so there is no harm in running it multiple times.'),
-      'options' => array(
+      'options' => [
         'skip-default-settings' => dt('Do not edit the default settings.php file. Use this option when the edited default settings.php is causing issues in a local environment.'),
-      ),
-    ),
-    'acsf-init-verify' => array(
+      ],
+    ],
+    'acsf-init-verify' => [
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
       'callback' => 'drush_acsf_init_verify',
       'description' => dt('Verifies that acsf-init was successfully run in the current version.'),
-      'options' => array(
+      'options' => [
         'skip-default-settings' => dt('Skip verifying the default settings.php file.'),
-      ),
-    ),
-    'acsf-connect-factory' => array(
+      ],
+    ],
+    'acsf-connect-factory' => [
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
       'callback' => 'drush_acsf_connect_factory',
       'description' => dt('Connect a site to a factory by setting up the right variables in the database.'),
-      'aliases' => array('acsf-cf'),
-      'options' => array(
-        'site-admin-mail' => array(
+      'aliases' => ['acsf-cf'],
+      'options' => [
+        'site-admin-mail' => [
           'description' => dt('The email address of the Site Factory admin / Gardens admin user. This is typically the "Site Factory admin" user on the factory. These email addresses have to match in order for the initial OpenID connection to bind these accounts.'),
           'required' => TRUE,
           'example-value' => 'user3@example.com',
-        ),
-        'site-owner-name' => array(
+        ],
+        'site-owner-name' => [
           'description' => dt('The name of the site owner.'),
           'required' => TRUE,
           'example-value' => 'John Smith',
-        ),
-        'site-owner-mail' => array(
+        ],
+        'site-owner-mail' => [
           'description' => dt('The email address of the site owner.'),
           'required' => TRUE,
           'example-value' => 'john.smith@example.com',
-        ),
-        'site-owner-roles' => array(
+        ],
+        'site-owner-roles' => [
           'description' => dt('A list of comma-separated roles (machine names) that should be granted to the site owner (optional).'),
           'example-value' => 'editor, site manager',
-        ),
-      ),
-      'examples' => array(
+        ],
+      ],
+      'examples' => [
         'drush acsf-connect-factory --site-admin-mail="user3@example.com" --site-owner-name="John Smith" --site-owner-mail="john.smith@example.com"' => dt('Connect the site to the factory and sets the owner to John Smith.'),
-      ),
-    ),
-    'acsf-uninstall' => array(
+      ],
+    ],
+    'acsf-uninstall' => [
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
       'callback' => 'drush_acsf_uninstall',
       'description' => dt('Uninstalls components for this Drupal repository to be compatible with Acquia Site Factory.'),
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -99,13 +99,13 @@ function acsf_init_drush_command() {
  */
 function _acsf_init_include_exceptions() {
   $path = dirname(__DIR__) . '/src';
-  $classes = array(
+  $classes = [
     'AcsfException',
     'AcsfInitException',
     'AcsfInitHtaccessException',
-  );
-  foreach($classes as $class) {
-    require_once("$path/$class.php");
+  ];
+  foreach ($classes as $class) {
+    require_once "$path/$class.php";
   }
 }
 
@@ -127,11 +127,20 @@ function drush_acsf_init_pre_acsf_init_verify() {
  * Command callback: executes the required changes to this repository.
  */
 function drush_acsf_init() {
-  // Retrieve the path to the acsf module relative to this file.
-  $path = dirname(dirname(dirname(__FILE__)));
-  $relative_path = str_replace(realpath(DRUPAL_ROOT) . '/', '', realpath($path));
-  $repo_root = str_replace('/docroot', '', realpath(DRUPAL_ROOT));
-  $lib_path = sprintf('%s/%s/acsf/acsf_init/lib', realpath(DRUPAL_ROOT), $relative_path);
+  $drupal_root = realpath(DRUPAL_ROOT);
+  if (basename($drupal_root) !== 'docroot') {
+    // If for some reason we wanted to enable this command to run on directory
+    // structures where no /docroot exists, that's possible in theory... but we
+    // need to to audit / change the code in this file to
+    // - derive the repo root in a good way;
+    // - properly distinguish the repo root from the drupal root;
+    // - figure out what to do with remaining instances of "docroot", if any;
+    // - figure out what to do when drupal root and repo root are equal... like
+    //   not copy hook files?
+    drush_set_error('INCORRECT DIRECTORY STRUCTURE', dt("Drupal must be installed in a subdirectory of your code repository, named 'docroot'."));
+    return;
+  }
+  $repo_root = dirname($drupal_root);
   $skip_default_settings = drush_get_option('skip-default-settings');
 
   drush_print(dt('Installing ACSF requirements.'));
@@ -143,10 +152,10 @@ function drush_acsf_init() {
       continue;
     }
 
-    drush_print(dt('Creating directory for !name at !dir', array(
+    drush_print(dt('Creating directory for !name at !dir', [
       '!name' => $name,
       '!dir' => $dir,
-    )));
+    ]));
     if (!file_exists($dir)) {
       if (mkdir($dir, 0755, TRUE)) {
         drush_log(dt('Success'), 'success');
@@ -161,6 +170,7 @@ function drush_acsf_init() {
   }
 
   // Copy the required files.
+  $lib_path = sprintf('%s/lib', dirname(__FILE__));
   foreach (acsf_init_get_required_files($repo_root) as $location) {
     $file = $location['filename'];
 
@@ -169,10 +179,10 @@ function drush_acsf_init() {
     // Some files only contain a destination as they are already in place.
     if (isset($location['source']) && isset($location['dest'])) {
       $source = sprintf('%s/%s/%s', $lib_path, $location['source'], $file);
-      drush_print(dt('Copying !file to !dest.', array(
+      drush_print(dt('Copying !file to !dest.', [
         '!file' => $source,
         '!dest' => $dest,
-      )));
+      ]));
       if (file_exists($dest)) {
         $confirm = drush_confirm(dt('Destination file exists, continue?'));
         if ($confirm === FALSE) {
@@ -181,16 +191,16 @@ function drush_acsf_init() {
       }
       // Copy the file into the destination.
       if (copy($source, $dest)) {
-        drush_log(dt('Copy Success: !file', array('!file' => $file)), 'success');
+        drush_log(dt('Copy Success: !file', ['!file' => $file]), 'success');
       }
       else {
-        drush_log(dt('Copy Error: !file', array('!file' => $file)), 'error');
+        drush_log(dt('Copy Error: !file', ['!file' => $file]), 'error');
       }
       // If the file exists, it could be set to 0444, so we have to ensure that
       // it is writable before overwriting it. The copy would fail otherwise.
       if (!is_writable($dest)) {
         if (!chmod($dest, 0666)) {
-          drush_log(dt('Chmod Error: !file', array('!file' => $file)), 'error');
+          drush_log(dt('Chmod Error: !file', ['!file' => $file]), 'error');
         };
       }
     }
@@ -198,10 +208,10 @@ function drush_acsf_init() {
     // Chmod the file if required.
     $mod = isset($location['mod']) ? $location['mod'] : FALSE;
     if ($mod && chmod($dest, $mod)) {
-      drush_log(dt('Chmod Success: !file', array('!file' => $file)), 'success');
+      drush_log(dt('Chmod Success: !file', ['!file' => $file]), 'success');
     }
     elseif ($mod) {
-      drush_log(dt('Chmod Error: !file', array('!file' => $file)), 'error');
+      drush_log(dt('Chmod Error: !file', ['!file' => $file]), 'error');
     }
   }
 
@@ -229,7 +239,7 @@ function drush_acsf_init() {
       // it is writable.
       if (file_exists($default_settings_php_path) && !is_writable($default_settings_php_path)) {
         if (!chmod($default_settings_php_path, 0666)) {
-          drush_log(dt('Chmod Error: !file', array('!file' => $file)), 'error');
+          drush_log(dt('Chmod Error: !file', ['!file' => $file]), 'error');
         }
       }
       if (file_exists($default_settings_php_path)) {
@@ -267,7 +277,7 @@ function drush_acsf_init() {
 }
 
 /**
- * (Re-)creates the default settings.php file.
+ * Re-creates the default settings.php file.
  *
  * @param string $default_settings_php_path
  *   The path to the default settings.php file.
@@ -326,7 +336,10 @@ function acsf_init_default_settings_php_include_get() {
   $delimiter_end = ACSF_INIT_CODE_DELIMITER_END;
   return <<<INCLUDE
 ${delimiter_start}
-include dirname(__FILE__) . '/acsf.settings.php';
+\$_acsf_infrastructure = include dirname(__FILE__) . '/acsf.settings.php';
+if (\$_acsf_infrastructure === 'acsf-infrastructure') {
+  return;
+}
 ${delimiter_end}
 INCLUDE;
 }
@@ -335,14 +348,16 @@ INCLUDE;
  * Command callback: Verify that acsf-init was run against the current version.
  */
 function drush_acsf_init_verify() {
-  $drupal_root = rtrim(DRUPAL_ROOT, '/.');
-  // Retrieve the path to the acsf module relative to this file.
-  $path = dirname(dirname(dirname(__FILE__)));
-  $relative_path = str_replace($drupal_root . '/', '', $path);
-  $repo_root = str_replace('/docroot', '', $drupal_root);
-  $lib_path = sprintf('%s/%s/acsf/acsf_init/lib', $drupal_root, $relative_path);
+  $drupal_root = realpath(DRUPAL_ROOT);
+  if (basename($drupal_root) !== 'docroot') {
+    // Don't check the rest, since drush acsf-init cannot reliably determine
+    // file locations to begin with.
+    return drush_set_error('INCORRECT DIRECTORY STRUCTURE', dt("Drupal must be installed in a subdirectory of your code repository, named 'docroot'."));
+  }
+  $repo_root = dirname($drupal_root);
   $skip_default_settings = drush_get_option('skip-default-settings');
 
+  $lib_path = sprintf('%s/lib', dirname(__FILE__));
   $error = FALSE;
   foreach (acsf_init_get_required_files($repo_root) as $location) {
     $file = $location['filename'];
@@ -354,15 +369,15 @@ function drush_acsf_init_verify() {
       $source = sprintf('%s/%s/%s', $lib_path, $location['source'], $file);
       if (!file_exists($dest)) {
         $error = TRUE;
-        drush_set_error('FILE MISSING', dt('The file !file is missing.', array(
+        drush_set_error('FILE MISSING', dt('The file !file is missing.', [
           '!file' => $file,
-        )));
+        ]));
       }
       elseif (md5_file($source) != md5_file($dest)) {
         $error = TRUE;
-        drush_set_error('FILE OUT OF DATE', dt('The file !file is out of date.', array(
+        drush_set_error('FILE OUT OF DATE', dt('The file !file is out of date.', [
           '!file' => $file,
-        )));
+        ]));
       }
     }
 
@@ -381,14 +396,15 @@ function drush_acsf_init_verify() {
       // decimal).
       if (($dest_permissions & (0100 | 0010)) != (0100 | 0010)) {
         $error = TRUE;
-        drush_set_error('INCORRECT FILE MODE', dt('The file !file is not executable. Make this file executable for the owner and group, then commit it again.', array(
+        drush_set_error('INCORRECT FILE MODE', dt('The file !file is not executable. Make this file executable for the owner and group, then commit it again.', [
           '!file' => $file,
-        )));
+        ]));
       }
     }
   }
 
   if (!drush_acsf_init_test_htaccess_is_patched()) {
+    $error = TRUE;
     drush_set_error('HTACCESS UNPATCHED', dt('The .htaccess file has not been patched to allow access to apc_rebuild.php.'));
   }
 
@@ -450,24 +466,24 @@ function drush_acsf_connect_factory() {
   $user_storage = \Drupal::entityManager()->getStorage('user');
 
   // Make sure there is no regular user account with the admin email address.
-  $site_admin_mail_accounts = $user_storage->loadByProperties(array(
-    'mail' => $site_admin_mail
-  ));
+  $site_admin_mail_accounts = $user_storage->loadByProperties([
+    'mail' => $site_admin_mail,
+  ]);
   $site_admin_mail_account = reset($site_admin_mail_accounts);
   if ($site_admin_mail_account && $site_admin_mail_account->id() > 1) {
-    return drush_set_error(dt('Unable to sync the admin account, the email address @mail is already used by the user account @uid.', array(
+    return drush_set_error(dt('Unable to sync the admin account, the email address @mail is already used by the user account @uid.', [
       '@mail' => $site_admin_mail,
       '@uid' => $site_admin_mail_account->id(),
-    )));
+    ]));
   }
 
   // The site owner's email address may have been changed on the factory (for
   // instance, if the user updated their email address on the factory and the
   // new email address has not yet been synced to the site). First, try to
   // locate the user account by site-owner-mail.
-  $site_owner_accounts = $user_storage->loadByProperties(array(
-    'mail' => $site_owner_mail
-  ));
+  $site_owner_accounts = $user_storage->loadByProperties([
+    'mail' => $site_owner_mail,
+  ]);
   $site_owner_account = reset($site_owner_accounts);
   if ($site_owner_account && $site_owner_account->getUsername() !== $site_owner_name) {
     return drush_set_error(dt('The site-owner-name value does not match the name of the user loaded by site-owner-mail.'));
@@ -475,9 +491,9 @@ function drush_acsf_connect_factory() {
   // If the site owner user account is not found, try to locate it by
   // site-owner-name.
   if (!$site_owner_account) {
-    $site_owner_accounts = $user_storage->loadByProperties(array(
-      'name' => $site_owner_name
-    ));
+    $site_owner_accounts = $user_storage->loadByProperties([
+      'name' => $site_owner_name,
+    ]);
     $site_owner_account = reset($site_owner_accounts);
   }
   // If the site owner account is still not found then either the customer has
@@ -496,7 +512,6 @@ function drush_acsf_connect_factory() {
   drush_log(dt('Cleared all caches.'), 'ok');
 
   // Set default settings for user accounts.
-
   $admin_role_ids = \Drupal::EntityQuery('user_role')
     ->condition('is_admin', TRUE)
     ->execute();
@@ -505,7 +520,7 @@ function drush_acsf_connect_factory() {
   $admin_account = User::load(1);
   // Create a new user if uid 1 doesn't exist.
   if (!$admin_account) {
-    $admin_account = User::create(array('uid' => 1));
+    $admin_account = User::create(['uid' => 1]);
   }
   // Ensure the default admin role is added to the account.
   $admin_account->addRole(reset($admin_role_ids));
@@ -527,7 +542,7 @@ function drush_acsf_connect_factory() {
       $site_owner_account->addRole($owner_role);
     }
     else {
-      drush_log(dt('The role @role does not exist; not adding it to the site owner.', array('@role' => $owner_role)), 'warning');
+      drush_log(dt('The role @role does not exist; not adding it to the site owner.', ['@role' => $owner_role]), 'warning');
     }
   }
   // Site owners also get the default administrator role.
@@ -553,15 +568,6 @@ function drush_acsf_connect_factory() {
   drush_acsf_site_sync();
   drush_log(dt('Executed acsf-site-sync to gather site data from factory and reset all acsf variables.'), 'ok');
 
-  // Set other configuration related to connections to/from the site factory.
-
-  if (\Drupal::moduleHandler()->moduleExists('acsf_sso')) {
-    // Repopulate/overwrite the subset of SAML auth data which is factory /
-    // sitegroup/env/factory-site-nid specific.
-    module_load_include('install', 'acsf_sso');
-    acsf_sso_install_set_env_dependent_config();
-  }
-
   // Clear all caches.
   drupal_flush_all_caches();
   drush_log(dt('Cleared all caches.'), 'ok');
@@ -576,14 +582,21 @@ function drush_acsf_connect_factory() {
 function drush_acsf_uninstall() {
   drush_print('Removing ACSF requirements.');
 
-  $repo_root = str_replace('/docroot', '', DRUPAL_ROOT);
+  $drupal_root = realpath(DRUPAL_ROOT);
+  $repo_root = dirname($drupal_root);
+  if (basename($drupal_root) !== 'docroot') {
+    // We're not failing if Drupal is not installed in 'docroot' (as in
+    // acsf-init), so that files can still be removed from strange installs.
+    // hooks/ will be checked inside the docroot.
+    $repo_root = $drupal_root;
+  }
   foreach (acsf_init_get_required_files($repo_root) as $location) {
     $file = $location['filename'];
     $dest = sprintf('%s/%s', $location['dest'], $file);
 
     // Some files only contain a destination as they are already in place.
     if (isset($location['source']) && file_exists($dest)) {
-      $confirm = drush_confirm(dt('Delete !file?', array('!file' => $dest)));
+      $confirm = drush_confirm(dt('Delete !file?', ['!file' => $dest]));
       if ($confirm === FALSE) {
         continue;
       }
@@ -608,23 +621,20 @@ function drush_acsf_uninstall() {
  * Lists all required directories to create.
  */
 function acsf_init_get_required_dirs($repo_root) {
-  return array(
+  return [
     'cloud hooks' => sprintf('%s/hooks/common/post-db-copy', $repo_root),
     'cloud hook deploy' => sprintf('%s/hooks/common/pre-web-activate', $repo_root),
     'acquia hook dir' => sprintf('%s/hooks/acquia', $repo_root),
     'cloud hook samples' => sprintf('%s/hooks/samples', $repo_root),
     'site config logic' => sprintf('%s/sites/g', DRUPAL_ROOT),
     'site env default' => sprintf('%s/sites/default', DRUPAL_ROOT),
-  );
+  ];
 }
 
 /**
  * Lists all required files to create/delete.
  */
 function acsf_init_get_required_files($repo_root) {
-  // Path to the ACSF module file.
-  $acsf_path = dirname(__DIR__);
-
   // Array elements should use the following guidelines:
   // - Use the 'source' element to indicate where the file should be copied
   //   from. Note: Some files do not have a source as they are already in place.
@@ -633,93 +643,96 @@ function acsf_init_get_required_files($repo_root) {
   //   must be chmod() compatible. e.g. 0755
   // - Use the 'test_executable' element to enforce testing executability of the
   //   file. "Executable" files are expected to be owner and group executable.
-
-  return array(
-    array(
+  return [
+    [
       'filename' => 'README.md',
       'source' => 'cloud_hooks',
       'dest' => sprintf('%s/hooks', $repo_root),
-    ),
-    array(
+    ],
+    [
       'filename' => '000-acquia_required_scrub.php',
       'source' => 'cloud_hooks/common/post-db-copy',
       'dest' => sprintf('%s/hooks/common/post-db-copy', $repo_root),
       'mod' => 0750,
       'test_executable' => TRUE,
-    ),
-    array(
+    ],
+    [
       'filename' => '000-acquia-deployment.php',
       'source' => 'cloud_hooks/common/pre-web-activate',
       'dest' => sprintf('%s/hooks/common/pre-web-activate', $repo_root),
       'mod' => 0750,
       'test_executable' => TRUE,
-    ),
-    array(
+    ],
+    [
       'filename' => 'db_connect.php',
       'source' => 'cloud_hooks/acquia',
       'dest' => sprintf('%s/hooks/acquia', $repo_root),
-    ),
-    array(
+    ],
+    [
       'filename' => 'uri.php',
       'source' => 'cloud_hooks/acquia',
       'dest' => sprintf('%s/hooks/acquia', $repo_root),
-    ),
-    array(
+    ],
+    [
       'filename' => 'acquia-cloud-site-factory-post-db.sh',
       'source' => 'cloud_hooks/samples',
       'dest' => sprintf('%s/hooks/samples', $repo_root),
-    ),
-    array(
+    ],
+    [
       'filename' => 'hello-world.sh',
       'source' => 'cloud_hooks/samples',
       'dest' => sprintf('%s/hooks/samples', $repo_root),
-    ),
-    array(
+    ],
+    [
       'filename' => 'sites.php',
       'source' => 'sites',
       'dest' => sprintf('%s/sites', DRUPAL_ROOT),
-    ),
-    array(
+    ],
+    [
       'filename' => 'apc_rebuild.php',
       'source' => 'sites/g',
       'dest' => sprintf('%s/sites/g', DRUPAL_ROOT),
-    ),
-    array(
+    ],
+    [
       'filename' => '.gitignore',
       'source' => 'sites/g',
       'dest' => sprintf('%s/sites/g', DRUPAL_ROOT),
-    ),
-    array(
+    ],
+    // If we ever add functionality to 'drush acsf-init' to remove files which
+    // were copied by previous versions, then IF services.yml is still empty,
+    // it is also a candidate for removal. (If it's not empty anymore, please
+    // remove this comment.)
+    [
       'filename' => 'services.yml',
       'source' => 'sites/g',
       'dest' => sprintf('%s/sites/g', DRUPAL_ROOT),
-    ),
-    array(
+    ],
+    [
       'filename' => 'settings.php',
       'source' => 'sites/g',
       'dest' => sprintf('%s/sites/g', DRUPAL_ROOT),
-    ),
-    array(
+    ],
+    [
       'filename' => 'SimpleRest.php',
       'source' => 'sites/g',
       'dest' => sprintf('%s/sites/g', DRUPAL_ROOT),
-    ),
-    array(
+    ],
+    [
       'filename' => 'sites.inc',
       'source' => 'sites/g',
       'dest' => sprintf('%s/sites/g', DRUPAL_ROOT),
-    ),
-    array(
+    ],
+    [
       'filename' => '.gitignore',
       'source' => 'sites/default',
       'dest' => sprintf('%s/sites/default', DRUPAL_ROOT),
-    ),
-    array(
+    ],
+    [
       'filename' => 'acsf.settings.php',
       'source' => 'sites/default',
       'dest' => sprintf('%s/sites/default', DRUPAL_ROOT),
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -744,7 +757,7 @@ function drush_acsf_init_patch_htaccess() {
 
   drush_print(dt('Patching .htaccess file.'));
   // All the lines we've scanned so far up until the marker line.
-  $output_lines = array();
+  $output_lines = [];
   // The output as a string.
   $output = '';
   // Iterate line-by-line until we reach the line which our rule MUST precede...
@@ -766,16 +779,18 @@ function drush_acsf_init_patch_htaccess() {
         // .htaccess file preceding the marker line were all comments.  We
         // cannot consider this valid, as the minimum requirements for
         // rewrites are not met.  We'd expect at a minimum
-        // <IfModule mod_rewrite.c> ... RewriteEngine on
+        // <IfModule mod_rewrite.c> ... RewriteEngine on.
         throw new AcsfInitHtaccessException('Reached the beginning of the file but was unable to find a place to insert the .htaccess patch.  The .htaccess file can be manually handled to fix this error.');
       }
 
       // Insert our patch with preceding comment, before the marker index,
       // i.e. after the first line seen which is not a comment.
-      array_splice($output_lines, $marker_index, 0, array(
+      // Also, prepending 2 whitespaces before the htaccess patch
+      // so that it's indented properly.
+      array_splice($output_lines, $marker_index, 0, [
         ACSF_HTACCESS_PATCH_COMMENT . "\n",
-        ACSF_HTACCESS_PATCH . "\n"
-      ));
+        '  ' . ACSF_HTACCESS_PATCH . "\n",
+      ]);
       $output = implode('', $output_lines);
 
       break;
@@ -818,6 +833,9 @@ function drush_acsf_init_test_htaccess_is_patched() {
     return TRUE;
   }
 
+  // If a customer was for some reason really sure that they did not want
+  // our line in their .htaccess file, then adding it verbatim, but
+  // commented-out would suffice.
   return strpos($content, ACSF_HTACCESS_PATCH) !== FALSE;
 }
 

@@ -5,24 +5,47 @@
  * Provides PHPUnit tests for the Acsf Events system.
  */
 
+use Drupal\acsf\AcsfLog;
+use Drupal\acsf\Event\AcsfEvent;
+use Drupal\acsf\Event\AcsfEventDispatcher;
+use Drupal\acsf\Event\AcsfEventHandlerIncompatibleException;
+use PHPUnit\Framework\TestCase;
+
 /**
  * Defines the Drupal root directory as the acsf directory.
+ *
+ * This is needed for AcsfEvent::loadHandlers().
  */
-define('DRUPAL_ROOT', __DIR__ . '/..');
+if (!defined('DRUPAL_ROOT')) {
+  define('DRUPAL_ROOT', __DIR__ . '/..');
+}
 
-class UnitTest extends PHPUnit_Framework_TestCase {
+/**
+ * UnitTest.
+ */
+// Class name doesn't match filename.
+// phpcs:disable
+class UnitTest extends TestCase {
+// phpcs:enable
 
+  /**
+   * Setup.
+   */
   public function setUp() {
-    $files = array(
-      __DIR__ . '/../vendor/autoload.php',
+    // The files in this directory can't be autoloaded as long as they don't
+    // match their classes' namespaces.
+    $files = [
       __DIR__ . '/UnitTestDummyHandler1.php',
       __DIR__ . '/UnitTestDummyHandler2.php',
       __DIR__ . '/UnitTestDummyHandler3.php',
       __DIR__ . '/UnitTestDummyHandlerInterrupt.php',
       __DIR__ . '/UnitTestDummyHandlerIncompatible.php',
-    );
+    ];
     foreach ($files as $file) {
+      // Acquia rules disallow 'include/require' with dynamic arguments.
+      // phpcs:disable
       require_once $file;
+      // phpcs:enable
     }
   }
 
@@ -30,7 +53,7 @@ class UnitTest extends PHPUnit_Framework_TestCase {
    * Tests that the handlers are initially empty.
    */
   public function testAcsfEventHandlersEmpty() {
-    $event = new \Drupal\acsf\Event\AcsfEvent(new \Drupal\acsf\Event\AcsfEventDispatcher(), new \Drupal\acsf\AcsfLog(), 'unit_test', array(), array());
+    $event = new AcsfEvent(new AcsfEventDispatcher(), new AcsfLog(), 'unit_test', [], []);
     $this->assertEmpty($event->debug());
   }
 
@@ -38,18 +61,18 @@ class UnitTest extends PHPUnit_Framework_TestCase {
    * Tests that the push and pop methods work as expected.
    */
   public function testAcsfEventPushPop() {
-    $classes = array(
+    $classes = [
       'UnitTestDummyHandler1',
       'UnitTestDummyHandler2',
       'UnitTestDummyHandler3',
-    );
-    $event = new \Drupal\acsf\Event\AcsfEvent(new \Drupal\acsf\Event\AcsfEventDispatcher(), new \Drupal\acsf\AcsfLog(), 'unit_test', array(), array());
+    ];
+    $event = new AcsfEvent(new AcsfEventDispatcher(), new AcsfLog(), 'unit_test', [], []);
     foreach ($classes as $class) {
       $event->pushHandler(new $class($event));
     }
     $debug = $event->debug();
     $this->assertCount(3, $debug['handlers']['incomplete']);
-    $handlers = array();
+    $handlers = [];
     while ($handler = $event->popHandler()) {
       $handlers[] = $handler;
     }
@@ -62,7 +85,7 @@ class UnitTest extends PHPUnit_Framework_TestCase {
    */
   public function testAcsfEventExecute() {
     $registry = acsf_get_registry();
-    $event = new \Drupal\acsf\Event\AcsfEvent(new \Drupal\acsf\Event\AcsfEventDispatcher(), new \Drupal\acsf\AcsfLog(), 'unit_test', $registry, array());
+    $event = new AcsfEvent(new AcsfEventDispatcher(), new AcsfLog(), 'unit_test', $registry, []);
     $event->run();
     $debug = $event->debug();
     $this->assertCount(3, $debug['handlers']['complete']);
@@ -73,7 +96,7 @@ class UnitTest extends PHPUnit_Framework_TestCase {
    */
   public function testAcsfEventInterrupt() {
     $registry = acsf_get_registry(TRUE);
-    $event = new \Drupal\acsf\Event\AcsfEvent(new \Drupal\acsf\Event\AcsfEventDispatcher(), new \Drupal\acsf\AcsfLog(), 'unit_test', $registry, array());
+    $event = new AcsfEvent(new AcsfEventDispatcher(), new AcsfLog(), 'unit_test', $registry, []);
     $event->run();
     $debug = $event->debug();
     $this->assertCount(1, $debug['handlers']['incomplete']);
@@ -84,7 +107,7 @@ class UnitTest extends PHPUnit_Framework_TestCase {
    * Tests the create method.
    */
   public function testAcsfEventCreate() {
-    $event = \Drupal\acsf\Event\AcsfEvent::create('unit_test', array());
+    $event = AcsfEvent::create('unit_test', []);
     $event->run();
     $debug = $event->debug();
     $this->assertCount(3, $debug['handlers']['complete']);
@@ -92,13 +115,12 @@ class UnitTest extends PHPUnit_Framework_TestCase {
 
   /**
    * Tests that incompatible handler types may not be used.
-   *
-   * @expectedException \Drupal\acsf\Event\AcsfEventHandlerIncompatibleException
    */
   public function testAcsfEventHandlerIncompatibleType() {
     $registry = acsf_get_registry(FALSE, 'UnitTestDummyHandler1');
-    $event = new \Drupal\acsf\Event\AcsfEvent(new \Drupal\acsf\Event\AcsfEventDispatcher(), new \Drupal\acsf\AcsfLog(), 'unit_test', $registry, array());
+    $event = new AcsfEvent(new AcsfEventDispatcher(), new AcsfLog(), 'unit_test', $registry, []);
     // Pass in a bogus handler type to trigger an exception.
+    $this->expectException(AcsfEventHandlerIncompatibleException::class);
     $event->popHandler('bogus_type');
   }
 
@@ -121,26 +143,25 @@ class UnitTest extends PHPUnit_Framework_TestCase {
  *   An array of dummy event handlers.
  */
 function acsf_get_registry($include_interrupt = FALSE, $handler = NULL) {
-  $classes = array(
+  $classes = [
     'UnitTestDummyHandler1',
     'UnitTestDummyHandler2',
     'UnitTestDummyHandlerInterrupt',
     'UnitTestDummyHandler3',
-  );
+  ];
   if (!$include_interrupt) {
-    $classes = array_diff($classes, array('UnitTestDummyHandlerInterrupt'));
+    $classes = array_diff($classes, ['UnitTestDummyHandlerInterrupt']);
   }
   if ($handler) {
-    $classes = array_intersect($classes, array($handler));
+    $classes = array_intersect($classes, [$handler]);
   }
-  $handlers = array();
+  $handlers = [];
   foreach ($classes as $class) {
-    $handlers[] = array(
+    $handlers[] = [
       'type' => 'unit_test',
       'class' => $class,
-      'path' => 'tests'
-    );
+      'path' => 'tests',
+    ];
   }
-  return array('events' => $handlers);
+  return ['events' => $handlers];
 }
-

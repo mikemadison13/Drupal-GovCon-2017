@@ -5,3 +5,6 @@ node.type.*.third_party.lightning_workflow:
     workflow:
       type: string
       label: 'Workflow ID'
+    autosave:
+      type: boolean
+      label: 'Enable autosave for this content type'

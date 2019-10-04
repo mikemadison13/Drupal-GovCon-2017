@@ -16,31 +16,43 @@ use Acquia\Blt\Robo\Common\YamlMunge;
 class AliasesCommand extends BltTasks {
 
   /**
+   * Cloud API client.
+   *
    * @var \AcquiaCloudApi\CloudApi\Client
    */
   protected $cloudApiClient;
 
   /**
+   * App id.
+   *
    * @var string
    */
   protected $appId;
 
   /**
+   * Cloud config dir.
+   *
    * @var string
    */
   protected $cloudConfDir;
 
   /**
+   * Cloud config filename.
+   *
    * @var string
    */
   protected $cloudConfFileName;
 
   /**
+   * Cloud config file path.
+   *
    * @var string
    */
   protected $cloudConfFilePath;
 
   /**
+   * Site alias dir.
+   *
    * @var string
    */
   protected $siteAliasDir;
@@ -51,7 +63,6 @@ class AliasesCommand extends BltTasks {
    * @command recipes:aliases:init:acquia
    *
    * @aliases raia aliases
-   *
    */
   public function generateAliasesAcquia() {
     $this->cloudConfDir = $_SERVER['HOME'] . '/.acquia';
@@ -98,7 +109,8 @@ class AliasesCommand extends BltTasks {
    * Sets appId value in blt.yml to disable interative prompt.
    *
    * @param string $app_id
-   *  The Acquia Cloud application UUID.
+   *   The Acquia Cloud application UUID.
+   *
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   protected function writeAppConfig($app_id) {
@@ -148,7 +160,8 @@ class AliasesCommand extends BltTasks {
    *
    * @return array
    *   Returns credentials as array on success.
-   * @throws BltException
+   *
+   * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   protected function askForCloudApiCredentials() {
     $this->say("You may generate new API tokens at <comment>https://cloud.acquia.com/app/profile/tokens</comment>");
@@ -188,7 +201,7 @@ class AliasesCommand extends BltTasks {
    * @param string $secret
    *   The Acquia token secret key.
    *
-   * @throws BltException
+   * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   protected function setCloudApiClient($key, $secret) {
     try {
@@ -198,7 +211,7 @@ class AliasesCommand extends BltTasks {
       ]);
       $cloud_api = Client::factory($connector);
       // We must call some method on the client to test authentication.
-      $cloud_api->applications();
+      $cloud_api->account();
       $this->cloudApiClient = $cloud_api;
     }
     catch (MalformedResponseExceptionAlias $e) {
@@ -253,7 +266,7 @@ class AliasesCommand extends BltTasks {
       $remoteHost = $ssh_split[1];
       $remoteUser = $ssh_split[0];
 
-      if ($hosting == 'ace') {
+      if (in_array($hosting, ['ace', 'acp'])) {
 
         $siteID = $site_split[1];
         $uri = $env->domains[0];
@@ -329,7 +342,7 @@ class AliasesCommand extends BltTasks {
    *   The full alias for this site.
    */
   protected function getAliases($uri, $envName, $remoteHost, $remoteUser, $siteID) {
-    $alias = array();
+    $alias = [];
     // Skip wildcard domains.
     $skip_site = FALSE;
     if (strpos($uri, ':*') !== FALSE) {

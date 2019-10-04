@@ -5,40 +5,54 @@
  * Provides PHPUnit tests for Acsf Site.
  */
 
-class AcsfSiteTest extends PHPUnit_Framework_TestCase {
+use Drupal\acsf\AcsfSite;
+use PHPUnit\Framework\TestCase;
+
+require_once __DIR__ . '/AcsfVariableStorageMock.php';
+
+/**
+ * AcsfSiteTest.
+ */
+class AcsfSiteTest extends TestCase {
 
   /**
    * The site ID issued by the factory.
    *
+   * Note this value is stored inside $info in AcsfSite, which defines __get().
+   * So we cannot rename it.
+   *
    * @var int
    */
+  // phpcs:disable
   public $site_id = 12345678;
+  // phpcs:enable
 
+  /**
+   * Setup.
+   */
   public function setUp() {
     // Simulate the sites.json configuration.
     $GLOBALS['gardens_site_settings']['conf']['acsf_site_id'] = $this->site_id;
 
-    $files = array(
-      __DIR__ . '/../vendor/autoload.php',
-      __DIR__ . '/AcsfVariableStorageMock.php',
-    );
-    foreach ($files as $file) {
-      require_once $file;
-    }
+    $drupalMock = Mockery::mock('overload:Drupal');
+    $drupalMock->shouldReceive('service')
+      ->with('acsf.variable_storage')
+      ->once()
+      ->andReturn(new AcsfVariableStorageMock());
   }
 
   /**
    * Provides test data.
    */
   public function getTestData() {
-    $data = array(
+    $data = [
       'true' => TRUE,
       'false' => FALSE,
       'string' => 'unit_test_string_value',
       'int' => mt_rand(0, 64),
       'float' => mt_rand() / mt_getrandmax(),
-      'array' => array('foo', 'bar', 'baz', 'qux'),
-    );
+      'array' => ['foo', 'bar', 'baz', 'qux'],
+    ];
 
     $data['object'] = (object) $data;
 
@@ -49,17 +63,10 @@ class AcsfSiteTest extends PHPUnit_Framework_TestCase {
    * Tests that we can use the factory method to get a cached site.
    */
   public function testFactoryLoadCache() {
-    $drupalMock = Mockery::mock('overload:Drupal');
-    $drupalMock->shouldReceive('service')
-      ->with('acsf.variable_storage')
-      ->once()
-      ->andReturn(new AcsfVariableStorageMock());
-
-    $GLOBALS['gardens_site_settings']['conf']['acsf_site_id'] = $this->site_id;
-    $site = \Drupal\acsf\AcsfSite::load();
+    $site = AcsfSite::load();
     $this->assertInstanceOf('\Drupal\acsf\AcsfSite', $site);
 
-    $cache = \Drupal\acsf\AcsfSite::load();
+    $cache = AcsfSite::load();
     $this->assertSame($site, $cache);
     $this->assertEquals($site->site_id, $cache->site_id);
   }
@@ -71,7 +78,7 @@ class AcsfSiteTest extends PHPUnit_Framework_TestCase {
    * if the value is set for the class property.
    */
   public function testAcsfSiteGet() {
-    $site = new \Drupal\acsf\AcsfSite($this->site_id);
+    $site = new AcsfSite($this->site_id);
 
     $data = $this->getTestData();
 
@@ -88,7 +95,7 @@ class AcsfSiteTest extends PHPUnit_Framework_TestCase {
    * the value is available using the __get() method.
    */
   public function testAcsfSiteSet() {
-    $site = new \Drupal\acsf\AcsfSite($this->site_id);
+    $site = new AcsfSite($this->site_id);
 
     $data = $this->getTestData();
 
@@ -106,7 +113,7 @@ class AcsfSiteTest extends PHPUnit_Framework_TestCase {
    * property and assure that it is NOT available using the __get() method.
    */
   public function testAcsfSiteUnset() {
-    $site = new \Drupal\acsf\AcsfSite($this->site_id);
+    $site = new AcsfSite($this->site_id);
 
     $data = $this->getTestData();
 
@@ -127,7 +134,7 @@ class AcsfSiteTest extends PHPUnit_Framework_TestCase {
    * that the class property is set using isset().
    */
   public function testAcsfSiteIsset() {
-    $site = new \Drupal\acsf\AcsfSite($this->site_id);
+    $site = new AcsfSite($this->site_id);
 
     $data = $this->getTestData();
 
@@ -143,14 +150,20 @@ class AcsfSiteTest extends PHPUnit_Framework_TestCase {
    */
   public function testSavedData() {
     $string = 'test value';
-    $site = new \Drupal\acsf\AcsfSite($this->site_id);
+    $site = new AcsfSite($this->site_id);
     $site->custom = $string;
     $site->save();
     unset($site);
 
-    $clone = new \Drupal\acsf\AcsfSite($this->site_id);
+    $clone = new AcsfSite($this->site_id);
     $this->assertEquals($clone->custom, $string);
   }
 
-}
+  /**
+   * Cleanup Mockery on each test. (PHPUnit 5 does not support listeners.)
+   */
+  public function tearDown() {
+    Mockery::close();
+  }
 
+}

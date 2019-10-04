@@ -1,8 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+use Drupal\Acsf\AcsfConfig;
 
-class AcsfConfigUnitTestMissingPassword extends \Drupal\Acsf\AcsfConfig {
+/**
+ * AcsfConfigUnitTestMissingPassword.
+ */
+class AcsfConfigUnitTestMissingPassword extends AcsfConfig {
 
   /**
    * Implements AcsfConfig::loadConfig().
@@ -13,4 +16,3 @@ class AcsfConfigUnitTestMissingPassword extends \Drupal\Acsf\AcsfConfig {
   }
 
 }
-

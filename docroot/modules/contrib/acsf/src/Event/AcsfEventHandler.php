@@ -1,25 +1,35 @@
 <?php
 
+namespace Drupal\acsf\Event;
+
 /**
- * @file
- * Contains \Drupal\acsf\Event\AcsfEventHandler.
+ * AcsfEventHandler.
  *
  * The purpose of this class is to define an interface for events within Site
  * Factory. Customers who have access to customize their code base can write
  * client code to this interface to interact with events in a standardized way.
  */
-
-namespace Drupal\acsf\Event;
-
 abstract class AcsfEventHandler {
 
-  // The time that the handler was started.
+  /**
+   * The time that the handler was started.
+   *
+   * @var int
+   */
   public $started = 0;
 
-  // The time that the handler was completed.
+  /**
+   * The time that the handler was completed.
+   *
+   * @var int
+   */
   public $completed = 0;
 
-  // Any messages triggered by the handler.
+  /**
+   * Any messages triggered by the handler.
+   *
+   * @var string
+   */
   public $message = '';
 
   /**

@@ -18,6 +18,7 @@ class GitCommand extends BltTasks {
    * @hidden
    *
    * @return int
+   *   Int.
    */
   public function commitMsgHook($message) {
     $this->say('Validating commit message syntax...');
@@ -45,14 +46,15 @@ class GitCommand extends BltTasks {
   /**
    * Validates staged files.
    *
+   * @param string $changed_files
+   *   A list of staged files, separated by \n.
+   *
    * @command internal:git-hook:execute:pre-commit
    * @aliases git:pre-commit
    * @hidden
    *
-   * @param string $changed_files
-   *   A list of staged files, separated by \n.
-   *
    * @return \Robo\Result
+   *   Result.
    */
   public function preCommitHook($changed_files) {
     $collection = $this->collectionBuilder();
@@ -71,7 +73,7 @@ class GitCommand extends BltTasks {
     if (in_array('composer.json', $changed_files_list)
       || in_array('composer.lock', $changed_files_list)) {
       $collection->addCode(
-        function () use ($changed_files) {
+        function () {
           return $this->invokeCommand('tests:composer:validate');
         }
       );

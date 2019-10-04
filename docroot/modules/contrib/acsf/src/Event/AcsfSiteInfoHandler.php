@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfSiteInfoHandler.
- */
-
 namespace Drupal\acsf\Event;
 
 use Drupal\acsf\AcsfSite;

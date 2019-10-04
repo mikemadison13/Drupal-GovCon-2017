@@ -10,6 +10,24 @@ use Drupal\lightning_core\ConfigHelper as Config;
 use Drupal\lightning_core\UpdateManager;
 
 /**
+ * Implements hook_requirements().
+ */
+function lightning_core_requirements() {
+  $requirements = [];
+
+  $profile = Drupal::installProfile();
+  $profile = Drupal::service('extension.list.profile')->get($profile);
+
+  if (isset($profile->info['base profile'])) {
+    $requirements['lightning_core_base_profile'] = [
+      'title' => t('Base profile'),
+      'value' => $profile->info['base profile'],
+    ];
+  }
+  return $requirements;
+}
+
+/**
  * Implements hook_install().
  */
 function lightning_core_install() {

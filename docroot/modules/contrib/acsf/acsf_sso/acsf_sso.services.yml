@@ -4,3 +4,7 @@ services:
     arguments: ['@entity_type.manager', '@logger.channel.samlauth']
     tags:
       - { name: event_subscriber }
+  acsf_sso.samlauth_request_subscriber:
+    class: Drupal\acsf_sso\EventSubscriber\SamlauthRequestSubscriber
+    tags:
+      - { name: event_subscriber }

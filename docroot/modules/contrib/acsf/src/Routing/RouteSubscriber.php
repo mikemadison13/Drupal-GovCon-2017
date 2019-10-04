@@ -1,15 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Routing\RouteSubscriber.
- */
-
 namespace Drupal\acsf\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
+/**
+ * RouteSubscriber.
+ */
 class RouteSubscriber extends RouteSubscriberBase {
 
   /**
@@ -21,5 +19,4 @@ class RouteSubscriber extends RouteSubscriberBase {
 
   // The default parent:getSubscribedEvents should return the correct event and
   // weight for this implementation, so no need to override.
-
 }

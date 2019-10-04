@@ -1,15 +1,18 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+use Drupal\acsf\AcsfMessage;
+use Drupal\acsf\AcsfMessageFailureException;
 
-class AcsfMessageUnitTestFailureException extends \Drupal\acsf\AcsfMessage {
+/**
+ * AcsfMessageUnitTestFailureException.
+ */
+class AcsfMessageUnitTestFailureException extends AcsfMessage {
 
   /**
    * Implements AcsfMessage::sendMessage().
    */
   protected function sendMessage($url, $method, $endpoint, array $parameters, $username, $password) {
-    throw new \Drupal\acsf\AcsfMessageFailureException('error message');
+    throw new AcsfMessageFailureException('error message');
   }
 
 }
-

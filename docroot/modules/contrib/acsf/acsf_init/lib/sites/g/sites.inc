@@ -2,10 +2,20 @@
 
 /**
  * @file
- * Configuration file for Drupal's multi-site directory aliasing feature.
+ * ACSF helper functions for Drupal's multi-site directory aliasing feature.
+ *
+ * Make sure to use require_once() so this file is never loaded more than
+ * once per page.
  */
 
+use Acquia\SimpleRest\SimpleRestCreds;
+use Acquia\SimpleRest\SimpleRestMessage;
+use Acquia\SimpleRest\SimpleRestResponse;
+
 // Load SimpleRest classes, needed for sending requests to the Site Factory.
+// @todo if we ever change/test gardens_site_data_alert_send(), we should move
+//   this include_once() into there. It is perfectly fine to execute in a
+//   shutdown function (as long as we don't make assumptions about the cwd).
 include_once dirname(__FILE__) . '/SimpleRest.php';
 
 // Bail out if we're not on an Acquia server.
@@ -13,8 +23,6 @@ if (function_exists('is_acquia_host') && !is_acquia_host()) {
   return;
 }
 
-// Make sure to use require_once() so this file is never loaded more than
-// once per page.
 define('GARDENS_SITE_DATA_USE_APC', (get_cfg_var('gardens.disable_apc_for_sites_php') != 1));
 // TTL set to 30 minutes to allow a cron to run full refreshes.
 define('GARDENS_SITE_DATA_TTL', 1800);
@@ -37,23 +45,29 @@ define('GARDENS_SITE_DATA_NOT_FOUND_TTL', 60);
 // sites be unreachable for too long.
 define('GARDENS_SITE_DATA_READ_FAILURE_TTL', 60);
 // Note: a nonexistent sites.json leads to no caching at all.
-
 // The path (template) to the lock file that should be checked when sites.json
 // is unreadable. Sitegroup + env need to be filled.
 define('GARDENS_SITE_JSON_ALERT_LOCK_TEMPLATE', '/mnt/tmp/%s.%s/.sites-json-alert');
 
-// Populate $_ENV if we are running cli.
-if ((!isset($_ENV['AH_SITE_NAME']) || !isset($_ENV['AH_SITE_GROUP']) || !isset($_ENV['AH_SITE_ENVIRONMENT'])) && file_exists('/var/www/site-scripts/site-info.php')) {
-  require_once '/var/www/site-scripts/site-info.php';
-  list($name, $group, $stage, $secret) = ah_site_info();
-  if (!isset($_ENV['AH_SITE_NAME'])) {
-    $_ENV['AH_SITE_NAME'] = $name;
+// This fallback to populate $_ENV should not be necessary on Acquia Hosting
+// anymore. Also, ah_site_info() is not a public API and not guaranteed to
+// keep existing. Still, we keep it for exotic environments which may be using
+// it to insert the environment values, e.g. local development environments.
+if (!isset($_ENV['AH_SITE_NAME']) || !isset($_ENV['AH_SITE_GROUP']) || !isset($_ENV['AH_SITE_ENVIRONMENT'])) {
+  if (!function_exists('ah_site_info') && file_exists('/var/www/site-scripts/site-info.php')) {
+    require_once '/var/www/site-scripts/site-info.php';
   }
-  if (!isset($_ENV['AH_SITE_GROUP'])) {
-    $_ENV['AH_SITE_GROUP'] = $group;
-  }
-  if (!isset($_ENV['AH_SITE_ENVIRONMENT'])) {
-    $_ENV['AH_SITE_ENVIRONMENT'] = $stage;
+  if (function_exists('ah_site_info')) {
+    list($name, $group, $stage, $secret) = ah_site_info();
+    if (!isset($_ENV['AH_SITE_NAME'])) {
+      $_ENV['AH_SITE_NAME'] = $name;
+    }
+    if (!isset($_ENV['AH_SITE_GROUP'])) {
+      $_ENV['AH_SITE_GROUP'] = $group;
+    }
+    if (!isset($_ENV['AH_SITE_ENVIRONMENT'])) {
+      $_ENV['AH_SITE_ENVIRONMENT'] = $stage;
+    }
   }
 }
 
@@ -71,6 +85,129 @@ function gardens_site_data_load_file() {
     return json_decode($json, TRUE);
   }
   return FALSE;
+}
+
+/**
+ * Checks for a registered ACSF site based on Apache server variables.
+ *
+ * Prerequisite: $_SERVER and $_ENV are both populated as per Acquia practices.
+ *
+ * @return array|int|null
+ *   0 if no site was found for the given domain; NULL if a sites.json read
+ *   failure was encountered; otherwise, an array of site data as constructed
+ *   by gardens_site_data_build_data() - with an added key 'dir_key' containing
+ *   the key where sites.php would expect to set this site's directory in its
+ *   '$sites' variable.
+ *
+ * @see gardens_site_data_build_data()
+ */
+function gardens_site_data_get_site_from_server_info() {
+  // First derive the 'site uri' (the base domain with possibly a sub path).
+  // Drush site-install gets confused about the uri when we specify the
+  // --sites-subdir option. The HTTP_HOST is set incorrectly and we can't find
+  // it in the sites.json. By specifying the --acsf-install-uri option with the
+  // value of the standard domain, we can catch that here and correct the uri
+  // argument for drush site installs.
+  if (PHP_SAPI === 'cli' && function_exists('drush_get_option') && ($acsf_uri = drush_get_option('acsf-install-uri', FALSE))) {
+    // The acsf-install-uri argument contains a pure domain string, one without
+    // a leading http:// string - but we make no assumptions about that.
+    if (!preg_match('|https?://|', $acsf_uri)) {
+      $acsf_uri = 'http://' . $acsf_uri;
+    }
+    $host = $_SERVER['HTTP_HOST'] = parse_url($acsf_uri, PHP_URL_HOST);
+    $path = parse_url($acsf_uri, PHP_URL_PATH);
+  }
+  else {
+    $host = rtrim($_SERVER['HTTP_HOST'], '.');
+    $path = $_SERVER['SCRIPT_NAME'] ? $_SERVER['SCRIPT_NAME'] : $_SERVER['SCRIPT_FILENAME'];
+    // Path based domains are implemented by symlinking a subdirectory back to
+    // the docroot. To support these, we need to know which part of the script
+    // path is the domain sub path, and which is a URL path inside the website.
+    // (Note our only concern in 'supporting path based domains' is locating
+    // the right site. How the request would derive the right URL inside that
+    // site is not up to us, and the only thing that is actually known to work
+    // with path based domains -through HTTP requests or Drush- is the standard
+    // index.php.)
+    if (substr($path, -10) === '/index.php') {
+      // Assume the requested index.php is in the root, meaning that the full
+      // script path leading up to it is the domain sub path. In other words:
+      // we do not support index.php being anywhere else except the docroot.
+      // This goes for every customer, not just those using path based domains.
+      $path = substr($path, 0, strlen($path) - 10);
+    }
+    else {
+      // For any non-index.php path, assume the sub path is empty. In other
+      // words: simply do not support path based domains for these.
+      $path = '';
+    }
+  }
+
+  // Convert host/path to lower case because our registry stores data this way;
+  // upper cased paths may still not be recognized (by Drush commands, unless
+  // there is a symlink matching the specific case) though.
+  $host = strtolower($host);
+  // The path may have a trailing slash (because PHP_URL_PATH can contain one,
+  // and because Drush can set SCRIPT_NAME to '//index.php' when the --uri
+  // parameter has a trailing slash). Unify, so the result is either empty or a
+  // path with a leading slash.
+  $path = strtolower(rtrim($path, '/'));
+
+  // Get data for the 'site uri' from APC or sites.json.
+  if (!GARDENS_SITE_DATA_USE_APC) {
+    $data = gardens_site_data_refresh_one($host . $path);
+  }
+  else {
+    // Check for data in APC: FALSE means no; 0 means "not found" cached in
+    // APC; NULL means "sites.json read failure" cached in APC.
+    $data = gardens_site_data_cache_get($host . $path);
+    if ($data === FALSE) {
+      // There's no guarantee about how many times this will be called, because
+      // Core doesn't do any caching around the 'conf path'. For instance Drush
+      // 7 would will call this file and logic around 19 times during each
+      // command; Drush 8 only once and Drush 9.6 increases this to around 4. To
+      // minimise gluster access, cache data to a local static cache. We assume
+      // that *if* we have data for a given domain at any point during a request
+      // on the command line then that data remains the same for the duration of
+      // the command execution.
+      // For some drush commands (that have bootstrap levels lower than
+      // 'configuration', only when run with drush6/drush7), we don't have
+      // drupal_static() available. We'll skip caching for those few commands,
+      // so sites.json will be read always (which used to be the case for all
+      // commands before we implemented this cache).
+      if (function_exists('drupal_static')) {
+        $static_cache = &drupal_static('acsf_sites_php_site_data');
+      }
+      else {
+        $static_cache = [];
+      }
+      if (isset($static_cache[$host . $path])) {
+        $data = $static_cache[$host . $path];
+      }
+      else {
+        $data = gardens_site_data_refresh_one($host . $path);
+        if ($data) {
+          // We only cache truthy data ourselves, because we don't want to
+          // assume that if a domain is not found (or there's a gluster error),
+          // that will stay the same during command execution. Note we also set
+          // the static cache if APC is active (which isn't necessary) because
+          // it doesn't really matter and because otherwise, we would have to
+          // - either replicate the check for APC which is now abstracted away
+          //   into gardens_site_data_cache_get()
+          // - or move $static_cache into gardens_site_data_cache_get() &
+          //   gardens_site_data_cache_set(), which isn't wrong but we prefer
+          //   not caching every domain in memory when the full file gets read.
+          $static_cache[$host . $path] = $data;
+        }
+      }
+    }
+  }
+
+  if (is_array($data)) {
+    // Generate the expected drupal sites.php key for this domain.
+    $data['dir_key'] = str_replace('/', '.', $host . $path);
+  }
+
+  return $data;
 }
 
 /**
@@ -136,22 +273,24 @@ function gardens_site_data_build_data(array $site, array $map) {
 
   $private_files_directory = gardens_site_data_get_private_files_directory($db_name);
 
-  return array(
+  return [
     'dir' => "g/files/{$site['name']}",
     // Put some settings into a global used in settings.php.
-    'gardens_site_settings' => array(
+    'gardens_site_settings' => [
       'site' => $map['cloud']['site'],
       'env' => $map['cloud']['env'],
       'memcache_inc' => !empty($map["memcache_inc"]) ? $map["memcache_inc"] : '',
-      'flags' => !empty($site['flags']) ? $site['flags'] : array(),
-      'conf' => !empty($site['conf']) ? $site['conf'] : array(),
+      'flags' => !empty($site['flags']) ? $site['flags'] : [],
+      'conf' => !empty($site['conf']) ? $site['conf'] : [],
       'file_private_path' => file_exists($private_files_directory) ? $private_files_directory : NULL,
-    ),
-  );
+    ],
+  ];
 }
 
 /**
  * Parses the entire JSON sites file and returns a result for a single domain.
+ *
+ * Use gardens_site_data_refresh_one() for a faster near-equivalent.
  *
  * @param string $domain
  *   A domain name to search for in the JSON.
@@ -184,7 +323,7 @@ function gardens_site_data_get_site_from_file($domain) {
  *   if a sites.json read failure was encountered.
  */
 function gardens_site_data_refresh_one($domain) {
-  $data = gardens_site_data_refresh_domains(array($domain));
+  $data = gardens_site_data_refresh_domains([$domain]);
   return isset($data[$domain]) ? $data[$domain] : NULL;
 }
 
@@ -203,7 +342,7 @@ function gardens_site_data_refresh_one($domain) {
  */
 function gardens_site_data_refresh_domains(array $domains) {
   $location = gardens_site_data_get_filepath();
-  $data = array();
+  $data = [];
   foreach ($domains as $domain) {
     $domain = trim($domain);
     // Below code expects the JSON file to contain newlines such that
@@ -218,7 +357,10 @@ function gardens_site_data_refresh_domains(array $domains) {
     // key for a site is included in double quotes (apparently for fear of
     // having a file in illegal JSON format, which does not double-quote its
     // object keys...) so we may hit false positives.
+    // Acquia rules disallow exec() with dynamic arguments.
+    // phpcs:disable
     exec(sprintf("grep %s %s --no-filename --color=never --context=0", escapeshellarg($domain), escapeshellarg($location)), $output_array, $exit_code);
+    // phpcs:enable
     $result = trim(implode("\n", $output_array));
 
     if (empty($result)) {
@@ -242,7 +384,7 @@ function gardens_site_data_refresh_domains(array $domains) {
       // the begin and end anchors can match the beginning and end of any one of
       // those lines, rather than having to match the entire string from
       // beginning to end (which fails if there is more than 1 line of results).
-      $matches = array();
+      $matches = [];
       $pattern = '@^\s*"' . preg_quote($domain, '@') . '": ({.+}),?$@m';
       if (preg_match($pattern, $result, $matches)) {
         $found_site = json_decode($matches[1], TRUE);
@@ -262,7 +404,7 @@ function gardens_site_data_refresh_domains(array $domains) {
         // format of the file has changed such that the grep-based single-line
         // parsing no longer works.
         if (class_exists('Drupal') && \Drupal::hasService('logger.factory')) {
-          \Drupal::logger('acsf')->alert('Unable to extract site data for site @site from sites.json line "@line".', array('@site' => $domain, '@line' => $result));
+          \Drupal::logger('acsf')->alert('Unable to extract site data for site @site from sites.json line "@line".', ['@site' => $domain, '@line' => $result]);
         }
         elseif (function_exists('syslog')) {
           syslog(LOG_ERR, sprintf('Unable to extract site data for site %s from sites.json line "%s".', $domain, $result));
@@ -342,7 +484,7 @@ function gardens_site_data_refresh_domains(array $domains) {
  *   a scalar 0; if sites.json could not be read, then NULL.
  */
 function gardens_site_data_cache_set($domain, $data) {
-  if (function_exists('apc_store')) {
+  if (extension_loaded('apcu') && ini_get('apc.enabled') && function_exists('apcu_store')) {
     if ($data === NULL) {
       $ttl = GARDENS_SITE_DATA_READ_FAILURE_TTL;
     }
@@ -354,7 +496,7 @@ function gardens_site_data_cache_set($domain, $data) {
     }
     if ($ttl) {
       $domain_key = "gardens_domain:$domain";
-      apc_store($domain_key, $data, $ttl);
+      apcu_store($domain_key, $data, $ttl);
     }
   }
 }
@@ -371,15 +513,15 @@ function gardens_site_data_cache_set($domain, $data) {
  */
 function gardens_site_data_cache_get($domain) {
   $result = FALSE;
-  if (function_exists('apc_fetch')) {
+  if (extension_loaded('apcu') && ini_get('apc.enabled') && function_exists('apcu_fetch')) {
     $domain_key = "gardens_domain:$domain";
-    $result = apc_fetch($domain_key);
+    $result = apcu_fetch($domain_key);
   }
   return $result;
 }
 
 /**
- * (Re)checks for a fatal issue with the sites.json file.
+ * Re-checks for a fatal issue with the sites.json file.
  *
  * This function is not the only location where issues are determined; it's used
  * to doublecheck the exact type of issue / doublecheck for a race condition,
@@ -405,12 +547,18 @@ function gardens_site_data_sites_json_issue_type_get() {
       // we get back if it fails. There is a fail which we need to ignore: when
       // the sites.json is being rewritten for a short period of time the
       // following error will be returned:
-      //   head: cannot open `/mnt/files/balazs.01live/files-private/sites.json'
-      //   for reading: Structure needs cleaning
+      //
+      // head: cannot open `/mnt/files/balazs.01live/files-private/sites.json'
+      // for reading: Structure needs cleaning
+      //
       // To make sure we are only triggering an alert in case of a Gluster split
       // brain, redirect the stderr to stdout and look for the indicator
       // message: 'Input/output error'.
+      //
+      // Acquia rules disallow exec() with dynamic arguments.
+      // phpcs:disable
       exec(sprintf('head -n1 %s 2>&1', escapeshellarg($sites_json_path)), $output_array, $exit_code);
+      // phpcs:enable
       $output = implode('', $output_array);
       if ($exit_code !== 0 && strpos($output, 'Input/output error') !== FALSE) {
         $issue_type = 'gluster_split_brain';
@@ -572,7 +720,7 @@ function gardens_site_data_shared_creds_get($site, $env) {
   if (file_exists($ini_file)) {
     $data = parse_ini_file($ini_file, TRUE);
     if (!empty($data) && !empty($data['gardener'])) {
-      return new Acquia\SimpleRest\SimpleRestCreds($data['gardener']['username'],
+      return new SimpleRestCreds($data['gardener']['username'],
         $data['gardener']['password'],
         $data['gardener']['url']);
     }
@@ -603,24 +751,24 @@ function gardens_site_data_alert_send($scope, $issue_type) {
   $webnode = gethostname();
 
   try {
-    $parameters = array(
+    $parameters = [
       'scope' => $scope,
-      'data' => array(
+      'data' => [
         'issue_type' => $issue_type,
         'site_group' => $site,
         'site_env' => $env,
         'server' => $webnode,
         'timestamp' => REQUEST_TIME,
-      ),
-    );
+      ],
+    ];
     $creds = gardens_site_data_shared_creds_get($site, $env);
-    $message = new Acquia\SimpleRest\SimpleRestMessage($site, $env);
+    $message = new SimpleRestMessage($site, $env);
     $response = $message->send('POST', $endpoint, $parameters, $creds);
   }
   catch (Exception $e) {
     $error_message = sprintf('Sending alert to Site Factory failed: %s', $e->getMessage());
     syslog(LOG_ERR, $error_message);
-    $response = new Acquia\SimpleRest\SimpleRestResponse($endpoint, 500, array('message' => $error_message));
+    $response = new SimpleRestResponse($endpoint, 500, ['message' => $error_message]);
   }
 
   return $response;

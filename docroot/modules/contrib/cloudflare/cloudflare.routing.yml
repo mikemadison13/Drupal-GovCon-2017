@@ -12,8 +12,7 @@ cloudflare.admin_settings_form:
     tempstore_id: 'cloudflare.wizard.settings'
     machine_name: 'CloudFlareSettings'
   requirements:
-    _access: 'TRUE'
-    _permission: 'access administration pages'
+    _permission: 'administer cloudflare'
 cloudflare.admin_settings_form.step:
   path: '/admin/config/services/cloudflare/{step}'
   defaults:
@@ -22,5 +21,4 @@ cloudflare.admin_settings_form.step:
     tempstore_id: 'cloudflare.wizard.settings'
     machine_name: 'CloudFlareSettings'
   requirements:
-    _access: 'TRUE'
-    _permission: 'access administration pages'
+    _permission: 'administer cloudflare'

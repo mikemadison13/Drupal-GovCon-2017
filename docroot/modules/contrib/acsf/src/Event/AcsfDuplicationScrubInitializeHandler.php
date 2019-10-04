@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\acsf\Event\AcsfDuplicationScrubInitializeHandler.
- */
-
 namespace Drupal\acsf\Event;
 
 use Drupal\acsf\AcsfSite;
@@ -19,7 +14,7 @@ class AcsfDuplicationScrubInitializeHandler extends AcsfEventHandler {
    * Implements AcsfEventHandler::handle().
    */
   public function handle() {
-    drush_print(dt('Entered @class', array('@class' => get_class($this))));
+    drush_print(dt('Entered @class', ['@class' => get_class($this)]));
     if (!$this->isComplete()) {
       $site = AcsfSite::load();
       $site->clean();

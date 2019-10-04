@@ -1,8 +1,6 @@
 <?php
 
-namespace Acquia\Blt\Tests\BltProject;
-
-use Acquia\Blt\Tests\BltProjectTestBase;
+namespace Acquia\Blt\Tests;
 
 /**
  * Class ConfigImportTest.
@@ -11,6 +9,9 @@ use Acquia\Blt\Tests\BltProjectTestBase;
  */
 class ConfigImportTest extends BltProjectTestBase {
 
+  /**
+   * @throws \Exception
+   */
   public function setUp() {
     parent::setUp();
     $this->importDbFromFixture();
@@ -18,46 +19,50 @@ class ConfigImportTest extends BltProjectTestBase {
 
   /**
    * @group requires-db
+   * @throws \Exception
    */
   public function testNoConfig() {
     $this->drush("config-export --yes");
-    list($status_code, $output, $config) = $this->blt("drupal:config:import", [
+    list($status_code) = $this->blt("drupal:config:import", [
       '--define' => [
         'cm.strategy=none',
       ],
     ]);
-    $this->assertEquals(0, $status_code);
+    $this::assertEquals(0, $status_code);
   }
 
   /**
    * @group requires-db
+   * @throws \Exception
    */
   public function testFeatures() {
     $this->drush("pm-enable features --yes");
     $this->drush("config-export --yes");
-    list($status_code, $output, $config) = $this->blt("drupal:config:import", [
+    list($status_code) = $this->blt("drupal:config:import", [
       '--define' => [
         'cm.strategy=features',
       ],
     ]);
-    $this->assertEquals(0, $status_code);
+    $this::assertEquals(0, $status_code);
   }
 
   /**
    * @group requires-db
+   * @throws \Exception
    */
   public function testCoreOnly() {
     $this->drush("config-export --yes");
-    list($status_code, $output, $config) = $this->blt("drupal:config:import", [
+    list($status_code) = $this->blt("drupal:config:import", [
       '--define' => [
         'cm.strategy=core-only',
       ],
     ]);
-    $this->assertEquals(0, $status_code);
+    static::assertEquals(0, $status_code);
   }
 
   /**
    * @group requires-db
+   * @throws \Exception
    */
   public function testConfigSplit() {
     $this->drush("pm-enable config_split --yes");
@@ -66,12 +71,12 @@ class ConfigImportTest extends BltProjectTestBase {
       $this->bltDirectory . "/scripts/blt/ci/internal/config_split.config_split.ci.yml",
       $this->sandboxInstance . "/config/default/config_split.config_split.ci.yml"
     );
-    list($status_code, $output, $config) = $this->blt("drupal:config:import", [
+    list($status_code) = $this->blt("drupal:config:import", [
       '--define' => [
         'cm.strategy=config-split',
       ],
     ]);
-    $this->assertEquals(0, $status_code);
+    static::assertEquals(0, $status_code);
   }
 
 }

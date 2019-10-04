@@ -2,7 +2,6 @@
 
 namespace Drupal\cloudflarepurger\Plugin\Purge\Purger;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\cloudflare\CloudFlareStateInterface;
 use Drupal\cloudflare\CloudFlareComposerDependenciesCheckInterface;
@@ -94,7 +93,7 @@ class CloudFlarePurger extends PurgerBase implements PurgerInterface {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
    * @param \Drupal\cloudflare\CloudFlareStateInterface $state
    *   Tracks limits associated with CloudFlare Api.
@@ -106,10 +105,10 @@ class CloudFlarePurger extends PurgerBase implements PurgerInterface {
    * @throws \LogicException
    *   Thrown if $configuration['id'] is missing, see Purger\Service::createId.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config, CloudFlareStateInterface $state, LoggerInterface $logger, CloudFlareComposerDependenciesCheckInterface $checker) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, CloudFlareStateInterface $state, LoggerInterface $logger, CloudFlareComposerDependenciesCheckInterface $checker) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->config = $config->get('cloudflare.settings');
+    $this->config = $config_factory->get('cloudflare.settings');
     $this->state = $state;
     $this->logger = $logger;
     $this->areCloudflareComposerDepenciesMet = $checker->check();

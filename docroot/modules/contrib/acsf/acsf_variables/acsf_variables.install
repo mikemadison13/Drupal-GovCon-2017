@@ -9,36 +9,36 @@
  * Implements hook_schema().
  */
 function acsf_variables_schema() {
-  $schema = array();
+  $schema = [];
 
-  $schema['acsf_variables'] = array(
+  $schema['acsf_variables'] = [
     'description' => 'A centralized storage mechanism for all ACSF sensitive variables that can be easily scrubbed.',
-    'fields' => array(
-      'name' => array(
+    'fields' => [
+      'name' => [
         'description' => 'The name of the variable.',
         'type' => 'varchar',
         'length' => 128,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'group_name' => array(
+      ],
+      'group_name' => [
         'description' => 'The group of the variable.',
         'type' => 'varchar',
         'length' => 128,
         'not null' => FALSE,
-      ),
-      'value' => array(
+      ],
+      'value' => [
         'description' => 'The value of the variable.',
         'type' => 'blob',
         'not null' => TRUE,
         'size' => 'big',
-      ),
-    ),
-    'primary key' => array('name'),
-    'indexes' => array(
-      'group_name' => array('group_name'),
-    ),
-  );
+      ],
+    ],
+    'primary key' => ['name'],
+    'indexes' => [
+      'group_name' => ['group_name'],
+    ],
+  ];
 
   return $schema;
 }

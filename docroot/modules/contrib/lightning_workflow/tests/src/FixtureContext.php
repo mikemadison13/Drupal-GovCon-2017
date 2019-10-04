@@ -3,10 +3,8 @@
 namespace Drupal\Tests\lightning_workflow;
 
 use Drupal\block\Entity\Block;
-use Drupal\lightning_core\ConfigHelper as Config;
 use Drupal\node\Entity\NodeType;
 use Drupal\Tests\lightning_core\FixtureBase;
-use Drupal\user\Entity\Role;
 use Drupal\views\Entity\View;
 
 final class FixtureContext extends FixtureBase {
@@ -15,46 +13,20 @@ final class FixtureContext extends FixtureBase {
    * @BeforeScenario
    */
   public function setUp() {
-    // Create the administrator role if it does not already exist.
-    if (!Role::load('administrator')) {
-      $role = Role::create([
-        'id' => 'administrator',
-        'label' => 'Administrator',
-      ])->setIsAdmin(TRUE);
-
-      $this->save($role);
-    }
-
-    if (!$this->container->get('module_handler')->moduleExists('lightning_page')) {
-      $config = new Config(
-        $this->container->get('extension.list.module')->get('lightning_page'),
-        $this->container->get('config.factory'),
-        $this->container->get('entity_type.manager')
-      );
-      $config->deleteAll();
-    }
-
-    // Install Lightning Page separately in order to ensure that the optional
-    // Pathauto config that it ships is installed too.
-    $this->installModule('lightning_page');
-    // Lightning Workflow optionally integrates with Diff, and for testing
-    // purposes we'd like to enable that integration. In order to test with
-    // meaningful responsibility-based roles, we also enable Lightning Roles.
-    $this->installModule('lightning_roles');
-    $this->installModule('pathauto');
     $this->installModule('views');
 
     // Cache the original state of the editorial workflow.
     $this->config('workflows.workflow.editorial');
 
-    // Add moderation to the page content type.
-    /** @var \Drupal\node\NodeTypeInterface $node_type */
-    $node_type = NodeType::load('page')
-      ->setThirdPartySetting('lightning_workflow', 'workflow', 'editorial');
-    $dependencies = $node_type->getDependencies();
-    $dependencies['enforced']['module'][] = 'lightning_page';
-    $node_type->set('dependencies', $dependencies)->save();
-    lightning_workflow_node_type_insert($node_type);
+    // Create a temporary content type specifically for testing.
+    $node_type = NodeType::create([
+      'type' => 'moderated',
+      'name' => 'Moderated',
+    ]);
+    $node_type->setThirdPartySetting('lightning_workflow', 'workflow', 'editorial');
+    $node_type->setThirdPartySetting('lightning_workflow', 'autosave', TRUE);
+    $this->save($node_type);
+    node_add_body_field($node_type);
 
     // Cache the original state of the content view.
     $this->config('views.view.content');

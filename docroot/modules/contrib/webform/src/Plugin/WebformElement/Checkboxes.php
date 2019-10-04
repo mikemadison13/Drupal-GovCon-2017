@@ -55,8 +55,11 @@ class Checkboxes extends OptionsBase {
    * {@inheritdoc}
    */
   public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
-    $element['#element_validate'][] = [get_class($this), 'validateMultipleOptions'];
     parent::prepare($element, $webform_submission);
+
+    // Issue #3068998: Checkboxes validation UI is different than
+    // other elements.
+    $element['#attached']['library'][] = 'webform/webform.element.checkboxes';
   }
 
   /**

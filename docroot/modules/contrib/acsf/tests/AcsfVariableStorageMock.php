@@ -1,21 +1,30 @@
 <?php
 
 /**
- * Encapsulates functionality to interact with ACSF variables.
+ * Mock AcsfVariableStorage class used for testing.
  */
 class AcsfVariableStorageMock {
 
+  /**
+   * In-memory storage space. Stores group_name + value by variable name.
+   *
+   * @var array[]
+   */
   protected $storage;
 
+  /**
+   * Mapping from group names to arrays of variable names.
+   *
+   * @var array[]
+   */
   protected $group;
 
   /**
    * Constructor.
-   *
    */
   public function __construct() {
-    $this->storage = array();
-    $this->group = array();
+    $this->storage = [];
+    $this->group = [];
   }
 
   /**
@@ -31,15 +40,15 @@ class AcsfVariableStorageMock {
    * @return int
    *   1 if an INSERT query was executed, 2 for UPDATE.
    */
-  function set($name, $value, $group = NULL) {
+  public function set($name, $value, $group = NULL) {
     $response = 1;
     if (isset($this->storage[$name])) {
       $response = 2;
     }
-    $this->storage[$name] = array(
+    $this->storage[$name] = [
       'group_name' => $group,
       'value' => serialize($value),
-    );
+    ];
     $this->group[$group][] = $name;
 
     return $response;
@@ -56,7 +65,7 @@ class AcsfVariableStorageMock {
    * @return mixed
    *   The value of the variable.
    */
-  function get($name, $default = NULL) {
+  public function get($name, $default = NULL) {
     if (isset($this->storage[$name])) {
       return unserialize($this->storage[$name]['value']);
     }
@@ -75,11 +84,11 @@ class AcsfVariableStorageMock {
    *   An associative array holding the values of the variables, keyed by the
    *   variable names.
    */
-  function getMatch($match) {
-    $return = array();
+  public function getMatch($match) {
+    $return = [];
 
     $result = $this->connection->select('acsf_variables', 'v')
-      ->fields('v', array('name', 'value'))
+      ->fields('v', ['name', 'value'])
       ->condition('name', '%' . $match . '%', 'LIKE')
       ->execute();
 
@@ -102,8 +111,8 @@ class AcsfVariableStorageMock {
    *   An associative array holding the values of the group of variables, keyed
    *   by the variable names.
    */
-  function getGroup($group, $default = array()) {
-    $return = array();
+  public function getGroup($group, $default = []) {
+    $return = [];
 
     if (isset($this->group[$group])) {
       foreach ($this->group[$group] as $name) {
@@ -128,7 +137,7 @@ class AcsfVariableStorageMock {
    * @return int
    *   The number of deleted rows.
    */
-  function delete($name) {
+  public function delete($name) {
     $result = $this->connection->delete('acsf_variables')
       ->condition('name', $name)
       ->execute();
