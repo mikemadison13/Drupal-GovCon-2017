@@ -113,7 +113,6 @@ class UpdateCommand extends BltTasks {
     $this->getConfig()->replace($new_config->export());
 
     $this->invokeCommand('blt:init:settings');
-    $this->invokeCommand('recipes:blt:init:command');
     $this->invokeCommand('blt:init:shell-alias');
     if (DIRECTORY_SEPARATOR === '\\') {
       // On Windows, during composer create-project,
@@ -153,8 +152,8 @@ class UpdateCommand extends BltTasks {
   /**
    * Removes deprecated BLT files and directories.
    *
-   * @command blt:source:cleanup
-   * @aliases bsc cleanup
+   * @command blt:update:cleanup
+   * @aliases blt:source:cleanup bsc cleanup
    */
   public function cleanup() {
     $this->say("Removing deprecated files and directories...");

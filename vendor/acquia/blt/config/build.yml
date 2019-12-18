@@ -24,6 +24,8 @@ blt:
     example-local: ${repo.root}/blt/example.local.blt.yml
     schema-version: ${repo.root}/blt/.schema_version
   command-cache-dir: ${blt.root}/cache/commands
+  alias:
+    auto-install: true
 
 composer:
   bin: ${repo.root}/${bin.path}
@@ -86,6 +88,7 @@ git:
   # You should execute `blt blt:init:git-hooks` after modifying these values.
   hooks:
     pre-commit: ${blt.root}/scripts/git-hooks
+    pre-push: ${blt.root}/scripts/git-hooks
     commit-msg: ${blt.root}/scripts/git-hooks
   commit-msg:
     # Commit messages must conform to this pattern.
@@ -135,9 +138,9 @@ setup:
 
 sync:
   # By default, files are not synced during sync:refresh.
-  # Set this value to 'true' or pass -D sync.files=true
+  # Set this value to 'true' or pass -D sync.public-files=true
   # to override this behavior.
-  files: false
+  public-files: false
   private-files: false
   # Paths to exclude during file syncing operations.
   exclude-paths:
@@ -213,15 +216,16 @@ tests:
     port: 9515
     args: null
   drupal:
-    # May be phpunit or run-tests-script.
-    test-runner: run-tests-script
+    # May be phpunit, run-tests-script, or nightwatch.
+    test-runner: phpunit
     sudo-run-tests: true
-    # Only chromedriver is supported at this time.
-    web-driver: chromedriver
+    # Chrome or chromedriver.
+    web-driver: chrome
     sqlite: '${repo.root}/tmp/test.sqlite'
     browsertest-output-directory: 'browser_output'
     apache-run-group: 'www-data'
     apache-run-user: 'www-data'
+    chrome-args: '--disable-gpu --headless --no-sandbox'
     # mink-driver-args: ''
     mink-driver-args-webdriver: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless","--no-sandbox"]}}, "http://localhost:9515"]'
     # mink-driver-class: 'Drupal\FunctionalJavascriptTests\DrupalSelenium2Driver'
@@ -242,10 +246,10 @@ tests:
 validate:
   # You can change this to true to have blt automatically validate acsf-init.
   acsf: false
-  # You can change one or both of these to true to have blt automatically scan for deprecated code.
+  # You can change one or both of these to false to disable deprecated code scanning.
   deprecation:
-    modules: false
-    themes: false
+    modules: true
+    themes: true
 
   deprecated:
     filesets:

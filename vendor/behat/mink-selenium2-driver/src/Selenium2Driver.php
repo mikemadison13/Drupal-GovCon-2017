@@ -14,7 +14,6 @@ use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Selector\Xpath\Escaper;
 use WebDriver\Element;
 use WebDriver\Exception\NoSuchElement;
-use WebDriver\Exception\UnknownCommand;
 use WebDriver\Exception\UnknownError;
 use WebDriver\Exception;
 use WebDriver\Key;
@@ -98,21 +97,12 @@ class Selenium2Driver extends CoreDriver
      * See http://code.google.com/p/selenium/wiki/DesiredCapabilities
      *
      * @param array $desiredCapabilities an array of capabilities to pass on to the WebDriver server
-     *
-     * @throws DriverException
      */
     public function setDesiredCapabilities($desiredCapabilities = null)
     {
-        if ($this->started) {
-            throw new DriverException("Unable to set desiredCapabilities, the session has already started");
-        }
-
         if (null === $desiredCapabilities) {
-            $desiredCapabilities = array();
+            $desiredCapabilities = self::getDefaultCapabilities();
         }
-
-        // Join $desiredCapabilities with defaultCapabilities
-        $desiredCapabilities = array_replace(self::getDefaultCapabilities(), $desiredCapabilities);
 
         if (isset($desiredCapabilities['firefox'])) {
             foreach ($desiredCapabilities['firefox'] as $capability => $value) {
@@ -131,7 +121,7 @@ class Selenium2Driver extends CoreDriver
         // See https://sites.google.com/a/chromium.org/chromedriver/capabilities
         if (isset($desiredCapabilities['chrome'])) {
 
-            $chromeOptions = (isset($desiredCapabilities['goog:chromeOptions']) && is_array($desiredCapabilities['goog:chromeOptions']))? $desiredCapabilities['goog:chromeOptions']:array();
+            $chromeOptions = array();
 
             foreach ($desiredCapabilities['chrome'] as $capability => $value) {
                 if ($capability == 'switches') {
@@ -142,22 +132,12 @@ class Selenium2Driver extends CoreDriver
                 $desiredCapabilities['chrome.'.$capability] = $value;
             }
 
-            $desiredCapabilities['goog:chromeOptions'] = $chromeOptions;
+            $desiredCapabilities['chromeOptions'] = $chromeOptions;
 
             unset($desiredCapabilities['chrome']);
         }
 
         $this->desiredCapabilities = $desiredCapabilities;
-    }
-
-    /**
-     * Gets the desiredCapabilities
-     *
-     * @return array $desiredCapabilities
-     */
-    public function getDesiredCapabilities()
-    {
-        return $this->desiredCapabilities;
     }
 
     /**
@@ -189,7 +169,14 @@ class Selenium2Driver extends CoreDriver
     {
         return array(
             'browserName'       => 'firefox',
+            'version'           => '9',
+            'platform'          => 'ANY',
+            'browserVersion'    => '9',
+            'browser'           => 'firefox',
             'name'              => 'Behat Test',
+            'deviceOrientation' => 'portrait',
+            'deviceType'        => 'tablet',
+            'selenium-version'  => '2.31.0'
         );
     }
 
@@ -672,24 +659,10 @@ JS;
             $existingValueLength = strlen($element->attribute('value'));
             // Add the TAB key to ensure we unfocus the field as browsers are triggering the change event only
             // after leaving the field.
-            $value = str_repeat(Key::BACKSPACE . Key::DELETE, $existingValueLength) . $value;
+            $value = str_repeat(Key::BACKSPACE . Key::DELETE, $existingValueLength) . $value . Key::TAB;
         }
 
         $element->postValue(array('value' => array($value)));
-        // Remove the focus from the element if the field still has focus in
-        // order to trigger the change event. By doing this instead of simply
-        // triggering the change event for the given xpath we ensure that the
-        // change event will not be triggered twice for the same element if it
-        // has lost focus in the meanwhile. If the element has lost focus
-        // already then there is nothing to do as this will already have caused
-        // the triggering of the change event for that element.
-        $script = <<<JS
-var node = {{ELEMENT}};
-if (document.activeElement === node) {
-  document.activeElement.blur();
-}
-JS;
-        $this->executeJsOnElement($element, $script);
     }
 
     /**
@@ -771,13 +744,7 @@ JS;
 
     private function clickOnElement(Element $element)
     {
-        try {
-            // Move the mouse to the element as Selenium does not allow clicking on an element which is outside the viewport
-            $this->wdSession->moveto(array('element' => $element->getID()));
-        } catch (UnknownCommand $e) {
-            // If the Webdriver implementation does not support moveto (which is not part of the W3C WebDriver spec), proceed to the click
-        }
-
+        $this->wdSession->moveto(array('element' => $element->getID()));
         $element->click();
     }
 
@@ -807,17 +774,7 @@ JS;
         $element = $this->findElement($xpath);
         $this->ensureInputType($element, $xpath, 'file', 'attach a file on');
 
-        // Upload the file to Selenium and use the remote path. This will
-        // ensure that Selenium always has access to the file, even if it runs
-        // as a remote instance.
-        try {
-          $remotePath = $this->uploadFile($path);
-        } catch (\Exception $e) {
-          // File could not be uploaded to remote instance. Use the local path.
-          $remotePath = $path;
-        }
-
-        $element->postValue(array('value' => array($remotePath)));
+        $element->postValue(array('value' => array($path)));
     }
 
     /**
@@ -843,7 +800,8 @@ JS;
      */
     public function focus($xpath)
     {
-        $this->trigger($xpath, 'focus');
+        $script = 'Syn.trigger("focus", {}, {{ELEMENT}})';
+        $this->withSyn()->executeJsOnXpath($xpath, $script);
     }
 
     /**
@@ -851,7 +809,8 @@ JS;
      */
     public function blur($xpath)
     {
-        $this->trigger($xpath, 'blur');
+        $script = 'Syn.trigger("blur", {}, {{ELEMENT}})';
+        $this->withSyn()->executeJsOnXpath($xpath, $script);
     }
 
     /**
@@ -860,7 +819,8 @@ JS;
     public function keyPress($xpath, $char, $modifier = null)
     {
         $options = self::charToOptions($char, $modifier);
-        $this->trigger($xpath, 'keypress', $options);
+        $script = "Syn.trigger('keypress', $options, {{ELEMENT}})";
+        $this->withSyn()->executeJsOnXpath($xpath, $script);
     }
 
     /**
@@ -869,7 +829,8 @@ JS;
     public function keyDown($xpath, $char, $modifier = null)
     {
         $options = self::charToOptions($char, $modifier);
-        $this->trigger($xpath, 'keydown', $options);
+        $script = "Syn.trigger('keydown', $options, {{ELEMENT}})";
+        $this->withSyn()->executeJsOnXpath($xpath, $script);
     }
 
     /**
@@ -878,7 +839,8 @@ JS;
     public function keyUp($xpath, $char, $modifier = null)
     {
         $options = self::charToOptions($char, $modifier);
-        $this->trigger($xpath, 'keyup', $options);
+        $script = "Syn.trigger('keyup', $options, {{ELEMENT}})";
+        $this->withSyn()->executeJsOnXpath($xpath, $script);
     }
 
     /**
@@ -1132,83 +1094,4 @@ JS;
             throw new DriverException(sprintf($message, $action, $xpath, $type));
         }
     }
-
-    /**
-     * @param $xpath
-     * @param $event
-     * @param string $options
-     */
-    private function trigger($xpath, $event, $options = '{}')
-    {
-        $script = 'Syn.trigger("' . $event . '", ' . $options . ', {{ELEMENT}})';
-        $this->withSyn()->executeJsOnXpath($xpath, $script);
-    }
-
-    /**
-     * Uploads a file to the Selenium instance.
-     *
-     * Note that uploading files is not part of the official WebDriver
-     * specification, but it is supported by Selenium.
-     *
-     * @param string $path     The path to the file to upload.
-     *
-     * @return string          The remote path.
-     *
-     * @throws DriverException When PHP is compiled without zip support, or the file doesn't exist.
-     * @throws UnknownError    When an unknown error occurred during file upload.
-     * @throws \Exception      When a known error occurred during file upload.
-     *
-     * @see https://github.com/SeleniumHQ/selenium/blob/master/py/selenium/webdriver/remote/webelement.py#L533
-     */
-    private function uploadFile($path)
-    {
-        if (!is_file($path)) {
-          throw new DriverException('File does not exist locally and cannot be uploaded to the remote instance.');
-        }
-
-        if (!class_exists('ZipArchive')) {
-          throw new DriverException('Could not compress file, PHP is compiled without zip support.');
-        }
-
-        // Selenium only accepts uploads that are compressed as a Zip archive.
-        $tempFilename = tempnam('', 'WebDriverZip');
-
-        $archive = new \ZipArchive();
-        $result = $archive->open($tempFilename, \ZipArchive::CREATE);
-        if (!$result) {
-          throw new DriverException('Zip archive could not be created. Error ' . $result);
-        }
-        $result = $archive->addFile($path, basename($path));
-        if (!$result) {
-          throw new DriverException('File could not be added to zip archive.');
-        }
-        $result = $archive->close();
-        if (!$result) {
-          throw new DriverException('Zip archive could not be closed.');
-        }
-
-        try {
-          $remotePath = $this->wdSession->file(array('file' => base64_encode(file_get_contents($tempFilename))));
-
-          // If no path is returned the file upload failed silently. In this
-          // case it is possible Selenium was not used but another web driver
-          // such as PhantomJS.
-          // @todo Support other drivers when (if) they get remote file transfer
-          // capability.
-          if (empty($remotePath)) {
-            throw new UnknownError();
-          }
-        } catch (\Exception $e) {
-          // Catch any error so we can still clean up the temporary archive.
-        }
-
-        unlink($tempFilename);
-
-        if (isset($e)) {
-          throw $e;
-        }
-
-        return $remotePath;
-    }
-
 }

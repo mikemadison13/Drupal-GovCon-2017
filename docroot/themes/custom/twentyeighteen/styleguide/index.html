@@ -19,7 +19,7 @@
   <header class="kss-header">
     <h1 class="kss-doc-title">Living Style Guide</h1>
   </header>
-  <nav class="kss-nav">
+  <nav class="kss-nav" aria-label="Style Guide">
     <ul class="kss-nav__menu">
       <li class="kss-nav__menu-item">
         <a class="kss-nav__menu-link" href="./">
@@ -55,11 +55,12 @@
         </ul>
   </nav>
 </div>
-<article role="main" class="kss-main">
+<main class="kss-main" aria-label="content">
+<article>
       <div id="kssref-0" class="kss-section kss-section--depth-0 kss-overview kss-style">
-      <h1 id="kss-style-guide">KSS Style Guide</h1>
+      <h1>KSS Style Guide</h1>
 <p>This web site is built using Sass and component-based styles. This front-end style guide documents the design components and the Sass variables, functions and mixins used to build the site.</p>
-<h2 id="organization">Organization</h2>
+<h2>Organization</h2>
 <p>We categorize our CSS styles to make them easy to find and apply to our HTML.</p>
 <ul>
 <li>Defaults: These are the default base styles applied to HTML elements.</li>
@@ -76,21 +77,20 @@
 <li>layout: component styles that only apply layout to major chunks of the page</li>
 <li>style-guide: some helper files needed to build this automated style guide</li>
 </ul>
-<h2 id="creating-a-styleguide-entry">Creating a styleguide entry</h2>
+<h2>Creating a styleguide entry</h2>
 <p>Please view the &quot;Example Button&quot; entry inside of the &quot;components&quot; section to view an example entry.</p>
 
     </div>
   </article>
+</main>
 
 <!-- SCRIPTS -->
 <script src="kss-assets/kss.js"></script>
 <script src="kss-assets/scrollspy.js"></script>
-<script src="kss-assets/prettify.js"></script>
 <script src="kss-assets/kss-fullscreen.js"></script>
 <script src="kss-assets/kss-guides.js"></script>
 <script src="kss-assets/kss-markup.js"></script>
 <script>
-  prettyPrint();
   var spy = new ScrollSpy('#kss-node', {
     nav: '.kss-nav__menu-child > li > a',
     className: 'is-in-viewport'

@@ -6,10 +6,10 @@ namespace Acquia\Blt\Update;
 // phpcs:ignore
 use Acquia\Blt\Annotations\Update;
 use Acquia\Blt\Robo\Common\ArrayManipulator;
+use Acquia\Blt\Robo\Common\ComposerMunge;
 use Dflydev\DotAccessData\Data;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
-use Acquia\Blt\Robo\Common\ComposerMunge;
 
 /**
  * Defines scripted updates for specific version deltas of BLT.
@@ -845,6 +845,41 @@ class Updates {
       $this->updater->getOutput()->writeln("");
       $this->updater->getOutput()->writeln("You must run `composer update acquia/memcache-settings drupal/memcache` and commit the resulting changes to composer.json and composer.lock if you wish to use these updated settings. Otherwise, you will need to provide your own Memcache settings in docroot/sites/settings. See the release notes for additional details.");
       $this->updater->getOutput()->writeln("");
+    }
+  }
+
+  /**
+   * Version 11.0.0.
+   *
+   * @Update(
+   *   version = "11000000",
+   *   description = "Update blt-require-dev version."
+   * )
+   */
+  public function update_11000000() {
+    $composer_json = $this->updater->getComposerJson();
+    $template_composer_json = $this->updater->getTemplateComposerJson();
+    if (array_key_exists('acquia/blt-require-dev', $composer_json['require-dev'])) {
+      $composer_json['require-dev']['acquia/blt-require-dev'] = $template_composer_json['require-dev']['acquia/blt-require-dev'];
+      $this->updater->writeComposerJson($composer_json);
+      $this->updater->getOutput()->writeln("acquia/blt-require-dev version has been updated in composer.json. You must run `composer update` and commit both composer.json and composer.lock to apply the changes.");
+    }
+  }
+
+  /**
+   * Version 11.0.0.
+   *
+   * @Update(
+   *   version = "11000001",
+   *   description = "Move Drupal Scaffold to project composer.json."
+   * )
+   */
+  public function update_11000001() {
+    $composer_json = $this->updater->getComposerJson();
+    if (!array_key_exists('drupal-composer/drupal-scaffold', $composer_json['require'])) {
+      $composer_json['require']['drupal-composer/drupal-scaffold'] = "^2.5.4";
+      $this->updater->writeComposerJson($composer_json);
+      $this->updater->getOutput()->writeln("Drupal Scaffold has been added to your composer.json. You must run `composer update` and commit both composer.json and composer.lock to apply the changes.");
     }
   }
 

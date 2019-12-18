@@ -9,10 +9,10 @@
 
 namespace PHP_CodeSniffer\Standards\PSR12\Sniffs\ControlStructures;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
-use PHP_CodeSniffer\Util\Tokens;
+use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Standards\PSR2\Sniffs\ControlStructures\ControlStructureSpacingSniff as PSR2Spacing;
+use PHP_CodeSniffer\Util\Tokens;
 
 class ControlStructureSpacingSniff implements Sniff
 {
@@ -101,6 +101,13 @@ class ControlStructureSpacingSniff implements Sniff
 
             if (($i + 1) === $parenCloser) {
                 break;
+            }
+
+            // Leave indentation inside multi-line strings.
+            if (isset(Tokens::$textStringTokens[$tokens[$i]['code']]) === true
+                || isset(Tokens::$heredocTokens[$tokens[$i]['code']]) === true
+            ) {
+                continue;
             }
 
             if ($tokens[$i]['code'] !== T_WHITESPACE) {

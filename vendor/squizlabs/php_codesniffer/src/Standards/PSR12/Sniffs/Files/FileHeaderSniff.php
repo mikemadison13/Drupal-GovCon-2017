@@ -9,8 +9,8 @@
 
 namespace PHP_CodeSniffer\Standards\PSR12\Sniffs\Files;
 
-use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Util\Tokens;
 
 class FileHeaderSniff implements Sniff
@@ -36,7 +36,7 @@ class FileHeaderSniff implements Sniff
      * @param int                         $stackPtr  The position of the current
      *                                               token in the stack.
      *
-     * @return void
+     * @return int|null
      */
     public function process(File $phpcsFile, $stackPtr)
     {
@@ -61,6 +61,11 @@ class FileHeaderSniff implements Sniff
 
         $foundDocblock = false;
 
+        $commentOpeners = Tokens::$scopeOpeners;
+        unset($commentOpeners[T_NAMESPACE]);
+        unset($commentOpeners[T_DECLARE]);
+        unset($commentOpeners[T_USE]);
+
         do {
             switch ($tokens[$next]['code']) {
             case T_DOC_COMMENT_OPEN_TAG:
@@ -72,16 +77,29 @@ class FileHeaderSniff implements Sniff
                 // Make sure this is not a code-level docblock.
                 $end      = $tokens[$next]['comment_closer'];
                 $docToken = $phpcsFile->findNext(Tokens::$emptyTokens, ($end + 1), null, true);
-                if (isset(Tokens::$scopeOpeners[$tokens[$docToken]['code']]) === false
+                if (isset($commentOpeners[$tokens[$docToken]['code']]) === false
                     && isset(Tokens::$methodPrefixes[$tokens[$docToken]['code']]) === false
                 ) {
-                    $foundDocblock = true;
-                    $headerLines[] = [
-                        'type'  => 'docblock',
-                        'start' => $next,
-                        'end'   => $end,
-                    ];
-                }
+                    // Check for an @var annotation.
+                    $annotation = false;
+                    for ($i = $next; $i < $end; $i++) {
+                        if ($tokens[$i]['code'] === T_DOC_COMMENT_TAG
+                            && strtolower($tokens[$i]['content']) === '@var'
+                        ) {
+                            $annotation = true;
+                            break;
+                        }
+                    }
+
+                    if ($annotation === false) {
+                        $foundDocblock = true;
+                        $headerLines[] = [
+                            'type'  => 'docblock',
+                            'start' => $next,
+                            'end'   => $end,
+                        ];
+                    }
+                }//end if
 
                 $next = $end;
                 break;
@@ -121,6 +139,11 @@ class FileHeaderSniff implements Sniff
                 // Skip comments as PSR-12 doesn't say if these are allowed or not.
                 if (isset(Tokens::$commentTokens[$tokens[$next]['code']]) === true) {
                     $next = $phpcsFile->findNext(Tokens::$commentTokens, ($next + 1), null, true);
+                    if ($next === false) {
+                        // We reached the end of the file.
+                        break(2);
+                    }
+
                     $next--;
                     break;
                 }
@@ -154,8 +177,8 @@ class FileHeaderSniff implements Sniff
                 // Make sure there is a single blank line after
                 // this block.
                 $next = $phpcsFile->findNext(T_WHITESPACE, ($line['end'] + 1), null, true);
-                if ($tokens[$next]['line'] !== ($tokens[$line['end']]['line'] + 2)) {
-                    $error = 'Header blocks must be followed by a single blank line';
+                if ($next !== false && $tokens[$next]['line'] !== ($tokens[$line['end']]['line'] + 2)) {
+                    $error = 'Header blocks must be separated by a single blank line';
                     $fix   = $phpcsFile->addFixableError($error, $line['end'], 'SpacingAfterBlock');
                     if ($fix === true) {
                         if ($tokens[$next]['line'] === $tokens[$line['end']]['line']) {
@@ -284,8 +307,19 @@ class FileHeaderSniff implements Sniff
         */
 
         if ($stackPtr !== 0) {
-            $error = 'The file header must be the first content in the file';
-            $phpcsFile->addError($error, $stackPtr, 'HeaderPosition');
+            // Allow for hashbang lines.
+            $hashbang = false;
+            if ($tokens[($stackPtr - 1)]['code'] === T_INLINE_HTML) {
+                $content = trim($tokens[($stackPtr - 1)]['content']);
+                if (substr($content, 0, 2) === '#!') {
+                    $hashbang = true;
+                }
+            }
+
+            if ($hashbang === false) {
+                $error = 'The file header must be the first content in the file';
+                $phpcsFile->addError($error, $stackPtr, 'HeaderPosition');
+            }
         }
 
         return $phpcsFile->numTokens;

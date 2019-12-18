@@ -19,7 +19,7 @@
   <header class="kss-header">
     <h1 class="kss-doc-title">Living Style Guide</h1>
   </header>
-  <nav class="kss-nav">
+  <nav class="kss-nav" aria-label="Style Guide">
     <ul class="kss-nav__menu">
       <li class="kss-nav__menu-item">
         <a class="kss-nav__menu-link" href="./">
@@ -50,7 +50,8 @@
         </ul>
   </nav>
 </div>
-<article role="main" class="kss-main">
+<main class="kss-main" aria-label="content">
+<article>
 
   
           <div id="kssref-components-block" class="kss-section kss-section--depth-2 is-fullscreen">
@@ -70,7 +71,7 @@
                   <p class="kss-toolbar">
                         <a href="#kssref-components-block" data-kss-guides="true">
               <span class="kss-toolbar__tooltip">Toggle example guides</span>
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+              <svg focusable="false" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
                 <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
                 <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
@@ -91,7 +92,7 @@
             </a>
             <a href="#kssref-components-block" data-kss-markup="true">
               <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+              <svg focusable="false" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
                 <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
               </svg>
@@ -102,6 +103,7 @@
             <p>Sidebar block styling.</p>
 
           </div>
+        
         
               </div>
 
@@ -199,86 +201,86 @@
             <summary>
                               Markup: <code>components/blocks/block.twig</code>
                           </summary>
-            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;aside&gt;
-  &lt;div class=&quot;block&quot;&gt;
-    &lt;h2&gt;Example title&lt;/h2&gt;
+            <pre class="hljs"><code class="language-twig"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">aside</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"block"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Example title<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
     Simple block: Liquorice fruitcake lollipop. Sesame snaps muffin gummies
     cake. Apple pie dessert sugar plum toffee marzipan bonbon sesame snaps
     halvah. Macaroon croissant sweet cheesecake. Croissant icing muffin. Gingerbread pudding
     halvah bonbon chupa chups bonbon sugar plum fruitcake ice cream. Bear claw
     tootsie roll jujubes.
-  &lt;/div&gt;
-&lt;/aside&gt;
-&lt;aside class=&quot;sidebar-second sidebars&quot; id=&quot;sidebar-second&quot; style=&quot;width: 385px;&quot;&gt;
-  &lt;div class=&quot;region region-sidebar-second&quot;&gt;
-    &lt;div class=&quot;views-element-container block block-views block-views-blockspecial-announcements-display-block-3&quot; id=&quot;block-views-block-special-announcements-display-block-3&quot; data-block-plugin-id=&quot;views_block:special_announcements_display-block_3&quot;&gt;
-      &lt;h2&gt;Announcements&lt;/h2&gt;
-      &lt;div&gt;
-        &lt;div class=&quot;home-announcements view view-special-announcements-display view-id-special_announcements_display view-display-id-block_3 js-view-dom-id-b56edcab81a13777110fe039cbdb47b4a4dd40ec736b51ced524a61ff1f57182&quot;&gt;
-          &lt;div class=&quot;view-header&quot;&gt;
-            &lt;p&gt;Follow us on social media for the latest happenings. To help you better plan, here are important dates and announcements:&lt;/p&gt;
-          &lt;/div&gt;
-          &lt;div class=&quot;view-content&quot;&gt;
-            &lt;div class=&quot;views-row&quot;&gt;
-              &lt;div class=&quot;views-field views-field-title&quot;&gt;&lt;h3 class=&quot;field-content&quot;&gt;&lt;a href=&quot;/2018/announcements/2019-dates-announced&quot; hreflang=&quot;en&quot;&gt;2019 Dates Announced!&lt;/a&gt;&lt;/h3&gt;
-              &lt;/div&gt;
-              &lt;p class=&quot;views-field views-field-field-important-date&quot;&gt;&lt;em class=&quot;field-content&quot;&gt;Posted &lt;time datetime=&quot;00Z&quot;&gt;August 22&lt;/time&gt;&lt;/em&gt;&lt;/p&gt;
-              &lt;div class=&quot;views-field views-field-body&quot;&gt;
-                &lt;div class=&quot;field-content&quot;&gt;
-                  &lt;p&gt;July 24-26, 2019&lt;/p&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class=&quot;views-row&quot;&gt;
-              &lt;div class=&quot;views-field views-field-title&quot;&gt;&lt;h3 class=&quot;field-content&quot;&gt;&lt;a href=&quot;/2018/announcements/change-plans&quot; hreflang=&quot;en&quot;&gt;Change of Plans?&lt;/a&gt;&lt;/h3&gt;
-              &lt;/div&gt;
-              &lt;p class=&quot;views-field views-field-field-important-date&quot;&gt;&lt;em class=&quot;field-content&quot;&gt;Posted &lt;time datetime=&quot;00Z&quot;&gt;August 15&lt;/time&gt;&lt;/em&gt;&lt;/p&gt;
-              &lt;div class=&quot;views-field views-field-body&quot;&gt;
-                &lt;div class=&quot;field-content&quot;&gt;&lt;h2&gt;Can’t Make it Anymore?&lt;/h2&gt;
-                  &lt;p&gt;Schedules change. Things happen. We understand.&lt;/p&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class=&quot;views-row&quot;&gt;
-              &lt;div class=&quot;views-field views-field-title&quot;&gt;&lt;h3 class=&quot;field-content&quot;&gt;&lt;a href=&quot;/2018/announcements/lunches&quot; hreflang=&quot;en&quot;&gt;Lunches&lt;/a&gt;&lt;/h3&gt;
-              &lt;/div&gt;
-              &lt;p class=&quot;views-field views-field-field-important-date&quot;&gt;&lt;em class=&quot;field-content&quot;&gt;Posted &lt;time datetime=&quot;00Z&quot;&gt;August 13&lt;/time&gt;&lt;/em&gt;&lt;/p&gt;
-              &lt;div class=&quot;views-field views-field-body&quot;&gt;
-                &lt;div class=&quot;field-content&quot;&gt;
-                  &lt;p&gt;Attendees who registered by August 12th will be given preference in line at lunch.&lt;/p&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class=&quot;views-row&quot;&gt;
-              &lt;div class=&quot;views-field views-field-title&quot;&gt;&lt;h3 class=&quot;field-content&quot;&gt;&lt;a href=&quot;/2018/announcements/personalize-your-schedule&quot; hreflang=&quot;en&quot;&gt;Personalize Your Schedule!&lt;/a&gt;&lt;/h3&gt;
-              &lt;/div&gt;
-              &lt;p class=&quot;views-field views-field-field-important-date&quot;&gt;&lt;em class=&quot;field-content&quot;&gt;Posted &lt;time datetime=&quot;00Z&quot;&gt;July 23&lt;/time&gt;&lt;/em&gt;&lt;/p&gt;
-              &lt;div class=&quot;views-field views-field-body&quot;&gt;
-                &lt;div class=&quot;field-content&quot;&gt;
-                  &lt;p&gt;Add your favorite sessions to your schedule and personalize your Drupal GovCon experience.&lt;/p&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class=&quot;views-row views-row-last&quot;&gt;
-              &lt;div class=&quot;views-field views-field-title&quot;&gt;&lt;h3 class=&quot;field-content&quot;&gt;&lt;a href=&quot;/2018/announcements/personal-sponsorships-available&quot; hreflang=&quot;en&quot;&gt;Personal Sponsorships Available&lt;/a&gt;&lt;/h3&gt;
-              &lt;/div&gt;
-              &lt;p class=&quot;views-field views-field-field-important-date&quot;&gt;&lt;em class=&quot;field-content&quot;&gt;Posted &lt;time datetime=&quot;00Z&quot;&gt;July 9&lt;/time&gt;&lt;/em&gt;&lt;/p&gt;
-              &lt;div class=&quot;views-field views-field-body&quot;&gt;
-                &lt;div class=&quot;field-content&quot;&gt;
-                  &lt;p&gt;Be a Personal Sponsor of Drupal GovCon!&lt;/p&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
-          &lt;div class=&quot;view-footer&quot;&gt;
-            &lt;p&gt;&lt;a href=&quot;/special-announcements&quot; rel=&quot;nofollow&quot;&gt;More Announcements&lt;/a&gt;&lt;/p&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/aside&gt;
-</code></pre>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">aside</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">aside</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-second sidebars"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"sidebar-second"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"width: 385px;"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"region region-sidebar-second"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-element-container block block-views block-views-blockspecial-announcements-display-block-3"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"block-views-block-special-announcements-display-block-3"</span> <span class="hljs-attr">data-block-plugin-id</span>=<span class="hljs-string">"views_block:special_announcements_display-block_3"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Announcements<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"home-announcements view view-special-announcements-display view-id-special_announcements_display view-display-id-block_3 js-view-dom-id-b56edcab81a13777110fe039cbdb47b4a4dd40ec736b51ced524a61ff1f57182"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"view-header"</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Follow us on social media for the latest happenings. To help you better plan, here are important dates and announcements:<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"view-content"</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-row"</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-title"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">h3</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/2018/announcements/2019-dates-announced"</span> <span class="hljs-attr">hreflang</span>=<span class="hljs-string">"en"</span>&gt;</span>2019 Dates Announced!<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h3</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-field-important-date"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">em</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span>Posted <span class="hljs-tag">&lt;<span class="hljs-name">time</span> <span class="hljs-attr">datetime</span>=<span class="hljs-string">"00Z"</span>&gt;</span>August 22<span class="hljs-tag">&lt;/<span class="hljs-name">time</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">em</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-body"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>July 24-26, 2019<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-row"</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-title"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">h3</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/2018/announcements/change-plans"</span> <span class="hljs-attr">hreflang</span>=<span class="hljs-string">"en"</span>&gt;</span>Change of Plans?<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h3</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-field-important-date"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">em</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span>Posted <span class="hljs-tag">&lt;<span class="hljs-name">time</span> <span class="hljs-attr">datetime</span>=<span class="hljs-string">"00Z"</span>&gt;</span>August 15<span class="hljs-tag">&lt;/<span class="hljs-name">time</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">em</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-body"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Can’t Make it Anymore?<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Schedules change. Things happen. We understand.<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-row"</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-title"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">h3</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/2018/announcements/lunches"</span> <span class="hljs-attr">hreflang</span>=<span class="hljs-string">"en"</span>&gt;</span>Lunches<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h3</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-field-important-date"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">em</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span>Posted <span class="hljs-tag">&lt;<span class="hljs-name">time</span> <span class="hljs-attr">datetime</span>=<span class="hljs-string">"00Z"</span>&gt;</span>August 13<span class="hljs-tag">&lt;/<span class="hljs-name">time</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">em</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-body"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Attendees who registered by August 12th will be given preference in line at lunch.<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-row"</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-title"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">h3</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/2018/announcements/personalize-your-schedule"</span> <span class="hljs-attr">hreflang</span>=<span class="hljs-string">"en"</span>&gt;</span>Personalize Your Schedule!<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h3</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-field-important-date"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">em</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span>Posted <span class="hljs-tag">&lt;<span class="hljs-name">time</span> <span class="hljs-attr">datetime</span>=<span class="hljs-string">"00Z"</span>&gt;</span>July 23<span class="hljs-tag">&lt;/<span class="hljs-name">time</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">em</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-body"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Add your favorite sessions to your schedule and personalize your Drupal GovCon experience.<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-row views-row-last"</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-title"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">h3</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/2018/announcements/personal-sponsorships-available"</span> <span class="hljs-attr">hreflang</span>=<span class="hljs-string">"en"</span>&gt;</span>Personal Sponsorships Available<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h3</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-field-important-date"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">em</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span>Posted <span class="hljs-tag">&lt;<span class="hljs-name">time</span> <span class="hljs-attr">datetime</span>=<span class="hljs-string">"00Z"</span>&gt;</span>July 9<span class="hljs-tag">&lt;/<span class="hljs-name">time</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">em</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+              <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"views-field views-field-body"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"field-content"</span>&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Be a Personal Sponsor of Drupal GovCon!<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"view-footer"</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/special-announcements"</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"nofollow"</span>&gt;</span>More Announcements<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">aside</span>&gt;</span>
+</span></code></pre>
           </details>
               
               <div class="kss-source kss-style">
@@ -286,16 +288,15 @@
         </div>
           </div>
   </article>
+</main>
 
 <!-- SCRIPTS -->
 <script src="kss-assets/kss.js"></script>
 <script src="kss-assets/scrollspy.js"></script>
-<script src="kss-assets/prettify.js"></script>
 <script src="kss-assets/kss-fullscreen.js"></script>
 <script src="kss-assets/kss-guides.js"></script>
 <script src="kss-assets/kss-markup.js"></script>
 <script>
-  prettyPrint();
   var spy = new ScrollSpy('#kss-node', {
     nav: '.kss-nav__menu-child > li > a',
     className: 'is-in-viewport'

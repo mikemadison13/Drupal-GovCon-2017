@@ -73,3 +73,12 @@ $instance9 = new class (
 };
 
 $instance10 = new class   {};
+
+$foo->bar(
+    new class implements Bar {
+        // ...
+    },
+);
+
+foo(new class {
+});

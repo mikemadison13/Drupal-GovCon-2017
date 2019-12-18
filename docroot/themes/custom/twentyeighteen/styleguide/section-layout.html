@@ -19,7 +19,7 @@
   <header class="kss-header">
     <h1 class="kss-doc-title">Living Style Guide</h1>
   </header>
-  <nav class="kss-nav">
+  <nav class="kss-nav" aria-label="Style Guide">
     <ul class="kss-nav__menu">
       <li class="kss-nav__menu-item">
         <a class="kss-nav__menu-link" href="./">
@@ -63,7 +63,8 @@
         </ul>
   </nav>
 </div>
-<article role="main" class="kss-main">
+<main class="kss-main" aria-label="content">
+<article>
 
   
           <div id="kssref-layout" class="kss-section kss-section--depth-1 ">
@@ -85,6 +86,7 @@
             <p>These are the layout rules.</p>
 
           </div>
+        
         
               </div>
 
@@ -110,16 +112,16 @@
                   <p class="kss-toolbar">
                           <a href="#kssref-layout-sidebars" data-kss-fullscreen="kssref-layout-sidebars">
                 <span class="kss-toolbar__tooltip">Toggle full screen</span>
-                <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <svg focusable="false" aria-hidden="true" class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                   <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
                 </svg>
-                <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <svg focusable="false" aria-hidden="true" class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                   <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
                 </svg>
               </a>
               <a href="item-layout-sidebars.html" target="_blank">
                 <span class="kss-toolbar__tooltip">Open in new window</span>
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <svg focusable="false" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                   <rect x="0" y="20" width="40" height="44" fill="#fff"/>
                   <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                   <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
@@ -130,7 +132,7 @@
               </a>
                         <a href="#kssref-layout-sidebars" data-kss-guides="true">
               <span class="kss-toolbar__tooltip">Toggle example guides</span>
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+              <svg focusable="false" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
                 <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
                 <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
@@ -151,7 +153,7 @@
             </a>
             <a href="#kssref-layout-sidebars" data-kss-markup="true">
               <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+              <svg focusable="false" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
                 <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
               </svg>
@@ -162,6 +164,7 @@
             <p>Sidebars Region Styling</p>
 
           </div>
+        
         
               </div>
 
@@ -229,19 +232,19 @@
             <summary>
                               Markup: <code>layout/sidebars.twig</code>
                           </summary>
-            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;body-sidebars-both&quot;&gt;
+            <pre class="hljs"><code class="language-twig"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"body-sidebars-both"</span>&gt;</span>
 
 
-  &lt;aside class=&quot;sidebar-first&quot; style=&quot;background: bisque;&quot;&gt;
+  <span class="hljs-tag">&lt;<span class="hljs-name">aside</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-first"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"background: bisque;"</span>&gt;</span>
     Sesame snaps muffin gummies cake. Apple pie
     dessert sugar plum toffee marzipan bonbon sesame snaps halvah. Macaroon
     croissant sweet cheesecake. Croissant icing muffin. Gingerbread pudding
     halvah
     bonbon chupa chups bonbon sugar
-  &lt;/aside&gt;
+  <span class="hljs-tag">&lt;/<span class="hljs-name">aside</span>&gt;</span>
 
 
-  &lt;section id=&quot;content&quot; style=&quot;background: burlywood;&quot;&gt;
+  <span class="hljs-tag">&lt;<span class="hljs-name">section</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"content"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"background: burlywood;"</span>&gt;</span>
     Wafer biscuit chupa chups donut. Cheesecake dragée macaroon. Bear claw candy
     canes jelly cake tootsie roll chocolate caramels candy. Chocolate bar toffee
     candy canes caramels cookie soufflé. Danish powder pie bonbon pastry carrot
@@ -266,19 +269,19 @@
     Cookie chocolate croissant cake bear claw chocolate bar gingerbread
     marshmallow apple pie. Muffin candy sweet dessert cotton candy pudding
     jelly.
-  &lt;/section&gt;
+  <span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span>
 
 
-  &lt;aside class=&quot;sidebar-second&quot; style=&quot;background: antiquewhite;&quot;&gt;
+  <span class="hljs-tag">&lt;<span class="hljs-name">aside</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-second"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"background: antiquewhite;"</span>&gt;</span>
     Sesame snaps muffin gummies cake. Apple pie
     dessert sugar plum toffee marzipan bonbon sesame snaps halvah. Macaroon
     croissant sweet cheesecake. Croissant icing muffin. Gingerbread pudding
     halvah
     bonbon chupa chups bonbon sugar
-  &lt;/aside&gt;
+  <span class="hljs-tag">&lt;/<span class="hljs-name">aside</span>&gt;</span>
 
 
-&lt;/div&gt;</code></pre>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span></code></pre>
           </details>
               
               <div class="kss-source kss-style">
@@ -286,16 +289,15 @@
         </div>
           </section>
   </article>
+</main>
 
 <!-- SCRIPTS -->
 <script src="kss-assets/kss.js"></script>
 <script src="kss-assets/scrollspy.js"></script>
-<script src="kss-assets/prettify.js"></script>
 <script src="kss-assets/kss-fullscreen.js"></script>
 <script src="kss-assets/kss-guides.js"></script>
 <script src="kss-assets/kss-markup.js"></script>
 <script>
-  prettyPrint();
   var spy = new ScrollSpy('#kss-node', {
     nav: '.kss-nav__menu-child > li > a',
     className: 'is-in-viewport'

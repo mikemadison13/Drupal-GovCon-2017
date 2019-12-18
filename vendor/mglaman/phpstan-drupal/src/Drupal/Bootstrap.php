@@ -169,6 +169,8 @@ class Bootstrap
         $this->namespaces['Drupal\\FunctionalTests'] =  $core_tests_dir . '/FunctionalTests';
         $this->namespaces['Drupal\\FunctionalJavascriptTests'] = $core_tests_dir . '/FunctionalJavascriptTests';
         $this->namespaces['Drupal\\Tests\\TestSuites'] = $this->drupalRoot . '/core/tests/TestSuites';
+        $this->namespaces['Drupal\\BuildTests'] = $core_tests_dir . '/BuildTests';
+        $this->namespaces['Drupal\\TestTools'] = $core_tests_dir . '/TestTools';
     }
 
     protected function addModuleNamespaces(): void
@@ -181,7 +183,7 @@ class Bootstrap
             // @see drupal_phpunit_get_extension_namespaces
             $module_test_dir = $module_dir . '/tests/src';
             if (is_dir($module_test_dir)) {
-                $suite_names = ['Unit', 'Kernel', 'Functional', 'FunctionalJavascript'];
+                $suite_names = ['Unit', 'Kernel', 'Functional', 'FunctionalJavascript', 'Build'];
                 foreach ($suite_names as $suite_name) {
                     $suite_dir = $module_test_dir . '/' . $suite_name;
                     if (is_dir($suite_dir)) {

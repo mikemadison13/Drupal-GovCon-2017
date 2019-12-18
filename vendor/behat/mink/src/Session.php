@@ -47,7 +47,7 @@ class Session
     /**
      * Checks whether session (driver) was started.
      *
-     * @return boolean
+     * @return Boolean
      */
     public function isStarted()
     {
@@ -134,24 +134,19 @@ class Session
     }
 
     /**
-     * Visit specified URL and automatically start session if not already running.
+     * Visit specified URL.
      *
      * @param string $url url of the page
      */
     public function visit($url)
     {
-        // start session if needed
-        if (!$this->isStarted()) {
-            $this->start();
-        }
-
         $this->driver->visit($url);
     }
 
     /**
      * Sets HTTP Basic authentication parameters.
      *
-     * @param string|boolean $user     user name or false to disable authentication
+     * @param string|Boolean $user     user name or false to disable authentication
      * @param string         $password password
      */
     public function setBasicAuth($user, $password = '')

@@ -9,7 +9,7 @@ use Acquia\Blt\Tests\BltProjectTestBase;
  *
  * @group orca_ignore
  */
-class DrupalTest extends BltProjectTestBase {
+class TestDrupalTestCommandTest extends BltProjectTestBase {
 
   /**
    * @var string
@@ -33,6 +33,8 @@ class DrupalTest extends BltProjectTestBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @throws \Exception
    */
   public function setUp() {
     parent::setUp();
@@ -41,6 +43,10 @@ class DrupalTest extends BltProjectTestBase {
     $this->reporoot = $this->config->get("repo.root");
     $this->sqlite = $this->config->get("tests.drupal.sqlite");
     $this->url = $this->config->get("tests.drupal.simpletest-base-url");
+    $this->execute('composer require se/selenium-server-standalone');
+    // drupal-core-require-dev has some nasty dependency conflicts.
+    $this->execute('composer require webflo/drupal-core-require-dev --no-update');
+    $this->execute('composer update');
   }
 
   /**

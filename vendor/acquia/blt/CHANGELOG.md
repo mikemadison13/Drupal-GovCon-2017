@@ -1,5 +1,112 @@
 # Change Log
 
+#### 11.0.1 (2019-12-16)
+
+[Full Changelog](https://github.com/acquia/blt/compare/11.0.0...11.0.1)
+
+
+**Miscellaneous**
+
+- Fixed update script.
+- Update README.md
+- Revert "Bump blt-project to stable."
+- Bump blt-project to stable.
+- Require PHP 7.2.
+- Update README.md
+
+
+#### 11.0.0 (2019-12-16)
+
+[Full Changelog](https://github.com/acquia/blt/compare/11.0.0-rc1...11.0.0)
+
+
+**Implemented enhancements**
+
+- DT-981: Fixes #3921: Enabled D9 deprecated code scanning by default. (#3946)
+- DT-980: Fixes #3922: Anonymous telemetry commands. (#3947)
+
+**Miscellaneous**
+
+- DT-588: New projects use Composer Scaffold. (#3944)
+- Delete plugins.md
+- Update README.md
+- Composer updates.
+- Sync docs changes.
+- ORCA Travis template updates. (#3945)
+- Revert "Bump blt-project to stable."
+- Bump blt-project to stable.
+
+
+#### 11.0.0-rc1 (2019-12-09)
+
+[Full Changelog](https://github.com/acquia/blt/compare/11.0.0-alpha1...11.0.0-rc1)
+
+
+**Implemented enhancements**
+
+- Allow blt:init:shell-alias install confirmation to be configurable when run with --no-interaction (#3937)
+- DT-581: Added nightwatch support. (#3941)
+
+**Miscellaneous**
+
+- DT-1035: Fixes #3929: Move Drupal Scaffold to project composer.json. (#3942)
+- Auto install aliases by default.
+- DT-1045: Removed duplicate markdown docs. (#3943)
+- Convert CONTRIBUTING to rst. (#3934)
+- Converted faq.rst to support.rst. (#3935)
+- DT-1016: BLT 10.x tests broken. (#3938)
+- Composer update.
+- Release notes clarify breaking changes
+- Replaced docs with RST versions from docs.acquia.com.
+- Update Updates.php
+
+
+#### 11.0.0-alpha1 (2019-11-26)
+
+[Full Changelog](https://github.com/acquia/blt/compare/10.5.0...11.0.0-alpha1)
+
+**Major / breaking changes**
+
+- DT-878: Support Drush 10. (#3905)
+- DT-747: Removing dependency on webflo. (#3908)
+- DT-850: Renamed sync.files config to sync.public-files. (#3907)
+- DT-950: Update node version in Pipelines. (#3901)
+- DT-655: Removed selenium-server-standalone from blt-require-dev. (#3878)
+- DT-458: Removed drush alias generation. (#3877)
+
+**Implemented enhancements**
+
+- DT-587: Fixes #3564: Simulate deploys on TravisCI. (#3927)
+- DT-596: Fixes #3052: Add Git pre-push validation. (#3925)
+- DT-657: Fixes #3785: Split up examples:init command, don't run automatically (#3923)
+- DT-658: Anonymous telemetry (#3912)
+- DT-849: Fixes #3859: Better CI environment detection for BLT config. (#3909)
+- Show diff for the dirty build. (#3885)
+- Issue #3865: Move location of logging UI override to appropriate file. (#3866)
+
+**Fixed bugs**
+
+- DT-593: Codesniffing via pre-commit hook doesn't respect filesets. (#3902)
+- DT-851: Fix local private files path. (#3906)
+- DT-948: Improve ACSF detection logic. (#3896)
+- TwigCommand should use configured project docroot. (#3892)
+- DT-880: Fixes #3869: duplicate .htaccess in composer.json with acsf:init (#3881)
+
+**Miscellaneous**
+
+- DT-971: Fixes #3917: Deprecate run-tests.sh, support Chrome for Drupal core tests. (#3931)
+- Update RELEASE.md
+- Remove clear-twig-cache.sh which is now done by the main platform (#3913)
+- DT-602: Fixes #3735: Reorganize robo commands and directories. (#3919)
+- Update ORCA version (#3884)
+- DT-879: Composer updates. (#3879)
+- Update README.md
+- Corrected extra.patches data type in blt-project/composer.json. (#3875)
+- DT-773: Fixes #3845: Clean up SAML docs and support policy. (#3872)
+- Revert "Bump blt-project to stable."
+- Bump blt-project to stable.
+
+
 #### 10.5.0 (2019-10-02)
 
 [Full Changelog](https://github.com/acquia/blt/compare/10.4.1...10.5.0)

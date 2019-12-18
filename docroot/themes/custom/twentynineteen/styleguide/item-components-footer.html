@@ -19,7 +19,7 @@
   <header class="kss-header">
     <h1 class="kss-doc-title">Living Style Guide</h1>
   </header>
-  <nav class="kss-nav">
+  <nav class="kss-nav" aria-label="Style Guide">
     <ul class="kss-nav__menu">
       <li class="kss-nav__menu-item">
         <a class="kss-nav__menu-link" href="./">
@@ -50,7 +50,8 @@
         </ul>
   </nav>
 </div>
-<article role="main" class="kss-main">
+<main class="kss-main" aria-label="content">
+<article>
 
   
           <div id="kssref-components-footer" class="kss-section kss-section--depth-2 is-fullscreen">
@@ -70,7 +71,7 @@
                   <p class="kss-toolbar">
                         <a href="#kssref-components-footer" data-kss-guides="true">
               <span class="kss-toolbar__tooltip">Toggle example guides</span>
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+              <svg focusable="false" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
                 <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
                 <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
@@ -91,12 +92,13 @@
             </a>
             <a href="#kssref-components-footer" data-kss-markup="true">
               <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+              <svg focusable="false" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                 <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
                 <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
               </svg>
             </a>
           </p>
+        
         
         
               </div>
@@ -137,28 +139,28 @@
             <summary>
                               Markup: <code>components/regions/footer.twig</code>
                           </summary>
-            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;div class=&quot;footer&quot;&gt;
-  &lt;div class=&quot;footer__text&quot;&gt;
-      &lt;p class=&quot;footer__text-content&quot;&gt;Drupal GovCon, a production of Drupal4Gov, is made possible by our wonderful sponsors and volunteers. Graciously hosted by the NIH Library.&lt;/p&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;footer__links&quot;&gt;
-    &lt;div class=&quot;footer__links-icons&quot;&gt;
-      &lt;a href=&quot;https://www.facebook.com/DrupalGovCon&quot;&gt;
-        &lt;img src=&quot;../images/icon-facebook.svg&quot; alt=&quot;Facebook&quot; /&gt;
-      &lt;/a&gt;
-      &lt;a href=&quot;https://www.twitter.com/DrupalGovCon&quot;&gt;
-        &lt;img src=&quot;../images/icon-twitter.svg&quot; alt=&quot;Twitter&quot; /&gt;
-      &lt;/a&gt;
-      &lt;a href=&quot;mailto:drupal4gov@gmail.com?subject=Contact from Website&quot;&gt;
-        &lt;img src=&quot;../images/icon-email.svg&quot; alt=&quot;Email&quot; /&gt;
-      &lt;/a&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;footer__logo&quot;&gt;
-    &lt;a href=&quot;/&quot;&gt;&lt;img src=&quot;../images/GC19_wordmark_solid_rev.svg&quot; alt=&quot;GovCon&quot; width=&quot;75px&quot; height=&quot;100px&quot;/&gt;&lt;/a&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
+            <pre class="hljs"><code class="language-twig"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"footer"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"footer__text"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"footer__text-content"</span>&gt;</span>Drupal GovCon, a production of Drupal4Gov, is made possible by our wonderful sponsors and volunteers. Graciously hosted by the NIH Library.<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"footer__links"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"footer__links-icons"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.facebook.com/DrupalGovCon"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"../images/icon-facebook.svg"</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"Facebook"</span> /&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.twitter.com/DrupalGovCon"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"../images/icon-twitter.svg"</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"Twitter"</span> /&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"mailto:drupal4gov@gmail.com?subject=Contact from Website"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"../images/icon-email.svg"</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"Email"</span> /&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"footer__logo"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"../images/GC19_wordmark_solid_rev.svg"</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"GovCon"</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"75px"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"100px"</span>/&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</span></code></pre>
           </details>
               
               <div class="kss-source kss-style">
@@ -166,16 +168,15 @@
         </div>
           </div>
   </article>
+</main>
 
 <!-- SCRIPTS -->
 <script src="kss-assets/kss.js"></script>
 <script src="kss-assets/scrollspy.js"></script>
-<script src="kss-assets/prettify.js"></script>
 <script src="kss-assets/kss-fullscreen.js"></script>
 <script src="kss-assets/kss-guides.js"></script>
 <script src="kss-assets/kss-markup.js"></script>
 <script>
-  prettyPrint();
   var spy = new ScrollSpy('#kss-node', {
     nav: '.kss-nav__menu-child > li > a',
     className: 'is-in-viewport'

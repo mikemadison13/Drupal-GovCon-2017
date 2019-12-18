@@ -2,7 +2,10 @@
 
 namespace Acquia\Blt\Robo;
 
+use Acquia\Blt\Robo\Common\EnvironmentDetector;
 use Acquia\Blt\Robo\Common\Executor;
+use Acquia\Blt\Robo\Common\IO;
+use Acquia\Blt\Robo\Common\UserConfig;
 use Acquia\Blt\Robo\Filesets\FilesetManager;
 use Acquia\Blt\Robo\Inspector\Inspector;
 use Acquia\Blt\Robo\Inspector\InspectorAwareInterface;
@@ -24,6 +27,7 @@ use Robo\Runner as RoboRunner;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Zumba\Amplitude\Amplitude as Amplitude;
 
 /**
  * The BLT Robo application.
@@ -33,11 +37,12 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
   use ConfigAwareTrait;
   use ContainerAwareTrait;
   use LoggerAwareTrait;
+  use IO;
 
   /**
    * The BLT version.
    */
-  const VERSION = '10.5.0';
+  const VERSION = '11.0.1';
 
   /**
    * The Robo task runner.
@@ -88,6 +93,22 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
     $this->runner->setRelativePluginNamespace('Blt\Plugin');
 
     $this->setLogger($container->get('logger'));
+
+    $this->initializeAmplitude();
+  }
+
+  /**
+   * Initializes Amplitude.
+   */
+  private function initializeAmplitude() {
+    $userConfig = new UserConfig(self::configDir());
+    $amplitude = Amplitude::getInstance();
+    $amplitude->init('dfd3cba7fa72065cde9edc2ca22d0f37')
+      ->setDeviceId(EnvironmentDetector::getMachineUuid());
+    if (!$userConfig->isTelemetryEnabled()) {
+      $amplitude->setOptOut(TRUE);
+    }
+    $amplitude->logQueuedEvents();
   }
 
   /**
@@ -122,8 +143,7 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
     $discovery = new CommandFileDiscovery();
     $discovery
       ->setSearchPattern('*Command.php')
-      ->setSearchLocations([])
-      ->addExclude('Internal');
+      ->setSearchLocations([]);
     return $discovery->discover($options['path'], $options['namespace']);
   }
 
@@ -223,7 +243,22 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
     $application = $this->getContainer()->get('application');
     $status_code = $this->runner->run($input, $output, $application, $this->commands);
 
+    $userConfig = new UserConfig(self::configDir());
+    $event_properties = $userConfig->getTelemetryUserData();
+    $event_properties['exit_code'] = $status_code;
+    Amplitude::getInstance()->queueEvent('blt ' . $input->getFirstArgument(), $event_properties);
+
     return $status_code;
+  }
+
+  /**
+   * Common config directory.
+   *
+   * @return string
+   *   Config directory path.
+   */
+  public static function configDir() {
+    return getenv('HOME') . DIRECTORY_SEPARATOR . '.config' . DIRECTORY_SEPARATOR . 'blt';
   }
 
 }
