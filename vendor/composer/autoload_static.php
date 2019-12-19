@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
+class ComposerStaticInitb8e53d9ad1ba18f4a81139033a9f7f23
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -12,6 +12,7 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         '59af96974553a1fc6407327354b6f47e' => __DIR__ . '/..' . '/nette/di/src/compatibility.php',
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
+        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
@@ -73,10 +74,6 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
             'Webmozart\\PathUtil\\' => 19,
             'Webmozart\\Assert\\' => 17,
         ),
-        'U' => 
-        array (
-            'Unish\\' => 6,
-        ),
         'T' => 
         array (
             'Twig\\' => 5,
@@ -86,6 +83,7 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'S' => 
         array (
             'Symfony\\Polyfill\\Util\\' => 22,
+            'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Php56\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
@@ -200,9 +198,11 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         ),
         'C' => 
         array (
+            'Consolidation\\SiteProcess\\' => 26,
             'Consolidation\\SiteAlias\\' => 24,
             'Consolidation\\OutputFormatters\\' => 31,
             'Consolidation\\Log\\' => 18,
+            'Consolidation\\Filter\\' => 21,
             'Consolidation\\Config\\' => 21,
             'Consolidation\\Comments\\' => 23,
             'Consolidation\\AnnotatedCommand\\' => 31,
@@ -290,10 +290,6 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
         ),
-        'Unish\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/drush/drush/tests',
-        ),
         'Twig\\' => 
         array (
             0 => __DIR__ . '/..' . '/twig/twig/src',
@@ -309,6 +305,10 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Symfony\\Polyfill\\Util\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-util',
+        ),
+        'Symfony\\Polyfill\\Php72\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
         ),
         'Symfony\\Polyfill\\Php70\\' => 
         array (
@@ -547,7 +547,7 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         ),
         'Drush\\Internal\\' => 
         array (
-            0 => __DIR__ . '/..' . '/drush/drush/internal-copy',
+            0 => __DIR__ . '/..' . '/drush/drush/src/internal-forks',
         ),
         'Drush\\' => 
         array (
@@ -640,6 +640,10 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         array (
             0 => __DIR__ . '/..' . '/dealerdirect/phpcodesniffer-composer-installer/src',
         ),
+        'Consolidation\\SiteProcess\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/site-process/src',
+        ),
         'Consolidation\\SiteAlias\\' => 
         array (
             0 => __DIR__ . '/..' . '/consolidation/site-alias/src',
@@ -651,6 +655,10 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Consolidation\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/consolidation/log/src',
+        ),
+        'Consolidation\\Filter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src',
         ),
         'Consolidation\\Config\\' => 
         array (
@@ -1854,6 +1862,19 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Consolidation\\Config\\Util\\ConfigRuntimeInterface' => __DIR__ . '/..' . '/consolidation/config/src/Util/ConfigRuntimeInterface.php',
         'Consolidation\\Config\\Util\\EnvConfig' => __DIR__ . '/..' . '/consolidation/config/src/Util/EnvConfig.php',
         'Consolidation\\Config\\Util\\Interpolator' => __DIR__ . '/..' . '/consolidation/config/src/Util/Interpolator.php',
+        'Consolidation\\Filter\\Cli\\OpCommands' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Cli/OpCommands.php',
+        'Consolidation\\Filter\\FactoryInterface' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/FactoryInterface.php',
+        'Consolidation\\Filter\\FilterOutputData' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/FilterOutputData.php',
+        'Consolidation\\Filter\\Hooks\\FilterHooks' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Hooks/FilterHooks.php',
+        'Consolidation\\Filter\\LogicalOpFactory' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/LogicalOpFactory.php',
+        'Consolidation\\Filter\\OperatorFactory' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/OperatorFactory.php',
+        'Consolidation\\Filter\\OperatorInterface' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/OperatorInterface.php',
+        'Consolidation\\Filter\\Operators\\ContainsOp' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Operators/ContainsOp.php',
+        'Consolidation\\Filter\\Operators\\EqualsOp' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Operators/EqualsOp.php',
+        'Consolidation\\Filter\\Operators\\LogicalAndOp' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Operators/LogicalAndOp.php',
+        'Consolidation\\Filter\\Operators\\LogicalOrOp' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Operators/LogicalOrOp.php',
+        'Consolidation\\Filter\\Operators\\NotOp' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Operators/NotOp.php',
+        'Consolidation\\Filter\\Operators\\RegexOp' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Operators/RegexOp.php',
         'Consolidation\\Log\\ConsoleLogLevel' => __DIR__ . '/..' . '/consolidation/log/src/ConsoleLogLevel.php',
         'Consolidation\\Log\\LogOutputStyler' => __DIR__ . '/..' . '/consolidation/log/src/LogOutputStyler.php',
         'Consolidation\\Log\\LogOutputStylerInterface' => __DIR__ . '/..' . '/consolidation/log/src/LogOutputStylerInterface.php',
@@ -1937,20 +1958,45 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Consolidation\\OutputFormatters\\Validate\\ValidDataTypesInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Validate/ValidDataTypesInterface.php',
         'Consolidation\\OutputFormatters\\Validate\\ValidDataTypesTrait' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Validate/ValidDataTypesTrait.php',
         'Consolidation\\OutputFormatters\\Validate\\ValidationInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Validate/ValidationInterface.php',
-        'Consolidation\\SiteAlias\\AliasRecord' => __DIR__ . '/..' . '/consolidation/site-alias/src/AliasRecord.php',
-        'Consolidation\\SiteAlias\\AliasRecordInterface' => __DIR__ . '/..' . '/consolidation/site-alias/src/AliasRecordInterface.php',
         'Consolidation\\SiteAlias\\Cli\\SiteAliasCommands' => __DIR__ . '/..' . '/consolidation/site-alias/src/Cli/SiteAliasCommands.php',
         'Consolidation\\SiteAlias\\DataFileLoaderInterface' => __DIR__ . '/..' . '/consolidation/site-alias/src/DataFileLoaderInterface.php',
         'Consolidation\\SiteAlias\\HostPath' => __DIR__ . '/..' . '/consolidation/site-alias/src/HostPath.php',
+        'Consolidation\\SiteAlias\\SiteAlias' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAlias.php',
         'Consolidation\\SiteAlias\\SiteAliasFileDiscovery' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasFileDiscovery.php',
         'Consolidation\\SiteAlias\\SiteAliasFileLoader' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasFileLoader.php',
+        'Consolidation\\SiteAlias\\SiteAliasInterface' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasInterface.php',
         'Consolidation\\SiteAlias\\SiteAliasManager' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasManager.php',
         'Consolidation\\SiteAlias\\SiteAliasManagerAwareInterface' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasManagerAwareInterface.php',
         'Consolidation\\SiteAlias\\SiteAliasManagerAwareTrait' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasManagerAwareTrait.php',
+        'Consolidation\\SiteAlias\\SiteAliasManagerInitializationInterface' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasManagerInitializationInterface.php',
+        'Consolidation\\SiteAlias\\SiteAliasManagerInterface' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasManagerInterface.php',
         'Consolidation\\SiteAlias\\SiteAliasName' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasName.php',
+        'Consolidation\\SiteAlias\\SiteAliasTrait' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasTrait.php',
+        'Consolidation\\SiteAlias\\SiteAliasWithConfig' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAliasWithConfig.php',
         'Consolidation\\SiteAlias\\SiteSpecParser' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteSpecParser.php',
         'Consolidation\\SiteAlias\\Util\\FsUtils' => __DIR__ . '/..' . '/consolidation/site-alias/src/Util/FsUtils.php',
         'Consolidation\\SiteAlias\\Util\\YamlDataFileLoader' => __DIR__ . '/..' . '/consolidation/site-alias/src/Util/YamlDataFileLoader.php',
+        'Consolidation\\SiteProcess\\Factory\\DockerComposeTransportFactory' => __DIR__ . '/..' . '/consolidation/site-process/src/Factory/DockerComposeTransportFactory.php',
+        'Consolidation\\SiteProcess\\Factory\\SshTransportFactory' => __DIR__ . '/..' . '/consolidation/site-process/src/Factory/SshTransportFactory.php',
+        'Consolidation\\SiteProcess\\Factory\\TransportFactoryInterface' => __DIR__ . '/..' . '/consolidation/site-process/src/Factory/TransportFactoryInterface.php',
+        'Consolidation\\SiteProcess\\Factory\\VagrantTransportFactory' => __DIR__ . '/..' . '/consolidation/site-process/src/Factory/VagrantTransportFactory.php',
+        'Consolidation\\SiteProcess\\ProcessBase' => __DIR__ . '/..' . '/consolidation/site-process/src/ProcessBase.php',
+        'Consolidation\\SiteProcess\\ProcessManager' => __DIR__ . '/..' . '/consolidation/site-process/src/ProcessManager.php',
+        'Consolidation\\SiteProcess\\ProcessManagerAwareInterface' => __DIR__ . '/..' . '/consolidation/site-process/src/ProcessManagerAwareInterface.php',
+        'Consolidation\\SiteProcess\\ProcessManagerAwareTrait' => __DIR__ . '/..' . '/consolidation/site-process/src/ProcessManagerAwareTrait.php',
+        'Consolidation\\SiteProcess\\Remo\\RemoCommands' => __DIR__ . '/..' . '/consolidation/site-process/src/Remo/RemoCommands.php',
+        'Consolidation\\SiteProcess\\SiteProcess' => __DIR__ . '/..' . '/consolidation/site-process/src/SiteProcess.php',
+        'Consolidation\\SiteProcess\\Transport\\DockerComposeTransport' => __DIR__ . '/..' . '/consolidation/site-process/src/Transport/DockerComposeTransport.php',
+        'Consolidation\\SiteProcess\\Transport\\LocalTransport' => __DIR__ . '/..' . '/consolidation/site-process/src/Transport/LocalTransport.php',
+        'Consolidation\\SiteProcess\\Transport\\SshTransport' => __DIR__ . '/..' . '/consolidation/site-process/src/Transport/SshTransport.php',
+        'Consolidation\\SiteProcess\\Transport\\TransportInterface' => __DIR__ . '/..' . '/consolidation/site-process/src/Transport/TransportInterface.php',
+        'Consolidation\\SiteProcess\\Transport\\VagrantTransport' => __DIR__ . '/..' . '/consolidation/site-process/src/Transport/VagrantTransport.php',
+        'Consolidation\\SiteProcess\\Util\\ArgumentProcessor' => __DIR__ . '/..' . '/consolidation/site-process/src/Util/ArgumentProcessor.php',
+        'Consolidation\\SiteProcess\\Util\\Escape' => __DIR__ . '/..' . '/consolidation/site-process/src/Util/Escape.php',
+        'Consolidation\\SiteProcess\\Util\\RealtimeOutputHandler' => __DIR__ . '/..' . '/consolidation/site-process/src/Util/RealtimeOutputHandler.php',
+        'Consolidation\\SiteProcess\\Util\\Shell' => __DIR__ . '/..' . '/consolidation/site-process/src/Util/Shell.php',
+        'Consolidation\\SiteProcess\\Util\\ShellOperatorInterface' => __DIR__ . '/..' . '/consolidation/site-process/src/Util/ShellOperatorInterface.php',
+        'Consolidation\\SiteProcess\\Util\\Tty' => __DIR__ . '/..' . '/consolidation/site-process/src/Util/Tty.php',
         'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin' => __DIR__ . '/..' . '/dealerdirect/phpcodesniffer-composer-installer/src/Plugin.php',
         'Defuse\\Crypto\\Core' => __DIR__ . '/..' . '/defuse/php-encryption/src/Core.php',
         'Defuse\\Crypto\\Crypto' => __DIR__ . '/..' . '/defuse/php-encryption/src/Crypto.php',
@@ -4321,8 +4367,6 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Drush\\Boot\\BootstrapHook' => __DIR__ . '/..' . '/drush/drush/src/Boot/BootstrapHook.php',
         'Drush\\Boot\\BootstrapManager' => __DIR__ . '/..' . '/drush/drush/src/Boot/BootstrapManager.php',
         'Drush\\Boot\\DrupalBoot' => __DIR__ . '/..' . '/drush/drush/src/Boot/DrupalBoot.php',
-        'Drush\\Boot\\DrupalBoot6' => __DIR__ . '/..' . '/drush/drush/src/Boot/DrupalBoot6.php',
-        'Drush\\Boot\\DrupalBoot7' => __DIR__ . '/..' . '/drush/drush/src/Boot/DrupalBoot7.php',
         'Drush\\Boot\\DrupalBoot8' => __DIR__ . '/..' . '/drush/drush/src/Boot/DrupalBoot8.php',
         'Drush\\Boot\\EmptyBoot' => __DIR__ . '/..' . '/drush/drush/src/Boot/EmptyBoot.php',
         'Drush\\Boot\\Kernels' => __DIR__ . '/..' . '/drush/drush/src/Boot/Kernels.php',
@@ -4330,6 +4374,7 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Drush\\Cache\\CommandCache' => __DIR__ . '/..' . '/drush/drush/src/Cache/CommandCache.php',
         'Drush\\Cache\\FileCache' => __DIR__ . '/..' . '/drush/drush/src/Cache/FileCache.php',
         'Drush\\Cache\\JSONCache' => __DIR__ . '/..' . '/drush/drush/src/Cache/JSONCache.php',
+        'Drush\\Command\\DrushCommandInfoAlterer' => __DIR__ . '/..' . '/drush/drush/src/Command/DrushCommandInfoAlterer.php',
         'Drush\\Command\\GlobalOptionsEventListener' => __DIR__ . '/..' . '/drush/drush/src/Command/GlobalOptionsEventListener.php',
         'Drush\\Command\\RemoteCommandProxy' => __DIR__ . '/..' . '/drush/drush/src/Command/RemoteCommandProxy.php',
         'Drush\\Command\\ServiceCommandlist' => __DIR__ . '/..' . '/drush/drush/src/Command/ServiceCommandlist.php',
@@ -4372,6 +4417,7 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Drush\\Commands\\pm\\SecurityUpdateCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/pm/SecurityUpdateCommands.php',
         'Drush\\Commands\\sql\\SqlCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/sql/SqlCommands.php',
         'Drush\\Commands\\sql\\SqlSyncCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/sql/SqlSyncCommands.php',
+        'Drush\\Config\\ConfigAwareTrait' => __DIR__ . '/..' . '/drush/drush/src/Config/ConfigAwareTrait.php',
         'Drush\\Config\\ConfigLocator' => __DIR__ . '/..' . '/drush/drush/src/Config/ConfigLocator.php',
         'Drush\\Config\\DrushConfig' => __DIR__ . '/..' . '/drush/drush/src/Config/DrushConfig.php',
         'Drush\\Config\\Environment' => __DIR__ . '/..' . '/drush/drush/src/Config/Environment.php',
@@ -4384,6 +4430,7 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Drush\\Drupal\\Commands\\core\\DrupalCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/DrupalCommands.php',
         'Drush\\Drupal\\Commands\\core\\EntityCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/EntityCommands.php',
         'Drush\\Drupal\\Commands\\core\\ImageCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/ImageCommands.php',
+        'Drush\\Drupal\\Commands\\core\\JsonapiCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/JsonapiCommands.php',
         'Drush\\Drupal\\Commands\\core\\LanguageCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/LanguageCommands.php',
         'Drush\\Drupal\\Commands\\core\\LocaleCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/LocaleCommands.php',
         'Drush\\Drupal\\Commands\\core\\MessengerCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/MessengerCommands.php',
@@ -4414,15 +4461,15 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Drush\\Exceptions\\UserAbortException' => __DIR__ . '/..' . '/drush/drush/src/Exceptions/UserAbortException.php',
         'Drush\\Exec\\ExecTrait' => __DIR__ . '/..' . '/drush/drush/src/Exec/ExecTrait.php',
         'Drush\\Formatters\\DrushFormatterManager' => __DIR__ . '/..' . '/drush/drush/src/Formatters/DrushFormatterManager.php',
-        'Drush\\Internal\\Config\\Yaml\\Escaper' => __DIR__ . '/..' . '/drush/drush/internal-copy/Config/Yaml/Escaper.php',
-        'Drush\\Internal\\Config\\Yaml\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/drush/drush/internal-copy/Config/Yaml/Exception/ExceptionInterface.php',
-        'Drush\\Internal\\Config\\Yaml\\Exception\\ParseException' => __DIR__ . '/..' . '/drush/drush/internal-copy/Config/Yaml/Exception/ParseException.php',
-        'Drush\\Internal\\Config\\Yaml\\Exception\\RuntimeException' => __DIR__ . '/..' . '/drush/drush/internal-copy/Config/Yaml/Exception/RuntimeException.php',
-        'Drush\\Internal\\Config\\Yaml\\Inline' => __DIR__ . '/..' . '/drush/drush/internal-copy/Config/Yaml/Inline.php',
-        'Drush\\Internal\\Config\\Yaml\\Parser' => __DIR__ . '/..' . '/drush/drush/internal-copy/Config/Yaml/Parser.php',
-        'Drush\\Internal\\Config\\Yaml\\Tag\\TaggedValue' => __DIR__ . '/..' . '/drush/drush/internal-copy/Config/Yaml/Tag/TaggedValue.php',
-        'Drush\\Internal\\Config\\Yaml\\Unescaper' => __DIR__ . '/..' . '/drush/drush/internal-copy/Config/Yaml/Unescaper.php',
-        'Drush\\Internal\\Config\\Yaml\\Yaml' => __DIR__ . '/..' . '/drush/drush/internal-copy/Config/Yaml/Yaml.php',
+        'Drush\\Internal\\Config\\Yaml\\Escaper' => __DIR__ . '/..' . '/drush/drush/src/internal-forks/Config/Yaml/Escaper.php',
+        'Drush\\Internal\\Config\\Yaml\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/drush/drush/src/internal-forks/Config/Yaml/Exception/ExceptionInterface.php',
+        'Drush\\Internal\\Config\\Yaml\\Exception\\ParseException' => __DIR__ . '/..' . '/drush/drush/src/internal-forks/Config/Yaml/Exception/ParseException.php',
+        'Drush\\Internal\\Config\\Yaml\\Exception\\RuntimeException' => __DIR__ . '/..' . '/drush/drush/src/internal-forks/Config/Yaml/Exception/RuntimeException.php',
+        'Drush\\Internal\\Config\\Yaml\\Inline' => __DIR__ . '/..' . '/drush/drush/src/internal-forks/Config/Yaml/Inline.php',
+        'Drush\\Internal\\Config\\Yaml\\Parser' => __DIR__ . '/..' . '/drush/drush/src/internal-forks/Config/Yaml/Parser.php',
+        'Drush\\Internal\\Config\\Yaml\\Tag\\TaggedValue' => __DIR__ . '/..' . '/drush/drush/src/internal-forks/Config/Yaml/Tag/TaggedValue.php',
+        'Drush\\Internal\\Config\\Yaml\\Unescaper' => __DIR__ . '/..' . '/drush/drush/src/internal-forks/Config/Yaml/Unescaper.php',
+        'Drush\\Internal\\Config\\Yaml\\Yaml' => __DIR__ . '/..' . '/drush/drush/src/internal-forks/Config/Yaml/Yaml.php',
         'Drush\\Log\\DrushLog' => __DIR__ . '/..' . '/drush/drush/src/Log/DrushLog.php',
         'Drush\\Log\\LogLevel' => __DIR__ . '/..' . '/drush/drush/src/Log/LogLevel.php',
         'Drush\\Log\\Logger' => __DIR__ . '/..' . '/drush/drush/src/Log/Logger.php',
@@ -4441,11 +4488,15 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Drush\\Psysh\\DrushHelpCommand' => __DIR__ . '/..' . '/drush/drush/src/Psysh/DrushHelpCommand.php',
         'Drush\\Psysh\\Shell' => __DIR__ . '/..' . '/drush/drush/src/Psysh/Shell.php',
         'Drush\\Runtime\\DependencyInjection' => __DIR__ . '/..' . '/drush/drush/src/Runtime/DependencyInjection.php',
+        'Drush\\Runtime\\ErrorHandler' => __DIR__ . '/..' . '/drush/drush/src/Runtime/ErrorHandler.php',
+        'Drush\\Runtime\\HandlerInterface' => __DIR__ . '/..' . '/drush/drush/src/Runtime/HandlerInterface.php',
         'Drush\\Runtime\\RedispatchHook' => __DIR__ . '/..' . '/drush/drush/src/Runtime/RedispatchHook.php',
         'Drush\\Runtime\\Runtime' => __DIR__ . '/..' . '/drush/drush/src/Runtime/Runtime.php',
+        'Drush\\Runtime\\ShutdownHandler' => __DIR__ . '/..' . '/drush/drush/src/Runtime/ShutdownHandler.php',
         'Drush\\Runtime\\TildeExpansionHook' => __DIR__ . '/..' . '/drush/drush/src/Runtime/TildeExpansionHook.php',
         'Drush\\SiteAlias\\HostPath' => __DIR__ . '/..' . '/drush/drush/src/SiteAlias/HostPath.php',
         'Drush\\SiteAlias\\LegacyAliasConverter' => __DIR__ . '/..' . '/drush/drush/src/SiteAlias/LegacyAliasConverter.php',
+        'Drush\\SiteAlias\\ProcessManager' => __DIR__ . '/..' . '/drush/drush/src/SiteAlias/ProcessManager.php',
         'Drush\\SiteAlias\\SiteAliasFileLoader' => __DIR__ . '/..' . '/drush/drush/src/SiteAlias/SiteAliasFileLoader.php',
         'Drush\\SiteAlias\\SiteAliasManagerAwareInterface' => __DIR__ . '/..' . '/drush/drush/src/SiteAlias/SiteAliasManagerAwareInterface.php',
         'Drush\\SiteAlias\\SiteAliasManagerAwareTrait' => __DIR__ . '/..' . '/drush/drush/src/SiteAlias/SiteAliasManagerAwareTrait.php',
@@ -4462,9 +4513,13 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Drush\\Sql\\SqlTableSelectionTrait' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlTableSelectionTrait.php',
         'Drush\\Style\\DrushStyle' => __DIR__ . '/..' . '/drush/drush/src/Style/DrushStyle.php',
         'Drush\\Symfony\\BootstrapCompilerPass' => __DIR__ . '/..' . '/drush/drush/src/Symfony/BootstrapCompilerPass.php',
+        'Drush\\Symfony\\BufferedConsoleOutput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/BufferedConsoleOutput.php',
         'Drush\\Symfony\\DrushArgvInput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/DrushArgvInput.php',
         'Drush\\Symfony\\IndiscriminateInputDefinition' => __DIR__ . '/..' . '/drush/drush/src/Symfony/IndiscriminateInputDefinition.php',
         'Drush\\Symfony\\LessStrictArgvInput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/LessStrictArgvInput.php',
+        'Drush\\TestTraits\\CliTestTrait' => __DIR__ . '/..' . '/drush/drush/src/TestTraits/CliTestTrait.php',
+        'Drush\\TestTraits\\DrushTestTrait' => __DIR__ . '/..' . '/drush/drush/src/TestTraits/DrushTestTrait.php',
+        'Drush\\TestTraits\\OutputUtilsTrait' => __DIR__ . '/..' . '/drush/drush/src/TestTraits/OutputUtilsTrait.php',
         'Drush\\Utils\\FsUtils' => __DIR__ . '/..' . '/drush/drush/src/Utils/FsUtils.php',
         'Drush\\Utils\\StringUtils' => __DIR__ . '/..' . '/drush/drush/src/Utils/StringUtils.php',
         'EasyRdf_Collection' => __DIR__ . '/..' . '/easyrdf/easyrdf/lib/EasyRdf/Collection.php',
@@ -7640,13 +7695,20 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Symfony\\Component\\VarDumper\\Caster\\DOMCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/DOMCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\DateCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/DateCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\DoctrineCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/DoctrineCaster.php',
+        'Symfony\\Component\\VarDumper\\Caster\\DsCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/DsCaster.php',
+        'Symfony\\Component\\VarDumper\\Caster\\DsPairStub' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/DsPairStub.php',
         'Symfony\\Component\\VarDumper\\Caster\\EnumStub' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/EnumStub.php',
         'Symfony\\Component\\VarDumper\\Caster\\ExceptionCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/ExceptionCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\FrameStub' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/FrameStub.php',
+        'Symfony\\Component\\VarDumper\\Caster\\GmpCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/GmpCaster.php',
+        'Symfony\\Component\\VarDumper\\Caster\\ImagineCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/ImagineCaster.php',
+        'Symfony\\Component\\VarDumper\\Caster\\ImgStub' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/ImgStub.php',
+        'Symfony\\Component\\VarDumper\\Caster\\IntlCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/IntlCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\LinkStub' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/LinkStub.php',
-        'Symfony\\Component\\VarDumper\\Caster\\MongoCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/MongoCaster.php',
+        'Symfony\\Component\\VarDumper\\Caster\\MemcachedCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/MemcachedCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\PdoCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/PdoCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\PgSqlCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/PgSqlCaster.php',
+        'Symfony\\Component\\VarDumper\\Caster\\ProxyManagerCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/ProxyManagerCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\RedisCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/RedisCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\ReflectionCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/ReflectionCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\ResourceCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/ResourceCaster.php',
@@ -7654,6 +7716,7 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Symfony\\Component\\VarDumper\\Caster\\StubCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/StubCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\SymfonyCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/SymfonyCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\TraceStub' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/TraceStub.php',
+        'Symfony\\Component\\VarDumper\\Caster\\UuidCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/UuidCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\XmlReaderCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/XmlReaderCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\XmlResourceCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/XmlResourceCaster.php',
         'Symfony\\Component\\VarDumper\\Cloner\\AbstractCloner' => __DIR__ . '/..' . '/symfony/var-dumper/Cloner/AbstractCloner.php',
@@ -7663,11 +7726,23 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Symfony\\Component\\VarDumper\\Cloner\\DumperInterface' => __DIR__ . '/..' . '/symfony/var-dumper/Cloner/DumperInterface.php',
         'Symfony\\Component\\VarDumper\\Cloner\\Stub' => __DIR__ . '/..' . '/symfony/var-dumper/Cloner/Stub.php',
         'Symfony\\Component\\VarDumper\\Cloner\\VarCloner' => __DIR__ . '/..' . '/symfony/var-dumper/Cloner/VarCloner.php',
+        'Symfony\\Component\\VarDumper\\Command\\Descriptor\\CliDescriptor' => __DIR__ . '/..' . '/symfony/var-dumper/Command/Descriptor/CliDescriptor.php',
+        'Symfony\\Component\\VarDumper\\Command\\Descriptor\\DumpDescriptorInterface' => __DIR__ . '/..' . '/symfony/var-dumper/Command/Descriptor/DumpDescriptorInterface.php',
+        'Symfony\\Component\\VarDumper\\Command\\Descriptor\\HtmlDescriptor' => __DIR__ . '/..' . '/symfony/var-dumper/Command/Descriptor/HtmlDescriptor.php',
+        'Symfony\\Component\\VarDumper\\Command\\ServerDumpCommand' => __DIR__ . '/..' . '/symfony/var-dumper/Command/ServerDumpCommand.php',
         'Symfony\\Component\\VarDumper\\Dumper\\AbstractDumper' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/AbstractDumper.php',
         'Symfony\\Component\\VarDumper\\Dumper\\CliDumper' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/CliDumper.php',
+        'Symfony\\Component\\VarDumper\\Dumper\\ContextProvider\\CliContextProvider' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/ContextProvider/CliContextProvider.php',
+        'Symfony\\Component\\VarDumper\\Dumper\\ContextProvider\\ContextProviderInterface' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/ContextProvider/ContextProviderInterface.php',
+        'Symfony\\Component\\VarDumper\\Dumper\\ContextProvider\\RequestContextProvider' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/ContextProvider/RequestContextProvider.php',
+        'Symfony\\Component\\VarDumper\\Dumper\\ContextProvider\\SourceContextProvider' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/ContextProvider/SourceContextProvider.php',
+        'Symfony\\Component\\VarDumper\\Dumper\\ContextualizedDumper' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/ContextualizedDumper.php',
         'Symfony\\Component\\VarDumper\\Dumper\\DataDumperInterface' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/DataDumperInterface.php',
         'Symfony\\Component\\VarDumper\\Dumper\\HtmlDumper' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/HtmlDumper.php',
+        'Symfony\\Component\\VarDumper\\Dumper\\ServerDumper' => __DIR__ . '/..' . '/symfony/var-dumper/Dumper/ServerDumper.php',
         'Symfony\\Component\\VarDumper\\Exception\\ThrowingCasterException' => __DIR__ . '/..' . '/symfony/var-dumper/Exception/ThrowingCasterException.php',
+        'Symfony\\Component\\VarDumper\\Server\\Connection' => __DIR__ . '/..' . '/symfony/var-dumper/Server/Connection.php',
+        'Symfony\\Component\\VarDumper\\Server\\DumpServer' => __DIR__ . '/..' . '/symfony/var-dumper/Server/DumpServer.php',
         'Symfony\\Component\\VarDumper\\Test\\VarDumperTestTrait' => __DIR__ . '/..' . '/symfony/var-dumper/Test/VarDumperTestTrait.php',
         'Symfony\\Component\\VarDumper\\VarDumper' => __DIR__ . '/..' . '/symfony/var-dumper/VarDumper.php',
         'Symfony\\Component\\Yaml\\Command\\LintCommand' => __DIR__ . '/..' . '/symfony/yaml/Command/LintCommand.php',
@@ -7687,6 +7762,7 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php56\\Php56' => __DIR__ . '/..' . '/symfony/polyfill-php56/Php56.php',
         'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
+        'Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
         'Symfony\\Polyfill\\Util\\Binary' => __DIR__ . '/..' . '/symfony/polyfill-util/Binary.php',
         'Symfony\\Polyfill\\Util\\BinaryNoFuncOverload' => __DIR__ . '/..' . '/symfony/polyfill-util/BinaryNoFuncOverload.php',
         'Symfony\\Polyfill\\Util\\BinaryOnFuncOverload' => __DIR__ . '/..' . '/symfony/polyfill-util/BinaryOnFuncOverload.php',
@@ -8454,11 +8530,11 @@ class ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit9ccfd3129963d367b7bdd2bfd240d5d8::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb8e53d9ad1ba18f4a81139033a9f7f23::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb8e53d9ad1ba18f4a81139033a9f7f23::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitb8e53d9ad1ba18f4a81139033a9f7f23::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitb8e53d9ad1ba18f4a81139033a9f7f23::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitb8e53d9ad1ba18f4a81139033a9f7f23::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -2,8 +2,6 @@
 
 namespace Drush\Sql;
 
-use Drush\Drush;
-use Drush\Preflight\PreflightArgs;
 use PDO;
 
 class SqlMysql extends SqlBase
@@ -46,8 +44,8 @@ EOT;
         // Default to unix socket if configured.
         if (!empty($dbSpec['unix_socket'])) {
             $parameters['socket'] = $dbSpec['unix_socket'];
-        } // EMPTY host is not the same as NO host, and is valid (see unix_socket).
-        elseif (isset($dbSpec['host'])) {
+        } elseif (isset($dbSpec['host'])) {
+            // EMPTY host is not the same as NO host, and is valid (see unix_socket).
             $parameters['host'] = $dbSpec['host'];
         }
 
@@ -115,13 +113,17 @@ EOT;
     public function dbExists()
     {
         // Suppress output. We only care about return value.
-        return $this->alwaysQuery("SELECT 1;", null, drush_bit_bucket());
+        return $this->alwaysQuery("SELECT 1;");
     }
 
     public function listTables()
     {
+        $tables = [];
         $this->alwaysQuery('SHOW TABLES;');
-        return drush_shell_exec_output();
+        if ($out = trim($this->getProcess()->getOutput())) {
+            $tables = explode(PHP_EOL, $out);
+        }
+        return $tables;
     }
 
     public function dumpCmd($table_selection)
