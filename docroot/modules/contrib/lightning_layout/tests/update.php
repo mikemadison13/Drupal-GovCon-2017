@@ -1,7 +1,12 @@
 <?php
 
-// Forcibly uninstall Lightning Dev, switch the installation profile from
-// Standard to Minimal, and delete defunct config objects.
+/**
+ * @file
+ * Prepares a code base to run database updates for testing.
+ *
+ * Forcibly uninstalls Lightning Dev, switches the installation profile from
+ *  Standard to Minimal, and deletes defunct config objects.
+ */
 
 Drupal::configFactory()
   ->getEditable('core.extension')
@@ -13,13 +18,13 @@ Drupal::configFactory()
 
 Drupal::keyValue('system.schema')->deleteMultiple(['lightning_dev']);
 
-entity_load('node_type', 'landing_page')
+\Drupal::entityTypeManager()->getStorage('node_type')->load('landing_page')
   ->unsetThirdPartySetting('lightning_workflow', 'workflow')
   ->save();
 
 Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
 
-$node_type = entity_load('node_type', 'page');
+$node_type = \Drupal::entityTypeManager()->getStorage('node_type')->load('page');
 if ($node_type) {
   $node_type->delete();
 }

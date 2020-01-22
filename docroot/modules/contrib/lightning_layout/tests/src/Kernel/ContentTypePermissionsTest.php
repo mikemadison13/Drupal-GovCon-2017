@@ -2,12 +2,14 @@
 
 namespace Drupal\Tests\lightning_layout\Kernel;
 
+use Drupal\KernelTests\KernelTestBase;
 use Drupal\lightning_core\ConfigHelper as Config;
 use Drupal\node\Entity\NodeType;
-use Drupal\Tests\token\Kernel\KernelTestBase;
 use Drupal\user\Entity\Role;
 
 /**
+ * Tests content type-related permission handling in Lightning Layout.
+ *
  * @group lightning_layout
  */
 class ContentTypePermissionsTest extends KernelTestBase {
@@ -18,6 +20,8 @@ class ContentTypePermissionsTest extends KernelTestBase {
   public static $modules = [
     'lightning_layout',
     'node',
+    'system',
+    'user',
   ];
 
   /**
@@ -35,6 +39,9 @@ class ContentTypePermissionsTest extends KernelTestBase {
     $role->unsetThirdPartySetting('lightning', 'bundled')->save();
   }
 
+  /**
+   * Tests that the layout_manager role gets content type-based permissions.
+   */
   public function test() {
     $node_type = NodeType::create([
       'type' => $this->randomMachineName(),

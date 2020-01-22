@@ -10,24 +10,34 @@
  *
  * This documentation is for developers that want to implement their own
  * challenge type and integrate it with the base CAPTCHA module.
+ *
  * === Required: hook_captcha($op, $captcha_type='') ===
+ *
  * The hook_captcha() hook is the only required function if you want to
  * integrate with the base CAPTCHA module.
+ *
  * Functionality depends on the first argument $op:
- * 'list': you should return an array of possible challenge types that
- * your module implements.
- * 'generate': generate a challenge.
+ *   - 'list': you should return an array of possible challenge types that
+ *    your module implements.
+ *   - 'generate': generate a challenge.
+ *
  * You should return an array that offers form elements and the solution
  * of your challenge, defined by the second argument $captcha_type.
+ *
  * The returned array $captcha should have the following items:
- * $captcha['solution']: this is the solution of your challenge
- * $captcha['form']: an array of the form elements you want to add to the form.
+ *   - $captcha['solution']: this is the solution of your challenge
+ *   - $captcha['form']: an array of the form elements you want to add to the
+ *     form.
+ *
  * There should be a key 'captcha_response' in this array, which points to
- * the form element where the user enters his answer.
+ * the form element where the user enters the answer.
+ *
  * An optional additional argument $captcha_sid with the captcha session ID is
  * available for more advanced challenges (e.g. the image CAPTCHA uses this
  * argument, see image_captcha_captcha()) and it is used for every session.
+ *
  * Let's give a simple example to make this more clear.
+ *
  * We create the challenge 'Foo CAPTCHA', which requires the user to
  * enter "foo" in a textfield.
  */

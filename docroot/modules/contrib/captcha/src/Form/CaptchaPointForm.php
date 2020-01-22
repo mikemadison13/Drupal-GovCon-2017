@@ -2,6 +2,7 @@
 
 namespace Drupal\captcha\Form;
 
+use Drupal\captcha\Service\CaptchaService;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -11,6 +12,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Entity Form to edit CAPTCHA points.
  */
 class CaptchaPointForm extends EntityForm {
+
+  /**
+   * The CAPTCHA helper service.
+   *
+   * @var \Drupal\captcha\Service\CaptchaService
+   */
+  protected $captchaService;
 
   /**
    * The request stack.
@@ -25,8 +33,9 @@ class CaptchaPointForm extends EntityForm {
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   Constructor.
    */
-  public function __construct(RequestStack $request_stack) {
+  public function __construct(RequestStack $request_stack, CaptchaService $captcha_service) {
     $this->requestStack = $request_stack;
+    $this->captchaService = $captcha_service;
   }
 
   /**
@@ -39,7 +48,8 @@ class CaptchaPointForm extends EntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('request_stack')
+      $container->get('request_stack'),
+      $container->get('captcha.helper')
     );
   }
 
@@ -84,9 +94,8 @@ class CaptchaPointForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Challenge type'),
       '#description' => $this->t('The CAPTCHA type to use for this form.'),
-      '#default_value' => ($captcha_point->getCaptchaType() ?: $this->config('captcha.settings')
-        ->get('default_challenge')),
-      '#options' => _captcha_available_challenge_types(),
+      '#default_value' => $captcha_point->getCaptchaType() ?: $this->config('captcha.settings')->get('default_challenge'),
+      '#options' => $this->captchaService->getAvailableChallengeTypes(),
     ];
 
     return $form;

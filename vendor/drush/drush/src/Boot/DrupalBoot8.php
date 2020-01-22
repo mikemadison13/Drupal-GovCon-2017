@@ -101,6 +101,15 @@ class DrupalBoot8 extends DrupalBoot implements AutoloaderAwareInterface
         }
     }
 
+    /**
+     * Beware, this function populates Database::Connection info.
+     *
+     * See https://github.com/drush-ops/drush/issues/3903.
+     * @param bool $require_settings
+     * @param bool $reset
+     *
+     * @return string|void
+     */
     public function confPath($require_settings = true, $reset = false)
     {
 
@@ -116,7 +125,7 @@ class DrupalBoot8 extends DrupalBoot implements AutoloaderAwareInterface
     public function addLogger()
     {
         // Provide a logger which sends
-        // output to drush_log(). This should catch every message logged through every
+        // output to log(). This should catch every message logged through every
         // channel.
         $container = \Drupal::getContainer();
         $parser = $container->get('logger.log_message_parser');
@@ -137,19 +146,21 @@ class DrupalBoot8 extends DrupalBoot implements AutoloaderAwareInterface
 
         // Normalize URI.
         $uri = rtrim($this->uri, '/') . '/';
+
         $parsed_url = parse_url($uri);
 
         // Account for users who omit the http:// prefix.
         if (empty($parsed_url['scheme'])) {
             $this->uri = 'http://' . $this->uri;
-            $parsed_url = parse_url('http://' . $uri);
+            $uri = 'http://' . $uri;
+            $parsed_url = parse_url($uri);
         }
 
         $server = [
             'SCRIPT_FILENAME' => getcwd() . '/index.php',
             'SCRIPT_NAME' => isset($parsed_url['path']) ? $parsed_url['path'] . 'index.php' : '/index.php',
         ];
-        $request = Request::create($this->uri, 'GET', [], [], [], $server);
+        $request = Request::create($uri, 'GET', [], [], [], $server);
         $this->setRequest($request);
         return true;
     }
@@ -160,6 +171,7 @@ class DrupalBoot8 extends DrupalBoot implements AutoloaderAwareInterface
      */
     public function bootstrapDoDrupalSite(BootstrapManager $manager)
     {
+        // Note: this reports the'default' during site:install even if we eventually install to a different multisite.
         $this->logger->log(LogLevel::BOOTSTRAP, dt("Initialized Drupal site !site at !site_root", ['!site' => $this->getRequest()->getHttpHost(), '!site_root' => $this->confPath()]));
     }
 
@@ -235,7 +247,7 @@ class DrupalBoot8 extends DrupalBoot implements AutoloaderAwareInterface
     {
         $this->logger->debug(dt('Start bootstrap of the Drupal Kernel.'));
         $this->kernel->boot();
-        $this->kernel->prepareLegacyRequest($this->getRequest());
+        $this->kernel->preHandle($this->getRequest());
         $this->logger->debug(dt('Finished bootstrap of the Drupal Kernel.'));
 
         parent::bootstrapDrupalFull($manager);

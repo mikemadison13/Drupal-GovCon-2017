@@ -2,6 +2,7 @@
 
 namespace Acquia\LightningExtension\Context;
 
+use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 
 /**
@@ -183,9 +184,10 @@ class PanelsIPEContext extends DrupalSubContextBase {
    * @When I change the layout to :layout_id from the :category category
    */
   public function changeLayout($category, $layout_id) {
+    $page = $this->getSession()->getPage();
     $assert = $this->assertSession();
 
-    $assert->elementExists('named', ['link', 'Change Layout'])->click();
+    $page->clickLink('Change Layout');
     $this->awaitAjax();
 
     $assert->elementExists('css', "a[data-category='$category']")->click();
@@ -193,6 +195,17 @@ class PanelsIPEContext extends DrupalSubContextBase {
 
     $assert->elementExists('css', "a[data-layout-id='$layout_id']")->click();
     $this->awaitAjax();
+
+    // If the layout is configurable (as it may be in Drupal 8.8 and later), we
+    // need to click another button.
+    $layout_class = \Drupal::service('plugin.manager.core.layout')
+      ->getDefinition($layout_id)
+      ->getClass();
+
+    if (is_a($layout_class, PluginFormInterface::class, TRUE)) {
+      $page->pressButton('Change Layout');
+      $this->awaitAjax();
+    }
   }
 
 }

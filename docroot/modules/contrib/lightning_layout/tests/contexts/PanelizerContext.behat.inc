@@ -71,8 +71,8 @@ class PanelizerContext extends DrupalSubContextBase {
    * @return \Behat\Mink\Element\NodeElement
    *   The block's row in the table.
    *
-   * @throws \Behat\Mink\Exception\ExpectationException if the block is not
-   * present as expected.
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   If the block is not present as expected.
    *
    * @Then the :label block should be in the :region region
    */
@@ -114,7 +114,7 @@ class PanelizerContext extends DrupalSubContextBase {
       }
     );
 
-    /** @var NodeElement $row */
+    /** @var \Behat\Mink\Element\NodeElement $row */
     foreach (array_map($row_map, $elements) as $row) {
       // The first cell is the one with the label; find() will return the first
       // matched element, which should be the first cell.

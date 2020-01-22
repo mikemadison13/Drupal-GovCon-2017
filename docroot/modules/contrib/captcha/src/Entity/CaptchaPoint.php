@@ -16,7 +16,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   id = "captcha_point",
  *   label = @Translation("Captcha Point"),
  *   handlers = {
- *     "list_builder" = "Drupal\captcha\Controller\CaptchaPointListBuilder",
+ *     "list_builder" = "Drupal\captcha\Entity\Controller\CaptchaPointListBuilder",
  *     "form" = {
  *       "add" = "Drupal\captcha\Form\CaptchaPointForm",
  *       "edit" = "Drupal\captcha\Form\CaptchaPointForm",

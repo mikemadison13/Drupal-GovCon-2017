@@ -11,13 +11,13 @@
 
 use Drupal\captcha\Entity\CaptchaPoint;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Form\BaseFormIdInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
-use Drupal\Core\Render\Element;
-use Drupal\Core\Form\BaseFormIdInterface;
 
 /**
  * Constants for CAPTCHA persistence.
@@ -141,7 +141,7 @@ function template_preprocess_captcha(&$variables) {
       '#description' => $element['#description'],
       '#children' => Markup::create($captcha_children_output),
       '#attributes' => [
-        'id' => ['captcha'],
+        'id' => 'captcha',
         'class' => ['captcha'],
         'open' => [''],
       ],
@@ -160,6 +160,8 @@ function template_preprocess_captcha(&$variables) {
 function captcha_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $account = \Drupal::currentUser();
   $config = \Drupal::config('captcha.settings');
+  $captchaService = \Drupal::service('captcha.helper');
+
   // Visitor does not have permission to skip CAPTCHAs.
   module_load_include('inc', 'captcha');
   if (!$account->hasPermission('skip CAPTCHA')) {
@@ -218,7 +220,7 @@ function captcha_form_alter(array &$form, FormStateInterface $form_state, $form_
 
       // Get placement in form and insert in form.
       $captcha_placement = _captcha_get_captcha_placement($form_id, $form);
-      _captcha_insert_captcha_element($form, $captcha_placement, $captcha_element);
+      $captchaService->insertCaptchaElement($form, $captcha_placement, $captcha_element);
 
     }
   }
@@ -273,7 +275,7 @@ function captcha_form_alter(array &$form, FormStateInterface $form_state, $form_
 
     // Get placement in form and insert in form.
     if ($captcha_placement = _captcha_get_captcha_placement($form_id, $form)) {
-      _captcha_insert_captcha_element($form, $captcha_placement, $captcha_element);
+      $captchaService->insertCaptchaElement($form, $captcha_placement, $captcha_element);
     };
   }
 

@@ -4,7 +4,7 @@ description: 'Helper module for duplicating Acquia Cloud Site Factory sites.'
 package: Acquia Cloud Site Factory
 core: 8.x
 
-# Information added by Drupal.org packaging script on 2019-10-02
-version: '8.x-1.62'
+# Information added by Drupal.org packaging script on 2019-12-11
+version: '8.x-1.63'
 project: 'acsf'
-datestamp: 1570013303
+datestamp: 1576067307

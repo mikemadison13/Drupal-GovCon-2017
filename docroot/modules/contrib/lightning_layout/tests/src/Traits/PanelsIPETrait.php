@@ -29,7 +29,7 @@ trait PanelsIPETrait {
     $tab = $this->getTab('Manage Content');
 
     $category = $assert->elementExists('css', '.ipe-category[data-category="' . $category . '"]', $tab);
-    if (! $category->hasClass('active')) {
+    if (!$category->hasClass('active')) {
       $category->click();
       $assert->assertWaitOnAjaxRequest();
     }

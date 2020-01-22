@@ -2,6 +2,7 @@
 
 namespace Drupal\captcha\Form;
 
+use Drupal\captcha\Service\CaptchaService;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -23,6 +24,13 @@ class CaptchaSettingsForm extends ConfigFormBase {
   protected $cacheBackend;
 
   /**
+   * The CAPTCHA helper service.
+   *
+   * @var \Drupal\captcha\Service\CaptchaService
+   */
+  protected $captchaService;
+
+  /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -39,10 +47,11 @@ class CaptchaSettingsForm extends ConfigFormBase {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   Module handler.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, CacheBackendInterface $cache_backend, ModuleHandlerInterface $moduleHandler) {
+  public function __construct(ConfigFactoryInterface $config_factory, CacheBackendInterface $cache_backend, ModuleHandlerInterface $moduleHandler, CaptchaService $captcha_service) {
     parent::__construct($config_factory);
     $this->cacheBackend = $cache_backend;
     $this->moduleHandler = $moduleHandler;
+    $this->captchaService = $captcha_service;
   }
 
   /**
@@ -52,7 +61,8 @@ class CaptchaSettingsForm extends ConfigFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('cache.default'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('captcha.helper')
     );
   }
 
@@ -90,7 +100,7 @@ class CaptchaSettingsForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => $this->t('Default challenge type'),
       '#description' => $this->t('Select the default challenge type for CAPTCHAs. This can be overridden for each form if desired.'),
-      '#options' => _captcha_available_challenge_types(FALSE),
+      '#options' => $this->captchaService->getAvailableChallengeTypes(FALSE),
       '#default_value' => $config->get('default_challenge'),
     ];
 

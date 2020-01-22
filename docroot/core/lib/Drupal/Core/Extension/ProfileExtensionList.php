@@ -56,7 +56,7 @@ class ProfileExtensionList extends ExtensionList {
     $ancestors = [];
 
     if (empty($profile)) {
-      $profile = $this->installProfile ?: drupal_get_profile();
+      $profile = $this->installProfile;
     }
     if (empty($profile)) {
       return $ancestors;

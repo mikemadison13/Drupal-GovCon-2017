@@ -17,8 +17,6 @@ env:
     - ORCA_SUT_NAME=drupal/acsf
     - ORCA_SUT_BRANCH=8.x-1.x
     - ORCA_VERSION=master
-    # @todo Remove once acsf is enabled in ORCA.
-    - ORCA_PACKAGES_CONFIG_ALTER=../acsf/tests/packages_alter.yml
     - ORCA_TELEMETRY_ENABLE=TRUE
 
 matrix:

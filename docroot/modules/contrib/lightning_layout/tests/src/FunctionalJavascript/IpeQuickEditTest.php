@@ -72,13 +72,13 @@ class IpeQuickEditTest extends WebDriverTestBase {
       'label' => 'Body',
     ])->save();
 
-    entity_get_display('block_content', $block_type->id(), 'default')
+    lightning_layout_entity_get_display('block_content', $block_type->id())
       ->setComponent('body', [
         'type' => 'text_default',
       ])
       ->save();
 
-    entity_get_form_display('block_content', $block_type->id(), 'default')
+    lightning_layout_entity_get_form_display('block_content', $block_type->id())
       ->setComponent('body', [
         'type' => 'text_textarea_with_summary',
       ])

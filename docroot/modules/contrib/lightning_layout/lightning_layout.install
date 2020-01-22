@@ -51,8 +51,6 @@ function lightning_layout_update_8003() {
  * Removed in Lightning 8.x-2.05.
  *
  * Formerly installed Panelizer defaults for the landing_page content type.
- *
- * @deprecated
  */
 function lightning_layout_update_8004() {
 }
@@ -61,8 +59,6 @@ function lightning_layout_update_8004() {
  * Removed in Lightning 8.x-2.06.
  *
  * Formerly added Panels and Panelizer permissions to content roles.
- *
- * @deprecated
  */
 function lightning_layout_update_8005() {
 }

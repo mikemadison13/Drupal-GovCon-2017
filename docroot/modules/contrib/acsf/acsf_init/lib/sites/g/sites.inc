@@ -8,6 +8,7 @@
  * once per page.
  */
 
+use Acquia\Cloud\Environment\MultiSite\Config;
 use Acquia\SimpleRest\SimpleRestCreds;
 use Acquia\SimpleRest\SimpleRestMessage;
 use Acquia\SimpleRest\SimpleRestResponse;
@@ -49,6 +50,11 @@ define('GARDENS_SITE_DATA_READ_FAILURE_TTL', 60);
 // is unreadable. Sitegroup + env need to be filled.
 define('GARDENS_SITE_JSON_ALERT_LOCK_TEMPLATE', '/mnt/tmp/%s.%s/.sites-json-alert');
 
+// The PHP configuration is used to switch between the new and the legacy
+// site.json usage. The new approach uses the interface provided by the
+// Acquia Cloud layer, the legacy approach uses the file deployed to gluster.
+define('GARDENS_SITE_JSON_LEGACY', empty(get_cfg_var('acsf.sites_json_on_ephemeral')));
+
 // This fallback to populate $_ENV should not be necessary on Acquia Hosting
 // anymore. Also, ah_site_info() is not a public API and not guaranteed to
 // keep existing. Still, we keep it for exotic environments which may be using
@@ -79,12 +85,17 @@ if (!isset($_ENV['AH_SITE_NAME']) || !isset($_ENV['AH_SITE_GROUP']) || !isset($_
  *   file.
  */
 function gardens_site_data_load_file() {
-  $json = @file_get_contents(gardens_site_data_get_filepath());
-  if ($json) {
-    // Get the map as arrays.
-    return json_decode($json, TRUE);
+  if (GARDENS_SITE_JSON_LEGACY) {
+    // Retrieve sites.json data from a gluster file.
+    $json = @file_get_contents(gardens_site_data_get_filepath());
+    return $json ? json_decode($json, TRUE) : FALSE;
   }
-  return FALSE;
+  else {
+    // Retrieve sites data using the interface provided by the Acquia Cloud
+    // layer.
+    $config = Config::getInstance();
+    return empty($config) ? FALSE : $config->all();
+  }
 }
 
 /**
@@ -152,11 +163,8 @@ function gardens_site_data_get_site_from_server_info() {
   // path with a leading slash.
   $path = strtolower(rtrim($path, '/'));
 
-  // Get data for the 'site uri' from APC or sites.json.
-  if (!GARDENS_SITE_DATA_USE_APC) {
-    $data = gardens_site_data_refresh_one($host . $path);
-  }
-  else {
+  // Get data for the 'site uri' from APC.
+  if (GARDENS_SITE_DATA_USE_APC && GARDENS_SITE_JSON_LEGACY) {
     // Check for data in APC: FALSE means no; 0 means "not found" cached in
     // APC; NULL means "sites.json read failure" cached in APC.
     $data = gardens_site_data_cache_get($host . $path);
@@ -200,6 +208,10 @@ function gardens_site_data_get_site_from_server_info() {
         }
       }
     }
+  }
+  // Get domain data.
+  else {
+    $data = gardens_site_data_refresh_one($host . $path);
   }
 
   if (is_array($data)) {
@@ -311,19 +323,28 @@ function gardens_site_data_get_site_from_file($domain) {
 }
 
 /**
- * Returns data for a single domain directly from the JSON file.
+ * Returns data for a single domain.
  *
  * Optionally also stores the data in APC.
  *
  * @param string $domain
- *   The domain name to look up in the JSON file.
+ *   The domain name to look up.
  *
  * @return array|int|null
  *   An array of site data, 0 if no site was found for the given domain, or NULL
  *   if a sites.json read failure was encountered.
  */
 function gardens_site_data_refresh_one($domain) {
-  $data = gardens_site_data_refresh_domains([$domain]);
+  if (GARDENS_SITE_JSON_LEGACY) {
+    // Using the legacy sites.json file from the gluster, and optionally also
+    // stores the data in APC.
+    $data = gardens_site_data_refresh_domains([$domain]);
+  }
+  else {
+    // Using interface provided by the Acquia Cloud layer, no APC cache handling
+    // in this case.
+    $data = gardens_site_data_from_multi_site_config([$domain]);
+  }
   return isset($data[$domain]) ? $data[$domain] : NULL;
 }
 
@@ -470,6 +491,45 @@ function gardens_site_data_refresh_domains(array $domains) {
     }
   }
 
+  return $data;
+}
+
+/**
+ * Returns data for the specified domains using hosting's php interface.
+ *
+ * @param array $domains
+ *   The domain names to look up in the domain registry.
+ *
+ * @return array
+ *   An array keyed by the specified domains, whose values are site data arrays
+ *   or 0 if no site was found for the given domain.
+ */
+function gardens_site_data_from_multi_site_config(array $domains) {
+  $data = [];
+  $config = Config::getInstance();
+  foreach ($domains as $domain) {
+    $domain = trim($domain);
+    if ($config) {
+      // Site config returns an associative array representation of one
+      // site object, selected by domain.
+      $found_site = $config->siteConfig($domain);
+      // Shared config returns an associative array with every key except sites.
+      $global_map_data = $config->sharedConfig();
+    }
+    // In case of missing data, set the results to zero and report the failure.
+    if (empty($found_site) || empty($global_map_data)) {
+      $data[$domain] = 0;
+      if (class_exists('Drupal') && \Drupal::hasService('logger.factory')) {
+        \Drupal::logger('acsf')->alert('Unable to extract site data for site @site.', ['@site' => $domain]);
+      }
+      elseif (function_exists('syslog')) {
+        syslog(LOG_ERR, sprintf('Unable to extract data for site %s.', $domain));
+      }
+    }
+    else {
+      $data[$domain] = gardens_site_data_build_data($found_site, $global_map_data);
+    }
+  }
   return $data;
 }
 

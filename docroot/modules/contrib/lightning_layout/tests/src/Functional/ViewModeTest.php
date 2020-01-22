@@ -11,6 +11,9 @@ use Drupal\Tests\BrowserTestBase;
  */
 class ViewModeTest extends BrowserTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected $strictConfigSchema = FALSE;
 
   /**
@@ -52,7 +55,7 @@ class ViewModeTest extends BrowserTestBase {
 
     $view_mode = EntityViewMode::load('node.foobaz');
     $this->assertInstanceOf(EntityViewModeInterface::class, $view_mode);
-    /** @var EntityViewModeInterface $view_mode */
+    /** @var \Drupal\Core\Entity\EntityViewModeInterface $view_mode */
     $view_mode->setThirdPartySetting('lightning_core', 'internal', TRUE);
     $this->assertSame(SAVED_UPDATED, $view_mode->save());
 
@@ -91,7 +94,7 @@ class ViewModeTest extends BrowserTestBase {
   public function testCustomization() {
     $assert_session = $this->assertSession();
 
-    $display = entity_get_display('node', 'landing_page', 'search_result')
+    $display = lightning_layout_entity_get_display('node', 'landing_page', 'search_result')
       ->setStatus(TRUE)
       ->setThirdPartySetting('panelizer', 'enable', TRUE)
       ->setThirdPartySetting('panelizer', 'custom', TRUE)

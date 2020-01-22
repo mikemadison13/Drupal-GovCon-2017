@@ -11,6 +11,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\File\FileSystemInterface;
 
 /**
  * Displays the pants settings form.
@@ -25,16 +26,26 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
   protected $languageManager;
 
   /**
+   * The file_system service.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
    * Constructs a \Drupal\image_captcha\Form\ImageCaptchaSettingsForm object.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   * @param LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param FileSystemInterface $fileSystem
+   *   The file_system service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager, FileSystemInterface $fileSystem) {
     parent::__construct($config_factory);
     $this->languageManager = $language_manager;
+    $this->fileSystem = $fileSystem;
   }
 
   /**
@@ -43,7 +54,8 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('file_system')
     );
   }
 
@@ -440,7 +452,7 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
     // Collect the font information.
     $fonts = [];
     foreach ($directories as $directory) {
-      foreach (file_scan_directory($directory, '/\.[tT][tT][fF]$/') as $filename => $font) {
+      foreach ($this->fileSystem->scanDirectory($directory, '/\.[tT][tT][fF]$/') as $filename => $font) {
         $fonts[hash('sha256', $filename)] = $font;
       }
     }

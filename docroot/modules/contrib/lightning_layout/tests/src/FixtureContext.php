@@ -13,17 +13,17 @@ final class FixtureContext extends FixtureBase {
    */
   public function setUp() {
     // Create the administrator role if it does not already exist.
-    if (! Role::load('administrator')) {
+    if (!Role::load('administrator')) {
       $role = Role::create([
         'id' => 'administrator',
-        'label' => 'Administrator'
+        'label' => 'Administrator',
       ])->setIsAdmin(TRUE);
 
       $this->save($role);
     }
 
     // Place the main content block if it's not already there.
-    if (! Block::load('bartik_content')) {
+    if (!Block::load('bartik_content')) {
       $block = Block::create([
         'id' => 'bartik_content',
         'theme' => 'bartik',
@@ -36,7 +36,7 @@ final class FixtureContext extends FixtureBase {
       $this->save($block);
     }
     // Place the local tasks block if it's not already there.
-    if (! Block::load('bartik_local_tasks')) {
+    if (!Block::load('bartik_local_tasks')) {
       $block = Block::create([
         'id' => 'bartik_local_tasks',
         'theme' => 'bartik',

@@ -6,15 +6,43 @@ namespace Drupal\image_captcha\Controller;
  * To change template file, choose Tools | Templates and open it in the editor.
  */
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Description of CaptchaImageRefresh.
  */
 class CaptchaImageRefresh extends ControllerBase {
+
+  /**
+   * Obtaining system time.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
+   * The contruct method.
+   *
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   Obtaining system time.
+   */
+  public function __construct(TimeInterface $time) {
+    $this->time = $time;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('datetime.time')
+    );
+  }
 
   /**
    * Put your code here.
@@ -26,7 +54,7 @@ class CaptchaImageRefresh extends ControllerBase {
     ];
     try {
       module_load_include('inc', 'captcha', 'captcha');
-      $config = \Drupal::config('image_captcha.settings');
+      $config = $this->config('image_captcha.settings');
       $captcha_sid = _captcha_generate_captcha_session($form_id);
       $captcha_token = md5(mt_rand());
       $allowed_chars = _image_captcha_utf8_split($config->get('image_captcha_image_allowed_chars', IMAGE_CAPTCHA_ALLOWED_CHARACTERS));
@@ -44,7 +72,7 @@ class CaptchaImageRefresh extends ControllerBase {
         ->condition('csid', $captcha_sid, '=')
         ->execute();
       $result['data'] = [
-        'url' => Url::fromRoute('image_captcha.generator', ['session_id' => $captcha_sid, 'timestamp' => \Drupal::time()->getRequestTime()])->toString(),
+        'url' => Url::fromRoute('image_captcha.generator', ['session_id' => $captcha_sid, 'timestamp' => $this->time->getRequestTime()])->toString(),
         'token' => $captcha_token,
         'sid' => $captcha_sid,
       ];

@@ -57,7 +57,7 @@ class CaptchaExamplesForm extends FormBase {
     if ($module && $challenge) {
       // Generate 10 example challenges.
       for ($i = 0; $i < 10; $i++) {
-        $form["challenge_{$i}"] = _captcha_generate_example_challenge($module, $challenge);
+        $form["challenge_{$i}"] = $this->buildChallenge($module, $challenge);
       }
     }
     else {
@@ -78,7 +78,7 @@ class CaptchaExamplesForm extends FormBase {
                 '%challenge' => $challenge,
                 '%module' => $module,
               ]),
-              'challenge' => _captcha_generate_example_challenge($module, $challenge),
+              'challenge' => $this->buildChallenge($module, $challenge),
               'more_examples' => [
                 '#markup' => Link::fromTextAndUrl($this->t('10 more examples of this challenge.'), Url::fromRoute('captcha_examples', [
                   'module' => $module,
@@ -97,8 +97,17 @@ class CaptchaExamplesForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {}
 
+  /**
+   * Returns a renderable array for a given CAPTCHA challenge.
+   */
+  protected function buildChallenge($module, $challenge) {
+    return [
+      '#type' => 'captcha',
+      '#captcha_type' => $module . '/' . $type,
+      '#captcha_admin_mode' => TRUE,
+    ];
   }
 
 }

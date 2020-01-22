@@ -134,6 +134,9 @@ class IgnoreFilter extends ConfigFilterBase implements ContainerFactoryPluginInt
     }
 
     $active = $this->active->read($name);
+    if (!$active) {
+      return $data;
+    }
     foreach ($keys as $key) {
       $parts = explode('.', $key);
 
@@ -168,6 +171,9 @@ class IgnoreFilter extends ConfigFilterBase implements ContainerFactoryPluginInt
   protected function activeReadMultiple(array $names, array $data) {
     $filtered_data = [];
     foreach ($names as $name) {
+      if (!array_key_exists($name, $data)) {
+        $data[$name] = [];
+      }
       $filtered_data[$name] = $this->activeRead($name, $data[$name]);
     }
 
