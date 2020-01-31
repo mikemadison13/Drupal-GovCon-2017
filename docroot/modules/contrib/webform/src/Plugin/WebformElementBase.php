@@ -747,27 +747,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       $element['#attached']['library'][] = 'webform/webform.tooltip';
     }
 
-    // Add iCheck support.
-    if ($this->hasProperty('icheck') && $this->librariesManager->isIncluded('jquery.icheck')) {
-      $icheck = NULL;
-      $icheck_skin = NULL;
-      if (isset($element['#icheck'])) {
-        if ($element['#icheck'] != 'none') {
-          $icheck = $element['#icheck'];
-          $icheck_skin = strtok($element['#icheck'], '-');
-        }
-      }
-      elseif ($default_icheck = $this->configFactory->get('webform.settings')->get('element.default_icheck')) {
-        $icheck = $default_icheck;
-        $icheck_skin = strtok($default_icheck, '-');
-      }
-      if ($icheck) {
-        $element['#attributes']['data-webform-icheck'] = $icheck;
-        $element['#attached']['library'][] = 'webform/webform.element.icheck';
-        $element['#attached']['library'][] = 'webform/libraries.jquery.icheck.' . $icheck_skin;
-      }
-    }
-
     // Add .webform-has-field-prefix and .webform-has-field-suffix class.
     if (!empty($element['#field_prefix'])) {
       $element[$attributes_property]['class'][] = 'webform-has-field-prefix';
@@ -2343,7 +2322,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     ];
 
     /* Form display */
-
     $form['form'] = [
       '#type' => 'details',
       '#title' => $this->t('Form display'),
@@ -2512,7 +2490,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $form['form']['prepopulate'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Prepopulate'),
-      '#description' => $this->t('Allow element to be populated using query string parameters'),
+      '#description' => $this->t('Allow element to be populated using query string parameters.'),
       '#return_value' => TRUE,
       '#weight' => 50,
     ];
@@ -2534,72 +2512,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#return_value' => TRUE,
       '#weight' => 50,
     ];
-    $default_icheck = $this->configFactory->get('webform.settings')->get('element.default_icheck');
-    $form['form']['icheck'] = [
-      '#type' => 'select',
-      '#title' => 'Enhance using iCheck',
-      '#description' => $this->t('Replaces @type element with jQuery <a href=":href">iCheck</a> boxes.', ['@type' => mb_strtolower($this->getPluginLabel()), ':href' => 'http://icheck.fronteed.com/']),
-      '#empty_option' => $this->t('- Default -'),
-      '#options' => [
-        (string) $this->t('Minimal') => [
-          'minimal' => $this->t('Minimal: Black'),
-          'minimal-grey' => $this->t('Minimal: Grey'),
-          'minimal-yellow' => $this->t('Minimal: Yellow'),
-          'minimal-orange' => $this->t('Minimal: Orange'),
-          'minimal-red' => $this->t('Minimal: Red'),
-          'minimal-pink' => $this->t('Minimal: Pink'),
-          'minimal-purple' => $this->t('Minimal: Purple'),
-          'minimal-blue' => $this->t('Minimal: Blue'),
-          'minimal-green' => $this->t('Minimal: Green'),
-          'minimal-aero' => $this->t('Minimal: Aero'),
-        ],
-        (string) $this->t('Square') => [
-          'square' => $this->t('Square: Black'),
-          'square-grey' => $this->t('Square: Grey'),
-          'square-yellow' => $this->t('Square: Yellow'),
-          'square-orange' => $this->t('Square: Orange'),
-          'square-red' => $this->t('Square: Red'),
-          'square-pink' => $this->t('Square: Pink'),
-          'square-purple' => $this->t('Square: Purple'),
-          'square-blue' => $this->t('Square: Blue'),
-          'square-green' => $this->t('Square: Green'),
-          'square-aero' => $this->t('Square: Aero'),
-        ],
-        (string) $this->t('Flat') => [
-          'flat' => $this->t('Flat: Black'),
-          'flat-grey' => $this->t('Flat: Grey'),
-          'flat-yellow' => $this->t('Flat: Yellow'),
-          'flat-orange' => $this->t('Flat: Orange'),
-          'flat-red' => $this->t('Flat: Red'),
-          'flat-pink' => $this->t('Flat: Pink'),
-          'flat-purple' => $this->t('Flat: Purple'),
-          'flat-blue' => $this->t('Flat: Blue'),
-          'flat-green' => $this->t('Flat: Green'),
-          'flat-aero' => $this->t('Flat: Aero'),
-        ],
-        (string) $this->t('Line') => [
-          'line' => $this->t('Line: Black'),
-          'line-grey' => $this->t('Line: Grey'),
-          'line-yellow' => $this->t('Line: Yellow'),
-          'line-orange' => $this->t('Line: Orange'),
-          'line-red' => $this->t('Line: Red'),
-          'line-pink' => $this->t('Line: Pink'),
-          'line-purple' => $this->t('Line: Purple'),
-          'line-blue' => $this->t('Line: Blue'),
-          'line-green' => $this->t('Line: Green'),
-          'line-aero' => $this->t('Line: Aero'),
-        ],
-      ],
-    ];
-    if ($this->librariesManager->isExcluded('jquery.icheck')) {
-      $form['form']['icheck']['#access'] = FALSE;
-    }
-    if ($default_icheck) {
-      $icheck_options = OptGroup::flattenOptions($form['form']['icheck']['#options']);
-      $form['form']['icheck']['#description'] .= '<br /><br />' . $this->t("Leave blank to use the default iCheck style. Select 'None' to display the default HTML element.");
-      $form['form']['icheck']['#description'] .= '<br /><br />' . $this->t('Defaults to: %value', ['%value' => $icheck_options[$default_icheck]]);
-      $form['form']['icheck']['#options']['none'] = $this->t('None');
-    }
 
     /* Validation */
 

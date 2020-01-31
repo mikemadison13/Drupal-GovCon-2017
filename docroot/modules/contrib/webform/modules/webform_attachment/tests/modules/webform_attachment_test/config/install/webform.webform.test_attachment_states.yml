@@ -27,7 +27,7 @@ elements: |
       'enabled':
         ':input[name="attach"]':
           checked: true
-  
+
 css: ''
 javascript: ''
 settings:
@@ -216,6 +216,7 @@ handlers:
       ignore_access: false
       exclude_empty: true
       exclude_empty_checkbox: false
+      exclude_attachments: false
       html: true
       attachments: true
       twig: false

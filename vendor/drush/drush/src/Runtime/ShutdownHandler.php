@@ -42,12 +42,16 @@ class ShutdownHandler implements LoggerAwareInterface, HandlerInterface
         }
 
         if (!Drush::config()->get(Runtime::DRUSH_RUNTIME_COMPLETED_NAMESPACE)) {
-            Drush::logger()->warning('Drush command terminated abnormally.');
+            Drush::logger()->warning('Drush command terminated abnormally. Check for an exit() in your Drupal site.');
             // Make sure that we will return an error code when we exit,
             // even if the code that got us here did not.
             if (!Runtime::exitCode()) {
                 Runtime::setExitCode(DrushCommands::EXIT_FAILURE);
             }
+        }
+
+        if (Drush::backend()) {
+            drush_backend_output();
         }
 
         // This way returnStatus() will always be the last shutdown function (unless other shutdown functions register shutdown functions...)

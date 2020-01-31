@@ -31,6 +31,16 @@ function hook_webform_handler_info_alter(array &$handlers) {
 }
 
 /**
+ * Alter the information provided in \Drupal\webform\Annotation\WebformVariant.
+ *
+ * @param array $variants
+ *   The array of webform variants, keyed on the machine-readable handler name.
+ */
+function hook_webform_variant_info_alter(array &$variants) {
+
+}
+
+/**
  * Alter definition of WebformSourceEntity plugins.
  *
  * @param array $definitions

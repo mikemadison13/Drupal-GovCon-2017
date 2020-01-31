@@ -119,6 +119,7 @@ class Runtime
 
         // Placate the Drush shutdown handler.
         Runtime::setCompleted();
+        // Placate drush_backend_output().
         Runtime::setExitCode($status);
 
         return $status;

@@ -14,6 +14,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Utility\TableSort;
 use Drupal\views\Views;
 use Drupal\webform\Controller\WebformSubmissionController;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
@@ -1273,8 +1274,8 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
     $query->pager($this->limit);
 
     $header = $this->buildHeader();
-    $order = tablesort_get_order($header);
-    $direction = tablesort_get_sort($header);
+    $order = TableSort::getOrder($header, $this->request);
+    $direction = TableSort::getSort($header, $this->request);
 
     // If query is order(ed) by 'element__*' we need to build a custom table
     // sort using hook_query_TAG_alter().

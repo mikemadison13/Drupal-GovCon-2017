@@ -84,7 +84,7 @@ class SearchSubscriber extends Plugin {
       $string = $path . $query;
     }
 
-    $cookie = $this->calculateAuthCookie($string, $this->nonce);
+    $cookie = $this->calculateAuthCookie($string, $this->nonce, \Drupal::time()->getRequestTime());
     $request->addHeader('Cookie: ' . $cookie);
     $request->addHeader('User-Agent: ' . 'acquia_search/' . \Drupal::config('acquia_search.settings')->get('version'));
   }
@@ -277,6 +277,8 @@ class SearchSubscriber extends Plugin {
    *   Data string.
    * @param string $nonce
    *   Nonce.
+   * @param int $time
+   *   Request time.
    * @param string $derived_key
    *   Derived key.
    * @param string $env_id
@@ -285,7 +287,7 @@ class SearchSubscriber extends Plugin {
    * @return string
    *   Auth cookie string.
    */
-  public function calculateAuthCookie($string, $nonce, $derived_key = NULL, $env_id = NULL) {
+  public function calculateAuthCookie($string, $nonce, $time, $derived_key = NULL, $env_id = NULL) {
     if (empty($derived_key)) {
       $derived_key = $this->getDerivedKey($env_id);
     }
@@ -294,7 +296,6 @@ class SearchSubscriber extends Plugin {
       return '';
     }
     else {
-      $time = REQUEST_TIME;
       return 'acquia_solr_time=' . $time . '; acquia_solr_nonce=' . $nonce . '; acquia_solr_hmac=' . hash_hmac('sha1', $time . $nonce . $string, $derived_key) . ';';
     }
   }

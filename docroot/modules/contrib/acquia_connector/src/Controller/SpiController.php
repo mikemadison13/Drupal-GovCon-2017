@@ -9,6 +9,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Config\BootstrapConfigStorageFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Database;
 use Drupal\Core\DrupalKernel;
@@ -40,9 +41,12 @@ class SpiController extends ControllerBase {
    *
    * @param \Drupal\acquia_connector\Client $client
    *   Acquia Client.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Config factory service.
    */
-  public function __construct(Client $client) {
+  public function __construct(Client $client, ConfigFactoryInterface $config_factory) {
     $this->client = $client;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -50,7 +54,8 @@ class SpiController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('acquia_connector.client')
+      $container->get('acquia_connector.client'),
+      $container->get('config.factory')
     );
   }
 
@@ -106,9 +111,9 @@ class SpiController extends ControllerBase {
 
     $spi = [
       // Used in HMAC validation.
-      'rpc_version'        => ACQUIA_SPI_DATA_VERSION,
+      'rpc_version'        => ACQUIA_CONNECTOR_ACQUIA_SPI_DATA_VERSION,
       // Used in Fix it now feature.
-      'spi_data_version'   => ACQUIA_SPI_DATA_VERSION,
+      'spi_data_version'   => ACQUIA_CONNECTOR_ACQUIA_SPI_DATA_VERSION,
       'site_key'           => sha1(\Drupal::service('private_key')->get()),
       'site_uuid'          => $this->config('acquia_connector.settings')->get('spi.site_uuid'),
       'env_changed_action' => $this->config('acquia_connector.settings')->get('spi.environment_changed_action'),
@@ -369,7 +374,7 @@ class SpiController extends ControllerBase {
     $last_five_users = [];
     $result = Database::getConnection()->select('users_field_data', 'u')
       ->fields('u', ['uid', 'name', 'mail', 'created'])
-      ->condition('u.created', REQUEST_TIME - 3600, '>')
+      ->condition('u.created', \Drupal::time()->getRequestTime() - 3600, '>')
       ->orderBy('created', 'DESC')
       ->range(0, 15)
       ->execute();
@@ -399,7 +404,7 @@ class SpiController extends ControllerBase {
     if ($this->moduleHandler()->moduleExists('node')) {
       $result = Database::getConnection()->select('node_field_data', 'n')
         ->fields('n', ['title', 'type', 'nid', 'created', 'langcode'])
-        ->condition('n.created', REQUEST_TIME - 3600, '>')
+        ->condition('n.created', \Drupal::time()->getRequestTime() - 3600, '>')
         ->orderBy('n.created', 'DESC')
         ->range(0, 15)
         ->execute();
@@ -432,7 +437,7 @@ class SpiController extends ControllerBase {
       $result = Database::getConnection()->select('watchdog', 'w')
         ->fields('w', ['wid', 'severity', 'type', 'message', 'timestamp'])
         ->condition('w.severity', [RfcLogLevel::EMERGENCY, RfcLogLevel::CRITICAL], 'IN')
-        ->condition('w.timestamp', REQUEST_TIME - 3600, '>')
+        ->condition('w.timestamp', \Drupal::time()->getRequestTime() - 3600, '>')
         ->execute();
 
       while ($record = $result->fetchAssoc()) {
@@ -472,7 +477,7 @@ class SpiController extends ControllerBase {
       $result = Database::getConnection()->select('watchdog', 'w')
         ->fields('w', ['message', 'hostname', 'referer', 'timestamp'])
         ->condition('w.type', 'page not found', '=')
-        ->condition('w.timestamp', REQUEST_TIME - 3600, '>')
+        ->condition('w.timestamp', \Drupal::time()->getRequestTime() - 3600, '>')
         ->condition('w.message', [
           "UPGRADE.txt",
           "MAINTAINERS.txt",
@@ -514,7 +519,7 @@ class SpiController extends ControllerBase {
       $result = Database::getConnection()->select('watchdog', 'w')
         ->fields('w', ['message', 'variables', 'timestamp'])
         ->condition('w.message', 'login attempt failed%', 'LIKE')
-        ->condition('w.timestamp', REQUEST_TIME - $cron_interval, '>')
+        ->condition('w.timestamp', \Drupal::time()->getRequestTime() - $cron_interval, '>')
         ->condition('w.message', [
           "UPGRADE.txt",
           "MAINTAINERS.txt",
@@ -556,7 +561,8 @@ class SpiController extends ControllerBase {
       $profile = BootstrapConfigStorageFactory::getDatabaseStorage()->read('core.extension')['profile'];
     }
     if ($profile != 'standard') {
-      $info = system_get_info('module', $profile);
+      $extension_list = \Drupal::service('extension.list.module');
+      $info = $extension_list->getExtensionInfo($profile);
       $data['install_profile'] = [
         'title' => 'Install profile',
         'value' => sprintf('%s (%s-%s)', $info['name'], $profile, $info['version']),
@@ -593,7 +599,7 @@ class SpiController extends ControllerBase {
     }
     $data['cron'] = [
       'title' => 'Cron maintenance tasks',
-      'value' => sprintf('Last run %s ago', \Drupal::service('date.formatter')->formatInterval(REQUEST_TIME - $cron_last)),
+      'value' => sprintf('Last run %s ago', \Drupal::service('date.formatter')->formatInterval(\Drupal::time()->getRequestTime() - $cron_last)),
       'cron_last' => $cron_last,
     ];
     if (!empty(Settings::get('update_free_access'))) {
@@ -674,7 +680,7 @@ class SpiController extends ControllerBase {
    *   1 if the super user has a weak name, 0 otherwise.
    */
   private function getSuperName() {
-    $result = Database::getConnection()->query("SELECT name FROM {users_field_data} WHERE uid = 1 AND (name LIKE '%admin%' OR name LIKE '%root%') AND CHAR_LENGTH(name) < 15")->fetchAll();
+    $result = Database::getConnection()->query("SELECT name FROM {users_field_data} WHERE uid = 1 AND (name LIKE '%admin%' OR name LIKE '%root%') AND LENGTH(name) < 15")->fetchAll();
     return (int) $result;
   }
 
@@ -820,7 +826,7 @@ class SpiController extends ControllerBase {
    */
   public function dataStoreSet(array $data, $expire = NULL) {
     if (is_null($expire)) {
-      $expire = REQUEST_TIME + (60 * 60 * 24);
+      $expire = \Drupal::time()->getRequestTime() + (60 * 60 * 24);
     }
     foreach ($data as $key => $value) {
       \Drupal::cache()->set('acquia.spi.' . $key, $value, $expire);
@@ -909,7 +915,7 @@ class SpiController extends ControllerBase {
    *   information on the modules.
    */
   private function getModules() {
-    $modules = system_rebuild_module_data();
+    $modules = \Drupal::service('extension.list.module')->reset()->getList();
     uasort($modules, 'system_sort_modules_by_info_name');
 
     $result = [];
@@ -1000,7 +1006,7 @@ class SpiController extends ControllerBase {
     }
 
     $this->handleServerResponse($response);
-    \Drupal::state()->set('acquia_connector.cron_last', REQUEST_TIME);
+    \Drupal::state()->set('acquia_connector.cron_last', \Drupal::time()->getRequestTime());
 
     return $response;
   }
@@ -1017,11 +1023,11 @@ class SpiController extends ControllerBase {
   public function send(Request $request) {
     // Mark this page as being uncacheable.
     \Drupal::service('page_cache_kill_switch')->trigger();
-    $method = ACQUIA_SPI_METHOD_CALLBACK;
+    $method = ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_CALLBACK;
 
     // Insight's set variable feature will pass method insight.
-    if ($request->query->has('method') && ($request->query->get('method') === ACQUIA_SPI_METHOD_INSIGHT)) {
-      $method = ACQUIA_SPI_METHOD_INSIGHT;
+    if ($request->query->has('method') && ($request->query->get('method') === ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_INSIGHT)) {
+      $method = ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_INSIGHT;
     }
 
     $response = $this->sendFullSpi($method);
@@ -1219,7 +1225,7 @@ class SpiController extends ControllerBase {
       if ($new_optional_vars > 0) {
         $config->set('spi.new_optional_data', 1);
       }
-      $config->set('spi.def_timestamp', $response_data['timestamp']);
+      $config->set('spi.def_timestamp', (int) $response_data['timestamp']);
       $config->set('spi.def_vars', $response_data['acquia_spi_variables']);
       $config->save();
       return TRUE;

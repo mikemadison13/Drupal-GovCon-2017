@@ -208,7 +208,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
 
     // Element: Webform IBAN field .
     $projects['webform_iban_field'] = [
-      'title' => $this->t('Webform IBAN field '),
+      'title' => $this->t('Webform IBAN field'),
       'description' => $this->t('Provides an IBAN Field to collect a valid IBAN number.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_iban_field'),
       'category' => 'element',
@@ -275,6 +275,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Simple Hierarchical Select'),
       'description' => $this->t('Integrates Simple Hierarchical Select module with Webform.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_shs'),
+      'category' => 'element',
+    ];
+
+    // Element: Webform Summation Field.
+    $projects['webform_summation_field'] = [
+      'title' => $this->t('Webform Summation Field'),
+      'description' => $this->t('Provides a webform summation field to collect the values of other fields.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_summation_field'),
       'category' => 'element',
     ];
 
@@ -346,9 +354,17 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'enhancement',
     ];
 
+    // Enhancement: Webform Navigation.
+    $projects['webformnavigation'] = [
+      'title' => $this->t('Webform Navigation'),
+      'description' => $this->t('Creates a navigation setting for webform that allows users to navigate forwards and backwards through wizard pages when the wizard navigation progress bar is enabled.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webformnavigation'),
+      'category' => 'enhancement',
+    ];
+
     // Enhancement: Webform OCR.
     $projects['webform_ocr'] = [
-      'title' => $this->t('Webform Webform OCR'),
+      'title' => $this->t('Webform OCR'),
       'description' => $this->t('OCR images as new Webforms.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_ocr'),
       'category' => 'enhancement',
@@ -375,6 +391,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Timeout'),
       'description' => $this->t('Provides functionality to limit user time during which he is able to make webform submission.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_timeout'),
+      'category' => 'enhancement',
+    ];
+
+    // Enhancement: Webform Validation.
+    $projects['webform_validation'] = [
+      'title' => $this->t('Webform Validation'),
+      'description' => $this->t('Add validation rules to Webforms.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_validation'),
       'category' => 'enhancement',
     ];
 
@@ -410,6 +434,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
 
     /**************************************************************************/
 
+    // Integrations: Webform AddressFinder.
+    $projects['academic_applications'] = [
+      'title' => $this->t('Academic Applications'),
+      'description' => $this->t('Provides a simple Webform-based system for applying to academic programs.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/academic_applications'),
+      'category' => 'integration',
+    ];
+
     // Integrations: Ansible.
     $projects['ansible'] = [
       'title' => $this->t('Ansible'),
@@ -423,6 +455,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Commerce Webform Order'),
       'description' => $this->t('Integrates Webform with Drupal Commerce and it allows creating orders with the submission data of a Webform via a Webform handler.'),
       'url' => Url::fromUri('https://www.drupal.org/project/commerce_webform_order'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Domain Webform.
+    $projects['domain_webform'] = [
+      'title' => $this->t('Domain Webform'),
+      'description' => $this->t('Domain intergration for the Webform module.'),
+      'url' => Url::fromUri('https://github.com/h3rj4n/domain_webform'),
       'category' => 'integration',
     ];
 
@@ -447,6 +487,22 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Flashpoint Course Content: Webform'),
       'description' => $this->t('Integrates Webforms into Flashpoint Courses.'),
       'url' => Url::fromUri('https://www.drupal.org/project/flashpoint_course_webform'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Gatsby Webform Backend.
+    $projects['react_webform_backend'] = [
+      'title' => $this->t('Gatsby Drupal Webform'),
+      'description' => $this->t('The goal of this project is to have a react component that generates bootstrap like HTML from webform YAML configuration.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/react_webform_backend'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: GitLab API with Library
+    $projects['gitlab_api'] = [
+      'title' => $this->t('GitLab API with Library'),
+      'description' => $this->t(' Integrates your Drupal site into GitLab using the GitLab API.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/gitlab_api'),
       'category' => 'integration',
     ];
 
@@ -500,7 +556,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
 
     // Integrations: Sherpa Webform .
     $projects['sherpa_webform'] = [
-      'title' => $this->t('Sherpa Webform '),
+      'title' => $this->t('Sherpa Webform'),
       'description' => $this->t('Captures Webform submissions, convert them to JSON, and send them to Sherpa.'),
       'url' => Url::fromUri('https://www.drupal.org/project/sherpa_webform'),
       'category' => 'integration',
@@ -522,6 +578,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'integration',
     ];
 
+    // Integrations: Webform API Handler.
+    $projects['webform_api_handler'] = [
+      'title' => $this->t('Webform API Handler'),
+      'description' => $this->t("Extends Webform's built it Remote Post handler to enable the creation of custom plugins for pre-processing the request Webform makes to an API endpoint, and for processing and displaying the result of the API request."),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_api_handler'),
+      'category' => 'integration',
+    ];
+
     // Integrations: Webform Copper CRM.
     $projects['webform_copper'] = [
       'title' => $this->t('Webform Copper'),
@@ -533,9 +597,17 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Integrations: Webform Emfluence.
     $projects['emfluence_webform'] = [
       'title' => $this->t('Webform Emfluence'),
-      'description' => $this->t('Integrates Emfluence Marketing Platform\'s contacts/save endpoint and Webform 8.x.'),
+      'description' => $this->t("Integrates Emfluence Marketing Platform's contacts/save endpoint and Webform 8.x."),
       'url' => Url::fromUri('https://www.drupal.org/sandbox/huskyninja/3074135'),
       'experimental' => TRUE,
+      'category' => 'integration',
+    ];
+
+    // Integrations: Webform Entity Builder.
+    $projects['webform_entity_builder'] = [
+      'title' => $this->t('Webform Entity Builder'),
+      'description' => $this->t('Provides support code for the generation and management of entities through webforms.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_entity_builder'),
       'category' => 'integration',
     ];
 
@@ -763,6 +835,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'mail',
     ];
 
+    // Mail: Queue Mail.
+    $projects['queue_mail'] = [
+      'title' => $this->t('Queue Mail'),
+      'description' => $this->t('Queues webform email sending so that instead of being sent immediately it is sent on cron or via some other queue processor.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/queue_mail'),
+      'category' => 'mail',
+    ];
+
     // Mail: SMTP Authentication Support.
     $projects['smtp'] = [
       'title' => $this->t('SMTP Authentication Support'),
@@ -936,6 +1016,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
 
     /**************************************************************************/
 
+    // Submissions: Protected Submissions.
+    $projects['protected_submissions'] = [
+      'title' => $this->t('Protected Submissions'),
+      'description' => $this->t('Prevents submissions that contain undesired patterns.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/protected_submissions'),
+      'category' => 'submission',
+    ];
+
     // Submissions: Webform Auto Exports.
     $projects['coc_forms_auto_export'] = [
       'title' => $this->t('Webform Auto Exports'),
@@ -1021,6 +1109,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Submission Files Download'),
       'description' => $this->t('Allows you to download files attached to a single submission'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_submission_files_download'),
+      'category' => 'submission',
+    ];
+
+    // Submissions: Webform Views Extras.
+    $projects['webform_views_extras'] = [
+      'title' => $this->t('Webform Views Extras'),
+      'description' => $this->t('Extends Webform views and supports relationships in views with all content entities not only node.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_views_extras'),
       'category' => 'submission',
     ];
 

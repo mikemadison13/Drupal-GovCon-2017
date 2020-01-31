@@ -88,9 +88,11 @@ class DrushLog implements LoggerInterface, LoggerAwareInterface
             case RfcLogLevel::NOTICE:
                 $error_type = LogLevel::NOTICE;
                 break;
-            // Unknown log levels that are not defined
+
+            // TODO: Unknown log levels that are not defined
             // in Psr\Log\LogLevel or Drush\Log\LogLevel SHOULD NOT be used.  See
             // https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
+            // We should convert these to 'notice'.
             default:
                 $error_type = $level;
                 break;

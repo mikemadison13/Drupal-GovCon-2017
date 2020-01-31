@@ -28,7 +28,6 @@ class WebformLibrariesTest extends WebformBrowserTestBase {
    */
   public function testLibraries() {
     $optional_properties = [
-      'icheck' => 'properties[icheck]',
       'input_mask' => 'properties[input_mask][select]',
       'international_telephone' => 'properties[international]',
       'international_telephone_composite' => 'properties[phone__international]',
@@ -38,11 +37,10 @@ class WebformLibrariesTest extends WebformBrowserTestBase {
 
     $this->drupalLogin($this->rootUser);
 
-    // Enable choices, jquery.chosen, and jquery.icheck.
+    // Enable choices and jquery.chosen
     $edit = [
       'excluded_libraries[choices]' => TRUE,
       'excluded_libraries[jquery.chosen]' => TRUE,
-      'excluded_libraries[jquery.icheck]' => TRUE,
     ];
     $this->drupalPostForm('/admin/structure/webform/config/libraries', $edit, t('Save configuration'));
 
@@ -54,7 +52,6 @@ class WebformLibrariesTest extends WebformBrowserTestBase {
     $this->assertRaw('/textcounter.min.js');
     $this->assertRaw('/intlTelInput.min.js');
     $this->assertRaw('/jquery.inputmask.bundle.min.js');
-    $this->assertRaw('/icheck.js');
     $this->assertRaw('/codemirror.js');
     $this->assertRaw('/jquery.timepicker.min.js');
 
@@ -71,7 +68,6 @@ class WebformLibrariesTest extends WebformBrowserTestBase {
       'excluded_libraries[ckeditor.link]' => FALSE,
       'excluded_libraries[codemirror]' => FALSE,
       'excluded_libraries[choices]' => FALSE,
-      'excluded_libraries[jquery.icheck]' => FALSE,
       'excluded_libraries[jquery.inputmask]' => FALSE,
       'excluded_libraries[jquery.intl-tel-input]' => FALSE,
       'excluded_libraries[jquery.select2]' => FALSE,
@@ -89,7 +85,6 @@ class WebformLibrariesTest extends WebformBrowserTestBase {
     $this->assertNoRaw('/textcounter.min.js');
     $this->assertNoRaw('/intlTelInput.min.js');
     $this->assertNoRaw('/jquery.inputmask.bundle.min.js');
-    $this->assertNoRaw('/icheck.js');
     $this->assertNoRaw('/codemirror.js');
     $this->assertNoRaw('/jquery.timepicker.min.js');
 
@@ -118,20 +113,15 @@ class WebformLibrariesTest extends WebformBrowserTestBase {
     /*
     // Exclude element types that require libraries.
     $edit = [
-      'excluded_elements[webform_location_geocomplete]' => FALSE,
       'excluded_elements[webform_rating]' => FALSE,
       'excluded_elements[webform_signature]' => FALSE,
-      'excluded_elements[webform_toggle]' => FALSE,
-      'excluded_elements[webform_toggles]' => FALSE,
     ];
     $this->drupalPostForm('/admin/structure/webform/config/elements', $edit, t('Save configuration'));
 
     // Check that status report excludes libraries required by element types.
     $this->drupalGet('/admin/reports/status');
-    $this->assertNoText('jQuery: Geocoding and Places Autocomplete Plugin library');
     $this->assertNoText('jQuery: Image Picker library');
     $this->assertNoText('jQuery: RateIt library');
-    $this->assertNoText('jQuery: Toggles library');
     $this->assertNoText('Signature Pad library');
     */
 

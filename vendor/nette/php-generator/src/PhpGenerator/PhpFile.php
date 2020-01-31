@@ -68,18 +68,14 @@ final class PhpFile
 	}
 
 
-	/**
-	 * @return PhpNamespace[]
-	 */
+	/** @return PhpNamespace[] */
 	public function getNamespaces(): array
 	{
 		return $this->namespaces;
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function addUse(string $name, string $alias = null): self
 	{
 		$this->addNamespace('')->addUse($name, $alias);
@@ -120,6 +116,7 @@ final class PhpFile
 				throw $e;
 			}
 			trigger_error('Exception in ' . __METHOD__ . "(): {$e->getMessage()} in {$e->getFile()}:{$e->getLine()}", E_USER_ERROR);
+			return '';
 		}
 	}
 }

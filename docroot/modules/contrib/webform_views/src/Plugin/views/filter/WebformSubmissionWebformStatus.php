@@ -69,6 +69,18 @@ class WebformSubmissionWebformStatus extends InOperator {
   /**
    * {@inheritdoc}
    */
+  public function operators() {
+    $operators = parent::operators();
+
+    $operators['in']['webform_operator'] = 'IN';
+    $operators['not in']['webform_operator'] = 'NOT IN';
+
+    return $operators;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function opSimple() {
     $webform_ids = $this->getApplicableWebformIds();
     if (empty($webform_ids)) {

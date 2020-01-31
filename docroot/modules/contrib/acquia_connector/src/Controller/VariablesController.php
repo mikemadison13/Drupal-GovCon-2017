@@ -117,7 +117,7 @@ class VariablesController extends ControllerBase {
   /**
    * Get all system variables.
    *
-   * @return array
+   * @return string
    *   Variables values keyed by the variable name.
    */
   public function getVariablesData() {

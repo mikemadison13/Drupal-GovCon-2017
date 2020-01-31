@@ -20,7 +20,7 @@ elements: |
     '#title': webform_image_file_attachment
     '#file_extensions': gif
     '#attachment_image_style': thumbnail
-  
+
 css: ''
 javascript: ''
 settings:
@@ -209,6 +209,7 @@ handlers:
       ignore_access: false
       exclude_empty: true
       exclude_empty_checkbox: false
+      exclude_attachments: false
       html: true
       attachments: true
       twig: false

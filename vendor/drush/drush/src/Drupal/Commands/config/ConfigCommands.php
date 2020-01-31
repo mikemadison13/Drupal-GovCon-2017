@@ -33,11 +33,6 @@ class ConfigCommands extends DrushCommands implements StdinAwareInterface
     protected $configFactory;
 
     /**
-     * @var StorageInterface
-     */
-    protected $configStorageExport;
-
-    /**
      * @return ConfigFactoryInterface
      */
     public function getConfigFactory()
@@ -49,32 +44,11 @@ class ConfigCommands extends DrushCommands implements StdinAwareInterface
     /**
      * ConfigCommands constructor.
      * @param ConfigFactoryInterface $configFactory
-     * @param \Drupal\Core\Config\StorageInterface $configStorage
      */
-    public function __construct($configFactory, StorageInterface $configStorage)
+    public function __construct($configFactory)
     {
         parent::__construct();
         $this->configFactory = $configFactory;
-        $this->configStorage = $configStorage;
-    }
-
-    /**
-     * @param \Drupal\Core\Config\StorageInterface $exportStorage
-     */
-    public function setExportStorage(StorageInterface $exportStorage)
-    {
-        $this->configStorageExport = $exportStorage;
-    }
-
-    /**
-     * @return StorageInterface
-     */
-    public function getConfigStorageExport()
-    {
-        if (isset($this->configStorageExport)) {
-            return $this->configStorageExport;
-        }
-        return $this->configStorage;
     }
 
     /**
@@ -194,9 +168,9 @@ class ConfigCommands extends DrushCommands implements StdinAwareInterface
         $temp_storage = new FileStorage($temp_dir);
         $temp_storage->write($config_name, $contents);
 
-        // Note that `getEditor()` returns a string that contains a
+        // Note that `drush_get_editor` returns a string that contains a
         // %s placeholder for the config file path.
-        $exec = self::getEditor();
+        $exec = drush_get_editor();
         $cmd = sprintf($exec, Escape::shellArg($temp_storage->getFilePath($config_name)));
         $process = $this->processManager()->shell($cmd);
         $process->setTty(true);
@@ -348,7 +322,7 @@ class ConfigCommands extends DrushCommands implements StdinAwareInterface
             }
         } else {
             // If a directory isn't specified, use the label argument or default sync directory.
-            $return = \drush_config_get_config_directory($label ?: CONFIG_SYNC_DIRECTORY);
+            $return = \config_get_config_directory($label ?: CONFIG_SYNC_DIRECTORY);
         }
         return Path::canonicalize($return);
     }
@@ -359,7 +333,7 @@ class ConfigCommands extends DrushCommands implements StdinAwareInterface
     public function getChanges($target_storage)
     {
         /** @var StorageInterface $active_storage */
-        $active_storage = $this->getConfigStorageExport();
+        $active_storage = \Drupal::service('config.storage');
 
         $config_comparer = new StorageComparer($active_storage, $target_storage, \Drupal::service('config.manager'));
 
@@ -377,7 +351,7 @@ class ConfigCommands extends DrushCommands implements StdinAwareInterface
      */
     public function getStorage($directory)
     {
-        if ($directory == Path::canonicalize(\drush_config_get_config_directory(CONFIG_SYNC_DIRECTORY))) {
+        if ($directory == Path::canonicalize(\config_get_config_directory(CONFIG_SYNC_DIRECTORY))) {
             return \Drupal::service('config.storage.sync');
         } else {
             return new FileStorage($directory);

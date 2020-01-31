@@ -62,7 +62,8 @@
 /**
  * Sizes
  */
-.linkicon .icon::before {
+.linkicon .icon::before,
+.linkicon svg.icon {
   display: block;
   font-size: 20px;
   height: 32px;
@@ -74,35 +75,44 @@
   width: 32px;
 }
 
-.linkicon--small .icon::before {
+/**
+ * FontAwesome >= 5 with SVG compatibility.
+ * https://fontawesome.com/how-to-use/on-the-web/setup/upgrading-from-version-4
+ */
+.linkicon--small .icon::before,
+.linkicon--small svg.icon {
   font-size: 16px;
   height: 28px;
   line-height: 18px;
   width: 28px;
 }
 
-.linkicon--medium .icon::before {
+.linkicon--medium .icon::before,
+.linkicon--medium svg.icon {
   font-size: 22px;
   height: 38px;
   line-height: 28px;
   width: 38px;
 }
 
-.linkicon--large .icon::before {
+.linkicon--large .icon::before,
+.linkicon--large svg.icon {
   font-size: 42px;
   height: 64px;
   line-height: 54px;
   width: 64px;
 }
 
-.linkicon--xlarge .icon::before {
+.linkicon--xlarge .icon::before,
+.linkicon--xlarge svg.icon {
   font-size: 64px;
   height: 100px;
   line-height: 88px;
   width: 100px;
 }
 
-.linkicon--xxlarge .icon::before {
+.linkicon--xxlarge .icon::before,
+.linkicon--xxlarge svg.icon {
   font-size: 92px;
   height: 140px;
   line-height: 132px;

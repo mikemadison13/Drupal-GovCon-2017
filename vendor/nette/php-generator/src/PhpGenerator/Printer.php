@@ -200,9 +200,7 @@ class Printer
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setTypeResolving(bool $state = true): self
 	{
 		$this->resolveTypes = $state;
@@ -241,7 +239,7 @@ class Printer
 
 
 	/**
-	 * @param Nette\PhpGenerator\Traits\FunctionLike  $function
+	 * @param Closure|GlobalFunction|Method  $function
 	 */
 	protected function printParameters($function, ?PhpNamespace $namespace): string
 	{
@@ -264,7 +262,7 @@ class Printer
 
 
 	/**
-	 * @param Nette\PhpGenerator\Traits\FunctionLike  $function
+	 * @param Closure|GlobalFunction|Method  $function
 	 */
 	protected function printReturnType($function, ?PhpNamespace $namespace): string
 	{

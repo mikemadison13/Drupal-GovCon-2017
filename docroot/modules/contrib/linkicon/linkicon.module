@@ -5,8 +5,7 @@
  * A link field formatter to create icon classes based on predefined titles.
  */
 
-use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Play safe predefined option on forms and settings, where DRUPAL_REQUIRED = 2.
@@ -14,17 +13,40 @@ use Drupal\Core\Url;
 const LINKICON_PREDEFINED = 5;
 
 /**
+ * Provides a convenient shortcut for procedural hooks.
+ *
+ * @return class
+ *   The Linkicon manager class instance.
+ */
+function linkicon() {
+  static $manager;
+
+  if (!isset($manager)) {
+    $manager = \Drupal::service('linkicon.manager');
+  }
+
+  return $manager;
+}
+
+/**
  * Implements hook_library_info_build().
  */
 function linkicon_library_info_build() {
-  $libraries = [];
+  $libraries = $paths = $library_path = [];
 
-  if ($font_path = \Drupal::service('linkicon.manager')->getSetting('font')) {
+  if ($font_path = linkicon()->getSetting('font')) {
+    if (strpos($font_path, ',') !== FALSE) {
+      $paths = array_map('trim', explode(',', $font_path));
+      foreach ($paths as $path) {
+        $library_path[$path] = [];
+      }
+    }
+    else {
+      $library_path = [$font_path => []];
+    }
     $libraries['linkicon.font'] = [
       'css' => [
-        'base' => [
-          $font_path => [],
-        ],
+        'base' => $library_path,
       ],
     ];
   }
@@ -60,14 +82,13 @@ function linkicon_field_info_alter(&$info) {
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
-function linkicon_field_widget_link_default_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+function linkicon_field_widget_link_default_form_alter(&$element, FormStateInterface $form_state, $context) {
   if (isset($element['uri']) && isset($element['title'])) {
     $items = $context['items'];
     // @todo drop 'predefined' for the new integer: LINKICON_PREDEFINED.
     $predefined = $items->getSetting('title') === LINKICON_PREDEFINED || $items->getSetting('title') === 'predefined';
     if ($predefined && ($title_predefined = $items->getSetting('title_predefined')) !== NULL) {
-      $linkicon = \Drupal::service('linkicon.manager');
-      $options = $linkicon->extractAllowedValues($title_predefined);
+      $options = linkicon()->extractAllowedValues($title_predefined);
       $element['title']['#type'] = 'select';
       $element['title']['#options'] = $options;
       $element['title']['#empty_option'] = t('- Select -');
@@ -80,9 +101,10 @@ function linkicon_field_widget_link_default_form_alter(&$element, \Drupal\Core\F
 /**
  * Implements hook_help().
  */
-function linkicon_help($route_name, RouteMatchInterface $route_match) {
-  switch ($route_name) {
-    case 'help.page.linkicon':
-      return check_markup(file_get_contents(dirname(__FILE__) . '/README.html'), 'restricted_html');
+function linkicon_help($route_name) {
+  if ($route_name == 'help.page.linkicon') {
+    $output = file_get_contents(dirname(__FILE__) . '/README.md');
+    return function_exists('blazy_parse_markdown') && blazy_parse_markdown($output) ? blazy_parse_markdown($output) : '<pre>' . $output . '</pre>';
   }
+  return '';
 }

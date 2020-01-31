@@ -12,7 +12,6 @@ use Symfony\Component\Console\Descriptor\JsonDescriptor;
 use Symfony\Component\Console\Descriptor\XmlDescriptor;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Terminal;
 
 class ListCommands extends DrushCommands
 {
@@ -153,20 +152,26 @@ class ListCommands extends DrushCommands
             }
         }
         $formatterManager = new FormatterManager();
+        list($terminalWidth,) = $application->getTerminalDimensions();
         $opts = [
             FormatterOptions::INCLUDE_FIELD_LABELS => false,
             FormatterOptions::TABLE_STYLE => 'compact',
-            FormatterOptions::TERMINAL_WIDTH => self::getTerminalWidth(),
+            FormatterOptions::TERMINAL_WIDTH => $terminalWidth,
         ];
         $formatterOptions = new FormatterOptions([], $opts);
 
         $formatterManager->write($output, 'table', new RowsOfFields($rows), $formatterOptions);
     }
 
-    public static function getTerminalWidth()
+    public function getTerminalWidth()
     {
-        $term = new Terminal();
-        return $term->getWidth();
+        // From \Consolidation\AnnotatedCommand\Options\PrepareTerminalWidthOption::getTerminalWidth
+        $application = Drush::getApplication();
+        $dimensions = $application->getTerminalDimensions();
+        if ($dimensions[0] == null) {
+            return 0;
+        }
+        return $dimensions[0];
     }
 
     /**

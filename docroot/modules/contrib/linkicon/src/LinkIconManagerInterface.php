@@ -3,7 +3,7 @@
 namespace Drupal\linkicon;
 
 /**
- * Interface for linkicon plugins.
+ * Interface for linkicon manager.
  */
 interface LinkIconManagerInterface {
 

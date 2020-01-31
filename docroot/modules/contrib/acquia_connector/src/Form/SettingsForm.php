@@ -107,7 +107,7 @@ class SettingsForm extends ConfigFormBase {
     $subscription = $config->get('subscription_name');
 
     if (empty($identifier) && empty($key)) {
-      return new RedirectResponse((string) $this->getUrlGenerator()->generateFromRoute('acquia_connector.start'));
+      return new RedirectResponse((string) \Drupal::service('url_generator')->generateFromRoute('acquia_connector.start'));
     }
 
     // Check our connection to the Acquia and validate credentials.
@@ -116,7 +116,7 @@ class SettingsForm extends ConfigFormBase {
     }
     catch (ConnectorException $e) {
       $error_message = acquia_connector_connection_error_message($e->getCustomMessage('code', FALSE));
-      $ssl_available = in_array('ssl', stream_get_transports(), TRUE) && !defined('ACQUIA_DEVELOPMENT_NOSSL') && $config->get('spi.ssl_verify');
+      $ssl_available = in_array('ssl', stream_get_transports(), TRUE) && !defined('ACQUIA_CONNECTOR_TEST_ACQUIA_DEVELOPMENT_NOSSL') && $config->get('spi.ssl_verify');
       if (empty($error_message) && $ssl_available) {
         $error_message = $this->t('There was an error in validating your subscription credentials. You may want to try disabling SSL peer verification by setting the variable acquia_connector.settings:spi.ssl_verify to false.');
       }
@@ -130,7 +130,7 @@ class SettingsForm extends ConfigFormBase {
       $form['subscription'] = [
         '#markup' => $this->t('Subscription: @sub <a href=":url">change</a>', [
           '@sub' => $subscription,
-          ':url' => (string) $this->getUrlGenerator()->generateFromRoute('acquia_connector.setup'),
+          ':url' => (string) \Drupal::service('url_generator')->generateFromRoute('acquia_connector.setup'),
         ]),
       ];
     }
@@ -287,7 +287,7 @@ class SettingsForm extends ConfigFormBase {
     if ($values['machine_name'] != $this->config('acquia_connector.settings')->get('spi.site_machine_name')) {
       $config->set('spi.site_machine_name', $values['machine_name'])->save();
 
-      $response = \Drupal::service('acquia_connector.spi')->sendFullSpi(ACQUIA_SPI_METHOD_CREDS);
+      $response = \Drupal::service('acquia_connector.spi')->sendFullSpi(ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_CREDS);
       \Drupal::service('acquia_connector.spi')->spiProcessMessages($response);
     }
 

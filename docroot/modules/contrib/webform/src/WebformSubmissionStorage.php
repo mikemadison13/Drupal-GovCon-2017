@@ -7,6 +7,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Database\ReplicaKillSwitch;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -16,6 +17,7 @@ use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
@@ -51,6 +53,20 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
   protected $currentUser;
 
   /**
+   * The replica kill switch.
+   *
+   * @var \Drupal\Core\Database\ReplicaKillSwitch
+   */
+  protected $replicaKillSwitch;
+
+  /**
+   * The file system service.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
    * Webform access rules manager service.
    *
    * @var \Drupal\webform\WebformAccessRulesManagerInterface
@@ -63,12 +79,14 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
    * @todo Webform 8.x-6.x: Move $time before $access_rules_manager.
    * @todo Webform 8.x-6.x: Move $memory_cache right after $language_manager.
    */
-  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityManagerInterface $entity_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, AccountProxyInterface $current_user, WebformAccessRulesManagerInterface $access_rules_manager, TimeInterface $time = NULL, MemoryCacheInterface $memory_cache = NULL) {
+  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityManagerInterface $entity_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, AccountProxyInterface $current_user, WebformAccessRulesManagerInterface $access_rules_manager, TimeInterface $time = NULL, MemoryCacheInterface $memory_cache = NULL, FileSystemInterface $file_system = NULL, ReplicaKillSwitch $replica_kill_switch = NULL) {
     parent::__construct($entity_type, $database, $entity_manager, $cache, $language_manager, $memory_cache);
 
     $this->currentUser = $current_user;
     $this->accessRulesManager = $access_rules_manager;
     $this->time = $time ?: \Drupal::time();
+    $this->fileSystem = $file_system ?: \Drupal::service('file_system');
+    $this->replicaKillSwitch = $replica_kill_switch ?: \Drupal::service('database.replica_kill_switch');
   }
 
   /**
@@ -84,7 +102,9 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
       $container->get('current_user'),
       $container->get('webform.access_rules_manager'),
       $container->get('datetime.time'),
-      $container->get('entity.memory_cache')
+      $container->get('entity.memory_cache'),
+      $container->get('file_system'),
+      $container->get('database.replica_kill_switch')
     );
   }
 
@@ -491,6 +511,29 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
     ksort($entity_type_labels);
 
     return array_intersect_key($entity_type_labels, array_flip($entity_types));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSourceEntityAsOptions(WebformInterface $webform, $entity_type) {
+    $entity_ids = Database::getConnection()->select('webform_submission', 's')
+      ->fields('s', ['entity_id'])
+      ->condition('s.webform_id', $webform->id())
+      ->condition('s.entity_type', $entity_type)
+      ->execute()
+      ->fetchCol();
+    // Limit the number of source entities loaded to 100.
+    if (empty($entity_ids) || count($entity_ids) > 100) {
+      return [];
+    }
+    $entities = $this->entityTypeManager->getStorage($entity_type)->loadMultiple($entity_ids);
+    $options = [];
+    foreach ($entities as $entity_id => $entity) {
+      $options[$entity_id] = $entity->label();
+    }
+    asort($options);
+    return $options;
   }
 
   /**
@@ -1078,7 +1121,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
       $return = $this->doSave($entity->id(), $entity);
 
       // Ignore replica server temporarily.
-      db_ignore_replica();
+      $this->replicaKillSwitch->trigger();
       return $return;
     }
     catch (\Exception $e) {
@@ -1126,7 +1169,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
         // Clear empty webform submission directory.
         if (file_exists($file_directory)
           && empty(file_scan_directory($file_directory, '/.*/'))) {
-          file_unmanaged_delete_recursive($file_directory);
+          $this->fileSystem->deleteRecursive($file_directory);
         }
       }
     }

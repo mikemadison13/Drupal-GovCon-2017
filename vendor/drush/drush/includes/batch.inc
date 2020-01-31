@@ -24,7 +24,6 @@
  * implementations.
  */
 
-use Drupal\Core\Database\Database;
 use Drush\Drush;
 use Drush\Log\LogLevel;
 
@@ -131,7 +130,7 @@ function _drush_backend_batch_process($command = 'batch-process', $args, $option
 
     // Assign an arbitrary id: don't rely on a serial column in the 'batch'
     // table, since non-progressive batches skip database storage completely.
-    $batch['id'] = \Drupal::database()->nextId();
+    $batch['id'] = db_next_id();
     $args[] = $batch['id'];
 
     $batch['progressive'] = TRUE;
@@ -176,11 +175,9 @@ function _drush_backend_batch_process($command = 'batch-process', $args, $option
 function _drush_batch_command($id) {
   $batch =& batch_get();
 
-  $data = Database::getConnection()->select('batch', 'b')
-    ->fields('b', ['batch'])
-    ->condition('bid', $id)
-    ->execute()
-    ->fetchField();
+  $data = db_query("SELECT batch FROM {batch} WHERE bid = :bid", [
+    ':bid' => $id
+  ])->fetchField();
 
   if ($data) {
     $batch = unserialize($data);
@@ -369,8 +366,16 @@ function _drush_batch_finished() {
  */
 function _drush_batch_shutdown() {
   if ($batch = batch_get()) {
+    if (drush_drupal_major_version() >= 8) {
       /** @var \Drupal\Core\Batch\BatchStorage $batch_storage */
       $batch_storage = \Drupal::service('batch.storage');
       $batch_storage->update($batch);
+    }
+    else {
+      db_update('batch')
+        ->fields(['batch' => serialize($batch)])
+        ->condition('bid', $batch['id'])
+        ->execute();
+    }
   }
 }

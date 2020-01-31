@@ -230,8 +230,7 @@ class AcquiaSearchOverrideTest extends KernelTestBase {
   protected function assertGetUpdateQueryException(SearchApiSolrAcquiaConnector $solr_connector) {
 
     // Set the expectation for exception.
-    $this->setExpectedException('Exception',
-      'The Search API Server serving this index is currently in read-only mode.');
+    $this->expectExceptionMessage('The Search API Server serving this index is currently in read-only mode.');
 
     // Run the code that should throw the exception.
     // If exception occurred - test passes. If no exception occurred - test

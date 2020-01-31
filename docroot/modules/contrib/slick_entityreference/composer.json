@@ -9,6 +9,6 @@
     "source": "https://cgit.drupalcode.org/slick_entityreference"
   },
   "require": {
-    "drupal/slick": "~1.0"
+    "drupal/slick": "~2.0"
   }
 }

@@ -2,16 +2,13 @@
 
 namespace Drupal\linkicon;
 
-use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
- * Manages linkicon plugins.
- *
- * @see plugin_api
+ * Implements LinkIconManagerInterface.
  */
-class LinkIconManager extends DefaultPluginManager implements LinkIconManagerInterface {
+class LinkIconManager implements LinkIconManagerInterface {
 
   /**
    * The config factory.
@@ -28,18 +25,12 @@ class LinkIconManager extends DefaultPluginManager implements LinkIconManagerInt
   protected $moduleHandler;
 
   /**
-   * Constructs a new LinkIconManager.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
+   * {@inheritdoc}
    */
   public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler) {
     $this->config = $config_factory->get('linkicon.settings');
     // @todo icon module.
     $this->moduleHandler = $module_handler;
-    $this->alterInfo('linkicon_info');
   }
 
   /**
@@ -47,6 +38,17 @@ class LinkIconManager extends DefaultPluginManager implements LinkIconManagerInt
    */
   public function getSetting($setting_name) {
     return $this->config->get($setting_name);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function simplifySettings(array $settings = []) {
+    $config = [];
+    foreach ($settings as $key => $value) {
+      $config[str_replace('linkicon_', '', $key)] = $value;
+    }
+    return $config;
   }
 
   /**

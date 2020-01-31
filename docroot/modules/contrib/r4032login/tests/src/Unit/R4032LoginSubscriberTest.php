@@ -8,8 +8,8 @@ namespace Drupal\Tests\r4032login\Unit {
   use Drupal\Tests\UnitTestCase;
   use Symfony\Component\EventDispatcher\EventDispatcher;
   use Symfony\Component\HttpFoundation\Request;
+  use Symfony\Component\HttpFoundation\RequestStack;
   use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-  use Symfony\Component\HttpKernel\Exception;
   use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
   use Symfony\Component\HttpKernel\HttpKernelInterface;
   use Symfony\Component\HttpKernel\KernelEvents;
@@ -42,11 +42,11 @@ namespace Drupal\Tests\r4032login\Unit {
     protected $currentUser;
 
     /**
-     * The mocked redirect destination service.
+     * The mocked request stack service.
      *
-     * @var \Drupal\Core\Routing\RedirectDestinationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $redirectDestination;
+    protected $requestStack;
 
     /**
      * The path matcher.
@@ -93,7 +93,10 @@ namespace Drupal\Tests\r4032login\Unit {
         ],
       ]);
       $this->currentUser = $this->getMock('Drupal\Core\Session\AccountInterface');
-      $this->redirectDestination = $this->getMock('\Drupal\Core\Routing\RedirectDestinationInterface');
+
+      $this->requestStack = new RequestStack();
+      $this->requestStack->push(new Request());
+
       $this->pathMatcher = $this->getMock('\Drupal\Core\Path\PathMatcherInterface');
       $this->eventDispatcher = $this->getMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
@@ -114,7 +117,7 @@ namespace Drupal\Tests\r4032login\Unit {
      * @covers ::__construct
      */
     public function testConstruct() {
-      $r4032login = new R4032LoginSubscriber($this->configFactory, $this->currentUser, $this->redirectDestination, $this->pathMatcher, $this->eventDispatcher);
+      $r4032login = new R4032LoginSubscriber($this->configFactory, $this->currentUser, $this->requestStack, $this->pathMatcher, $this->eventDispatcher);
       $this->assertInstanceOf('\Drupal\r4032login\EventSubscriber\R4032LoginSubscriber', $r4032login);
     }
 
@@ -138,7 +141,7 @@ namespace Drupal\Tests\r4032login\Unit {
       ]);
       $this->currentUser->expects($this->any())->method('isAnonymous')->willReturn(TRUE);
 
-      $r4032login = new R4032LoginSubscriber($config, $this->currentUser, $this->redirectDestination, $this->pathMatcher, $this->eventDispatcher);
+      $r4032login = new R4032LoginSubscriber($config, $this->currentUser, $this->requestStack, $this->pathMatcher, $this->eventDispatcher);
       $event = new GetResponseForExceptionEvent($this->kernel, $request, HttpKernelInterface::MASTER_REQUEST, new AccessDeniedHttpException());
       $dispatcher = new EventDispatcher();
       $dispatcher->addListener(KernelEvents::EXCEPTION, [
@@ -172,7 +175,7 @@ namespace Drupal\Tests\r4032login\Unit {
       ]);
       $this->currentUser->expects($this->any())->method('isAuthenticated')->willReturn(TRUE);
 
-      $r4032login = new R4032LoginSubscriber($config, $this->currentUser, $this->redirectDestination, $this->pathMatcher, $this->eventDispatcher);
+      $r4032login = new R4032LoginSubscriber($config, $this->currentUser, $this->requestStack, $this->pathMatcher, $this->eventDispatcher);
       $event = new GetResponseForExceptionEvent($this->kernel, $request, HttpKernelInterface::MASTER_REQUEST, new AccessDeniedHttpException());
       $dispatcher = new EventDispatcher();
       $dispatcher->addListener(KernelEvents::EXCEPTION, [

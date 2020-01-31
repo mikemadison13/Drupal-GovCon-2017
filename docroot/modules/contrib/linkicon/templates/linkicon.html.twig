@@ -29,7 +29,7 @@
       settings.no_text ? 'linkicon--no-text',
       settings.color ? 'linkicon--' ~ settings.color|clean_class,
       settings.style ? 'linkicon--' ~ settings.style|clean_class,
-      settings.size ? 'linkicon--' ~ settings.size|clean_class,
+      settings.size and not settings._preview ? 'linkicon--' ~ settings.size|clean_class,
       settings.tooltip ? 'linkicon--tooltip',
       settings.position ? 'linkicon--' ~ settings.position|clean_class,
     ]
@@ -38,7 +38,7 @@
 
 {% spaceless %}
 <div{{ wrapper_attributes.addClass(wrapper_classes) }}>
-  <ul id="{{ attributes.id|clean_id }}"{{ attributes.addClass('linkicon', classes) }}>
+  <ul{{ attributes.addClass('linkicon', classes) }}>
     {%- for item in items -%}
       <li>
         {{ item }}

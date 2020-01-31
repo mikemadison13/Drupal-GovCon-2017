@@ -4,12 +4,11 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
+class ComposerStaticInit1fcd5fd6fcef53c91122ef86c1db8717
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
-        '59af96974553a1fc6407327354b6f47e' => __DIR__ . '/..' . '/nette/di/src/compatibility.php',
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
@@ -22,6 +21,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         '0b0974a5566a1077e4f2e111341112c1' => __DIR__ . '/..' . '/zendframework/zend-diactoros/src/functions/normalize_server.php',
         '1ca3bc274755662169f9629d5412a1da' => __DIR__ . '/..' . '/zendframework/zend-diactoros/src/functions/normalize_uploaded_files.php',
         '40360c0b9b437e69bcbb7f1349ce029e' => __DIR__ . '/..' . '/zendframework/zend-diactoros/src/functions/parse_cookie_header.php',
+        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
@@ -87,6 +87,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
             'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Php56\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Symfony\\Polyfill\\Iconv\\' => 23,
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\Yaml\\' => 23,
@@ -214,6 +215,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         ),
         'B' => 
         array (
+            'Behat\\Transliterator\\' => 21,
             'Behat\\Mink\\Driver\\' => 18,
             'Behat\\Mink\\' => 11,
         ),
@@ -320,6 +322,10 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Polyfill\\Intl\\Idn\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
         ),
         'Symfony\\Polyfill\\Iconv\\' => 
         array (
@@ -691,6 +697,10 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         array (
             0 => __DIR__ . '/..' . '/d8-contrib-modules/cloudflarephpsdk/src',
         ),
+        'Behat\\Transliterator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/behat/transliterator/src/Behat/Transliterator',
+        ),
         'Behat\\Mink\\Driver\\' => 
         array (
             0 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
@@ -826,10 +836,6 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         ),
         'B' => 
         array (
-            'Behat\\Transliterator' => 
-            array (
-                0 => __DIR__ . '/..' . '/behat/transliterator/src',
-            ),
             'Behat\\Testwork' => 
             array (
                 0 => __DIR__ . '/..' . '/behat/behat/src',
@@ -2129,6 +2135,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Doctrine\\Common\\Reflection\\StaticReflectionMethod' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/StaticReflectionMethod.php',
         'Doctrine\\Common\\Reflection\\StaticReflectionParser' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/StaticReflectionParser.php',
         'Doctrine\\Common\\Reflection\\StaticReflectionProperty' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/StaticReflectionProperty.php',
+        'Doctrine\\Common\\Reflection\\TypedNoDefaultReflectionProperty' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/TypedNoDefaultReflectionProperty.php',
         'Doctrine\\Common\\Util\\ClassUtils' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/ClassUtils.php',
         'Doctrine\\Common\\Util\\Debug' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/Debug.php',
         'Doctrine\\Common\\Util\\Inflector' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/Inflector.php',
@@ -4410,6 +4417,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Drupal\\random\\bunny_hat\\long\\namingspace\\wtf\\still\\going\\strong\\LongNamespace' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Test/good/drupal8/LongNamespace.php',
         'Drush\\Application' => __DIR__ . '/..' . '/drush/drush/src/Application.php',
         'Drush\\Backend\\BackendPathEvaluator' => __DIR__ . '/..' . '/drush/drush/src/Backend/BackendPathEvaluator.php',
+        'Drush\\Backend\\BackendResultSetter' => __DIR__ . '/..' . '/drush/drush/src/Backend/BackendResultSetter.php',
         'Drush\\Boot\\AutoloaderAwareInterface' => __DIR__ . '/..' . '/drush/drush/src/Boot/AutoloaderAwareInterface.php',
         'Drush\\Boot\\AutoloaderAwareTrait' => __DIR__ . '/..' . '/drush/drush/src/Boot/AutoloaderAwareTrait.php',
         'Drush\\Boot\\BaseBoot' => __DIR__ . '/..' . '/drush/drush/src/Boot/BaseBoot.php',
@@ -4433,7 +4441,6 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Drush\\Commands\\LegacyCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/LegacyCommands.php',
         'Drush\\Commands\\OptionsCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/OptionsCommands.php',
         'Drush\\Commands\\ValidatorsCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/ValidatorsCommands.php',
-        'Drush\\Commands\\config\\ConfigImportCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/config/ConfigImportCommands.php',
         'Drush\\Commands\\config\\ConfigPullCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/config/ConfigPullCommands.php',
         'Drush\\Commands\\core\\BrowseCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/BrowseCommands.php',
         'Drush\\Commands\\core\\CacheCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/CacheCommands.php',
@@ -4557,14 +4564,15 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Drush\\Sql\\SqlBase' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlBase.php',
         'Drush\\Sql\\SqlException' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlException.php',
         'Drush\\Sql\\SqlMysql' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlMysql.php',
+        'Drush\\Sql\\SqlOracle' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlOracle.php',
         'Drush\\Sql\\SqlPgsql' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlPgsql.php',
         'Drush\\Sql\\SqlSqlite' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlSqlite.php',
+        'Drush\\Sql\\SqlSqlsrv' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlSqlsrv.php',
         'Drush\\Sql\\SqlTableSelectionTrait' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlTableSelectionTrait.php',
         'Drush\\Style\\DrushStyle' => __DIR__ . '/..' . '/drush/drush/src/Style/DrushStyle.php',
         'Drush\\Symfony\\BootstrapCompilerPass' => __DIR__ . '/..' . '/drush/drush/src/Symfony/BootstrapCompilerPass.php',
         'Drush\\Symfony\\BufferedConsoleOutput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/BufferedConsoleOutput.php',
         'Drush\\Symfony\\DrushArgvInput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/DrushArgvInput.php',
-        'Drush\\Symfony\\DrushStyleInjector' => __DIR__ . '/..' . '/drush/drush/src/Symfony/DrushStyleInjector.php',
         'Drush\\Symfony\\IndiscriminateInputDefinition' => __DIR__ . '/..' . '/drush/drush/src/Symfony/IndiscriminateInputDefinition.php',
         'Drush\\Symfony\\LessStrictArgvInput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/LessStrictArgvInput.php',
         'Drush\\TestTraits\\CliTestTrait' => __DIR__ . '/..' . '/drush/drush/src/TestTraits/CliTestTrait.php',
@@ -5170,6 +5178,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Nette\\DI\\Config\\Adapters\\PhpAdapter' => __DIR__ . '/..' . '/nette/di/src/DI/Config/Adapters/PhpAdapter.php',
         'Nette\\DI\\Config\\DefinitionSchema' => __DIR__ . '/..' . '/nette/di/src/DI/Config/DefinitionSchema.php',
         'Nette\\DI\\Config\\Helpers' => __DIR__ . '/..' . '/nette/di/src/DI/Config/Helpers.php',
+        'Nette\\DI\\Config\\IAdapter' => __DIR__ . '/..' . '/nette/di/src/compatibility.php',
         'Nette\\DI\\Config\\Loader' => __DIR__ . '/..' . '/nette/di/src/DI/Config/Loader.php',
         'Nette\\DI\\Container' => __DIR__ . '/..' . '/nette/di/src/DI/Container.php',
         'Nette\\DI\\ContainerBuilder' => __DIR__ . '/..' . '/nette/di/src/DI/ContainerBuilder.php',
@@ -5200,6 +5209,8 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Nette\\DI\\PhpGenerator' => __DIR__ . '/..' . '/nette/di/src/DI/PhpGenerator.php',
         'Nette\\DI\\Resolver' => __DIR__ . '/..' . '/nette/di/src/DI/Resolver.php',
         'Nette\\DI\\ServiceCreationException' => __DIR__ . '/..' . '/nette/di/src/DI/exceptions.php',
+        'Nette\\DI\\ServiceDefinition' => __DIR__ . '/..' . '/nette/di/src/compatibility.php',
+        'Nette\\DI\\Statement' => __DIR__ . '/..' . '/nette/di/src/compatibility.php',
         'Nette\\DeprecatedException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\DirectoryNotFoundException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\FileNotFoundException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
@@ -5226,6 +5237,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Nette\\PhpGenerator\\Factory' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/Factory.php',
         'Nette\\PhpGenerator\\GlobalFunction' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/GlobalFunction.php',
         'Nette\\PhpGenerator\\Helpers' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/Helpers.php',
+        'Nette\\PhpGenerator\\Literal' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/Literal.php',
         'Nette\\PhpGenerator\\Method' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/Method.php',
         'Nette\\PhpGenerator\\Parameter' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/Parameter.php',
         'Nette\\PhpGenerator\\PhpFile' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/PhpFile.php',
@@ -5238,6 +5250,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Nette\\PhpGenerator\\Traits\\FunctionLike' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/Traits/FunctionLike.php',
         'Nette\\PhpGenerator\\Traits\\NameAware' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/Traits/NameAware.php',
         'Nette\\PhpGenerator\\Traits\\VisibilityAware' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/Traits/VisibilityAware.php',
+        'Nette\\PhpGenerator\\Type' => __DIR__ . '/..' . '/nette/php-generator/src/PhpGenerator/Type.php',
         'Nette\\Schema\\Context' => __DIR__ . '/..' . '/nette/schema/src/Schema/Context.php',
         'Nette\\Schema\\DynamicParameter' => __DIR__ . '/..' . '/nette/schema/src/Schema/DynamicParameter.php',
         'Nette\\Schema\\Elements\\AnyOf' => __DIR__ . '/..' . '/nette/schema/src/Schema/Elements/AnyOf.php',
@@ -5260,6 +5273,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Nette\\Utils\\DateTime' => __DIR__ . '/..' . '/nette/utils/src/Utils/DateTime.php',
         'Nette\\Utils\\FileSystem' => __DIR__ . '/..' . '/nette/utils/src/Utils/FileSystem.php',
         'Nette\\Utils\\Finder' => __DIR__ . '/..' . '/nette/finder/src/Utils/Finder.php',
+        'Nette\\Utils\\Helpers' => __DIR__ . '/..' . '/nette/utils/src/Utils/Helpers.php',
         'Nette\\Utils\\Html' => __DIR__ . '/..' . '/nette/utils/src/Utils/Html.php',
         'Nette\\Utils\\IHtmlString' => __DIR__ . '/..' . '/nette/utils/src/Utils/IHtmlString.php',
         'Nette\\Utils\\Image' => __DIR__ . '/..' . '/nette/utils/src/Utils/Image.php',
@@ -6370,6 +6384,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Robo\\Task\\Vcs\\loadTasks' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Vcs/loadTasks.php',
         'Robo\\Tasks' => __DIR__ . '/..' . '/consolidation/robo/src/Tasks.php',
         'SebastianBergmann\\Diff\\Chunk' => __DIR__ . '/..' . '/sebastian/diff/src/Chunk.php',
+        'SebastianBergmann\\Diff\\ConfigurationException' => __DIR__ . '/..' . '/sebastian/diff/src/Exception/ConfigurationException.php',
         'SebastianBergmann\\Diff\\Diff' => __DIR__ . '/..' . '/sebastian/diff/src/Diff.php',
         'SebastianBergmann\\Diff\\Differ' => __DIR__ . '/..' . '/sebastian/diff/src/Differ.php',
         'SebastianBergmann\\Diff\\Exception' => __DIR__ . '/..' . '/sebastian/diff/src/Exception/Exception.php',
@@ -6380,6 +6395,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'SebastianBergmann\\Diff\\Output\\AbstractChunkOutputBuilder' => __DIR__ . '/..' . '/sebastian/diff/src/Output/AbstractChunkOutputBuilder.php',
         'SebastianBergmann\\Diff\\Output\\DiffOnlyOutputBuilder' => __DIR__ . '/..' . '/sebastian/diff/src/Output/DiffOnlyOutputBuilder.php',
         'SebastianBergmann\\Diff\\Output\\DiffOutputBuilderInterface' => __DIR__ . '/..' . '/sebastian/diff/src/Output/DiffOutputBuilderInterface.php',
+        'SebastianBergmann\\Diff\\Output\\StrictUnifiedDiffOutputBuilder' => __DIR__ . '/..' . '/sebastian/diff/src/Output/StrictUnifiedDiffOutputBuilder.php',
         'SebastianBergmann\\Diff\\Output\\UnifiedDiffOutputBuilder' => __DIR__ . '/..' . '/sebastian/diff/src/Output/UnifiedDiffOutputBuilder.php',
         'SebastianBergmann\\Diff\\Parser' => __DIR__ . '/..' . '/sebastian/diff/src/Parser.php',
         'SebastianBergmann\\Diff\\TimeEfficientLongestCommonSubsequenceCalculator' => __DIR__ . '/..' . '/sebastian/diff/src/TimeEfficientLongestCommonSubsequenceCalculator.php',
@@ -7602,6 +7618,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'Symfony\\Component\\Yaml\\Yaml' => __DIR__ . '/..' . '/symfony/yaml/Yaml.php',
         'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
         'Symfony\\Polyfill\\Iconv\\Iconv' => __DIR__ . '/..' . '/symfony/polyfill-iconv/Iconv.php',
+        'Symfony\\Polyfill\\Intl\\Idn\\Idn' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Idn.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php56\\Php56' => __DIR__ . '/..' . '/symfony/polyfill-php56/Php56.php',
         'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
@@ -8329,6 +8346,7 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\See' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/See.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Since' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Since.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Source' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Source.php',
+        'phpDocumentor\\Reflection\\DocBlock\\Tags\\TagWithType' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/TagWithType.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Throws' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Throws.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Uses' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Uses.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Var_' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Var_.php',
@@ -8373,11 +8391,11 @@ class ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitcf3b8d277e3dfbe97a767677278dfd45::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1fcd5fd6fcef53c91122ef86c1db8717::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1fcd5fd6fcef53c91122ef86c1db8717::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit1fcd5fd6fcef53c91122ef86c1db8717::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit1fcd5fd6fcef53c91122ef86c1db8717::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit1fcd5fd6fcef53c91122ef86c1db8717::$classMap;
 
         }, null, ClassLoader::class);
     }

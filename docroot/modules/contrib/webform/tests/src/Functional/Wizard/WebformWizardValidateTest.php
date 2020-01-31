@@ -124,7 +124,6 @@ wizard_1_test_composite:
   radios: ''
   date: ''
   webform_entity_select: ''
-  webform_toggle: ''
   entity_autocomplete: null
   datetime: ''
   nested_radios: ''
@@ -140,7 +139,6 @@ wizard_1_test_composite_multiple:
     radios: ''
     date: ''
     webform_entity_select: ''
-    webform_toggle: ''
     entity_autocomplete: null
     datetime: ''
     nested_radios: ''
@@ -186,7 +184,6 @@ wizard_1_test_composite:
   radios: ''
   date: ''
   webform_entity_select: ''
-  webform_toggle: ''
   entity_autocomplete: null
   datetime: ''
   nested_radios: ''
@@ -202,7 +199,6 @@ wizard_1_test_composite_multiple:
     radios: ''
     date: ''
     webform_entity_select: ''
-    webform_toggle: ''
     entity_autocomplete: null
     datetime: ''
     nested_radios: ''
@@ -221,7 +217,6 @@ wizard_2_test_composite:
   radios: ''
   date: ''
   webform_entity_select: ''
-  webform_toggle: ''
   entity_autocomplete: null
   datetime: ''
   nested_radios: ''
@@ -237,7 +232,6 @@ wizard_2_test_composite_multiple:
     radios: ''
     date: ''
     webform_entity_select: ''
-    webform_toggle: ''
     entity_autocomplete: null
     datetime: ''
     nested_radios: ''";

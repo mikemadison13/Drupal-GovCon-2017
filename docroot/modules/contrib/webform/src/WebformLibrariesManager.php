@@ -346,25 +346,6 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'version' => '1.17.0',
       'elements' => ['webform_location_places'],
     ];
-    $libraries['jquery.geocomplete'] = [
-      'title' => $this->t('jQuery: Geocoding and Places Autocomplete Plugin'),
-      'description' => $this->t("Geocomple is an advanced jQuery plugin that wraps the Google Maps API's Geocoding and Places Autocomplete services."),
-      'notes' => $this->t('Geocomplete is used by the location element.'),
-      'homepage_url' => Url::fromUri('http://ubilabs.github.io/geocomplete/'),
-      'download_url' => Url::fromUri('https://github.com/ubilabs/geocomplete/archive/1.7.0.zip'),
-      'version' => '1.7.0',
-      'elements' => ['webform_location_geocomplete'],
-      'deprecated' => $this->t('The jQuery: Geocoding and Places Autocomplete Plugin library is not being maintained. It has been <a href=":href">deprecated</a> and will be removed before Webform 8.x-6.0.', [':href' => 'https://www.drupal.org/node/2991275']),
-    ];
-    $libraries['jquery.icheck'] = [
-      'title' => $this->t('jQuery: iCheck'),
-      'description' => $this->t('Highly customizable checkboxes and radio buttons.'),
-      'notes' => $this->t('iCheck is used to optionally enhance checkboxes and radio buttons.'),
-      'homepage_url' => Url::fromUri('http://icheck.fronteed.com/'),
-      'download_url' => Url::fromUri('https://github.com/fronteed/icheck/archive/1.0.2.zip'),
-      'version' => '1.0.2 ',
-      'deprecated' => $this->t('The iCheck library is not being maintained. It has been <a href=":href">deprecated</a> and will be removed before Webform 8.x-6.0.', [':href' => 'https://www.drupal.org/project/webform/issues/2931154']),
-    ];
     $libraries['jquery.inputmask'] = [
       'title' => $this->t('jQuery: Input Mask'),
       'description' => $this->t('Input masks ensures a predefined format is entered. This can be useful for dates, numerics, phone numbers, etc…'),
@@ -405,16 +386,6 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'homepage_url' => Url::fromUri('https://github.com/jonthornton/jquery-timepicker'),
       'download_url' => Url::fromUri('https://github.com/jonthornton/jquery-timepicker/archive/1.11.15.zip'),
       'version' => '1.11.15',
-    ];
-    $libraries['jquery.toggles'] = [
-      'title' => $this->t('jQuery: Toggles'),
-      'description' => $this->t('Toggles is a lightweight jQuery plugin that creates easy-to-style toggle buttons.'),
-      'notes' => $this->t('Toggles is used to provide a toggle element.'),
-      'homepage_url' => Url::fromUri('https://github.com/simontabor/jquery-toggles/'),
-      'download_url' => Url::fromUri('https://github.com/simontabor/jquery-toggles/archive/v4.0.0.zip'),
-      'version' => '4.0.0',
-      'elements' => ['webform_toggle', 'webform_toggles'],
-      'deprecated' => $this->t('The Toogles library is not being maintained and has major accessibility issues. It has been <a href=":href">deprecated</a> and will be removed before Webform 8.x-6.0.', [':href' => 'https://www.drupal.org/project/webform/issues/2890861']),
     ];
     $libraries['progress-tracker'] = [
       'title' => $this->t('Progress Tracker'),

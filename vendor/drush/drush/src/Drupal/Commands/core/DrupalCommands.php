@@ -56,7 +56,10 @@ class DrupalCommands extends DrushCommands
      */
     public function cron()
     {
-        $this->getCron()->run();
+        $result = $this->getCron()->run();
+        if (!$result) {
+            throw new \Exception(dt('Cron run failed.'));
+        }
     }
 
     /**

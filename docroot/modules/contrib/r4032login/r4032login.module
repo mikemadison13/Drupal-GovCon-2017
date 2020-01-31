@@ -89,8 +89,9 @@ function r4032login_form_system_site_information_settings_alter(&$form, FormStat
     '#type' => 'select',
     '#weight' => 10,
     '#title' => t("HTTP redirect code"),
-    '#description' => t('The redirect code to send by default. 301 responses may be cached by browsers and proxies, so 302 is normally the correct choice.'),
+    '#description' => t('The redirect code to send by default. 301 and 302 responses may be cached by browsers and proxies, so 307 is normally the correct choice.'),
     '#options' => [
+      '307' => t('307 Temporary Redirect'),
       '302' => t('302 Found'),
       '301' => t('301 Moved Permanently'),
     ],

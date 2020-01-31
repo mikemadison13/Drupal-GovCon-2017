@@ -16,9 +16,9 @@ class LinkIconItem extends LinkItem {
    * {@inheritdoc}
    */
   public static function defaultFieldSettings() {
-    return array(
+    return [
       'title_predefined' => '',
-    ) + parent::defaultFieldSettings();
+    ] + parent::defaultFieldSettings();
   }
 
   /**

@@ -15,16 +15,16 @@ use Drupal\Core\Url;
 use Drupal\update\UpdateFetcherInterface;
 
 // Version of SPI data format.
-define('ACQUIA_SPI_DATA_VERSION', 3.1);
+define('ACQUIA_CONNECTOR_ACQUIA_SPI_DATA_VERSION', 3.1);
 
 /**
  * Identifiers for the method of sending SPI data.
  */
-define('ACQUIA_SPI_METHOD_CALLBACK', 'menu');
-define('ACQUIA_SPI_METHOD_CRON', 'cron');
-define('ACQUIA_SPI_METHOD_DRUSH', 'drush');
-define('ACQUIA_SPI_METHOD_CREDS', 'creds');
-define('ACQUIA_SPI_METHOD_INSIGHT', 'insight');
+define('ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_CALLBACK', 'menu');
+define('ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_CRON', 'cron');
+define('ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_DRUSH', 'drush');
+define('ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_CREDS', 'creds');
+define('ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_INSIGHT', 'insight');
 
 /**
  * Implements hook_help().
@@ -103,8 +103,8 @@ function acquia_connector_cron() {
   }
 
   // Determine if the required interval has passed.
-  if ($config->get('spi.use_cron') && ((REQUEST_TIME - $last) > ($interval * 60))) {
-    \Drupal::service('acquia_connector.spi')->sendFullSpi(ACQUIA_SPI_METHOD_CRON);
+  if ($config->get('spi.use_cron') && ((\Drupal::time()->getRequestTime() - $last) > ($interval * 60))) {
+    \Drupal::service('acquia_connector.spi')->sendFullSpi(ACQUIA_CONNECTOR_ACQUIA_SPI_METHOD_CRON);
   }
 }
 

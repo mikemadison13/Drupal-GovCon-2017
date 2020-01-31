@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Collects available webform elements.
  */
-interface WebformElementManagerInterface extends PluginManagerInterface, CachedDiscoveryInterface, FallbackPluginManagerInterface, CategorizingPluginManagerInterface {
+interface WebformElementManagerInterface extends PluginManagerInterface, CachedDiscoveryInterface, FallbackPluginManagerInterface, CategorizingPluginManagerInterface, WebformPluginManagerExcludedInterface {
 
   /**
    * Get all available webform element plugin instances.
@@ -125,17 +125,6 @@ interface WebformElementManagerInterface extends PluginManagerInterface, CachedD
    *   An array of plugin definitions, sorted by category and label.
    */
   public function getSortedDefinitions(array $definitions = NULL, $sort_by = 'label');
-
-  /**
-   * Remove excluded plugin definitions.
-   *
-   * @param array $definitions
-   *   The plugin definitions to filter.
-   *
-   * @return array
-   *   An array of plugin definitions with excluded plugins removed.
-   */
-  public function removeExcludeDefinitions(array $definitions);
 
   /**
    * Get all translatable properties from all elements.

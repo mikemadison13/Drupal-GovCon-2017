@@ -40,7 +40,7 @@ elements: |
     '#type': textarea
     '#required': true
     '#default_value': '{message}'
-  
+
 css: ''
 javascript: ''
 settings:
@@ -229,6 +229,7 @@ handlers:
       ignore_access: false
       exclude_empty: true
       exclude_empty_checkbox: false
+      exclude_attachments: false
       html: false
       attachments: false
       twig: false

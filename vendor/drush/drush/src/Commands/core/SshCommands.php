@@ -11,8 +11,7 @@ class SshCommands extends DrushCommands implements SiteAliasManagerAwareInterfac
     use SiteAliasManagerAwareTrait;
 
     /**
-     * Connect to a Drupal site's server via SSH, and optionally run a shell
-     * command.
+     * Connect to a Drupal site's server via SSH.
      *
      * @command site:ssh
      * @option cd Directory to change to. Defaults to Drupal root.
@@ -24,14 +23,15 @@ class SshCommands extends DrushCommands implements SiteAliasManagerAwareInterfac
      *   Run "ls /tmp" on @prod site.
      * @usage drush @prod ssh git pull
      *   Run "git pull" on the Drupal root directory on the @prod site.
-     * @usage drush ssh git pull
-     *   Run "git pull" on the local Drupal root directory.
      * @aliases ssh,site-ssh
      * @topics docs:aliases
      */
     public function ssh(array $args, $options = ['cd' => self::REQ, 'tty' => false])
     {
         $alias = $this->siteAliasManager()->getSelf();
+        if ($alias->isNone()) {
+            throw new \Exception('A site alias is required. The way you call ssh command has changed to `drush @alias ssh`.');
+        }
 
         if (empty($args)) {
             $args[] = 'bash';

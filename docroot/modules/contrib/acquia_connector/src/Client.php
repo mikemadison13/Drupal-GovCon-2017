@@ -86,7 +86,7 @@ class Client {
    */
   public function getSubscriptionCredentials($email, $password) {
     $body = ['email' => $email];
-    $authenticator = $this->buildAuthenticator($email, ['rpc_version' => ACQUIA_SPI_DATA_VERSION]);
+    $authenticator = $this->buildAuthenticator($email, \Drupal::time()->getRequestTime(), ['rpc_version' => ACQUIA_CONNECTOR_ACQUIA_SPI_DATA_VERSION]);
     $data = [
       'body' => $body,
       'authenticator' => $authenticator,
@@ -101,9 +101,9 @@ class Client {
       $body = [
         'email' => $email,
         'pass' => $pass,
-        'rpc_version' => ACQUIA_SPI_DATA_VERSION,
+        'rpc_version' => ACQUIA_CONNECTOR_ACQUIA_SPI_DATA_VERSION,
       ];
-      $authenticator = $this->buildAuthenticator($pass, ['rpc_version' => ACQUIA_SPI_DATA_VERSION]);
+      $authenticator = $this->buildAuthenticator($pass, \Drupal::time()->getRequestTime(), ['rpc_version' => ACQUIA_CONNECTOR_ACQUIA_SPI_DATA_VERSION]);
       $data = [
         'body' => $body,
         'authenticator' => $authenticator,
@@ -137,7 +137,7 @@ class Client {
     $body['identifier'] = $id;
     // There is an identifier and key, so attempt communication.
     $subscription = [];
-    \Drupal::state()->set('acquia_subscription_data.timestamp', REQUEST_TIME);
+    \Drupal::state()->set('acquia_subscription_data.timestamp', \Drupal::time()->getRequestTime());
 
     // Include version number information.
     acquia_connector_load_versions();
@@ -151,7 +151,7 @@ class Client {
     // Include Acquia Search for Search API module version number.
     if (\Drupal::moduleHandler()->moduleExists('acquia_search')) {
       foreach (['acquia_search', 'search_api', 'search_api_solr'] as $name) {
-        $info = system_get_info('module', $name);
+        $info = \Drupal::service('extension.list.module')->getExtensionInfo($name);
         // Send the version, or at least the core compatibility as a fallback.
         $body['search_version'][$name] = isset($info['version']) ? (string) $info['version'] : (string) $info['core'];
       }
@@ -315,6 +315,8 @@ class Client {
    *
    * @param string $key
    *   Secret key to use for signing the request.
+   * @param int $request_time
+   *   Such as from \Drupal::time()->getRequestTime().
    * @param array $params
    *   Optional parameters to include.
    *   'identifier' - Network Identifier.
@@ -322,7 +324,7 @@ class Client {
    * @return array
    *   Authenticator array.
    */
-  protected function buildAuthenticator($key, array $params = []) {
+  protected function buildAuthenticator($key, int $request_time, array $params = []) {
     $authenticator = [];
     if (isset($params['identifier'])) {
       // Put Subscription ID in authenticator but do not use in hash.
@@ -330,8 +332,8 @@ class Client {
       unset($params['identifier']);
     }
     $nonce = $this->getNonce();
-    $authenticator['time'] = REQUEST_TIME;
-    $authenticator['hash'] = $this->hash($key, REQUEST_TIME, $nonce);
+    $authenticator['time'] = $request_time;
+    $authenticator['hash'] = $this->hash($key, $request_time, $nonce);
     $authenticator['nonce'] = $nonce;
 
     return $authenticator;
@@ -364,7 +366,7 @@ class Client {
    *   Random base 64 encoded string.
    */
   protected function getNonce() {
-    return Crypt::hashBase64(uniqid(mt_rand(), TRUE) . Crypt::randomBytes(55));
+    return Crypt::hashBase64(uniqid(mt_rand(), TRUE) . random_bytes(55));
   }
 
   /**
@@ -388,12 +390,12 @@ class Client {
       $key = $storage->getKey();
     }
     // Used in HMAC validation.
-    $params['rpc_version'] = ACQUIA_SPI_DATA_VERSION;
+    $params['rpc_version'] = ACQUIA_CONNECTOR_ACQUIA_SPI_DATA_VERSION;
     $ip = \Drupal::request()->server->get('SERVER_ADDR', '');
     $host = \Drupal::request()->server->get('HTTP_HOST', '');
     $ssl = \Drupal::request()->isSecure();
     $data = [
-      'authenticator' => $this->buildAuthenticator($key, $params),
+      'authenticator' => $this->buildAuthenticator($key, \Drupal::time()->getRequestTime(), $params),
       'ip' => $ip,
       'host' => $host,
       'ssl' => $ssl,

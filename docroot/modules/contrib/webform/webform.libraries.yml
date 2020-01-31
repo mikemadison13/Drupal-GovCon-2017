@@ -394,17 +394,13 @@ webform.wizard.track:
 
 # Element.
 
-webform.element.buttons:
+webform.element.ajax:
   version: VERSION
   js:
-    # Issue #2906737: With the new jquery 3 checkboxradio and selectmenu error.
-    # @see https://www.drupal.org/node/2906737
-    /core/assets/vendor/jquery.ui/ui/form-reset-mixin-min.js: { minified: true }
-    /core/assets/vendor/jquery.ui/ui/escape-selector-min.js: { minified: true }
-    /core/assets/vendor/jquery.ui/ui/widgets/checkboxradio-min.js: { minified: true }
-    js/webform.element.buttons.js: {}
+    js/webform.element.ajax.js: {}
   dependencies:
-    - core/jquery.ui.checkboxradio
+    - core/drupal
+    - core/jquery.once
 
 webform.element.checkboxes:
   version: VERSION
@@ -654,18 +650,6 @@ webform.element.horizontal_rule:
     component:
       css/webform.element.horizontal_rule.css: {}
 
-webform.element.icheck:
-  version: VERSION
-  css:
-    component:
-      css/webform.element.icheck.css: {}
-  js:
-    js/webform.element.icheck.js: { weight: -10 } # iCheck library must be executed before #states.
-  dependencies:
-    - core/drupal
-    - core/jquery.once
-    - webform/libraries.jquery.icheck
-
 webform.element.image_file:
   version: VERSION
   css:
@@ -707,18 +691,6 @@ webform.element.likert:
   css:
     component:
       css/webform.element.likert.css: {}
-
-webform.element.location.geocomplete:
-  version: VERSION
-  css:
-    component:
-      css/webform.element.location.geocomplete.css: {}
-  js:
-    js/webform.element.location.geocomplete.js: {}
-  dependencies:
-    - core/drupal
-    - core/jquery.once
-    - webform/libraries.jquery.geocomplete
 
 webform.element.location.places:
   version: VERSION
@@ -936,18 +908,6 @@ webform.element.time:
     - core/drupal
     - webform/libraries.jquery.timepicker
 
-webform.element.toggle:
-  version: VERSION
-  css:
-    component:
-      css/webform.element.toggle.css: {}
-  js:
-    js/webform.element.toggle.js: {}
-  dependencies:
-    - core/drupal
-    - webform/libraries.jquery.toggles
-    - core/jquery.once
-
 webform.element.video_file:
   version: VERSION
   css:
@@ -1105,75 +1065,6 @@ libraries.algolia.places:
   js:
     /libraries/algolia.places/dist/cdn/places.js: {}
 
-libraries.jquery.geocomplete:
-  remote: http://ubilabs.github.io/geocomplete/
-  version: '1.7.0'
-  license:
-    name: MIT
-    url: https://github.com/ubilabs/geocomplete/blob/master/MIT-LICENSE.txt
-    gpl-compatible: true
-  cdn:
-    /libraries/geocomplete/: https://cdnjs.cloudflare.com/ajax/libs/geocomplete/1.7.0/
-  js:
-    https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places: {}
-    /libraries/geocomplete/jquery.geocomplete.min.js: { minified: true }
-  dependencies:
-    - core/jquery
-
-libraries.jquery.icheck:
-  remote: http://icheck.fronteed.com/
-  version: &webform_icheck_version '1.0.2'
-  license: &webform_icheck_license
-    name: MIT
-    url: https://en.wikipedia.org/wiki/MIT_License
-    gpl-compatible: true
-  cdn: &webform_icheck_cdn
-    /libraries/jquery.icheck/: https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/
-  js:
-    /libraries/jquery.icheck/icheck.js: {}
-  dependencies:
-    - core/jquery
-
-libraries.jquery.icheck.flat:
-  version: *webform_icheck_version
-  license: *webform_icheck_license
-  cdn: *webform_icheck_cdn
-  css:
-    component:
-      /libraries/jquery.icheck/skins/flat/_all.css: {}
-  dependencies:
-    - webform/libraries.jquery.icheck
-
-libraries.jquery.icheck.line:
-  version: *webform_icheck_version
-  license: *webform_icheck_license
-  cdn: *webform_icheck_cdn
-  css:
-    component:
-      /libraries/jquery.icheck/skins/line/_all.css: {}
-  dependencies:
-    - webform/libraries.jquery.icheck
-
-libraries.jquery.icheck.minimal:
-  version: *webform_icheck_version
-  license: *webform_icheck_license
-  cdn: *webform_icheck_cdn
-  css:
-    component:
-      /libraries/jquery.icheck/skins/minimal/_all.css: {}
-  dependencies:
-    - webform/libraries.jquery.icheck
-
-libraries.jquery.icheck.square:
-  version: *webform_icheck_version
-  license: *webform_icheck_license
-  cdn: *webform_icheck_cdn
-  css:
-    component:
-      /libraries/jquery.icheck/skins/square/_all.css: {}
-  dependencies:
-    - webform/libraries.jquery.icheck
-
 libraries.jquery.inputmask:
   remote: https://github.com/RobinHerbots/jquery.inputmask
   version: '4.0.9'
@@ -1286,23 +1177,6 @@ libraries.jquery.timepicker:
       /libraries/jquery.timepicker/jquery.timepicker.min.css: { minified: true }
   js:
     /libraries/jquery.timepicker/jquery.timepicker.min.js: { minified: true }
-  dependencies:
-    - core/jquery
-
-libraries.jquery.toggles:
-  remote: https://github.com/simontabor/jquery-toggles/
-  version: '4.0.0'
-  license:
-    name: MIT
-    url: http://opensource.org/licenses/mit-license.php
-    gpl-compatible: true
-  cdn:
-    /libraries/jquery.toggles/: https://cdn.jsdelivr.net/gh/simontabor/jquery-toggles@v4.0.0/
-  css:
-    component:
-      /libraries/jquery.toggles/css/toggles-full.css: {}
-  js:
-    /libraries/jquery.toggles/toggles.min.js: { minified: true }
   dependencies:
     - core/jquery
 

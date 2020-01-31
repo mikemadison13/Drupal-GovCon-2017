@@ -17,12 +17,16 @@ views.field.webform_submission_field:
 views.filter.webform_submission_select_filter:
   type: views.filter.in_operator
 
+# Schema definition for webform status.
+views.filter.webform_views_webform_status:
+  type: views.filter.in_operator
+
 # Schema definition for date filter.
 views.filter.webform_submission_date_filter:
   type: views.filter.date
 
 views.filter_value.webform_submission_date_filter:
-    type: views.filter_value.date
+  type: views.filter_value.date
 
 # Schema definition for numeric filter.
 views.filter.webform_submission_numeric_filter:
