@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
+class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -878,7 +878,6 @@ class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
         'Acquia\\Blt\\Robo\\Commands\\Artifact\\AcsfHooksCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Artifact/AcsfHooksCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Artifact\\DeployCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Artifact/DeployCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Blt\\ConfigCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Blt/ConfigCommand.php',
-        'Acquia\\Blt\\Robo\\Commands\\Blt\\DevCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Blt/DevCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Blt\\DoctorCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Blt/DoctorCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Blt\\SetupCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Blt/SetupCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Blt\\ShellAliasCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Blt/ShellAliasCommand.php',
@@ -901,10 +900,12 @@ class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
         'Acquia\\Blt\\Robo\\Commands\\Recipes\\ConfigSplitCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/ConfigSplitCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Recipes\\MultisiteCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/MultisiteCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Recipes\\PhpUnitCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/PhpUnitCommand.php',
+        'Acquia\\Blt\\Robo\\Commands\\Recipes\\ScaffoldCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/ScaffoldCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Recipes\\SimpleSamlPhpCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/SimpleSamlPhpCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Recipes\\VmCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/VmCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Source\\BuildCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Source/BuildCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Source\\FrontendCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Source/FrontendCommand.php',
+        'Acquia\\Blt\\Robo\\Commands\\Source\\LinkPackageCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Source/LinkPackageCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Source\\PhpCbfCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Source/PhpCbfCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Source\\SettingsCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Source/SettingsCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Tests\\AcsfCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Tests/AcsfCommand.php',
@@ -1719,6 +1720,7 @@ class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
         'Composer\\Installers\\MagentoInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/MagentoInstaller.php',
         'Composer\\Installers\\MajimaInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/MajimaInstaller.php',
         'Composer\\Installers\\MakoInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/MakoInstaller.php',
+        'Composer\\Installers\\MantisBTInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/MantisBTInstaller.php',
         'Composer\\Installers\\MauticInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/MauticInstaller.php',
         'Composer\\Installers\\MayaInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/MayaInstaller.php',
         'Composer\\Installers\\MediaWikiInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/MediaWikiInstaller.php',
@@ -1750,6 +1752,7 @@ class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
         'Composer\\Installers\\SilverStripeInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/SilverStripeInstaller.php',
         'Composer\\Installers\\SiteDirectInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/SiteDirectInstaller.php',
         'Composer\\Installers\\SyDESInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/SyDESInstaller.php',
+        'Composer\\Installers\\SyliusInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/SyliusInstaller.php',
         'Composer\\Installers\\Symfony1Installer' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/Symfony1Installer.php',
         'Composer\\Installers\\TYPO3CmsInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/TYPO3CmsInstaller.php',
         'Composer\\Installers\\TYPO3FlowInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/TYPO3FlowInstaller.php',
@@ -2846,6 +2849,7 @@ class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
         'Drupal\\Core\\Config\\UnmetDependenciesException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/UnmetDependenciesException.php',
         'Drupal\\Core\\Config\\UnsupportedDataTypeConfigException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Config/UnsupportedDataTypeConfigException.php',
         'Drupal\\Core\\Controller\\ArgumentResolver\\Psr7RequestValueResolver' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ArgumentResolver/Psr7RequestValueResolver.php',
+        'Drupal\\Core\\Controller\\ArgumentResolver\\RawParameterValueResolver' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ArgumentResolver/RawParameterValueResolver.php',
         'Drupal\\Core\\Controller\\ArgumentResolver\\RouteMatchValueResolver' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ArgumentResolver/RouteMatchValueResolver.php',
         'Drupal\\Core\\Controller\\ControllerBase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ControllerBase.php',
         'Drupal\\Core\\Controller\\ControllerResolver' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Controller/ControllerResolver.php',
@@ -4417,7 +4421,6 @@ class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
         'Drupal\\random\\bunny_hat\\long\\namingspace\\wtf\\still\\going\\strong\\LongNamespace' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Test/good/drupal8/LongNamespace.php',
         'Drush\\Application' => __DIR__ . '/..' . '/drush/drush/src/Application.php',
         'Drush\\Backend\\BackendPathEvaluator' => __DIR__ . '/..' . '/drush/drush/src/Backend/BackendPathEvaluator.php',
-        'Drush\\Backend\\BackendResultSetter' => __DIR__ . '/..' . '/drush/drush/src/Backend/BackendResultSetter.php',
         'Drush\\Boot\\AutoloaderAwareInterface' => __DIR__ . '/..' . '/drush/drush/src/Boot/AutoloaderAwareInterface.php',
         'Drush\\Boot\\AutoloaderAwareTrait' => __DIR__ . '/..' . '/drush/drush/src/Boot/AutoloaderAwareTrait.php',
         'Drush\\Boot\\BaseBoot' => __DIR__ . '/..' . '/drush/drush/src/Boot/BaseBoot.php',
@@ -4441,6 +4444,7 @@ class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
         'Drush\\Commands\\LegacyCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/LegacyCommands.php',
         'Drush\\Commands\\OptionsCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/OptionsCommands.php',
         'Drush\\Commands\\ValidatorsCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/ValidatorsCommands.php',
+        'Drush\\Commands\\config\\ConfigImportCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/config/ConfigImportCommands.php',
         'Drush\\Commands\\config\\ConfigPullCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/config/ConfigPullCommands.php',
         'Drush\\Commands\\core\\BrowseCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/BrowseCommands.php',
         'Drush\\Commands\\core\\CacheCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/CacheCommands.php',
@@ -4564,15 +4568,14 @@ class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
         'Drush\\Sql\\SqlBase' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlBase.php',
         'Drush\\Sql\\SqlException' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlException.php',
         'Drush\\Sql\\SqlMysql' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlMysql.php',
-        'Drush\\Sql\\SqlOracle' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlOracle.php',
         'Drush\\Sql\\SqlPgsql' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlPgsql.php',
         'Drush\\Sql\\SqlSqlite' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlSqlite.php',
-        'Drush\\Sql\\SqlSqlsrv' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlSqlsrv.php',
         'Drush\\Sql\\SqlTableSelectionTrait' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlTableSelectionTrait.php',
         'Drush\\Style\\DrushStyle' => __DIR__ . '/..' . '/drush/drush/src/Style/DrushStyle.php',
         'Drush\\Symfony\\BootstrapCompilerPass' => __DIR__ . '/..' . '/drush/drush/src/Symfony/BootstrapCompilerPass.php',
         'Drush\\Symfony\\BufferedConsoleOutput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/BufferedConsoleOutput.php',
         'Drush\\Symfony\\DrushArgvInput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/DrushArgvInput.php',
+        'Drush\\Symfony\\DrushStyleInjector' => __DIR__ . '/..' . '/drush/drush/src/Symfony/DrushStyleInjector.php',
         'Drush\\Symfony\\IndiscriminateInputDefinition' => __DIR__ . '/..' . '/drush/drush/src/Symfony/IndiscriminateInputDefinition.php',
         'Drush\\Symfony\\LessStrictArgvInput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/LessStrictArgvInput.php',
         'Drush\\TestTraits\\CliTestTrait' => __DIR__ . '/..' . '/drush/drush/src/TestTraits/CliTestTrait.php',
@@ -8391,11 +8394,11 @@ class ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit6ee1df627a8adc837ec3e60eeb75094f::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$classMap;
 
         }, null, ClassLoader::class);
     }

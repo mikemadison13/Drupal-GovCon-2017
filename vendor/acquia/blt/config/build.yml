@@ -39,6 +39,8 @@ cm:
     path: ../config
     # The default config key to use for imports. This is the key used in Drupal's global $config_directories variable.
     # E.g., $config_directories['sync']. It must have a corresponding key in cm.core.dirs. E.g., `cm.core.dirs.sync`.
+    # @todo This feature is deprecated in Drupal 8.8, remove it when we drop support for Drupal 8.8.
+    # @see https://www.drupal.org/node/3018145
     key: sync
     dirs:
       # Corresponding value is defined in config.settings.php.
@@ -54,6 +56,7 @@ deploy:
   # If true, dependencies will be built during deploy. If false, you should commit dependencies directly.
   build-dependencies: true
   dir: ${repo.root}/deploy
+  docroot: ${deploy.dir}/docroot
   exclude_file: ${blt.root}/scripts/blt/deploy/deploy-exclude.txt
   exclude_additions_file: ${repo.root}/blt/deploy-exclude-additions.txt
   gitignore_file: ${blt.root}/scripts/blt/deploy/.gitignore
@@ -196,6 +199,7 @@ command-hooks:
     dir: ${docroot}
     command: null
 
+# Warning: BLT will attempt to kill processes on the ports listed below, which could lead to unexpected behavior if you use common ports (e.g. 80).
 tests:
   reports:
     localDir: ${repo.root}/reports
