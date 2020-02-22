@@ -5,7 +5,8 @@ langcode: en
 is_admin: false
 permissions:
   - administer node display
-  - administer panelizer
+  - configure any layout
 dependencies:
   module:
     - lightning_roles
+    - node

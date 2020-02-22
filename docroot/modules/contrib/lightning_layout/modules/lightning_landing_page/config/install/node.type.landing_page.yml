@@ -1,6 +1,5 @@
 langcode: en
 status: true
-third_party_settings: {  }
 name: 'Landing page'
 type: landing_page
 description: 'A special page with its own one-off layout and content.'

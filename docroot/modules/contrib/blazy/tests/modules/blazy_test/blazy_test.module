@@ -5,8 +5,8 @@
  * Testing various Blazy hooks, etc.
  */
 
-use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\BlazyAlter;
 
 /**
  * Implements hook_theme().
@@ -72,14 +72,6 @@ function blazy_test_pre_render($image) {
 }
 
 /**
- * Implements hook_hook_info().
- */
-function blazy_test_hook_info() {
-  $hooks['blazy_test_skins_info'] = ['group' => 'blazy_test'];
-  return $hooks;
-}
-
-/**
  * Implements hook_library_info_alter().
  */
 function blazy_test_library_info_alter(array &$libraries, $extension) {
@@ -87,7 +79,7 @@ function blazy_test_library_info_alter(array &$libraries, $extension) {
     return;
   }
 
-  $path = DRUPAL_ROOT . '/libraries/blazy/blazy.js';
+  $path = \Drupal::root() . '/libraries/blazy/blazy.js';
   if (!is_file($path)) {
     $libraries['blazy']['js'] = ['https://cdn.jsdelivr.net/npm/blazy/blazy.js' => ['type' => 'external', 'weight' => -4]];
     unset($libraries['blazy']['js']['/libraries/blazy/blazy.js']);
@@ -99,5 +91,19 @@ function blazy_test_library_info_alter(array &$libraries, $extension) {
  */
 function blazy_test_config_schema_info_alter(array &$definitions) {
   $extra = ['thumbnail' => ''] + BlazyDefault::gridSettings();
-  Blazy::configSchemaInfoAlter($definitions, 'blazy_base', BlazyDefault::extendedSettings() + $extra);
+  BlazyAlter::configSchemaInfoAlter($definitions, 'blazy_base', BlazyDefault::extendedSettings() + $extra);
+}
+
+/**
+ * Attempts to satisfy the tests for <= D8.7.
+ */
+if (!function_exists('file_valid_uri')) {
+
+  /**
+   * Dummy function.
+   */
+  function file_valid_uri() {
+    // Empty block to satisfy coder.
+  }
+
 }

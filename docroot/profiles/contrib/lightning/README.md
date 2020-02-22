@@ -33,11 +33,9 @@ Drupal Console command (`lightning:subprofile`) which will generate a
 sub-profile for you.
 
 #### Installing from exported config
-If you have a config export of a site built with Lighting, you can install it
-using the [Config Installer](https://drupal.org/project/config_installer)
-profile. This profile is fully supported by Lightning (we even run our tests
-against it). You can find more information about installing Lightning from
-exported config [here](https://lightning.acquia.com/blog/using-configuration-installer-lightning).
+Lightning can be installed from a set of exported configuration (e.g., using the
+--existing-config option with `drush site:install`). This method of installation
+is fully supported and tested.
 
 ## What Lightning Does
 Through custom, contrib, and core modules plus configuration, Lightning aims to
@@ -52,14 +50,12 @@ The current version of media includes the following functionality:
 * The ability to place media into the text area and have it fully embedded as it
   will appear in the live entity. The following media types are currently
   supported:
-  * Audio files
   * Tweets
   * Instagram posts
-  * Videos (YouTube, Vimeo, and files are supported out of the box)
+  * Videos (YouTube and Vimeo supported out of the box)
   * Images
 * Drag-and-drop bulk image uploads.
 * Image cropping.
-* Support for creating slideshows and carousels of media assets.
 * Ability to create new media through the media library (/media/add)
 * Ability to embed tweets, Instagrams, and YouTube/Vimeo videos directly into
   CKEditor by pasting the video URL
@@ -80,18 +76,11 @@ can use them in your Lightning site:
   * [Pinterest](https://www.drupal.org/project/lightning_media_pinterest)  
 
 ### Layout
-Lightning includes the Panelizer module, which allows you to configure the
-layout of any content type using a drag-and-drop interface (Panels IPE).
-Lightning also includes a Landing Page content type for you to create
-landing pages with their own one-off layouts and content.
-
-Any content type that uses Panelizer will allow you to set up default layouts
-for each view mode of that content type, which you can choose from (or override
-on a one-off basis) for individual pieces of content.
-
-Eight layouts are provided out of the box by Panels. You can create your own
-layouts (see the Layout Discovery module bundled with Core) or install a
-contributed library of layouts like [Radix Layouts](https://www.drupal.org/project/radix_layouts).
+Lightning includes a Landing Page content type which allows editors to create
+and place discrete blocks of content in any order and layout they wish using an
+intuitive, accessible interface. Lightning also allows site builders to define
+default layouts for content types using the same interface - or define multiple
+layouts and allow editors to choose which one to use for each post.
 
 ### Workflow
 Lightning includes tools for building organization-specific content workflows.
@@ -104,7 +93,7 @@ specific future date and time.
 ### API-First
 Lightning ships with several modules which, together, quickly set up Drupal to
 deliver data to decoupled applications via a standardized API. By default,
-Lightning installs the OpenAPI and JSON API modules, plus the Simple OAuth
+Lightning installs the OpenAPI and JSON:API modules, plus the Simple OAuth
 module, as a toolkit for authentication, authorization, and delivery of data
 to API consumers. Currently, Lightning includes no default configuration for
 any of these modules, because it does not make any assumptions about how the
@@ -125,14 +114,18 @@ Please use the [Drupal.org issue queue][issue_queue] for latest information and
 to request features or bug fixes.
 
 ## Known Issues
+* There are a few known issues when using the Claro administrative theme with
+  various Lightning components.
+  See https://github.com/acquia/lightning/pull/660#pullrequestreview-331654008
+  for more information.
 
 ### Media
 * If you upload an image into an image field using the new image browser, you
   can set the image's alt text at upload time, but that text will not be
   replicated to the image field. This is due to a limitation of Entity Browser's
   API.
-* Some of the Lightning contributed media module listed above might not yet be
-  compatible with the core Media module.
+* Some of the Lightning contributed media modules listed above might not yet be
+  compatible with the Core Media entity.
 * Using the bulk upload feature in environments with a load balancer might
   result in some images not being saved.
 

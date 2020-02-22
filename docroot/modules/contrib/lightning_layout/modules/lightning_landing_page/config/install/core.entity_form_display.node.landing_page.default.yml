@@ -3,10 +3,8 @@ status: true
 dependencies:
   config:
     - field.field.node.landing_page.body
-    - field.field.node.landing_page.panelizer
     - node.type.landing_page
   module:
-    - panelizer
     - path
     - text
 id: node.landing_page.default
@@ -29,16 +27,17 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
-  panelizer:
-    type: panelizer
-    weight: 5
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   path:
     type: path
     weight: 4
     settings: {  }
+    third_party_settings: {  }
+    region: content
+  status:
+    type: boolean_checkbox
+    weight: 10
+    settings:
+      display_label: true
     third_party_settings: {  }
     region: content
   title:
@@ -58,13 +57,18 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  status:
-    type: boolean_checkbox
-    weight: 10
-    settings:
-      display_label: true
-    third_party_settings: {  }
+  field_meta_tags:
+    type: metatag_firehose
     region: content
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+  layout_selection:
+    type: options_select
+    region: content
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   promote: true
   sticky: true

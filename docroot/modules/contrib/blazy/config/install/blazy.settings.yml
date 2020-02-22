@@ -1,6 +1,9 @@
 admin_css: true
+fx: ''
+native: true
+noscript: false
 responsive_image: false
-unbreakpoints: false
+unbreakpoints: true
 one_pixel: true
 placeholder: ''
 extras: {}
@@ -9,6 +12,7 @@ blazy:
   offset: 100
   saveViewportOffsetDelay: 50
   validateDelay: 25
+  container: ''
 io:
   enabled: false
   unblazy: false

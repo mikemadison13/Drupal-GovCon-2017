@@ -48,6 +48,7 @@ class BlazyAdminFormatterUnitTest extends UnitTestCase {
     $container->set('config.typed', $this->typedConfig);
     $container->set('string_translation', $this->getStringTranslationStub());
     $container->set('date.formatter', $this->dateFormatter);
+    $container->set('blazy.manager', $this->blazyManager);
 
     \Drupal::setContainer($container);
 

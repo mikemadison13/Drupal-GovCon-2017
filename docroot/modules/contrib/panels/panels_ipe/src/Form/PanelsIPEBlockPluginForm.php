@@ -14,7 +14,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\panels\Plugin\DisplayVariant\PanelsDisplayVariant;
 use Drupal\panels_ipe\PanelsIPEBlockRendererTrait;
-use Drupal\user\SharedTempStoreFactory;
+use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -40,7 +40,7 @@ class PanelsIPEBlockPluginForm extends FormBase {
   protected $renderer;
 
   /**
-   * @var \Drupal\user\SharedTempStore
+   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
    */
   protected $tempStore;
 
@@ -57,7 +57,7 @@ class PanelsIPEBlockPluginForm extends FormBase {
    * @param \Drupal\Component\Plugin\PluginManagerInterface $block_manager
    * @param \Drupal\Core\Plugin\Context\ContextHandlerInterface $context_handler
    * @param \Drupal\Core\Render\RendererInterface $renderer
-   * @param \Drupal\user\SharedTempStoreFactory $temp_store_factory
+   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $temp_store_factory
    */
   public function __construct(PluginManagerInterface $block_manager, ContextHandlerInterface $context_handler, RendererInterface $renderer, SharedTempStoreFactory $temp_store_factory) {
     $this->blockManager = $block_manager;
@@ -74,7 +74,7 @@ class PanelsIPEBlockPluginForm extends FormBase {
       $container->get('plugin.manager.block'),
       $container->get('context.handler'),
       $container->get('renderer'),
-      $container->get('user.shared_tempstore')
+      $container->get('tempstore.shared')
     );
   }
 

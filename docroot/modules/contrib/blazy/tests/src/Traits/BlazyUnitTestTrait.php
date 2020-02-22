@@ -79,7 +79,7 @@ trait BlazyUnitTestTrait {
       'ratio'           => 'fluid',
       'caption'         => ['alt' => 'alt', 'title' => 'title'],
       'sizes'           => '100w',
-    ] + BlazyDefault::extendedSettings() + BlazyDefault::itemSettings();
+    ] + BlazyDefault::extendedSettings() + BlazyDefault::itemSettings() + $this->getDefaultFieldDefinition();
 
     return empty($this->formatterSettings) ? $defaults : array_merge($defaults, $this->formatterSettings);
   }
@@ -115,6 +115,22 @@ trait BlazyUnitTestTrait {
   }
 
   /**
+   * Returns the default field definition.
+   *
+   * @return array
+   *   The default field definition.
+   */
+  protected function getDefaultFieldDefinition() {
+    return [
+      'bundle'            => isset($this->bundle) ? $this->bundle : 'bundle_test',
+      'current_view_mode' => 'default',
+      'entity_type'       => $this->entityType,
+      'field_name'        => $this->testFieldName,
+      'field_type'        => 'image',
+    ];
+  }
+
+  /**
    * Returns the default field formatter definition.
    *
    * @return array
@@ -135,10 +151,6 @@ trait BlazyUnitTestTrait {
       'breakpoints'       => BlazyDefault::getConstantBreakpoints(),
       'captions'          => ['alt' => 'Alt', 'title' => 'Title'],
       'classes'           => ['field_class' => 'Classes'],
-      'current_view_mode' => 'default',
-      'entity_type'       => $this->entityType,
-      'field_name'        => $this->testFieldName,
-      'field_type'        => 'image',
       'multimedia'        => TRUE,
       'images'            => [$this->testFieldName => $this->testFieldName],
       'layouts'           => ['top' => 'Top'],
@@ -158,7 +170,7 @@ trait BlazyUnitTestTrait {
         'image_style',
         'media_switch',
       ],
-    ] + $deprecated;
+    ] + $deprecated + $this->getDefaultFieldDefinition();
   }
 
   /**
@@ -245,7 +257,7 @@ trait BlazyUnitTestTrait {
 
     $image['#build']['settings'] = array_merge($this->getCacheMetaData(), $build['settings']);
     $image['#build']['item'] = $build['item'];
-    return $this->blazyManager->preRenderImage($image);
+    return $this->blazyManager->preRenderBlazy($image);
   }
 
   /**
@@ -287,7 +299,7 @@ trait BlazyUnitTestTrait {
     $this->testFieldType = 'image';
     $this->testPluginId  = 'blazy';
     $this->maxItems      = 3;
-    $this->maxParagraphs = 20;
+    $this->maxParagraphs = 30;
   }
 
   /**
@@ -379,6 +391,18 @@ if (!function_exists('file_valid_uri')) {
    * Dummy function.
    */
   function file_valid_uri() {
+    // Empty block to satisfy coder.
+  }
+
+}
+
+
+if (!function_exists('blazy')) {
+
+  /**
+   * Dummy function.
+   */
+  function blazy() {
     // Empty block to satisfy coder.
   }
 

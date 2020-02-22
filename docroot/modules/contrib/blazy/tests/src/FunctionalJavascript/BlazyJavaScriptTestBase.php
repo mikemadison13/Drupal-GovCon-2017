@@ -19,6 +19,11 @@ abstract class BlazyJavaScriptTestBase extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
     'field',
     'filter',
@@ -37,47 +42,34 @@ abstract class BlazyJavaScriptTestBase extends WebDriverTestBase {
 
     $this->setUpVariables();
 
+    $this->root                   = $this->container->get('app.root');
     $this->fileSystem             = $this->container->get('file_system');
     $this->entityFieldManager     = $this->container->get('entity_field.manager');
     $this->formatterPluginManager = $this->container->get('plugin.manager.field.formatter');
     $this->blazyAdmin             = $this->container->get('blazy.admin');
     $this->blazyManager           = $this->container->get('blazy.manager');
     $this->scriptLoader           = 'blazy';
+    $this->maxParagraphs          = 180;
   }
 
   /**
    * Test the Blazy element from loading to loaded states.
    */
   public function doTestFormatterDisplay() {
-    $data['settings']['blazy'] = TRUE;
-    $data['settings']['ratio'] = '';
-    $data['settings']['image_style'] = 'thumbnail';
-
-    $this->setUpContentTypeTest($this->bundle);
-    $this->setUpFormatterDisplay($this->bundle, $data);
-    $this->setUpContentWithItems($this->bundle);
-    $session = $this->getSession();
     $image_path = $this->getImagePath(TRUE);
 
-    $this->drupalGet('node/' . $this->entity->id());
-
-    // Ensures Blazy is not loaded on page load.
-    // @todo recheck since this appears to be randomly failing since D8.7.
-    // Likely the images are not having enough vertical space to be below the
-    // fold. This appears to be no issues with BlazyFilter.
-    // @todo $this->assertSession()->elementNotExists('css', '.b-loaded');
     // Capture the initial page load moment.
     $this->createScreenshot($image_path . '/' . $this->scriptLoader . '_1_initial.png');
     $this->assertSession()->elementExists('css', '.b-lazy');
 
     // Trigger Blazy to load images by scrolling down window.
-    $session->executeScript('window.scrollTo(0, document.body.scrollHeight);');
+    $this->getSession()->executeScript('window.scrollTo(0, document.body.scrollHeight);');
 
     // Capture the loading moment after scrolling down the window.
     $this->createScreenshot($image_path . '/' . $this->scriptLoader . '_2_loading.png');
 
     // Wait a moment.
-    $session->wait(3000);
+    $this->getSession()->wait(3000);
 
     // Verifies that one of the images is there once loaded.
     $this->assertNotEmpty($this->assertSession()->waitForElement('css', '.b-loaded'));

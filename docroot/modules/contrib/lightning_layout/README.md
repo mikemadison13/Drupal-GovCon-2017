@@ -14,6 +14,14 @@ box to be customizable using the
 [Panelizer](https://drupal.org/project/panelizer) module and visually editable
 using the drag-and-drop Panels In-Place Editor.
 
+#### Banner Block (`lightning_banner_block`)
+Provides a custom block type called "Banner", which has an image and body text,
+which is displayed on top of the image.
+
+#### Map Block (`lightning_map_block`)
+Provides a custom block type called "Google Map", which displays an interactive
+Google Map centered on a particular location or address.
+
 ### Installation
 This component can only be installed using Composer. To add it to your Drupal
 code base:

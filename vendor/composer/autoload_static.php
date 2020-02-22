@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
+class ComposerStaticInitf607d584ce1d034f99293b6eb384ba37
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -224,7 +224,6 @@ class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
             'Asm89\\Stack\\' => 12,
             'Ajgl\\Twig\\Extension\\' => 20,
             'Acquia\\Lightning\\' => 17,
-            'Acquia\\LightningExtension\\' => 26,
             'Acquia\\DrupalSpecTool\\' => 22,
             'Acquia\\Blt\\Tests\\Robo\\' => 22,
             'Acquia\\Blt\\Tests\\' => 17,
@@ -723,10 +722,6 @@ class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
         array (
             0 => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src',
         ),
-        'Acquia\\LightningExtension\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension',
-        ),
         'Acquia\\DrupalSpecTool\\' => 
         array (
             0 => __DIR__ . '/..' . '/acquia/drupal-spec-tool/src',
@@ -1022,30 +1017,20 @@ class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
         'Acquia\\DrupalSpecTool\\Context\\MenuContext' => __DIR__ . '/..' . '/acquia/drupal-spec-tool/src/Context/MenuContext.php',
         'Acquia\\DrupalSpecTool\\Context\\ViewsContext' => __DIR__ . '/..' . '/acquia/drupal-spec-tool/src/Context/ViewsContext.php',
         'Acquia\\DrupalSpecTool\\Context\\WorkflowContext' => __DIR__ . '/..' . '/acquia/drupal-spec-tool/src/Context/WorkflowContext.php',
-        'Acquia\\LightningExtension\\AwaitTrait' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/AwaitTrait.php',
         'Acquia\\LightningExtension\\Context\\AwaitTrait' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/AwaitTrait.inc',
-        'Acquia\\LightningExtension\\Context\\BlockContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/BlockContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\CkEditorContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/CkEditorContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\DebugContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/DebugContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\DisplayModeContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/DisplayModeContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\DropzoneContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/DropzoneContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\ElementContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/ElementContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\EntityBrowserContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/EntityBrowserContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\EntityContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/EntityContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\FieldApiContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/FieldApiContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\ImageBrowserContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/ImageBrowserContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\MediaBrowserContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/MediaBrowserContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\MediaEntityContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/MediaEntityContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\MediaLibraryContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/MediaLibraryContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\ModerationContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_workflow/tests/contexts/ModerationContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\PanelizerContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/contexts/PanelizerContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\PanelsIPEContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/contexts/PanelsIPEContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\PanelsInPlaceContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/PanelsInPlaceContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\TestModuleContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/TestModuleContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\UndoContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/UndoContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\UtilityContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/Context/UtilityContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\ViewsContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/ViewsContext.behat.inc',
-        'Acquia\\LightningExtension\\DetailsTrait' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/LightningExtension/DetailsTrait.php',
         'Acquia\\Lightning\\Composer\\AssetPackagist' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/Composer/AssetPackagist.php',
         'Acquia\\Lightning\\Composer\\ConfigureLegacyProject' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/Composer/ConfigureLegacyProject.php',
         'Acquia\\Lightning\\Composer\\Package' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/src/Composer/Package.php',
@@ -4325,14 +4310,9 @@ class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
         'Drupal\\Tests\\lightning_core\\Unit\\TestUpdateManager' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Unit/UpdateManagerTest.php',
         'Drupal\\Tests\\lightning_core\\Unit\\UpdateManagerTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Unit/UpdateManagerTest.php',
         'Drupal\\Tests\\lightning_layout\\FixtureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/FixtureContext.php',
-        'Drupal\\Tests\\lightning_layout\\FunctionalJavascript\\IpeQuickEditTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/FunctionalJavascript/IpeQuickEditTest.php',
-        'Drupal\\Tests\\lightning_layout\\FunctionalJavascript\\PanelizerTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/FunctionalJavascript/PanelizerTest.php',
-        'Drupal\\Tests\\lightning_layout\\FunctionalJavascript\\PanelizerWizardTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/FunctionalJavascript/PanelizerWizardTest.php',
         'Drupal\\Tests\\lightning_layout\\Functional\\EntityBlockTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Functional/EntityBlockTest.php',
-        'Drupal\\Tests\\lightning_layout\\Functional\\PanelizerTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Functional/PanelizerTest.php',
-        'Drupal\\Tests\\lightning_layout\\Functional\\ViewModeTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Functional/ViewModeTest.php',
-        'Drupal\\Tests\\lightning_layout\\Kernel\\ContentTypePermissionsTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Kernel/ContentTypePermissionsTest.php',
-        'Drupal\\Tests\\lightning_layout\\Traits\\PanelsIPETrait' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Traits/PanelsIPETrait.php',
+        'Drupal\\Tests\\lightning_layout\\Functional\\LayoutBuilderTranslationsUpdateTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Functional/LayoutBuilderTranslationsUpdateTest.php',
+        'Drupal\\Tests\\lightning_layout\\Kernel\\HooksTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_layout/tests/src/Kernel/HooksTest.php',
         'Drupal\\Tests\\lightning_media\\FixtureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FixtureContext.php',
         'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\CKEditorMediaBrowserTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/CKEditorMediaBrowserTest.php',
         'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\EmbeddedMediaTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/EmbeddedMediaTest.php',
@@ -4695,9 +4675,7 @@ class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
         'Egulias\\EmailValidator\\Warning\\QuotedString' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/QuotedString.php',
         'Egulias\\EmailValidator\\Warning\\TLD' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/TLD.php',
         'Egulias\\EmailValidator\\Warning\\Warning' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/Warning.php',
-        'EntitySubContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/tests/features/bootstrap/entity.behat.inc',
         'Error' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/Error.php',
-        'FeatureContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/tests/features/bootstrap/FeatureContext.php',
         'Goutte\\Client' => __DIR__ . '/..' . '/fabpot/goutte/Goutte/Client.php',
         'Grasmash\\Expander\\Expander' => __DIR__ . '/..' . '/grasmash/expander/src/Expander.php',
         'Grasmash\\Expander\\Stringifier' => __DIR__ . '/..' . '/grasmash/expander/src/Stringifier.php',
@@ -5149,7 +5127,6 @@ class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
         'League\\OAuth2\\Server\\ResponseTypes\\BearerTokenResponse' => __DIR__ . '/..' . '/league/oauth2-server/src/ResponseTypes/BearerTokenResponse.php',
         'League\\OAuth2\\Server\\ResponseTypes\\RedirectResponse' => __DIR__ . '/..' . '/league/oauth2-server/src/ResponseTypes/RedirectResponse.php',
         'League\\OAuth2\\Server\\ResponseTypes\\ResponseTypeInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/ResponseTypes/ResponseTypeInterface.php',
-        'LightningSubContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/tests/features/bootstrap/lightning.behat.inc',
         'Masterminds\\HTML5' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5.php',
         'Masterminds\\HTML5\\Elements' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Elements.php',
         'Masterminds\\HTML5\\Entities' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Entities.php',
@@ -5831,7 +5808,6 @@ class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
         'PackageVersions\\FallbackVersions' => __DIR__ . '/..' . '/ocramius/package-versions/src/PackageVersions/FallbackVersions.php',
         'PackageVersions\\Installer' => __DIR__ . '/..' . '/ocramius/package-versions/src/PackageVersions/Installer.php',
         'PackageVersions\\Versions' => __DIR__ . '/..' . '/ocramius/package-versions/src/PackageVersions/Versions.php',
-        'PanelsSubContext' => __DIR__ . '/../..' . '/docroot/profiles/contrib/lightning/tests/features/bootstrap/panels.behat.inc',
         'ParseError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ParseError.php',
         'PhpParser\\Builder' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder.php',
         'PhpParser\\BuilderFactory' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/BuilderFactory.php',
@@ -8394,11 +8370,11 @@ class ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit0a568d6b008014c15e6caffd3e5a800b::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitf607d584ce1d034f99293b6eb384ba37::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitf607d584ce1d034f99293b6eb384ba37::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitf607d584ce1d034f99293b6eb384ba37::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitf607d584ce1d034f99293b6eb384ba37::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitf607d584ce1d034f99293b6eb384ba37::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -13,7 +13,20 @@ class BlazyBlazyJavaScriptTest extends BlazyJavaScriptTestBase {
    * Test the Blazy element from loading to loaded states.
    */
   public function testFormatterDisplay() {
-    parent::doTestFormatterDisplay();
+    $data['settings']['blazy'] = TRUE;
+    $data['settings']['ratio'] = '';
+    $data['settings']['image_style'] = 'thumbnail';
+
+    $this->setUpContentTypeTest($this->bundle);
+    $this->setUpFormatterDisplay($this->bundle, $data);
+    $this->setUpContentWithItems($this->bundle);
+
+    $this->drupalGet('node/' . $this->entity->id());
+
+    // Ensures Blazy is not loaded on page load.
+    $this->assertSession()->elementNotExists('css', '.b-loaded');
+
+    $this->doTestFormatterDisplay();
   }
 
 }
