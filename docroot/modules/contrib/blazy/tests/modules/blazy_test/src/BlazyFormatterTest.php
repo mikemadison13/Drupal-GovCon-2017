@@ -2,12 +2,12 @@
 
 namespace Drupal\blazy_test;
 
-use Drupal\blazy\BlazyFormatter;
+use Drupal\blazy\BlazyFormatterManager;
 
 /**
  * Implements GridStackFormatterInterface.
  */
-class BlazyFormatterTest extends BlazyFormatter implements BlazyFormatterTestInterface {
+class BlazyFormatterTest extends BlazyFormatterManager implements BlazyFormatterTestInterface {
 
   /**
    * Gets the thumbnail image using theme_image_style().

@@ -108,16 +108,9 @@ trait BlazyPropertiesTestTrait {
   /**
    * The created item.
    *
-   * @var \Drupal\image\Plugin\Field\FieldType\ImageItem
+   * @var string
    */
   protected $testItem;
-
-  /**
-   * The created image item.
-   *
-   * @var \Drupal\image\Plugin\Field\FieldType\ImageItem
-   */
-  protected $image;
 
   /**
    * The created items.

@@ -4,4 +4,4 @@ extlink_admin.settings:
     _form: '\Drupal\extlink\Form\ExtlinkAdminSettingsForm'
     _title: 'External Links'
   requirements:
-    _permission: 'administer extlink'
+    _permission: 'administer site configuration'

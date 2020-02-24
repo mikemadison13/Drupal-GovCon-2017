@@ -17,11 +17,6 @@ use Drupal\blazy_ui\Form\BlazySettingsForm;
 class BlazySettingsFormTest extends KernelTestBase {
 
   /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
-
-  /**
    * The Blazy form object under test.
    *
    * @var \Drupal\blazy_ui\Form\BlazySettingsForm
@@ -54,7 +49,10 @@ class BlazySettingsFormTest extends KernelTestBase {
 
     $this->blazyManager = $this->container->get('blazy.manager');
 
-    $this->blazySettingsForm = BlazySettingsForm::create($this->container);
+    $this->blazySettingsForm = new BlazySettingsForm(
+      $this->blazyManager->getConfigFactory(),
+      $this->container->get('library.discovery')
+    );
   }
 
   /**

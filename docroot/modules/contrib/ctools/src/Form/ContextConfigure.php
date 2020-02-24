@@ -2,9 +2,11 @@
 
 namespace Drupal\ctools\Form;
 
+
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\RedirectCommand;
+use Drupal\Core\Entity\Entity;
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -12,23 +14,15 @@ use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\Plugin\Context\ContextInterface;
 use Drupal\Core\Url;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 abstract class ContextConfigure extends FormBase {
 
   /**
-   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
+   * @var \Drupal\user\SharedTempStoreFactory
    */
   protected $tempstore;
-
-  /**
-   * Object EntityTypeManager.
-   *
-   * @var Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
 
   /**
    * @var string
@@ -36,7 +30,7 @@ abstract class ContextConfigure extends FormBase {
   protected $tempstore_id;
 
   /**
-   * @var string
+   * @var string;
    */
   protected $machine_name;
 
@@ -44,15 +38,11 @@ abstract class ContextConfigure extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('tempstore.shared'),
-      $container->get('entity_type.manager')
-    );
+    return new static($container->get('user.shared_tempstore'));
   }
 
-  function __construct(SharedTempStoreFactory $tempstore, EntityTypeManagerInterface $entity_type_manager) {
+  function __construct(SharedTempStoreFactory $tempstore) {
     $this->tempstore = $tempstore;
-    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -177,7 +167,7 @@ abstract class ContextConfigure extends FormBase {
     if (strpos($context_definition->getDataType(), 'entity:') === 0) {
       list(, $entity_type) = explode(':', $context_definition->getDataType());
       if (is_numeric($form_state->getValue('context_value'))) {
-        $value = $this->entityTypeManager->getStorage($entity_type)->load($form_state->getValue('context_value'));
+        $value = \Drupal::entityTypeManager()->getStorage($entity_type)->load($form_state->getValue('context_value'));
       }
     }
     // No loading required for non-entity values.

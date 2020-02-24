@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\lightning_landing_page\Functional;
 
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 use Drupal\Tests\BrowserTestBase;
 
 /**
@@ -13,24 +15,25 @@ class PathautoPatternTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['lightning_landing_page'];
+  protected static $modules = [
+    'lightning_landing_page',
+    'pathauto',
+  ];
 
   /**
-   * Tests that landing pages are available at path '/[node:title]'.
+   * Tests that Landing page nodes are available at path '/[node:title]'.
    */
   public function testLandingPagePattern() {
-    // Install Pathauto so that the optional config which integrates landing
-    // pages with it will be picked up.
-    $this->container->get('module_installer')->install(['pathauto']);
-
-    $node = $this->drupalCreateNode([
+    $node = Node::create([
       'type' => 'landing_page',
+      'title' => 'Foo Bar',
+      'status' => NodeInterface::PUBLISHED,
+      'uid' => 1,
     ]);
-    $this->assertSame(SAVED_UPDATED, $node->setTitle('Foo Bar')->setPublished()->save());
-
+    $node->save();
     $this->drupalGet('/foo-bar');
+    $this->assertSession()->pageTextContains('Foo Bar');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->pageTextContains($node->getTitle());
   }
 
 }

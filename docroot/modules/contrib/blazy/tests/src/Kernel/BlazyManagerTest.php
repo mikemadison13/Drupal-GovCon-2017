@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\blazy\Kernel;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
 
@@ -38,18 +39,17 @@ class BlazyManagerTest extends BlazyKernelTestBase {
    * @param bool $expected_has_responsive_image
    *   Has the responsive image style ID.
    *
-   * @covers ::preRenderBlazy
+   * @covers ::preRenderImage
    * @covers \Drupal\blazy\BlazyLightbox::build
    * @covers \Drupal\blazy\BlazyLightbox::buildCaptions
    * @dataProvider providerTestPreRenderImage
    */
   public function testPreRenderImage(array $settings = [], $expected_has_responsive_image = FALSE) {
-    $build = $this->data;
+    $build             = $this->data;
     $settings['count'] = $this->maxItems;
-    $settings['uri'] = $this->uri;
-    $settings['resimage'] = $expected_has_responsive_image ? $this->blazyManager->entityLoad('blazy_responsive_test', 'responsive_image_style') : NULL;
+    $settings['uri']   = $this->uri;
     $build['settings'] = array_merge($build['settings'], $settings);
-    $switch_css = str_replace('_', '-', $settings['media_switch']);
+    $switch_css        = str_replace('_', '-', $settings['media_switch']);
 
     $element = $this->doPreRenderImage($build);
 
@@ -62,7 +62,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
       $this->assertArrayHasKey('#url', $element);
     }
 
-    $this->assertEquals($expected_has_responsive_image, !empty($element['#settings']['responsive_image_style_id']));
+    $this->assertEquals($expected_has_responsive_image, !empty($element['#image']['#responsive_image_style_id']));
   }
 
   /**
@@ -83,6 +83,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
       [
         'lightbox'               => TRUE,
         'media_switch'           => 'photobox',
+        'resimage'               => TRUE,
         'responsive_image_style' => 'blazy_responsive_test',
       ],
       TRUE,
@@ -112,17 +113,20 @@ class BlazyManagerTest extends BlazyKernelTestBase {
    *   The settings being tested.
    * @param bool $use_uri
    *   Whether to provide image URI, or not.
+   * @param object $item
+   *   Whether to provide image item, or not.
    * @param bool $iframe
    *   Whether to expect an iframe, or not.
    * @param mixed|bool|int $expected
    *   The expected output.
    *
-   * @covers \Drupal\blazy\Blazy::preprocessBlazy
-   * @covers \Drupal\blazy\Blazy::urlAndDimensions
+   * @covers \Drupal\blazy\Blazy::buildAttributes
+   * @covers \Drupal\blazy\Blazy::buildBreakpointAttributes
+   * @covers \Drupal\blazy\Blazy::buildUrlAndDimensions
    * @covers \Drupal\blazy\Dejavu\BlazyDefault::entitySettings
-   * @dataProvider providerPreprocessBlazy
+   * @dataProvider providerBuildAttributes
    */
-  public function testPreprocessBlazy(array $settings, $use_uri, $iframe, $expected) {
+  public function testBuildAttributes(array $settings, $use_uri, $item, $iframe, $expected) {
     $variables = ['attributes' => []];
     $settings = array_merge($this->getFormatterSettings(), $settings);
     $settings += BlazyDefault::itemSettings();
@@ -137,10 +141,10 @@ class BlazyManagerTest extends BlazyKernelTestBase {
       $settings = array_merge(BlazyDefault::entitySettings(), $settings);
     }
 
-    $variables['element']['#item'] = $this->testItem;
+    $variables['element']['#item'] = $item ? $this->testItem : NULL;
     $variables['element']['#settings'] = $settings;
 
-    Blazy::preprocessBlazy($variables);
+    Blazy::buildAttributes($variables);
 
     $image = $expected == TRUE ? !empty($variables['image']) : empty($variables['image']);
     $iframe = $iframe == TRUE ? !empty($variables['iframe_attributes']) : empty($variables['iframe_attributes']);
@@ -150,9 +154,9 @@ class BlazyManagerTest extends BlazyKernelTestBase {
   }
 
   /**
-   * Provider for ::testPreprocessBlazy.
+   * Provider for ::testBuildAttributes.
    */
-  public function providerPreprocessBlazy() {
+  public function providerBuildAttributes() {
     $breakpoints = $this->getDataBreakpoints();
 
     $data[] = [
@@ -161,6 +165,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
         'breakpoints' => [],
       ],
       FALSE,
+      NULL,
       FALSE,
       FALSE,
     ];
@@ -169,6 +174,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
         'background' => FALSE,
         'breakpoints' => [],
       ],
+      FALSE,
       TRUE,
       FALSE,
       TRUE,
@@ -182,6 +188,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
         'width' => 640,
         'height' => 360,
       ],
+      TRUE,
       TRUE,
       FALSE,
       FALSE,
@@ -205,8 +212,6 @@ class BlazyManagerTest extends BlazyKernelTestBase {
       'item' => $this->testItem,
       'uri' => $this->uri,
       'responsive_image_style_id' => $responsive_image_style_id,
-      'width' => 600,
-      'height' => 480,
     ];
 
     template_preprocess_responsive_image($variables);
@@ -235,9 +240,42 @@ class BlazyManagerTest extends BlazyKernelTestBase {
   }
 
   /**
+   * Tests isCrop.
+   *
+   * @covers ::isCrop
+   * @dataProvider providerIsCrop
+   */
+  public function testIsCrop($image_style_id, $expected) {
+    $is_cropped = $this->blazyManager->isCrop($image_style_id);
+
+    $this->assertEquals($expected, !empty($is_cropped));
+  }
+
+  /**
+   * Provider for ::testIsCrop.
+   */
+  public function providerIsCrop() {
+    return [
+      'Cropped image style' => [
+        'blazy_crop',
+        TRUE,
+      ],
+      'Non-cropped image style' => [
+        'large',
+        FALSE,
+      ],
+    ];
+  }
+
+  /**
    * Tests cases for various methods.
    *
    * @covers ::attach
+   * @covers ::buildDataBlazy
+   * @covers ::getLightboxes
+   * @covers ::setLightboxes
+   * @covers ::buildSkins
+   * @covers ::getCache
    */
   public function testBlazyManagerMethods() {
     // Tests Blazy attachments.
@@ -245,6 +283,51 @@ class BlazyManagerTest extends BlazyKernelTestBase {
 
     $attachments = $this->blazyManager->attach($attach);
     $this->assertArrayHasKey('blazy', $attachments['drupalSettings']);
+
+    // Tests Blazy [data-blazy] attributes.
+    $build     = $this->data;
+    $settings  = &$build['settings'];
+    $settings += BlazyDefault::itemSettings();
+    $item      = $build['item'];
+
+    $settings['first_item']  = $item;
+    $settings['first_uri']   = $this->uri;
+    $settings['blazy_data']  = [];
+    $settings['background']  = TRUE;
+    $settings['breakpoints'] = $this->getDataBreakpoints();
+
+    // Ensure Blazy can be activated by breakpoints.
+    $this->blazyManager->buildDataBlazy($settings, $build);
+    $this->assertNotEmpty($settings['blazy']);
+
+    // Tests Blazy lightboxes.
+    $this->blazyManager->setLightboxes('blazy_test');
+    $lightboxes = $this->blazyManager->getLightboxes();
+
+    $this->assertFalse(in_array('nixbox', $lightboxes));
+    $this->assertTrue(in_array('blazy_test', $lightboxes));
+
+    // Tests for skins.
+    // Tests skins with a single expected method BlazySkinTest::skins().
+    $skins = $this->blazyManager->buildSkins('blazy_test', '\Drupal\blazy_test\BlazySkinTest');
+
+    // Verify we have cached skins.
+    $cid = 'blazy_test:skins';
+    $cached_skins = $this->blazyManager->getCache()->get($cid);
+    $this->assertEquals($cid, $cached_skins->cid);
+    $this->assertEquals($skins, $cached_skins->data);
+
+    // Verify multiple skin methods are respected.
+    Cache::invalidateTags([$cid]);
+    drupal_flush_all_caches();
+    $this->assertFalse($this->blazyManager->getCache()->get($cid));
+
+    $skins = $this->blazyManager->buildSkins('blazy_test', '\Drupal\blazy_test\BlazySkinTest', ['skins', 'features']);
+
+    $this->assertArrayHasKey('features', $skins);
+
+    $cached_skins = $this->blazyManager->getCache()->get($cid);
+    $this->assertEquals($skins, $cached_skins->data);
   }
 
 }

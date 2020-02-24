@@ -17,7 +17,6 @@ use Drupal\entity_browser\FieldWidgetDisplayManager;
 use Drupal\image\Entity\ImageStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Component\Utility\Environment;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 
 /**
@@ -230,6 +229,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
     $current = [
       '#type' => 'table',
       '#empty' => $this->t('No files yet'),
+      '#prefix' => '<p>' . $this->getCardinalityMessage($entities) . '</p>',
       '#attributes' => ['class' => ['entities-list']],
       '#tabledrag' => [
         [
@@ -489,7 +489,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
 
     if ($upload) {
       // Cap the upload size according to the PHP limit.
-      $max_filesize = Bytes::toInt(Environment::getUploadMaxSize());
+      $max_filesize = Bytes::toInt(file_upload_max_size());
       if (!empty($settings['max_filesize'])) {
         $max_filesize = min($max_filesize, Bytes::toInt($settings['max_filesize']));
       }

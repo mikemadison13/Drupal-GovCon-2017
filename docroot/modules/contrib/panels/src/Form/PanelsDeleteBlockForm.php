@@ -5,7 +5,7 @@ namespace Drupal\panels\Form;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\panels\CachedValuesGetterTrait;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,7 +18,7 @@ class PanelsDeleteBlockForm extends ConfirmFormBase {
   /**
    * The tempstore factory.
    *
-   * @var \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   * @var \Drupal\user\SharedTempStoreFactory
    */
   protected $tempstore;
 
@@ -44,7 +44,7 @@ class PanelsDeleteBlockForm extends ConfirmFormBase {
   /**
    * PanelsDeleteBlockForm constructor.
    *
-   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   * @param \Drupal\user\SharedTempStoreFactory $tempstore
    *   The tempstore factory.
    */
   public function __construct(SharedTempStoreFactory $tempstore) {
@@ -56,7 +56,7 @@ class PanelsDeleteBlockForm extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('tempstore.shared')
+      $container->get('user.shared_tempstore')
     );
   }
 

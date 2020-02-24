@@ -6,27 +6,27 @@
  */
 
 use Drupal\lightning_core\ConfigHelper as Config;
+use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
  */
 function lightning_layout_install() {
-  // React to other modules possibly being installed already.
-  $modules = [
-    'lightning_roles',
-    'lightning_media',
-  ];
-  $modules = array_filter($modules, [Drupal::moduleHandler(), 'moduleExists']);
-  if ($modules) {
-    lightning_layout_modules_installed($modules);
+  // Set up layout_manager permissions.
+  lightning_layout_update_8003();
+
+  // Add layout permissions to Lightning Roles' content role configuration.
+  if (\Drupal::moduleHandler()->moduleExists('lightning_roles')) {
+    lightning_layout_modules_installed(['lightning_roles']);
   }
 }
 
 /**
- * Installs default configuration for landing page content type.
+ * Installs Panelizer and default configuration for landing page content type.
  */
 function lightning_layout_update_8001() {
+  \Drupal::service('module_installer')->install(['panelizer']);
   \Drupal::service('config.installer')->installDefaultConfig('module', 'lightning_layout');
 }
 
@@ -40,11 +40,11 @@ function lightning_layout_update_8002() {
 }
 
 /**
- * Removed in Lightning 8.x-4.0.
- *
- * Formerly added layout permissions to layout_manager role.
+ * Adds Panelizer permissions to layout_manager role.
  */
 function lightning_layout_update_8003() {
+  $node_types = NodeType::loadMultiple();
+  array_walk($node_types, 'lightning_layout_node_type_insert');
 }
 
 /**
@@ -84,8 +84,11 @@ function lightning_layout_update_8006() {
       // data loss!! Sigh...but anyway...having stripped layout_manager of its
       // administrative status, we now need to ensure it has all the permissions
       // that it would have out of the box.
-      ->grantPermission('configure any layout')
+      ->grantPermission('administer node display')
+      ->grantPermission('administer panelizer')
       ->save();
+
+    lightning_layout_update_8003();
   }
 }
 
@@ -101,11 +104,10 @@ function lightning_layout_update_8007() {
 }
 
 /**
- * Removed in Lightning Layout 8.x-2.0.
- *
- * Formerly installed the Panelizer Quick Edit module.
+ * Installs the Panelizer Quick Edit module.
  */
 function lightning_layout_update_8008() {
+  \Drupal::service('module_installer')->install(['panelizer_quickedit']);
 }
 
 /**
@@ -117,20 +119,4 @@ function lightning_layout_update_8009() {
     $role->unsetThirdPartySetting('lightning', 'bundled');
     $role->save();
   }
-}
-
-/**
- * Installs the layout_builder_st module if needed.
- */
-function lightning_layout_update_8010() {
-  if (Drupal::moduleHandler()->moduleExists('language')) {
-    Drupal::service('module_installer')->install(['layout_builder_st']);
-  }
-}
-
-/**
- * Installs the layout_builder_styles module.
- */
-function lightning_layout_update_8011() {
-  Drupal::service('module_installer')->install(['layout_builder_styles']);
 }

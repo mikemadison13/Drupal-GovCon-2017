@@ -9,7 +9,8 @@ namespace Drupal\page_manager_ui\Form;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\page_manager\PageVariantInterface;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -28,8 +29,6 @@ class VariantPluginAddBlockForm extends VariantPluginConfigureBlockFormBase {
   /**
    * Constructs a new VariantPluginFormBase.
    *
-   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
-   *   The shared temp store.
    * @param \Drupal\Component\Plugin\PluginManagerInterface $block_manager
    *   The block manager.
    */
@@ -43,7 +42,7 @@ class VariantPluginAddBlockForm extends VariantPluginConfigureBlockFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('tempstore.shared'),
+      $container->get('user.shared_tempstore'),
       $container->get('plugin.manager.block')
     );
   }

@@ -3,7 +3,7 @@
 namespace Drupal\ctools;
 
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
-use Drupal\Core\TempStore\SharedTempStore;
+use Drupal\user\SharedTempStore;
 
 /**
  * An extension of the SharedTempStore system for serialized data.

@@ -3,7 +3,6 @@
 namespace Drupal\dropzonejs\Element;
 
 use Drupal\Component\Utility\Bytes;
-use Drupal\Component\Utility\Environment;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
@@ -97,7 +96,7 @@ class DropzoneJs extends FormElement {
     ];
 
     if (empty($element['#max_filesize'])) {
-      $element['#max_filesize'] = Environment::getUploadMaxSize();
+      $element['#max_filesize'] = file_upload_max_size();
     }
 
     // Set #max_files to NULL (explicitly unlimited) if #max_files is not
@@ -108,7 +107,7 @@ class DropzoneJs extends FormElement {
 
     if (!\Drupal::currentUser()->hasPermission('dropzone upload files')) {
       $element['#access'] = FALSE;
-      \Drupal::messenger()->addWarning(new TranslatableMarkup("You don't have sufficent permissions to use the DropzoneJS uploader. Contact your system administrator"));
+      drupal_set_message(new TranslatableMarkup("You don't have sufficent permissions to use the DropzoneJS uploader. Contact your system administrator"), 'warning');
     }
 
     return $element;
@@ -186,9 +185,7 @@ class DropzoneJs extends FormElement {
           if (file_exists($old_filepath)) {
             // Finaly rename the file and add it to results.
             $new_filepath = $tmp_upload_scheme . '://' . $name;
-            /** @var \Drupal\Core\File\FileSystemInterface $file_system */
-            $file_system = \Drupal::service('file_system');
-            $move_result = $file_system->move($old_filepath, $new_filepath);
+            $move_result = file_unmanaged_move($old_filepath, $new_filepath);
 
             if ($move_result) {
               $return['uploaded_files'][] = [
@@ -197,7 +194,7 @@ class DropzoneJs extends FormElement {
               ];
             }
             else {
-              \Drupal::messenger()->addError(self::t('There was a problem while processing the file named @name', ['@name' => $name]));
+              drupal_set_message(self::t('There was a problem while processing the file named @name', ['@name' => $name]), 'error');
             }
           }
         }

@@ -9,9 +9,8 @@
  * Implements hook_views_data_alter().
  */
 function blazy_views_data_alter(&$data) {
-  // @todo let's keep it for a while as this can be useful for EB.
   $data['file_managed']['blazy_file'] = [
-    'title' => t('Blazy'),
+    'title' => 'Blazy',
     'help'  => t('Displays a preview of a File using Blazy, if applicable.'),
     'field' => [
       'id' => 'blazy_file',

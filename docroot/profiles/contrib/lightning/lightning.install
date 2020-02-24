@@ -61,21 +61,15 @@ function lightning_update_8002() {
  * Enables the lightning_core module.
  */
 function lightning_update_8003() {
-  Drupal::service('module_installer')->install(['lightning_core']);
+  \Drupal::service('module_installer')->install(['lightning_core']);
 }
 
 /**
  * Enables Entity API.
  */
 function lightning_update_8004() {
-  /*
-   * This ancient line is disabled in order to evade a strict coding standards
-   * check. It should not be necessary at this point anyway, since it dates from
-   * the days of Lightning 1.x, which has long since been end-of-life.
-   *
-   * eval('interface Drupal\entity\Entity\RevisionableEntityBundleInterface{}');
-   */
-  Drupal::service('module_installer')->install(['entity']);
+  require_once __DIR__ . '/.entity-helper.php';
+  \Drupal::service('module_installer')->install(['entity']);
 }
 
 /**

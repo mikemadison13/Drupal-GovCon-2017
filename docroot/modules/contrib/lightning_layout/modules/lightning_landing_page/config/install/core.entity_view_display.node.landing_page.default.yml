@@ -2,41 +2,36 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.landing_page.body
+    - field.field.node.landing_page.panelizer
     - node.type.landing_page
   module:
-    - layout_builder
-third_party_settings:
-  layout_builder:
-    allow_custom: false
-    enabled: true
-    sections:
-      -
-        layout_id: layout_onecol
-        layout_settings: {  }
-        components: {  }
-        third_party_settings: {  }
-  layout_library:
-    enable: true
-  layout_builder_restrictions:
-    entity_view_mode_restriction:
-      allowed_blocks: {  }
-      allowed_layouts:
-        - layout_onecol
-        - layout_twocol_section
-        - layout_threecol_section
-        - layout_fourcol_section
+    - panelizer
+    - text
+    - user
+third_party_settings: {  }
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
 mode: default
 content:
-  field_meta_tags:
-    type: metatag_empty_formatter
-    region: content
+  body:
+    weight: 102
     label: hidden
-    weight: 0
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    type: text_summary_or_trimmed
+    region: content
+  links:
+    weight: 100
     settings: {  }
     third_party_settings: {  }
+    region: content
+  workbench_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
 hidden:
-  body: true
-  links: true
+  panelizer: true

@@ -126,6 +126,7 @@ return array(
     'Asm89\\Stack\\' => array($vendorDir . '/asm89/stack-cors/src/Asm89/Stack'),
     'Ajgl\\Twig\\Extension\\' => array($vendorDir . '/ajgl/breakpoint-twig-extension/src'),
     'Acquia\\Lightning\\' => array($baseDir . '/docroot/profiles/contrib/lightning/src'),
+    'Acquia\\LightningExtension\\' => array($baseDir . '/docroot/profiles/contrib/lightning/src/LightningExtension'),
     'Acquia\\DrupalSpecTool\\' => array($vendorDir . '/acquia/drupal-spec-tool/src'),
     'Acquia\\Blt\\Tests\\Robo\\' => array($vendorDir . '/acquia/blt/tests/phpunit/Robo'),
     'Acquia\\Blt\\Tests\\' => array($vendorDir . '/acquia/blt/tests/phpunit/src'),

@@ -302,18 +302,14 @@ abstract class FlagFormBase extends EntityForm {
     $flag->getLinkTypePlugin()->submitConfigurationForm($form, $form_state);
 
     $status = $flag->save();
-    $message_params = ['%label' => $flag->label()];
-    $logger_params = [
-      '%label' => $flag->label(),
-      'link' => $flag->toLink($this->t('Edit'), 'edit-form')->toString(),
-    ];
+    $url = $flag->urlInfo();
     if ($status == SAVED_UPDATED) {
-      $this->messenger()->addMessage($this->t('Flag %label has been updated.', $message_params));
-      $this->logger('flag')->notice('Flag %label has been updated.', $logger_params);
+      drupal_set_message($this->t('Flag %label has been updated.', ['%label' => $flag->label()]));
+      $this->logger('flag')->notice('Flag %label has been updated.', ['%label' => $flag->label(), 'link' => $this->l($this->t('Edit'), $url)]);
     }
     else {
-      $this->messenger()->addMessage($this->t('Flag %label has been added.', $message_params));
-      $this->logger('flag')->notice('Flag %label has been added.', $logger_params);
+      drupal_set_message($this->t('Flag %label has been added.', ['%label' => $flag->label()]));
+      $this->logger('flag')->notice('Flag %label has been added.', ['%label' => $flag->label(), 'link' => $this->l($this->t('Edit'), $url)]);
     }
 
     // We clear caches more vigorously if the flag was new.

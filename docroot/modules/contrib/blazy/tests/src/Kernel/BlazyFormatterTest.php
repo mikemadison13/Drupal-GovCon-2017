@@ -107,7 +107,7 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
 
     try {
       $settings['vanilla'] = TRUE;
-      $this->BlazyFormatter->buildSettings($format, $this->testItems);
+      $this->blazyFormatterManager->buildSettings($format, $this->testItems);
     }
     catch (\PHPUnit_Framework_Exception $e) {
     }
@@ -115,13 +115,22 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     $this->assertEquals($this->testFieldName, $settings['field_name']);
 
     $settings['vanilla'] = FALSE;
-    $this->BlazyFormatter->buildSettings($format, $this->testItems);
+    $this->blazyFormatterManager->buildSettings($format, $this->testItems);
 
     $this->assertEquals($this->testFieldName, $settings['field_name']);
     $this->assertArrayHasKey('#blazy', $build[$this->testFieldName]);
 
-    $options = $this->blazyAdminFormatter->getOptionsetOptions('image_style');
-    $this->assertArrayHasKey('large', $options);
+    // Tests options.
+    // Verify no optionsets without a defined function paramater.
+    try {
+      $options_1a = $this->blazyAdminFormatter->getOptionsetOptions();
+    }
+    catch (\PHPUnit_Framework_Exception $e) {
+    }
+    $this->assertEmpty($options_1a);
+
+    $options_1b = $this->blazyAdminFormatter->getOptionsetOptions('image_style');
+    $this->assertArrayHasKey('large', $options_1b);
 
     // Tests grid.
     $new_settings = $this->getFormatterSettings();
@@ -161,7 +170,6 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     $settings = [
       'input_url'       => $input_url,
       'source_field'    => $this->testFieldName,
-      'media_source'    => 'remote_video',
       'view_mode'       => 'default',
       'bundle'          => $this->bundle,
       'thumbnail_style' => 'thumbnail',
@@ -176,7 +184,6 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
       $this->assertNotEmpty($render);
 
       $field[0] = $render;
-      $field['#settings'] = $settings;
       $wrap = BlazyMedia::wrap($field, $settings);
       $this->assertNotEmpty($wrap);
 

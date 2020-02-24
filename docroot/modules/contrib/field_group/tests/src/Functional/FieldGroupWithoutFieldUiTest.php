@@ -18,11 +18,6 @@ class FieldGroupWithoutFieldUiTest extends BrowserTestBase {
   public static $modules = ['field_group', 'block'];
 
   /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
-
-  /**
    * Test that local actions show up without field ui enabled.
    */
   public function testLocalActions() {

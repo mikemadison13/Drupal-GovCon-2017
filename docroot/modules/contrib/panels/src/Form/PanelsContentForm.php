@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\ctools\Form\AjaxFormTrait;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,7 +19,7 @@ class PanelsContentForm extends FormBase {
   /**
    * Tempstore factory.
    *
-   * @var \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   * @var \Drupal\user\SharedTempStoreFactory
    */
   protected $tempstore;
 
@@ -33,7 +33,7 @@ class PanelsContentForm extends FormBase {
   /**
    * Constructs a new VariantPluginContentForm.
    *
-   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   * @param \Drupal\user\SharedTempStoreFactory $tempstore
    *   The tempstore factory.
    */
   public function __construct(SharedTempStoreFactory $tempstore) {
@@ -45,7 +45,7 @@ class PanelsContentForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('tempstore.shared')
+      $container->get('user.shared_tempstore')
     );
   }
 
@@ -61,7 +61,7 @@ class PanelsContentForm extends FormBase {
   /**
    * Get the tempstore.
    *
-   * @return \Drupal\Core\TempStore\SharedTempStoreFactory
+   * @return \Drupal\user\SharedTempStore
    */
   protected function getTempstore() {
     return $this->tempstore->get($this->getTempstoreId());

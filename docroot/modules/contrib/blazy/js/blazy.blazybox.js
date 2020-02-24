@@ -112,9 +112,7 @@
   Drupal.behaviors.blazyBox = {
     attach: function (context) {
       var boxes = context.querySelectorAll('.blazybox:not(.blazybox--on)');
-      if (boxes.length > 0) {
-        _db.once(_db.forEach(boxes, doBlazyBox, context));
-      }
+      _db.once(_db.forEach(boxes, doBlazyBox, context));
     }
   };
 

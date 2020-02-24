@@ -9,8 +9,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\ctools\TypedDataResolver;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class ManageResolverRelationships extends FormBase {
 
@@ -25,43 +23,6 @@ abstract class ManageResolverRelationships extends FormBase {
    * @var array
    */
   protected $property_types = [];
-
-  /**
-   * The typed data resolver.
-   *
-   * @var \Drupal\ctools\TypedDataResolver
-   */
-  protected $typedDataResolver;
-
-  /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilder
-   */
-  protected $formBuilder;
-
-  /**
-   * Constructs a new ManageResolverRelationships object.
-   *
-   * @param \Drupal\ctools\TypedDataResolver $ctools_typed_data_resolver
-   *   The typed data resolver.
-   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
-   *   The form builder.
-   */
-  public function __construct(TypedDataResolver $ctools_typed_data_resolver, FormBuilderInterface $form_builder) {
-    $this->typedDataResolver = $ctools_typed_data_resolver;
-    $this->formBuilder = $form_builder;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('ctools.typed_data.resolver'),
-      $container->get('form_builder')
-    );
-  }
 
   /**
    * {@inheritdoc}
@@ -119,18 +80,11 @@ abstract class ManageResolverRelationships extends FormBase {
 
   public function addRelationship(array &$form, FormStateInterface $form_state) {
     $relationship = $form_state->getValue('relationships');
-    $content = $this->formBuilder->getForm($this->getContextClass(), $relationship, $this->getTempstoreId(), $this->machine_name);
+    $content = \Drupal::formBuilder()->getForm($this->getContextClass(), $relationship, $this->getTempstoreId(), $this->machine_name);
     $content['#attached']['library'][] = 'core/drupal.dialog.ajax';
     $cached_values = $form_state->getTemporaryValue('wizard');
     list(, $route_parameters) = $this->getRelationshipOperationsRouteInfo($cached_values, $this->machine_name, $relationship);
-    $route_name = $this->getAddRoute($cached_values);
-    $route_options = [
-      'query' => [
-        FormBuilderInterface::AJAX_FORM_REQUEST => TRUE,
-      ],
-    ];
-    $url = Url::fromRoute($route_name, $route_parameters, $route_options);
-    $content['submit']['#attached']['drupalSettings']['ajax'][$content['submit']['#id']]['url'] = $url->toString();
+    $content['submit']['#attached']['drupalSettings']['ajax'][$content['submit']['#id']]['url'] = $this->url($this->getAddRoute($cached_values), $route_parameters, ['query' => [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]]);
     $response = new AjaxResponse();
     $response->addCommand(new OpenModalDialogCommand($this->t('Configure Relationship'), $content, array('width' => '700')));
     return $response;
@@ -138,7 +92,7 @@ abstract class ManageResolverRelationships extends FormBase {
 
   protected function getAvailableRelationships($cached_values) {
     /** @var \Drupal\ctools\TypedDataResolver $resolver */
-    $resolver = $this->typedDataResolver;
+    $resolver = \Drupal::service('ctools.typed_data.resolver');
     return $resolver->getTokensForContexts($this->getContexts($cached_values));
   }
 

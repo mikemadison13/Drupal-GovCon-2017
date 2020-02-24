@@ -6,7 +6,7 @@
  * @see https://developers.google.com/web/updates/2016/04/intersectionobserver
  */
 
-/* global define, module */
+/* global window, document, define, module */
 (function (root, factory) {
 
   'use strict';
@@ -32,6 +32,7 @@
   /**
    * Private variables.
    */
+  var _win = window;
   var _doc = document;
   var _db = dBlazy;
   var _bioTick = 0;
@@ -121,7 +122,7 @@
     var me = this;
 
     // Prevents from too many revalidations unless needed.
-    if ((force === true || me.count !== me.counted) && (_revTick < me.counted)) {
+    if ((me.count !== me.counted || force === true) && (_revTick < me.counted)) {
       _disconnected = false;
       me.elms = (me.options.root || _doc).querySelectorAll(me.options.selector);
       me.observe();
@@ -180,6 +181,10 @@
 
     me[status === me._ok ? 'success' : 'error'](el, status, parent);
     el.classList.add(status === me._ok ? me.options.successClass : me.options.errorClass);
+  };
+
+  _proto.equal = function (el, str) {
+    return el.nodeName.toLowerCase() === str;
   };
 
   _proto.observe = function () {
@@ -263,9 +268,10 @@
       threshold: me.options.threshold
     };
 
-    me.elms = (me.options.root || _doc).querySelectorAll(me.options.selector + ':not(.' + me.options.successClass + ')');
+    me.options.selector = me.options.selector + ':not(.' + me.options.successClass + ')';
+    me.elms = (me.options.root || _doc).querySelectorAll(me.options.selector);
     me.count = me.elms.length;
-    me.windowWidth = _db.windowWidth();
+    me.windowWidth = _win.innerWidth || _doc.documentElement.clientWidth || _doc.body.clientWidth || _win.screen.width;
 
     me.prepare();
 

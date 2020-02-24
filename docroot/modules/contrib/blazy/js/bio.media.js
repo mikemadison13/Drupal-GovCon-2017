@@ -6,7 +6,7 @@
  * @see https://developers.google.com/web/updates/2016/04/intersectionobserver
  */
 
-/* global define, module */
+/* global window, document, define, module */
 (function (root, factory) {
 
   'use strict';
@@ -61,12 +61,41 @@
   var _proto = BioMedia.prototype = Object.create(Bio.prototype);
   _proto.constructor = BioMedia;
 
+  _proto.removeAttrs = function (el, attrs) {
+    _db.forEach(attrs, function (attr) {
+      el.removeAttribute('data-' + attr);
+    });
+  };
+
+  _proto.setAttrs = function (el, attrs) {
+    var me = this;
+
+    _db.forEach(attrs, function (src) {
+      me.setAttr(el, src);
+    });
+  };
+
+  _proto.setAttr = function (el, attr, remove) {
+    if (el.hasAttribute('data-' + attr)) {
+      var dataAttr = el.getAttribute('data-' + attr);
+      if (attr === _src) {
+        el.src = dataAttr;
+      }
+      else {
+        el.setAttribute(attr, dataAttr);
+      }
+
+      if (remove) {
+        el.removeAttribute('data-' + attr);
+      }
+    }
+  };
+
   _proto.prepare = (function (_bio) {
     return function () {
       var me = this;
 
       // DIV elements with multi-serving CSS background images.
-      // @todo remove custom breakpoints anytime before 2.x.
       if (me.options.breakpoints) {
         var _bgSrcs = [];
 
@@ -108,22 +137,25 @@
 
       var me = this;
       var parent = el.parentNode;
-      var isImage = _db.equal(el, 'img');
+      var isImage = me.equal(el, 'img');
       var isBg = typeof el.src === 'undefined' && el.classList.contains(me.options.bgClass);
-      var isPicture = parent && _db.equal(parent, 'picture');
-      var isVideo = _db.equal(el, 'video');
+      var isPicture = parent && me.equal(parent, 'picture');
+      var isVideo = me.equal(el, 'video');
 
       // PICTURE elements.
       if (isPicture) {
-        _db.setAttrsWithSources(el, _srcSet, true);
-
+        _db.forEach(parent.getElementsByTagName('source'), function (source) {
+          me.setAttr(source, _srcSet, true);
+        });
         // Tiny controller image inside picture element won't get preloaded.
-        _db.setAttr(el, _src, true);
+        me.setAttr(el, _src, true);
         me.loaded(el, me._ok);
       }
       // VIDEO elements.
       else if (isVideo) {
-        _db.setAttrsWithSources(el, _src, true);
+        _db.forEach(el.getElementsByTagName('source'), function (source) {
+          me.setAttr(source, _src, true);
+        });
         el.load();
         me.loaded(el, me._ok);
       }
@@ -135,7 +167,7 @@
         // IFRAME elements, etc.
         else {
           if (el.getAttribute(_dataSrc) && el.hasAttribute(_src)) {
-            _db.setAttr(el, _src, true);
+            me.setAttr(el, _src, true);
             me.loaded(el, me._ok);
           }
         }
@@ -166,7 +198,7 @@
           me.setBg(el);
         }
         else {
-          _db.setAttrs(el, _imgSources, false);
+          me.setAttrs(el, _imgSources);
         }
       };
 
@@ -190,7 +222,7 @@
     return me.promise(el, isBg)
       .then(function (status) {
         me.loaded(el, status);
-        _db.removeAttrs(el, isBg ? _bgSources : _imgSources);
+        me.removeAttrs(el, isBg ? _bgSources : _imgSources);
       })
       .catch(function (status) {
         me.loaded(el, status);

@@ -2,14 +2,14 @@
 
 namespace Drupal\Tests\flag_bookmark\FunctionalJavascript;
 
-use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
 
 /**
  * Browser tests for flag_bookmark.
  *
  * @group flag_bookmark
  */
-class FlagBookmarkUITest extends WebDriverTestBase {
+class FlagBookmarkUITest extends JavascriptTestBase {
 
   /**
    * Modules to enable.
@@ -56,7 +56,7 @@ class FlagBookmarkUITest extends WebDriverTestBase {
 
     // Check the view is shown correctly.
     $this->drupalGet('bookmarks');
-    $assert_session->pageTextContains($article->getTitle());
+    $this->assertText($article->getTitle());
   }
 
   /**
@@ -102,8 +102,8 @@ class FlagBookmarkUITest extends WebDriverTestBase {
     $empty_form = $assert_session
       ->waitForElementVisible('css', "form:contains('No bookmarks available.')");
     $this->assertNotNull($empty_form, 'Flagging form is empty.');
-    $assert_session->pageTextNotContains($articles[0]->label());
-    $assert_session->pageTextNotContains($articles[1]->label());
+    $this->assertNoText($articles[0]->label());
+    $this->assertNoText($articles[1]->label());
   }
 
 }

@@ -73,14 +73,13 @@
   /**
    * Overall layout.
    */
-  .page-manager-wizard-main {
-    display: flex;
-  }
   .page-manager-wizard-tree {
-    flex: .2;
+    float: left; /* LTR */
+    width: 20%;
   }
   .page-manager-wizard-form {
-    flex: .8;
+    float: left; /* LTR */
+    width: 80%;
   }
   .page-manager-wizard-form-actions {
     margin-left: 20%; /* LTR */
@@ -91,6 +90,9 @@
    */
   .page-manager-wizard-tree > ul {
     border-right: 0; /* LTR */
+  }
+  .page-manager-wizard-form {
+    min-height: 700px;
   }
 
   /**

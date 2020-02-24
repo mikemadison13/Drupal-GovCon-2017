@@ -4,7 +4,7 @@ namespace Drupal\Tests\flag\FunctionalJavascript;
 
 use Drupal\flag\Entity\Flag;
 use Drupal\flag\Tests\FlagCreateTrait;
-use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
 use Drupal\Tests\flag\Traits\FlagPermissionsTrait;
 
 /**
@@ -17,7 +17,7 @@ use Drupal\Tests\flag\Traits\FlagPermissionsTrait;
  *
  * @group flag
  */
-class FlagContextualLinksTest extends WebDriverTestBase {
+class FlagContextualLinksTest extends JavascriptTestBase {
 
   use FlagCreateTrait;
   use FlagPermissionsTrait;

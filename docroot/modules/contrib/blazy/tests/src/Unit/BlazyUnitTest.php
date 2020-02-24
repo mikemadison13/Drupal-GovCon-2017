@@ -31,35 +31,64 @@ class BlazyUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests \Drupal\blazy\Blazy::buildIframe.
+   * Test \Drupal\blazy\Blazy\widthFromDescriptors.
+   *
+   * @param string $data
+   *   The input data which can be string, or integer.
+   * @param mixed|bool|int $expected
+   *   The expected output.
+   *
+   * @covers ::widthFromDescriptors
+   * @dataProvider providerTestWidthFromDescriptors
+   */
+  public function testWidthFromDescriptors($data, $expected) {
+    $result = Blazy::widthFromDescriptors($data);
+    $this->assertSame($result, $expected);
+  }
+
+  /**
+   * Provide test cases for ::testWidthFromDescriptors().
+   */
+  public function providerTestWidthFromDescriptors() {
+    return [
+      [1024, 1024],
+      ['1024', 1024],
+      ['769w', 769],
+      ['640w 2x', 640],
+      ['2x 640w', 640],
+      ['xYz123', FALSE],
+    ];
+  }
+
+  /**
+   * Tests \Drupal\blazy\Blazy\buildIframeAttributes.
    *
    * @param array $data
    *   The input data which can be string, or integer.
    * @param mixed|bool|int $expected
    *   The expected output.
    *
-   * @covers ::buildIframe
+   * @covers ::buildIframeAttributes
    * @covers \Drupal\blazy\Dejavu\BlazyDefault::entitySettings
-   * @dataProvider providerTestBuildIframe
+   * @dataProvider providerTestBuildIframeAttributes
    */
-  public function testBuildIframe(array $data, $expected) {
+  public function testBuildIframeAttributes(array $data, $expected) {
     $variables             = ['attributes' => [], 'image' => []];
     $settings              = BlazyDefault::entitySettings();
     $settings['embed_url'] = '//www.youtube.com/watch?v=E03HFA923kw';
     $settings['scheme']    = 'youtube';
     $settings['type']      = 'video';
-    $settings['bundle']    = 'remote_video';
 
     $variables['settings'] = array_merge($settings, $data);
-    Blazy::buildIframe($variables);
+    Blazy::buildIframeAttributes($variables);
 
     $this->assertNotEmpty($variables[$expected]);
   }
 
   /**
-   * Provide test cases for ::testBuildIframe().
+   * Provide test cases for ::testBuildIframeAttributes().
    */
-  public function providerTestBuildIframe() {
+  public function providerTestBuildIframeAttributes() {
     return [
       [
         [
@@ -81,7 +110,7 @@ class BlazyUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests \Drupal\blazy\Blazy::preprocessBlazy.
+   * Tests building Blazy attributes.
    *
    * @param array $settings
    *   The settings being tested.
@@ -92,12 +121,13 @@ class BlazyUnitTest extends UnitTestCase {
    * @param bool $expected_iframe
    *   Whether to expect an iframe, or not.
    *
-   * @covers \Drupal\blazy\Blazy::preprocessBlazy
-   * @covers \Drupal\blazy\Blazy::urlAndDimensions
+   * @covers \Drupal\blazy\Blazy::buildAttributes
+   * @covers \Drupal\blazy\Blazy::buildBreakpointAttributes
+   * @covers \Drupal\blazy\Blazy::buildUrlAndDimensions
    * @covers \Drupal\blazy\Dejavu\BlazyDefault::entitySettings
-   * @dataProvider providerPreprocessBlazy
+   * @dataProvider providerBuildAttributes
    */
-  public function testPreprocessBlazy(array $settings, $item, $expected_image, $expected_iframe) {
+  public function testBuildAttributes(array $settings, $item, $expected_image, $expected_iframe) {
     $variables = ['attributes' => []];
     $build     = $this->data;
     $settings  = array_merge($build['settings'], $settings);
@@ -116,7 +146,7 @@ class BlazyUnitTest extends UnitTestCase {
     $variables['element']['#item'] = $item == TRUE ? $this->testItem : NULL;
     $variables['element']['#settings'] = $settings;
 
-    Blazy::preprocessBlazy($variables);
+    Blazy::buildAttributes($variables);
 
     $image = $expected_image == TRUE ? !empty($variables['image']) : empty($variables['image']);
     $iframe = $expected_iframe == TRUE ? !empty($variables['iframe_attributes']) : empty($variables['iframe_attributes']);
@@ -128,9 +158,9 @@ class BlazyUnitTest extends UnitTestCase {
   }
 
   /**
-   * Provider for ::testPreprocessBlazy.
+   * Provider for ::testBuildAttributes.
    */
-  public function providerPreprocessBlazy() {
+  public function providerBuildAttributes() {
     $uri = 'public://example.jpg';
 
     $data[] = [
@@ -192,12 +222,12 @@ class BlazyUnitTest extends UnitTestCase {
    * @param array $settings
    *   The settings being tested.
    *
-   * @covers \Drupal\blazy\BlazyManager::preRenderBlazy
+   * @covers \Drupal\blazy\BlazyManager::preRenderImage
    * @covers \Drupal\blazy\BlazyLightbox::build
    * @covers \Drupal\blazy\BlazyLightbox::buildCaptions
    * @dataProvider providerTestPreRenderImageLightbox
    */
-  public function todoTestPreRenderImageLightbox(array $settings = []) {
+  public function testPreRenderImageLightbox(array $settings = []) {
     $build                       = $this->data;
     $settings                   += BlazyDefault::itemSettings();
     $settings['count']           = $this->maxItems;

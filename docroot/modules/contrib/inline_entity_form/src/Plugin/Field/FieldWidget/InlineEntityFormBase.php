@@ -190,7 +190,6 @@ abstract class InlineEntityFormBase extends WidgetBase implements ContainerFacto
   public static function defaultSettings() {
     return [
       'form_mode' => 'default',
-      'revision' => FALSE,
       'override_labels' => FALSE,
       'label_singular' => '',
       'label_plural' => '',
@@ -212,11 +211,6 @@ abstract class InlineEntityFormBase extends WidgetBase implements ContainerFacto
       '#default_value' => $this->getSetting('form_mode'),
       '#options' => $this->entityDisplayRepository->getFormModeOptions($entity_type_id),
       '#required' => TRUE,
-    ];
-    $element['revision'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Create new revision'),
-      '#default_value' => $this->getSetting('revision'),
     ];
     $element['override_labels'] = [
       '#type' => 'checkbox',
@@ -282,10 +276,6 @@ abstract class InlineEntityFormBase extends WidgetBase implements ContainerFacto
     }
     else {
       $summary[] = $this->t('Default labels are used.');
-    }
-
-    if ($this->getSetting('revision')) {
-      $summary[] = $this->t('Create new revision');
     }
 
     if ($this->getSetting('collapsible')) {
@@ -405,7 +395,6 @@ abstract class InlineEntityFormBase extends WidgetBase implements ContainerFacto
       '#default_value' => $entity,
       '#op' => $operation,
       '#form_mode' => $this->getSetting('form_mode'),
-      '#revision' => $this->getSetting('revision'),
       '#save_entity' => FALSE,
       '#ief_row_delta' => $delta,
       // Used by Field API and controller methods to find the relevant

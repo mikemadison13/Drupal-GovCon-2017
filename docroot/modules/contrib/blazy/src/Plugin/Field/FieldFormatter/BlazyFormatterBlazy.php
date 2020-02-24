@@ -17,14 +17,35 @@ class BlazyFormatterBlazy extends BlazyFileFormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
+    $build = [];
     $files = $this->getEntitiesToView($items, $langcode);
 
     // Early opt-out if the field is empty.
     if (empty($files)) {
-      return [];
+      return $build;
     }
 
-    return $this->commonViewElements($items, $langcode, $files);
+    // Collects specific settings to this formatter.
+    $settings              = $this->buildSettings();
+    $settings['blazy']     = TRUE;
+    $settings['namespace'] = $settings['item_id'] = $settings['lazy'] = 'blazy';
+    $settings['_grid']     = !empty($settings['style']) && !empty($settings['grid']);
+    $settings['langcode']  = $langcode;
+
+    // Build the settings.
+    $build = ['settings' => $settings];
+
+    // Modifies settings before building elements.
+    $this->formatter->preBuildElements($build, $items, $files);
+
+    // Build the elements.
+    $this->buildElements($build, $files);
+
+    // Modifies settings post building elements.
+    $this->formatter->postBuildElements($build, $items, $files);
+
+    // Pass to manager for easy updates to all Blazy formatters.
+    return $this->formatter->build($build);
   }
 
   /**
@@ -44,7 +65,7 @@ class BlazyFormatterBlazy extends BlazyFileFormatterBase {
       $box['item']           = $item;
       $box['settings']       = $settings;
 
-      // Build individual element.
+      // If imported Drupal\blazy\Dejavu\BlazyVideoTrait.
       $this->buildElement($box, $file);
 
       // Build caption if so configured.

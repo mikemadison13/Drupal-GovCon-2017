@@ -31,9 +31,12 @@ class BlazyViews {
 
       // Prevents dup [data-LIGHTBOX-gallery] if the Views style supports Grid.
       if (!$grid) {
-        // @todo remove conditions when confident, kept to avoid the unexpected.
-        $view->element['#attributes'] = empty($view->element['#attributes']) ? [] : $view->element['#attributes'];
-        Blazy::containerAttributes($view->element['#attributes'], $settings);
+        $view->element['#attributes']['class'][] = 'blazy';
+        $view->element['#attributes']['data-blazy'] = TRUE;
+        if (!empty($settings['media_switch'])) {
+          $switch = str_replace('_', '-', $settings['media_switch']);
+          $view->element['#attributes']['data-' . $switch . '-gallery'] = TRUE;
+        }
       }
     }
   }
@@ -59,11 +62,9 @@ class BlazyViews {
 
     // Given blazy--photoswipe-gallery, adds the [data-photoswipe-gallery], etc.
     if ($lightbox && in_array($lightbox, $lightboxes)) {
-      $settings['namespace'] = 'blazy';
-      $settings['media_switch'] = $matches[1];
-      // @todo remove conditions when confident, kept to avoid the unexpected.
-      $variables['attributes'] = empty($variables['attributes']) ? [] : $variables['attributes'];
-      Blazy::containerAttributes($variables['attributes'], $settings);
+      $variables['attributes']['class'] = array_merge(['blazy'], $variables['attributes']['class']);
+      $variables['attributes']['data-blazy'] = TRUE;
+      $variables['attributes']['data-' . $matches[1] . '-gallery'] = TRUE;
     }
   }
 

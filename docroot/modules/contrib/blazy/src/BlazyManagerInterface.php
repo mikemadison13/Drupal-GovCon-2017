@@ -8,28 +8,6 @@ namespace Drupal\blazy;
 interface BlazyManagerInterface {
 
   /**
-   * Returns array of needed assets suitable for #attached property.
-   *
-   * @param array $attach
-   *   The settings which determine what library to attach.
-   *
-   * @return array
-   *   The supported libraries.
-   */
-  public function attach(array $attach = []);
-
-  /**
-   * Returns drupalSettings for IO.
-   *
-   * @param array $attach
-   *   The settings which determine what library to attach.
-   *
-   * @return array
-   *   The supported IO drupalSettings.
-   */
-  public function getIoSettings(array $attach = []);
-
-  /**
    * Gets the supported lightboxes.
    *
    * @return array
@@ -38,12 +16,31 @@ interface BlazyManagerInterface {
   public function getLightboxes();
 
   /**
-   * Returns the supported image effects.
+   * Sets the lightboxes.
    *
-   * @return array
-   *   The supported image effects.
+   * @param string $lightbox
+   *   The lightbox name, expected to be the module name.
    */
-  public function getImageEffects();
+  public function setLightboxes($lightbox);
+
+  /**
+   * Cleans up empty, or not so empty, breakpoints.
+   *
+   * @param array $settings
+   *   The settings being modified.
+   */
+  public function cleanUpBreakpoints(array &$settings = []);
+
+  /**
+   * Checks if an image style contains crop effect.
+   *
+   * @param string $style
+   *   The image style to check for.
+   *
+   * @return object|bool
+   *   Returns the image style instance if it contains crop effect, else FALSE.
+   */
+  public function isCrop($style);
 
   /**
    * Checks for Blazy formatter such as from within a Views style plugin.
@@ -57,13 +54,6 @@ interface BlazyManagerInterface {
    * attributes to its container, etc. Also applies to entity references where
    * Blazy is not the main formatter, instead embedded as part of the parent's.
    *
-   * This fairly complex logic is intended to reduce similarly complex logic at
-   * individual item. But rather than at individual item, it is executed once
-   * at the container level. If you have 100 images, this method is executed
-   * once, not 100x, as long as you have all image styles cropped, not scaled.
-   *
-   * This still needs improvements and a little more simplified version.
-   *
    * @param array $settings
    *   The settings being modified.
    * @param array $item
@@ -75,14 +65,18 @@ interface BlazyManagerInterface {
   public function isBlazy(array &$settings, array $item = []);
 
   /**
-   * Checks if an image style contains crop effect.
+   * Builds breakpoints suitable for top-level [data-blazy] wrapper attributes.
    *
-   * @param string $style
-   *   The image style to check for.
+   * The hustle is because we need to define dimensions once, if applicable, and
+   * let all images inherit. Each breakpoint image may be cropped, or scaled
+   * without a crop. To set dimensions once requires all breakpoint images
+   * uniformly cropped. But that is not always the case.
    *
-   * @return object|bool
-   *   Returns the image style instance if it contains crop effect, else FALSE.
+   * @param array $settings
+   *   The settings being modified.
+   * @param object $item
+   *   The \Drupal\image\Plugin\Field\FieldType\ImageItem item.
    */
-  public function isCrop($style);
+  public function buildDataBlazy(array &$settings, $item = NULL);
 
 }

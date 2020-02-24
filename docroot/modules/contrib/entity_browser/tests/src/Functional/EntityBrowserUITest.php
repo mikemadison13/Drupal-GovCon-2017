@@ -27,11 +27,6 @@ class EntityBrowserUITest extends BrowserTestBase {
   ];
 
   /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
-
-  /**
    * Tests entity browser UI.
    */
   public function testEntityBrowserUI() {

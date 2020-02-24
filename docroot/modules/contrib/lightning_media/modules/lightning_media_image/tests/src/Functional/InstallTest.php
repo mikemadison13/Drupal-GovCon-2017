@@ -5,8 +5,6 @@ namespace Drupal\Tests\lightning_media_image\Functional;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * Tests install-time logic of Lightning Media Image.
- *
  * @group lightning_media
  * @group lightning_media_image
  */
@@ -29,9 +27,6 @@ class InstallTest extends BrowserTestBase {
    */
   protected $strictConfigSchema = FALSE;
 
-  /**
-   * Tests installing Lightning Media Image.
-   */
   public function test() {
     // Assert that a local copy of the Cropper library is being used.
     $settings = $this->config('image_widget_crop.settings')->get('settings');
@@ -50,7 +45,7 @@ class InstallTest extends BrowserTestBase {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
     foreach ($form_displays as $form_display) {
       $component = $form_display->getComponent('image');
-      $this->assertSame('array', gettype($component));
+      $this->assertInternalType('array', $component);
       $this->assertSame('image_widget_crop', $component['type']);
       $this->assertSame(['freeform'], $component['settings']['crop_list']);
     }

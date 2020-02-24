@@ -167,11 +167,7 @@ class MediaHelper {
    * @return \Drupal\file\FileInterface|false
    *   The final file entity (unsaved), or FALSE if an error occurred.
    */
-  public static function useFile(MediaInterface $entity, FileInterface $file, $replace = NULL) {
-    // @todo Remove this and just use FileSystemInterface::EXISTS_REPLACE when support for older versions of core is dropped.
-    if (is_null($replace)) {
-      $replace = defined(FileSystemInterface::class . '::EXISTS_REPLACE') ? FileSystemInterface::EXISTS_REPLACE : constant('FILE_EXISTS_REPLACE');
-    }
+  public static function useFile(MediaInterface $entity, FileInterface $file, $replace = FILE_EXISTS_RENAME) {
     $field = static::getSourceField($entity);
     $field->setValue($file);
 

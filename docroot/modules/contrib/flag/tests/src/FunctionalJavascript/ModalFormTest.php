@@ -4,14 +4,14 @@ namespace Drupal\Tests\flag\FunctionalJavascript;
 
 use Drupal\Core\Url;
 use Drupal\flag\Tests\FlagCreateTrait;
-use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
 
 /**
  * Tests modal form options for action link plugins.
  *
  * @group flag
  */
-class ModalFormTest extends WebDriverTestBase {
+class ModalFormTest extends JavascriptTestBase {
 
   use FlagCreateTrait;
 

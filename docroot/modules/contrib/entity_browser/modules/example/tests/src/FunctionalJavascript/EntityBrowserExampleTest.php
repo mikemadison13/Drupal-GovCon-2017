@@ -19,11 +19,6 @@ class EntityBrowserExampleTest extends BrowserTestBase {
   public static $modules = ['entity_browser_example'];
 
   /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
-
-  /**
    * Tests Entity Browser example module.
    */
   public function testExampleInstall() {

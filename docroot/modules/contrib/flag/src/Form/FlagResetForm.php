@@ -99,7 +99,7 @@ class FlagResetForm extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->flagService->unflagAllByFlag($this->flag);
-    $this->messenger()->addMessage($this->t('Flag %label was reset.', [
+    drupal_set_message($this->t('Flag %label was reset.', [
       '%label' => $this->flag->label(),
     ]));
 

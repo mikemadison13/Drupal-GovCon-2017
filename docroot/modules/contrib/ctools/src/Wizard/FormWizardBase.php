@@ -13,8 +13,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\ctools\Ajax\OpenModalWizardCommand;
 use Drupal\ctools\Event\WizardEvent;
-use Drupal\Core\TempStore\PrivateTempStoreFactory;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -25,7 +24,7 @@ abstract class FormWizardBase extends FormBase implements FormWizardInterface {
   /**
    * Tempstore Factory for keeping track of values in each step of the wizard.
    *
-   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
+   * @var \Drupal\user\SharedTempStoreFactory
    */
   protected $tempstore;
 
@@ -72,7 +71,7 @@ abstract class FormWizardBase extends FormBase implements FormWizardInterface {
   protected $step;
 
   /**
-   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   * @param \Drupal\user\SharedTempStoreFactory $tempstore
    *   Tempstore Factory for keeping track of values in each step of the
    *   wizard.
    * @param \Drupal\Core\Form\FormBuilderInterface $builder
@@ -104,7 +103,7 @@ abstract class FormWizardBase extends FormBase implements FormWizardInterface {
    */
   public static function getParameters() {
     return [
-      'tempstore' => \Drupal::service('tempstore.shared'),
+      'tempstore' => \Drupal::service('user.shared_tempstore'),
       'builder' => \Drupal::service('form_builder'),
       'class_resolver' => \Drupal::service('class_resolver'),
       'event_dispatcher' => \Drupal::service('event_dispatcher'),
@@ -132,8 +131,7 @@ abstract class FormWizardBase extends FormBase implements FormWizardInterface {
    * {@inheritdoc}
    */
   public function getTempstore() {
-    $tempstore = $this->tempstore->get($this->getTempstoreId());
-    return $tempstore;
+    return $this->tempstore->get($this->getTempstoreId());
   }
 
   /**
@@ -395,7 +393,7 @@ abstract class FormWizardBase extends FormBase implements FormWizardInterface {
       $actions['submit']['#ajax'] = [
         'callback' => '::ajaxSubmit',
         'url' => Url::fromRoute($this->getRouteName(), $parameters),
-        'options' => ['query' => $this->getRequest()->query->all() + [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]],
+        'options' => ['query' => \Drupal::request()->query->all() + [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]],
       ];
     }
 
@@ -421,7 +419,7 @@ abstract class FormWizardBase extends FormBase implements FormWizardInterface {
         $actions['previous']['#ajax'] = [
           'callback' => '::ajaxPrevious',
           'url' => Url::fromRoute($this->getRouteName(), $parameters),
-          'options' => ['query' => $this->getRequest()->query->all() + [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]],
+          'options' => ['query' => \Drupal::request()->query->all() + [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]],
         ];
       }
     }

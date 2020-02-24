@@ -9,17 +9,16 @@
         "bower-asset/slick-carousel": "^1.8",
         "drupal/core": "~8.6.18 || ~8.7.11 || ~8.8.1 || 8.9.* || 9.0.*",
         "drupal/crop": "^2.0.0-rc1",
-        "drupal/dropzonejs": "2.0.0-alpha5",
+        "drupal/dropzonejs": "2.0.0-alpha4",
         "drupal/embed": "^1.0",
-        "drupal/entity_browser": "^2.3",
-        "drupal/entity_embed": "^1.0",
+        "drupal/entity_browser": "2.2.0",
+        "drupal/entity_embed": "1.0",
         "drupal/image_widget_crop": "^2.1",
         "drupal/inline_entity_form": "^1.0",
         "drupal/libraries": "3.0-alpha1",
         "drupal/lightning_core": "3.* || 4.* || 5.*",
         "drupal/media_entity_instagram": "^2.0",
         "drupal/media_entity_twitter": "^2.1",
-        "drupal/slick": "2.0",
         "drupal/slick_entityreference": "^2.0",
         "drupal/video_embed_field": "^2.0",
         "drupal/views_infinite_scroll": "^1.6",
@@ -70,6 +69,9 @@
             "npm-asset"
         ],
         "patches": {
+            "drupal/entity_browser": {
+                "2877751 - Inform users how many items they can add to a field that uses an entity browser": "https://www.drupal.org/files/issues/2018-06-28/2877751-39-8.x-2.x.patch"
+            },
             "drupal/libraries": {
                 "2882709 - Misnamed interface causes \"Fatal error: Cannot declare interface Drupal\\libraries\\ExternalLibrary\\Utility\\LibraryAccessorIdInterface\"": "https://www.drupal.org/files/issues/2882709-2-interface-libraryidaccessorinterface-misnamed.patch"
             }

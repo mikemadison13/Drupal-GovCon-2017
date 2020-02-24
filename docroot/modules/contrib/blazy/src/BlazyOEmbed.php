@@ -5,8 +5,6 @@ namespace Drupal\blazy;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Url;
-use Drupal\Core\Image\ImageFactory;
-use Drupal\file\Entity\File;
 use Drupal\media\IFrameUrlHelper;
 use Drupal\media\OEmbed\Resource;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
@@ -15,9 +13,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Implements BlazyOEmbedInterface.
+ * Provides OEmbed integration.
  */
-class BlazyOEmbed implements BlazyOEmbedInterface {
+class BlazyOEmbed {
 
   /**
    * Core Media oEmbed url resolver.
@@ -62,39 +60,6 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
   protected $request;
 
   /**
-   * The image factory service.
-   *
-   * @var \Drupal\Core\Image\ImageFactory
-   */
-  protected $imageFactory;
-
-  /**
-   * Constructs a BlazyManager object.
-   */
-  public function __construct(RequestStack $request, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, ImageFactory $image_factory, BlazyManagerInterface $blazy_manager) {
-    $this->request = $request;
-    $this->resourceFetcher = $resource_fetcher;
-    $this->urlResolver = $url_resolver;
-    $this->iframeUrlHelper = $iframe_url_helper;
-    $this->imageFactory = $image_factory;
-    $this->blazyManager = $blazy_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('request_stack'),
-      $container->get('media.oembed.resource_fetcher'),
-      $container->get('media.oembed.url_resolver'),
-      $container->get('media.oembed.iframe_url_helper'),
-      $container->get('image.factory'),
-      $container->get('blazy.manager')
-    );
-  }
-
-  /**
    * Returns the Media oEmbed resource fecther.
    */
   public function getResourceFetcher() {
@@ -116,13 +81,6 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
   }
 
   /**
-   * Returns the image factory.
-   */
-  public function imageFactory() {
-    return $this->imageFactory;
-  }
-
-  /**
    * Returns the blazy manager.
    */
   public function blazyManager() {
@@ -130,7 +88,37 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
   }
 
   /**
+   * Constructs a BlazyManager object.
+   */
+  public function __construct(RequestStack $request, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, BlazyManagerInterface $blazy_manager) {
+    $this->request = $request;
+    $this->resourceFetcher = $resource_fetcher;
+    $this->urlResolver = $url_resolver;
+    $this->iframeUrlHelper = $iframe_url_helper;
+    $this->blazyManager = $blazy_manager;
+  }
+
+  /**
    * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('request_stack'),
+      $container->get('media.oembed.resource_fetcher'),
+      $container->get('media.oembed.url_resolver'),
+      $container->get('media.oembed.iframe_url_helper'),
+      $container->get('blazy.manager')
+    );
+  }
+
+  /**
+   * Returns the oEmbed Resource.
+   *
+   * @param string $input_url
+   *   The video url.
+   *
+   * @return Drupal\media\OEmbed\Resource[]
+   *   The oEmbed resource.
    */
   public function getResource($input_url) {
     if (!isset($this->resource[hash('md2', $input_url)])) {
@@ -142,12 +130,20 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Builds media-related settings based on the given media url.
+   *
+   * Need internet, else `Could not retrieve the oEmbed provider database from
+   * //oembed.com/providers.json in Drupal\media\OEmbed\ProviderRepository.
+   *
+   * @param array $settings
+   *   The settings array being modified.
+   *
+   * @return Drupal\media\OEmbed\Resource
+   *   The oEmbed resource.
    */
   public function build(array &$settings = []) {
     $resource = NULL;
     try {
-      $this->blazyManager->getCommonSettings($settings);
       $settings['input_url'] = UrlHelper::stripDangerousProtocols($settings['input_url']);
       $resource = $this->getResource($settings['input_url']);
 
@@ -194,44 +190,100 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Provides the autoplay url suitable for lightboxes, or custom video trigger.
+   *
+   * @param Drupal\media\OEmbed\Resource $resource
+   *   The oEmbed resource.
+   *
+   * @return array
+   *   The settings array.
    */
-  public function getAutoPlayUrl(Resource $resource, \DOMDocument $dom = NULL) {
+  public function getAutoPlayUrl(Resource $resource) {
     $data = [];
-    if ($dom || $resource->getHtml()) {
-      $dom = $dom ?: Html::load($resource->getHtml());
-      $iframe = $dom->getElementsByTagName('iframe');
-      $url = $iframe->length > 0 ? $iframe->item(0)->getAttribute('src') : NULL;
+    if (empty($resource->getHtml())) {
+      return $data;
+    }
 
-      if (!empty($url)) {
-        $data['oembed_url'] = $url;
-        $data['scheme']     = mb_strtolower($resource->getProvider()->getName());
-        $data['type']       = $resource->getType();
+    $dom = Html::load($resource->getHtml());
+    $iframe = $dom->getElementsByTagName('iframe');
+    $url = $iframe->length > 0 ? $iframe->item(0)->getAttribute('src') : NULL;
 
-        // Adds autoplay for media URL on lightboxes, saving another click.
-        if (strpos($url, 'autoplay') === FALSE || strpos($url, 'autoplay=0') !== FALSE) {
-          $data['autoplay_url'] = strpos($url, '?') === FALSE ? $url . '?autoplay=1' : $url . '&autoplay=1';
-        }
+    if (!empty($url)) {
+      $data['oembed_url'] = $url;
+      $data['scheme']     = mb_strtolower($resource->getProvider()->getName());
+      $data['type']       = $resource->getType();
+
+      // Adds autoplay for media URL on lightboxes, saving another click.
+      if (strpos($url, 'autoplay') === FALSE || strpos($url, 'autoplay=0') !== FALSE) {
+        $data['autoplay_url'] = strpos($url, '?') === FALSE ? $url . '?autoplay=1' : $url . '&autoplay=1';
       }
     }
+
     return $data;
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the Media item thumbnail.
+   *
+   * @param array $data
+   *   The modified array containing settings, and to be video thumbnail item.
+   * @param object $media
+   *   The core Media entity.
    */
-  public function getMediaItem(array &$data, $media) {
+  public function getMediaItem(array &$data = [], $media = NULL) {
     // Only proceed if we do have Media.
     if ($media->getEntityTypeId() != 'media') {
       return;
     }
 
-    BlazyMedia::mediaItem($data, $media);
+    $item     = NULL;
+    $content  = [];
     $settings = $data['settings'];
 
+    $settings['bundle']       = $media->bundle();
+    $settings['source_field'] = $media->getSource()->getConfiguration()['source_field'];
+    $settings['media_url']    = $media->toUrl()->toString();
+    $settings['media_id']     = $media->id();
+    $settings['media_source'] = $media->getSource()->getPluginId();
+    $settings['view_mode']    = empty($settings['view_mode']) ? 'default' : $settings['view_mode'];
+
+    // If Media has a defined thumbnail, add it to data item, not all has this.
+    if ($media->hasField('thumbnail')) {
+      /** @var Drupal\image\Plugin\Field\FieldType\ImageItem $item */
+      $item = $media->get('thumbnail')->first();
+
+      // Title is NULL from thumbnail, likely core bug, so fallback to source.
+      if ($settings['media_source'] == 'image') {
+        $item = $media->get($settings['source_field'])->get(0);
+      }
+
+      $settings['file_tags'] = ['file:' . $item->target_id];
+
+      // Provides thumbnail URI for EB selection with various Media entities.
+      if (empty($settings['uri'])) {
+        try {
+          // Without internet, this screwed up the site.
+          $settings['uri'] = $media->getSource()->getMetadata($media, 'thumbnail_uri');
+        }
+        catch (\Exception $ignore) {
+          // Do nothing, no need to be chatty on this.
+        }
+
+        // Provides a fallback for the URI.
+        if (empty($settings['uri'])) {
+          $settings['uri'] = ($entity = $item->entity) && empty($item->uri) ? $entity->getFileUri() : $item->uri;
+        }
+      }
+    }
+
     // @todo support local video/ audio file, and other media sources.
-    // @todo check for Resource::TYPE_PHOTO, Resource::TYPE_RICH, etc.
     switch ($settings['media_source']) {
+      case 'file':
+      case 'audio_file':
+      case 'video_file':
+        // @todo or not @todo. @tobe or not @tobe. @o...bedo...bedo.
+        break;
+
       case 'oembed':
       case 'oembed:video':
         // Input url != embed url. For Youtube, /watch != /embed.
@@ -248,48 +300,27 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
         $settings['type'] = 'image';
         break;
 
-      // No special handling for anything else for now, pass through.
       default:
         break;
     }
 
     // Do not proceed if it has type, already managed by theme_blazy().
-    // Supports other Media entities: Facebook, Instagram, local video, etc.
+    // Supports other Media entities: Facebook, Instagram, Twitter, etc.
+    // @todo recheck against core Media with Resource::TYPE_RICH.
     if (empty($settings['type']) && ($build = BlazyMedia::build($media, $settings))) {
-      $data['content'][] = $build;
+      $content[] = $build;
     }
 
     // Collect what's needed for clarity.
+    $data['item'] = $item;
     $data['settings'] = $settings;
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo compare and merge with BlazyMedia::imageItem().
-   */
-  public function getImageItem($file) {
-    $data = [];
-    $entity = $file;
-
-    /** @var Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $file */
-    if (isset($file->entity) && !isset($file->alt)) {
-      $entity = $file->entity;
-    }
-
-    if ($entity instanceof File) {
-      if ($image = $this->imageFactory->get($entity->getFileUri())) {
-        BlazyMedia::fakeImageItem($data, $entity, $image);
-      }
-    }
-
-    return $data;
+    $data['content'] = $content;
   }
 
   /**
    * Overrides variables for media-oembed-iframe.html.twig templates.
    *
-   * @todo recheck this in case core provides a more flexible way post 8.8+.
+   * @todo recheck this in case core provides a more flexible way post 8.6+.
    */
   public function preprocessMediaOembedIframe(array &$variables) {
     // Without internet, this may be empty, bail out.
@@ -313,7 +344,7 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
         $resource = $this->getResource($url);
 
         // Fetches autoplay_url.
-        $settings = $this->getAutoPlayUrl($resource, $dom);
+        $settings = $this->getAutoPlayUrl($resource);
 
         // Replace old oEmbed url with autoplay support, and save the DOM.
         if ($iframe->length > 0) {
@@ -323,15 +354,14 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
           }
 
           // Make responsive iframe with/ without autoplay.
-          // The following ensures iframe does not shrink due to its attributes.
-          $iframe->item(0)->setAttribute('height', '100%');
           $iframe->item(0)->setAttribute('width', '100%');
-          $dom->getElementsByTagName('body')->item(0)->setAttribute('class', 'is-b-oembed');
+          $iframe->item(0)->setAttribute('height', '100%');
+          $iframe->item(0)->setAttribute('style', 'display: block; max-width: 100%; overflow: hidden; width: 100%; height: 100vh;');
           $variables['media'] = $dom->saveHTML();
         }
       }
     }
-    catch (\Exception $ignore) {
+    catch (\Exception $e) {
       // Do nothing, likely local work without internet, or the site is down.
       // No need to be chatty on this.
     }

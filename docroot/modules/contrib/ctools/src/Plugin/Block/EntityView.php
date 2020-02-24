@@ -4,8 +4,7 @@ namespace Drupal\ctools\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
@@ -22,18 +21,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EntityView extends BlockBase implements ContextAwarePluginInterface, ContainerFactoryPluginInterface {
 
   /**
-   * The entity type manager.
+   * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $entityTypeManager;
-
-  /**
-   * The entity display repository.
-   *
-   * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
-   */
-  protected $entityDisplayRepository;
+  protected $entityManager;
 
   /**
    * Constructs a new EntityView.
@@ -44,16 +36,13 @@ class EntityView extends BlockBase implements ContextAwarePluginInterface, Conta
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
-   *   The entity display repository.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityDisplayRepositoryInterface $entity_display_repository) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->entityTypeManager = $entity_type_manager;
-    $this->entityDisplayRepository = $entity_display_repository;
+    $this->entityManager = $entity_manager;
   }
 
   /**
@@ -64,8 +53,7 @@ class EntityView extends BlockBase implements ContextAwarePluginInterface, Conta
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('entity_display.repository')
+      $container->get('entity.manager')
     );
   }
 
@@ -84,7 +72,7 @@ class EntityView extends BlockBase implements ContextAwarePluginInterface, Conta
   public function blockForm($form, FormStateInterface $form_state) {
     $form['view_mode'] = [
       '#type' => 'select',
-      '#options' => $this->entityDisplayRepository->getViewModeOptions($this->getDerivativeId()),
+      '#options' => $this->entityManager->getViewModeOptions($this->getDerivativeId()),
       '#title' => $this->t('View mode'),
       '#default_value' => $this->configuration['view_mode'],
     ];
@@ -105,7 +93,7 @@ class EntityView extends BlockBase implements ContextAwarePluginInterface, Conta
     /** @var $entity \Drupal\Core\Entity\EntityInterface */
     $entity = $this->getContextValue('entity');
 
-    $view_builder = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
+    $view_builder = $this->entityManager->getViewBuilder($entity->getEntityTypeId());
     $build = $view_builder->view($entity, $this->configuration['view_mode']);
 
     CacheableMetadata::createFromObject($this->getContext('entity'))

@@ -1,9 +1,15 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\page_manager_ui\Form\VariantPluginDeleteBlockForm.
+ */
+
 namespace Drupal\page_manager_ui\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\page_manager\PageVariantInterface;
 
 /**
  * Provides a form for deleting an access condition.
@@ -11,8 +17,6 @@ use Drupal\Core\Form\FormStateInterface;
 class VariantPluginDeleteBlockForm extends ConfirmFormBase {
 
   /**
-   * The block variant.
-   *
    * @var \Drupal\ctools\Plugin\BlockVariantInterface
    */
   protected $plugin;
@@ -28,7 +32,6 @@ class VariantPluginDeleteBlockForm extends ConfirmFormBase {
    * Get the tempstore id.
    *
    * @return string
-   *   The temp store id.
    */
   protected function getTempstoreId() {
     return 'page_manager.block_display';
@@ -37,11 +40,10 @@ class VariantPluginDeleteBlockForm extends ConfirmFormBase {
   /**
    * Get the tempstore.
    *
-   * @return \Drupal\Core\TempStore\SharedTempStore
-   *   The shared temp store.
+   * @return \Drupal\user\SharedTempStore
    */
   protected function getTempstore() {
-    return \Drupal::service('tempstore.shared')->get($this->getTempstoreId());
+    return \Drupal::service('user.shared_tempstore')->get($this->getTempstoreId());
   }
 
   /**

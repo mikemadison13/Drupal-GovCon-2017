@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContextAwarePluginAssignmentTrait;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\panels\CachedValuesGetterTrait;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,7 +22,7 @@ abstract class PanelsBlockConfigureFormBase extends FormBase {
   /**
    * Tempstore factory.
    *
-   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
+   * @var \Drupal\user\SharedTempStoreFactory
    */
   protected $tempstore;
 
@@ -50,7 +50,7 @@ abstract class PanelsBlockConfigureFormBase extends FormBase {
   /**
    * Constructs a new VariantPluginConfigureBlockFormBase.
    *
-   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   * @param \Drupal\user\SharedTempStoreFactory $tempstore
    *   The tempstore factory.
    */
   public function __construct(SharedTempStoreFactory $tempstore) {
@@ -62,7 +62,7 @@ abstract class PanelsBlockConfigureFormBase extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('tempstore.shared')
+      $container->get('user.shared_tempstore')
     );
   }
 
@@ -78,7 +78,7 @@ abstract class PanelsBlockConfigureFormBase extends FormBase {
   /**
    * Get the tempstore.
    *
-   * @return \Drupal\Core\TempStore\SharedTempStoreFactory
+   * @return \Drupal\user\SharedTempStore
    */
   protected function getTempstore() {
     return $this->tempstore->get($this->getTempstoreId());

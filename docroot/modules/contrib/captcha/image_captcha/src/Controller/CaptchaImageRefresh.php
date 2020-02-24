@@ -12,7 +12,6 @@ use Drupal\Core\Database\Database;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Drupal\Component\Utility\Crypt;
 
 /**
  * Description of CaptchaImageRefresh.
@@ -57,7 +56,7 @@ class CaptchaImageRefresh extends ControllerBase {
       module_load_include('inc', 'captcha', 'captcha');
       $config = $this->config('image_captcha.settings');
       $captcha_sid = _captcha_generate_captcha_session($form_id);
-      $captcha_token = Crypt::randomBytesBase64();
+      $captcha_token = md5(mt_rand());
       $allowed_chars = _image_captcha_utf8_split($config->get('image_captcha_image_allowed_chars', IMAGE_CAPTCHA_ALLOWED_CHARACTERS));
       $code_length = (int) $config->get('image_captcha_code_length');
       $code = '';

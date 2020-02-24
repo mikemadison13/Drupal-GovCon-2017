@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains Drupal\page_manager_ui\Form\PageVariantAddForm.
+ */
+
 namespace Drupal\page_manager_ui\Form;
 
 use Drupal\Core\Display\VariantManager;
@@ -7,7 +12,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\page_manager\Entity\PageVariant;
 use Drupal\page_manager\PageInterface;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,7 +30,7 @@ class PageVariantAddForm extends FormBase {
   /**
    * Tempstore factory.
    *
-   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
+   * @var \Drupal\user\SharedTempStoreFactory
    */
   protected $tempstore;
 
@@ -34,8 +39,6 @@ class PageVariantAddForm extends FormBase {
    *
    * @param \Drupal\Core\Display\VariantManager $variant_manager
    *   The variant manager.
-   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
-   *   The shared temp store factory.
    */
   public function __construct(VariantManager $variant_manager, SharedTempStoreFactory $tempstore) {
     $this->variantManager = $variant_manager;
@@ -48,7 +51,7 @@ class PageVariantAddForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.display_variant'),
-      $container->get('tempstore.shared')
+      $container->get('user.shared_tempstore')
     );
   }
 

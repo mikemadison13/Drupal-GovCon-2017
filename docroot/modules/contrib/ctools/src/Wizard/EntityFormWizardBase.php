@@ -2,13 +2,14 @@
 
 namespace Drupal\ctools\Wizard;
 
+
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\ctools\Event\WizardEvent;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -17,14 +18,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 abstract class EntityFormWizardBase extends FormWizardBase implements EntityFormWizardInterface {
 
   /**
-   * The entity type manager.
+   * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $entityTypeManager;
+  protected $entityManager;
 
   /**
-   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   * @param \Drupal\user\SharedTempStoreFactory $tempstore
    *   Tempstore Factory for keeping track of values in each step of the
    *   wizard.
    * @param \Drupal\Core\Form\FormBuilderInterface $builder
@@ -33,8 +34,8 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
    *   The class resolver.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
    * @param $tempstore_id
    *   The shared temp store factory collection name.
    * @param null $machine_name
@@ -42,8 +43,8 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
    * @param null $step
    *   The current active step of the wizard.
    */
-  public function __construct(SharedTempStoreFactory $tempstore, FormBuilderInterface $builder, ClassResolverInterface $class_resolver, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, RouteMatchInterface $route_match, $tempstore_id, $machine_name = NULL, $step = NULL) {
-    $this->entityTypeManager = $entity_type_manager;
+  public function __construct(SharedTempStoreFactory $tempstore, FormBuilderInterface $builder, ClassResolverInterface $class_resolver, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, RouteMatchInterface $route_match, $tempstore_id, $machine_name = NULL, $step = NULL) {
+    $this->entityManager = $entity_manager;
     parent::__construct($tempstore, $builder, $class_resolver, $event_dispatcher, $route_match, $tempstore_id, $machine_name, $step);
   }
 
@@ -52,14 +53,11 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
    */
   public static function getParameters() {
     return [
-      'tempstore' => \Drupal::service('tempstore.shared'),
+      'tempstore' => \Drupal::service('user.shared_tempstore'),
       'builder' => \Drupal::service('form_builder'),
       'class_resolver' => \Drupal::service('class_resolver'),
       'event_dispatcher' => \Drupal::service('event_dispatcher'),
-      // Keep the deprecated entity manager service as a parameter as well for
-      // BC, so that subclasses still work.
       'entity_manager' => \Drupal::service('entity.manager'),
-      'entity_type_manager' => \Drupal::service('entity_type.manager'),
     ];
   }
 
@@ -67,7 +65,7 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
    * {@inheritdoc}
    */
   public function initValues() {
-    $storage = $this->entityTypeManager->getStorage($this->getEntityType());
+    $storage = $this->entityManager->getStorage($this->getEntityType());
     if ($this->getMachineName()) {
       $values = $this->getTempstore()->get($this->getMachineName());
       if (!$values) {
@@ -91,25 +89,24 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
    */
   public function finish(array &$form, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
-    /** @var \Drupal\Core\Entity\EntityInterface $entity */
+    /** @var $entity \Drupal\Core\Entity\EntityInterface */
     $entity = $cached_values[$this->getEntityType()];
     $entity->set('id', $cached_values['id']);
     $entity->set('label', $cached_values['label']);
     $status = $entity->save();
-
-    $arguments = [
-      '@entity-type' => $entity->getEntityType()->getLowercaseLabel(),
-      '%label' => $entity->label(),
-    ];
-    if ($status === SAVED_UPDATED) {
-      $this->messenger()->addMessage($this->t('The @entity-type %label has been updated.', $arguments));
-      $this->logger($entity->getEntityType()->getProvider())->notice('Updated @entity-type %label.', $arguments);
+    $definition = $this->entityManager->getDefinition($this->getEntityType());
+    if ($status) {
+      drupal_set_message($this->t('Saved the %label @entity_type.', array(
+        '%label' => $entity->label(),
+        '@entity_type' => $definition->getLabel(),
+      )));
     }
-    elseif ($status === SAVED_NEW) {
-      $this->messenger()->addMessage($this->t('The @entity-type %label has been added.', $arguments));
-      $this->logger($entity->getEntityType()->getProvider())->notice('Added @entity-type %label.', $arguments);
+    else {
+      drupal_set_message($this->t('The %label @entity_type was not saved.', array(
+        '%label' => $entity->label(),
+        '@entity_type' => $definition->getLabel(),
+      )));
     }
-
     $form_state->setRedirectUrl($entity->toUrl('collection'));
     parent::finish($form, $form_state);
   }
@@ -125,7 +122,7 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
   protected function customizeForm(array $form, FormStateInterface $form_state) {
     $form = parent::customizeForm($form, $form_state);
     if ($this->machine_name) {
-      $entity = $this->entityTypeManager->getStorage($this->getEntityType())
+      $entity = $this->entityManager->getStorage($this->getEntityType())
         ->load($this->machine_name);
     }
     else {
@@ -148,7 +145,7 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
     $default_operation = reset($operations);
     if ($operation['form'] == $default_operation['form']) {
       // Get the plugin definition of this entity.
-      $definition = $this->entityTypeManager->getDefinition($this->getEntityType());
+      $definition = $this->entityManager->getDefinition($this->getEntityType());
       // Create id and label form elements.
       $form['name'] = array(
         '#type' => 'fieldset',

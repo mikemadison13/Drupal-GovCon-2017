@@ -3,7 +3,6 @@
 namespace Drupal\blazy\Dejavu;
 
 use Drupal\Component\Utility\Xss;
-use Drupal\blazy\Blazy;
 
 /**
  * A Trait common for optional views style plugins.
@@ -36,7 +35,7 @@ trait BlazyStylePluginTrait {
       // background option, and other options, and still lazyload it.
       $theme = isset($image['rendered']['#theme']) ? $image['rendered']['#theme'] : '';
       if (in_array($theme, ['blazy', 'image_formatter'])) {
-        $settings['uri'] = Blazy::uri($item);
+        $settings['uri'] = ($entity = $item->entity) && empty($item->uri) ? $entity->getFileUri() : $item->uri;
         $settings['cache_tags'] = isset($image['rendered']['#cache']['tags']) ? $image['rendered']['#cache']['tags'] : [];
 
         if ($theme == 'blazy') {
@@ -51,8 +50,7 @@ trait BlazyStylePluginTrait {
           // Deals with "link to content/image" by formatters.
           $settings['content_url'] = isset($image['rendered']['#url']) ? $image['rendered']['#url'] : '';
           // Prevent images from having absurd height when being lazyloaded.
-          // Allows to disables it by _noratio such as enforced CSS background.
-          $settings['ratio'] = empty($settings['_noratio']) ? 'fluid' : '';
+          $settings['ratio'] = 'fluid';
           if (empty($settings['media_switch']) && !empty($settings['content_url'])) {
             $settings['media_switch'] = 'content';
           }
