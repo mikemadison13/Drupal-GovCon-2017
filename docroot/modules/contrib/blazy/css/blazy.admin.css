@@ -24,7 +24,8 @@ body.path-admin .form--slick *,
 
 .form--slick::after,
 .form--slick .fieldset-wrapper::after,
-.form--slick .form-checkboxes {
+.form--slick .form-checkboxes,
+.form--slick .claro-details__content {
   content: "";
   display: table;
   clear: both;
@@ -181,8 +182,8 @@ body.path-admin .form--slick *,
 }
 
 .form--slick details.form-wrapper {
-  margin: 0 0 20px;
-  padding: 30px 0;
+  margin: 0;
+  padding: 0;
   border: 0;
 }
 
@@ -200,6 +201,10 @@ body.path-admin .form--slick *,
   font-size: 18px;
   font-size: 1.125rem;
   padding: 0 0.8em;
+}
+
+.form--slick details.claro-details summary {
+  padding-left: 2em;
 }
 
 .form--slick details .details-title {
@@ -620,6 +625,10 @@ html.js .form--slick .collapsed .details-legend .details-legend-prefix::after {
   min-width: 40px;
 }
 
+.form--slick .form-type--boolean .form-boolean {
+  min-width: 18px;
+}
+
 .form--slick .form-item .form-text,
 .form--slick .form-item .form-select,
 .form--slick .form-item .form-textarea {
@@ -668,13 +677,15 @@ html.js .form--slick .collapsed .details-legend .details-legend-prefix::after {
   white-space: nowrap; /* Fix for Bartik */
 }
 
-.form--slick .form-type-textfield .field-prefix {
+.form--slick .form-type-textfield .field-prefix,
+.form--slick .form-type--textfield .form-item__prefix {
   float: left;
   line-height: 22px;
   padding: 5px;
 }
 
-.form--slick .form-type-textfield .field-suffix {
+.form--slick .form-type-textfield .field-suffix,
+.form--slick .form-type--textfield .form-item__prefix {
   padding-left: 5px;
 }
 
@@ -711,7 +722,7 @@ html.js .form--slick .collapsed .details-legend .details-legend-prefix::after {
   max-width: 150px;
 }
 
-.form--slick .form-item.form-type-textfield .form-text--int {
+.form--slick .form-item.form-type-textfield .form-number {
   max-width: 50px;
 }
 
@@ -1060,11 +1071,13 @@ td .form__title {
 
 .form--slick .form__header .form-item .form-checkbox {
   max-width: 100%;
+  width: auto;
 }
 
 .form--slick .form__header .form-item label {
   float: none;
   text-align: left;
+  padding-left: 0 !important;
 }
 
 .form--slick .form__header .form-item-skin label,
@@ -1245,6 +1258,14 @@ td .form__title {
   text-align: center;
 }
 
+.form--slick .form-wrapper--table-breakpoints .tabledrag-handle {
+  display: none;
+}
+
+.form--slick .fieldset__description {
+  text-align: center;
+}
+
 @media screen and (min-width: 760px) {
   .form--slick .form-item {
     border-right: 1px solid #e7e7e7;
@@ -1348,11 +1369,60 @@ td .form__title {
   }
 
   .form--slick #edit-delete {
-    float: right;
+    position: absolute;
+    right: 0;
   }
 }
 
 @media screen and (min-width: 1280px) {
+  .form--slick .claro-details {
+    box-shadow: none;
+  }
+
+  .form--slick.slick-form .vertical-tabs .claro-details .details-wrapper {
+    top: -112px;
+    position: relative;
+  }
+
+  .form--slick.slick-form .vertical-tabs .details-wrapper .details-wrapper {
+    top: 0;
+    margin: 2px;
+  }
+
+  .form--slick.slick-form .vertical-tabs .claro-details .details-wrapper .details-wrapper {
+    padding: 0 1.5em 1em 1.5em;
+  }
+
+  .form--slick.slick-form .vertical-tabs .details-wrapper .details--settings .details-wrapper {
+    margin: 0;
+    padding: 0;
+  }
+
+  .form--slick .vertical-tabs details {
+    overflow: visible;
+  }
+
+  .form--slick .vertical-tabs .details--responsive--ajax {
+    padding: 0;
+  }
+
+  .form--slick .claro-details__description {
+    padding: 1em;
+  }
+
+  .form--slick .form-type--boolean .form-boolean {
+    margin-left: 0;
+  }
+
+  .form--slick .form-item .form-number {
+    min-height: 2rem;
+    padding: 2px 15px;
+  }
+
+  .form--slick .vertical-tabs .claro-details__content--vertical-tabs-item {
+    margin: auto;
+  }
+
   .form--optionset .form-item,
   .toolbar-tray-open .form--optionset .form-item {
     width: 33.2666%;
@@ -1362,6 +1432,11 @@ td .form__title {
   .form--half .form-item,
   .toolbar-vertical.toolbar-tray-open .form--slick .form-item {
     width: 49.9999%;
+  }
+
+  .form--optionset .form-item.form-type--vertical-tabs,
+  .toolbar-tray-open .form--optionset .form-item.form-type--vertical-tabs {
+    width: 100%;
   }
 
   /** Blazy grid at Views UI */
@@ -1395,6 +1470,14 @@ td .form__title {
     width: 100%;
   }
 
+  .form--slick .vertical-tabs__items {
+    margin-left: 190px;
+  }
+
+  .form--gridstack .vertical-tabs__items {
+    margin-left: 0;
+  }
+
   .form--slick .form-type-item {
     float: left;
     width: 100%;
@@ -1407,6 +1490,10 @@ td .form__title {
 
   .form--slick.form--half .form-checkboxes .form-item {
     width: 24.9999%;
+  }
+
+  .toolbar-tray-open .form--slick.slick-form .form__half--last .form-item {
+    max-width: 24%;
   }
 
   .form--slick.form--image .form-wrapper--caption .form-item,

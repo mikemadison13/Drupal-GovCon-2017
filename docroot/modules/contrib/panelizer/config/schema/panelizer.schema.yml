@@ -4,8 +4,11 @@ panelizer.default.display:
   label: 'Panelizer display default'
   mapping:
     static_context:
-      type: ctools.context
+      type: sequence
       label: 'Contexts'
+      sequence:
+        type: ctools.context
+        label: 'Context'
     pattern:
       type: string
       label: 'Pattern plugin ID'

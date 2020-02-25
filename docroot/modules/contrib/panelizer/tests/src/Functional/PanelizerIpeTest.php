@@ -17,22 +17,11 @@ class PanelizerIpeTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
-    // Modules for core functionality.
+  protected static $modules = [
     'node',
-    'field',
     'field_ui',
     'user',
-
-    // Core dependencies.
-    'layout_discovery',
-
-    // Contrib dependencies.
-    'ctools',
-    'panels',
     'panels_ipe',
-
-    // This module.
     'panelizer',
   ];
 
@@ -41,6 +30,16 @@ class PanelizerIpeTest extends BrowserTestBase {
    */
   protected function setUp() {
     parent::setUp();
+
+    $this->createContentType(['type' => $this->content_type]);
+
+    $this->container->get('panelizer')
+      ->setPanelizerSettings('node', $this->content_type, 'default', [
+        'enable' => TRUE,
+        'allow' => FALSE,
+        'custom' => TRUE,
+        'default' => 'default',
+      ]);
 
     // Reload all caches.
     $this->rebuildAll();
@@ -89,8 +88,6 @@ class PanelizerIpeTest extends BrowserTestBase {
    * Test that the IPE functionality as user 1, which should cover all options.
    */
   public function testAdminUser() {
-    $this->setupContentType($this->content_type);
-
     // Create a test node.
     $node = $this->createTestNode();
 
@@ -132,8 +129,6 @@ class PanelizerIpeTest extends BrowserTestBase {
    * Confirm the 'administer panelizer' permission works.
    */
   public function testAdministerPanelizerPermission() {
-    $this->setupContentType($this->content_type);
-
     // Create a test node.
     $node = $this->createTestNode();
 
@@ -195,8 +190,6 @@ class PanelizerIpeTest extends BrowserTestBase {
    * permission works.
    */
   public function testAdministerEntityContentPermission() {
-    $this->setupContentType($this->content_type);
-
     // Need the node for the tests below, so create it now.
     $node = $this->createTestNode();
 
@@ -232,8 +225,6 @@ class PanelizerIpeTest extends BrowserTestBase {
    * permission works.
    */
   public function testAdministerEntityLayoutPermission() {
-    $this->setupContentType($this->content_type);
-
     // Need the node for the tests below, so create it now.
     $node = $this->createTestNode();
 
@@ -289,8 +280,6 @@ class PanelizerIpeTest extends BrowserTestBase {
    * permission works.
    */
   public function testAdministerEntityRevertPermission() {
-    $this->setupContentType($this->content_type);
-
     // Need the node for the tests below, so create it now.
     $node = $this->createTestNode();
 

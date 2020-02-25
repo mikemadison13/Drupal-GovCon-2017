@@ -82,3 +82,10 @@ function panelizer_post_update_rename_layout_machine_names(&$sandbox) {
     return t('Panelized custom layouts have been updated.');
   }
 }
+
+/**
+ * Installs dependencies needed for migration to Layout Builder.
+ */
+function panelizer_post_update_enable_layout_builder_dependencies() {
+  Drupal::service('module_installer')->install(['layout_library']);
+}

@@ -48,11 +48,12 @@
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   position: relative;
+  min-height: 30px;
 }
 
 .media--loading::before {
   content: '';
-  display: block;
+  display: none;
   width: 30px;
   height: 30px;
   max-width: 30px;
@@ -77,4 +78,21 @@
 /** Fix for conflict with Bootstrap CSS if not using aspect ratio. */
 .blazy .media {
   display: block;
+}
+
+/**
+ * With JS being disabled, the NOSCRIPT tag is replaced by SPAN.
+ * No worries about video iframes, they are broken without JS anyway.
+ */
+.blazy--on .media--loading::before {
+  display: block;
+}
+
+/** Hide JS stuffs when being disabled. Ensures to not mess up JS users. */
+.media--loading > span + .b-lazy,
+.media--loading > span + picture,
+.media--loading > span + a,
+.media--loading.media--player > span ~ .b-lazy,
+.media--loading.media--player > span ~ .media__icon {
+  display: none;
 }

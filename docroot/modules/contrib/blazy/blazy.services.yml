@@ -3,24 +3,37 @@ services:
     abstract: true
     class: Drupal\blazy\BlazyManagerBase
     arguments: ['@entity.repository', '@entity_type.manager', '@module_handler', '@renderer', '@config.factory', '@cache.default']
+    calls:
+      # @todo remove and use DI instead after sub-module updates.
+      - [setRoot, ['@app.root']]
 
   blazy.manager:
     abstract: false
     class: Drupal\blazy\BlazyManager
     parent: blazy.manager.base
 
+  blazy.formatter:
+    class: Drupal\blazy\BlazyFormatter
+    parent: blazy.manager
+
+  # @todo deprecate and remove this for blazy.formatter at blazy: 8.3.
   blazy.formatter.manager:
     class: Drupal\blazy\BlazyFormatterManager
-    parent: blazy.manager
+    parent: blazy.formatter
 
   blazy.oembed:
     class: Drupal\blazy\BlazyOEmbed
-    arguments: ['@request_stack', '@media.oembed.resource_fetcher', '@media.oembed.url_resolver', '@media.oembed.iframe_url_helper', '@blazy.manager']
+    arguments: ['@request_stack', '@media.oembed.resource_fetcher', '@media.oembed.url_resolver', '@media.oembed.iframe_url_helper', '@image.factory', '@blazy.manager']
 
   blazy.entity:
     class: Drupal\blazy\BlazyEntity
     arguments: ['@blazy.oembed']
 
+  blazy.media:
+    class: Drupal\blazy\BlazyMedia
+    # @todo arguments: ['@blazy.entity']
+
+  # @todo deprecate and remove this for blazy.formatter at blazy: 8.3.
   blazy:
     class: Drupal\blazy\Blazy
 

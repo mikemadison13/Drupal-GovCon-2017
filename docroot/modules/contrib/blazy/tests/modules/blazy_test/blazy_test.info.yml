@@ -9,9 +9,8 @@ dependencies:
   - blazy:blazy
   - drupal:responsive_image
   - drupal:views
-  - drupal:media (>= 8.8)
 
-# Information added by Drupal.org packaging script on 2019-12-25
-version: '8.x-2.0-rc6'
+# Information added by Drupal.org packaging script on 2020-02-15
+version: '8.x-2.0-rc7'
 project: 'blazy'
-datestamp: 1577248389
+datestamp: 1581756282

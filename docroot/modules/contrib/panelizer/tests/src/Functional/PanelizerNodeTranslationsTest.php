@@ -22,22 +22,12 @@ class PanelizerNodeTranslationsTest extends ContentTranslationTestBase {
    * {@inheritdoc}
    */
   public static $modules = [
-    // Core dependencies.
     'content_translation',
-    'field',
     'field_ui',
     'language',
-    'layout_discovery',
     'node',
-
-    // Contrib dependencies.
-    'ctools',
     'ctools_block',
-    'panels',
     'panels_ipe',
-
-    // This module.
-    'panelizer',
     'panelizer_test',
   ];
 
@@ -68,7 +58,13 @@ class PanelizerNodeTranslationsTest extends ContentTranslationTestBase {
    * Tests the admin interface to set a default layout for a bundle.
    */
   public function _testWizardUI() {
-    $this->panelize($this->bundle, NULL, ['panelizer[custom]' => TRUE]);
+    $this->container->get('panelizer')
+      ->setPanelizerSettings('node', $this->bundle, 'default', [
+        'enable' => TRUE,
+        'allow' => FALSE,
+        'custom' => TRUE,
+        'default' => 'default',
+      ]);
 
     // Enter the wizard.
     $this->drupalGet("admin/structure/panelizer/edit/{$this->entityTypeId}__{$this->bundle}__default__default");
@@ -150,7 +146,14 @@ class PanelizerNodeTranslationsTest extends ContentTranslationTestBase {
    * Tests rendering a node with Panelizer default.
    */
   public function testPanelizerDefault() {
-    $this->panelize($this->bundle, NULL, ['panelizer[custom]' => TRUE]);
+    $this->container->get('panelizer')
+      ->setPanelizerSettings('node', $this->bundle, 'default', [
+        'enable' => TRUE,
+        'allow' => FALSE,
+        'custom' => TRUE,
+        'default' => 'default',
+      ]);
+
     /** @var \Drupal\panelizer\PanelizerInterface $panelizer */
     $panelizer = $this->container->get('panelizer');
     $displays = $panelizer->getDefaultPanelsDisplays($this->entityTypeId, $this->bundle, 'default');

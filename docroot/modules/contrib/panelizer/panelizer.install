@@ -31,3 +31,35 @@ function panelizer_update_8401(&$sandbox) {
     }
   }
 }
+
+/**
+ * Implements hook_requirements().
+ */
+function panelizer_requirements($phase) {
+  $requirements = [];
+
+  if ($phase === 'update') {
+    $available_modules = Drupal::service('extension.list.module')
+      ->getAllAvailableInfo();
+
+    if (!array_key_exists('layout_library', $available_modules)) {
+      $requirements['panelizer_layout_library_not_installed'] = [
+        'title' => t('Layout Library module required'),
+        'description' => t('Panelizer 5.0 requires the <a href="@url">Layout builder library</a> module.', [
+          '@url' => 'https://drupal.org/project/layout_library',
+        ]),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+    if (!array_key_exists('core_context', $available_modules)) {
+      $requirements['panelizer_core_context_not_installed'] = [
+        'title' => t('Core Context module required'),
+        'description' => t('Panelizer 5.0 requires the <a href="@url">Core Context</a> module.', [
+          '@url' => 'https://drpual.org/project/core_context',
+        ]),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+  }
+  return $requirements;
+}
