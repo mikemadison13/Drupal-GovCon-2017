@@ -71,9 +71,16 @@ final class SectionComponentRenderArray implements EventSubscriberInterface {
       return;
     }
 
+    // @todo Remove once https://www.drupal.org/project/drupal/issues/3018782
+    // is done.
+    $contexts = $event->getContexts();
+    if (isset($contexts['layout_builder.entity']) && empty($contexts['entity'])) {
+      $contexts['entity'] = &$contexts['layout_builder.entity'];
+    }
+
     // The event is unaware of the section storage, so we need to use the
     // available contexts to find the correct section storage.
-    $section_storage = $this->sectionStorageManager->findByContext($event->getContexts(), $event->getCacheableMetadata());
+    $section_storage = $this->sectionStorageManager->findByContext($contexts, $event->getCacheableMetadata());
 
     // If the section storage is overriding another one, the contexts provided
     // by the override should be overlaid on top of the ones provided by the
