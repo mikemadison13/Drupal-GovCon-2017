@@ -10,23 +10,23 @@ Cog is a developer-focused base theme and starterkit created by Acquia's Profess
 * Living style guide construction via KSS-node
 
 ## Let's get started!
-The Cog documentation you seek is located [here](https://github.com/acquia-pso/cog/tree/8.x-1.x/STARTERKIT/README.md). This documentation will cover [installation steps](https://github.com/acquia-pso/cog/tree/8.x-1.x/STARTERKIT/README.md#installation) and a theme [overview](https://github.com/acquia-pso/cog/tree/8.x-1.x/STARTERKIT/README.md#overview) to provide insight into internal methodologies.
+The Cog documentation you seek is located [here](https://github.com/acquia-pso/cog/tree/8.x-1.x/starterkit/README.md). This documentation will cover [installation steps](https://github.com/acquia-pso/cog/tree/8.x-1.x/starterkit/README.md#installation) and a theme [overview](https://github.com/acquia-pso/cog/tree/8.x-1.x/starterkit/README.md#overview) to provide insight into internal methodologies.
 
 ## Got Questions? 
 
-Be sure to visit our [about document](https://github.com/acquia-pso/cog/tree/8.x-1.x/STARTERKIT/_readme/about-cog.md) for high-level insight into topics including "[Background of Cog](https://github.com/acquia-pso/cog/tree/8.x-1.x/STARTERKIT/_readme/about-cog.md#created)" and "[Comparing Cog to frameworks](https://github.com/acquia-pso/cog/tree/8.x-1.x/STARTERKIT/_readme/about-cog.md#compare)"? 
+Be sure to visit our [about document](https://github.com/acquia-pso/cog/tree/8.x-1.x/starterkit/_readme/about-cog.md) for high-level insight into topics including "[Background of Cog](https://github.com/acquia-pso/cog/tree/8.x-1.x/starterkit/_readme/about-cog.md#created)" and "[Comparing Cog to frameworks](https://github.com/acquia-pso/cog/tree/8.x-1.x/starterkit/_readme/about-cog.md#compare)"? 
 
 ## Theming Guide 
 
-We have included a wide collection of snippets and resources in Cog in the format of a [theming guide](https://github.com/acquia-pso/cog/tree/8.x-1.x/STARTERKIT/_theming-guide). These code samples are referenced by common topics and technical methodologies. 
+We have included a wide collection of snippets and resources in Cog in the format of a [theming guide](https://github.com/acquia-pso/cog/tree/8.x-1.x/starterkit/_theming-guide). These code samples are referenced by common topics and technical methodologies. 
 
-* [Sass in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/sass.md)
-* [Using Web Fonts in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/fonts.md)
-* [Twig for Drupal 8](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/twig.md)
-* [Images in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/images.md) 
-* [Drupal 8 Libraries](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/libraries.md)
-* [Preprocessing in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/preprocessing.md)
-* [JavaScript in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/STARTERKIT/_theming-guide/javascript.md)
+* [Sass in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/starterkit/_theming-guide/sass.md)
+* [Using Web Fonts in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/starterkit/_theming-guide/fonts.md)
+* [Twig for Drupal 8](https://github.com/acquia-pso/cog/blob/8.x-1.x/starterkit/_theming-guide/twig.md)
+* [Images in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/starterkit/_theming-guide/images.md) 
+* [Drupal 8 Libraries](https://github.com/acquia-pso/cog/blob/8.x-1.x/starterkit/_theming-guide/libraries.md)
+* [Preprocessing in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/starterkit/_theming-guide/preprocessing.md)
+* [JavaScript in Drupal](https://github.com/acquia-pso/cog/blob/8.x-1.x/starterkit/_theming-guide/javascript.md)
 
 ---
 

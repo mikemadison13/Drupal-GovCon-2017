@@ -18,6 +18,11 @@ class LayoutBuilderIntegrationTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'core_context',
     'core_context_test',
@@ -233,10 +238,18 @@ class LayoutBuilderIntegrationTest extends BrowserTestBase {
       ->setThirdPartySetting('core_context', 'contexts', $third_party_contexts)
       ->save();
 
+    $permissions = ['edit own page content'];
+    if ($layout_overridable) {
+      $permissions[] = 'configure editable page node layout overrides';
+    }
+    $account = $this->drupalCreateUser($permissions);
+    $this->drupalLogin($account);
+
     $entity_values += [
       'type' => 'page',
     ];
     $node = $this->drupalCreateNode($entity_values);
+
     if ($layout_overridable) {
       /** @var \Drupal\layout_builder\Field\LayoutSectionItemList $section_list */
       $section_list = $node->get(OverridesSectionStorage::FIELD_NAME);
@@ -249,22 +262,11 @@ class LayoutBuilderIntegrationTest extends BrowserTestBase {
     $assert_session->statusCodeEquals(200);
     $assert_session->pageTextContains('The context value is 512, brought to you by the letter Charlie.');
 
-    // If the entity can have its own layout, ensure we can actually visit the
-    // Layout tab without trouble.
-    if ($display->isOverridable()) {
-      $account = $this->drupalCreateUser([
-        'configure editable page node layout overrides',
-        'edit any page content',
-      ]);
-      $this->drupalLogin($account);
-      $this->drupalGet($node->toUrl());
-
+    // If the layout is customizable per entity, ensure we can visit the Layout
+    // page without errors.
+    if ($layout_overridable) {
       $this->getSession()->getPage()->clickLink('Layout');
-      // $assert_session->statusCodeEquals(200);
-      if ($this->getSession()->getStatusCode() === 500) {
-        print_r($this->getRawContent());
-        $this->fail();
-      }
+      $assert_session->statusCodeEquals(200);
     }
   }
 

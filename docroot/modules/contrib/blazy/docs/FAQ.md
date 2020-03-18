@@ -74,10 +74,3 @@ function MYTHEME_preprocess_blazy(&$variables) {
   }
 }
 ```
-
-## PERFORMANCE TIPS:
-* If breakpoints provided with tons of images, using image styles with ANY crop
-  is recommended to avoid image dimension calculation with individual images.
-  The image dimensions will be set once, and inherited by all images as long as
-  they contain word crop. If using scaled image styles, regular calculation
-  applies.

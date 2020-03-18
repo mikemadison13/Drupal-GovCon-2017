@@ -1,11 +1,11 @@
 name: 'Core Context'
-core: 8.x
+core_version_requirement: '^8.8 || ^9'
 type: module
 description: 'Allows context values to be attached to entities in a field.'
 dependencies:
   - ctools:ctools
 
-# Information added by Drupal.org packaging script on 2019-12-10
-version: '8.x-1.0-beta1'
+# Information added by Drupal.org packaging script on 2020-02-27
+version: '8.x-1.0-beta2'
 project: 'core_context'
-datestamp: 1575989313
+datestamp: 1582832529

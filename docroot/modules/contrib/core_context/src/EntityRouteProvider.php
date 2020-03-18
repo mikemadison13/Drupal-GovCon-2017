@@ -3,7 +3,6 @@
 namespace Drupal\core_context;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Entity\EntityDisplayRepository;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -74,20 +73,64 @@ final class EntityRouteProvider implements ContextProviderInterface {
   }
 
   /**
+   * Determines the entity type and view mode for the current route.
+   *
+   * This context provider expects to be on a canonical entity route. That means
+   * we expect it to have an _entity_view default which carries the entity type
+   * being viewed, and the view mode being used, separated by a period. Certain
+   * routes (like entity.node.canonical) don't have this, so our route
+   * subscriber adds a _core_context_entity default which contains the required
+   * information.
+   *
+   * We also handle the special case of Layout Builder's entity-specific editing
+   * UI, which we can identify using the _entity_form default (it will carry a
+   * value of ENTITY_TYPE_ID.layout_builder).
+   *
+   * @see \Drupal\core_context\Routing\RouteSubscriber::alterRoutes()
+   * @see \Drupal\layout_builder\Routing\LayoutBuilderRoutesTrait
+   *
+   * @return string|null
+   *   The entity type ID and view mode of the current route, separated by a
+   *   period, or NULL if we are not on an entity route.
+   */
+  private function getEntityTypeAndViewModeFromRoute() {
+    // If we don't even know what route we're on, there's nothing we can do.
+    $route = $this->routeMatch->getRouteObject();
+    if (empty($route)) {
+      return NULL;
+    }
+
+    $default = $route->getDefault('_core_context_entity') ?: $route->getDefault('_entity_view');
+    if (strpos((string) $default, '.') > 0) {
+      return $default;
+    }
+
+    $matched = [];
+    $default = (string) $route->getDefault('_entity_form');
+    if (preg_match('/([a-zA-Z0-9_]+)\.layout_builder$/', $default, $matched)) {
+      // For now, we can (more or less) assume that 'full' is the canonical view
+      // mode.
+      // @see \Drupal\layout_builder\Form\LayoutBuilderEntityViewDisplayForm::isCanonicalMode()
+      return $matched[1] . '.full';
+    }
+
+    return NULL;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getRuntimeContexts(array $unqualified_context_ids) {
     $contexts = [];
 
-    $route = $this->routeMatch->getRouteObject();
-
-    if ($route && ($route->hasDefault('_entity_view') || $route->hasDefault('_core_context_entity'))) {
-      list ($entity_type_id, $view_mode) = explode('.', $route->getDefault('_entity_view') ?: $route->getDefault('_core_context_entity'));
+    $default = $this->getEntityTypeAndViewModeFromRoute();
+    if ($default) {
+      list ($entity_type_id, $view_mode) = explode('.', $default);
 
       $entity = $this->routeMatch->getParameter($entity_type_id);
       $contexts = array_merge($contexts, $this->getContextsFromEntity($entity));
 
-      $display = $this->getViewDisplay($entity, $view_mode);
+      $display = $this->entityDisplayRepository->getViewDisplay($entity_type_id, $entity->bundle(), $view_mode);
       $contexts = array_merge($contexts, $this->getContextsFromEntity($display));
     }
 
@@ -109,31 +152,6 @@ final class EntityRouteProvider implements ContextProviderInterface {
    */
   public function getAvailableContexts() {
     return $this->getRuntimeContexts([]);
-  }
-
-  /**
-   * Returns an entity view display for a specific entity type and view mode.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity for which to retrieve the view display.
-   * @param string $view_mode
-   *   The desired view mode of the view display.
-   *
-   * @return \Drupal\Core\Entity\Display\EntityViewDisplayInterface
-   *   The entity view display.
-   *
-   * @todo Remove this when Drupal 8.8.0 is the minimum supported version.
-   */
-  private function getViewDisplay(EntityInterface $entity, $view_mode) {
-    $entity_type_id = $entity->getEntityTypeId();
-    $bundle = $entity->bundle();
-
-    if ($this->entityDisplayRepository instanceof EntityDisplayRepository && method_exists($this->entityDisplayRepository, 'getViewDisplay')) {
-      return $this->entityDisplayRepository->getViewDisplay($entity_type_id, $bundle, $view_mode);
-    }
-    else {
-      return entity_get_display($entity_type_id, $bundle, $view_mode);
-    }
   }
 
 }

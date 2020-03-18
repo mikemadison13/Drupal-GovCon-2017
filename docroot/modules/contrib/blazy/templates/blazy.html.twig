@@ -12,7 +12,7 @@
  *   - captions: An optional renderable array of inline or lightbox captions.
  *   - image: A collection of image data.
  *   - attributes: An array of attributes applied to .media container.
- *   - iframe_attributes: An array of iframe attributes, including iframe SRC.
+ *   - iframe: A renderable array of iframe with its attributes and SRC.
  *   - settings: An array containing the given settings.
  *   - url: An optional URL the image can be linked to, can be any of
  *       audio/video, or entity URLs, when using Colorbox/Photobox, or Link to
@@ -55,15 +55,14 @@
 %}
 
 {% set player %}
-  {% if settings.player %}
-    {% block blazy_player %}
-      <iframe{{ iframe_attributes }}></iframe>
-      {% if settings.media_switch and settings.autoplay_url %}
-        <span class="media__icon media__icon--close"></span>
-        <span class="media__icon media__icon--play" data-url="{{ settings.embed_url }}"></span>
-      {% endif %}
-    {% endblock %}
-  {% endif %}
+  {% block blazy_player %}
+    {% if settings.player %}
+      <span class="media__icon media__icon--close"></span>
+      <span class="media__icon media__icon--play" data-url="{{ settings.embed_url }}"></span>
+    {% else %}
+      {{ iframe }}
+    {% endif %}
+  {% endblock %}
 {% endset %}
 
 {% set media %}

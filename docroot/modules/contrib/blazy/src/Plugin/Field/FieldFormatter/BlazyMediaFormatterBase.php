@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @see \Drupal\blazy\Plugin\Field\FieldFormatter\BlazyMediaFormatter
  * @see \Drupal\gridstack\Plugin\Field\FieldFormatter\GridStackMediaFormatter
+ *
+ * @todo remove ContainerFactoryPluginInterface since D8.8 has it by default.
  */
 abstract class BlazyMediaFormatterBase extends BlazyEntityMediaBase implements ContainerFactoryPluginInterface {
 

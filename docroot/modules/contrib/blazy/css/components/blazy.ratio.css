@@ -3,11 +3,7 @@
  * The CSS and class names below are based on Slick media for easy migration.
  */
 
-.blazy,
-.blazy * {
-  box-sizing: border-box;
-}
-
+/* Touch me not! Or boom when outside .blazy such as within lightboxes. */
 .media {
   position: relative;
 }
@@ -61,9 +57,4 @@
 /* 16:9 ratio */
 .media--ratio--169 {
   padding-bottom: 56.25%;
-}
-
-/* Be sure to add width to the container accordingly, otherwise collapsed. */
-.field[data-blazy] {
-  min-width: 50%;
 }

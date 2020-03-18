@@ -12,6 +12,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\blazy\BlazyDefault;
 use Drupal\blazy\BlazyManagerInterface;
 
 /**
@@ -25,8 +26,6 @@ use Drupal\blazy\BlazyManagerInterface;
 abstract class BlazyAdminBase implements BlazyAdminInterface {
 
   use StringTranslationTrait;
-  // @todo deprecated and remove at 2.0.
-  use BlazyAdminBreakpointTrait;
 
   /**
    * A state that represents the responsive image style is disabled.
@@ -594,6 +593,10 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       if (isset($form[$key]['#access']) && $form[$key]['#access'] == FALSE) {
         unset($form[$key]['#default_value']);
       }
+
+      if (in_array($key, BlazyDefault::deprecatedSettings())) {
+        unset($form[$key]['#default_value']);
+      }
     }
 
     if ($admin_css) {
@@ -731,13 +734,11 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
   }
 
   /**
-   * TBD; enable once decided to remove.
+   * Deprecated method to remove.
    *
-   * @todo change to breakpointsForm.
+   * @todo remove once sub-modules remove this method.
    * @see https://www.drupal.org/node/3105243
    */
-  public function todoBreakpointsForm(array &$form, $definition = []) {
-    return [];
-  }
+  public function breakpointsForm(array &$form, $definition = []) {}
 
 }

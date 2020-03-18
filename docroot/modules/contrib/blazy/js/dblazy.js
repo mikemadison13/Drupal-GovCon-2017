@@ -495,7 +495,7 @@
   };
 
   /**
-   * A simple wrapper to delay callback function, tasken out of blazy library.
+   * A simple wrapper to delay callback function, taken out of blazy library.
    *
    * Alternative to core Drupal.debounce for D7 compatibility, and easy port.
    *

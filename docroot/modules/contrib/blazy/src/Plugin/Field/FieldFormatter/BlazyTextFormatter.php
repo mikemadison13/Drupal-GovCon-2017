@@ -23,6 +23,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   },
  *   quickedit = {"editor" = "disabled"}
  * )
+ *
+ * @todo remove ContainerFactoryPluginInterface since D8.8 has it by default.
  */
 class BlazyTextFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 

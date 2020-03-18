@@ -1,0 +1,16 @@
+{
+    "name": "drupal/core_context",
+    "type": "drupal-module",
+    "description": "Allows context values to be attached to entities in a field.",
+    "require-dev": {
+        "drupal/page_manager": "^4.0"
+    },
+    "repositories": {
+        "drupal": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

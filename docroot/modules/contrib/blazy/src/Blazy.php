@@ -160,8 +160,7 @@ class Blazy implements BlazyInterface {
 
     // Only output dimensions for non-svg. Respects hand-coded image attributes.
     // Do not pass it to $attributes to also respect both (Responsive) image.
-    // @todo remove custom breakpoints anytime before 2.x.
-    if (empty($settings['_sizes']) && !isset($attributes['width']) && $settings['extension'] != 'svg') {
+    if (!isset($attributes['width']) && $settings['extension'] != 'svg') {
       $image['#height'] = $settings['height'];
       $image['#width'] = $settings['width'];
     }
@@ -184,17 +183,13 @@ class Blazy implements BlazyInterface {
   /**
    * {@inheritdoc}
    */
-  public static function iframeAttributes(array $settings) {
+  public static function iframeAttributes(array &$settings) {
+    $settings['player'] = empty($settings['lightbox']) && $settings['media_switch'] == 'media';
     if (empty($settings['is_preview'])) {
       $attributes['data-src'] = $settings['embed_url'];
       $attributes['src'] = 'about:blank';
       $attributes['class'][] = 'b-lazy';
       $attributes['allowfullscreen'] = TRUE;
-
-      // Adds specific Youtube attributes, related to mobile apps, etc.
-      if (strpos($settings['embed_url'], 'youtu') !== FALSE) {
-        $attributes['allow'] = 'autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture';
-      }
     }
     else {
       $attributes['src'] = $settings['embed_url'];
@@ -212,13 +207,16 @@ class Blazy implements BlazyInterface {
   public static function buildIframe(array &$variables) {
     $settings = &$variables['settings'];
     $variables['image'] = empty($settings['media_switch']) ? [] : $variables['image'];
-    $settings['player'] = empty($settings['player']) ? (empty($settings['lightbox']) && $settings['media_switch'] != 'content') : $settings['player'];
 
     // Pass iframe attributes to template.
-    $variables['iframe_attributes'] = new Attribute(self::iframeAttributes($settings));
+    $variables['iframe'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'iframe',
+      '#attributes' => self::iframeAttributes($settings),
+    ];
 
     // Iframe is removed on lazyloaded, puts data at non-removable storage.
-    $variables['attributes']['data-media'] = Json::encode(['type' => $settings['type'], 'scheme' => $settings['scheme']]);
+    $variables['attributes']['data-media'] = Json::encode(['type' => $settings['type']]);
   }
 
   /**
@@ -276,10 +274,6 @@ class Blazy implements BlazyInterface {
       $padding = $settings['padding_bottom'] ?: round((($settings['height'] / $settings['width']) * 100), 2);
       self::inlineStyle($attributes, 'padding-bottom: ' . $padding . '%;');
 
-      // Provides hint to breakpoints to work with multi-breakpoint ratio.
-      // @todo remove custom breakpoints anytime before 2.x.
-      $settings['_breakpoint_ratio'] = $settings['ratio'];
-
       // Views rewrite results or Twig inline_template may strip out `style`
       // attributes, provide hint to JS.
       $attributes['data-ratio'] = $padding;
@@ -290,22 +284,28 @@ class Blazy implements BlazyInterface {
    * Provides container attributes for .blazy container: .field, .view, etc.
    */
   public static function containerAttributes(array &$attributes, array $settings = []) {
-    // Provides the main container attributes.
+    $settings += ['namespace' => 'blazy'];
     $classes = empty($attributes['class']) ? [] : $attributes['class'];
     $attributes['data-blazy'] = empty($settings['blazy_data']) ? '' : Json::encode($settings['blazy_data']);
 
     // Provides data-LIGHTBOX-gallery to not conflict with original modules.
-    if (!empty($settings['media_switch'])) {
+    if (!empty($settings['media_switch']) && $settings['media_switch'] != 'content') {
       $switch = str_replace('_', '-', $settings['media_switch']);
       $attributes['data-' . $switch . '-gallery'] = TRUE;
       $classes[] = 'blazy--' . $switch;
     }
 
     // Provides contextual classes relevant to the container: .field, or .view.
-    if (isset($settings['namespace']) && $settings['namespace'] == 'blazy') {
-      foreach (['field', 'view'] as $key) {
-        if (!empty($settings[$key . '_name'])) {
-          $classes[] = 'blazy--' . $key . ' blazy--' . str_replace('_', '-', $settings[$key . '_name']);
+    // Sniffs for Views to allow block__no_wrapper, views__no_wrapper, etc.
+    foreach (['field', 'view'] as $key) {
+      if (!empty($settings[$key . '_name'])) {
+        $name = str_replace('_', '-', $settings[$key . '_name']);
+        $name = $key == 'view' ? 'view--' . $name : $name;
+        $classes[] = $settings['namespace'] . '--' . $key;
+        $classes[] = $settings['namespace'] . '--' . $name;
+        if (!empty($settings['current_view_mode'])) {
+          $view_mode = str_replace('_', '-', $settings['current_view_mode']);
+          $classes[] = $settings['namespace'] . '--' . $name . '--' . $view_mode;
         }
       }
     }
@@ -322,6 +322,7 @@ class Blazy implements BlazyInterface {
     $placeholder = empty($attributes['data-placeholder']) ? static::PLACEHOLDER : $attributes['data-placeholder'];
 
     // Bail out if a noscript is requested.
+    // @todo figure out to not even enter this method, yet not break ratio, etc.
     if (!isset($attributes['data-b-noscript'])) {
       // Modifies <picture> [data-srcset] attributes on <source> elements.
       if (!$variables['output_image_tag']) {
@@ -435,7 +436,21 @@ class Blazy implements BlazyInterface {
    * Returns URI from image item.
    */
   public static function uri($item) {
-    return empty($item) ? '' : (($entity = $item->entity) && empty($item->uri) ? $entity->getFileUri() : $item->uri);
+    $fallback = isset($item->uri) ? $item->uri : '';
+    return empty($item) ? '' : (($entity = $item->entity) && empty($item->uri) ? $entity->getFileUri() : $fallback);
+  }
+
+  /**
+   * Returns fake image item based on the given $attributes.
+   */
+  public static function image(array $attributes = []) {
+    $item = new \stdClass();
+    foreach (['uri', 'width', 'height', 'target_id', 'alt', 'title'] as $key) {
+      if (isset($attributes[$key])) {
+        $item->{$key} = $attributes[$key];
+      }
+    }
+    return $item;
   }
 
   /**

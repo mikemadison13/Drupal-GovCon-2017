@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class BlazyManagerBase implements BlazyManagerInterface {
 
-  // @todo remove or keep temp fix for EB AJAX issue: #2893029
+  // Fixed for EB AJAX issue: #2893029.
   use DependencySerializationTrait;
   use StringTranslationTrait;
 
@@ -283,14 +283,15 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
    */
   public function getCommonSettings(array &$settings) {
     $settings += array_intersect_key($this->configLoad(), BlazyDefault::uiSettings());
-    $switch = $settings['media_switch'] = empty($settings['media_switch']) ? '' : $settings['media_switch'];
+    $settings['media_switch'] = $switch = empty($settings['media_switch']) ? '' : $settings['media_switch'];
+    $settings['iframe_domain'] = $this->configLoad('iframe_domain', 'media.settings');
     $settings['is_preview'] = Blazy::isPreview();
     $settings['lightbox'] = ($switch && in_array($switch, $this->getLightboxes())) ? $switch : FALSE;
     $settings['namespace'] = empty($settings['namespace']) ? 'blazy' : $settings['namespace'];
     $settings['route_name'] = Blazy::routeMatch() ? Blazy::routeMatch()->getRouteName() : '';
 
     if ($switch) {
-      // Allows lightboxes to provide its own optionsets.
+      // Allows lightboxes to provide its own optionsets, e.g.: ElevateZoomPlus.
       $settings[$switch] = empty($settings[$switch]) ? $switch : $settings[$switch];
     }
   }
@@ -339,12 +340,6 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
     if (isset($item['settings'])) {
       $blazy = $item['settings'];
 
-      // Allows breakpoints overrides such as multi-styled images by GridStack.
-      // @todo remove custom breakpoints anytime before 2.x, recheck GridStack.
-      if (empty($settings['breakpoints']) && isset($blazy['breakpoints'])) {
-        $settings['breakpoints'] = $blazy['breakpoints'];
-      }
-
       // Merge the first found (Responsive) image data.
       if (!empty($blazy['blazy_data'])) {
         $settings['blazy_data'] = empty($settings['blazy_data']) ? $blazy['blazy_data'] : array_merge($settings['blazy_data'], $blazy['blazy_data']);
@@ -370,19 +365,6 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
       if ($blazy_field = BlazyViews::viewsField($view)) {
         $settings = array_merge(array_filter($blazy_field->mergedViewsSettings()), array_filter($settings));
       }
-    }
-
-    // Allows lightboxes to provide its own optionsets.
-    $switch = empty($settings['media_switch']) ? FALSE : $settings['media_switch'];
-    if ($switch) {
-      $settings[$switch] = empty($settings[$switch]) ? $switch : $settings[$switch];
-    }
-
-    // Provides data for the [data-blazy] attribute at the containing element.
-    // @todo remove custom breakpoints anytime before 2.x.
-    BlazyBreakpoint::cleanUpBreakpoints($settings);
-    if (!empty($settings['breakpoints'])) {
-      BlazyBreakpoint::buildDataBlazy($settings, $image);
     }
 
     unset($settings['first_image']);
@@ -478,28 +460,6 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
     $this->cache->set($cid, $skins, Cache::PERMANENT, $tags);
 
     return $skins;
-  }
-
-  /**
-   * Cleans up breakpoints.
-   *
-   * @deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-2.0. Do not
-   *   use it instead.
-   * @see https://www.drupal.org/node/3103018
-   */
-  public function cleanUpBreakpoints(array &$settings = []) {
-    @trigger_error('cleanUpBreakpoints is deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-2.0. Do not use it instead. See https://www.drupal.org/node/3103018', E_USER_DEPRECATED);
-  }
-
-  /**
-   * Builds breakpoints suitable for top-level [data-blazy] wrapper attributes.
-   *
-   * @deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-2.0. Do not
-   *   use it instead.
-   * @see https://www.drupal.org/node/3103018
-   */
-  public function buildDataBlazy(array &$settings, $item = NULL) {
-    @trigger_error('buildDataBlazy is deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-2.0. Do not use it instead. See https://www.drupal.org/node/3103018', E_USER_DEPRECATED);
   }
 
 }

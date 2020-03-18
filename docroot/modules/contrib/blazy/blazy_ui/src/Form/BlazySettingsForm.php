@@ -81,14 +81,6 @@ class BlazySettingsForm extends ConfigFormBase {
       '#disabled'      => !function_exists('responsive_image_get_image_dimensions'),
     ];
 
-    // @todo TBD; for keeping or removal at blazy:8.x-2.0.
-    $form['unbreakpoints'] = [
-      '#type'          => 'checkbox',
-      '#title'         => $this->t('Disable custom breakpoints (deprecated)'),
-      '#default_value' => $config->get('unbreakpoints'),
-      '#description'   => $this->t('Check to permanently disable custom breakpoints which is always disabled when choosing a Responsive image. Note: multi-breakpoint CSS background image will then be disabled, as well. This feature will be removed at 3.x, please keep it checked.'),
-    ];
-
     $form['one_pixel'] = [
       '#type'          => 'checkbox',
       '#title'         => $this->t('Responsive image 1px placeholder'),
@@ -233,8 +225,6 @@ class BlazySettingsForm extends ConfigFormBase {
       ->set('fx', $form_state->getValue('fx'))
       ->set('noscript', $form_state->getValue('noscript'))
       ->set('responsive_image', $form_state->getValue('responsive_image'))
-      // @todo TBD; for keeping or removal at blazy:8.x-2.0.
-      ->set('unbreakpoints', $form_state->getValue('unbreakpoints'))
       ->set('one_pixel', $form_state->getValue('one_pixel'))
       ->set('placeholder', $form_state->getValue('placeholder'))
       ->set('blazy.loadInvisible', $form_state->getValue(['blazy', 'loadInvisible']))

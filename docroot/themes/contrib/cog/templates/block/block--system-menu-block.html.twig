@@ -40,7 +40,7 @@
 'menu--' ~ derivative_plugin_id|clean_class,
 ] %}
 
-{% set heading_id = attributes.id ~ '-menu'|clean_id %}
+{% set heading_id = attributes.id |clean_id %}
 
 <nav role="navigation" aria-labelledby="{{ heading_id }}"{{ attributes.addClass(classes)|without('role', 'aria-labelledby') }}>
   {# The label has been removed from this template per WCAG2AA.Principle1.Guideline1_3.1_3_1_A.G141 #}

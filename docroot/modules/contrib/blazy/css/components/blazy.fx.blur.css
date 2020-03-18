@@ -9,10 +9,12 @@
 @-webkit-keyframes blazyBlur {
   0% {
     -webkit-transform: scale(1.04);
+    transform: scale(1.04);
     opacity: 0;
   }
   100% {
     -webkit-transform: scale(1);
+    transform: scale(1);
     opacity: 1;
   }
 }

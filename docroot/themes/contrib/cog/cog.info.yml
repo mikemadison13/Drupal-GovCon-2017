@@ -1,8 +1,10 @@
 name: Cog
 type: theme
-description: 'Acquia D8 base theme'
+description: 'An Acquia-maintained base theme.'
+base theme: stable
 package: Core
-# core: 8.x
+core: 8.x
+core_version_requirement: '^8 || ^9'
 libraries:
   - cog/lib
 regions:
@@ -15,8 +17,7 @@ regions:
   post_content: Post content
   footer: Footer
 
-# Information added by Drupal.org packaging script on 2018-01-18
-version: '8.x-1.13'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-03-17
+version: '8.x-1.15'
 project: 'cog'
-datestamp: 1516296834
+datestamp: 1584454091

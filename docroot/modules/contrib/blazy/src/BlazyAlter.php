@@ -34,9 +34,9 @@ class BlazyAlter {
         }
       }
 
-      // @todo remove custom breakpoints anytime before 2.x as per #3105243.
+      // @todo remove custom breakpoints anytime before 3.x as per #3105243.
       if (isset($mappings['breakpoints'])) {
-        foreach (BlazyDefault::getConstantBreakpoints() as $breakpoint) {
+        foreach (['xs', 'sm', 'md', 'lg', 'xl'] as $breakpoint) {
           $mappings['breakpoints']['mapping'][$breakpoint]['type'] = 'mapping';
           foreach (['breakpoint', 'width', 'image_style'] as $item) {
             $mappings['breakpoints']['mapping'][$breakpoint]['mapping'][$item]['type']  = 'string';

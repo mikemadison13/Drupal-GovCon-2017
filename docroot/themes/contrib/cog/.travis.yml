@@ -1,89 +1,63 @@
-sudo: false
+---
 language: php
 
-php:
-  - 7
-  - 5.6
+php: "7.2"
+node_js: "8"
 
-env:
-  global:
-    - DOCROOT=$TRAVIS_BUILD_DIR/../drupal
-    - COG_DIR=$DOCROOT/themes/contrib/cog
-    - COGNIZANT_DIR=$DOCROOT/themes/custom/cognizant
+addons:
+  chrome: stable
 
 cache:
   bundler: true
-  apt: true
   directories:
-  - "$HOME/.composer/cache"
-  - "$HOME/.composer/vendor"
-  - "$HOME/.drush/cache"
-  - "$HOME/.npm"
-  - "$HOME/.nvm"
-  - "$COGNIZANT_DIR/node_modules"
+    - "$HOME/.composer/cache"
+    - "$HOME/.drush/cache"
+    - "$HOME/.npm"
+    - "$HOME/.nvm"
+    - "${TMPDIR:-/tmp}/phpstan/cache"
 
-mysql:
-  database: drupal
-  username: root
-  encoding: utf8
+env:
+  global:
+    - ORCA_SUT_NAME=drupal/cog
+    - ORCA_SUT_BRANCH=8.x-1.x
+    - ORCA_VERSION=master
+    - ORCA_TELEMETRY_ENABLE=TRUE
 
-# Set up environment.
+matrix:
+  fast_finish: true
+  include:
+    # Standard ORCA jobs.
+    - { name: "Static code analysis", env: ORCA_JOB=STATIC_CODE_ANALYSIS }
+    - { name: "Deprecated code scan", env: ORCA_JOB=DEPRECATED_CODE_SCAN }
+    - { name: "Isolated test w/ recommended package versions", env: ORCA_JOB=ISOLATED_RECOMMENDED }
+    - { name: "Integrated test w/ recommended package versions", env: ORCA_JOB=INTEGRATED_RECOMMENDED }
+    - { name: "Isolated test w/ dev package versions", env: ORCA_JOB=ISOLATED_DEV }
+    - { name: "Integrated test w/ dev package versions", env: ORCA_JOB=INTEGRATED_DEV }
+    - { name: "Integrated test w/ dev package versions & next minor dev version of Drupal core", env: ORCA_JOB=CORE_NEXT }
+    # Custom job.
+    - { name: "Gulp test", env: COG_GULP_TEST=true }
+  allow_failures:
+    - env: ORCA_JOB=INTEGRATED_DEV
+    - env: ORCA_JOB=CORE_NEXT
+
 before_install:
-  # Disable xdebug.
-  - phpenv config-rm xdebug.ini
+  - git clone --branch ${ORCA_VERSION} --depth 1 https://github.com/acquia/orca.git ../orca
+  - ../orca/bin/travis/before_install.sh
 
-  # Set up composer.
-  - composer self-update
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+install: ../orca/bin/travis/install.sh
 
-  # Install drush
-  - composer global require drush/drush:8.* --prefer-source
-  - composer global require drupal/coder:8.* --prefer-source
-  - phpenv rehash
+before_script: ../orca/bin/travis/before_script.sh
 
-  # Clear drush release history cache, to pick up new releases.
-  - rm -f ~/.drush/cache/download/*---updates.drupal.org-release-history-*
-
-  # Create MySQL Database
-  - mysql -e 'create database drupal;'
-
-  # Copy cached dependencies back to travis build dir so that they are
-  # not wiped out by `drush dl drupal` command.
-  - mv $COGNIZANT_DIR/node_modules $TRAVIS_BUILD_DIR/
-
-# Install Drupal and Cog itself.
-install:
-  # Install drupal default profile
-  - cd ..
-  - drush dl drupal --drupal-project-rename=drupal -y
-  - cd drupal
-
-  # Copy cog into themes/contrib/cog.
-  - mkdir -p themes/contrib/cog
-  - cp -R ${TRAVIS_BUILD_DIR}/* themes/contrib/cog/
-
-  # Make custom dir for subtheme
-  - mkdir -p themes/custom
-
-  # Install Drupal and enable cog.
-  - drush --verbose site-install minimal --db-url=mysql://root:@127.0.0.1/drupal --yes
-  - drush en cog -y
-  - drush cog "Cognizant"
-
-  # Set up front-end dependencies.
-  - cd $COGNIZANT_DIR
-
-  - nvm ls-remote
-  - nvm install 8.9.1
-  - nvm use 8.9.1
-  - npm install -g gulp-cli
-  - npm install -g npm@latest
-  - npm run install-tools
-
-# Run cog tasks.
 script:
-  # Codesniff all files, ignore third party libraries and compiled CSS.
-  - phpcs --standard=$HOME/.composer/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml --ignore=*/STARTERKIT/gulp-tasks/*,*/STARTERKIT/gulpfile.js,*/STARTERKIT/theme-settings.php,*/STARTERKIT/STARTERKIT.theme,*/node_modules/*,*/styleguide/*,*/css/*,**/*.md $COG_DIR
-  - phpcs --standard=$HOME/.composer/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml --ignore=*/gulp-tasks/*,gulpfile.js,*/node_modules/*,*/styleguide/*,*/css/*,**/*.md $COGNIZANT_DIR
+  - ../orca/bin/travis/script.sh
+  - nvm install 8.9
+  - nvm use 8.9
+  - ./tests/travis/script.sh
 
-  - gulp
+before_cache: ../orca/bin/travis/before_cache.sh
+
+after_success: ../orca/bin/travis/after_success.sh
+
+after_failure: ../orca/bin/travis/after_failure.sh
+
+after_script: ../orca/bin/travis/after_script.sh

@@ -60,10 +60,11 @@
         });
       }
 
+      // Container might be the el itself for BG, do not NULL check here.
       me.updateContainer(el, cn);
-      // Supports various scenario: CSS background, picture, image, media.
-      if (me.isLoaded(el) && cn.hasAttribute('data-animation')) {
-        _db.animate(cn);
+      // Supports animate.css for CSS background, picture, image, media.
+      if (me.isLoaded(el) && (me.has(cn, 'data-animation') || me.has(el, 'data-animation'))) {
+        _db.animate(me.has(cn, 'data-animation') ? cn : el);
       }
 
       // Provides event listeners for easy overrides without full overrides.
@@ -74,15 +75,19 @@
       return el !== null && el.classList.contains(this.options.successClass);
     },
 
+    has: function (el, attribute) {
+      return el !== null && el.hasAttribute(attribute);
+    },
+
     updateContainer: function (el, cn) {
       var me = this;
 
       if (me.isLoaded(el)) {
-        if (_db.equal(el.parentNode, 'picture') && cn.classList.contains('media--ratio--fluid')) {
+        if (_db.equal(el.parentNode, 'picture') && me.has(cn, 'data-dimensions')) {
           me.updatePicture(el, cn);
         }
 
-        if (el.hasAttribute('data-backgrounds')) {
+        if (me.has(el, 'data-backgrounds')) {
           _db.updateBg(el, me.options.mobileFirst);
         }
       }
@@ -118,7 +123,7 @@
       }
 
       // Fix for picture or bg element with resizing.
-      if (isPicture || cn.hasAttribute('data-backgrounds')) {
+      if (isPicture || me.has(cn, 'data-backgrounds')) {
         me.updateContainer((isPicture ? cn.querySelector('img') : cn), cn);
       }
     },

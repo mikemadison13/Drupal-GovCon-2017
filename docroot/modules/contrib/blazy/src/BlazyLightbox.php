@@ -70,12 +70,11 @@ class BlazyLightbox {
     }
 
     if (!empty($settings['embed_url'])) {
-      $json['scheme'] = $settings['scheme'];
       $json['width']  = 640;
       $json['height'] = 360;
 
       // Force autoplay for media URL on lightboxes, saving another click.
-      $url = empty($settings['autoplay_url']) ? $settings['embed_url'] : $settings['autoplay_url'];
+      $url = $settings['embed_url'];
       $url_attributes['data-oembed-url'] = $settings['embed_url'];
 
       // This allows PhotoSwipe with videos still swipable.

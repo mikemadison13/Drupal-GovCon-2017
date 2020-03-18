@@ -67,7 +67,7 @@ abstract class BlazyEntityMediaBase extends BlazyEntityBase {
     $delta = $settings['delta'];
     $element = ['settings' => $settings];
 
-    // Built early before stage to allow custom highres video thumbnail later.
+    // Built media item including custom highres video thumbnail.
     $this->blazyOembed()->getMediaItem($element, $entity);
 
     // Build the main stage with image options from highres video thumbnail.
@@ -139,7 +139,7 @@ abstract class BlazyEntityMediaBase extends BlazyEntityBase {
       foreach ($settings['caption'] as $name => $field_caption) {
         /** @var Drupal\image\Plugin\Field\FieldType\ImageItem $item */
         if ($item = $element['item']) {
-          // Provides basic captions based on image attributes.
+          // Provides basic captions based on image attributes (Alt, Title).
           foreach (['title', 'alt'] as $key => $attribute) {
             if ($name == $attribute && $caption = trim($item->get($attribute)->getString())) {
               $caption_items[$name] = ['#markup' => Xss::filter($caption, BlazyDefault::TAGS)];
@@ -223,7 +223,6 @@ abstract class BlazyEntityMediaBase extends BlazyEntityBase {
     return [
       'background'        => TRUE,
       'box_captions'      => TRUE,
-      'breakpoints'       => BlazyDefault::getConstantBreakpoints(),
       'captions'          => $captions,
       'fieldable_form'    => TRUE,
       'image_style_form'  => TRUE,

@@ -71,8 +71,9 @@ final class SectionComponentRenderArray implements EventSubscriberInterface {
       return;
     }
 
-    // @todo Remove once https://www.drupal.org/project/drupal/issues/3018782
-    // is done.
+    // @todo Remove when https://www.drupal.org/project/drupal/issues/3018782 is
+    // done.
+    // @see \Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay::buildSections()
     $contexts = $event->getContexts();
     if (isset($contexts['layout_builder.entity']) && empty($contexts['entity'])) {
       $contexts['entity'] = &$contexts['layout_builder.entity'];

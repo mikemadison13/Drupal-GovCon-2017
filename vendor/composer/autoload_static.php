@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc
+class ComposerStaticInit78eef193375f3cbb4d255487cfee249f
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -3922,6 +3922,7 @@ class ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc
         'Drupal\\Core\\Template\\Attribute' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Template/Attribute.php',
         'Drupal\\Core\\Template\\AttributeArray' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Template/AttributeArray.php',
         'Drupal\\Core\\Template\\AttributeBoolean' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Template/AttributeBoolean.php',
+        'Drupal\\Core\\Template\\AttributeHelper' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Template/AttributeHelper.php',
         'Drupal\\Core\\Template\\AttributeString' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Template/AttributeString.php',
         'Drupal\\Core\\Template\\AttributeValueBase' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Template/AttributeValueBase.php',
         'Drupal\\Core\\Template\\Loader\\FilesystemLoader' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Template/Loader/FilesystemLoader.php',
@@ -4285,6 +4286,7 @@ class ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc
         'Drupal\\Tests\\lightning_api\\FixtureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/FixtureContext.php',
         'Drupal\\Tests\\lightning_api\\Functional\\ApiTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/Functional/ApiTest.php',
         'Drupal\\Tests\\lightning_api\\Functional\\BasicUsageTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/Functional/BasicUsageTest.php',
+        'Drupal\\Tests\\lightning_api\\Functional\\Update8401Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/Functional/Update8401Test.php',
         'Drupal\\Tests\\lightning_api\\Kernel\\OAuthKeyFormTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/Kernel/OAuthKeyFormTest.php',
         'Drupal\\Tests\\lightning_core\\FixtureBase' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/FixtureBase.php',
         'Drupal\\Tests\\lightning_core\\FixtureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/FixtureContext.php',
@@ -6058,14 +6060,15 @@ class ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc
         'Psy\\CodeCleaner\\CallTimePassByReferencePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/CallTimePassByReferencePass.php',
         'Psy\\CodeCleaner\\CalledClassPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/CalledClassPass.php',
         'Psy\\CodeCleaner\\CodeCleanerPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/CodeCleanerPass.php',
+        'Psy\\CodeCleaner\\EmptyArrayDimFetchPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/EmptyArrayDimFetchPass.php',
         'Psy\\CodeCleaner\\ExitPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ExitPass.php',
         'Psy\\CodeCleaner\\FinalClassPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/FinalClassPass.php',
         'Psy\\CodeCleaner\\FunctionContextPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/FunctionContextPass.php',
         'Psy\\CodeCleaner\\FunctionReturnInWriteContextPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/FunctionReturnInWriteContextPass.php',
         'Psy\\CodeCleaner\\ImplicitReturnPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ImplicitReturnPass.php',
         'Psy\\CodeCleaner\\InstanceOfPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/InstanceOfPass.php',
+        'Psy\\CodeCleaner\\LabelContextPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/LabelContextPass.php',
         'Psy\\CodeCleaner\\LeavePsyshAlonePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/LeavePsyshAlonePass.php',
-        'Psy\\CodeCleaner\\LegacyEmptyPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/LegacyEmptyPass.php',
         'Psy\\CodeCleaner\\ListPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ListPass.php',
         'Psy\\CodeCleaner\\LoopContextPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/LoopContextPass.php',
         'Psy\\CodeCleaner\\MagicConstantsPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/MagicConstantsPass.php',
@@ -6096,10 +6099,8 @@ class ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc
         'Psy\\Command\\ListCommand\\Enumerator' => __DIR__ . '/..' . '/psy/psysh/src/Command/ListCommand/Enumerator.php',
         'Psy\\Command\\ListCommand\\FunctionEnumerator' => __DIR__ . '/..' . '/psy/psysh/src/Command/ListCommand/FunctionEnumerator.php',
         'Psy\\Command\\ListCommand\\GlobalVariableEnumerator' => __DIR__ . '/..' . '/psy/psysh/src/Command/ListCommand/GlobalVariableEnumerator.php',
-        'Psy\\Command\\ListCommand\\InterfaceEnumerator' => __DIR__ . '/..' . '/psy/psysh/src/Command/ListCommand/InterfaceEnumerator.php',
         'Psy\\Command\\ListCommand\\MethodEnumerator' => __DIR__ . '/..' . '/psy/psysh/src/Command/ListCommand/MethodEnumerator.php',
         'Psy\\Command\\ListCommand\\PropertyEnumerator' => __DIR__ . '/..' . '/psy/psysh/src/Command/ListCommand/PropertyEnumerator.php',
-        'Psy\\Command\\ListCommand\\TraitEnumerator' => __DIR__ . '/..' . '/psy/psysh/src/Command/ListCommand/TraitEnumerator.php',
         'Psy\\Command\\ListCommand\\VariableEnumerator' => __DIR__ . '/..' . '/psy/psysh/src/Command/ListCommand/VariableEnumerator.php',
         'Psy\\Command\\ParseCommand' => __DIR__ . '/..' . '/psy/psysh/src/Command/ParseCommand.php',
         'Psy\\Command\\PsyVersionCommand' => __DIR__ . '/..' . '/psy/psysh/src/Command/PsyVersionCommand.php',
@@ -6127,7 +6128,6 @@ class ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc
         'Psy\\Exception\\ThrowUpException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/ThrowUpException.php',
         'Psy\\Exception\\TypeErrorException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/TypeErrorException.php',
         'Psy\\ExecutionClosure' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionClosure.php',
-        'Psy\\ExecutionLoop' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoop.php',
         'Psy\\ExecutionLoopClosure' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoopClosure.php',
         'Psy\\ExecutionLoop\\AbstractListener' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoop/AbstractListener.php',
         'Psy\\ExecutionLoop\\Listener' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoop/Listener.php',
@@ -6987,6 +6987,7 @@ class ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc
         'Symfony\\Component\\HttpFoundation\\Session\\SessionBagInterface' => __DIR__ . '/..' . '/symfony/http-foundation/Session/SessionBagInterface.php',
         'Symfony\\Component\\HttpFoundation\\Session\\SessionBagProxy' => __DIR__ . '/..' . '/symfony/http-foundation/Session/SessionBagProxy.php',
         'Symfony\\Component\\HttpFoundation\\Session\\SessionInterface' => __DIR__ . '/..' . '/symfony/http-foundation/Session/SessionInterface.php',
+        'Symfony\\Component\\HttpFoundation\\Session\\SessionUtils' => __DIR__ . '/..' . '/symfony/http-foundation/Session/SessionUtils.php',
         'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\AbstractSessionHandler' => __DIR__ . '/..' . '/symfony/http-foundation/Session/Storage/Handler/AbstractSessionHandler.php',
         'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\MemcacheSessionHandler' => __DIR__ . '/..' . '/symfony/http-foundation/Session/Storage/Handler/MemcacheSessionHandler.php',
         'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\MemcachedSessionHandler' => __DIR__ . '/..' . '/symfony/http-foundation/Session/Storage/Handler/MemcachedSessionHandler.php',
@@ -8343,6 +8344,7 @@ class ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc
         'phpDocumentor\\Reflection\\Types\\Array_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Array_.php',
         'phpDocumentor\\Reflection\\Types\\Boolean' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Boolean.php',
         'phpDocumentor\\Reflection\\Types\\Callable_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Callable_.php',
+        'phpDocumentor\\Reflection\\Types\\ClassString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/ClassString.php',
         'phpDocumentor\\Reflection\\Types\\Collection' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Collection.php',
         'phpDocumentor\\Reflection\\Types\\Compound' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Compound.php',
         'phpDocumentor\\Reflection\\Types\\Context' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Context.php',
@@ -8370,11 +8372,11 @@ class ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitac6d9014c7bf6472e8eabab0c2af91cc::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit78eef193375f3cbb4d255487cfee249f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit78eef193375f3cbb4d255487cfee249f::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit78eef193375f3cbb4d255487cfee249f::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit78eef193375f3cbb4d255487cfee249f::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit78eef193375f3cbb4d255487cfee249f::$classMap;
 
         }, null, ClassLoader::class);
     }

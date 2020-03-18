@@ -81,13 +81,8 @@ class BlazyFormatter extends BlazyManager implements BlazyFormatterInterface {
       return;
     }
 
-    // Don't bother if using Responsive image.
-    // @todo remove custom breakpoints anytime before 2.x.
-    $settings['breakpoints'] = isset($settings['breakpoints']) && empty($settings['unbreakpoints']) && empty($settings['responsive_image_style']) ? $settings['breakpoints'] : [];
-    BlazyBreakpoint::cleanUpBreakpoints($settings);
-
     // Lazy load types: blazy, and slick: ondemand, anticipated, progressive.
-    $settings['blazy'] = !empty($settings['blazy']) || !empty($settings['background']) || $settings['resimage'] || $settings['breakpoints'];
+    $settings['blazy'] = !empty($settings['blazy']) || !empty($settings['background']) || $settings['resimage'];
     $settings['lazy']  = $settings['blazy'] ? 'blazy' : (isset($settings['lazy']) ? $settings['lazy'] : '');
     $settings['lazy']  = empty($settings['is_preview']) ? $settings['lazy'] : '';
 
@@ -119,11 +114,6 @@ class BlazyFormatter extends BlazyManager implements BlazyFormatterInterface {
       elseif (!empty($settings['resimage']) && $settings['ratio'] == 'fluid') {
         $this->setResponsiveImageDimensions($settings);
       }
-    }
-
-    // @todo remove if nobody uses this like everything else.
-    if (!empty($settings['use_ajax'])) {
-      $settings['blazy_data']['useAjax'] = TRUE;
     }
 
     // Allows altering the settings.
@@ -171,12 +161,6 @@ class BlazyFormatter extends BlazyManager implements BlazyFormatterInterface {
 
         // Informs individual images that dimensions are already set once.
         $settings['_dimensions'] = TRUE;
-      }
-
-      // Also sets breakpoint dimensions once, if cropped.
-      // @todo remove custom breakpoints anytime before 2.x.
-      if (!empty($settings['breakpoints'])) {
-        BlazyBreakpoint::buildDataBlazy($settings, $this->firstItem);
       }
 
       $this->isImageDimensionSet[md5($settings['id'])] = TRUE;

@@ -8,14 +8,6 @@ namespace Drupal\blazy;
 class BlazyDefault {
 
   /**
-   * The supported $breakpoints.
-   *
-   * @var array
-   * @todo remove custom breakpoints anytime before blazy:2.x.
-   */
-  private static $breakpoints = ['xs', 'sm', 'md', 'lg', 'xl'];
-
-  /**
    * Defines constant for the supported text tags.
    */
   const TAGS = ['a', 'em', 'strong', 'h2', 'p', 'span', 'ul', 'ol', 'li'];
@@ -41,9 +33,11 @@ class BlazyDefault {
 
   /**
    * Returns Blazy specific breakpoints.
+   *
+   * @todo remove custom breakpoints anytime before blazy:3.x.
    */
   public static function getConstantBreakpoints() {
-    return self::$breakpoints;
+    return ['xs', 'sm', 'md', 'lg', 'xl'];
   }
 
   /**
@@ -106,17 +100,27 @@ class BlazyDefault {
   }
 
   /**
+   * Returns deprecated settings.
+   *
+   * @todo remove custom breakpoints anytime before 3.x.
+   */
+  public static function deprecatedSettings() {
+    return [
+      'breakpoints' => [],
+      'sizes'       => '',
+      'grid_header' => '',
+    ];
+  }
+
+  /**
    * Returns image-related field formatter and Views settings.
    */
   public static function imageSettings() {
     return [
-      // @todo remove custom breakpoints anytime before 2.x.
-      'breakpoints' => [],
-      'icon'        => '',
-      'layout'      => '',
-      'sizes'       => '',
-      'view_mode'   => '',
-    ] + self::baseSettings() + self::baseImageSettings();
+      'icon'      => '',
+      'layout'    => '',
+      'view_mode' => '',
+    ] + self::baseSettings() + self::baseImageSettings() + self::deprecatedSettings();
   }
 
   /**
@@ -203,7 +207,6 @@ class BlazyDefault {
       'noscript'         => FALSE,
       'placeholder'      => '',
       'responsive_image' => FALSE,
-      'unbreakpoints'    => TRUE,
     ] + self::anywhereSettings();
   }
 
@@ -265,6 +268,7 @@ class BlazyDefault {
       'attributes',
       'captions',
       'content',
+      'iframe',
       'image',
       'item',
       'item_attributes',

@@ -114,7 +114,7 @@ function consumers_update_8106() {
   $field_storage_definition = $field_definition
     ->getFieldStorageDefinition();
   $has_original = (bool) $edum->getFieldStorageDefinition(
-    $field_storage_definition->getName(),
+    $owner_key,
     $field_storage_definition->getTargetEntityTypeId()
   );
   $has_original
