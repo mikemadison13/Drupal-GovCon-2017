@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30
+class ComposerStaticInit617daed24b537467bb20655561c90cea
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -47,6 +47,10 @@ class ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30
         'g' => 
         array (
             'grasmash\\DrupalSecurityWarning\\' => 31,
+        ),
+        'e' => 
+        array (
+            'enshrined\\svgSanitize\\' => 22,
         ),
         'd' => 
         array (
@@ -245,6 +249,10 @@ class ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30
         'grasmash\\DrupalSecurityWarning\\' => 
         array (
             0 => __DIR__ . '/..' . '/grasmash/drupal-security-warning/src',
+        ),
+        'enshrined\\svgSanitize\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/enshrined/svg-sanitize/src',
         ),
         'drupol\\phposinfo\\' => 
         array (
@@ -6051,7 +6059,7 @@ class ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30
         'Psr\\Log\\LoggerInterface' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerInterface.php',
         'Psr\\Log\\LoggerTrait' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerTrait.php',
         'Psr\\Log\\NullLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/NullLogger.php',
-        'Psr\\Log\\Test\\DummyTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php',
+        'Psr\\Log\\Test\\DummyTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/DummyTest.php',
         'Psr\\Log\\Test\\LoggerInterfaceTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php',
         'Psr\\Log\\Test\\TestLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/TestLogger.php',
         'Psy\\CodeCleaner' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner.php',
@@ -8291,6 +8299,17 @@ class ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30
         'drupol\\phposinfo\\Enum\\OsName' => __DIR__ . '/..' . '/drupol/phposinfo/src/Enum/OsName.php',
         'drupol\\phposinfo\\OsInfo' => __DIR__ . '/..' . '/drupol/phposinfo/src/OsInfo.php',
         'drupol\\phposinfo\\OsInfoInterface' => __DIR__ . '/..' . '/drupol/phposinfo/src/OsInfoInterface.php',
+        'enshrined\\svgSanitize\\ElementReference\\Resolver' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/ElementReference/Resolver.php',
+        'enshrined\\svgSanitize\\ElementReference\\Subject' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/ElementReference/Subject.php',
+        'enshrined\\svgSanitize\\ElementReference\\Usage' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/ElementReference/Usage.php',
+        'enshrined\\svgSanitize\\Exceptions\\NestingException' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/Exceptions/NestingException.php',
+        'enshrined\\svgSanitize\\Helper' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/Helper.php',
+        'enshrined\\svgSanitize\\Sanitizer' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/Sanitizer.php',
+        'enshrined\\svgSanitize\\data\\AllowedAttributes' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/data/AllowedAttributes.php',
+        'enshrined\\svgSanitize\\data\\AllowedTags' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/data/AllowedTags.php',
+        'enshrined\\svgSanitize\\data\\AttributeInterface' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/data/AttributeInterface.php',
+        'enshrined\\svgSanitize\\data\\TagInterface' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/data/TagInterface.php',
+        'enshrined\\svgSanitize\\data\\XPath' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/data/XPath.php',
         'grasmash\\DrupalSecurityWarning\\Composer\\Plugin' => __DIR__ . '/..' . '/grasmash/drupal-security-warning/src/Composer/Plugin.php',
         'phpDocumentor\\Reflection\\DocBlock' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock.php',
         'phpDocumentor\\Reflection\\DocBlockFactory' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlockFactory.php',
@@ -8372,11 +8391,11 @@ class ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitefb75e2c3a51c68ad575db4c533aad30::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit617daed24b537467bb20655561c90cea::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit617daed24b537467bb20655561c90cea::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit617daed24b537467bb20655561c90cea::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit617daed24b537467bb20655561c90cea::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit617daed24b537467bb20655561c90cea::$classMap;
 
         }, null, ClassLoader::class);
     }
