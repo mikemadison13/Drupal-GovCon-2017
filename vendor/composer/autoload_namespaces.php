@@ -17,8 +17,6 @@ return array(
     'Drupal\\DrupalExtension' => array($vendorDir . '/drupal/drupal-extension/src'),
     'Drupal\\Drupal' => array($vendorDir . '/drupal/drupal-extension/src'),
     'Drupal\\Driver' => array($vendorDir . '/drupal/drupal-driver/src'),
-    'Drupal\\' => array($vendorDir . '/drupal/coder/coder_sniffer/Drupal'),
-    'DrupalPractice\\' => array($vendorDir . '/drupal/coder/coder_sniffer/DrupalPractice'),
     'Dflydev\\DotAccessData' => array($vendorDir . '/dflydev/dot-access-data/src'),
     'Console' => array($vendorDir . '/pear/console_getopt'),
     'Caxy\\HtmlDiff' => array($vendorDir . '/caxy/php-htmldiff/lib'),

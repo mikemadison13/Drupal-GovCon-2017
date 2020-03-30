@@ -11,6 +11,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\file\FileInterface;
 
 /**
  * Implements hook_help().
@@ -66,6 +67,9 @@ function focal_point_entity_update(EntityInterface $entity) {
         foreach ($entity->{$field->getName()} as $item) {
           /** @var \Drupal\focal_point\FocalPointManagerInterface $focal_point_manager */
           $focal_point_manager = \Drupal::service('focal_point.manager');
+          if (!$item->entity instanceof FileInterface) {
+            continue;
+          }
           $crop = $focal_point_manager->getCropEntity($item->entity, $crop_type);
 
           $focal_point = NULL;

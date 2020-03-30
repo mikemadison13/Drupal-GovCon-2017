@@ -7,7 +7,6 @@
 
 use Drupal\file\Entity\File;
 use Drupal\svg_image\Plugin\Field\FieldFormatter\SvgImageFormatter;
-use Drupal\svg_image\Plugin\Field\FieldFormatter\SvgResponsiveImageFormatter;
 use Drupal\svg_image\Plugin\Field\FieldWidget\SvgImageWidget;
 
 /**
@@ -22,9 +21,6 @@ function svg_image_field_widget_info_alter(array &$info) {
  */
 function svg_image_field_formatter_info_alter(array &$info) {
   $info['image']['class'] = SvgImageFormatter::class;
-  if (!empty($info['responsive_image'])) {
-    $info['responsive_image']['class'] = SvgResponsiveImageFormatter::class;
-  }
 }
 
 /**

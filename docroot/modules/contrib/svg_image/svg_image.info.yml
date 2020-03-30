@@ -7,7 +7,7 @@ package: Media
 dependencies:
   - drupal:image
 
-# Information added by Drupal.org packaging script on 2020-03-25
-version: '8.x-1.10'
+# Information added by Drupal.org packaging script on 2020-03-28
+version: '8.x-1.13'
 project: 'svg_image'
-datestamp: 1585150273
+datestamp: 1585379084
