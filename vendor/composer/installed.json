@@ -946,6 +946,26 @@
         ]
     },
     {
+        "name": "bower-asset/blazy",
+        "version": "1.8.2",
+        "version_normalized": "1.8.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/dinbror/blazy.git",
+            "reference": "5becad405976695e6016ba301be4f22ba61d5b95"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/dinbror/blazy/zipball/5becad405976695e6016ba301be4f22ba61d5b95",
+            "reference": "5becad405976695e6016ba301be4f22ba61d5b95"
+        },
+        "type": "bower-asset",
+        "installation-source": "dist",
+        "license": [
+            "MIT"
+        ]
+    },
+    {
         "name": "bower-asset/cropper",
         "version": "v2.3.4",
         "version_normalized": "2.3.4.0",

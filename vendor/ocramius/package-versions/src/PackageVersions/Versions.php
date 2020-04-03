@@ -28,6 +28,7 @@ final class Versions
   'behat/mink-goutte-driver' => 'v1.2.1@8b9ad6d2d95bc70b840d15323365f52fcdaea6ca',
   'behat/mink-selenium2-driver' => 'v1.4.0@312a967dd527f28980cce40850339cd5316da092',
   'behat/transliterator' => 'v1.3.0@3c4ec1d77c3d05caa1f0bf8fb3aae4845005c7fc',
+  'bower-asset/blazy' => '1.8.2@5becad405976695e6016ba301be4f22ba61d5b95',
   'bower-asset/cropper' => 'v2.3.4@30c58b29ee21010e17e58ebab165fbd84285c685',
   'bower-asset/dropzone' => 'v5.7.0@5b82186d5f18540a1d13b6f4914fdc6220617ef5',
   'bower-asset/jquery' => '3.4.1@15bc73803f76bc53b654b9fdbbbc096f56d7c03d',
