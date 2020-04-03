@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit847a02dbba43828649d88e8a0d2de8b7
+class ComposerStaticInitbe9d4fde0a10ea66fc4761a34207cff1
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -4040,6 +4040,7 @@ class ComposerStaticInit847a02dbba43828649d88e8a0d2de8b7
         'Drupal\\Core\\TypedData\\Validation\\RecursiveValidator' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/TypedData/Validation/RecursiveValidator.php',
         'Drupal\\Core\\TypedData\\Validation\\TypedDataAwareValidatorTrait' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/TypedData/Validation/TypedDataAwareValidatorTrait.php',
         'Drupal\\Core\\TypedData\\Validation\\TypedDataMetadata' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/TypedData/Validation/TypedDataMetadata.php',
+        'Drupal\\Core\\Update\\RemovedPostUpdateNameException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Update/RemovedPostUpdateNameException.php',
         'Drupal\\Core\\Update\\UpdateBackend' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Update/UpdateBackend.php',
         'Drupal\\Core\\Update\\UpdateCacheBackendFactory' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Update/UpdateCacheBackendFactory.php',
         'Drupal\\Core\\Update\\UpdateCompilerPass' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Update/UpdateCompilerPass.php',
@@ -8396,11 +8397,11 @@ class ComposerStaticInit847a02dbba43828649d88e8a0d2de8b7
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit847a02dbba43828649d88e8a0d2de8b7::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit847a02dbba43828649d88e8a0d2de8b7::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit847a02dbba43828649d88e8a0d2de8b7::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit847a02dbba43828649d88e8a0d2de8b7::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit847a02dbba43828649d88e8a0d2de8b7::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitbe9d4fde0a10ea66fc4761a34207cff1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitbe9d4fde0a10ea66fc4761a34207cff1::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitbe9d4fde0a10ea66fc4761a34207cff1::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitbe9d4fde0a10ea66fc4761a34207cff1::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitbe9d4fde0a10ea66fc4761a34207cff1::$classMap;
 
         }, null, ClassLoader::class);
     }

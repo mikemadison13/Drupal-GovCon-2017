@@ -211,7 +211,7 @@ class ParameterEditForm extends FormBase {
     }
 
     $this->setTempstore($cache_values);
-    drupal_set_message($this->t('The %label parameter has been updated.', ['%label' => $label ?: $name]));
+    $this->messenger()->addMessage($this->t('The %label parameter has been updated.', ['%label' => $label ?: $name]));
     list($route_name, $route_parameters) = $this->getParentRouteInfo($cache_values);
     $form_state->setRedirect($route_name, $route_parameters);
   }

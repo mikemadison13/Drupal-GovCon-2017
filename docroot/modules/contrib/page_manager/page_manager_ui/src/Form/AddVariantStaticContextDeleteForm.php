@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Form\AddVariantStaticContextDeleteForm.
- */
-
 namespace Drupal\page_manager_ui\Form;
 
 
@@ -51,7 +46,7 @@ class AddVariantStaticContextDeleteForm extends ContextDelete {
     $cached_values = $this->getTempstore();
     /** @var $page \Drupal\page_manager\PageInterface */
     $page_variant = $this->getPageVariant($cached_values);
-    drupal_set_message($this->t('The static context %label has been removed.', ['%label' => $page_variant->getStaticContext($this->context_id)['label']]));
+    $this->messenger()->addMessage($this->t('The static context %label has been removed.', ['%label' => $page_variant->getStaticContext($this->context_id)['label']]));
     $page_variant->removeStaticContext($this->context_id);
     $this->setTempstore($cached_values);
     parent::submitForm($form, $form_state);

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Form\AddVariantStaticContextConfigure.
- */
-
 namespace Drupal\page_manager_ui\Form;
 
 

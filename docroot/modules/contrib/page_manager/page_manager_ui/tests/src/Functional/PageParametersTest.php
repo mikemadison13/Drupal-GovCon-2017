@@ -1,23 +1,16 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Tests\PageParametersTest.php.
- */
-
-namespace Drupal\page_manager_ui\Tests;
+namespace Drupal\Tests\page_manager_ui\Functional;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Core\Url;
-use Drupal\page_manager\Entity\Page;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests the page parameters capabilities.
  *
  * @group page_manager_ui
  */
-class PageParametersTest extends WebTestBase {
+class PageParametersTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
@@ -73,7 +66,7 @@ class PageParametersTest extends WebTestBase {
 
     // Edit the node parameter.
     $this->clickLink('Edit');
-    $this->assertTitle('Edit  parameter | Drupal');
+    $this->assertTitle('Edit parameter | Drupal');
     $edit = [
       'type' => 'entity:node',
     ];

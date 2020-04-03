@@ -1,16 +1,12 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Form\AddVariantContextsForm.
- */
-
 namespace Drupal\page_manager_ui\Form;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\ctools\Form\ManageContext;
 
 class AddVariantContextsForm extends ManageContext {
@@ -35,7 +31,11 @@ class AddVariantContextsForm extends ManageContext {
     $content = $this->formBuilder->getForm($this->getContextClass($cached_values), $context, $this->getTempstoreId(), $this->machine_name, $page_variant->id());
     $content['#attached']['library'][] = 'core/drupal.dialog.ajax';
     list(, $route_parameters) = $this->getContextOperationsRouteInfo($cached_values, $this->machine_name, $context);
-    $content['submit']['#attached']['drupalSettings']['ajax'][$content['submit']['#id']]['url'] = $this->url($this->getContextAddRoute($cached_values), $route_parameters, ['query' => [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]]);
+    $content['submit']['#attached']['drupalSettings']['ajax'][$content['submit']['#id']]['url'] = Url::fromRoute(
+      $this->getContextAddRoute($cached_values),
+      $route_parameters,
+      ['query' => [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]]
+    );
     $response = new AjaxResponse();
     $response->addCommand(new OpenModalDialogCommand($this->t('Add new context'), $content, array('width' => '700')));
     return $response;

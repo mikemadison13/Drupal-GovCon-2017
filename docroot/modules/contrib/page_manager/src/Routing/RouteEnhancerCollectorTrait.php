@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Routing\RouteEnhancerCollectorTrait.
- */
-
 namespace Drupal\page_manager\Routing;
 
 use Drupal\Core\Routing\EnhancerInterface;

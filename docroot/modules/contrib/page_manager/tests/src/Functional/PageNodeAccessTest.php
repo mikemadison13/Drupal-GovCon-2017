@@ -1,15 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Tests\PageNodeAccessTest.
- */
-
-namespace Drupal\page_manager\Tests;
+namespace Drupal\Tests\page_manager\Functional;
 
 use Drupal\page_manager\Entity\Page;
 use Drupal\page_manager\Entity\PageVariant;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 
@@ -18,7 +13,7 @@ use Drupal\user\RoleInterface;
  *
  * @group page_manager
  */
-class PageNodeAccessTest extends WebTestBase {
+class PageNodeAccessTest extends BrowserTestBase {
 
   use PageTestHelperTrait;
 

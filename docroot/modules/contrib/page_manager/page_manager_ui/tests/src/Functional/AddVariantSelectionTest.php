@@ -1,20 +1,15 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Tests\AddVariantSelectionTest.
- */
+namespace Drupal\Tests\page_manager_ui\Functional;
 
-namespace Drupal\page_manager_ui\Tests;
-
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests selection criteria for page variants.
  *
  * @group page_manager
  */
-class AddVariantSelectionTest  extends WebTestBase {
+class AddVariantSelectionTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}

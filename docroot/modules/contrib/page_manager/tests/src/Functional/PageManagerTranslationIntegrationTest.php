@@ -1,14 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Tests\PageManagerTranslationIntegrationTest.
- */
+namespace Drupal\Tests\page_manager\Functional;
 
-namespace Drupal\page_manager\Tests;
-
-use Drupal\content_translation\Tests\ContentTranslationTestBase;
 use Drupal\page_manager\Entity\PageVariant;
+use Drupal\Tests\content_translation\Functional\ContentTranslationTestBase;
 
 /**
  * Tests that overriding the entity page does not affect content translation.

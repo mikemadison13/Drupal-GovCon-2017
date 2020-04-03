@@ -1,22 +1,17 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Tests\PageManagerConfigTranslationTest.
- */
-
-namespace Drupal\page_manager\Tests;
+namespace Drupal\Tests\page_manager\Functional;
 
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\page_manager\Entity\PageVariant;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests that pages and variants can be translated.
  *
  * @group page_manager
  */
-class PageManagerConfigTranslationTest extends WebTestBase {
+class PageManagerConfigTranslationTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}

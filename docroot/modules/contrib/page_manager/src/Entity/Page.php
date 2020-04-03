@@ -1,16 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Entity\Page.
- */
-
 namespace Drupal\page_manager\Entity;
 
 use Drupal\Component\Plugin\Context\ContextInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Plugin\Context\Context;
-use Drupal\Core\Plugin\Context\ContextDefinition;
+use Drupal\page_manager\Context\ContextDefinitionFactory;
 use Drupal\page_manager\Event\PageManagerContextEvent;
 use Drupal\page_manager\Event\PageManagerEvents;
 use Drupal\page_manager\PageInterface;
@@ -360,7 +355,8 @@ class Page extends ConfigEntityBase implements PageInterface {
             $cacheability = new CacheableMetadata();
             $cacheability->setCacheContexts(['route']);
 
-            $context_definition = new ContextDefinition($configuration['type'], $configuration['label']);
+            $context_definition = ContextDefinitionFactory::create($configuration['type'])
+              ->setLabel($configuration['label']);
             $context = new Context($context_definition);
             $context->addCacheableDependency($cacheability);
             $this->contexts[$machine_name] = $context;

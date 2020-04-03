@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Wizard\PageVariantAddWizard.
- */
 
 namespace Drupal\page_manager_ui\Wizard;
 
@@ -184,7 +180,7 @@ class PageVariantAddWizard extends EntityFormWizardBase {
     $this->tempstore->get('page_manager.page')->set($cached_values['page']->id(), $page_tempstore);
 
     $variant_plugin = $cached_values['page_variant']->getVariantPlugin();
-    drupal_set_message($this->t('The %label @entity_type has been added to the page, but has not been saved. Please save the page to store changes.', array(
+    $this->messenger()->addMessage($this->t('The %label @entity_type has been added to the page, but has not been saved. Please save the page to store changes.', array(
       '%label' => $cached_values['page_variant']->label(),
       '@entity_type' => $variant_plugin->adminLabel(),
     )));

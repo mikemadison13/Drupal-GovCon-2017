@@ -1,24 +1,19 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Tests\PageManagerAdminTest.
- */
-
-namespace Drupal\page_manager_ui\Tests;
+namespace Drupal\Tests\page_manager_ui\Functional;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Url;
 use Drupal\page_manager\Entity\Page;
 use Drupal\page_manager\Entity\PageVariant;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests the admin UI for page entities.
  *
  * @group page_manager_ui
  */
-class PageManagerAdminTest extends WebTestBase {
+class PageManagerAdminTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
@@ -52,7 +47,6 @@ class PageManagerAdminTest extends WebTestBase {
     $this->doTestAddPage();
     $this->doTestAccessConditions();
     $this->doTestSelectionCriteria();
-    $this->doTestSelectionCriteriaWithAjax();
     $this->doTestDisablePage();
     $this->doTestAddVariant();
     $this->doTestAddBlock();
@@ -236,18 +230,6 @@ class PageManagerAdminTest extends WebTestBase {
   }
 
   /**
-   * Tests the AJAX form for Selection Criteria.
-   */
-  protected function doTestSelectionCriteriaWithAjax() {
-    $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-http_status_code-0__selection');
-    $edit = [
-      'conditions' => 'user_role',
-    ];
-    $response = $this->drupalPostAjaxForm(NULL, $edit, ['add' => 'Add Condition']);
-    $this->assertEqual($response[2]['dialogOptions']['title'], 'Configure Required Context');
-  }
-
-  /**
    * Tests disabling a page.
    */
   protected function doTestDisablePage() {
@@ -297,16 +279,15 @@ class PageManagerAdminTest extends WebTestBase {
     $this->drupalGet('admin/foo');
     $this->assertResponse(200);
     // Tests that the content region has no content at all.
-    $elements = $this->xpath('//div[@class=:region]', [':region' => 'region region-content']);
+    $elements = $this->getSession()->getPage()->findAll('css', 'div.region.region-content *');
     // From Drupal 8.7, fallback area for messages is added by default.
     // @see https://www.drupal.org/node/3002643
     if (version_compare(\Drupal::VERSION, '8.7', '<')) {
-      $this->assertIdentical(0, $elements[0]->count());
+      $this->assertEmpty($elements);
     }
     else {
-      $this->assertIdentical(1, $elements[0]->count());
-      $status_messages_placeholder = $elements[0]->children()[0];
-      $this->assertTrue(isset($status_messages_placeholder['data-drupal-messages-fallback']));
+      $this->assertCount(1, $elements);
+      $this->assertTrue($elements[0]->hasAttribute('data-drupal-messages-fallback'));
     }
   }
 
@@ -336,7 +317,7 @@ class PageManagerAdminTest extends WebTestBase {
     $expected = ['My account', 'Log out'];
     $links = [];
     foreach ($elements as $element) {
-      $links[] = (string) $element;
+      $links[] = $element->getText();
     }
     $this->assertEqual($expected, $links);
     // Check the block label.
@@ -430,7 +411,7 @@ class PageManagerAdminTest extends WebTestBase {
     $expected = ['My account', 'Log out'];
     $links = [];
     foreach ($elements as $element) {
-      $links[] = (string) $element;
+      $links[] = $element->getText();
     }
     $this->assertEqual($expected, $links);
 
@@ -505,7 +486,7 @@ class PageManagerAdminTest extends WebTestBase {
     $expected = ['My account', 'Log out'];
     $links = [];
     foreach ($elements as $element) {
-      $links[] = (string) $element;
+      $links[] = $element->getText();
     }
     $this->assertEqual($expected, $links);
 

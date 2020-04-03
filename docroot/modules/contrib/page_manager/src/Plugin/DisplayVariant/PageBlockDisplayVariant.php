@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Plugin\DisplayVariant\PageBlockDisplayVariant.
- */
-
 namespace Drupal\page_manager\Plugin\DisplayVariant;
 
 use Drupal\Component\Render\HtmlEscapedText;

@@ -1,11 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Tests\PageTestHelperTrait.
- */
-
-namespace Drupal\page_manager\Tests;
+namespace Drupal\Tests\page_manager\Functional;
 
 /**
  * Provides helpers for Page Manager tests.

@@ -93,7 +93,7 @@ class VariantPluginDeleteBlockForm extends ConfirmFormBase {
     $cached_values = $this->getTempstore()->get($form_state->getValue('block_display'));
     $cached_values['plugin'] = $this->plugin;
     $this->getTempstore()->set($form_state->getValue('block_display'), $cached_values);
-    drupal_set_message($this->t('The block %label has been removed.', ['%label' => $this->block->label()]));
+    $this->messenger()->addMessage($this->t('The block %label has been removed.', ['%label' => $this->block->label()]));
   }
 
 }

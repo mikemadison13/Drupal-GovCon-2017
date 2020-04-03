@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Form\AccessDelete.
- */
 
 namespace Drupal\page_manager_ui\Form;
 

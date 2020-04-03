@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\page_manager\Unit\RouteParamContextTest.
- */
-
 namespace Drupal\Tests\page_manager\Unit;
 
 use Drupal\Core\Plugin\Context\Context;

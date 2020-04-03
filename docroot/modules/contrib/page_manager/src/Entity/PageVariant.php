@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\page_manager\Entity\PageVariant.
- */
-
 namespace Drupal\page_manager\Entity;
 
 use Drupal\Core\Cache\Cache;

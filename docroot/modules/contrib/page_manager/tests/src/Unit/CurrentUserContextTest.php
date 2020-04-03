@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\page_manager\Unit\CurrentUserContextTest.
- */
-
 namespace Drupal\Tests\page_manager\Unit;
 
 use Drupal\Core\Entity\EntityStorageInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager_test\Plugin\Block\TestBlock.
- */
-
 namespace Drupal\page_manager_test\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;

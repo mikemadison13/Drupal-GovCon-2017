@@ -1,16 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Tests\PageConfigSchemaTest.
- */
+namespace Drupal\Tests\page_manager\Kernel;
 
-namespace Drupal\page_manager\Tests;
-
-use Drupal\config\Tests\SchemaCheckTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\page_manager\Entity\Page;
 use Drupal\page_manager\Entity\PageVariant;
+use Drupal\Tests\SchemaCheckTestTrait;
 
 /**
  * Ensures that page entities have valid config schema.

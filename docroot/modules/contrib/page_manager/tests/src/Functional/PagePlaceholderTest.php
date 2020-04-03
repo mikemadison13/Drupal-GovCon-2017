@@ -1,22 +1,17 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Tests\PageNodeSelectionTest.
- */
-
-namespace Drupal\page_manager\Tests;
+namespace Drupal\Tests\page_manager\Functional;
 
 use Drupal\page_manager\Entity\Page;
 use Drupal\page_manager\Entity\PageVariant;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests selecting page variants based on nodes.
  *
  * @group page_manager
  */
-class PagePlaceholderTest extends WebTestBase {
+class PagePlaceholderTest extends BrowserTestBase {
 
   use PageTestHelperTrait;
 

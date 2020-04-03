@@ -1,16 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\EventSubscriber\CurrentUserContext.
- */
-
 namespace Drupal\page_manager\EventSubscriber;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\page_manager\Context\ContextDefinitionFactory;
 use Drupal\page_manager\Event\PageManagerContextEvent;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -61,7 +56,7 @@ class CurrentUserContext implements EventSubscriberInterface {
     $id = $this->account->id();
     $current_user = $this->userStorage->load($id);
 
-    $context = new Context(new ContextDefinition('entity:user', $this->t('Current user')), $current_user);
+    $context = new Context(ContextDefinitionFactory::create('entity:user')->setLabel($this->t('Current user')), $current_user);
     $cacheability = new CacheableMetadata();
     $cacheability->setCacheContexts(['user']);
     $context->addCacheableDependency($cacheability);

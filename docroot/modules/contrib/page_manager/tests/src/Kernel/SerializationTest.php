@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\page_manager\Kernel\SerializationTest.
- */
-
 namespace Drupal\Tests\page_manager\Kernel;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;

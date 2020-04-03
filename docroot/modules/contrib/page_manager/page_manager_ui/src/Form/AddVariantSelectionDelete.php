@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Form\AddVariantSelectionDelete.
- */
-
 namespace Drupal\page_manager_ui\Form;
 
 use Drupal\Core\Form\FormStateInterface;

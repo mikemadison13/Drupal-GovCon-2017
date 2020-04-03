@@ -1,21 +1,16 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager\Tests\PageNodeSelectionTest.
- */
-
-namespace Drupal\page_manager\Tests;
+namespace Drupal\Tests\page_manager\Functional;
 
 use Drupal\page_manager\Entity\PageVariant;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests selecting variants based on nodes.
  *
  * @group page_manager
  */
-class PageNodeSelectionTest extends WebTestBase {
+class PageNodeSelectionTest extends BrowserTestBase {
 
   use PageTestHelperTrait;
 
@@ -54,7 +49,7 @@ class PageNodeSelectionTest extends WebTestBase {
     $this->assertCacheTag('page_manager_route_name:entity.node.canonical');
     $expected_title = '&lt;em&gt;First&lt;/em&gt; &amp; &lt;Second&gt;';
     $this->assertRaw($expected_title);
-    $this->assertTitle($expected_title . ' | Drupal');
+    $this->assertTitle(html_entity_decode($expected_title) . ' | Drupal');
 
     // Create a new variant to always return 404, the node_view page exists by
     // default.
@@ -121,7 +116,7 @@ class PageNodeSelectionTest extends WebTestBase {
 
     $this->drupalGet('node/' . $node2->id());
     $this->assertResponse(200);
-    $this->assertTitle($expected_title . ' | Drupal');
+    $this->assertTitle(html_entity_decode($expected_title) . ' | Drupal');
     $this->assertText($node2->body->value);
     $this->assertRaw('<h1 class="page-title">' . $expected_title . '</h1>');
 
@@ -137,7 +132,7 @@ class PageNodeSelectionTest extends WebTestBase {
     $block_page_variant->save();
     $this->drupalGet('node/' . $node2->id());
     $this->assertResponse(200);
-    $this->assertTitle($expected_title . ' | Drupal');
+    $this->assertTitle(html_entity_decode($expected_title) . ' | Drupal');
     $this->assertRaw('<h1 class="page-title">' . $expected_title . '</h1>');
 
     // Ensure this doesn't affect the /node/add page.

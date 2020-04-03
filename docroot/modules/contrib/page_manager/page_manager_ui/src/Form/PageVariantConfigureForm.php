@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Form\PageVariantConfigureForm.
- */
 
 namespace Drupal\page_manager_ui\Form;
 

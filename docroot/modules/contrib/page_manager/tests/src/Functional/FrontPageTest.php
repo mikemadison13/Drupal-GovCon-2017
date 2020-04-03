@@ -1,18 +1,18 @@
 <?php
 
-namespace Drupal\page_manager\Tests;
+namespace Drupal\Tests\page_manager\Functional;
 
 use Drupal\block\Entity\Block;
 use Drupal\page_manager\Entity\Page;
 use Drupal\page_manager\Entity\PageVariant;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests a page manager page as front page.
  *
  * @group page_manager
  */
-class FrontPageTest extends WebTestBase {
+class FrontPageTest extends BrowserTestBase {
 
   use PageTestHelperTrait;
 

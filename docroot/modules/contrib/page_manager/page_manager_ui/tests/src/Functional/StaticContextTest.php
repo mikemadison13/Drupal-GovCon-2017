@@ -1,20 +1,15 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Tests\StaticContextTest.
- */
+namespace Drupal\Tests\page_manager_ui\Functional;
 
-namespace Drupal\page_manager_ui\Tests;
-
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests static context for pages.
  *
  * @group page_manager
  */
-class StaticContextTest extends WebTestBase {
+class StaticContextTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}

@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\page_manager_ui\Form\SelectionDelete.
- */
 
 namespace Drupal\page_manager_ui\Form;
 
