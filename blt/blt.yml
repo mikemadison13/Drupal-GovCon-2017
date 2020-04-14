@@ -1,0 +1,33 @@
+project:
+  machine_name: capitalcamp
+  prefix: DGC
+  human_name: 'Drupal GovCon'
+  profile:
+    name: lightning
+  local:
+    protocol: http
+    hostname: 'drupalgovcon.lndo.site'
+git:
+  default_branch: master
+  remotes:
+    - 'capitalcamp@svn-6971.prod.hosting.acquia.com:capitalcamp.git'
+deploy:
+  tag_source: true
+drush:
+  aliases:
+    remote: dgc.dev
+    local: self
+    ci: self
+  default_alias: '${drush.aliases.local}'
+command-hooks:
+  frontend-reqs:
+    dir: '${repo.root}'
+    command: ./blt/scripts/frontend-setup.sh
+  frontend-assets:
+    dir: '${repo.root}'
+    command: ./blt/scripts/frontend-build.sh
+cm:
+  strategy: config-split
+  allow-overrides: true
+  core:
+    install_from_config: true

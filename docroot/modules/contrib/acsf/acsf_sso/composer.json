@@ -1,0 +1,9 @@
+{
+    "name": "drupal/acsf_sso",
+    "type": "drupal-module",
+    "description": "Manages SSO settings.",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "drupal/samlauth": "^2.0.0-alpha1 || ^3"
+    }
+}

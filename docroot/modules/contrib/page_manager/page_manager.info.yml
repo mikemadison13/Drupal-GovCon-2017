@@ -1,0 +1,15 @@
+type: module
+name: Page Manager
+description: 'Provides a way to place blocks on a custom page.'
+package: Layout
+core: 8.x
+core_version_requirement: '^8 || ^9'
+dependencies:
+  - drupal:system (>=8.5)
+  - drupal:block
+  - ctools:ctools (>=3.1)
+
+# Information added by Drupal.org packaging script on 2020-03-30
+version: '8.x-4.0-beta5'
+project: 'page_manager'
+datestamp: 1585603619

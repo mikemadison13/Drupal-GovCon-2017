@@ -1,0 +1,18 @@
+purgers:
+  -
+    order_index: 2
+    instance_id: c678dff596
+    plugin_id: acquia_purge
+queuers:
+  -
+    plugin_id: drush_purge_queue_add
+    status: true
+  -
+    plugin_id: coretags
+    status: true
+  -
+    plugin_id: urlpath
+    status: false
+  -
+    plugin_id: purge_ui_block_queuer
+    status: true

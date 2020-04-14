@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acsf_sj",
+    "type": "drupal-module",
+    "description": "Integrates with Site Factory's Scheduled Jobs functionality.",
+    "license": "GPL-2.0-or-later"
+}

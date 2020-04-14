@@ -1,0 +1,24 @@
+uuid: 6b1e27cd-bfbe-4a42-b629-c31f649f336d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_website
+  module:
+    - link
+    - user
+id: user.user.field_website
+field_name: field_website
+entity_type: user
+bundle: user
+label: Website
+description: 'If desired, list your Website to help with networking.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 16
+  title: 0
+  title_predefined: ''
+field_type: link

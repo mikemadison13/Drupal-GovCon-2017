@@ -1,0 +1,89 @@
+// Tables
+//
+// Markup: table.twig
+//
+// Style guide: atoms.table
+
+table {
+  font-family: $body_font;
+  border: 1px solid $dark-gray;
+  padding: 0.25em;
+  width: 100%;
+
+  .label {
+    color: $white;
+  }
+
+  thead {
+    background-color: $white-gray;
+    text-align: left;
+
+    a,
+    a:visited {
+      color: rgba($white, 0.5);
+    }
+
+    a:hover {
+      color: $white;
+
+      .tablesort--desc::after {
+        border-top-color: $white;
+      }
+
+      .tablesort--asc::after {
+        border-bottom-color: $white;
+      }
+    }
+  }
+
+  .tablesort--desc {
+    background-image: none;
+
+    &::after {
+      content: '';
+      display: block;
+      margin-top: 5px;
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 10px solid rgba($white, 0.5);
+    }
+  }
+
+  .tablesort--asc {
+    background-image: none;
+
+    &::after {
+      content: '';
+      display: block;
+      margin-top: 5px;
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-bottom: 10px solid rgba($white, 0.5);
+    }
+  }
+
+  th {
+    border: 1px solid $dark-gray;
+    font-weight: 700;
+    padding: 0.5em;
+  }
+
+  td {
+    border: 1px solid $dark-gray;
+    outline: none;
+    padding: 0.5em;
+  }
+
+  tfoot {
+    border-top: 1px solid $color-primary;
+    background-color: rgba(28, 187, 180, 0.2);
+    color: $mediumteal;
+    font-size: 0.875em;
+    font-weight: 700;
+    text-align: left;
+  }
+}

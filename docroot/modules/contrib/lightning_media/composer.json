@@ -1,0 +1,118 @@
+{
+    "name": "drupal/lightning_media",
+    "type": "drupal-module",
+    "description": "Slick media handling for Lightning. So cool you'll make the A/C jealous.",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "bower-asset/cropper": "^2.3",
+        "bower-asset/dropzone": "^5.1",
+        "bower-asset/slick-carousel": "^1.8",
+        "drupal/core": "~8.6.18 || ~8.7.11 || ~8.8.1 || 8.9.* || 9.0.*",
+        "drupal/crop": "^2.0.0-rc1",
+        "drupal/dropzonejs": "2.0.0-alpha5",
+        "drupal/embed": "^1.0",
+        "drupal/entity_browser": "^2.3",
+        "drupal/entity_embed": "^1.0",
+        "drupal/image_widget_crop": "^2.1",
+        "drupal/inline_entity_form": "^1.0",
+        "drupal/libraries": "3.0-alpha1",
+        "drupal/lightning_core": "3.* || 4.* || 5.*",
+        "drupal/media_entity_instagram": "^2.0",
+        "drupal/media_entity_twitter": "^2.1",
+        "drupal/slick": "2.0",
+        "drupal/slick_entityreference": "^2.0",
+        "drupal/video_embed_field": "^2.0",
+        "drupal/views_infinite_scroll": "^1.6",
+        "vardot/blazy": "^1.8"
+    },
+    "require-dev": {
+        "cweagans/composer-patches": "^1.6",
+        "drupal-composer/drupal-scaffold": "^2.6",
+        "drupal/drupal-extension": "^3.4",
+        "drupal/facets": "^1.2",
+        "drupal/schema_metatag": "^1.3",
+        "drush/drush": "^9.7",
+        "oomphinc/composer-installers-extender": "^1.1",
+        "vijaycs85/drupal-quality-checker": "^1.0",
+        "webflo/drupal-core-require-dev": "*"
+    },
+    "config": {
+        "preferred-install": {
+            "drupal/core": "dist"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-8.x-3.x": "3.x-dev"
+        },
+        "enable-patching": true,
+        "installer-paths": {
+            "docroot/core": [
+                "type:drupal-core"
+            ],
+            "docroot/libraries/{$name}": [
+                "type:drupal-library",
+                "type:bower-asset",
+                "type:npm-asset"
+            ],
+            "docroot/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "docroot/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "docroot/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ]
+        },
+        "installer-types": [
+            "bower-asset",
+            "npm-asset"
+        ],
+        "patches": {
+            "drupal/libraries": {
+                "2882709 - Misnamed interface causes \"Fatal error: Cannot declare interface Drupal\\libraries\\ExternalLibrary\\Utility\\LibraryAccessorIdInterface\"": "https://www.drupal.org/files/issues/2882709-2-interface-libraryidaccessorinterface-misnamed.patch"
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Drupal\\Tests\\lightning_media\\": "tests/src"
+        },
+        "classmap": [
+            "tests/contexts"
+        ]
+    },
+    "repositories": {
+        "drupal": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        "assets": {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "post-install-cmd": [
+            "@push",
+            "@drupal-scaffold"
+        ],
+        "post-update-cmd": [
+            "@push",
+            "@drupal-scaffold"
+        ],
+        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "nuke": "rm -r -f docroot vendor",
+        "pull": "cp -R -f ./docroot/modules/contrib/lightning_media/* .",
+        "push": [
+            "rm -r -f ./docroot/modules/contrib/lightning_media",
+            "mkdir -p ./docroot/modules/contrib/lightning_media",
+            "@composer archive --file lightning_media",
+            "tar -x -f lightning_media.tar -C ./docroot/modules/contrib/lightning_media",
+            "rm lightning_media.tar"
+        ]
+    }
+}

@@ -1,0 +1,116 @@
+// Layout
+//
+// Sidebars Region Styling
+//
+// Markup: sidebars.twig
+//
+// Style guide: layout.sidebars
+
+//////////////////////////////////
+// Sidebar First /////////////////
+//////////////////////////////////
+.body-sidebars-first {
+  @include breakpoint($up-sm) {
+    aside.sidebar-first {
+      width: calc(40% - 15px);
+
+      > * {
+        padding-left: 15px;
+      }
+    }
+
+    section#content {
+      width: calc(80% - 25px);
+
+      > * {
+        padding-right: 25px;
+      }
+    }
+  }
+}
+
+//////////////////////////////////
+// Sidebar Second ////////////////
+//////////////////////////////////
+.body-sidebars-second {
+  @include breakpoint($up-sm) {
+    aside.sidebar-second {
+      display: inline-block;
+      width: calc(40% - 15px);
+
+      > * {
+        padding-right: 15px;
+      }
+    }
+
+    section#content {
+      display: inline-block;
+      width: calc(80% - 1.25em);
+
+      > * {
+        padding-left: 1.25em;
+
+        @include breakpoint($medium-max) {
+          padding-left: 7em;
+        }
+      }
+    }
+  }
+}
+
+//////////////////////////////////
+// Sidebar Both //////////////////
+//////////////////////////////////
+.body-sidebars-both {
+  @include breakpoint($up-sm) {
+    aside.sidebar-first {
+      width: calc(20% - 15px);
+
+      > * {
+        padding-left: 15px;
+      }
+    }
+
+    section#content {
+      width: calc(80% - 25px);
+
+      > * {
+        padding-right: 25px;
+      }
+    }
+
+    aside.sidebar-second {
+      width: calc(42% - 15px);
+
+      > * {
+        padding-right: 15px;
+      }
+    }
+  }
+}
+
+//////////////////////////////////
+// Sidebar None //////////////////
+//////////////////////////////////
+.body-sidebars-none {
+  section#content {
+    width: 100%;
+
+    > * {
+      padding-left: 1.25em;
+      padding-right: 1.25em;
+
+      @include breakpoint($medium-max) {
+        padding-left: 7em;
+        padding-right: 7em;
+      }
+    }
+  }
+}
+
+//////////////////////////////////
+// General Sidebar Rules /////////
+//////////////////////////////////
+aside.sidebar {
+  overflow: hidden;
+}

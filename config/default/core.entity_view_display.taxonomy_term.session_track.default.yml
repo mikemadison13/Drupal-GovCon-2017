@@ -1,0 +1,30 @@
+uuid: 553f7c28-b079-4a66-ac3f-5fb51871e254
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.session_track.field_conference_year
+    - taxonomy.vocabulary.session_track
+  module:
+    - panelizer
+    - text
+third_party_settings:
+  panelizer:
+    enable: false
+    custom: false
+    allow: false
+    default: default
+id: taxonomy_term.session_track.default
+targetEntityType: taxonomy_term
+bundle: session_track
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_conference_year: true

@@ -1,0 +1,19 @@
+.field--name-field-session-co-presenter-s- {
+  .tabledrag-toggle-weight {
+    letter-spacing: normal;
+    background: transparent;
+    color: $color-primary;
+    text-transform: inherit;
+    font-weight: normal;
+    padding: 0;
+
+    &:hover {
+      color: $primary-darkest;
+      text-decoration: underline;
+    }
+  }
+
+  h4 {
+    margin: 0;
+  }
+}

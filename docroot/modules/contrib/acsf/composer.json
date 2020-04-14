@@ -1,0 +1,31 @@
+{
+    "name": "drupal/acsf",
+    "type": "drupal-module",
+    "description": "Connects a site with Acquia Cloud Site Factory.",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Acquia",
+            "email": "support@acquia.com"
+        }
+    ],
+    "require": {
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "acquia/coding-standards": "^0.4.0",
+        "mockery/mockery": "dev-master",
+        "phpunit/phpunit": "^7.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-8.x-1.x": "1.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Drupal\\acsf\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}

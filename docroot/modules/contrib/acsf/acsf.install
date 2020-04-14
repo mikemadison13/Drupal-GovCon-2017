@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Acquia Site Factory module.
+ */
+
+use Drupal\acsf\Event\AcsfEvent;
+
+/**
+ * Implements hook_install().
+ */
+function acsf_install() {
+  // Initiate an event to run post-acsf-install tasks. We assume this event
+  // will only ever do anything useful on ACSF environments.
+  if (!empty($GLOBALS['gardens_site_settings'])) {
+    acsf_build_registry();
+
+    $type = 'acsf_install';
+    $event = AcsfEvent::create($type);
+    $event->run();
+  }
+}

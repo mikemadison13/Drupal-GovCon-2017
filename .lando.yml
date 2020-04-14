@@ -1,0 +1,28 @@
+name: drupalgovcon
+recipe: drupal8
+config:
+  webroot: docroot
+  xdebug: false
+services:
+  appserver:
+    xdebug: false
+    build_as_root:
+      - echo "Run additional build commands here. Run lando rebuild after updating this file."
+    overrides:
+      image: 'acquia/ads-local:lando-php-7.3-nodejs-10'
+      cap_add:
+        - SYS_ADMIN
+tooling:
+  blt:
+    service: appserver
+    cmd: /app/vendor/bin/blt
+  xdebug-on:
+    service: appserver
+    description: Enable xdebug for apache.
+    cmd: "docker-php-ext-enable xdebug && /etc/init.d/apache2 reload"
+    user: root
+  xdebug-off:
+    service: appserver
+    description: Disable xdebug for apache.
+    cmd: "rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && /etc/init.d/apache2 reload"
+    user: root

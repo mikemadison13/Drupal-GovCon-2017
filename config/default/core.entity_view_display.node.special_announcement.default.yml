@@ -1,0 +1,54 @@
+uuid: 3e0d309c-f3d7-4262-af6c-dd993af44011
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.special_announcement.body
+    - field.field.node.special_announcement.field_conference_year
+    - field.field.node.special_announcement.field_critical_announcement_text
+    - field.field.node.special_announcement.field_important_date
+    - field.field.node.special_announcement.field_is_critical_
+    - field.field.node.special_announcement.field_sort_order
+    - node.type.special_announcement
+  module:
+    - datetime
+    - panelizer
+    - text
+    - user
+third_party_settings:
+  panelizer:
+    enable: false
+    custom: false
+    allow: false
+    default: default
+id: node.special_announcement.default
+targetEntityType: node
+bundle: special_announcement
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_important_date:
+    weight: 2
+    label: inline
+    settings:
+      timezone_override: ''
+      format_type: month_day_year
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  links:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_conference_year: true
+  field_critical_announcement_text: true
+  field_is_critical_: true
+  field_sort_order: true

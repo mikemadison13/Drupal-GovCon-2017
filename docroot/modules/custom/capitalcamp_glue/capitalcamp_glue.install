@@ -1,0 +1,279 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for CapitalCamp.
+ */
+
+use Drupal\block\Entity\Block;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\user\Entity\Role;
+
+/**
+ * DCG-107: Add terms to sponsorship level vocabulary.
+ */
+function capitalcamp_glue_update_8001() {
+  $sponsorshipLevelTerms = [
+    'Core',
+    'Coffee',
+    'Contributor',
+    'Mentor',
+    'Sprinter',
+    'Exhibitor',
+    'Supporter',
+    'Personal',
+    'Training',
+  ];
+  foreach ($sponsorshipLevelTerms as $sponsorshipLevelTerm) {
+    Term::create([
+      'name' => $sponsorshipLevelTerm,
+      'vid' => 'sponsorship_level',
+    ])->save();
+  }
+}
+
+/**
+ * Update menu block to the lastest.
+ */
+function capitalcamp_glue_update_8002() {
+  $block = Block::load('dgcnav');
+  if ($block) {
+    $block->delete();
+  }
+}
+
+/**
+ * Add user registation and submission links.
+ */
+function capitalcamp_glue_update_8003() {
+  $registerLink = MenuLinkContent::create([
+    'title' => 'Submit a Session',
+    'link' => ['uri' => 'internal:/node/add/session?destination=/user/'],
+    'parent' => 'menu_link_content:cfde32b4-ff81-4a70-a608-5faf124c12ee',
+    'menu_name' => 'main',
+    'expanded' => FALSE,
+    'weight' => -46,
+  ]);
+  $registerLink->save();
+
+  $registerLink = MenuLinkContent::create([
+    'title' => 'Register to Attend',
+    'link' => ['uri' => 'internal:/form/registration?destination=/user/'],
+    'parent' => 'menu_link_content:cfde32b4-ff81-4a70-a608-5faf124c12ee',
+    'menu_name' => 'main',
+    'expanded' => FALSE,
+    'weight' => -45,
+  ]);
+  $registerLink->save();
+}
+
+/**
+ * Add 2015 and 2016 archive links to footer menu.
+ */
+function capitalcamp_glue_update_8007() {
+  $archive2016Link = MenuLinkContent::create([
+    'title' => '2016',
+    'link' => ['uri' => 'https://www.drupalgovcon.org/drupal-govcon-2016/index.html'],
+    'parent' => '',
+    'menu_name' => 'footer',
+    'expanded' => FALSE,
+    'weight' => 0,
+  ]);
+  $archive2016Link->save();
+
+  $archive2015Link = MenuLinkContent::create([
+    'title' => '2015',
+    'link' => ['uri' => 'https://www.drupalgovcon.org/drupal-govcon-2015/index.html'],
+    'parent' => '',
+    'menu_name' => 'footer',
+    'expanded' => FALSE,
+    'weight' => 0,
+  ]);
+  $archive2015Link->save();
+}
+
+/**
+ * DCG-104: Add terms to sponsorship level vocabulary.
+ */
+function capitalcamp_glue_update_8004() {
+  $sessionTracks = [
+    'Site Building',
+    'Front End',
+    'Back End',
+    'DevOps',
+    'Business (Gov, Non-Profit, Commercial)',
+    'End Users / Content Management / Project Management',
+    'Design/UX',
+    'Community',
+  ];
+  foreach ($sessionTracks as $sessionTrack) {
+    Term::create([
+      'name' => $sessionTrack,
+      'vid' => 'session_track',
+    ])->save();
+  }
+}
+
+/**
+ * Delete all extra not required roles created by lightning.
+ */
+function capitalcamp_glue_update_8005() {
+  $roles = [
+    'session_reviewer',
+    'session_creator',
+    'sponsor_reviewer',
+    'sponsor_creator',
+    'media_manager',
+    'media_creator',
+    'landing_page_reviewer',
+    'landing_page_creator',
+    'basic_page_reviewer',
+    'basic_page_creator',
+    'layout_manager',
+
+  ];
+  foreach ($roles as $role) {
+    $role = Role::load($role);
+    if ($role) {
+      $role->delete();
+    }
+  }
+}
+
+/**
+ * Populates the <> Vocabulary with 2017 Role Terms.
+ */
+function capitalcamp_glue_update_8006() {
+  $vocabulary = "conference_role";
+  $terms = [
+    "Organizer-2017",
+    "Presenter-2017",
+    "Sponsor-2017",
+    "Volunteer-2017",
+  ];
+
+  foreach ($terms as $name) {
+    // Check whether the term already exists.
+    $result = \Drupal::entityQuery('taxonomy_term')->condition('vid', $vocabulary)->condition('name', $name)->execute();
+    if (empty($result)) {
+      $term = Term::create(['vid' => $vocabulary, 'name' => $name]);
+      $term->save();
+    }
+  }
+}
+
+/**
+ * DCG-153: Add terms to Conference Year vocabulary.
+ */
+function capitalcamp_glue_update_8008() {
+  $vocabulary = "conference_year";
+  $terms = [
+    '2017',
+    '2018',
+  ];
+
+  foreach ($terms as $name) {
+    // Check whether the term already exists.
+    $result = \Drupal::entityQuery('taxonomy_term')->condition('vid', $vocabulary)->condition('name', $name)->execute();
+    if (empty($result)) {
+      $term = Term::create(['vid' => $vocabulary, 'name' => $name]);
+      $term->save();
+    }
+  }
+}
+
+/**
+ * Uninstalling scheduled_updates.
+ */
+function capitalcamp_glue_update_8009() {
+  \Drupal::service('module_installer')->uninstall(['scheduled_updates']);
+}
+
+/**
+ * Removing unneeded modules.
+ */
+function capitalcamp_glue_update_8011() {
+  \Drupal::service('module_installer')->uninstall(['features']);
+}
+
+/**
+ * Removing unneeded modules.
+ */
+function capitalcamp_glue_update_8012() {
+  \Drupal::service('module_installer')->uninstall(['page_manager']);
+  \Drupal::service('module_installer')->uninstall(['contribute']);
+}
+
+/**
+ * Removing unneeded modules.
+ */
+function capitalcamp_glue_update_8013() {
+  \Drupal::service('module_installer')->uninstall(['sponsors']);
+  \Drupal::service('module_installer')->uninstall(['session']);
+  \Drupal::service('module_installer')->uninstall(['contribute']);
+}
+
+/**
+ * Removing unneeded modules.
+ */
+function capitalcamp_glue_update_8014() {
+  \Drupal::service('module_installer')->uninstall(['features']);
+  \Drupal::service('module_installer')->uninstall(['entity']);
+}
+
+/**
+ * Deleting old views.
+ */
+function capitalcamp_glue_update_8015() {
+  \Drupal::configFactory()->getEditable('views.view.accepted_sessions')->delete();
+  \Drupal::configFactory()->getEditable('views.view.new_proposed_sessions')->delete();
+}
+
+/**
+ * DCG-167: Add terms to rooms vocabulary.
+ */
+function capitalcamp_glue_update_8016() {
+  $sponsorshipLevelTerms = [
+    'Auditorium',
+    'Balcony A',
+    'Balcony B',
+    'Balcony C',
+    'Room A',
+    'Room B',
+    'Room C1/C2',
+    'Room D',
+    'Room E',
+    'Room E1/E2',
+    'Room F1/F2',
+    'Room G1/G2',
+    'Room H',
+    'Room J',
+  ];
+  foreach ($sponsorshipLevelTerms as $sponsorshipLevelTerm) {
+    Term::create([
+      'name' => $sponsorshipLevelTerm,
+      'vid' => 'rooms',
+    ])->save();
+  }
+}
+
+/**
+ * Fix Flag Config re: D.O 3099003.
+ */
+function capitalcamp_glue_update_8020() {
+  $config_factory = \Drupal::configFactory();
+  $flags = [
+    'system.action.flag_action.check_in_status.flag',
+    'system.action.flag_action.check_in_status.unflag',
+    'system.action.flag_action.session_schedule.flag',
+    'system.action.flag_action.session_schedule.unflag',
+  ];
+
+  foreach ($flags as $flag) {
+    $names = explode('.', $flag);
+    $config = $config_factory->getEditable($flag);
+    $config->set('plugin', "flag_action:" . $names[3] . "_flag");
+    $config->save(TRUE);
+  }
+}

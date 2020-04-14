@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acsf_duplication",
+    "type": "drupal-module",
+    "description": "Helper module for duplicating Acquia Cloud Site Factory sites.",
+    "license": "GPL-2.0-or-later"
+}
