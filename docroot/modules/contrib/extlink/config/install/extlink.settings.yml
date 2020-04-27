@@ -1,6 +1,8 @@
+extlink_use_external_js_file: false
 extlink_target: false
 extlink_target_no_override: false
 extlink_nofollow: false
+extlink_noreferrer: true
 extlink_follow_no_override: false
 extlink_subdomains: true
 extlink_alert: false
