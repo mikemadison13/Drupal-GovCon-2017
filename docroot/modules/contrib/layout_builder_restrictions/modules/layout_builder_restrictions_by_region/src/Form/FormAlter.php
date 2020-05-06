@@ -3,7 +3,7 @@
 namespace Drupal\layout_builder_restrictions_by_region\Form;
 
 use Drupal\Component\Serialization\Json;
-use Drupal\Component\Uuid\Php as Uuid;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
@@ -58,7 +58,7 @@ class FormAlter implements ContainerInjectionInterface {
   /**
    * A service for generating UUIDs.
    *
-   * @var \Drupal\Component\Uuid\Php
+   * @var \Drupal\Component\Uuid\UuidInterface
    */
   protected $uuid;
 
@@ -80,12 +80,12 @@ class FormAlter implements ContainerInjectionInterface {
    *   The layout plugin manager.
    * @param \Drupal\Core\Plugin\Context\ContextHandlerInterface $context_handler
    *   The context handler.
-   * @param \Drupal\Component\Uuid\Php $uuid
+   * @param \Drupal\Component\Uuid\UuidInterface $uuid
    *   A service for generating UUIDs.
    * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $private_temp_store_factory
    *   Creates a private temporary storage for a collection.
    */
-  public function __construct(SectionStorageManagerInterface $section_storage_manager, BlockManagerInterface $block_manager, LayoutPluginManagerInterface $layout_manager, ContextHandlerInterface $context_handler, Uuid $uuid, PrivateTempStoreFactory $private_temp_store_factory) {
+  public function __construct(SectionStorageManagerInterface $section_storage_manager, BlockManagerInterface $block_manager, LayoutPluginManagerInterface $layout_manager, ContextHandlerInterface $context_handler, UuidInterface $uuid, PrivateTempStoreFactory $private_temp_store_factory) {
     $this->sectionStorageManager = $section_storage_manager;
     $this->blockManager = $block_manager;
     $this->layoutManager = $layout_manager;
