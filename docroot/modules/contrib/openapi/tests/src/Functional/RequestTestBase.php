@@ -14,6 +14,11 @@ use Drupal\Tests\BrowserTestBase;
 abstract class RequestTestBase extends BrowserTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Set to TRUE to run this test to generate expectation files.
    *
    * The test will be marked as a fail when generating test files.

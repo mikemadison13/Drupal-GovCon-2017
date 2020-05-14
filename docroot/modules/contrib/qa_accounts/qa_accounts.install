@@ -9,5 +9,12 @@
  * Implements hook_install().
  */
 function qa_accounts_install() {
-  qa_accounts_test_users_create();
+  \Drupal::service('qa_accounts.create_delete')->createQaAccounts();
+}
+
+/**
+ * Force cache rebuild for new service definitions.
+ */
+function qa_accounts_update_8001() {
+  // Do nothing.
 }

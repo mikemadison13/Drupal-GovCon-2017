@@ -38,8 +38,14 @@ class UserConfig {
       $this->config = json_decode(file_get_contents($this->configPath), TRUE);
     }
     else {
-      mkdir($configDir, 0777, TRUE);
-      $this->setTelemetryUserData();
+      // Make sure directory tree for user config file exists.
+      if (!file_exists($configDir) && !mkdir($configDir, 0777, TRUE)) {
+        return;
+      }
+      // Make sure directory for user config file is writable.
+      if (is_writable($configDir) || chmod($configDir, 0777)) {
+        $this->setTelemetryUserData();
+      }
     }
   }
 

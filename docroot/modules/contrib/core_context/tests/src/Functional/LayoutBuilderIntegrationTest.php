@@ -65,8 +65,8 @@ class LayoutBuilderIntegrationTest extends BrowserTestBase {
         'block_configuration' => [
           'id' => 'context_block',
           'context_mapping' => [
-            'value' => '@core_context.entity:value',
-            'letter' => '@core_context.entity:letter',
+            'value' => '@core_context:value',
+            'letter' => '@core_context:letter',
           ],
         ],
         'layout_overridable' => FALSE,
@@ -111,8 +111,8 @@ class LayoutBuilderIntegrationTest extends BrowserTestBase {
         'block_configuration' => [
           'id' => 'context_block',
           'context_mapping' => [
-            'value' => '@core_context.entity:value',
-            'letter' => '@core_context.entity:letter',
+            'value' => '@core_context:value',
+            'letter' => '@core_context:letter',
           ],
         ],
         'layout_overridable' => TRUE,
@@ -218,6 +218,8 @@ class LayoutBuilderIntegrationTest extends BrowserTestBase {
    * @dataProvider provider
    */
   public function test(array $block_configuration, $layout_overridable = FALSE, $third_party_contexts = [], array $entity_values = []) {
+    $page = $this->getSession()->getPage();
+
     $component = SectionComponent::fromArray([
       'uuid' => $this->container->get('uuid')->generate(),
       'region' => 'content',
@@ -238,11 +240,11 @@ class LayoutBuilderIntegrationTest extends BrowserTestBase {
       ->setThirdPartySetting('core_context', 'contexts', $third_party_contexts)
       ->save();
 
-    $permissions = ['edit own page content'];
-    if ($layout_overridable) {
-      $permissions[] = 'configure editable page node layout overrides';
-    }
-    $account = $this->drupalCreateUser($permissions);
+    $account = $this->drupalCreateUser([
+      'administer node display',
+      'configure any layout',
+      'edit own page content',
+    ]);
     $this->drupalLogin($account);
 
     $entity_values += [
@@ -265,9 +267,36 @@ class LayoutBuilderIntegrationTest extends BrowserTestBase {
     // If the layout is customizable per entity, ensure we can visit the Layout
     // page without errors.
     if ($layout_overridable) {
-      $this->getSession()->getPage()->clickLink('Layout');
+      $page->clickLink('Layout');
       $assert_session->statusCodeEquals(200);
     }
+
+    // Ensure that we can edit the default layout without errors, but only if
+    // there are contexts stored in the entity display.
+    if ($third_party_contexts || $block_configuration['id'] === 'context_block_optional') {
+      $this->drupalGet('/admin/structure/types/manage/page/display/full');
+      $page->clickLink('Manage layout');
+      $assert_session->statusCodeEquals(200);
+    }
+  }
+
+  /**
+   * Tests integration with Layout Builder for non-bundleable entity types.
+   */
+  public function testNonBundleableEntityType() {
+    $this->container->get('entity_display.repository')
+      ->getViewDisplay('user', 'user')
+      ->enableLayoutBuilder()
+      ->save();
+
+    $account = $this->drupalCreateUser([
+      'administer user display',
+      'configure any layout',
+    ]);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('/admin/config/people/accounts/display/default/layout');
+    $this->assertSession()->statusCodeEquals(200);
   }
 
 }

@@ -48,12 +48,12 @@ function qa_accounts_drush_help($section) {
  * Implements drush_hook_COMMAND().
  */
 function drush_qa_accounts_test_users_create() {
-  qa_accounts_test_users_create();
+  \Drupal::service('qa_accounts.create_delete')->createQaAccounts();
 }
 
 /**
  * Implements drush_hook_COMMAND().
  */
 function drush_qa_accounts_test_users_delete() {
-  qa_accounts_test_users_delete();
+  \Drupal::service('qa_accounts.create_delete')->deleteQaAccounts();
 }
