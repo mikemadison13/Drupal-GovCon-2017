@@ -13,6 +13,25 @@ form .form-item {
   padding: 0.5em;
 }
 
+.form-item {
+  .field--label-inline .field__label {
+    background: $light-gold;
+    color: $blk;
+    font-weight: 700;
+    line-height: 28px;
+    margin: 0.25rem 0.5rem 0.25rem 0;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+.views-label {
+  background: $light-gold;
+  font-weight: 700;
+  line-height: 28px;
+  margin: 0.25rem 0.5rem 0.25rem 0;
+  padding: 0.25rem 0.5rem;
+}
+
 form button.link-edit-summary {
   color: $gray !important;
   text-transform: capitalize;
@@ -196,8 +215,7 @@ fieldset {
 }
 
 fieldset .fieldset-legend {
-  background: $color-primary;
-  background-color: $legend;
+  background-color: $primary-darkest;
   color: $white;
   display: block;
   font-weight: bold;
@@ -324,8 +342,12 @@ form input {
 }
 
 .field--label-inline .field__label {
-  color: $color-primary;
-  font-weight: bold;
+  background: $light-gold;
+  color: $blk;
+  font-weight: 700;
+  line-height: 28px;
+  margin: 0.25rem 0.5rem 0.25rem 0;
+  padding: 0.25rem 0.5rem;
 
   &::after {
     content: ':';
