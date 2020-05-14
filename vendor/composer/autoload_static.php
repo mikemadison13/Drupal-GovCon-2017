@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit29c98c0dc6cdec00303419e2183cef94
+class ComposerStaticInit6ce3757a30bd7a5bd6654fb6412e8f88
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -1699,6 +1699,7 @@ class ComposerStaticInit29c98c0dc6cdec00303419e2183cef94
         'DrupalPractice\\Sniffs\\General\\AccessAdminPagesSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/General/AccessAdminPagesSniff.php',
         'DrupalPractice\\Sniffs\\General\\ClassNameSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/General/ClassNameSniff.php',
         'DrupalPractice\\Sniffs\\General\\DescriptionTSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/General/DescriptionTSniff.php',
+        'DrupalPractice\\Sniffs\\General\\ExceptionTSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/General/ExceptionTSniff.php',
         'DrupalPractice\\Sniffs\\General\\FormStateInputSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/General/FormStateInputSniff.php',
         'DrupalPractice\\Sniffs\\General\\LanguageNoneSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/General/LanguageNoneSniff.php',
         'DrupalPractice\\Sniffs\\General\\OptionsTSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/General/OptionsTSniff.php',
@@ -1729,6 +1730,7 @@ class ComposerStaticInit29c98c0dc6cdec00303419e2183cef94
         'DrupalPractice\\Test\\FunctionDefinitions\\FormAlterDocUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Test/FunctionDefinitions/FormAlterDocUnitTest.php',
         'DrupalPractice\\Test\\FunctionDefinitions\\HookInitCssUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Test/FunctionDefinitions/HookInitCssUnitTest.php',
         'DrupalPractice\\Test\\FunctionDefinitions\\InstallTUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Test/FunctionDefinitions/InstallTUnitTest.php',
+        'DrupalPractice\\Test\\General\\ExceptionTUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Test/General/ExceptionTUnitTest.php',
         'DrupalPractice\\Test\\General\\OptionsTUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Test/General/OptionsTUnitTest.php',
         'DrupalPractice\\Test\\General\\VariableNameUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Test/General/VariableNameUnitTest.php',
         'DrupalPractice\\Test\\InfoFiles\\CoreVersionRequirementUnitTest' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Test/InfoFiles/CoreVersionRequirementUnitTest.php',
@@ -7508,11 +7510,11 @@ class ComposerStaticInit29c98c0dc6cdec00303419e2183cef94
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit29c98c0dc6cdec00303419e2183cef94::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit29c98c0dc6cdec00303419e2183cef94::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit29c98c0dc6cdec00303419e2183cef94::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit29c98c0dc6cdec00303419e2183cef94::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit29c98c0dc6cdec00303419e2183cef94::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit6ce3757a30bd7a5bd6654fb6412e8f88::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit6ce3757a30bd7a5bd6654fb6412e8f88::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit6ce3757a30bd7a5bd6654fb6412e8f88::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit6ce3757a30bd7a5bd6654fb6412e8f88::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit6ce3757a30bd7a5bd6654fb6412e8f88::$classMap;
 
         }, null, ClassLoader::class);
     }
