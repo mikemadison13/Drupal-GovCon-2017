@@ -15,6 +15,11 @@ class PageParametersTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['block', 'page_manager_ui', 'node'];
 
   /**

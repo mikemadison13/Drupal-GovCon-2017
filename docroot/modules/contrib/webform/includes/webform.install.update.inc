@@ -5,7 +5,6 @@
  * Archived Webform update hooks.
  */
 
-use Drupal\Core\Path\Entity\PathAlias;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Component\Uuid\Php as Uuid;
 use Drupal\Core\Cache\Cache;
@@ -3299,7 +3298,7 @@ function webform_update_8177() {
 }
 
 /**
- * Issue #3095275: Allow webform management filter by default category and states to be customized
+ * Issue #3095275: Allow webform management category/state to be customized.
  */
 function webform_update_8178() {
   _webform_update_admin_settings();
@@ -3366,7 +3365,7 @@ function webform_update_8180() {
 }
 
 /**
- * Issue #3103032: Move deprecated location geocomplete element into a sub-module
+ * Issue #3103032: Move deprecated geocomplete element into a sub-module.
  */
 function webform_update_8181() {
   $config_factory = \Drupal::configFactory();
@@ -3666,11 +3665,17 @@ function webform_update_8191() {
 }
 
 /**
-+ * Unsafe HMAC construction.
-+ */
+ * Unsafe HMAC construction.
+ */
 function webform_update_8192() {
+  // Check if the webform directory exists.
+  $webform_uri = 'public://webform';
+  if (!\Drupal::service('file_system')->prepareDirectory($webform_uri)) {
+    return NULL;
+  }
+
   $invalid_signatures = [];
-  $files = file_scan_directory('public://webform/','/signature-/');
+  $files = \Drupal::service('file_system')->scanDirectory('public://webform/', '/signature-/');
   foreach ($files as $file) {
     $value = file_get_contents($file->uri);
     $value = 'data:image/png;base64,' . base64_encode($value);
@@ -3684,7 +3689,7 @@ function webform_update_8192() {
     }
 
     // Delete invalid invalid signature file.
-    file_unmanaged_delete($file->uri);
+    \Drupal::service('file_system')->delete($file->uri);
   }
 
   // Exit if all signatures are valid.
@@ -3702,7 +3707,7 @@ function webform_update_8192() {
   if (PHP_SAPI === 'cli') {
     $text = t('Invalid signature file detected and deleted. (@see @url)', ['@url' => 'https://www.drupal.org/security/psa']) . PHP_EOL;
     foreach ($webform_submissions as $webform_submission) {
-      $text .= '- ' . $webform_submission->label() . ' (' .  $webform_submission->toUrl()->setAbsolute()->toString() . ')' . PHP_EOL;
+      $text .= '- ' . $webform_submission->label() . ' (' . $webform_submission->toUrl()->setAbsolute()->toString() . ')' . PHP_EOL;
     }
     return $text;
   }
@@ -3724,4 +3729,26 @@ function webform_update_8192() {
     ];
     return \Drupal::service('renderer')->renderPlain($build);
   }
+}
+
+/**
+ * Issue #3137964: Make it easier to embed/share a webform.
+ */
+function webform_update_8193() {
+  _webform_update_admin_settings();
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3144962: Webform cards.
+ */
+function webform_update_8195() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3153184: Allow a webform displayed as a page to have a custom theme.
+ */
+function webform_update_8196() {
+  _webform_update_webform_settings();
 }

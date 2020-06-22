@@ -7,9 +7,11 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
-use PHPStan\Reflection\DeprecatableReflection;
 use PHPStan\Type\TypeUtils;
 
+/**
+ * @implements \PHPStan\Rules\Rule<PropertyFetch>
+ */
 class AccessDeprecatedPropertyRule implements \PHPStan\Rules\Rule
 {
 
@@ -26,11 +28,6 @@ class AccessDeprecatedPropertyRule implements \PHPStan\Rules\Rule
 		return PropertyFetch::class;
 	}
 
-	/**
-	 * @param PropertyFetch $node
-	 * @param \PHPStan\Analyser\Scope $scope
-	 * @return string[] errors
-	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if (DeprecatedScopeHelper::isScopeDeprecated($scope)) {
@@ -50,16 +47,8 @@ class AccessDeprecatedPropertyRule implements \PHPStan\Rules\Rule
 				$classReflection = $this->broker->getClass($referencedClass);
 				$propertyReflection = $classReflection->getProperty($propertyName, $scope);
 
-				if (!$propertyReflection instanceof DeprecatableReflection) {
-					continue;
-				}
-
-				if ($propertyReflection->isDeprecated()) {
-					$description = null;
-					if (method_exists($propertyReflection, 'getDeprecatedDescription')) {
-						$description = $propertyReflection->getDeprecatedDescription();
-					}
-
+				if ($propertyReflection->isDeprecated()->yes()) {
+					$description = $propertyReflection->getDeprecatedDescription();
 					if ($description === null) {
 						return [sprintf(
 							'Access to deprecated property $%s of class %s.',

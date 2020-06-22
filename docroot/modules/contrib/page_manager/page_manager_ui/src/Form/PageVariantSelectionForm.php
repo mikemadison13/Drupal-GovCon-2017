@@ -8,7 +8,6 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\ctools\Form\ManageConditions;
-use Drupal\page_manager_ui\Form\SelectionConfigure;
 
 class PageVariantSelectionForm extends ManageConditions {
 
@@ -42,8 +41,9 @@ class PageVariantSelectionForm extends ManageConditions {
     return ['entity.page_variant.condition', [
       'machine_name' => $machine_name,
       'variant_machine_name' => $page_variant->id(),
-      'condition' => $row
-    ]];
+      'condition' => $row,
+    ],
+    ];
   }
 
   /**
@@ -85,9 +85,9 @@ class PageVariantSelectionForm extends ManageConditions {
       $this->getAddRoute($cached_values),
       $route_parameters,
       ['query' => [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]]
-    );
+    )->toString();
     $response = new AjaxResponse();
-    $response->addCommand(new OpenModalDialogCommand($this->t('Configure Required Context'), $content, array('width' => '700')));
+    $response->addCommand(new OpenModalDialogCommand($this->t('Configure Required Context'), $content, ['width' => '700']));
     return $response;
   }
 

@@ -13,6 +13,11 @@ class StaticContextTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
    *
    * @todo Remove dependency on the UI module or move to the UI module tests,
    *   in https://www.drupal.org/node/2659638.
@@ -54,20 +59,20 @@ class StaticContextTest extends BrowserTestBase {
     $this->drupalPostForm('admin/structure/page_manager/add', $edit_page, 'Next');
 
     // Add a static context for each node to the page variant.
-    $contexts = array(
-      array(
+    $contexts = [
+      [
         'title' => 'Static Node',
         'machine_name' => 'static_node',
         'description' => 'Static node 1',
         'node' => $node,
-      ),
-      array(
+      ],
+      [
         'title' => 'Static Node 2',
         'machine_name' => 'static_node_2',
         'description' => 'Static node 2',
         'node' => $node2,
-      ),
-    );
+      ],
+    ];
     foreach ($contexts as $context) {
       $edit = [
         'context' => 'entity:node',
@@ -145,10 +150,10 @@ class StaticContextTest extends BrowserTestBase {
     // Change the first static context to the second node.
     $this->drupalGet('admin/structure/page_manager/manage/static_node_context/page_variant__static_node_context-block_display-0__contexts');
     $this->clickLink('Edit');
-    $edit = array(
+    $edit = [
       'label' => 'Static Node edited',
       'context_value' => $node2->getTitle(),
-    );
+    ];
     $this->drupalPostForm(NULL, $edit, 'Save');
     $this->assertText("Static Node 2 edited");
 
@@ -170,7 +175,7 @@ class StaticContextTest extends BrowserTestBase {
     $this->clickLink('Delete');
     $this->drupalPostForm(NULL, [], t('Delete'));
     $this->assertText("The static context Static Node edited has been removed.");
-    // Reload the page to clear the message
+    // Reload the page to clear the message.
     $this->drupalGet($this->getUrl());
     $this->assertNoText($edit['label']);
 

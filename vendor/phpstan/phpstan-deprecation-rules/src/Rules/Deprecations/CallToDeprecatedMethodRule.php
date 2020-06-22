@@ -7,9 +7,11 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
-use PHPStan\Reflection\DeprecatableReflection;
 use PHPStan\Type\TypeUtils;
 
+/**
+ * @implements \PHPStan\Rules\Rule<MethodCall>
+ */
 class CallToDeprecatedMethodRule implements \PHPStan\Rules\Rule
 {
 
@@ -26,11 +28,6 @@ class CallToDeprecatedMethodRule implements \PHPStan\Rules\Rule
 		return MethodCall::class;
 	}
 
-	/**
-	 * @param MethodCall $node
-	 * @param \PHPStan\Analyser\Scope $scope
-	 * @return string[] errors
-	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if (DeprecatedScopeHelper::isScopeDeprecated($scope)) {
@@ -50,19 +47,11 @@ class CallToDeprecatedMethodRule implements \PHPStan\Rules\Rule
 				$classReflection = $this->broker->getClass($referencedClass);
 				$methodReflection = $classReflection->getMethod($methodName, $scope);
 
-				if (!$methodReflection instanceof DeprecatableReflection) {
+				if (!$methodReflection->isDeprecated()->yes()) {
 					continue;
 				}
 
-				if (!$methodReflection->isDeprecated()) {
-					continue;
-				}
-
-				$description = null;
-				if (method_exists($methodReflection, 'getDeprecatedDescription')) {
-					$description = $methodReflection->getDeprecatedDescription();
-				}
-
+				$description = $methodReflection->getDeprecatedDescription();
 				if ($description === null) {
 					return [sprintf(
 						'Call to deprecated method %s() of class %s.',

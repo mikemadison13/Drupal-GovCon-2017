@@ -146,7 +146,7 @@ class SpiChangeForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
     $values = $form_state->getValues();
-    $config = \Drupal::configFactory()->getEditable('acquia_connector.settings');
+    $config = $this->configFactory()->getEditable('acquia_connector.settings');
 
     if (isset($values['env_change_action']['unblock']) && $values['env_change_action']['unblock'] == 'unblock') {
       $config->set('spi.environment_changed_action', $values['env_change_action']['unblock'])->save();

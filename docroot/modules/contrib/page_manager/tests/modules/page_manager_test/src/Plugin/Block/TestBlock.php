@@ -32,7 +32,7 @@ class TestBlock extends BlockBase {
       '#title' => $this->t('Example'),
       '#ajax' => [
         'callback' => [$this, 'exampleAjaxCallback'],
-      ]
+      ],
     ];
     return $form;
   }

@@ -7,6 +7,9 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 
+/**
+ * @implements \PHPStan\Rules\Rule<Class_>
+ */
 class InheritanceOfDeprecatedClassRule implements \PHPStan\Rules\Rule
 {
 
@@ -23,11 +26,6 @@ class InheritanceOfDeprecatedClassRule implements \PHPStan\Rules\Rule
 		return Class_::class;
 	}
 
-	/**
-	 * @param Class_ $node
-	 * @param \PHPStan\Analyser\Scope $scope
-	 * @return string[] errors
-	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if (DeprecatedScopeHelper::isScopeDeprecated($scope)) {
@@ -54,11 +52,7 @@ class InheritanceOfDeprecatedClassRule implements \PHPStan\Rules\Rule
 
 		try {
 			$parentClass = $this->broker->getClass($parentClassName);
-			$description = null;
-			if (method_exists($parentClass, 'getDeprecatedDescription')) {
-				$description = $parentClass->getDeprecatedDescription();
-			}
-
+			$description = $parentClass->getDeprecatedDescription();
 			if ($parentClass->isDeprecated()) {
 				if (!$class->isAnonymous()) {
 					if ($description === null) {

@@ -20,6 +20,11 @@ class PageNodeAccessTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['page_manager', 'node', 'user'];
 
   /**
@@ -73,7 +78,7 @@ class PageNodeAccessTest extends BrowserTestBase {
         RoleInterface::AUTHENTICATED_ID => RoleInterface::AUTHENTICATED_ID,
       ],
       'context_mapping' => [
-        'user' => 'current_user',
+        'user' => '@user.current_user_context:current_user',
       ],
     ]);
     $this->page->addAccessCondition([

@@ -162,6 +162,15 @@ abstract class ContainerBase extends WebformElementBase {
           '#children' => $children,
         ];
 
+      case 'container':
+        $attributes['class'][] = 'webform-container';
+        return [
+          '#type' => 'container',
+          '#id' => $element['#webform_id'],
+          '#attributes' => $attributes,
+          '#children' => $children,
+        ];
+
       case 'header':
       default:
         return [
@@ -233,6 +242,7 @@ abstract class ContainerBase extends WebformElementBase {
       'fieldset' => $this->t('Fieldset'),
       'details' => $this->t('Details (opened)'),
       'details-closed' => $this->t('Details (closed)'),
+      'container' => $this->t('Container (no title)'),
     ];
   }
 

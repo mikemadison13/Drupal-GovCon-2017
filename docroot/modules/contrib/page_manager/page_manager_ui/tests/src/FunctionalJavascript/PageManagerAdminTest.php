@@ -16,6 +16,11 @@ class PageManagerAdminTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['block', 'page_manager_ui', 'page_manager_test'];
 
   /**
@@ -29,7 +34,7 @@ class PageManagerAdminTest extends WebDriverTestBase {
     $this->drupalPlaceBlock('system_branding_block');
     $this->drupalPlaceBlock('page_title_block');
 
-    \Drupal::service('theme_handler')->install(['bartik', 'classy']);
+    \Drupal::service('theme_installer')->install(['bartik']);
     $this->config('system.theme')->set('admin', 'classy')->save();
 
     $this->drupalLogin($this->drupalCreateUser(['administer pages', 'access administration pages', 'view the administration theme']));

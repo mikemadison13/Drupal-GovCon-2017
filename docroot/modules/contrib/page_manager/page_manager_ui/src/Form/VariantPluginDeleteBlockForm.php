@@ -80,7 +80,7 @@ class VariantPluginDeleteBlockForm extends ConfirmFormBase {
     $this->block = $this->plugin->getBlock($block_id);
     $form['block_display'] = [
       '#type' => 'value',
-      '#value' => $block_display
+      '#value' => $block_display,
     ];
     return parent::buildForm($form, $form_state);
   }

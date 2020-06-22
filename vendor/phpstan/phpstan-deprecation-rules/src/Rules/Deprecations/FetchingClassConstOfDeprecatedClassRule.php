@@ -8,11 +8,13 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
-use PHPStan\Reflection\DeprecatableReflection;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
 
+/**
+ * @implements \PHPStan\Rules\Rule<ClassConstFetch>
+ */
 class FetchingClassConstOfDeprecatedClassRule implements \PHPStan\Rules\Rule
 {
 
@@ -33,11 +35,6 @@ class FetchingClassConstOfDeprecatedClassRule implements \PHPStan\Rules\Rule
 		return ClassConstFetch::class;
 	}
 
-	/**
-	 * @param ClassConstFetch $node
-	 * @param \PHPStan\Analyser\Scope $scope
-	 * @return string[] errors
-	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if (DeprecatedScopeHelper::isScopeDeprecated($scope)) {
@@ -80,11 +77,7 @@ class FetchingClassConstOfDeprecatedClassRule implements \PHPStan\Rules\Rule
 			}
 
 			if ($class->isDeprecated()) {
-				$classDescription = null;
-				if (method_exists($class, 'getDeprecatedDescription')) {
-					$classDescription = $class->getDeprecatedDescription();
-				}
-
+				$classDescription = $class->getDeprecatedDescription();
 				if ($classDescription === null) {
 					$errors[] = sprintf(
 						'Fetching class constant %s of deprecated class %s.',
@@ -101,21 +94,21 @@ class FetchingClassConstOfDeprecatedClassRule implements \PHPStan\Rules\Rule
 				}
 			}
 
+			if (strtolower($constantName) === 'class') {
+				continue;
+			}
+
 			if (!$class->hasConstant($constantName)) {
 				continue;
 			}
 
 			$constantReflection = $class->getConstant($constantName);
 
-			if (!$constantReflection instanceof DeprecatableReflection || !$constantReflection->isDeprecated()) {
+			if (!$constantReflection->isDeprecated()->yes()) {
 				continue;
 			}
 
-			$description = null;
-			if (method_exists($constantReflection, 'getDeprecatedDescription')) {
-				$description = $constantReflection->getDeprecatedDescription();
-			}
-
+			$description = $constantReflection->getDeprecatedDescription();
 			if ($description === null) {
 				$errors[] = sprintf(
 					'Fetching deprecated class constant %s of class %s.',

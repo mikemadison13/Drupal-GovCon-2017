@@ -2,12 +2,10 @@
 
 namespace Drupal\page_manager_ui\Form;
 
-
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Display\VariantManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\page_manager\PageVariantInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PageGeneralForm extends FormBase {

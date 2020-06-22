@@ -18,6 +18,11 @@ class PageManagerAdminTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['block', 'page_manager_ui', 'page_manager_test'];
 
   /**
@@ -31,7 +36,7 @@ class PageManagerAdminTest extends BrowserTestBase {
     $this->drupalPlaceBlock('system_branding_block');
     $this->drupalPlaceBlock('page_title_block');
 
-    \Drupal::service('theme_handler')->install(['bartik', 'classy']);
+    \Drupal::service('theme_installer')->install(['bartik']);
     $this->config('system.theme')->set('admin', 'classy')->save();
 
     $this->drupalLogin($this->drupalCreateUser(['administer pages', 'access administration pages', 'view the administration theme']));
@@ -141,7 +146,7 @@ class PageManagerAdminTest extends BrowserTestBase {
    *
    * @param string $path
    *   The path this step is supposed to be at.
-   * @param bool|TRUE $redirect
+   * @param bool|true $redirect
    *   Whether or not to redirect to the path.
    */
   protected function doTestAccessConditions($path = 'admin/structure/page_manager/manage/foo/access', $redirect = TRUE) {
@@ -188,7 +193,7 @@ class PageManagerAdminTest extends BrowserTestBase {
    *
    * @param string $path
    *   The path this step is supposed to be at.
-   * @param bool|TRUE $redirect
+   * @param bool|true $redirect
    *   Whether or not to redirect to the path.
    */
   protected function doTestSelectionCriteria($path = 'admin/structure/page_manager/manage/foo/page_variant__foo-http_status_code-0__selection', $redirect = TRUE) {

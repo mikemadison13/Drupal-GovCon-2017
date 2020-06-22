@@ -18,6 +18,11 @@ class PagePlaceholderTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['page_manager', 'page_manager_test'];
 
   /**

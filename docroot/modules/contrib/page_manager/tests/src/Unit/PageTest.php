@@ -238,7 +238,7 @@ class PageTest extends UnitTestCase {
         'machine_name' => 'baz',
         'type' => 'integer',
         'label' => 'Baz',
-      ]
+      ],
     ];
     $page = new Page(['id' => 'the_page', 'parameters' => $parameters, 'path' => 'test/{foo}/{bar}'], 'page');
 

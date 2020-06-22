@@ -17,6 +17,11 @@ class FrontPageTest extends BrowserTestBase {
   use PageTestHelperTrait;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array

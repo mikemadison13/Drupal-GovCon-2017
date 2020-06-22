@@ -8,11 +8,13 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
-use PHPStan\Reflection\DeprecatableReflection;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
 
+/**
+ * @implements \PHPStan\Rules\Rule<StaticPropertyFetch>
+ */
 class AccessDeprecatedStaticPropertyRule implements \PHPStan\Rules\Rule
 {
 
@@ -33,11 +35,6 @@ class AccessDeprecatedStaticPropertyRule implements \PHPStan\Rules\Rule
 		return StaticPropertyFetch::class;
 	}
 
-	/**
-	 * @param StaticPropertyFetch $node
-	 * @param \PHPStan\Analyser\Scope $scope
-	 * @return string[] errors
-	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if (DeprecatedScopeHelper::isScopeDeprecated($scope)) {
@@ -80,12 +77,8 @@ class AccessDeprecatedStaticPropertyRule implements \PHPStan\Rules\Rule
 				continue;
 			}
 
-			if ($property instanceof DeprecatableReflection && $property->isDeprecated()) {
-				$description = null;
-				if (method_exists($property, 'getDeprecatedDescription')) {
-					$description = $property->getDeprecatedDescription();
-				}
-
+			if ($property->isDeprecated()->yes()) {
+				$description = $property->getDeprecatedDescription();
 				if ($description === null) {
 					return [sprintf(
 						'Access to deprecated static property $%s of class %s.',

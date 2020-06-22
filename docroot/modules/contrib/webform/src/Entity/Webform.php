@@ -1033,7 +1033,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'page' => TRUE,
       'page_submit_path' => '',
       'page_confirm_path' => '',
-      'page_admin_theme' => FALSE,
+      'page_theme_name' => '',
       'form_title' => 'both',
       'form_submit_once' => FALSE,
       'form_exception_message' => '',
@@ -1063,6 +1063,11 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'form_access_denied_message' => '',
       'form_access_denied_attributes' => [],
       'form_file_limit' => '',
+      'share' => FALSE,
+      'share_node' => FALSE,
+      'share_theme_name' => '',
+      'share_title' => TRUE,
+      'share_page_body_attributes' => [],
       'submission_label' => '',
       'submission_log' => FALSE,
       'submission_views' => [],
@@ -1088,11 +1093,17 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'wizard_progress_percentage' => FALSE,
       'wizard_progress_link' => FALSE,
       'wizard_progress_states' => FALSE,
+      'wizard_auto_forward' => TRUE,
       'wizard_start_label' => '',
       'wizard_preview_link' => FALSE,
       'wizard_confirmation' => TRUE,
       'wizard_confirmation_label' => '',
       'wizard_track' => '',
+      'wizard_prev_button_label' => '',
+      'wizard_next_button_label' => '',
+      'wizard_toggle' => FALSE,
+      'wizard_toggle_show_label' => '',
+      'wizard_toggle_hide_label' => '',
       'preview' => DRUPAL_DISABLED,
       'preview_label' => '',
       'preview_title' => '',
@@ -1148,10 +1159,14 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     // Test a single webform variant which is set via
     // ?_webform_handler[ELEMENT_KEY]={variant_id}.
     $webform_variant = \Drupal::request()->query->get('_webform_variant') ?: [];
-    if ($webform_variant &&
-      ($operation === 'add' && $this->access('update') || $operation === 'test' && $this->access('test'))) {
-      $values += ['data' => []];
-      $values['data'] = $webform_variant + $values['data'];
+    if ($webform_variant) {
+      $is_add_operation = ($operation === 'add' && $this->access('update'));
+      $is_test_operation = ($operation === 'test' && $this->access('test'));
+      $is_share_operation = (strpos(\Drupal::routeMatch()->getRouteName(), 'entity.webform.share_page') === 0);
+      if ($is_add_operation || $is_test_operation || $is_share_operation) {
+        $values += ['data' => []];
+        $values['data'] = $webform_variant + $values['data'];
+      }
     }
 
     // Set this webform's id which can be used by preCreate hooks.
@@ -1188,7 +1203,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   public function getElementsOriginalDecoded() {
     $this->elementsOriginal;
     try {
-      $elements = Yaml::decode($this->elementsOriginal);
+      $elements = WebformYaml::decode($this->elementsOriginal);
       return (is_array($elements)) ? $elements : [];
     }
     catch (\Exception $exception) {
@@ -1434,7 +1449,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         }
       }
       else {
-        $elements = Yaml::decode($this->elements);
+        $elements = WebformYaml::decode($this->elements);
       }
 
       // Since YAML supports simple values.
@@ -1878,6 +1893,8 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    *
    * @return array
    *   An associative array of webform wizard pages.
+   *
+   * @see \Drupal\webform_cards\WebformCardsManager::buildPages
    */
   protected function buildPages($operation = 'default') {
     if (isset($this->pages[$operation])) {
@@ -1914,8 +1931,10 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         // to the current user.
         $access_operation = (in_array($operation, ['default', 'add'])) ? 'create' : 'update';
         if ($element_plugin->checkAccessRules($access_operation, $element)) {
-          $pages[$key] = array_intersect_key($element, $wizard_properties);
-          $pages[$key]['#access'] = TRUE;
+          $pages[$key] = array_intersect_key($element, $wizard_properties) + [
+              '#type' => 'page',
+              '#access' => TRUE,
+            ];
         }
       }
     }
@@ -1925,21 +1944,24 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     if ($settings['preview'] != DRUPAL_DISABLED) {
       // If there is no start page, we must define one.
       if (empty($pages)) {
-        $pages['webform_start'] = [
+        $pages[WebformInterface::PAGE_START] = [
           '#title' => $this->getSetting('wizard_start_label', TRUE),
+          '#type' => 'page',
           '#access' => TRUE,
         ];
       }
-      $pages['webform_preview'] = [
+      $pages[WebformInterface::PAGE_PREVIEW] = [
         '#title' => $this->getSetting('preview_label', TRUE),
+        '#type' => 'page',
         '#access' => TRUE,
       ];
     }
 
     // Only add complete page, if there are some pages.
     if ($pages && $this->getSetting('wizard_confirmation')) {
-      $pages['webform_confirmation'] = [
+      $pages[WebformInterface::PAGE_CONFIRMATION] = [
         '#title' => $this->getSetting('wizard_confirmation_label', TRUE),
+        '#type' => 'page',
         '#access' => TRUE,
       ];
     }
@@ -2160,7 +2182,33 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * {@inheritdoc}
    */
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
-    parent::postSave($storage, $update);
+    // Because webform are not fieldable, when a webform is saved not all
+    // config/content entity related caches need to be cleared.
+    // parent::postSave($storage, $update);
+    /**************************************************************************/
+
+    $this->invalidateTagsOnSave($update);
+
+    $entity_type_manager = $this->entityTypeManager();
+    $bundle_of = $this->getEntityType()->getBundleOf();
+    if (!$update) {
+      \Drupal::service('entity_bundle.listener')->onBundleCreate($this->id(), $bundle_of);
+    }
+    else {
+      // Invalidate the render cache of entities for which this entity
+      // is a bundle.
+      if ($entity_type_manager->hasHandler($bundle_of, 'view_builder')) {
+        $entity_type_manager->getViewBuilder($bundle_of)->resetCache();
+      }
+
+      // Webform does not not clear field definitions on every change.
+      // @see \Drupal\Core\Entity\EntityFieldManager::clearCachedFieldDefinitions
+      // Entity bundle field definitions may depend on bundle settings.
+      // \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+      $this->entityTypeBundleInfo()->clearCachedBundles();
+    }
+
+    /**************************************************************************/
 
     // Update paths.
     $this->updatePaths();
@@ -2264,13 +2312,17 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       return;
     }
 
-    /** @var \Drupal\Core\Path\AliasStorageInterface $path_alias_storage */
-    $path_alias_storage = \Drupal::service('path.alias_storage');
+    $path_alias_storage = \Drupal::entityTypeManager()->getStorage('path_alias');
+    $query = $path_alias_storage->getQuery('OR');
 
     // Delete webform base, confirmation, submissions and drafts paths.
     $path_suffixes = ['', '/confirmation', '/submissions', '/drafts'];
     foreach ($path_suffixes as $path_suffix) {
-      $path_alias_storage->delete(['source' => '/webform/' . $this->id() . $path_suffix]);
+      $query->condition('path', '/webform/' . $this->id() . $path_suffix);
+    }
+
+    if ($ids = $query->execute()) {
+      $path_alias_storage->delete($path_alias_storage->loadMultiple($ids));
     }
   }
 
@@ -2285,18 +2337,26 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    *   (optional) The language code of the alias.
    */
   protected function updatePath($source, $alias, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
-    /** @var \Drupal\Core\Path\AliasStorageInterface $path_alias_storage */
-    $path_alias_storage = \Drupal::service('path.alias_storage');
-
-    $path = $path_alias_storage->load(['source' => $source, 'langcode' => $langcode]);
+    $path_alias_storage = \Drupal::entityTypeManager()->getStorage('path_alias');
 
     // Check if the path alias is already setup.
-    if ($path && ($path['alias'] == $alias)) {
-      return;
+    $path_aliases = $path_alias_storage->loadByProperties(['path' => $source, 'langcode' => $langcode]);
+    if ($path_aliases) {
+      /** @var \Drupal\path_alias\PathAliasInterface $path_alias */
+      $path_alias = reset($path_aliases);
+      if ($path_alias->getAlias() == $alias) {
+        return;
+      }
+    }
+    else {
+      $path_alias = $path_alias_storage->create([
+        'path' => $source,
+        'langcode' => $langcode,
+      ]);
     }
 
-    $pid = $path['pid'] ?? NULL;
-    $path_alias_storage->save($source, $alias, $langcode, $pid);
+    $path_alias->setAlias($alias);
+    $path_alias->save();
   }
 
   /**
@@ -2732,7 +2792,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   /**
    * {@inheritdoc}
    */
-  public function applyVariants(WebformSubmissionInterface $webform_submission = NULL, $variants = [], $force = FALSE) {
+  public function applyVariants(WebformSubmissionInterface $webform_submission = NULL, array $variants = [], $force = FALSE) {
     // Get variants from webform submission.
     if ($webform_submission) {
       // Make sure webform submission is associated with this webform.

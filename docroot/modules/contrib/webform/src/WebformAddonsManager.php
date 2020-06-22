@@ -526,7 +526,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Integrations: GitLab API with Library.
     $projects['gitlab_api'] = [
       'title' => $this->t('GitLab API with Library'),
-      'description' => $this->t(' Integrates your Drupal site into GitLab using the GitLab API.'),
+      'description' => $this->t('Integrates your Drupal site into GitLab using the GitLab API.'),
       'url' => Url::fromUri('https://www.drupal.org/project/gitlab_api'),
       'category' => 'integration',
     ];
@@ -860,6 +860,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'mail',
     ];
 
+    // Mail: Mailboxlayer.
+    $projects['mailboxlayer'] = [
+      'title' => $this->t('Mailboxlayer'),
+      'description' => $this->t('Integrates the <a href=":href">Mailboxlayer API</a> with the Webforms.', [':href' => 'https://mailboxlayer.com']),
+      'url' => Url::fromUri('https://www.drupal.org/project/mailboxlayer'),
+      'category' => 'mail',
+    ];
+
     // Mail: Mail System: SendGrid Integration.
     $projects['sendgrid_integration'] = [
       'title' => $this->t('SendGrid Integration <em>(requires Mail System)</em>'),
@@ -1043,6 +1051,15 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Views'),
       'description' => $this->t('Integrates Webform 8.x-5.x and Views modules.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_views'),
+      'category' => 'submission',
+      'recommended' => TRUE,
+    ];
+
+    // Submissions: Webform Submission Views Token Field.
+    $projects['ws_views_field'] = [
+      'title' => $this->t('Webform Submission Views Token Field'),
+      'description' => $this->t('Provides a token approach to list WebformSubmission fields in views.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/ws_views_field'),
       'category' => 'submission',
       'recommended' => TRUE,
     ];

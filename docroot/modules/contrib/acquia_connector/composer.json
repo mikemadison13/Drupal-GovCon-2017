@@ -6,17 +6,15 @@
     "require": {
         "php": "^7.1",
         "ext-json": "*",
-        "drupal/core": "^8.7 || ^9"
+        "drupal/core": "^8.7 || ^9.0.0-alpha1"
     },
     "require-dev": {
         "acquia/coding-standards": "^0.4.1",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
-        "drupal/acquia_search": "*",
-        "drush/drush": "~9.0"
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"
     },
     "extra": {
         "branch-alias": {
-            "dev-8.x-1.x": "1.x-dev"
+            "dev-8.x-2.x": "2.x-dev"
         },
         "drush": {
             "services": {
@@ -24,17 +22,5 @@
             }
         },
         "phpcodesniffer-search-depth": 4
-    },
-    "repositories": {
-        "acquia-search": {
-            "type": "path",
-            "url": "./acquia_search"
-        },
-        "drupal": {
-            "type": "composer",
-            "url": "https://packages.drupal.org/8"
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

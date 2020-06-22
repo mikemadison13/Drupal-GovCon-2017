@@ -74,7 +74,7 @@ class Page extends ConfigEntityBase implements PageInterface {
   /**
    * The page variant entities.
    *
-   * @var \Drupal\page_manager\PageVariantInterface[].
+   * @var \Drupal\page_manager\PageVariantInterface[]
    */
   protected $variants;
 
@@ -332,6 +332,7 @@ class Page extends ConfigEntityBase implements PageInterface {
    */
   public function addContext($name, ContextInterface $value) {
     $this->contexts[$name] = $value;
+    return $this;
   }
 
   /**
@@ -341,7 +342,7 @@ class Page extends ConfigEntityBase implements PageInterface {
     // @todo add the other global contexts here as they are added
     // @todo maybe come up with a non-hardcoded way of doing this?
     $global_contexts = [
-      'current_user'
+      'current_user',
     ];
     if (!$this->contexts) {
       $this->eventDispatcher()->dispatch(PageManagerEvents::PAGE_CONTEXT, new PageManagerContextEvent($this));

@@ -37,6 +37,13 @@ class SpiController extends ControllerBase {
   protected $client;
 
   /**
+   * Path alias manager.
+   *
+   * @var mixed
+   */
+  protected $pathAliasManager;
+
+  /**
    * Constructs a \Drupal\system\ConfigFormBase object.
    *
    * @param \Drupal\acquia_connector\Client $client
@@ -47,6 +54,15 @@ class SpiController extends ControllerBase {
   public function __construct(Client $client, ConfigFactoryInterface $config_factory) {
     $this->client = $client;
     $this->configFactory = $config_factory;
+    if (\Drupal::hasService('path.alias_manager')) {
+      // Legacy compatibility with Drupal 8.7-. Remove after D8.7 is EOL. Also
+      // replace this with service injection.
+      $this->pathAliasManager = \Drupal::service('path.alias_manager');
+    }
+    else {
+      // Compatibility with Drupal 8.8+.
+      $this->pathAliasManager = \Drupal::service('path_alias.manager');
+    }
   }
 
   /**
@@ -70,7 +86,6 @@ class SpiController extends ControllerBase {
    *   An associative array keyed by types of information.
    */
   public function get($method = '') {
-
     $config = $this->configFactory->getEditable('acquia_connector.settings');
 
     // Get the Drupal version.
@@ -110,9 +125,9 @@ class SpiController extends ControllerBase {
     $config->save();
 
     $spi = [
-      // Used in HMAC validation.
+    // Used in HMAC validation.
       'rpc_version'        => ACQUIA_CONNECTOR_ACQUIA_SPI_DATA_VERSION,
-      // Used in Fix it now feature.
+    // Used in Fix it now feature.
       'spi_data_version'   => ACQUIA_CONNECTOR_ACQUIA_SPI_DATA_VERSION,
       'site_key'           => sha1(\Drupal::service('private_key')->get()),
       'site_uuid'          => $this->config('acquia_connector.settings')->get('spi.site_uuid'),
@@ -411,7 +426,7 @@ class SpiController extends ControllerBase {
 
       $count = 0;
       foreach ($result as $record) {
-        $last_five_nodes[$count]['url'] = \Drupal::service('path.alias_manager')
+        $last_five_nodes[$count]['url'] = $this->pathAliasManager
           ->getAliasByPath('/node/' . $record->nid, $record->langcode);
         $last_five_nodes[$count]['title'] = $record->title;
         $last_five_nodes[$count]['type'] = $record->type;

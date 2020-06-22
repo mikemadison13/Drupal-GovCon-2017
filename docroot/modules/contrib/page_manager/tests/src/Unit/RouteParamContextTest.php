@@ -72,7 +72,7 @@ class RouteParamContextTest extends PageContextTestBase {
       'parameters' => [
         'foo' => ['type' => 'bar'],
         'baz' => ['type' => 'bop'],
-        'page' => ['type' => 'entity:page']
+        'page' => ['type' => 'entity:page'],
       ],
     ]));
 

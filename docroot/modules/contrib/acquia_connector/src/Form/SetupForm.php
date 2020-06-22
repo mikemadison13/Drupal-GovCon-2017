@@ -53,7 +53,7 @@ class SetupForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['acquia_connector.settings', 'acquia_search.settings'];
+    return ['acquia_connector.settings'];
   }
 
   /**
@@ -168,7 +168,7 @@ class SetupForm extends ConfigFormBase {
           $form_state->setErrorByName('', $e->getCustomMessage());
         }
         else {
-          \Drupal::logger('acquia connector')->error($e->getMessage());
+          $this->getLogger('acquia connector')->error($e->getMessage());
           $form_state->setErrorByName('', $this->t("Can't connect to the Acquia Subscription."));
         }
       }

@@ -77,11 +77,8 @@ class Subscription {
             return $current_subscription;
         }
       }
-      if ($subscription) {
-        \Drupal::moduleHandler()->invokeAll('acquia_subscription_status', [$subscription]);
-        if ($subscription != $current_subscription) {
-          \Drupal::state()->set('acquia_subscription_data', $subscription);
-        }
+      if ($subscription && $subscription != $current_subscription) {
+        \Drupal::state()->set('acquia_subscription_data', $subscription);
       }
     }
 

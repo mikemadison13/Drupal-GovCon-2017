@@ -5,7 +5,6 @@ namespace Drupal\page_manager_ui\ConfigTranslation;
 use Drupal\config_translation\ConfigEntityMapper;
 use Symfony\Component\Routing\Route;
 
-
 /**
  * Configuration mapper for page_manager pages.
  */

@@ -7,6 +7,9 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 
+/**
+ * @implements \PHPStan\Rules\Rule<Class_>
+ */
 class ImplementationOfDeprecatedInterfaceRule implements \PHPStan\Rules\Rule
 {
 
@@ -23,11 +26,6 @@ class ImplementationOfDeprecatedInterfaceRule implements \PHPStan\Rules\Rule
 		return Class_::class;
 	}
 
-	/**
-	 * @param Class_ $node
-	 * @param \PHPStan\Analyser\Scope $scope
-	 * @return string[] errors
-	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if (DeprecatedScopeHelper::isScopeDeprecated($scope)) {
@@ -57,10 +55,7 @@ class ImplementationOfDeprecatedInterfaceRule implements \PHPStan\Rules\Rule
 				$interface = $this->broker->getClass($interfaceName);
 
 				if ($interface->isDeprecated()) {
-					$description = null;
-					if (method_exists($interface, 'getDeprecatedDescription')) {
-						$description = $interface->getDeprecatedDescription();
-					}
+					$description = $interface->getDeprecatedDescription();
 					if (!$class->isAnonymous()) {
 						if ($description === null) {
 							$errors[] = sprintf(

@@ -7,6 +7,9 @@ use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 
+/**
+ * @implements \PHPStan\Rules\Rule<FuncCall>
+ */
 class CallToDeprecatedFunctionRule implements \PHPStan\Rules\Rule
 {
 
@@ -23,11 +26,6 @@ class CallToDeprecatedFunctionRule implements \PHPStan\Rules\Rule
 		return FuncCall::class;
 	}
 
-	/**
-	 * @param FuncCall $node
-	 * @param \PHPStan\Analyser\Scope $scope
-	 * @return string[] errors
-	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if (DeprecatedScopeHelper::isScopeDeprecated($scope)) {
@@ -45,12 +43,8 @@ class CallToDeprecatedFunctionRule implements \PHPStan\Rules\Rule
 			return [];
 		}
 
-		if ($function->isDeprecated()) {
-			$description = null;
-			if (method_exists($function, 'getDeprecatedDescription')) {
-				$description = $function->getDeprecatedDescription();
-			}
-
+		if ($function->isDeprecated()->yes()) {
+			$description = $function->getDeprecatedDescription();
 			if ($description === null) {
 				return [sprintf(
 					'Call to deprecated function %s().',

@@ -32,6 +32,8 @@ abstract class WebformOtherBase extends FormElement {
    * The properties of the element.
    *
    * @var array
+   *
+   * @see \Drupal\webform\Element\WebformSelectOther::$properties
    */
   protected static $properties = [
     '#title',
@@ -44,6 +46,15 @@ abstract class WebformOtherBase extends FormElement {
     '#options__properties',
     '#default_value',
     '#attributes',
+  ];
+
+  /**
+   * The properties of the other element.
+   *
+   * @var array
+   */
+  protected static $otherProperties = [
+    '#required_error',
   ];
 
   /**
@@ -105,6 +116,7 @@ abstract class WebformOtherBase extends FormElement {
 
     $element[$type]['#type'] = static::$type;
     $element[$type]['#webform_element'] = TRUE;
+    $element[$type]['#webform_other'] = TRUE;
     $element[$type] += array_intersect_key($element, array_combine($properties, $properties));
     $element[$type]['#title_display'] = 'invisible';
     if (!isset($element[$type]['#options'][static::OTHER_OPTION])) {
@@ -133,6 +145,7 @@ abstract class WebformOtherBase extends FormElement {
         '#title_display' => 'invisible',
       ];
     }
+    $element['other'] += array_intersect_key($element, array_combine(static::$otherProperties, static::$otherProperties));
 
     $element['other']['#wrapper_attributes']['class'][] = "js-webform-$type-other-input";
     $element['other']['#wrapper_attributes']['class'][] = "webform-$type-other-input";

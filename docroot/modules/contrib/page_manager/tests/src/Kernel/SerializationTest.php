@@ -23,7 +23,7 @@ class SerializationTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager', 'system', 'user'];
+  public static $modules = ['page_manager', 'path_alias', 'system', 'user'];
 
   /**
    * {@inheritdoc}

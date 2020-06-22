@@ -204,6 +204,22 @@ class AcquiaConnectorModuleTest extends BrowserTestBase {
     \Drupal::configFactory()->getEditable('acquia_connector.settings')->set('spi.server', 'http://mock-spi-server')->save();
     \Drupal::configFactory()->getEditable('acquia_connector.settings')->set('spi.ssl_verify', FALSE)->save();
     \Drupal::configFactory()->getEditable('acquia_connector.settings')->set('spi.ssl_override', TRUE)->save();
+
+    // Create a node, since some SPI data is only gathered if nodes exist.
+    $this->createContentType([
+      'type' => 'test_content_type',
+      'name' => 'Test content type',
+    ]);
+    $this->createNode([
+      'type' => 'test_content_type',
+      'title' => 'Dummy node',
+      'body' => [
+        [
+          'value' => 'Dummy node body',
+        ],
+      ],
+    ]);
+
   }
 
   /**

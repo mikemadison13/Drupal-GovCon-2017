@@ -2,7 +2,6 @@
 
 namespace Drupal\page_manager_ui\Form;
 
-
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -36,9 +35,9 @@ class PageVariantContextsForm extends ManageContext {
       $this->getContextAddRoute($cached_values),
       $route_parameters,
       ['query' => [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]]
-    );
+    )->toString();
     $response = new AjaxResponse();
-    $response->addCommand(new OpenModalDialogCommand($this->t('Add new context'), $content, array('width' => '700')));
+    $response->addCommand(new OpenModalDialogCommand($this->t('Add new context'), $content, ['width' => '700']));
     return $response;
   }
 
@@ -60,7 +59,7 @@ class PageVariantContextsForm extends ManageContext {
    * {@inheritdoc}
    */
   protected function getRelationshipClass($cached_values) {
-    //return VariantRelationshipConfigure::class;
+    // Return VariantRelationshipConfigure::class;.
   }
 
   /**
@@ -102,8 +101,9 @@ class PageVariantContextsForm extends ManageContext {
     return ['entity.page_variant.context', [
       'machine_name' => $machine_name,
       'variant_machine_name' => $page_variant->id(),
-      'context_id' => $row
-    ]];
+      'context_id' => $row,
+    ],
+    ];
   }
 
   /**
@@ -115,9 +115,11 @@ class PageVariantContextsForm extends ManageContext {
     return ['entity.page_variant.relationship', [
       'machine_name' => $machine_name,
       'variant_machine_name' => $page_variant->id(),
-      'relationship' => $row
-    ]];
+      'relationship' => $row,
+    ],
+    ];
   }
+
 
   protected function isEditableContext($cached_values, $row) {
     /** @var \Drupal\page_manager\PageInterface $page */
@@ -126,6 +128,5 @@ class PageVariantContextsForm extends ManageContext {
     $page_variant = $cached_values['page_variant'];
     return empty($page->getContexts()[$row]) && !empty($page_variant->getContexts()[$row]);
   }
-
 
 }

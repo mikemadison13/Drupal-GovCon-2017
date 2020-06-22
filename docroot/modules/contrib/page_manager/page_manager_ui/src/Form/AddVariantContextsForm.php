@@ -35,9 +35,9 @@ class AddVariantContextsForm extends ManageContext {
       $this->getContextAddRoute($cached_values),
       $route_parameters,
       ['query' => [FormBuilderInterface::AJAX_FORM_REQUEST => TRUE]]
-    );
+    )->toString();
     $response = new AjaxResponse();
-    $response->addCommand(new OpenModalDialogCommand($this->t('Add new context'), $content, array('width' => '700')));
+    $response->addCommand(new OpenModalDialogCommand($this->t('Add new context'), $content, ['width' => '700']));
     return $response;
   }
 
@@ -59,7 +59,7 @@ class AddVariantContextsForm extends ManageContext {
    * {@inheritdoc}
    */
   protected function getRelationshipClass($cached_values) {
-    //return AddVariantRelationshipConfigure::class;
+    // Return AddVariantRelationshipConfigure::class;.
   }
 
   /**
@@ -101,8 +101,9 @@ class AddVariantContextsForm extends ManageContext {
     return ['entity.page_variant.add_step_form.context', [
       'page' => $page_variant->getPage()->id(),
       'machine_name' => $machine_name,
-      'context_id' => $row
-    ]];
+      'context_id' => $row,
+    ],
+    ];
   }
 
   /**
@@ -114,9 +115,11 @@ class AddVariantContextsForm extends ManageContext {
     return ['entity.page_variant.add_step_form.context', [
       'page' => $page_variant->getPage()->id(),
       'machine_name' => $machine_name,
-      'context_id' => $row
-    ]];
+      'context_id' => $row,
+    ],
+    ];
   }
+
 
   protected function isEditableContext($cached_values, $row) {
     /** @var \Drupal\page_manager\PageVariantInterface $page_variant */
@@ -124,6 +127,5 @@ class AddVariantContextsForm extends ManageContext {
     $page = $page_variant->getPage();
     return empty($page->getContexts()[$row]) && !empty($page_variant->getContexts()[$row]);
   }
-
 
 }

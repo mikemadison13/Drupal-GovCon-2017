@@ -15,6 +15,11 @@ class PageManagerConfigTranslationTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
    *
    * @todo Remove page_manager_ui from the list once config_translation does not
    *   require a UI in https://www.drupal.org/node/2670718.

@@ -14,6 +14,11 @@ class AddVariantSelectionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['page_manager', 'page_manager_ui', 'node'];
 
   /**
@@ -46,7 +51,7 @@ class AddVariantSelectionTest extends BrowserTestBase {
       'label' => 'Selection criteria',
       'id' => 'selection_criteria',
       'path' => 'selection-criteria',
-      'variant_plugin_id' => 'block_display'
+      'variant_plugin_id' => 'block_display',
     ];
     $this->drupalPostForm('admin/structure/page_manager/add', $edit_page, 'Next');
     $this->drupalPostForm(NULL, [], 'Next');
@@ -60,20 +65,20 @@ class AddVariantSelectionTest extends BrowserTestBase {
     ];
     $this->drupalPostForm(NULL, $edit, 'Next');
     // Add a static context for each node to the page variant.
-    $contexts = array(
-      array(
+    $contexts = [
+      [
         'title' => 'Static Node',
         'machine_name' => 'static_node',
         'description' => 'Static node 1',
         'node' => $node,
-      ),
-      array(
+      ],
+      [
         'title' => 'Static Node 2',
         'machine_name' => 'static_node_2',
         'description' => 'Static node 2',
         'node' => $node2,
-      ),
-    );
+      ],
+    ];
     foreach ($contexts as $context) {
       $edit = [
         'context' => 'entity:node',

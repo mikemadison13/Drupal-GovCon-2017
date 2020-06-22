@@ -8,7 +8,7 @@ dependencies:
   - page_manager
 configure: entity.page.collection
 
-# Information added by Drupal.org packaging script on 2020-03-30
-version: '8.x-4.0-beta5'
+# Information added by Drupal.org packaging script on 2020-06-02
+version: '8.x-4.0-beta6'
 project: 'page_manager'
-datestamp: 1585603619
+datestamp: 1591125566

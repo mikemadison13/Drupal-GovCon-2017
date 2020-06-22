@@ -85,7 +85,7 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['acquia_connector.settings', 'acquia_search.settings'];
+    return ['acquia_connector.settings'];
   }
 
   /**
@@ -272,7 +272,7 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = \Drupal::configFactory()->getEditable('acquia_connector.settings');
+    $config = $this->configFactory()->getEditable('acquia_connector.settings');
     $values = $form_state->getValues();
     $config->set('spi.site_name', $values['name'])
       ->set('spi.dynamic_banner', $values['acquia_dynamic_banner'])

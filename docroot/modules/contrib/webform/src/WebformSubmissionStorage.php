@@ -67,7 +67,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
   protected $fileSystem;
 
   /**
-   * Webform access rules manager service.
+   * The webform access rules manager service.
    *
    * @var \Drupal\webform\WebformAccessRulesManagerInterface
    */
@@ -281,11 +281,8 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
     $query = $this->getQuery();
     $query->accessCheck(FALSE);
     $this->addQueryConditions($query, $webform, $source_entity, $account, $options);
-
-    // Issue: Query count method is not working for SQL Lite.
-    // return $query->count()->execute();
-    // Work-around: Manually count the number of entity ids.
-    return count($query->execute());
+    $query->count();
+    return $query->execute();
   }
 
   /**
@@ -311,6 +308,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
       ->fields('sd', ['sid'])
       ->condition('sd.webform_id', $webform->id())
       ->condition('sd.name', $element_key)
+      ->range(0, 1)
       ->execute();
     return $result->fetchAssoc() ? TRUE : FALSE;
   }
@@ -910,7 +908,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
       }
     }
 
-    $source_entity_key = $key .'.' . $source_entity->getEntityTypeId() . '.' . $source_entity->id();
+    $source_entity_key = $key . '.' . $source_entity->getEntityTypeId() . '.' . $source_entity->id();
     if ($results_customize && $webform->hasUserData($source_entity_key)) {
       return $webform->getUserData($source_entity_key);
     }
@@ -1168,7 +1166,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
           $file_directory = $stream_wrapper . '://webform/' . $webform->id() . '/' . $entity->id();
           // Clear empty webform submission directory.
           if (file_exists($file_directory)
-            && empty(file_scan_directory($file_directory, '/.*/'))) {
+            && empty($this->fileSystem->scanDirectory($file_directory, '/.*/'))) {
             $this->fileSystem->deleteRecursive($file_directory);
           }
         }

@@ -7,6 +7,9 @@ use PhpParser\Node\Stmt\Interface_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 
+/**
+ * @implements \PHPStan\Rules\Rule<Interface_>
+ */
 class InheritanceOfDeprecatedInterfaceRule implements \PHPStan\Rules\Rule
 {
 
@@ -23,11 +26,6 @@ class InheritanceOfDeprecatedInterfaceRule implements \PHPStan\Rules\Rule
 		return Interface_::class;
 	}
 
-	/**
-	 * @param Interface_ $node
-	 * @param \PHPStan\Analyser\Scope $scope
-	 * @return string[] errors
-	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if ($node->extends === null) {
@@ -60,11 +58,7 @@ class InheritanceOfDeprecatedInterfaceRule implements \PHPStan\Rules\Rule
 					continue;
 				}
 
-				$description = null;
-				if (method_exists($parentInterface, 'getDeprecatedDescription')) {
-					$description = $parentInterface->getDeprecatedDescription();
-				}
-
+				$description = $parentInterface->getDeprecatedDescription();
 				if ($description === null) {
 					$errors[] = sprintf(
 						'Interface %s extends deprecated interface %s.',

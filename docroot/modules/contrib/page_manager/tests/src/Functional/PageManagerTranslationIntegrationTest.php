@@ -17,6 +17,11 @@ class PageManagerTranslationIntegrationTest extends ContentTranslationTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['block', 'page_manager', 'node', 'content_translation'];
 
   /**

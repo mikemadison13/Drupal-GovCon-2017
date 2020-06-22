@@ -20,7 +20,7 @@ class PageManagerRoutingTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager', 'page_manager_routing_test'];
+  public static $modules = ['page_manager', 'page_manager_routing_test', 'path_alias'];
 
   /**
    * {@inheritdoc}

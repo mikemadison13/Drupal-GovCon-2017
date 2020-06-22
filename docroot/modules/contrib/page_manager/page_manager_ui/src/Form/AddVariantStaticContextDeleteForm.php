@@ -2,7 +2,6 @@
 
 namespace Drupal\page_manager_ui\Form;
 
-
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\ctools\Form\ContextDelete;

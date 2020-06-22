@@ -428,6 +428,7 @@ class PageVariant extends ConfigEntityBase implements PageVariantInterface {
    * Wraps the condition plugin manager.
    *
    * @return \Drupal\Core\Condition\ConditionManager
+   *   The condition manager service.
    */
   protected function getConditionManager() {
     return \Drupal::service('plugin.manager.condition');
@@ -437,6 +438,7 @@ class PageVariant extends ConfigEntityBase implements PageVariantInterface {
    * Wraps the context mapper.
    *
    * @return \Drupal\page_manager\ContextMapperInterface
+   *   The context mapper service.
    */
   protected function getContextMapper() {
     return \Drupal::service('page_manager.context_mapper');
@@ -446,6 +448,7 @@ class PageVariant extends ConfigEntityBase implements PageVariantInterface {
    * Wraps the page entity storage.
    *
    * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   The Page entity storage service.
    */
   protected function getPageStorage() {
     return \Drupal::entityTypeManager()->getStorage('page');

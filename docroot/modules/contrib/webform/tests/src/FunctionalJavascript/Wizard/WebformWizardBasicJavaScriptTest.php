@@ -8,7 +8,7 @@ use Drupal\Tests\webform\FunctionalJavascript\WebformWebDriverTestBase;
 /**
  * Tests for webform basic wizard.
  *
- * @group Webform
+ * @group webform_javascript
  */
 class WebformWizardBasicJavaScriptTest extends WebformWebDriverTestBase {
 
@@ -23,8 +23,6 @@ class WebformWizardBasicJavaScriptTest extends WebformWebDriverTestBase {
    * Test webform basic wizard.
    */
   public function testBasicWizard() {
-    global $base_path;
-
     $session = $this->getSession();
     $page = $session->getPage();
     $assert_session = $this->assertSession();

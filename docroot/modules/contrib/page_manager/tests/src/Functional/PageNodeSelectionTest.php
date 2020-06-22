@@ -17,6 +17,11 @@ class PageNodeSelectionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['page_manager', 'node'];
 
   /**

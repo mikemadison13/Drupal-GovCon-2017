@@ -230,13 +230,15 @@ class ParameterEditForm extends FormBase {
       return ['entity.page.add_step_form', [
         'machine_name' => $this->machine_name,
         'step' => 'parameters',
-      ]];
+      ],
+      ];
     }
     else {
       return ['entity.page.edit_form', [
         'machine_name' => $this->machine_name,
         'step' => 'parameters',
-      ]];
+      ],
+      ];
     }
   }
 

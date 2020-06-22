@@ -8,11 +8,13 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
-use PHPStan\Reflection\DeprecatableReflection;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
 
+/**
+ * @implements \PHPStan\Rules\Rule<StaticCall>
+ */
 class CallToDeprecatedStaticMethodRule implements \PHPStan\Rules\Rule
 {
 
@@ -33,11 +35,6 @@ class CallToDeprecatedStaticMethodRule implements \PHPStan\Rules\Rule
 		return StaticCall::class;
 	}
 
-	/**
-	 * @param StaticCall $node
-	 * @param \PHPStan\Analyser\Scope $scope
-	 * @return string[] errors
-	 */
 	public function processNode(Node $node, Scope $scope): array
 	{
 		if (DeprecatedScopeHelper::isScopeDeprecated($scope)) {
@@ -83,11 +80,7 @@ class CallToDeprecatedStaticMethodRule implements \PHPStan\Rules\Rule
 			}
 
 			if ($class->isDeprecated()) {
-				$classDescription = null;
-				if (method_exists($class, 'getDeprecatedDescription')) {
-					$classDescription = $class->getDeprecatedDescription();
-				}
-
+				$classDescription = $class->getDeprecatedDescription();
 				if ($classDescription === null) {
 					$errors[] = sprintf(
 						'Call to method %s() of deprecated class %s.',
@@ -104,15 +97,11 @@ class CallToDeprecatedStaticMethodRule implements \PHPStan\Rules\Rule
 				}
 			}
 
-			if (!$methodReflection instanceof DeprecatableReflection || !$methodReflection->isDeprecated()) {
+			if (!$methodReflection->isDeprecated()->yes()) {
 				continue;
 			}
 
-			$description = null;
-			if (method_exists($methodReflection, 'getDeprecatedDescription')) {
-				$description = $methodReflection->getDeprecatedDescription();
-			}
-
+			$description = $methodReflection->getDeprecatedDescription();
 			if ($description === null) {
 				$errors[] = sprintf(
 					'Call to deprecated method %s() of class %s.',
