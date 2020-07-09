@@ -684,7 +684,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     // modal, then clicking the image button opens another modal,
     // which closes the original modal.
     // @todo Remove the below workaround once this issue is resolved.
-    if ($webform_element->getPluginId() == 'processed_text' && !WebformDialogHelper::useOffCanvas()) {
+    if ($webform_element->getPluginId() === 'processed_text' && !WebformDialogHelper::useOffCanvas()) {
       unset($row['operations']['#links']['edit']['attributes']);
     }
     if (!$is_container) {

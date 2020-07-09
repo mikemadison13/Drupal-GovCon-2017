@@ -39,7 +39,7 @@ class BetterExposedFiltersKernelTest extends BetterExposedFiltersKernelTestBase 
 
     // Check our "submit" button is hidden.
     $actual = $this->xpath("//form//input[@type='submit'][contains(concat(' ',normalize-space(@class),' '),' js-hide ')]");
-    $this->assertEqual(count($actual), 1, 'Submit button was hidden successfully.');
+    $this->assertCount(1, $actual, 'Submit button was hidden successfully.');
 
     $view->destroy();
   }
@@ -63,8 +63,8 @@ class BetterExposedFiltersKernelTest extends BetterExposedFiltersKernelTestBase 
     $this->renderExposedForm($view);
 
     // Assert our "secondary" options detail is hidden if no fields are placed.
-    $actual = $this->xpath("//form//details[@id='edit-secondary']");
-    $this->assertEqual(count($actual), 0, 'Secondary options are hidden because no fields were placed.');
+    $actual = $this->xpath("//form//details[@data-drupal-selector='edit-secondary']");
+    $this->assertCount(0, $actual, 'Secondary options are hidden because no fields were placed.');
 
     $view->destroy();
 
@@ -102,20 +102,20 @@ class BetterExposedFiltersKernelTest extends BetterExposedFiltersKernelTestBase 
     $this->renderExposedForm($view);
 
     // Assert our "secondary" options detail is visible.
-    $actual = $this->xpath("//form//details[@id='edit-secondary']");
-    $this->assertEqual(count($actual), 1, 'Secondary options is visible.');
+    $actual = $this->xpath("//form//details[@data-drupal-selector='edit-secondary']");
+    $this->assertCount(1, $actual, 'Secondary options is visible.');
 
     // Assert sort option was placed in secondary details.
-    $actual = $this->xpath("//form//details[@id='edit-secondary']//select[@name='sort_by']");
-    $this->assertEqual(count($actual), 1, 'Exposed sort was placed in secondary fieldset.');
+    $actual = $this->xpath("//form//details[@data-drupal-selector='edit-secondary']//select[@name='sort_by']");
+    $this->assertCount(1, $actual, 'Exposed sort was placed in secondary fieldset.');
 
     // Assert pager option was placed in secondary details.
-    $actual = $this->xpath("//form//details[@id='edit-secondary']//select[@name='items_per_page']");
-    $this->assertEqual(count($actual), 1, 'Exposed pager was placed in secondary fieldset.');
+    $actual = $this->xpath("//form//details[@data-drupal-selector='edit-secondary']//select[@name='items_per_page']");
+    $this->assertCount(1, $actual, 'Exposed pager was placed in secondary fieldset.');
 
     // Assert filter option was placed in secondary details.
-    $actual = $this->xpath("//form//details[@id='edit-secondary']//select[@name='field_bef_boolean_value']");
-    $this->assertEqual(count($actual), 1, 'Exposed filter "field_bef_boolean" was placed in secondary fieldset.');
+    $actual = $this->xpath("//form//details[@data-drupal-selector='edit-secondary']//select[@name='field_bef_boolean_value']");
+    $this->assertCount(1, $actual, 'Exposed filter "field_bef_boolean" was placed in secondary fieldset.');
 
     $view->destroy();
   }

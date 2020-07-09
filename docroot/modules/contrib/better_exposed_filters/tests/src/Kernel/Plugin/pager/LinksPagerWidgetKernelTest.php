@@ -42,7 +42,7 @@ class LinksPagerWidgetKernelTest extends BetterExposedFiltersKernelTestBase {
 
     // Check our pager item "items_per_page" is rendered as links.
     $actual = $this->xpath('//form//a[starts-with(@name, "items_per_page")]');
-    $this->assertEqual(count($actual), 4, 'Exposed pager "items_per_page" has correct number of exposed radio buttons.');
+    $this->assertCount(4, $actual, 'Exposed pager "items_per_page" has correct number of exposed radio buttons.');
 
     $view->destroy();
   }

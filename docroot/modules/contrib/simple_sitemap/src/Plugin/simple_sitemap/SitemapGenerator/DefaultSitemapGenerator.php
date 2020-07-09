@@ -83,6 +83,8 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
    * @param array $links
    */
   protected function addLinks(array $links) {
+    $sitemap_variant = $this->sitemapVariant;
+    $this->moduleHandler->alter('simple_sitemap_links', $links, $sitemap_variant);
     foreach ($links as $url_data) {
       $this->writer->startElement('url');
       $this->addUrl($url_data);

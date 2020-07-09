@@ -42,7 +42,7 @@ class RadioButtonsPagerWidgetKernelTest extends BetterExposedFiltersKernelTestBa
 
     // Check our pager item "items_per_page" is rendered as radio buttons.
     $actual = $this->xpath('//form//input[@type="radio" and starts-with(@name, "items_per_page")]');
-    $this->assertEqual(count($actual), 4, 'Exposed pager "items_per_page" has correct number of exposed radio buttons.');
+    $this->assertCount(4, $actual, 'Exposed pager "items_per_page" has correct number of exposed radio buttons.');
 
     $view->destroy();
   }

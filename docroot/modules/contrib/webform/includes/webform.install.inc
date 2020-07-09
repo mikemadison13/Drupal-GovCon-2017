@@ -212,7 +212,7 @@ function _webform_update_webform_handler_settings() {
           $settings[$settings_key] = $setting_value;
         }
 
-        if ($handler['settings'] != $settings) {
+        if ($handler['settings'] !== $settings) {
           $has_handler = TRUE;
           $handler['settings'] = $settings;
         }

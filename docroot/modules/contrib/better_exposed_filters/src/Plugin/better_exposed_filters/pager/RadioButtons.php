@@ -22,10 +22,6 @@ class RadioButtons extends PagerWidgetBase {
 
     if (!empty($form['items_per_page'])) {
       $form['items_per_page']['#type'] = 'radios';
-      if (empty($form['items_per_page']['#process'])) {
-        $form['items_per_page']['#process'] = [];
-      }
-      array_unshift($form['items_per_page']['#process'], ['\Drupal\Core\Render\Element\Radios', 'processRadios']);
       $form['items_per_page']['#prefix'] = '<div class="bef-sortby bef-select-as-radios">';
       $form['items_per_page']['#suffix'] = '</div>';
     }

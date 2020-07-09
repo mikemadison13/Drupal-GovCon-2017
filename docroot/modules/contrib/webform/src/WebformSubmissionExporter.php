@@ -661,7 +661,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
           'completed' => $this->t('Completed submissions only'),
           'draft' => $this->t('Drafts only'),
         ],
-        '#access' => ($webform->getSetting('draft') != WebformInterface::DRAFT_NONE),
+        '#access' => ($webform->getSetting('draft') !== WebformInterface::DRAFT_NONE),
       ];
     }
 
@@ -902,7 +902,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     }
 
     // Filter by latest.
-    if ($export_options['range_type'] == 'latest' && $export_options['range_latest']) {
+    if ($export_options['range_type'] === 'latest' && $export_options['range_latest']) {
       // Clone the query and use it to get latest sid starting sid.
       $latest_query = clone $query;
       $latest_query->sort('created', 'DESC');

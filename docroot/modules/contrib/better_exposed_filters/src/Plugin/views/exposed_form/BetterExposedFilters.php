@@ -4,6 +4,7 @@ namespace Drupal\better_exposed_filters\Plugin\views\exposed_form;
 
 use Drupal\better_exposed_filters\Plugin\BetterExposedFiltersWidgetManager;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\Core\Render\Element;
@@ -46,6 +47,13 @@ class BetterExposedFilters extends InputRequired {
   public $sortWidgetManager;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * BetterExposedFilters constructor.
    *
    * @param array $configuration
@@ -60,12 +68,15 @@ class BetterExposedFilters extends InputRequired {
    *   The better exposed filter widget manager for pager widgets.
    * @param \Drupal\better_exposed_filters\Plugin\BetterExposedFiltersWidgetManager $sort_widget_manager
    *   The better exposed filter widget manager for sort widgets.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Manage drupal modules.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, BetterExposedFiltersWidgetManager $filter_widget_manager, BetterExposedFiltersWidgetManager $pager_widget_manager, BetterExposedFiltersWidgetManager $sort_widget_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, BetterExposedFiltersWidgetManager $filter_widget_manager, BetterExposedFiltersWidgetManager $pager_widget_manager, BetterExposedFiltersWidgetManager $sort_widget_manager, ModuleHandlerInterface $module_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->filterWidgetManager = $filter_widget_manager;
     $this->pagerWidgetManager = $pager_widget_manager;
     $this->sortWidgetManager = $sort_widget_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -78,7 +89,8 @@ class BetterExposedFilters extends InputRequired {
       $plugin_definition,
       $container->get('plugin.manager.better_exposed_filters_filter_widget'),
       $container->get('plugin.manager.better_exposed_filters_pager_widget'),
-      $container->get('plugin.manager.better_exposed_filters_sort_widget')
+      $container->get('plugin.manager.better_exposed_filters_sort_widget'),
+      $container->get('module_handler')
     );
   }
 
@@ -467,7 +479,7 @@ class BetterExposedFilters extends InputRequired {
       }
 
       // Alter the list of available widgets for this filter.
-      \Drupal::moduleHandler()->alter('better_exposed_filters_display_options', $options, $filter);
+     $this->moduleHandler->alter('better_exposed_filters_display_options', $options, $filter);
 
       // Get a descriptive label for the filter.
       $label = $this->t('Exposed filter @filter', [
@@ -690,6 +702,9 @@ class BetterExposedFilters extends InputRequired {
   public function exposedFormAlter(&$form, FormStateInterface $form_state) {
     parent::exposedFormAlter($form, $form_state);
 
+    // Mark form as Better Exposed Filter form for easier alterations.
+    $form['#context']['bef'] = TRUE;
+
     // These styles are used on all exposed forms.
     $form['#attached']['library'][] = 'better_exposed_filters/general';
 
@@ -700,7 +715,7 @@ class BetterExposedFilters extends InputRequired {
     // Grab BEF options and allow modules/theme to modify them before
     // processing.
     $bef_options = $this->options['bef'];
-    \Drupal::moduleHandler()->alter('better_exposed_filters_options', $bef_options, $this->view, $this->displayHandler);
+    $this->moduleHandler->alter('better_exposed_filters_options', $bef_options, $this->view, $this->displayHandler);
 
     // Apply auto-submit values.
     if (!empty($bef_options['general']['autosubmit'])) {
@@ -805,6 +820,13 @@ class BetterExposedFilters extends InputRequired {
     $has_visible_filters = !empty(Element::getVisibleChildren($form)) ?: FALSE;
     $form['actions']['submit']['#access'] = $has_visible_filters;
     $form['actions']['reset']['#access'] = $has_visible_filters;
+
+    // Ensure default process/pre_render callbacks are included when a BEF
+    // widget has added their own.
+    foreach (Element::children($form) as $key) {
+      $element = &$form[$key];
+      $this->addDefaultElementInfo($element);
+    }
   }
 
   /**
@@ -839,6 +861,55 @@ class BetterExposedFilters extends InputRequired {
   protected function prependFormElement(array $form, $key, array $element) {
     $pos = array_search($key, array_keys($form)) + 1;
     return array_splice($form, 0, $pos - 1) + $element + $form;
+  }
+
+  /**
+   * Adds default element callbacks.
+   *
+   * This is a workaround where adding process and pre-render functions are not
+   * results in replacing the default ones instead of merging.
+   *
+   * @param array $element
+   *   The render array for a single form element.
+   *
+   * @todo remove once the following issues are resolved.
+   * @see https://www.drupal.org/project/drupal/issues/2070131
+   * @see https://www.drupal.org/project/drupal/issues/2190333
+   */
+  protected function addDefaultElementInfo(array &$element) {
+    /** @var \Drupal\Core\Render\ElementInfoManager $element_info_manager */
+    $element_info = \Drupal::service('element_info');
+    if (isset($element['#type']) && empty($element['#defaults_loaded']) && ($info = $element_info->getInfo($element['#type']))) {
+      $element['#process'] = $element['#process'] ?? [];
+      $element['#pre_render'] = $element['#pre_render'] ?? [];
+      if (!empty($info['#process'])) {
+        $element['#process'] = array_merge($info['#process'], $element['#process']);
+      }
+      if (!empty($info['#pre_render'])) {
+        $element['#pre_render'] = array_merge($info['#pre_render'], $element['#pre_render']);
+      }
+
+      // Some processing needs to happen prior to the default form element
+      // callbacks (e.g. sort). We use the custom '#pre_process' array for this.
+      if (!empty($element['#pre_process'])) {
+        $element['#process'] = array_merge($element['#pre_process'], $element['#process']);
+      }
+
+      // Workaround to add support for #group FAPI to all elements currently not
+      // supported.
+      // @todo remove once core issue is resolved.
+      // @see https://www.drupal.org/project/drupal/issues/2190333
+      if (!in_array('processGroup', array_column($element['#process'], 1))) {
+        $element['#process'][] = ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'];
+        $element['#pre_render'][] = ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'];
+      }
+    }
+
+    // Apply the same to any nested children.
+    foreach (Element::children($element) as $key) {
+      $child = &$element[$key];
+      $this->addDefaultElementInfo($child);
+    }
   }
 
 }

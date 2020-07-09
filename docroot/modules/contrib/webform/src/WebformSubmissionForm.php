@@ -286,7 +286,7 @@ class WebformSubmissionForm extends ContentEntityForm {
     if ($source_entity = $this->entity->getSourceEntity()) {
       $form_id .= '_' . $source_entity->getEntityTypeId() . '_' . $source_entity->id();
     }
-    if ($this->operation != 'default') {
+    if ($this->operation !== 'default') {
       $form_id .= '_' . $this->operation;
     }
     return $form_id . '_form';
@@ -378,7 +378,7 @@ class WebformSubmissionForm extends ContentEntityForm {
         $data = $entity->getRawData();
         $this->operation = 'edit';
       }
-      elseif ($webform->getSetting('draft') != WebformInterface::DRAFT_NONE) {
+      elseif ($webform->getSetting('draft') !== WebformInterface::DRAFT_NONE) {
         if ($webform->getSetting('draft_multiple')) {
           // Allow multiple drafts to be restored using token.
           // This allows the webform's public facing URL to be used instead of
@@ -639,7 +639,7 @@ class WebformSubmissionForm extends ContentEntityForm {
     $track = $this->getWebform()->getSetting('wizard_track');
     if ($track && $this->getRequest()->isMethod('POST')) {
       $current_page = $this->getCurrentPage($form, $form_state);
-      if ($track == 'index') {
+      if ($track === 'index') {
         $pages = $this->getWebform()->getPages($this->operation);
         $track_pages = array_flip(array_keys($pages));
         $form['#attributes']['data-webform-wizard-current-page'] = ($track_pages[$current_page] + 1);
@@ -771,7 +771,7 @@ class WebformSubmissionForm extends ContentEntityForm {
 
     // Required indicator.
     $current_page = $this->getCurrentPage($form, $form_state);
-    if ($current_page != WebformInterface::PAGE_PREVIEW && $this->getWebformSetting('form_required') && $webform->hasRequired()) {
+    if ($current_page !== WebformInterface::PAGE_PREVIEW && $this->getWebformSetting('form_required') && $webform->hasRequired()) {
       $form['required'] = [
         '#theme' => 'webform_required',
         '#label' => $this->getWebformSetting('form_required_label'),
@@ -837,7 +837,7 @@ class WebformSubmissionForm extends ContentEntityForm {
         return $this->getMessageManager()->append($form, WebformMessageManagerInterface::PREPOPULATE_SOURCE_ENTITY_REQUIRED, 'warning');
       }
       $source_entity_type = $webform->getSetting('form_prepopulate_source_entity_type');
-      if ($source_entity_type && $this->getSourceEntity() && $source_entity_type != $this->getSourceEntity()->getEntityTypeId()) {
+      if ($source_entity_type && $this->getSourceEntity() && $source_entity_type !== $this->getSourceEntity()->getEntityTypeId()) {
         $this->getMessageManager()->log(WebformMessageManagerInterface::PREPOPULATE_SOURCE_ENTITY_TYPE, 'notice');
         return $this->getMessageManager()->append($form, WebformMessageManagerInterface::PREPOPULATE_SOURCE_ENTITY_TYPE, 'warning');
       }
@@ -1024,7 +1024,7 @@ class WebformSubmissionForm extends ContentEntityForm {
       }
       else {
         $draft_submission = $this->getStorage()->loadDraft($webform, $this->sourceEntity, $this->currentUser());
-        if (!$draft_submission || $webform_submission->id() != $draft_submission->id()) {
+        if (!$draft_submission || $webform_submission->id() !== $draft_submission->id()) {
           $this->getMessageManager()->display(WebformMessageManagerInterface::DRAFT_PENDING_SINGLE);
         }
       }
@@ -1133,7 +1133,7 @@ class WebformSubmissionForm extends ContentEntityForm {
       // Set 'data-webform-unsaved' attribute if unsaved wizard.
       $pages = $this->getPages($form, $form_state);
       $current_page = $this->getCurrentPage($form, $form_state);
-      if ($current_page && ($current_page != $this->getFirstPage($pages))) {
+      if ($current_page && ($current_page !== $this->getFirstPage($pages))) {
         $form['#attributes']['data-webform-unsaved'] = TRUE;
       }
       $form['#attached']['library'][] = 'webform/webform.form.unsaved';
@@ -1352,12 +1352,12 @@ class WebformSubmissionForm extends ContentEntityForm {
           break;
       }
 
-      $is_first_page = ($current_page == $this->getFirstPage($pages)) ? TRUE : FALSE;
+      $is_first_page = ($current_page === $this->getFirstPage($pages)) ? TRUE : FALSE;
       $is_last_page = (in_array($current_page, [WebformInterface::PAGE_PREVIEW, WebformInterface::PAGE_CONFIRMATION, $this->getLastPage($pages)])) ? TRUE : FALSE;
-      $is_preview_page = ($current_page == WebformInterface::PAGE_PREVIEW);
-      $is_next_page_preview = ($next_page == WebformInterface::PAGE_PREVIEW) ? TRUE : FALSE;
-      $is_next_page_complete = ($next_page == WebformInterface::PAGE_CONFIRMATION) ? TRUE : FALSE;
-      $is_next_page_optional_preview = ($is_next_page_preview && $preview_mode != DRUPAL_REQUIRED);
+      $is_preview_page = ($current_page === WebformInterface::PAGE_PREVIEW);
+      $is_next_page_preview = ($next_page === WebformInterface::PAGE_PREVIEW) ? TRUE : FALSE;
+      $is_next_page_complete = ($next_page === WebformInterface::PAGE_CONFIRMATION) ? TRUE : FALSE;
+      $is_next_page_optional_preview = ($is_next_page_preview && $preview_mode !== DRUPAL_REQUIRED);
 
       // Only show that save button if this is the last page of the wizard or
       // on preview page or right before the optional preview.
@@ -1758,7 +1758,7 @@ class WebformSubmissionForm extends ContentEntityForm {
     if (isset($trigger_element['#validate'])) {
       $handlers = array_filter($form['#validate'], function ($callback) {
         // Remove ::validateForm to prevent a recursion.
-        return (is_array($callback) || $callback != '::validateForm');
+        return (is_array($callback) || $callback !== '::validateForm');
       });
       // @see \Drupal\Core\Form\FormValidator::executeValidateHandlers
       foreach ($handlers as $callback) {
@@ -2035,7 +2035,7 @@ class WebformSubmissionForm extends ContentEntityForm {
    */
   protected function setFormPropertiesFromElements(array &$form, array &$elements) {
     foreach ($elements as $key => $value) {
-      if (is_string($key) && $key[0] == '#') {
+      if (is_string($key) && $key[0] === '#') {
         $value = $this->tokenManager->replace($value, $this->getEntity());
         if (isset($form[$key]) && is_array($form[$key]) && is_array($value)) {
           $form[$key] = NestedArray::mergeDeep($form[$key], $value);
@@ -2190,7 +2190,7 @@ class WebformSubmissionForm extends ContentEntityForm {
    */
   protected function displayCurrentPage(array &$form, FormStateInterface $form_state) {
     $current_page = $this->getCurrentPage($form, $form_state);
-    if ($current_page == WebformInterface::PAGE_PREVIEW) {
+    if ($current_page === WebformInterface::PAGE_PREVIEW) {
       // Hide all elements except 'webform_actions'.
       foreach ($form['elements'] as $element_key => $element) {
         if (isset($element['#type']) && $element['#type'] === 'webform_actions') {
@@ -2228,7 +2228,7 @@ class WebformSubmissionForm extends ContentEntityForm {
           $page_element =& $form['elements'][$page_key];
           $page_element_plugin = $this->elementManager->getElementInstance($page_element);
           if ($page_element_plugin instanceof WebformElementWizardPageInterface) {
-            if ($page_key != $current_page) {
+            if ($page_key !== $current_page) {
               $page_element_plugin->hidePage($page_element);
             }
             else {
@@ -2325,7 +2325,7 @@ class WebformSubmissionForm extends ContentEntityForm {
           $redirect_url = $this->pathValidator->getUrlIfValid($confirmation_url);
         }
         if ($redirect_url) {
-          if ($confirmation_type == WebformInterface::CONFIRMATION_URL_MESSAGE) {
+          if ($confirmation_type === WebformInterface::CONFIRMATION_URL_MESSAGE) {
             $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_CONFIRMATION_MESSAGE);
           }
           $this->setTrustedRedirectUrl($form_state, $redirect_url);
@@ -2798,7 +2798,7 @@ class WebformSubmissionForm extends ContentEntityForm {
    *   TRUE if the webform is being initially loaded via GET method.
    */
   protected function isGet() {
-    return ($this->getRequest()->getMethod() == 'GET') ? TRUE : FALSE;
+    return ($this->getRequest()->getMethod() === 'GET') ? TRUE : FALSE;
   }
 
   /**
@@ -2811,7 +2811,7 @@ class WebformSubmissionForm extends ContentEntityForm {
    *   TRUE if the current request is a specific route (name).
    */
   protected function isRoute($route_name) {
-    return ($this->requestHandler->getRouteName($this->getEntity(), $this->getSourceEntity(), $route_name) == $this->getRouteMatch()->getRouteName()) ? TRUE : FALSE;
+    return ($this->requestHandler->getRouteName($this->getEntity(), $this->getSourceEntity(), $route_name) === $this->getRouteMatch()->getRouteName()) ? TRUE : FALSE;
   }
 
   /**
@@ -2830,7 +2830,7 @@ class WebformSubmissionForm extends ContentEntityForm {
       return FALSE;
     }
 
-    return ($webform->id() == $this->getWebform()->id()) ? TRUE : FALSE;
+    return ($webform->id() === $this->getWebform()->id()) ? TRUE : FALSE;
   }
 
   /****************************************************************************/
@@ -2893,7 +2893,7 @@ class WebformSubmissionForm extends ContentEntityForm {
     $webform_submission = $this->getEntity();
 
     $source_entity = $webform_submission->getSourceEntity();
-    if ($source_entity && $source_entity->getEntityTypeId() != 'webform') {
+    if ($source_entity && $source_entity->getEntityTypeId() !== 'webform') {
       return $source_entity;
     }
     return NULL;

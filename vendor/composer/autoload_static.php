@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInita2dd1f010425b530547094cc34499b58
+class ComposerStaticInit51f23cde59a1a45ad5518818f21c9462
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -75,8 +75,6 @@ class ComposerStaticInita2dd1f010425b530547094cc34499b58
         array (
             'Zumba\\Amplitude\\Test\\' => 21,
             'Zumba\\Amplitude\\' => 16,
-            'Zend\\Text\\' => 10,
-            'Zend\\ServiceManager\\' => 20,
         ),
         'X' => 
         array (
@@ -156,7 +154,9 @@ class ComposerStaticInita2dd1f010425b530547094cc34499b58
             'League\\Container\\' => 17,
             'Lcobucci\\JWT\\' => 13,
             'Laminas\\ZendFrameworkBridge\\' => 28,
+            'Laminas\\Text\\' => 13,
             'Laminas\\Stdlib\\' => 15,
+            'Laminas\\ServiceManager\\' => 23,
             'Laminas\\Feed\\' => 13,
             'Laminas\\Escaper\\' => 16,
             'Laminas\\Diactoros\\' => 18,
@@ -271,14 +271,6 @@ class ComposerStaticInita2dd1f010425b530547094cc34499b58
         'Zumba\\Amplitude\\' => 
         array (
             0 => __DIR__ . '/..' . '/zumba/amplitude-php/src',
-        ),
-        'Zend\\Text\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-text/src',
-        ),
-        'Zend\\ServiceManager\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src',
         ),
         'XdgBaseDir\\' => 
         array (
@@ -489,9 +481,17 @@ class ComposerStaticInita2dd1f010425b530547094cc34499b58
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src',
         ),
+        'Laminas\\Text\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-text/src',
+        ),
         'Laminas\\Stdlib\\' => 
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-stdlib/src',
+        ),
+        'Laminas\\ServiceManager\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src',
         ),
         'Laminas\\Feed\\' => 
         array (
@@ -4212,7 +4212,6 @@ class ComposerStaticInita2dd1f010425b530547094cc34499b58
         'HTMLPurifier_Injector_SafeObject' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Injector/SafeObject.php',
         'HTMLPurifier_Language' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Language.php',
         'HTMLPurifier_LanguageFactory' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/LanguageFactory.php',
-        'HTMLPurifier_Language_en_x_test' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Language/classes/en-x-test.php',
         'HTMLPurifier_Length' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Length.php',
         'HTMLPurifier_Lexer' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Lexer.php',
         'HTMLPurifier_Lexer_DOMLex' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Lexer/DOMLex.php',
@@ -4439,6 +4438,37 @@ class ComposerStaticInita2dd1f010425b530547094cc34499b58
         'Laminas\\Feed\\Writer\\StandaloneExtensionManager' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/StandaloneExtensionManager.php',
         'Laminas\\Feed\\Writer\\Version' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Version.php',
         'Laminas\\Feed\\Writer\\Writer' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Writer.php',
+        'Laminas\\ServiceManager\\AbstractFactoryInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/AbstractFactoryInterface.php',
+        'Laminas\\ServiceManager\\AbstractFactory\\ConfigAbstractFactory' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/AbstractFactory/ConfigAbstractFactory.php',
+        'Laminas\\ServiceManager\\AbstractFactory\\ReflectionBasedAbstractFactory' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/AbstractFactory/ReflectionBasedAbstractFactory.php',
+        'Laminas\\ServiceManager\\AbstractPluginManager' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/AbstractPluginManager.php',
+        'Laminas\\ServiceManager\\Config' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Config.php',
+        'Laminas\\ServiceManager\\ConfigInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/ConfigInterface.php',
+        'Laminas\\ServiceManager\\DelegatorFactoryInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/DelegatorFactoryInterface.php',
+        'Laminas\\ServiceManager\\Exception\\ContainerModificationsNotAllowedException' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Exception/ContainerModificationsNotAllowedException.php',
+        'Laminas\\ServiceManager\\Exception\\CyclicAliasException' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Exception/CyclicAliasException.php',
+        'Laminas\\ServiceManager\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Exception/ExceptionInterface.php',
+        'Laminas\\ServiceManager\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Exception/InvalidArgumentException.php',
+        'Laminas\\ServiceManager\\Exception\\InvalidServiceException' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Exception/InvalidServiceException.php',
+        'Laminas\\ServiceManager\\Exception\\ServiceNotCreatedException' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Exception/ServiceNotCreatedException.php',
+        'Laminas\\ServiceManager\\Exception\\ServiceNotFoundException' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Exception/ServiceNotFoundException.php',
+        'Laminas\\ServiceManager\\FactoryInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/FactoryInterface.php',
+        'Laminas\\ServiceManager\\Factory\\AbstractFactoryInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Factory/AbstractFactoryInterface.php',
+        'Laminas\\ServiceManager\\Factory\\DelegatorFactoryInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Factory/DelegatorFactoryInterface.php',
+        'Laminas\\ServiceManager\\Factory\\FactoryInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Factory/FactoryInterface.php',
+        'Laminas\\ServiceManager\\Factory\\InvokableFactory' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Factory/InvokableFactory.php',
+        'Laminas\\ServiceManager\\InitializerInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/InitializerInterface.php',
+        'Laminas\\ServiceManager\\Initializer\\InitializerInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Initializer/InitializerInterface.php',
+        'Laminas\\ServiceManager\\PluginManagerInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/PluginManagerInterface.php',
+        'Laminas\\ServiceManager\\Proxy\\LazyServiceFactory' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Proxy/LazyServiceFactory.php',
+        'Laminas\\ServiceManager\\PsrContainerDecorator' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/PsrContainerDecorator.php',
+        'Laminas\\ServiceManager\\ServiceLocatorInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/ServiceLocatorInterface.php',
+        'Laminas\\ServiceManager\\ServiceManager' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/ServiceManager.php',
+        'Laminas\\ServiceManager\\Test\\CommonPluginManagerTrait' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Test/CommonPluginManagerTrait.php',
+        'Laminas\\ServiceManager\\Tool\\ConfigDumper' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Tool/ConfigDumper.php',
+        'Laminas\\ServiceManager\\Tool\\ConfigDumperCommand' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Tool/ConfigDumperCommand.php',
+        'Laminas\\ServiceManager\\Tool\\FactoryCreator' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Tool/FactoryCreator.php',
+        'Laminas\\ServiceManager\\Tool\\FactoryCreatorCommand' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Tool/FactoryCreatorCommand.php',
         'Laminas\\Stdlib\\AbstractOptions' => __DIR__ . '/..' . '/laminas/laminas-stdlib/src/AbstractOptions.php',
         'Laminas\\Stdlib\\ArrayObject' => __DIR__ . '/..' . '/laminas/laminas-stdlib/src/ArrayObject.php',
         'Laminas\\Stdlib\\ArraySerializableInterface' => __DIR__ . '/..' . '/laminas/laminas-stdlib/src/ArraySerializableInterface.php',
@@ -4486,6 +4516,32 @@ class ComposerStaticInita2dd1f010425b530547094cc34499b58
         'Laminas\\Stdlib\\StringWrapper\\MbString' => __DIR__ . '/..' . '/laminas/laminas-stdlib/src/StringWrapper/MbString.php',
         'Laminas\\Stdlib\\StringWrapper\\Native' => __DIR__ . '/..' . '/laminas/laminas-stdlib/src/StringWrapper/Native.php',
         'Laminas\\Stdlib\\StringWrapper\\StringWrapperInterface' => __DIR__ . '/..' . '/laminas/laminas-stdlib/src/StringWrapper/StringWrapperInterface.php',
+        'Laminas\\Text\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/laminas/laminas-text/src/Exception/ExceptionInterface.php',
+        'Laminas\\Text\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Exception/InvalidArgumentException.php',
+        'Laminas\\Text\\Exception\\OutOfBoundsException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Exception/OutOfBoundsException.php',
+        'Laminas\\Text\\Exception\\OverflowException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Exception/OverflowException.php',
+        'Laminas\\Text\\Exception\\RuntimeException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Exception/RuntimeException.php',
+        'Laminas\\Text\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Exception/UnexpectedValueException.php',
+        'Laminas\\Text\\Figlet\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/laminas/laminas-text/src/Figlet/Exception/ExceptionInterface.php',
+        'Laminas\\Text\\Figlet\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Figlet/Exception/InvalidArgumentException.php',
+        'Laminas\\Text\\Figlet\\Exception\\RuntimeException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Figlet/Exception/RuntimeException.php',
+        'Laminas\\Text\\Figlet\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Figlet/Exception/UnexpectedValueException.php',
+        'Laminas\\Text\\Figlet\\Figlet' => __DIR__ . '/..' . '/laminas/laminas-text/src/Figlet/Figlet.php',
+        'Laminas\\Text\\MultiByte' => __DIR__ . '/..' . '/laminas/laminas-text/src/MultiByte.php',
+        'Laminas\\Text\\Table\\Column' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Column.php',
+        'Laminas\\Text\\Table\\DecoratorManager' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/DecoratorManager.php',
+        'Laminas\\Text\\Table\\Decorator\\Ascii' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Decorator/Ascii.php',
+        'Laminas\\Text\\Table\\Decorator\\Blank' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Decorator/Blank.php',
+        'Laminas\\Text\\Table\\Decorator\\DecoratorInterface' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Decorator/DecoratorInterface.php',
+        'Laminas\\Text\\Table\\Decorator\\Unicode' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Decorator/Unicode.php',
+        'Laminas\\Text\\Table\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Exception/ExceptionInterface.php',
+        'Laminas\\Text\\Table\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Exception/InvalidArgumentException.php',
+        'Laminas\\Text\\Table\\Exception\\InvalidDecoratorException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Exception/InvalidDecoratorException.php',
+        'Laminas\\Text\\Table\\Exception\\OutOfBoundsException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Exception/OutOfBoundsException.php',
+        'Laminas\\Text\\Table\\Exception\\OverflowException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Exception/OverflowException.php',
+        'Laminas\\Text\\Table\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Exception/UnexpectedValueException.php',
+        'Laminas\\Text\\Table\\Row' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Row.php',
+        'Laminas\\Text\\Table\\Table' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Table.php',
         'Laminas\\ZendFrameworkBridge\\Autoloader' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Autoloader.php',
         'Laminas\\ZendFrameworkBridge\\ConfigPostProcessor' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/ConfigPostProcessor.php',
         'Laminas\\ZendFrameworkBridge\\Module' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Module.php',
@@ -6862,63 +6918,6 @@ class ComposerStaticInita2dd1f010425b530547094cc34499b58
         'Webmozart\\PathUtil\\Path' => __DIR__ . '/..' . '/webmozart/path-util/src/Path.php',
         'Webmozart\\PathUtil\\Url' => __DIR__ . '/..' . '/webmozart/path-util/src/Url.php',
         'XdgBaseDir\\Xdg' => __DIR__ . '/..' . '/dnoegel/php-xdg-base-dir/src/Xdg.php',
-        'Zend\\ServiceManager\\AbstractFactoryInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/AbstractFactoryInterface.php',
-        'Zend\\ServiceManager\\AbstractFactory\\ConfigAbstractFactory' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/AbstractFactory/ConfigAbstractFactory.php',
-        'Zend\\ServiceManager\\AbstractFactory\\ReflectionBasedAbstractFactory' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/AbstractFactory/ReflectionBasedAbstractFactory.php',
-        'Zend\\ServiceManager\\AbstractPluginManager' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/AbstractPluginManager.php',
-        'Zend\\ServiceManager\\Config' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Config.php',
-        'Zend\\ServiceManager\\ConfigInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/ConfigInterface.php',
-        'Zend\\ServiceManager\\DelegatorFactoryInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/DelegatorFactoryInterface.php',
-        'Zend\\ServiceManager\\Exception\\ContainerModificationsNotAllowedException' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Exception/ContainerModificationsNotAllowedException.php',
-        'Zend\\ServiceManager\\Exception\\CyclicAliasException' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Exception/CyclicAliasException.php',
-        'Zend\\ServiceManager\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Exception/ExceptionInterface.php',
-        'Zend\\ServiceManager\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Exception/InvalidArgumentException.php',
-        'Zend\\ServiceManager\\Exception\\InvalidServiceException' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Exception/InvalidServiceException.php',
-        'Zend\\ServiceManager\\Exception\\ServiceNotCreatedException' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Exception/ServiceNotCreatedException.php',
-        'Zend\\ServiceManager\\Exception\\ServiceNotFoundException' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Exception/ServiceNotFoundException.php',
-        'Zend\\ServiceManager\\FactoryInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/FactoryInterface.php',
-        'Zend\\ServiceManager\\Factory\\AbstractFactoryInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Factory/AbstractFactoryInterface.php',
-        'Zend\\ServiceManager\\Factory\\DelegatorFactoryInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Factory/DelegatorFactoryInterface.php',
-        'Zend\\ServiceManager\\Factory\\FactoryInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Factory/FactoryInterface.php',
-        'Zend\\ServiceManager\\Factory\\InvokableFactory' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Factory/InvokableFactory.php',
-        'Zend\\ServiceManager\\InitializerInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/InitializerInterface.php',
-        'Zend\\ServiceManager\\Initializer\\InitializerInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Initializer/InitializerInterface.php',
-        'Zend\\ServiceManager\\PluginManagerInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/PluginManagerInterface.php',
-        'Zend\\ServiceManager\\Proxy\\LazyServiceFactory' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Proxy/LazyServiceFactory.php',
-        'Zend\\ServiceManager\\PsrContainerDecorator' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/PsrContainerDecorator.php',
-        'Zend\\ServiceManager\\ServiceLocatorInterface' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/ServiceLocatorInterface.php',
-        'Zend\\ServiceManager\\ServiceManager' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/ServiceManager.php',
-        'Zend\\ServiceManager\\Test\\CommonPluginManagerTrait' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Test/CommonPluginManagerTrait.php',
-        'Zend\\ServiceManager\\Tool\\ConfigDumper' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Tool/ConfigDumper.php',
-        'Zend\\ServiceManager\\Tool\\ConfigDumperCommand' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Tool/ConfigDumperCommand.php',
-        'Zend\\ServiceManager\\Tool\\FactoryCreator' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Tool/FactoryCreator.php',
-        'Zend\\ServiceManager\\Tool\\FactoryCreatorCommand' => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src/Tool/FactoryCreatorCommand.php',
-        'Zend\\Text\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/zendframework/zend-text/src/Exception/ExceptionInterface.php',
-        'Zend\\Text\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Exception/InvalidArgumentException.php',
-        'Zend\\Text\\Exception\\OutOfBoundsException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Exception/OutOfBoundsException.php',
-        'Zend\\Text\\Exception\\OverflowException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Exception/OverflowException.php',
-        'Zend\\Text\\Exception\\RuntimeException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Exception/RuntimeException.php',
-        'Zend\\Text\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Exception/UnexpectedValueException.php',
-        'Zend\\Text\\Figlet\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/zendframework/zend-text/src/Figlet/Exception/ExceptionInterface.php',
-        'Zend\\Text\\Figlet\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Figlet/Exception/InvalidArgumentException.php',
-        'Zend\\Text\\Figlet\\Exception\\RuntimeException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Figlet/Exception/RuntimeException.php',
-        'Zend\\Text\\Figlet\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Figlet/Exception/UnexpectedValueException.php',
-        'Zend\\Text\\Figlet\\Figlet' => __DIR__ . '/..' . '/zendframework/zend-text/src/Figlet/Figlet.php',
-        'Zend\\Text\\MultiByte' => __DIR__ . '/..' . '/zendframework/zend-text/src/MultiByte.php',
-        'Zend\\Text\\Table\\Column' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Column.php',
-        'Zend\\Text\\Table\\DecoratorManager' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/DecoratorManager.php',
-        'Zend\\Text\\Table\\Decorator\\Ascii' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Decorator/Ascii.php',
-        'Zend\\Text\\Table\\Decorator\\Blank' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Decorator/Blank.php',
-        'Zend\\Text\\Table\\Decorator\\DecoratorInterface' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Decorator/DecoratorInterface.php',
-        'Zend\\Text\\Table\\Decorator\\Unicode' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Decorator/Unicode.php',
-        'Zend\\Text\\Table\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Exception/ExceptionInterface.php',
-        'Zend\\Text\\Table\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Exception/InvalidArgumentException.php',
-        'Zend\\Text\\Table\\Exception\\InvalidDecoratorException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Exception/InvalidDecoratorException.php',
-        'Zend\\Text\\Table\\Exception\\OutOfBoundsException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Exception/OutOfBoundsException.php',
-        'Zend\\Text\\Table\\Exception\\OverflowException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Exception/OverflowException.php',
-        'Zend\\Text\\Table\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Exception/UnexpectedValueException.php',
-        'Zend\\Text\\Table\\Row' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Row.php',
-        'Zend\\Text\\Table\\Table' => __DIR__ . '/..' . '/zendframework/zend-text/src/Table/Table.php',
         'Zumba\\Amplitude\\Amplitude' => __DIR__ . '/..' . '/zumba/amplitude-php/src/Amplitude.php',
         'Zumba\\Amplitude\\Event' => __DIR__ . '/..' . '/zumba/amplitude-php/src/Event.php',
         'Zumba\\Amplitude\\Inflector' => __DIR__ . '/..' . '/zumba/amplitude-php/src/Inflector.php',
@@ -7032,11 +7031,11 @@ class ComposerStaticInita2dd1f010425b530547094cc34499b58
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInita2dd1f010425b530547094cc34499b58::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInita2dd1f010425b530547094cc34499b58::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInita2dd1f010425b530547094cc34499b58::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInita2dd1f010425b530547094cc34499b58::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInita2dd1f010425b530547094cc34499b58::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit51f23cde59a1a45ad5518818f21c9462::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit51f23cde59a1a45ad5518818f21c9462::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit51f23cde59a1a45ad5518818f21c9462::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit51f23cde59a1a45ad5518818f21c9462::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit51f23cde59a1a45ad5518818f21c9462::$classMap;
 
         }, null, ClassLoader::class);
     }

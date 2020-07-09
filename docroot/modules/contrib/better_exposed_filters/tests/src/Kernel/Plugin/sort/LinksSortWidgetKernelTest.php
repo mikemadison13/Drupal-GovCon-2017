@@ -38,11 +38,11 @@ class LinksSortWidgetKernelTest extends BetterExposedFiltersKernelTestBase {
 
     // Check our sort item "sort_by" is rendered as links.
     $actual = $this->xpath('//form//a[starts-with(@id, "edit-sort-by")]');
-    $this->assertEqual(count($actual), 1, 'Exposed sort "sort_by" has correct number of exposed links.');
+    $this->assertCount(1, $actual, 'Exposed sort "sort_by" has correct number of exposed links.');
 
     // Check our sort item "sort_order" is rendered as links.
     $actual = $this->xpath('//form//a[starts-with(@id, "edit-sort-order")]');
-    $this->assertEqual(count($actual), 2, 'Exposed sort "sort_order" has correct number of exposed links.');
+    $this->assertCount(2, $actual, 'Exposed sort "sort_order" has correct number of exposed links.');
 
     $view->destroy();
   }

@@ -59,7 +59,7 @@ class WebformElementPluginPropertiesTest extends WebformElementBrowserTestBase {
     $actual_elements = $this->getActualElementDefaultProperties();
     $this->htmlOutput('<pre>' . htmlentities(Yaml::encode($actual_elements)) . '</pre>');
     foreach ($actual_elements as $element_key => $actual_element) {
-      if ($expected_elements[$element_key] != $actual_element) {
+      if ($expected_elements[$element_key] !== $actual_element) {
         $this->htmlOutput('<pre>' . Yaml::encode([$element_key => $actual_element]) . '</pre>');
       }
       $this->assertEquals($expected_elements[$element_key], $actual_element, "Expected and actual '$element_key' element properties match.");

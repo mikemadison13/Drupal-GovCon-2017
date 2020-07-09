@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\RenderElement;
 use Drupal\Core\Template\Attribute;
@@ -243,7 +244,9 @@ function webform_cards_form_webform_edit_form_alter(array &$form, FormStateInter
 
   /** @var \Drupal\webform\WebformInterface $webform */
   $webform = $form_object->getEntity();
-  if ($webform->hasWizardPages()) {
+  $wrapper_format = \Drupal::request()->get(MainContentViewSubscriber::WRAPPER_FORMAT);
+  $is_ajax_request = ($wrapper_format === 'drupal_ajax');
+  if ($webform->hasWizardPages() && !$is_ajax_request) {
     $form['webform_cards_convert'] = [
       '#type' => 'webform_message',
       '#message_message' => [

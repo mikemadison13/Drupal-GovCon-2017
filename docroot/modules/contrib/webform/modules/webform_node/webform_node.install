@@ -13,7 +13,7 @@ function webform_node_requirements($phase) {
   // Throw error if Webform (webform) content type is already exists which will
   // happen during a D7 to D8 content migration.
   // @see https://www.drupal.org/node/2856599
-  if ($phase == 'install') {
+  if ($phase === 'install') {
     $manager = \Drupal::entityTypeManager();
     if ($manager->hasDefinition('node_type') && ($node_type = $manager->getStorage('node_type')->load('webform'))) {
       $requirements['webform_node'] = [

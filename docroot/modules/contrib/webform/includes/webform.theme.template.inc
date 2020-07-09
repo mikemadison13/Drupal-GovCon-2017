@@ -351,7 +351,7 @@ function template_preprocess_webform_submission_information(array &$variables) {
     }
     elseif (\Drupal::currentUser()->hasPermission("view webform node submissions own $entity_type")
       && method_exists($source_entity, 'getOwnerId')
-      && $source_entity->getOwnerId() == \Drupal::currentUser()->id()
+      && (int) $source_entity->getOwnerId() === (int) \Drupal::currentUser()->id()
     ) {
       $variables['submissions_view'] = TRUE;
     }
@@ -710,7 +710,7 @@ function template_preprocess_webform_section(array &$variables) {
   }
 
   // Add 'visually-hidden' class to title attributes.
-  if ($variables['title_display'] == 'invisible') {
+  if ($variables['title_display'] === 'invisible') {
     $variables['title_attributes']['class'][] = 'visually-hidden';
   }
   $variables['title_attributes'] = new Attribute($variables['title_attributes']);
@@ -1017,7 +1017,7 @@ function template_preprocess_webform_element_image_file(array &$variables) {
     }
 
     // Wrap 'image' in a link/modal.
-    if ($format && $format != 'image') {
+    if ($format && $format !== 'image') {
       $variables['image'] = [
         '#type' => 'link',
         '#title' => $variables['image'],

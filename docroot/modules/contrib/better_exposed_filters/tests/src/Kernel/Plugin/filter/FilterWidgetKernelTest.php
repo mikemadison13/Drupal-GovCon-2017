@@ -136,8 +136,8 @@ class FilterWidgetKernelTest extends BetterExposedFiltersKernelTestBase {
     $this->renderExposedForm($view);
 
     // Assert our "collapsible" options detail is visible.
-    $actual = $this->xpath("//form//details[@id='edit-field-bef-email-value-collapsible']");
-    $this->assertEqual(count($actual), 1, '"Field BEF Email" option is displayed as collapsible fieldset.');
+    $actual = $this->xpath("//form//details[@data-drupal-selector='edit-field-bef-email-value-collapsible']");
+    $this->assertCount(1, $actual, '"Field BEF Email" option is displayed as collapsible fieldset.');
 
     $view->destroy();
   }

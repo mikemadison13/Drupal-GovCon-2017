@@ -164,26 +164,6 @@ abstract class BetterExposedFiltersWidgetBase extends PluginBase implements Bett
         $form[$group]['#open'] = TRUE;
       }
     }
-
-    /** @var \Drupal\Core\Render\ElementInfoManager $element_info_manager */
-    $element_info_manager = \Drupal::service('plugin.manager.element_info');
-    $element_info_plugin = $element_info_manager->createInstance($form[$element]['#type']);
-    $element_info = $element_info_plugin->getInfo();
-    if (!empty($element_info['#process'])) {
-      foreach ($element_info['#process'] as $process) {
-        if (is_array($process) && $process[1] === 'processGroup') {
-          // This element already supports #group.
-          return;
-        }
-      }
-    }
-
-    // Workaround to add support for #group FAPI to all elements currently not
-    // supported.
-    // @todo remove once core issue is resolved.
-    // @see https://www.drupal.org/project/drupal/issues/2190333
-    $form[$element]['#process'][] = ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'];
-    $form[$element]['#pre_render'][] = ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'];
   }
 
   /**
@@ -209,7 +189,7 @@ abstract class BetterExposedFiltersWidgetBase extends PluginBase implements Bett
     }
 
     $request = \Drupal::request();
-    $url = Url::createFromRequest($request);
+    $url = Url::createFromRequest(clone $request);
     $url->setAbsolute();
 
     return $url;

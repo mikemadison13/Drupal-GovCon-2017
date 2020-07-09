@@ -125,7 +125,7 @@ class SecurityUpdateCommands extends DrushCommands
     }
 
     /**
-     * Return  available security updates.
+     * Return available security updates.
      *
      * @param array $composer_lock_data
      *   The contents of the local Drupal application's composer.lock file.
@@ -182,5 +182,6 @@ class SecurityUpdateCommands extends DrushCommands
             $this->logger()->notice("Run <comment>$suggested_command</comment> to learn what module requires the package.");
             return CommandResult::dataWithExitCode(new UnstructuredData($packages), self::EXIT_FAILURE);
         }
+        $this->logger()->success("There are no outstanding security updates for your dependencies.");
     }
 }

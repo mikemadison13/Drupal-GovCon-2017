@@ -58,7 +58,7 @@ class WebformElementPluginDefinitionsTest extends WebformElementBrowserTestBase 
     $actual_definitions = $this->getActualElementDefinitions();
     $this->htmlOutput('<pre>' . htmlentities(Yaml::encode($actual_definitions)) . '</pre>');
     foreach ($actual_definitions as $key => $actual_definition) {
-      if ($expected_definitions[$key] != $actual_definition) {
+      if ($expected_definitions[$key] !== $actual_definition) {
         $this->htmlOutput('<pre>' . Yaml::encode([$key => $actual_definition]) . '</pre>');
       }
       $this->assertEquals($expected_definitions[$key], $actual_definition, "Expected and actual '$key' element definitions match.");

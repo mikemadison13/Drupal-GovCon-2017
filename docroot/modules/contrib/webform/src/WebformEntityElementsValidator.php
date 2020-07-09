@@ -377,7 +377,7 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
     if ($ignored_properties) {
       $messages = [];
       foreach ($ignored_properties as $ignored_property => $ignored_message) {
-        if ($ignored_property != $ignored_message) {
+        if ($ignored_property !== $ignored_message) {
           $messages[] = $ignored_message;
         }
         else {

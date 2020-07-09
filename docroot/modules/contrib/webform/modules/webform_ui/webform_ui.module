@@ -52,7 +52,7 @@ function webform_ui_entity_type_alter(array &$entity_types) {
  * @see Drupal.behaviors.webformUiElementsActionsSecondary
  */
 function webform_ui_preprocess_menu_local_action(&$variables) {
-  if (\Drupal::routeMatch()->getRouteName() != 'entity.webform.edit_form') {
+  if (\Drupal::routeMatch()->getRouteName() !== 'entity.webform.edit_form') {
     return;
   }
 

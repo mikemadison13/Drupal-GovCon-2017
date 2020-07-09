@@ -69,7 +69,6 @@ class Single extends FilterWidgetBase {
       $form[$field_id]['#default_value'] = 0;
       $form[$field_id]['#return_value'] = 1;
       $form[$field_id]['#value'] = $checked ? 1 : 0;
-      $form[$field_id]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processCheckbox'];
     }
   }
 

@@ -543,7 +543,7 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
           $or->condition('id', $webform_ids, 'IN');
         }
         // Also check the webform's owner.
-        if ($access_type == 'users') {
+        if ($access_type === 'users') {
           $or->condition('uid', $access_value);
         }
       }

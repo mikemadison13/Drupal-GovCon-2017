@@ -729,7 +729,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
 
     // Track if we need to trigger an update of all webform paths
     // because the 'default_page_base_path' changed.
-    $update_paths = ($settings['default_page_base_path'] != $this->config('webform.settings')->get('settings.default_page_base_path')) ? TRUE : FALSE;
+    $update_paths = ($settings['default_page_base_path'] !== $this->config('webform.settings')->get('settings.default_page_base_path')) ? TRUE : FALSE;
 
     // Filter empty dialog options.
     foreach ($settings['dialog_options'] as $dialog_name => $dialog_options) {

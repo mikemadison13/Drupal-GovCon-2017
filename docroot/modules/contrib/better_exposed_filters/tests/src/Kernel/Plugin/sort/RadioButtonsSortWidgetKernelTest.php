@@ -38,11 +38,11 @@ class RadioButtonsSortWidgetKernelTest extends BetterExposedFiltersKernelTestBas
 
     // Check our sort item "sort_by" is rendered as links.
     $actual = $this->xpath('//form//input[@type="radio" and starts-with(@id, "edit-sort-by")]');
-    $this->assertEqual(count($actual), 1, 'Exposed sort "sort_by" has correct number of exposed radio buttons.');
+    $this->assertCount(1, $actual, 'Exposed sort "sort_by" has correct number of exposed radio buttons.');
 
     // Check our sort item "sort_order" is rendered as links.
     $actual = $this->xpath('//form//input[@type="radio" and starts-with(@id, "edit-sort-order")]');
-    $this->assertEqual(count($actual), 2, 'Exposed sort "sort_order" has correct number of exposed radio buttons.');
+    $this->assertCount(2, $actual, 'Exposed sort "sort_order" has correct number of exposed radio buttons.');
 
     $view->destroy();
   }

@@ -172,7 +172,7 @@ abstract class FilterWidgetBase extends BetterExposedFiltersWidgetBase implement
     if ($this->configuration['advanced']['sort_options']) {
       $form[$field_id]['#nested'] = $filter->options['hierarchy'] ?? FALSE;
       $form[$field_id]['#nested_delimiter'] = '-';
-      $form[$field_id]['#process'][] = [$this, 'processSortedOptions'];
+      $form[$field_id]['#pre_process'][] = [$this, 'processSortedOptions'];
     }
 
     // Check for placeholder text.
@@ -324,9 +324,6 @@ abstract class FilterWidgetBase extends BetterExposedFiltersWidgetBase implement
     /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter */
     $filter = $this->handler;
     $filter_id = $filter->options['expose']['identifier'];
-
-    /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter */
-    $filter->buildExposedForm($form, $form_state);
 
     return $form[$filter_id]['#type'] ?? $form[$filter_id]['value']['#type'] ?? '';
   }

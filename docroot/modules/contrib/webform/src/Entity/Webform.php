@@ -820,7 +820,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * {@inheritdoc}
    */
   public function hasPreview() {
-    return ($this->getSetting('preview') != DRUPAL_DISABLED);
+    return ($this->getSetting('preview') !== DRUPAL_DISABLED);
   }
 
   /**
@@ -926,7 +926,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     // Settings should not be empty even.
     // https://www.drupal.org/node/2880392.
     return (isset($this->settings)) ? $this->settings +
-      self::getDefaultSettings() : self::getDefaultSettings();
+      static::getDefaultSettings() : static::getDefaultSettings();
   }
 
   /**
@@ -1112,7 +1112,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'preview_excluded_elements' => [],
       'preview_exclude_empty' => TRUE,
       'preview_exclude_empty_checkbox' => FALSE,
-      'draft' => self::DRAFT_NONE,
+      'draft' => WebformInterface::DRAFT_NONE,
       'draft_multiple' => FALSE,
       'draft_auto_save' => FALSE,
       'draft_saved_message' => '',
@@ -1440,7 +1440,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       // If current webform is translated, load the base (default) webform and
       // apply the translation to the elements.
       if ($config_translation
-        && ($this->langcode != $language_manager->getCurrentLanguage()->getId())) {
+        && ($this->langcode !== $language_manager->getCurrentLanguage()->getId())) {
         // Always get the elements in the original language.
         $elements = $translation_manager->getElements($this);
         // For none admin routes get the element (label) translations.
@@ -1556,7 +1556,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         $parent_element['#webform_children'][$key] = $key;
         // Set #parent_flexbox to TRUE is the parent element is a
         // 'webform_flexbox'.
-        $element['#webform_parent_flexbox'] = (isset($parent_element['#type']) && $parent_element['#type'] == 'webform_flexbox') ? TRUE : FALSE;
+        $element['#webform_parent_flexbox'] = (isset($parent_element['#type']) && $parent_element['#type'] === 'webform_flexbox') ? TRUE : FALSE;
 
         $element['#webform_parents'] = $parent_element['#webform_parents'];
       }
@@ -1599,7 +1599,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         $element_plugin->initialize($element);
 
         // Track flexbox.
-        if ($element['#type'] == 'flexbox' || $element['#type'] == 'webform_flexbox') {
+        if ($element['#type'] === 'flexbox' || $element['#type'] === 'webform_flexbox') {
           $this->hasFlexboxLayout = TRUE;
         }
 
@@ -1738,7 +1738,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         $last_action_key = end($this->elementsActions);
         $updated_elements = [];
         foreach ($elements as $element_key => $element) {
-          if ($element_key == $last_action_key) {
+          if ($element_key === $last_action_key) {
             $updated_elements[$key] = $properties;
           }
           $updated_elements[$element_key] = $element;
@@ -1775,12 +1775,12 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         continue;
       }
 
-      if ($element_key == $key) {
+      if ($element_key === $key) {
         $element = $properties + WebformElementHelper::removeProperties($element);
         return TRUE;
       }
 
-      if ($element_key == $parent_key) {
+      if ($element_key === $parent_key) {
         $element[$key] = $properties;
         return TRUE;
       }
@@ -1838,7 +1838,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         continue;
       }
 
-      if ($element_key == $key) {
+      if ($element_key === $key) {
         $sub_element_keys = [$element_key => $element_key];
         $this->collectSubElementKeysRecursive($sub_element_keys, $element);
         unset($elements[$element_key]);
@@ -1941,7 +1941,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
     // Add preview page.
     $settings = $this->getSettings();
-    if ($settings['preview'] != DRUPAL_DISABLED) {
+    if ((int) $settings['preview'] !== DRUPAL_DISABLED) {
       // If there is no start page, we must define one.
       if (empty($pages)) {
         $pages[WebformInterface::PAGE_START] = [
@@ -2218,7 +2218,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     // different.
     $elements_original = $this->getElementsOriginalDecoded() ?: [];
     $elements = $this->getElementsDecoded() ?: [];
-    if ($elements_original != $elements) {
+    if ($elements_original !== $elements) {
       $elements_original = WebformElementHelper::getFlattened($elements_original);
       $elements = WebformElementHelper::getFlattened($elements);
 
@@ -2236,7 +2236,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
       // Handle update element.
       foreach ($elements as $element_key => $element) {
-        if (isset($elements_original[$element_key]) && $elements_original[$element_key] != $element) {
+        if (isset($elements_original[$element_key]) && $elements_original[$element_key] !== $element) {
           $this->invokeHandlers('updateElement', $element_key, $element, $elements_original[$element_key]);
         }
       }
@@ -2344,7 +2344,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     if ($path_aliases) {
       /** @var \Drupal\path_alias\PathAliasInterface $path_alias */
       $path_alias = reset($path_aliases);
-      if ($path_alias->getAlias() == $alias) {
+      if ($path_alias->getAlias() === $alias) {
         return;
       }
     }
@@ -2465,7 +2465,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     // This is used to limit track and enforce a handlers cardinality.
     if (isset($plugin_id)) {
       foreach ($handlers as $instance_id => $handler) {
-        if ($handler->getPluginId() != $plugin_id) {
+        if ($handler->getPluginId() !== $plugin_id) {
           $handlers->removeInstanceId($instance_id);
         }
       }
@@ -2475,7 +2475,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     // This is used to limit track and enforce a handlers cardinality.
     if (isset($status)) {
       foreach ($handlers as $instance_id => $handler) {
-        if ($handler->getStatus() != $status) {
+        if ($handler->getStatus() !== $status) {
           $handlers->removeInstanceId($instance_id);
         }
       }
@@ -2486,7 +2486,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     if (isset($results)) {
       foreach ($handlers as $instance_id => $handler) {
         $plugin_definition = $handler->getPluginDefinition();
-        if ($plugin_definition['results'] != $results) {
+        if ($plugin_definition['results'] !== $results) {
           $handlers->removeInstanceId($instance_id);
         }
       }
@@ -2497,7 +2497,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     if (isset($submission)) {
       foreach ($handlers as $instance_id => $handler) {
         $plugin_definition = $handler->getPluginDefinition();
-        if ($plugin_definition['submission'] != $submission) {
+        if ($plugin_definition['submission'] !== $submission) {
           $handlers->removeInstanceId($instance_id);
         }
       }
@@ -2579,7 +2579,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         // If a handler has change some settings set override.
         // Only look for altered original settings, which prevents issues where
         // a webform saved settings and default settings are out-of-sync.
-        if (array_intersect_key($settings, $this->settingsOriginal) != $this->settingsOriginal) {
+        if (array_intersect_key($settings, $this->settingsOriginal) !== $this->settingsOriginal) {
           $this->setSettingsOverride($settings);
         }
         return NULL;

@@ -24,10 +24,6 @@ class RadioButtons extends SortWidgetBase {
       if (!empty($form[$element])) {
         $form[$element]['#theme'] = 'bef_radios';
         $form[$element]['#type'] = 'radios';
-        if (empty($form[$element]['#process'])) {
-          $form[$element]['#process'] = [];
-        }
-        $form[$element]['#process'][] = ['\Drupal\Core\Render\Element\Radios', 'processRadios'];
       }
     }
   }

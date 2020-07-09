@@ -756,7 +756,7 @@ class WebformMultiple extends FormElement {
    *   The default value.
    */
   protected static function setElementDefaultValue(array &$element, $default_value) {
-    if ($element['#type'] == 'value') {
+    if ($element['#type'] === 'value') {
       $element['#value'] = $default_value;
     }
     else {
@@ -842,7 +842,7 @@ class WebformMultiple extends FormElement {
     $values = [];
     foreach ($element['items']['#value'] as $row_index => $value) {
       $values[] = $value;
-      if ($row_index == $button['#row_index']) {
+      if ($row_index === $button['#row_index']) {
         $values[] = [];
       }
     }

@@ -40,7 +40,7 @@ class HiddenFilterWidgetKernelTest extends BetterExposedFiltersKernelTestBase {
 
     // Check our "FIELD_BEF_BOOLEAN" filter is rendered as a hidden element.
     $actual = $this->xpath('//form//input[@type="hidden" and starts-with(@name, "field_bef_boolean_value")]');
-    $this->assertEqual(count($actual), 1, 'Exposed filter "FIELD_BEF_BOOLEAN" is hidden.');
+    $this->assertCount(1, $actual, 'Exposed filter "FIELD_BEF_BOOLEAN" is hidden.');
 
     $view->destroy();
   }
@@ -69,10 +69,10 @@ class HiddenFilterWidgetKernelTest extends BetterExposedFiltersKernelTestBase {
 
     // Check our "FIELD_BEF_INTEGER" filter is rendered as a hidden element.
     $actual = $this->xpath('//form//label[@type="label" and starts-with(@for, "edit-field-bef-integer-value")]');
-    $this->assertEqual(count($actual), 0, 'Exposed filter "FIELD_BEF_INTEGER" is hidden.');
+    $this->assertCount(0, $actual, 'Exposed filter "FIELD_BEF_INTEGER" is hidden.');
 
     $actual = $this->xpath('//form//input[@type="hidden" and starts-with(@name, "field_bef_integer_value")]');
-    $this->assertEqual(count($actual), 0, 'Exposed filter "FIELD_BEF_INTEGER" has no selected values.');
+    $this->assertCount(0, $actual, 'Exposed filter "FIELD_BEF_INTEGER" has no selected values.');
   }
 
 }
