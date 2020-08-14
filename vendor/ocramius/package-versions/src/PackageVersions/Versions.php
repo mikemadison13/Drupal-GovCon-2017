@@ -84,6 +84,7 @@ final class Versions
   'drupal/crop' => '2.1.0@8.x-2.1',
   'drupal/ctools' => '3.4.0@8.x-3.4',
   'drupal/ctools_block' => '3.4.0@',
+  'drupal/default_content' => '2.0.0-alpha1@2.0.0-alpha1',
   'drupal/devel' => '2.1.0@8.x-2.1',
   'drupal/diff' => '1.0.0@8.x-1.0',
   'drupal/dropzonejs' => '2.0.0-alpha5@8.x-2.0-alpha5',
