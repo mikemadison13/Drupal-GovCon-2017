@@ -4,13 +4,13 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit74eb779d07b388b3274ec3bb778341d4
+class ComposerStaticInit5c20f9c93de969cfdbcc9a54aed77730
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         '9b38cf48e83f5d8f60375221cd213eee' => __DIR__ . '/..' . '/phpstan/phpstan/bootstrap.php',
+        '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
@@ -3920,6 +3920,7 @@ class ComposerStaticInit74eb779d07b388b3274ec3bb778341d4
         'Egulias\\EmailValidator\\Exception\\CommaInDomain' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/CommaInDomain.php',
         'Egulias\\EmailValidator\\Exception\\ConsecutiveAt' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/ConsecutiveAt.php',
         'Egulias\\EmailValidator\\Exception\\ConsecutiveDot' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/ConsecutiveDot.php',
+        'Egulias\\EmailValidator\\Exception\\DomainAcceptsNoMail' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/DomainAcceptsNoMail.php',
         'Egulias\\EmailValidator\\Exception\\DomainHyphened' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/DomainHyphened.php',
         'Egulias\\EmailValidator\\Exception\\DotAtEnd' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/DotAtEnd.php',
         'Egulias\\EmailValidator\\Exception\\DotAtStart' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/DotAtStart.php',
@@ -3930,6 +3931,7 @@ class ComposerStaticInit74eb779d07b388b3274ec3bb778341d4
         'Egulias\\EmailValidator\\Exception\\ExpectingDomainLiteralClose' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/ExpectingDomainLiteralClose.php',
         'Egulias\\EmailValidator\\Exception\\ExpectingQPair' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/ExpectingQPair.php',
         'Egulias\\EmailValidator\\Exception\\InvalidEmail' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/InvalidEmail.php',
+        'Egulias\\EmailValidator\\Exception\\LocalOrReservedDomain' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/LocalOrReservedDomain.php',
         'Egulias\\EmailValidator\\Exception\\NoDNSRecord' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/NoDNSRecord.php',
         'Egulias\\EmailValidator\\Exception\\NoDomainPart' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/NoDomainPart.php',
         'Egulias\\EmailValidator\\Exception\\NoLocalPart' => __DIR__ . '/..' . '/egulias/email-validator/src/Exception/NoLocalPart.php',
@@ -6416,6 +6418,7 @@ class ComposerStaticInit74eb779d07b388b3274ec3bb778341d4
         'Symfony\\Component\\Validator\\Mapping\\PropertyMetadataInterface' => __DIR__ . '/..' . '/symfony/validator/Mapping/PropertyMetadataInterface.php',
         'Symfony\\Component\\Validator\\Mapping\\TraversalStrategy' => __DIR__ . '/..' . '/symfony/validator/Mapping/TraversalStrategy.php',
         'Symfony\\Component\\Validator\\ObjectInitializerInterface' => __DIR__ . '/..' . '/symfony/validator/ObjectInitializerInterface.php',
+        'Symfony\\Component\\Validator\\Test\\AssertingContextualValidator' => __DIR__ . '/..' . '/symfony/validator/Test/ConstraintValidatorTestCase.php',
         'Symfony\\Component\\Validator\\Test\\ConstraintValidatorTestCase' => __DIR__ . '/..' . '/symfony/validator/Test/ConstraintValidatorTestCase.php',
         'Symfony\\Component\\Validator\\Test\\ConstraintViolationAssertion' => __DIR__ . '/..' . '/symfony/validator/Test/ConstraintValidatorTestCase.php',
         'Symfony\\Component\\Validator\\Test\\ForwardCompatTestTrait' => __DIR__ . '/..' . '/symfony/validator/Test/ForwardCompatTestTrait.php',
@@ -7043,11 +7046,11 @@ class ComposerStaticInit74eb779d07b388b3274ec3bb778341d4
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit74eb779d07b388b3274ec3bb778341d4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit74eb779d07b388b3274ec3bb778341d4::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit74eb779d07b388b3274ec3bb778341d4::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit74eb779d07b388b3274ec3bb778341d4::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit74eb779d07b388b3274ec3bb778341d4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5c20f9c93de969cfdbcc9a54aed77730::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5c20f9c93de969cfdbcc9a54aed77730::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit5c20f9c93de969cfdbcc9a54aed77730::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit5c20f9c93de969cfdbcc9a54aed77730::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit5c20f9c93de969cfdbcc9a54aed77730::$classMap;
 
         }, null, ClassLoader::class);
     }
