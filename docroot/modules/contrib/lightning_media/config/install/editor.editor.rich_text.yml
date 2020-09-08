@@ -37,7 +37,7 @@ settings:
             - Blockquote
             - Table
             - HorizontalRule
-            - media_browser
+            - DrupalMediaLibrary
         -
           name: 'Block Formatting'
           items:
@@ -48,10 +48,10 @@ settings:
             - ShowBlocks
             - Source
   plugins:
-    language:
-      language_list: un
     stylescombo:
       styles: ''
+    language:
+      language_list: un
 image_upload:
   status: true
   scheme: public

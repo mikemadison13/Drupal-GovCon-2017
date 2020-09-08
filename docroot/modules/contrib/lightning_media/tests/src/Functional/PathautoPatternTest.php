@@ -18,6 +18,11 @@ class PathautoPatternTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'pathauto',
     'lightning_media_document',
@@ -27,15 +32,6 @@ class PathautoPatternTest extends BrowserTestBase {
     'lightning_media_video',
     'media_test_source',
   ];
-
-  /**
-   * Slick Entity Reference has a schema error.
-   *
-   * @var bool
-   *
-   * @todo Remove when depending on slick_entityreference 1.2 or later.
-   */
-  protected $strictConfigSchema = FALSE;
 
   /**
    * {@inheritdoc}
@@ -57,7 +53,7 @@ class PathautoPatternTest extends BrowserTestBase {
     $media = [
       'document' => NULL,
       'image' => NULL,
-      'video' => NULL,
+      'video' => 'https://www.youtube.com/watch?v=Nf_aD3dTloY',
       'tweet' => 'https://twitter.com/50NerdsofGrey/status/757319527151636480',
       'instagram' => 'https://www.instagram.com/p/BmIh_AFDBzX',
     ];

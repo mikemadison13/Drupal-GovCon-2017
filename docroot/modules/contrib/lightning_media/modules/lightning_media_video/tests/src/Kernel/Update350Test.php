@@ -3,12 +3,16 @@
 namespace Drupal\Tests\lightning_media_video\Kernel;
 
 use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\lightning_media_video\Update\Update350;
+use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Prophecy\Argument;
 use Symfony\Component\Console\Style\StyleInterface;
 
 /**
+ * Tests configuration updates targeting Lightning Media Video 3.5.0.
+ *
  * @group lightning_media
  * @group lightning_media_video
  *
@@ -16,35 +20,50 @@ use Symfony\Component\Console\Style\StyleInterface;
  */
 class Update350Test extends KernelTestBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = ['system', 'user'];
+  use MediaTypeCreationTrait;
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    parent::setUp();
-
-    $this->container->get('module_installer')->install([
-      'lightning_media_video',
-    ]);
-
-    FieldConfig::loadByName('media', 'video', 'field_media_in_library')
-      ->setTranslatable(TRUE)
-      ->save();
-
-    FieldConfig::loadByName('media', 'video_file', 'field_media_in_library')
-      ->setTranslatable(TRUE)
-      ->save();
-  }
+  protected static $modules = [
+    'field',
+    'media',
+    'media_test_source',
+    'system',
+    'user',
+  ];
 
   /**
    * @covers ::removeVideoFileLibraryFieldTranslatability
    * @covers ::removeVideoLibraryFieldTranslatability
    */
   public function test() {
+    $this->createMediaType('test', [
+      'id' => 'video',
+    ]);
+    $this->createMediaType('test', [
+      'id' => 'video_file',
+    ]);
+
+    $field_storage = FieldStorageConfig::create([
+      'type' => 'boolean',
+      'entity_type' => 'media',
+      'field_name' => 'field_media_in_library',
+    ]);
+    $field_storage->save();
+
+    FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => 'video',
+      'translatable' => TRUE,
+    ])->save();
+
+    FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => 'video_file',
+      'translatable' => TRUE,
+    ])->save();
+
     $io = $this->prophesize(StyleInterface::class);
     $io->confirm(Argument::type('string'))->willReturn(TRUE);
 

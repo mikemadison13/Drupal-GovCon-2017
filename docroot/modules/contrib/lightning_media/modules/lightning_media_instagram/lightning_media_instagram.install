@@ -8,12 +8,11 @@
 use Drupal\lightning_core\ConfigHelper as Config;
 
 /**
- * Creates the media_browser form display.
+ * Removed in Lightning Media 4.0.
+ *
+ * Formerly created the media_browser form display.
  */
 function lightning_media_instagram_update_8001() {
-  Config::forModule('lightning_media_instagram')
-    ->getEntity('entity_form_display', 'media.instagram.media_browser')
-    ->save();
 }
 
 /**
@@ -22,6 +21,15 @@ function lightning_media_instagram_update_8001() {
 function lightning_media_instagram_update_8002() {
   Config::forModule('lightning_media_instagram')
     ->getEntity('entity_view_display', 'media.instagram.thumbnail')
+    ->save();
+}
+
+/**
+ * Creates the media_library form display for Instagram posts.
+ */
+function lightning_media_instagram_update_8003() {
+  Config::forModule('lightning_media_instagram')
+    ->getEntity('entity_form_display', 'media.instagram.media_library')
     ->save();
 }
 

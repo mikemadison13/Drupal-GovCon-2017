@@ -6,6 +6,7 @@
  */
 
 use Drupal\lightning_core\OverrideHelper as Override;
+use Drupal\lightning_media\Form\AddByUrlForm;
 use Drupal\lightning_media_instagram\Plugin\media\Source\Instagram;
 
 /**
@@ -20,6 +21,7 @@ function lightning_media_instagram_media_source_info_alter(array &$sources) {
     ],
   ];
   $sources['instagram']['preview'] = TRUE;
+  $sources['instagram']['forms']['media_library_add'] = AddByUrlForm::class;
 
   Override::pluginClass($sources['instagram'], Instagram::class);
 }

@@ -162,16 +162,13 @@ class MediaHelper {
    *   The file entity.
    * @param int $replace
    *   (optional) What to do if the file already exists. Can be any of the
-   *   constants accepted by file_move().
+   *   constants accepted by file_move(). Defaults to
+   *   \Drupal\Core\File\FileSystemInterface::EXISTS_RENAME.
    *
    * @return \Drupal\file\FileInterface|false
    *   The final file entity (unsaved), or FALSE if an error occurred.
    */
-  public static function useFile(MediaInterface $entity, FileInterface $file, $replace = NULL) {
-    // @todo Remove this and just use FileSystemInterface::EXISTS_REPLACE when support for older versions of core is dropped.
-    if (is_null($replace)) {
-      $replace = defined(FileSystemInterface::class . '::EXISTS_REPLACE') ? FileSystemInterface::EXISTS_REPLACE : constant('FILE_EXISTS_REPLACE');
-    }
+  public static function useFile(MediaInterface $entity, FileInterface $file, $replace = FileSystemInterface::EXISTS_RENAME) {
     $field = static::getSourceField($entity);
     $field->setValue($file);
 
@@ -212,19 +209,9 @@ class MediaHelper {
     $item = static::getSourceField($entity)->first();
 
     $destination = $item->getUploadLocation();
+    $options = FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS;
+    \Drupal::service('file_system')->prepareDirectory($destination, $options);
 
-    // Support both Drupal 8.7's API and its antecedents. We need to call the
-    // deprecated symbols in an obscure way to prevent failures during
-    // deprecation testing.
-    if (version_compare(\Drupal::VERSION, '8.7.0', '>=')) {
-      $options = FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS;
-      \Drupal::service('file_system')->prepareDirectory($destination, $options);
-    }
-    else {
-      $options = constant('FILE_CREATE_DIRECTORY') | constant('FILE_MODIFY_PERMISSIONS');
-      $function = 'file_prepare_directory';
-      $function($destination, $options);
-    }
     return $destination;
   }
 

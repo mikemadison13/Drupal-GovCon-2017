@@ -31,21 +31,11 @@ function lightning_media_install() {
   user_role_grant_permissions('anonymous', ['view media']);
   user_role_grant_permissions('authenticated', ['view media']);
 
-  // Set the icon for the media_browser embed button.
-  lightning_media_update_8006();
-
   // Grant the creator content role permission to use the rich_text format and
   // the media browser.
   if (\Drupal::moduleHandler()->moduleExists('lightning_roles')) {
     lightning_media_modules_installed(['lightning_roles']);
   }
-
-  // Add the media.embedded view mode to the media_browser embed button. It
-  // cannot be part of the original embed button config entity because the view
-  // mode is itself installed at the same time as the button, as part of this
-  // module's default configuration -- which means that it might not exist when
-  // the button is installed, resulting in a scary PluginNotFoundException.
-  lightning_media_update_8013();
 }
 
 /**
@@ -89,15 +79,14 @@ function lightning_media_update_8004() {
 }
 
 /**
- * Installs the media browser and its embed button.
+ * Creates the media_browser form mode.
  */
 function lightning_media_update_8005() {
   \Drupal::service('module_installer')->install(['entity_browser']);
 
-  $config = Config::forModule('lightning_media');
-  $config->getEntity('entity_form_mode', 'media.media_browser')->save();
-  $config->getEntity('entity_browser', 'media_browser')->save();
-  $config->getEntity('embed_button', 'media_browser')->save();
+  Config::forModule('lightning_media')
+    ->getEntity('entity_form_mode', 'media.media_browser')
+    ->save();
 }
 
 /**
@@ -137,14 +126,11 @@ function lightning_media_update_8006() {
 }
 
 /**
- * Deletes the media_library view.
+ * Removed in Lightning Media 4.0.
+ *
+ * Formerly deleted the media_library view.
  */
 function lightning_media_update_8007() {
-  $view = View::load('media_library');
-
-  if ($view) {
-    $view->delete();
-  }
 }
 
 /**
@@ -365,12 +351,45 @@ function lightning_media_update_8019() {
 
 /**
  * Sets the default value of the entity_browser.override_widget config switch.
+ *
+ * Removed in Lightning Media 4.0.
  */
 function lightning_media_update_8020() {
+}
+
+/**
+ * Deletes unsupported Entity Browser-related config settings.
+ */
+function lightning_media_update_8021() {
   Drupal::configFactory()
     ->getEditable('lightning_media.settings')
-    ->set('entity_browser.override_widget', TRUE)
+    ->clear('entity_browser')
     ->save();
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function lightning_media_requirements($phase) {
+  $requirements = [];
+
+  if ($phase === 'runtime' && Drupal::moduleHandler()->moduleExists('entity_embed')) {
+    if (Drupal::moduleHandler()->moduleExists('entity_embed')) {
+      $requirements['lightning_media_deprecate_entity_embed'] = [
+        'severity' => REQUIREMENT_WARNING,
+        'title' => t('Deprecated dependency: Entity Embed'),
+        'description' => t('Lightning Media 5.0 will <strong>not</strong> include the Entity Embed module. Please add it to your project directly: <code>composer require drupal/entity_embed:^1.0</code>.'),
+      ];
+    }
+    if (Drupal::moduleHandler()->moduleExists('views_infinite_scroll')) {
+      $requirements['lightning_media_deprecate_views_infinite_scroll'] = [
+        'severity' => REQUIREMENT_WARNING,
+        'title' => t('Deprecated dependency: Views Infinite Scroll'),
+        'description' => t('Lightning Media 5.0 will <strong>not</strong> include the Views Infinite Scroll module. Please add it to your project directly: <code>composer require drupal/views_infinite_scroll:^1.6</code>.'),
+      ];
+    }
+  }
+  return $requirements;
 }
 
 /**

@@ -8,12 +8,11 @@
 use Drupal\lightning_core\ConfigHelper as Config;
 
 /**
- * Creates the media_browser form display.
+ * Removed in Lightning Media 4.0.
+ *
+ * Formerly created the media_browser form display.
  */
 function lightning_media_twitter_update_8001() {
-  Config::forModule('lightning_media_twitter')
-    ->getEntity('entity_form_display', 'media.tweet.media_browser')
-    ->save();
 }
 
 /**
@@ -22,6 +21,15 @@ function lightning_media_twitter_update_8001() {
 function lightning_media_twitter_update_8002() {
   Config::forModule('lightning_media_twitter')
     ->getEntity('entity_view_display', 'media.tweet.thumbnail')
+    ->save();
+}
+
+/**
+ * Creates the media_library form display for tweets.
+ */
+function lightning_media_twitter_update_8003() {
+  Config::forModule('lightning_media_twitter')
+    ->getEntity('entity_form_display', 'media.tweet.media_library')
     ->save();
 }
 

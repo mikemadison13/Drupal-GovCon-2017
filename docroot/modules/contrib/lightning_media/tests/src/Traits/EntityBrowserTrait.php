@@ -4,7 +4,6 @@ namespace Drupal\Tests\lightning_media\Traits;
 
 use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Element\NodeElement;
-use Drupal\views\Entity\View;
 
 /**
  * Contains methods for interacting with entity browsers in frames.
@@ -17,17 +16,6 @@ trait EntityBrowserTrait {
    * @var string
    */
   private $currentEntityBrowser;
-
-  /**
-   * Adds the "Library" widget to the entity browsers we ship.
-   */
-  private function addMediaLibraryToEntityBrowsers() {
-    $GLOBALS['install_state'] = [];
-    /** @var \Drupal\views\ViewEntityInterface $view */
-    $view = View::load('media');
-    lightning_media_view_insert($view);
-    unset($GLOBALS['install_state']);
-  }
 
   /**
    * Waits for an entity browser frame to load.

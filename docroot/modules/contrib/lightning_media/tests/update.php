@@ -33,9 +33,10 @@ Drupal::configFactory()
   ->getEditable('core.base_field_override.node.page.status')
   ->delete();
 
-lightning_media_entity_get_form_display('node', 'page')->delete();
-lightning_media_entity_get_display('node', 'page')->delete();
-lightning_media_entity_get_display('node', 'page', 'teaser')->delete();
+$display_repository = Drupal::service('entity_display.repository');
+$display_repository->getFormDisplay('node', 'page')->delete();
+$display_repository->getViewDisplay('node', 'page')->delete();
+$display_repository->getViewDisplay('node', 'page', 'teaser')->delete();
 
 Drupal::configFactory()->getEditable('field.field.node.page.body')->delete();
 

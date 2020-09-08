@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Contains install, uninstall, and update hooks for Lightning Media Audio.
+ */
+
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\lightning_core\ConfigHelper as Config;
+use Drupal\media\Entity\MediaType;
+
+/**
+ * Creates the media_library form display for audio files.
+ */
+function lightning_media_audio_update_8001() {
+  // In Lightning Media 4, the audio_file media type was renamed to audio. This
+  // update existed prior to Lightning Media 4, so we need to ensure that the
+  // media_library form display is created for the existing media type.
+  $form_display = EntityFormDisplay::load('media.audio_file.media_library');
+
+  // Only create the form display if it hasn't been created already.
+  if (empty($form_display)) {
+    $media_type = MediaType::load('audio_file');
+
+    // Adapt the form display we ship for the audio media type, so that it works
+    // with the audio_file media type.
+    $values = Config::forModule('lightning_media_audio')
+      ->optional()
+      ->read('core.entity_form_display.media.audio.media_library');
+
+    $values['bundle'] = $media_type->id();
+    unset($values['id'], $values['dependencies'], $values['hidden']['field_media_audio_file']);
+
+    EntityFormDisplay::create($values)
+      ->removeComponent($media_type->getSource()->getSourceFieldDefinition($media_type)->getName())
+      ->save();
+  }
+}

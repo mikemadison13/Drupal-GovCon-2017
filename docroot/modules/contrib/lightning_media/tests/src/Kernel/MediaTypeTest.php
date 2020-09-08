@@ -56,10 +56,11 @@ class MediaTypeTest extends KernelTestBase {
     $this->assertTrue($media->hasField('field_media_in_library'));
 
     // The field should be present in the form as a checkbox.
-    $component = lightning_media_entity_get_form_display('media', $type)
+    $component = $this->container->get('entity_display.repository')
+      ->getFormDisplay('media', $type)
       ->getComponent('field_media_in_library');
 
-    $this->assertSame('array', gettype($component));
+    $this->assertIsArray($component);
   }
 
 }

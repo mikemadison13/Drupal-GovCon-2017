@@ -1,4 +1,2 @@
 entity_embed:
   choose_display: false
-entity_browser:
-  override_widget: true

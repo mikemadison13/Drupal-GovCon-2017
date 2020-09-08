@@ -4,6 +4,7 @@ namespace Drupal\lightning_media\Form;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\lightning_core\Form\BulkCreationEntityFormTrait;
 use Drupal\lightning_media\MediaHelper as Helper;
 use Drupal\media\MediaForm as BaseMediaForm;
@@ -11,7 +12,7 @@ use Drupal\media\MediaForm as BaseMediaForm;
 /**
  * Adds dynamic preview support to the media entity form.
  */
-class MediaForm extends BaseMediaForm {
+class MediaForm extends BaseMediaForm implements TrustedCallbackInterface {
 
   use BulkCreationEntityFormTrait;
 
@@ -99,6 +100,13 @@ class MediaForm extends BaseMediaForm {
     $handler->copyFormValuesToEntity($entity, $form, $form_state);
 
     return Helper::getSourceField($entity)->view('default');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['renderPreview'];
   }
 
 }

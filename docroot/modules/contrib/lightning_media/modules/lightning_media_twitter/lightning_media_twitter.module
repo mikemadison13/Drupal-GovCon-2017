@@ -6,6 +6,7 @@
  */
 
 use Drupal\lightning_core\OverrideHelper as Override;
+use Drupal\lightning_media\Form\AddByUrlForm;
 use Drupal\lightning_media_twitter\Plugin\media\Source\Twitter;
 
 /**
@@ -20,6 +21,41 @@ function lightning_media_twitter_media_source_info_alter(array &$sources) {
     ],
   ];
   $sources['twitter']['preview'] = TRUE;
+  $sources['twitter']['forms']['media_library_add'] = AddByUrlForm::class;
 
   Override::pluginClass($sources['twitter'], Twitter::class);
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function lightning_media_twitter_theme_registry_alter(array &$theme_registry) {
+  /** @var \Drupal\Core\Extension\ModuleExtensionList $module_list */
+  $module_list = Drupal::service('extension.list.module');
+
+  $hook = &$theme_registry['media_entity_twitter_tweet'];
+  if ($hook['path'] === $module_list->getPath('media_entity_twitter') . '/templates') {
+    $hook['path'] = $module_list->getPath('lightning_media_twitter') . '/templates';
+  }
+}
+
+/**
+ * Implements hook_preprocess_media_entity_twitter_tweet().
+ */
+function lightning_media_twitter_preprocess_media_entity_twitter_tweet(array &$variables) {
+  if (isset($variables['placeholder'])) {
+    return;
+  }
+
+  // Add a placeholder image so that's easy to see where tweets are embedded in
+  // CKEditor.
+  $placeholder = [
+    '#theme' => 'image',
+    '#uri' => Drupal::service('extension.list.module')->getPath('media_entity_twitter') . '/images/icons/twitter.png',
+    '#width' => 180,
+    '#height' => 180,
+    // This is a placeholder, so no need for an alt text.
+    '#alt' => NULL,
+  ];
+  $variables['placeholder'] = Drupal::service('renderer')->renderPlain($placeholder);
 }

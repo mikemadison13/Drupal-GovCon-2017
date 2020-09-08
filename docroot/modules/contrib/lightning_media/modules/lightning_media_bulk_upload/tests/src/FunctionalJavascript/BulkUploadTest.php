@@ -15,6 +15,11 @@ class BulkUploadTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'block',
     'lightning_media_audio',
@@ -47,6 +52,13 @@ class BulkUploadTest extends WebDriverTestBase {
     ]);
     $this->drupalLogin($account);
 
+    // Confirm that Bulk upload link is present on the grid display of the
+    // administrative media overview.
+    $this->drupalGet('/admin/content/media-grid');
+    $this->assertSession()->linkExists('Bulk upload');
+
+    // Confirm that Bulk upload link is present on the table display of the
+    // administrative media overview.
     $this->drupalGet('/admin/content/media');
     $page->clickLink('Bulk upload');
     // Wait for the dropzone to be initialized.
@@ -59,13 +71,8 @@ class BulkUploadTest extends WebDriverTestBase {
       'test.pdf',
     ];
 
-    $dir = $this->root . '/' . $this->container
-      ->get('extension.list.module')
-      ->get('lightning_media')
-      ->getPath();
-
     foreach ($files as $file) {
-      $file = "$dir/tests/files/$file";
+      $file = __DIR__ . "/../../../../../tests/files/$file";
       $this->assertFileExists($file);
 
       $this->getSession()->executeScript('Dropzone.instances[0].hiddenFileInput.name = "file"');

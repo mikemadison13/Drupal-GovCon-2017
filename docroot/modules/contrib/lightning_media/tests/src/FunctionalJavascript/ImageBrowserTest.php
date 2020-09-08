@@ -20,6 +20,11 @@ class ImageBrowserTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'image_widget_crop',
     'lightning_media_image',
@@ -46,7 +51,8 @@ class ImageBrowserTest extends WebDriverTestBase {
       'field_storage' => $field_storage,
     ])->save();
 
-    lightning_media_entity_get_form_display('node', 'page')
+    $this->container->get('entity_display.repository')
+      ->getFormDisplay('node', 'page')
       ->setComponent('field_hero_image', [
         'type' => 'entity_browser_file',
         'settings' => [
@@ -80,6 +86,7 @@ class ImageBrowserTest extends WebDriverTestBase {
     $assert_session->elementExists('css', '.field--name-field-hero-image')
       ->pressButton('Select Image(s)');
     $this->waitForEntityBrowser('image_browser');
+    $assert_session->waitForLink('Upload')->click();
 
     // This helps stabilize the next couple of calls; without it, the
     // upload is more likely to randomly fail. It's not clear why this

@@ -3,3 +3,4 @@ lightning_media.bulk_upload:
   title: 'Bulk upload'
   appears_on:
     - entity.media.collection
+    - view.media_library.page

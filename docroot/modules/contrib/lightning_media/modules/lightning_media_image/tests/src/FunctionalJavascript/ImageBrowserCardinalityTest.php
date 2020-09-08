@@ -26,6 +26,11 @@ class ImageBrowserCardinalityTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'image_widget_crop',
     'lightning_media_image',
@@ -68,7 +73,8 @@ class ImageBrowserCardinalityTest extends WebDriverTestBase {
       'label' => 'Unlimited Images',
     ])->save();
 
-    lightning_media_entity_get_form_display('node', 'page')
+    $this->container->get('entity_display.repository')
+      ->getFormDisplay('node', 'page')
       ->setComponent('field_multi_image', [
         'type' => 'entity_browser_file',
         'settings' => [
@@ -110,7 +116,7 @@ class ImageBrowserCardinalityTest extends WebDriverTestBase {
       $media = Media::create([
         'bundle' => 'image',
         'name' => $this->getRandomGenerator()->name(32),
-        'image' => $file->id(),
+        'field_media_image' => $file->id(),
         'field_media_in_library' => TRUE,
       ]);
       $media->save();
@@ -122,12 +128,6 @@ class ImageBrowserCardinalityTest extends WebDriverTestBase {
       'access image_browser entity browser pages',
     ]);
     $this->drupalLogin($account);
-
-    $GLOBALS['install_state'] = [];
-    /** @var \Drupal\views\ViewEntityInterface $view */
-    $view = $this->container->get('entity_type.manager')->getStorage('view')->load('media');
-    lightning_media_image_view_insert($view);
-    unset($GLOBALS['install_state']);
 
     module_load_install('lightning_media_image');
     lightning_media_image_install();

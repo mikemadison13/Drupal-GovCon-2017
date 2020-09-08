@@ -7,15 +7,19 @@ use Drupal\entity_browser\Element\EntityBrowserElement;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Tests\BrowserTestBase;
-use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 
 /**
+ * Tests validation when uploading files into the image browser.
+ *
  * @group lightning_media
  * @group lightning_media_image
  */
 class ImageBrowserUploadValidationTest extends BrowserTestBase {
 
-  use ContentTypeCreationTrait;
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
 
   /**
    * {@inheritdoc}
@@ -55,6 +59,8 @@ class ImageBrowserUploadValidationTest extends BrowserTestBase {
    * @dataProvider providerValidation
    */
   public function testValidation($file, $expected_error) {
+    $assert_session = $this->assertSession();
+
     $node_type = $this->createContentType();
 
     /** @var \Drupal\field\FieldStorageConfigInterface $field_storage */
@@ -64,7 +70,7 @@ class ImageBrowserUploadValidationTest extends BrowserTestBase {
       'type' => 'image',
       'cardinality' => 1,
     ]);
-    $this->assertSame(SAVED_NEW, $field_storage->save());
+    $field_storage->save();
 
     FieldConfig::create([
       'field_storage' => $field_storage,
@@ -75,7 +81,8 @@ class ImageBrowserUploadValidationTest extends BrowserTestBase {
       ],
     ])->save();
 
-    lightning_media_entity_get_form_display('node', $node_type->id())
+    $this->container->get('entity_display.repository')
+      ->getFormDisplay('node', $node_type->id())
       ->setComponent('field_lightweight_image', [
         'type' => 'entity_browser_file',
         'settings' => [
@@ -99,10 +106,28 @@ class ImageBrowserUploadValidationTest extends BrowserTestBase {
     $this->drupalLogin($account);
 
     $this->drupalGet('/node/add/' . $node_type->id());
-    $this->assertSession()->statusCodeEquals(200);
+    $assert_session->statusCodeEquals(200);
+    $this->visitImageBrowser();
+    $this->getSession()->getPage()->pressButton('Upload');
 
-    $settings = $this->assertSession()
-      ->elementExists('css', '[data-drupal-selector="drupal-settings-json"]')
+    $file_field = $assert_session->elementExists('css', '.js-form-managed-file');
+    $file_field->attachFileToField('File', __DIR__ . "/../../files/$file");
+    $file_field->pressButton('Upload');
+    $assert_session->statusCodeEquals(200);
+    $assert_session->elementExists('css', '[role="alert"]');
+    $assert_session->pageTextContains($expected_error);
+    // The error message should not be double-escaped.
+    $assert_session->responseNotContains('&lt;em class="placeholder"&gt;');
+    $assert_session->elementExists('css', 'input.form-file.error');
+  }
+
+  /**
+   * Visits the image browser at its dedicated URL.
+   */
+  private function visitImageBrowser() {
+    $assert_session = $this->assertSession();
+
+    $settings = $assert_session->elementExists('css', '[data-drupal-selector="drupal-settings-json"]')
       ->getText();
 
     $settings = Json::decode($settings);
@@ -117,17 +142,7 @@ class ImageBrowserUploadValidationTest extends BrowserTestBase {
       ],
     ]);
     $this->drupalGet($url);
-    $this->assertSession()->statusCodeEquals(200);
-
-    $file_field = $this->assertSession()->elementExists('css', '.js-form-managed-file');
-    $file_field->attachFileToField('File', __DIR__ . "/../../files/$file");
-    $file_field->pressButton('Upload');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->elementExists('css', '[role="alert"]');
-    $this->assertSession()->pageTextContains($expected_error);
-    // The error message should not be double-escaped.
-    $this->assertSession()->responseNotContains('&lt;em class="placeholder"&gt;');
-    $this->assertSession()->elementExists('css', 'input.form-file.error');
+    $assert_session->statusCodeEquals(200);
   }
 
 }

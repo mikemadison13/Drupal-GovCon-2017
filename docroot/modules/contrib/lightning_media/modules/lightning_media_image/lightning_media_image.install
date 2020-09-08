@@ -36,31 +36,25 @@ function lightning_media_image_install() {
 
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
     foreach ($form_displays as $form_display) {
-      $component = $form_display->getComponent('image');
+      $component = $form_display->getComponent('field_media_image');
 
       if ($component && $component['type'] == 'image_image') {
         $component['type'] = 'image_widget_crop';
         $component['settings']['crop_list'] = ['freeform'];
         $component['settings']['show_crop_area'] = TRUE;
-        $form_display->setComponent('image', $component)->save();
+        $form_display->setComponent('field_media_image', $component)->save();
       }
     }
 
     // Try to use a local copy of Cropper over the CDN-hosted fallback.
-    $lib = 'libraries/cropper/dist';
-    $lib = [
-      $lib,
-      drupal_get_path('module', \Drupal::installProfile()) . "/$lib",
-    ];
-    $lib = array_filter($lib, 'is_dir');
+    $cropper_path = Drupal::service('library.libraries_directory_file_finder')
+      ->find('cropper/dist');
 
-    if ($lib) {
-      $lib = reset($lib);
-
-      \Drupal::configFactory()
+    if ($cropper_path) {
+      Drupal::configFactory()
         ->getEditable('image_widget_crop.settings')
-        ->set('settings.library_url', "$lib/cropper.min.js")
-        ->set('settings.css_url', "$lib/cropper.min.css")
+        ->set('settings.library_url', "$cropper_path/cropper.min.js")
+        ->set('settings.css_url', "$cropper_path/cropper.min.css")
         ->save();
     }
   }
@@ -71,6 +65,7 @@ function lightning_media_image_install() {
  */
 function lightning_media_image_update_8001() {
   Config::forModule('lightning_media_image')
+    ->optional()
     ->getEntity('entity_form_display', 'media.image.media_browser')
     ->save();
 }
@@ -91,6 +86,7 @@ function lightning_media_image_update_8002() {
   }
 
   Config::forModule('lightning_media_image')
+    ->optional()
     ->getEntity('entity_browser', 'image_browser')
     ->save();
 }
@@ -99,8 +95,6 @@ function lightning_media_image_update_8002() {
  * Removed in Lightning 8.x-2.21.
  *
  * Formerly created the image browser display of the media view.
- *
- * @see lightning_media_image_view_insert()
  */
 function lightning_media_image_update_8003() {
 }
@@ -119,7 +113,8 @@ function lightning_media_image_update_8004() {
  * Removes the file link(s) and Remove button from the media_browser form.
  */
 function lightning_media_image_update_8005() {
-  $display = lightning_media_entity_get_form_display('media', 'image', 'media_browser');
+  $display = Drupal::service('entity_display.repository')
+    ->getFormDisplay('media', 'image', 'media_browser');
 
   $component = $display->getComponent('image');
 
@@ -137,7 +132,18 @@ function lightning_media_image_update_8005() {
  */
 function lightning_media_image_update_8006() {
   Config::forModule('lightning_media_image')
+    ->optional()
     ->getEntity('entity_view_display', 'media.image.thumbnail')
+    ->save();
+}
+
+/**
+ * Creates the media_library form display for images.
+ */
+function lightning_media_image_update_8007() {
+  Config::forModule('lightning_media_image')
+    ->optional()
+    ->getEntity('entity_form_display', 'media.image.media_library')
     ->save();
 }
 

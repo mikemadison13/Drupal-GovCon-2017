@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce
+class ComposerStaticInit0456c85896c57118a23a6339e92c8e33
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -190,7 +190,6 @@ class ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce
             'Drush\\Internal\\' => 15,
             'Drush\\' => 6,
             'Drupal\\Tests\\lightning_workflow\\' => 32,
-            'Drupal\\Tests\\lightning_media\\' => 29,
             'Drupal\\Tests\\lightning_core\\' => 28,
             'Drupal\\Tests\\lightning_api\\' => 27,
             'Drupal\\Driver\\' => 14,
@@ -562,10 +561,6 @@ class ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce
         'Drupal\\Tests\\lightning_workflow\\' => 
         array (
             0 => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_workflow/tests/src',
-        ),
-        'Drupal\\Tests\\lightning_media\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src',
         ),
         'Drupal\\Tests\\lightning_core\\' => 
         array (
@@ -945,14 +940,8 @@ class ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce
         'Acquia\\LightningExtension\\Context\\AwaitTrait' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/AwaitTrait.inc',
         'Acquia\\LightningExtension\\Context\\CkEditorContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/CkEditorContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\DebugContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/DebugContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\DropzoneContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/DropzoneContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\ElementContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/ElementContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\EntityBrowserContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/EntityBrowserContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\EntityContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/EntityContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\ImageBrowserContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/ImageBrowserContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\MediaBrowserContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/MediaBrowserContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\MediaEntityContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/MediaEntityContext.behat.inc',
-        'Acquia\\LightningExtension\\Context\\MediaLibraryContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/contexts/MediaLibraryContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\ModerationContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_workflow/tests/contexts/ModerationContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\TestModuleContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/TestModuleContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\ViewsContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/ViewsContext.behat.inc',
@@ -3648,31 +3637,6 @@ class ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce
         'Drupal\\Tests\\lightning_core\\Unit\\TestUpdateHandler' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Unit/UpdateManagerTest.php',
         'Drupal\\Tests\\lightning_core\\Unit\\TestUpdateManager' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Unit/UpdateManagerTest.php',
         'Drupal\\Tests\\lightning_core\\Unit\\UpdateManagerTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Unit/UpdateManagerTest.php',
-        'Drupal\\Tests\\lightning_media\\FixtureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FixtureContext.php',
-        'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\CKEditorMediaBrowserTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/CKEditorMediaBrowserTest.php',
-        'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\EmbeddedMediaTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/EmbeddedMediaTest.php',
-        'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\ImageBrowserTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/ImageBrowserTest.php',
-        'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\MediaBrowserEmbedCodeWidgetTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/MediaBrowserEmbedCodeWidgetTest.php',
-        'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\MediaBrowserWidgetDisambiguationTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/MediaBrowserWidgetDisambiguationTest.php',
-        'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\MediaImageFieldTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/MediaImageFieldTest.php',
-        'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\QuickEditMediaBrowserTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/QuickEditMediaBrowserTest.php',
-        'Drupal\\Tests\\lightning_media\\FunctionalJavascript\\WebDriverWebAssert' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/FunctionalJavascript/WebDriverWebAssert.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\EmbeddedMediaLabelTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/EmbeddedMediaLabelTest.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\ImageMediaTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/ImageMediaTest.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\MediaBrowserEmbedCodeWidgetTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/MediaBrowserEmbedCodeWidgetTest.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\MediaBrowserTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/MediaBrowserTest.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\MediaBrowserUploadWidgetTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/MediaBrowserUploadWidgetTest.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\MediaBrowserWidgetTestBase' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/MediaBrowserWidgetTestBase.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\MediaListTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/MediaListTest.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\PathautoPatternTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/PathautoPatternTest.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\RolesTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/RolesTest.php',
-        'Drupal\\Tests\\lightning_media\\Functional\\Update360Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Functional/Update360Test.php',
-        'Drupal\\Tests\\lightning_media\\Kernel\\EntityFormDisplayPresaveTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Kernel/EntityFormDisplayPresaveTest.php',
-        'Drupal\\Tests\\lightning_media\\Kernel\\MediaHelperTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Kernel/MediaHelperTest.php',
-        'Drupal\\Tests\\lightning_media\\Kernel\\MediaTypeTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Kernel/MediaTypeTest.php',
-        'Drupal\\Tests\\lightning_media\\Kernel\\Update\\Update8020Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Kernel/Update/Update8020Test.php',
-        'Drupal\\Tests\\lightning_media\\Traits\\EntityBrowserTrait' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Traits/EntityBrowserTrait.php',
-        'Drupal\\Tests\\lightning_media\\Traits\\EntityEmbedTrait' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_media/tests/src/Traits/EntityEmbedTrait.php',
         'Drupal\\Tests\\lightning_workflow\\FixtureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_workflow/tests/src/FixtureContext.php',
         'Drupal\\Tests\\lightning_workflow\\FunctionalJavascript\\AutosaveTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_workflow/tests/src/FunctionalJavascript/AutosaveTest.php',
         'Drupal\\Tests\\lightning_workflow\\FunctionalJavascript\\ModerationSidebarTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_workflow/tests/src/FunctionalJavascript/ModerationSidebarTest.php',
@@ -7046,11 +7010,11 @@ class ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit1ca632d6c8605c9b15086f0dbd0d05ce::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit0456c85896c57118a23a6339e92c8e33::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit0456c85896c57118a23a6339e92c8e33::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit0456c85896c57118a23a6339e92c8e33::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit0456c85896c57118a23a6339e92c8e33::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit0456c85896c57118a23a6339e92c8e33::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -7,9 +7,16 @@ use Drupal\node\Entity\Node;
 use Drupal\Tests\BrowserTestBase;
 
 /**
+ * Tests the handling of entity labels when embedding media in WYSIWYG.
+ *
  * @group lightning_media
  */
 class EmbeddedMediaLabelTest extends BrowserTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
@@ -18,15 +25,6 @@ class EmbeddedMediaLabelTest extends BrowserTestBase {
     'lightning_media_twitter',
     'node',
   ];
-
-  /**
-   * Slick Entity Reference has a schema error.
-   *
-   * @var bool
-   *
-   * @todo Remove when depending on slick_entityreference 1.2 or later.
-   */
-  protected $strictConfigSchema = FALSE;
 
   /**
    * The label of an embedded media item should not appear in the host entity.

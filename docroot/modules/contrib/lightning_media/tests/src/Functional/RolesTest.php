@@ -10,11 +10,18 @@ use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\Role;
 
 /**
+ * Tests functionality of optional 'media_creator' and 'media_manager' roles.
+ *
  * @group lightning_media
  */
 class RolesTest extends BrowserTestBase {
 
   use MediaTypeCreationTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
@@ -33,15 +40,6 @@ class RolesTest extends BrowserTestBase {
   protected $mediaType;
 
   /**
-   * Slick Entity Reference has a schema error.
-   *
-   * @var bool
-   *
-   * @todo Remove when depending on slick_entityreference 1.2 or later.
-   */
-  protected $strictConfigSchema = FALSE;
-
-  /**
    * {@inheritdoc}
    */
   protected function setUp() {
@@ -57,7 +55,12 @@ class RolesTest extends BrowserTestBase {
     $this->drupalPlaceBlock('local_tasks_block');
   }
 
+  /**
+   * Tests the functionality of the 'media_creator' and 'media_manager' roles.
+   */
   public function testRoles() {
+    $page = $this->getSession()->getPage();
+
     $account = $this->drupalCreateUser();
     $account->addRole('media_creator');
     $account->save();
@@ -73,7 +76,7 @@ class RolesTest extends BrowserTestBase {
 
     $assert = $this->assertSession();
     $this->drupalGet('/admin/content/media');
-    $this->clickLink($media->label());
+    $page->clickLink($media->label());
     $assert->statusCodeEquals(200);
     $assert->linkExists('Edit');
     $assert->linkExists('Delete');
@@ -86,7 +89,7 @@ class RolesTest extends BrowserTestBase {
     $this->drupalLogin($account);
 
     $this->drupalGet('/admin/content/media');
-    $this->clickLink($media->label());
+    $page->clickLink($media->label());
     $assert->statusCodeEquals(200);
     $assert->linkExists('Edit');
     $assert->linkExists('Delete');

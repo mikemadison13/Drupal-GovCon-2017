@@ -86,7 +86,6 @@ return array(
     'Drush\\Internal\\' => array($vendorDir . '/drush/drush/src/internal-forks'),
     'Drush\\' => array($vendorDir . '/drush/drush/src'),
     'Drupal\\Tests\\lightning_workflow\\' => array($baseDir . '/docroot/modules/contrib/lightning_workflow/tests/src'),
-    'Drupal\\Tests\\lightning_media\\' => array($baseDir . '/docroot/modules/contrib/lightning_media/tests/src'),
     'Drupal\\Tests\\lightning_core\\' => array($baseDir . '/docroot/modules/contrib/lightning_core/tests/src'),
     'Drupal\\Tests\\lightning_api\\' => array($baseDir . '/docroot/modules/contrib/lightning_api/tests/src'),
     'Drupal\\Driver\\' => array($baseDir . '/docroot/drivers/lib/Drupal/Driver'),

@@ -9,13 +9,6 @@ lightning_media.settings:
         choose_display:
           type: boolean
           label: 'Allow user to choose display plugin for embedded media'
-    entity_browser:
-      type: mapping
-      label: 'Entity Browser settings'
-      mapping:
-        override_widget:
-          type: boolean
-          label: 'Override the default widget of media reference fields'
 
 entity_browser.browser.widget.embed_code:
   type: mapping

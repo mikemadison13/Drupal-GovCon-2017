@@ -15,6 +15,11 @@ class MediaListTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'block',
     'lightning_media_instagram',
