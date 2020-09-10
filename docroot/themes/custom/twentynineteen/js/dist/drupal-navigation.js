@@ -128,7 +128,8 @@ for (var i = 0; i < subMenu.length; i++) {
 //   }
 // }
 
-var toggleButton = document.getElementsByClassName('show-menu');
+var toggleContainer = document.getElementById("header").getElementsByClassName('show-menu');
+var toggleButton = toggleContainer[0];
 var userMenu = document.querySelector('.menu--account');
 var userMenuLinks = userMenu.getElementsByTagName('a');
 
@@ -138,10 +139,8 @@ var userMenuLinks = userMenu.getElementsByTagName('a');
  */
 userMenuLinks[userMenuLinks.length - 1].onblur = function () {
   toggleButton.checked = false;
-  userMenu.classList.remove('menu--account--show');g;
+  userMenu.classList.remove('menu--account--show');
 };
-
-console.log(userMenu.getElementsByTagName('a')[userMenu.getElementsByTagName('a').length - 1]);
 
 /**
  * Overrides "checkmark" behavior so that you can use the enter key to toggle the mobile menu.
