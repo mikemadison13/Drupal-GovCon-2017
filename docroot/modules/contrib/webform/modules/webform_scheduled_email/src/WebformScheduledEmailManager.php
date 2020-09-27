@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\webform\WebformEntityReferenceManagerInterface;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform\WebformTokenManagerInterface;
@@ -81,6 +82,13 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
   protected $tokenManager;
 
   /**
+   * The webform entity reference manager.
+   *
+   * @var \Drupal\webform\WebformEntityReferenceManagerInterface
+   */
+  protected $entityReferenceManager;
+
+  /**
    * Constructs a WebformScheduledEmailManager object.
    *
    * @param \Drupal\Component\Datetime\TimeInterface $time
@@ -97,8 +105,10 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
    *   The entity type manager.
    * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
    *   The webform token manager.
+   * @param \Drupal\webform\WebformEntityReferenceManagerInterface $entity_reference_manager
+   *   The webform entity reference manager.
    */
-  public function __construct(TimeInterface $time, Connection $database, LanguageManagerInterface $language_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, EntityTypeManagerInterface $entity_type_manager, WebformTokenManagerInterface $token_manager) {
+  public function __construct(TimeInterface $time, Connection $database, LanguageManagerInterface $language_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, EntityTypeManagerInterface $entity_type_manager, WebformTokenManagerInterface $token_manager, WebformEntityReferenceManagerInterface $entity_reference_manager) {
     $this->time = $time;
     $this->database = $database;
     $this->languageManager = $language_manager;
@@ -107,6 +117,7 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
     $this->webformStorage = $entity_type_manager->getStorage('webform');
     $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
     $this->tokenManager = $token_manager;
+    $this->entityReferenceManager = $entity_reference_manager;
   }
 
   /****************************************************************************/
@@ -278,7 +289,7 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
         'send' => $send_timestamp,
       ])->execute();
 
-      // If email is alread scheduled when don't need to log anything.
+      // If email is already scheduled when don't need to log anything.
       if ($status === WebformScheduledEmailManagerInterface::EMAIL_ALREADY_SCHEDULED) {
         return $status;
       }
@@ -815,11 +826,8 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
       $webform = $webform_submission->getWebform();
     }
     elseif ($entity instanceof EntityInterface) {
-      /** @var \Drupal\webform\WebformEntityReferenceManagerInterface $entity_reference_manager */
-      $entity_reference_manager = \Drupal::service('webform.entity_reference_manager');
-
       $source_entity = $entity;
-      $webform = $entity_reference_manager->getWebform($source_entity);
+      $webform = $this->entityReferenceManager->getWebform($source_entity);
     }
 
     return [$webform, $webform_submission, $source_entity];

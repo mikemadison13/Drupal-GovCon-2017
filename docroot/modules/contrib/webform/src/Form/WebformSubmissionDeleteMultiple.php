@@ -2,11 +2,9 @@
 
 namespace Drupal\webform\Form;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -37,26 +35,13 @@ class WebformSubmissionDeleteMultiple extends ConfirmFormBase {
   protected $storage;
 
   /**
-   * Constructs a WebformSubmissionDeleteMultiple object.
-   *
-   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
-   *   The tempstore factory.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory, EntityTypeManagerInterface $entity_type_manager) {
-    $this->tempStoreFactory = $temp_store_factory;
-    $this->storage = $entity_type_manager->getStorage('webform_submission');
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('tempstore.private'),
-      $container->get('entity_type.manager')
-    );
+    $instance = parent::create($container);
+    $instance->tempStoreFactory = $container->get('tempstore.private');
+    $instance->storage = $container->get('entity_type.manager')->getStorage('webform_submission');
+    return $instance;
   }
 
   /**

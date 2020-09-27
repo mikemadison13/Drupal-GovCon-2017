@@ -5,6 +5,7 @@ namespace Drupal\r4032login\EventSubscriber;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\EventSubscriber\HttpExceptionSubscriberBase;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
@@ -57,6 +58,13 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
   protected $eventDispatcher;
 
   /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Constructs a new R4032LoginSubscriber.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -69,13 +77,16 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
    *   The path matcher.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, AccountInterface $current_user, RequestStack $request_stack, PathMatcherInterface $path_matcher, EventDispatcherInterface $event_dispatcher) {
+  public function __construct(ConfigFactoryInterface $config_factory, AccountInterface $current_user, RequestStack $request_stack, PathMatcherInterface $path_matcher, EventDispatcherInterface $event_dispatcher, MessengerInterface $messenger) {
     $this->configFactory = $config_factory;
     $this->currentUser = $current_user;
     $this->requestStack = $request_stack;
     $this->pathMatcher = $path_matcher;
     $this->eventDispatcher = $event_dispatcher;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -160,7 +171,7 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
         if ($this->currentUser->isAnonymous() && $config->get('display_denied_message')) {
           $message = $config->get('access_denied_message');
           $messageType = $config->get('access_denied_message_type');
-          drupal_set_message(Xss::filterAdmin($message), $messageType);
+          $this->messenger->addMessage(Xss::filterAdmin($message), $messageType);
         }
 
         if ($redirectPath === '<front>') {

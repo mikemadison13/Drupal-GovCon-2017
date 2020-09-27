@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Yaml\Dumper;
 
 /**
- * Webform submission export import manager.
+ * Webform submission export importer.
  */
 class WebformSubmissionExportImportImporter implements WebformSubmissionExportImportImporterInterface {
 

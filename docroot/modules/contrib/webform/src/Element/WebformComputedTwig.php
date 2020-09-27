@@ -41,7 +41,7 @@ class WebformComputedTwig extends WebformComputedBase {
   public static function computeValue(array $element, WebformSubmissionInterface $webform_submission) {
     $whitespace = (!empty($element['#whitespace'])) ? $element['#whitespace'] : '';
 
-    $template = ($whitespace === static::WHITESPACE_SPACELESS) ? '{% spaceless %}' . $element['#template'] . '{% endspaceless %}' : $element['#template'];
+    $template = ($whitespace === static::WHITESPACE_SPACELESS) ? '{% apply spaceless %}' . $element['#template'] . '{% endapply %}' : $element['#template'];
 
     $options = ['html' => (static::getMode($element) === WebformComputedInterface::MODE_HTML)];
 

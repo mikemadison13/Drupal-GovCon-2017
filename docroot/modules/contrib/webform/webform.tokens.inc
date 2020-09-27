@@ -72,12 +72,12 @@ function webform_token_info() {
     'description' => t('The URL the user submitted the webform submission.'),
     'type' => 'url',
   ];
-  $webform_submission['view-url'] = [
+  $webform_submission['token-view-url'] = [
     'name' => t('View (token) URL'),
     'description' => t('The URL that can used to view the webform submission. The webform must be configured to allow users to view a submission using a secure token.'),
     'type' => 'url',
   ];
-  $webform_submission['update-url'] = [
+  $webform_submission['token-update-url'] = [
     'name' => t('Update (token) URL'),
     'description' => t('The URL that can used to update the webform submission. The webform must be configured to allow users to update a submission using a secure token.'),
     'type' => 'url',
@@ -537,11 +537,11 @@ function webform_tokens($type, $tokens, array $data, array $options, BubbleableM
           $replacements[$original] = $webform_submission->getSourceUrl()->toString();
           break;
 
-        case 'view-url':
+        case 'token-view-url':
           $replacements[$original] = $webform_submission->getTokenUrl('view')->toString();
           break;
 
-        case 'update-url':
+        case 'token-update-url':
           $replacements[$original] = $webform_submission->getTokenUrl('update')->toString();
           break;
 
@@ -735,15 +735,15 @@ function webform_tokens($type, $tokens, array $data, array $options, BubbleableM
     if (($submitted_to_tokens = $token_service->findWithPrefix($tokens, 'submitted-to')) && ($submitted_to = $webform_submission->getSourceEntity(TRUE) ?: $webform_submission->getWebform())) {
       $replacements += $token_service->generate($submitted_to->getEntityTypeId(), $submitted_to_tokens, [$submitted_to->getEntityTypeId() => $submitted_to], $options, $bubbleable_metadata);
     }
-    foreach (['view-url', 'update-url', 'source-url'] as $token) {
+    foreach (['token-view-url', 'token-update-url', 'source-url'] as $token) {
       if ($url_tokens = $token_service->findWithPrefix($tokens, $token)) {
         $url = NULL;
         switch ($token) {
-          case 'view-url':
+          case 'token-view-url':
             $url = $webform_submission->getTokenUrl('view');
             break;
 
-          case 'update-url':
+          case 'token-update-url':
             $url = $webform_submission->getTokenUrl('update');
             break;
 
@@ -1103,7 +1103,7 @@ function _webform_token_render_more($more_title, $more) {
   // Token info might be called via CLI and not all modules are loaded
   // or an active theme is defined.
   //
-  // Prevent the below expections:
+  // Prevent the below exceptions:
   // - The theme implementations may not be rendered until all modules
   //   are loaded.
   // - Call to a member function setParser() on array in Twig\Parser->parse().

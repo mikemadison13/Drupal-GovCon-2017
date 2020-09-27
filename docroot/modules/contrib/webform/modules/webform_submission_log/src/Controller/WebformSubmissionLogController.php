@@ -3,14 +3,10 @@
 namespace Drupal\webform_submission_log\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Database\Connection;
-use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\webform\WebformInterface;
-use Drupal\webform\WebformRequestInterface;
 use Drupal\webform\WebformSubmissionInterface;
-use Drupal\webform_submission_log\WebformSubmissionLogManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -70,37 +66,20 @@ class WebformSubmissionLogController extends ControllerBase {
   protected $logManager;
 
   /**
-   * Constructs a WebformSubmissionLogController object.
-   *
-   * @param \Drupal\Core\Database\Connection $database
-   *   A database connection.
-   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
-   *   The date formatter service.
-   * @param \Drupal\webform\WebformRequestInterface $request_handler
-   *   The webform request handler.
-   * @param \Drupal\webform_submission_log\WebformSubmissionLogManagerInterface $log_manager
-   *   The webform submission log manager.
-   */
-  public function __construct(Connection $database, DateFormatterInterface $date_formatter, WebformRequestInterface $request_handler, WebformSubmissionLogManagerInterface $log_manager) {
-    $this->database = $database;
-    $this->dateFormatter = $date_formatter;
-    $this->webformStorage = $this->entityTypeManager()->getStorage('webform');
-    $this->webformSubmissionStorage = $this->entityTypeManager()->getStorage('webform_submission');
-    $this->userStorage = $this->entityTypeManager()->getStorage('user');
-    $this->requestHandler = $request_handler;
-    $this->logManager = $log_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('database'),
-      $container->get('date.formatter'),
-      $container->get('webform.request'),
-      $container->get('webform_submission_log.manager')
-    );
+    /** @var \Drupal\webform_submission_log\Controller\WebformSubmissionLogController $instance */
+    $instance = parent::create($container);
+    $instance->database = $container->get('database');
+    $instance->dateFormatter = $container->get('date.formatter');
+    $instance->requestHandler = $container->get('webform.request');
+    $instance->logManager = $container->get('webform_submission_log.manager');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->webformStorage = $instance->entityTypeManager->getStorage('webform');
+    $instance->webformSubmissionStorage = $instance->entityTypeManager->getStorage('webform_submission');
+    $instance->userStorage = $instance->entityTypeManager->getStorage('user');
+    return $instance;
   }
 
   /**

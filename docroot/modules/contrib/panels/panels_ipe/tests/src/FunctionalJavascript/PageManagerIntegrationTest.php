@@ -12,11 +12,6 @@ class PageManagerIntegrationTest extends PanelsIPETestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'stark';
-
-  /**
-   * {@inheritdoc}
-   */
   public static $modules = [
     'panels',
     'panels_ipe',

@@ -3,10 +3,9 @@
 namespace Drupal\webform_access;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
-use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\webform\EntityListBuilder\WebformEntityListBuilderSortLabelTrait;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform_access\Entity\WebformAccessGroup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\webform\Entity\WebformOption
  */
 class WebformAccessTypeListBuilder extends ConfigEntityListBuilder {
+
+  use WebformEntityListBuilderSortLabelTrait;
 
   /**
    * {@inheritdoc}
@@ -33,20 +34,10 @@ class WebformAccessTypeListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, ConfigEntityStorageInterface $access_group_storage) {
-    parent::__construct($entity_type, $storage);
-    $this->accessGroupStorage = $access_group_storage;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    return new static(
-      $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id()),
-      $container->get('entity.manager')->getStorage('webform_access_group')
-    );
+    $instance = parent::createInstance($container, $entity_type);
+    $instance->accessGroupStorage = $container->get('entity_type.manager')->getStorage('webform_access_group');
+    return $instance;
   }
 
   /**
@@ -81,7 +72,7 @@ class WebformAccessTypeListBuilder extends ConfigEntityListBuilder {
     }
 
     return [
-      '#markup' => $this->formatPlural($total, '@total access type', '@total access types', ['@total' => $total]),
+      '#markup' => $this->formatPlural($total, '@count access type', '@count access types'),
       '#prefix' => '<div>',
       '#suffix' => '</div>',
     ];

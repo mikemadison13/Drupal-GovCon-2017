@@ -4,9 +4,6 @@ namespace Drupal\webform_templates\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Form\FormBuilderInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\WebformInterface;
@@ -28,7 +25,7 @@ class WebformTemplatesController extends ControllerBase implements ContainerInje
   protected $currentUser;
 
   /**
-   * The webform builder.
+   * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
@@ -42,30 +39,14 @@ class WebformTemplatesController extends ControllerBase implements ContainerInje
   protected $webformStorage;
 
   /**
-   * Constructs a WebformTemplatesController object.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
-   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
-   *   The webform builder.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   */
-  public function __construct(AccountInterface $current_user, FormBuilderInterface $form_builder, EntityTypeManagerInterface $entity_type_manager) {
-    $this->currentUser = $current_user;
-    $this->formBuilder = $form_builder;
-    $this->webformStorage = $entity_type_manager->getStorage('webform');
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('current_user'),
-      $container->get('form_builder'),
-      $container->get('entity_type.manager')
-    );
+    $instance = parent::create($container);
+    $instance->currentUser = $container->get('current_user');
+    $instance->formBuilder = $container->get('form_builder');
+    $instance->webformStorage = $container->get('entity_type.manager')->getStorage('webform');
+    return $instance;
   }
 
   /**
@@ -176,7 +157,7 @@ class WebformTemplatesController extends ControllerBase implements ContainerInje
     // Display info.
     if ($total = count($rows)) {
       $build['info'] = [
-        '#markup' => $this->formatPlural($total, '@total template', '@total templates', ['@total' => $total]),
+        '#markup' => $this->formatPlural($total, '@count template', '@count templates'),
         '#prefix' => '<div>',
         '#suffix' => '</div>',
       ];

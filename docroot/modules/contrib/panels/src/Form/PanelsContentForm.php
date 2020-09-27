@@ -2,11 +2,11 @@
 
 namespace Drupal\panels\Form;
 
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\TempStore\SharedTempStoreFactory;
+use Drupal\Core\Url;
 use Drupal\ctools\Form\AjaxFormTrait;
+use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -31,24 +31,13 @@ class PanelsContentForm extends FormBase {
   protected $tempstore_id;
 
   /**
-   * ModuleHandler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandler
-   *   ModuleHandler.
-   */
-  protected $moduleHandler;
-
-  /**
    * Constructs a new VariantPluginContentForm.
    *
    * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
    *   The tempstore factory.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *   The module handler.
    */
-  public function __construct(SharedTempStoreFactory $tempstore, ModuleHandlerInterface $moduleHandler) {
+  public function __construct(SharedTempStoreFactory $tempstore) {
     $this->tempstore = $tempstore;
-    $this->moduleHandler = $moduleHandler;
   }
 
   /**
@@ -56,8 +45,7 @@ class PanelsContentForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('tempstore.shared'),
-      $container->get('module_handler')
+      $container->get('tempstore.shared')
     );
   }
 
@@ -106,19 +94,6 @@ class PanelsContentForm extends FormBase {
     $pattern_plugin = $variant_plugin->getPattern();
     $machine_name = $pattern_plugin->getMachineName($cached_values);
 
-    if ($this->moduleHandler->moduleExists('token')) {
-      $contexts = $pattern_plugin->getDefaultContexts($this->tempstore, $this->tempstore_id, $machine_name);
-      $tokens = $this->getContextAsTokenData($contexts);
-
-      $form['token_tree'] = [
-        '#type' => 'container',
-        'token_tree_link' => [
-          '#theme' => 'token_tree_link',
-          '#token_types' => $tokens,
-        ],
-      ];
-    }
-
     // Set up the attributes used by a modal to prevent duplication later.
     $attributes = $this->getAjaxAttributes();
     $add_button_attributes = $this->getAjaxButtonAttributes();
@@ -145,9 +120,9 @@ class PanelsContentForm extends FormBase {
           $this->t('Weight'),
           $this->t('Operations'),
         ],
-        '#attributes' => [
+        '#attributes' => array(
           'id' => 'blocks',
-        ],
+        ),
         '#empty' => $this->t('There are no regions for blocks.'),
       ];
       // Loop through the blocks per region.
@@ -270,29 +245,6 @@ class PanelsContentForm extends FormBase {
       $configuration['page_title'] = $form_state->getValue('page_title');
       $variant_plugin->setConfiguration($configuration);
     }
-  }
-
-  /**
-   * Get context as token data.
-   *
-   * @param array $contexts
-   *   Context.
-   *
-   * @return array
-   *   Array of tokens.
-   */
-  protected function getContextAsTokenData(array $contexts) {
-    $tokens = [];
-    foreach ($contexts as $context_key => $context) {
-      if (strpos($context->getContextDefinition()->getDataType(), 'entity:') === 0) {
-        $token_type = substr($context->getContextDefinition()->getDataType(), 7);
-        if ($token_type == 'taxonomy_term') {
-          $token_type = 'term';
-        }
-        $tokens[] = $token_type;
-      }
-    }
-    return $tokens;
   }
 
 }

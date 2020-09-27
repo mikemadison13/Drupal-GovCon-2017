@@ -4,8 +4,10 @@ namespace Drupal\webform\Element;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\webform\Utility\WebformElementHelper;
+use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 
 /**
@@ -172,7 +174,7 @@ class WebformMapping extends FormElement {
     array_unshift($element['#element_validate'], [get_called_class(), 'validateWebformMapping']);
 
     if (!empty($element['#states'])) {
-      webform_process_states($element, '#wrapper_attributes');
+      WebformFormHelper::processStates($element, '#wrapper_attributes');
     }
 
     $element['#attached']['library'][] = 'webform/webform.element.mapping';
@@ -189,8 +191,10 @@ class WebformMapping extends FormElement {
 
     // Note: Not validating REQUIRED_ALL because each destination element is
     // already required.
-    $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
-    if ($element['#required'] && $element['#required'] !== static::REQUIRED_ALL && empty($value) && $has_access) {
+    if (Element::isVisibleElement($element)
+      && $element['#required']
+      && $element['#required'] !== static::REQUIRED_ALL
+      && empty($value)) {
       WebformElementHelper::setRequiredError($element, $form_state);
     }
 

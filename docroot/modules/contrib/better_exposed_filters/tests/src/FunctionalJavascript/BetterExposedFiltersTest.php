@@ -22,6 +22,11 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
     'block',
     'node',
@@ -34,7 +39,7 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Enable AJAX on the our test view.
@@ -89,8 +94,8 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
 
     // Ensure that the content we're testing for is present.
     $html = $page->getHtml();
-    $this->assertContains('Page One', $html);
-    $this->assertContains('Page Two', $html);
+    $this->assertStringContainsString('Page One', $html);
+    $this->assertStringContainsString('Page Two', $html);
 
     // Search for "Page One".
     $field_bef_integer = $page->findField('field_bef_integer_value');
@@ -100,8 +105,8 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
 
     // Verify that only the "Page One" Node is present.
     $html = $page->getHtml();
-    $this->assertContains('Page One', $html);
-    $this->assertNotContains('Page Two', $html);
+    $this->assertStringContainsString('Page One', $html);
+    $this->assertStringNotContainsString('Page Two', $html);
 
     // Enter value in email field.
     $field_bef_email = $page->find('css', '.form-item-field-bef-email-value input');
@@ -109,8 +114,8 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Verify nothing has changed.
-    $this->assertContains('Page One', $html);
-    $this->assertNotContains('Page Two', $html);
+    $this->assertStringContainsString('Page One', $html);
+    $this->assertStringNotContainsString('Page Two', $html);
 
     // Submit form.
     $this->submitForm([], 'Apply');
@@ -118,8 +123,8 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
 
     // Verify no results are visible.
     $html = $page->getHtml();
-    $this->assertNotContains('Page One', $html);
-    $this->assertNotContains('Page Two', $html);
+    $this->assertStringNotContainsString('Page One', $html);
+    $this->assertStringNotContainsString('Page Two', $html);
   }
 
   /**
@@ -146,8 +151,8 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
 
     // Ensure that the content we're testing for is present.
     $html = $page->getHtml();
-    $this->assertContains('Page One', $html);
-    $this->assertContains('Page Two', $html);
+    $this->assertStringContainsString('Page One', $html);
+    $this->assertStringContainsString('Page Two', $html);
 
     // Search for "Page One".
     $field_bef_integer = $page->findField('field_bef_integer_value');
@@ -157,8 +162,8 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
 
     // Verify that only the "Page One" Node is present.
     $html = $page->getHtml();
-    $this->assertContains('Page One', $html);
-    $this->assertNotContains('Page Two', $html);
+    $this->assertStringContainsString('Page One', $html);
+    $this->assertStringNotContainsString('Page Two', $html);
 
     // Enter value in email field.
     $field_bef_email = $page->find('css', '.form-item-field-bef-email-value input');
@@ -166,8 +171,8 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Verify nothing has changed.
-    $this->assertContains('Page One', $html);
-    $this->assertNotContains('Page Two', $html);
+    $this->assertStringContainsString('Page One', $html);
+    $this->assertStringNotContainsString('Page Two', $html);
 
     // Submit form.
     $this->submitForm([], 'Apply');
@@ -175,8 +180,8 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
 
     // Verify no results are visible.
     $html = $page->getHtml();
-    $this->assertNotContains('Page One', $html);
-    $this->assertNotContains('Page Two', $html);
+    $this->assertStringNotContainsString('Page One', $html);
+    $this->assertStringNotContainsString('Page Two', $html);
   }
 
   /**
@@ -223,8 +228,7 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
     // Assert our fields are initially hidden inside the collapsible field-set.
     $secondary_options = $page->find('css', '.bef--secondary');
     $this->assertFalse($secondary_options->hasAttribute('open'));
-    $field_bef_boolean = $page->findField('field_bef_boolean_value');
-    $this->assertFalse($field_bef_boolean->isVisible());
+    $secondary_options->hasField('field_bef_boolean_value');
 
     // Submit form and set a value for the boolean field.
     $secondary_options->click();
@@ -235,8 +239,6 @@ class BetterExposedFiltersTest extends WebDriverTestBase {
     // Verify our field-set is open and our fields visible.
     $secondary_options = $page->find('css', '.bef--secondary');
     $this->assertTrue($secondary_options->hasAttribute('open'));
-    $field_bef_boolean = $page->findField('field_bef_boolean_value');
-    $this->assertTrue($field_bef_boolean->isVisible());
   }
 
 }

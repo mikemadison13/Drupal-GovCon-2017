@@ -6,6 +6,7 @@ use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\webform\Form\WebformDialogFormTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a webform add form.
@@ -13,6 +14,38 @@ use Drupal\webform\Form\WebformDialogFormTrait;
 class WebformEntityAddForm extends BundleEntityFormBase {
 
   use WebformDialogFormTrait;
+
+  /**
+   * Active database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
+   * The state service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
+   * The current route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    $instance = parent::create($container);
+    $instance->database = $container->get('database');
+    $instance->state = $container->get('state');
+    $instance->routeMatch = $container->get('current_route_match');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -111,31 +144,31 @@ class WebformEntityAddForm extends BundleEntityFormBase {
     parent::submitForm($form, $form_state);
 
     if ($this->operation === 'duplicate') {
-      $original_id = \Drupal::routeMatch()->getRawParameter('webform');
+      $original_id = $this->routeMatch->getRawParameter('webform');
       $duplicate_id = $this->getEntity()->id();
 
       // Poormans duplication of translated webform configuration.
       // This completely bypasses the config translation system and just
       // duplicates any translated webform config stored in the database.
-      $result = \Drupal::database()->select('config', 'c')
+      $result = $this->database->select('config', 'c')
         ->fields('c', ['collection', 'name', 'data'])
         ->condition('c.name', 'webform.webform.' . $original_id)
         ->condition('c.collection', 'language.%', 'LIKE')
         ->execute();
       while ($record = $result->fetchAssoc()) {
         $record['name'] = 'webform.webform.' . $duplicate_id;
-        \Drupal::database()->insert('config')
+        $this->database->insert('config')
           ->fields(['collection', 'name', 'data'])
           ->values($record)
           ->execute();
       }
 
       // Copy webform export and results from state.
-      $state = \Drupal::state()->get("webform.webform.$original_id");
+      $state = $this->state->get("webform.webform.$original_id");
       // Remove node (source entity) keys.
       unset($state['results.export.node'], $state['results.custom.node']);
       if ($state) {
-        \Drupal::state()->set("webform.webform.$duplicate_id", $state);
+        $this->state->set("webform.webform.$duplicate_id", $state);
       }
     }
 

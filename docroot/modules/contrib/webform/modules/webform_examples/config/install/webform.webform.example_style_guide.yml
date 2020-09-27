@@ -374,10 +374,10 @@ elements: |
         last_name:
           '#type': textfield
           '#title': 'Last name'
-        gender:
+        sex:
           '#type': webform_select_other
-          '#options': gender
-          '#title': Gender
+          '#options': sex
+          '#title': Sex
         martial_status:
           '#type': webform_select_other
           '#options': marital_status
@@ -643,7 +643,7 @@ elements: |
       '#type': address
       '#title': Address
       '#description': '@see <a href="https://www.drupal.org/project/address">https://www.drupal.org/project/address</a>'
-
+  
 css: ''
 javascript: ''
 settings:
@@ -664,7 +664,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -716,6 +716,8 @@ settings:
   wizard_progress_link: false
   wizard_progress_states: false
   wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -771,6 +773,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  serial_disabled: false
 access:
   create:
     roles:

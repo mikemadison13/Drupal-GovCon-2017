@@ -2,21 +2,13 @@
 
 namespace Drupal\webform\Plugin\DevelGenerate;
 
-use Drupal\Core\Database\Connection;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\webform\Utility\WebformArrayHelper;
-use Drupal\webform\WebformEntityReferenceManagerInterface;
-use Drupal\webform\WebformSubmissionGenerateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Provides a WebformSubmissionDevelGenerate trait.
- *
- * @see webform_devel_generate_info_alter()
+ * Provides a WebformSubmissionDevelGenerate plugin.
  */
 trait WebformSubmissionDevelGenerateTrait {
 
@@ -84,55 +76,19 @@ trait WebformSubmissionDevelGenerateTrait {
   protected $messenger;
 
   /**
-   * Constructs a WebformSubmissionDevelGenerate object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack.
-   * @param \Drupal\Core\Database\Connection $database
-   *   The database.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
-   * @param \Drupal\webform\WebformSubmissionGenerateInterface $webform_submission_generate
-   *   The webform submission generator.
-   * @param \Drupal\webform\WebformEntityReferenceManagerInterface $webform_entity_reference_manager
-   *   The webform entity reference manager.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RequestStack $request_stack, Connection $database, EntityTypeManagerInterface $entity_type_manager, MessengerInterface $messenger, WebformSubmissionGenerateInterface $webform_submission_generate, WebformEntityReferenceManagerInterface $webform_entity_reference_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->request = $request_stack->getCurrentRequest();
-    $this->database = $database;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->messenger = $messenger;
-    $this->webformSubmissionGenerate = $webform_submission_generate;
-    $this->webformEntityReferenceManager = $webform_entity_reference_manager;
-    $this->webformStorage = $entity_type_manager->getStorage('webform');
-    $this->webformSubmissionStorage = $entity_type_manager->getStorage('webform_submission');
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('request_stack'),
-      $container->get('database'),
-      $container->get('entity_type.manager'),
-      $container->get('messenger'),
-      $container->get('webform_submission.generate'),
-      $container->get('webform.entity_reference_manager')
-    );
+    $instance = new static($configuration, $plugin_id, $plugin_definition);
+    $instance->request = $container->get('request_stack')->getCurrentRequest();
+    $instance->database = $container->get('database');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->messenger = $container->get('messenger');
+    $instance->webformSubmissionGenerate = $container->get('webform_submission.generate');
+    $instance->webformEntityReferenceManager = $container->get('webform.entity_reference_manager');
+    $instance->webformStorage = $container->get('entity_type.manager')->getStorage('webform');
+    $instance->webformSubmissionStorage = $container->get('entity_type.manager')->getStorage('webform_submission');
+    return $instance;
   }
 
   /**

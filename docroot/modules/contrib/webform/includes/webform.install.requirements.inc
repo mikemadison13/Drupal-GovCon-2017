@@ -108,14 +108,14 @@ function webform_requirements($phase) {
   /****************************************************************************/
 
   if (\Drupal::config('webform.settings')->get('requirements.bootstrap')) {
-    $spam_protection = FALSE;
+    $bootstrap_enabled = FALSE;
     $themes = \Drupal::service('theme_handler')->listInfo();
     foreach ($themes as $theme) {
       if ((isset($theme->base_themes) && isset($theme->base_themes['bootstrap'])) || $theme === 'bootstrap') {
-        $spam_protection = TRUE;
+        $bootstrap_enabled = TRUE;
       }
     }
-    if ($spam_protection) {
+    if ($bootstrap_enabled) {
       if (\Drupal::moduleHandler()->moduleExists('webform_bootstrap')) {
         $requirements['webform_bootstrap'] = [
           'title' => t('Webform: Bootstrap integration'),
@@ -130,6 +130,63 @@ function webform_requirements($phase) {
           'severity' => REQUIREMENT_WARNING,
         ];
       }
+    }
+  }
+
+  /****************************************************************************/
+  // Check Clientside validation module.
+  /****************************************************************************/
+
+  if (\Drupal::config('webform.settings')->get('requirements.clientside_validation')
+    && \Drupal::moduleHandler()->moduleExists('clientside_validation')) {
+    if (\Drupal::moduleHandler()->moduleExists('webform_clientside_validation')) {
+      $requirements['webform_clientside_validation'] = [
+        'title' => t('Webform: Clientside validation'),
+        'value' => t('Webform Clientside Validation module installed.'),
+      ];
+    }
+    else {
+      $requirements['webform_clientside_validation'] = [
+        'title' => t('Webform: Clientside validation'),
+        'value' => t('Webform Clientside Validation module not installed.'),
+        'description' => t('The Webform Clientside Validation module helps support Webform Clientside Validation integration. <a href=":href">Disable Webform Clientside Validation warning</a>', [':href' => Url::fromRoute('webform.config.advanced')->toString()]),
+        'severity' => REQUIREMENT_WARNING,
+      ];
+    }
+  }
+
+  /****************************************************************************/
+  // Check jQuery UI Datepicker module.
+  /****************************************************************************/
+
+  $config_factory = \Drupal::configFactory();
+  $has_datepicker = FALSE;
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $data = $webform_config->getRawData();
+    if (strpos($data['elements'], 'datepicker')) {
+      $has_datepicker = TRUE;
+      break;
+    }
+  }
+  if ($has_datepicker) {
+    if (\Drupal::moduleHandler()->moduleExists('jquery_ui_datepicker')) {
+      $requirements['jquery_ui_datepicker'] = [
+        'title' => t('Webform: jQuery UI Datepicker'),
+        'value' => t('jQuery UI Datepicker module installed.'),
+      ];
+    }
+    else {
+      $t_args = [
+        ':href_webform' => Url::fromRoute('entity.webform.collection', [], ['query' => ['search' => 'datepicker']])->toString(),
+        ':href_datepicker' => 'https://www.drupal.org/project/jquery_ui_datepicker',
+      ];
+      $requirements['jquery_ui_datepicker'] = [
+        'title' => t('Webform: jQuery UI Datepicker'),
+        'value' => t('jQuery UI Datepicker module not installed.'),
+        'description' => t('The <a href=":href_datepicker">jQuery UI Datepicker</a> module is required to support datepickers. Disable this datepicker warning by <a href=":href_webform">removing #datepicker property from all webforms</a>.', $t_args),
+        'severity' => REQUIREMENT_WARNING,
+      ];
     }
   }
 

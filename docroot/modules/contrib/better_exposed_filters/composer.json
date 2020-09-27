@@ -23,5 +23,11 @@
       "type": "composer",
       "url": "https://packages.drupal.org/8"
     }
-  ]
+  ],
+  "require": {
+    "drupal/jquery_ui": "^1.4",
+    "drupal/jquery_ui_slider": "^1.1",
+    "drupal/jquery_ui_touch_punch": "^1.0",
+    "drupal/jquery_ui_datepicker": "^1.0"
+  }
 }

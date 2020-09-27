@@ -6,23 +6,11 @@ Why? While there are many static analysis tools out there, none of them run with
 
 Are you ready for Drupal 9? Check out our [Drupal 9 Readiness](https://github.com/mglaman/drupal-check/wiki/Drupal-9-Readiness) instructions for details on how this tool can help.
 
-Don't want to run Drupal Check on your own? We offer a hosted version in [Centarro Toolbox](https://www.centarro.io/products/centarro-toolbox) for folks who want it done for them.
-
 ## Requirements
 
-* PHP >=7.1
+* PHP >=7.2
 
 ## Installation
-
-The easiest way to install is by downloading the latest PHAR and putting it into your path. For example:
-
-```
-curl -O -L https://github.com/mglaman/drupal-check/releases/latest/download/drupal-check.phar
-mv drupal-check.phar /usr/local/bin/drupal-check
-chmod +x /usr/local/bin/drupal-check
-```
-
-### Composer
 
 You can install this in your project using Composer as a development dependency like so:
 
@@ -37,12 +25,6 @@ composer global require mglaman/drupal-check
 ```
 
 Refer to Composer's documentation on how to ensure global binaries are in your PATH: https://getcomposer.org/doc/00-intro.md#manual-installation.
-
-Note: you can also install this locally to your project and run it from that project's Composer bin directory.
-
-### Build From Source
-
-Follow these instructions to build from source: https://github.com/mglaman/drupal-check/wiki/Build-From-Source.
 
 ## Usage
 
@@ -74,6 +56,7 @@ Options:
 
 * `-a` Check analysis
 * `-d` Check deprecations (default)
+* `-e` Exclude directories. Wildcards work. Separate multiple excluded directories with commas, no spaces. e.g.: \*/tests/codeception/acceptance/\*.php
 * `--drupal-root` Path to Drupal root. Fallback option if drupal-check could not identify Drupal root from the provided path(s).
 
 Examples:
@@ -101,7 +84,7 @@ Examples:
   ```
   drupal-check -ad web/modules/contrib/address
   ```
-  
+
 ## Drupal Check - VS Code Extension
 
 You can run Drupal Check from VSCode using this extension: https://marketplace.visualstudio.com/items?itemName=bbeversdorf.drupal-check

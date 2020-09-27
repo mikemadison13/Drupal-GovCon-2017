@@ -144,9 +144,9 @@ class WebformCustomComposite extends WebformCompositeBase {
           '#title' => 'Name',
           '#title_display' => 'invisible',
         ],
-        'gender' => [
+        'sex' => [
           '#type' => 'select',
-          '#title' => 'Gender',
+          '#title' => 'Sex',
           '#title_display' => 'invisible',
           '#options' => [
             'Male' => $this->t('Male'),

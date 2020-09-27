@@ -40,12 +40,11 @@ class DateTime extends DateBase {
       }
     }
 
-    return [
+    $properties = [
       'date_min' => '',
       'date_max' => '',
       // Date settings.
       'date_date_format' => $date_format,
-      'date_date_datepicker_button' => FALSE,
       'date_date_element' => 'date',
       'date_year_range' => '1900:2050',
       'date_date_placeholder' => '',
@@ -57,6 +56,12 @@ class DateTime extends DateBase {
       'date_time_step' => '',
       'date_time_placeholder' => '',
     ] + parent::defineDefaultProperties();
+    if ($this->datePickerExists()) {
+      $properties += [
+        'date_date_datepicker_button' => FALSE,
+      ];
+    }
+    return $properties;
   }
 
   /**
@@ -175,6 +180,9 @@ class DateTime extends DateBase {
         'none' => $this->t('None - Do not display a date element'),
       ],
     ];
+    if (!$this->datePickerExists()) {
+      unset($form['date']['date_date_element']['#options']['datepicker']);
+    }
     $form['date']['date_date_datepicker_button'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show date picker button'),
@@ -249,7 +257,6 @@ class DateTime extends DateBase {
       '#description' => $this->t("A description of the range of years to allow, like '1900:2050', '-3:+3' or '2000:+3', where the first value describes the earliest year and the second the latest year in the range.") . ' ' .
       $this->t('A year in either position means that specific year.') . ' ' .
       $this->t('A +/- value describes a dynamic value that is that many years earlier or later than the current year at the time the webform is displayed.') . ' ' .
-      $this->t("Used in jQueryUI (fallback) datepicker year range and HTML5 min/max date settings. Defaults to '1900:2050'.") . ' ' .
       $this->t('Use min/max validation to define a more specific date range.'),
       '#states' => [
         'invisible' => [

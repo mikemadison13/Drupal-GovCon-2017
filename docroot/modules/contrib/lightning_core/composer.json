@@ -4,6 +4,7 @@
     "description": "Shared functionality for the Lightning distribution.",
     "license": "GPL-2.0-or-later",
     "require": {
+        "drupal/acquia_telemetry-acquia_telemetry": "^1.0-alpha3",
         "drupal/contact_storage": "^1.0",
         "drupal/core": "^8.8.6 || ~9.0.0-beta3",
         "drupal/metatag": "^1.13",
@@ -11,7 +12,7 @@
         "drupal/redirect": "^1.5",
         "drupal/search_api": "^1.16",
         "drupal/token": "^1.7",
-        "phpdocumentor/reflection-docblock": ">=3"
+        "phpdocumentor/reflection-docblock": "^4"
     },
     "conflict": {
         "drupal/drupal-extension": "<3.4.0"
@@ -23,6 +24,7 @@
         "drupal/core-dev": "*",
         "drush/drush": ">=9.7",
         "oomphinc/composer-installers-extender": "^1.1",
+        "symfony/options-resolver": ">=4",
         "vijaycs85/drupal-quality-checker": "^1.0"
     },
     "config": {

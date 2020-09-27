@@ -9,16 +9,12 @@ use Drupal\Core\Serialization\Yaml;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\ElementInfoManagerInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Drupal\webform\Element\WebformElementStates;
 use Drupal\webform\Form\WebformEntityAjaxFormTrait;
 use Drupal\webform\Plugin\WebformElement\WebformElement;
 use Drupal\webform\Plugin\WebformElement\WebformTable;
 use Drupal\webform\Utility\WebformDialogHelper;
-use Drupal\webform\Plugin\WebformElementManagerInterface;
-use Drupal\webform\WebformEntityElementsValidatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -76,34 +72,15 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
   protected $tokenManager;
 
   /**
-   * Constructs a WebformUiEntityElementsForm.
-   *
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer.
-   * @param \Drupal\Core\Render\ElementInfoManagerInterface $element_info
-   *   The element manager.
-   * @param \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager
-   *   The webform element manager.
-   * @param \Drupal\webform\WebformEntityElementsValidatorInterface $elements_validator
-   *   Webform element validator.
-   */
-  public function __construct(RendererInterface $renderer, ElementInfoManagerInterface $element_info, WebformElementManagerInterface $element_manager, WebformEntityElementsValidatorInterface $elements_validator) {
-    $this->renderer = $renderer;
-    $this->elementInfo = $element_info;
-    $this->elementManager = $element_manager;
-    $this->elementsValidator = $elements_validator;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('renderer'),
-      $container->get('plugin.manager.element_info'),
-      $container->get('plugin.manager.webform.element'),
-      $container->get('webform.elements_validator')
-    );
+    $instance = parent::create($container);
+    $instance->renderer = $container->get('renderer');
+    $instance->elementInfo = $container->get('plugin.manager.element_info');
+    $instance->elementManager = $container->get('plugin.manager.webform.element');
+    $instance->elementsValidator = $container->get('webform.elements_validator');
+    return $instance;
   }
 
   /**
@@ -465,6 +442,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     $key = $element['#webform_key'];
     $title = $element['#admin_title'] ?: $element['#title'];
     $title = (is_array($title)) ? $this->renderer->render($title) : $title;
+
     $plugin_id = $this->elementManager->getElementPluginId($element);
 
     /** @var \Drupal\webform\Plugin\WebformElementInterface $webform_element */
@@ -473,7 +451,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     $is_container = $webform_element->isContainer($element);
     $is_root = $webform_element->isRoot();
     $is_element_disabled = $webform_element->isDisabled();
-    $is_access_disabled = (isset($element['#access']) && $element['#access'] === FALSE);
+    $is_access_disabled = !Element::isVisibleElement($element);
 
     // If disabled, display warning.
     if ($is_element_disabled) {
@@ -517,15 +495,25 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     }
 
     $row['title'] = [
-      '#type' => 'link',
-      '#title' => $element['#admin_title'] ?: $element['#title'],
-      '#url' => new Url('entity.webform_ui.element.edit_form', [
-        'webform' => $webform->id(),
-        'key' => $key,
-      ]),
-      '#attributes' => $element_dialog_attributes,
-      '#prefix' => !empty($indentation) ? $this->renderer->renderPlain($indentation) : '',
+      'link' => [
+        '#type' => 'link',
+        '#title' => $element['#admin_title'] ?: $element['#title'],
+        '#url' => new Url('entity.webform_ui.element.edit_form', [
+          'webform' => $webform->id(),
+          'key' => $key,
+        ]),
+        '#attributes' => $element_dialog_attributes,
+        '#prefix' => !empty($indentation) ? $this->renderer->renderPlain($indentation) : '',
+      ],
     ];
+    if (!empty($element['#admin_notes'])) {
+      $row['title']['notes'] = [
+        '#type' => 'webform_help',
+        '#help_title' => $element['#admin_title'] ?: $element['#title'],
+        '#help' => $element['#admin_notes'],
+        '#weight' => 100,
+      ];
+    }
 
     if ($webform->hasContainer()) {
       if ($is_container) {

@@ -12,7 +12,7 @@ template: false
 archive: false
 id: test_element_description_tooltip
 title: 'Test: Element: Description tooltip'
-description: 'Test element eescription tooltip.'
+description: 'Test element description tooltip.'
 category: 'Test: Element'
 elements: |
   basic_elements:
@@ -165,9 +165,9 @@ elements: |
           '#type': textfield
           '#title': Name
           '#title_display': invisible
-        gender:
+        sex:
           '#type': select
-          '#title': Gender
+          '#title': Sex
           '#title_display': invisible
           '#options':
             Male: Male
@@ -466,7 +466,7 @@ elements: |
       '#title': 'Machine name'
       '#description': 'This is a description for the ''machine_name'' element.'
       '#description_display': tooltip
-
+  
 css: ''
 javascript: ''
 settings:
@@ -487,7 +487,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -539,6 +539,8 @@ settings:
   wizard_progress_link: false
   wizard_progress_states: false
   wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -594,6 +596,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  serial_disabled: false
 access:
   create:
     roles:

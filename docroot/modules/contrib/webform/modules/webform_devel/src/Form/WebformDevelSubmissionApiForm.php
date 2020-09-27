@@ -3,14 +3,11 @@
 namespace Drupal\webform_devel\Form;
 
 use Drupal\Component\Utility\Variable;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
-use Drupal\webform\WebformRequestInterface;
 use Drupal\webform\WebformSubmissionForm;
-use Drupal\webform\WebformSubmissionGenerateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -40,30 +37,14 @@ class WebformDevelSubmissionApiForm extends FormBase {
   protected $generate;
 
   /**
-   * Constructs a WebformDevelSubmissionApiForm object.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\webform\WebformRequestInterface $request_handler
-   *   The webform request handler.
-   * @param \Drupal\webform\WebformSubmissionGenerateInterface $submission_generate
-   *   The webform submission generation service.
-   */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, WebformRequestInterface $request_handler, WebformSubmissionGenerateInterface $submission_generate) {
-    $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
-    $this->requestHandler = $request_handler;
-    $this->generate = $submission_generate;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity_type.manager'),
-      $container->get('webform.request'),
-      $container->get('webform_submission.generate')
-    );
+    $instance = parent::create($container);
+    $instance->submissionStorage = $container->get('entity_type.manager')->getStorage('webform_submission');
+    $instance->requestHandler = $container->get('webform.request');
+    $instance->generate = $container->get('webform_submission.generate');
+    return $instance;
   }
 
   /**

@@ -2,19 +2,14 @@
 
 namespace Drupal\webform;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\webform\Element\WebformHtmlEditor;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Defines a class to build a listing of webform entities.
@@ -29,6 +24,13 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
    * @var \Symfony\Component\HttpFoundation\Request
    */
   protected $request;
+
+  /**
+   * The configuration object factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
 
   /**
    * The current user.
@@ -80,50 +82,33 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
   protected $roleStorage;
 
   /**
-   * Constructs a new WebformListBuilder object.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   *   The entity type definition.
-   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
-   *   The entity storage class.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
-   */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, RequestStack $request_stack, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory = NULL) {
-    parent::__construct($entity_type, $storage);
-    $this->request = $request_stack->getCurrentRequest();
-    $this->currentUser = $current_user;
-
-    $query = $this->request->query;
-    $config = $config_factory->get('webform.settings');
-    $this->keys = ($query->has('search')) ? $query->get('search') : '';
-    $this->category = ($query->has('category')) ? $query->get('category') : $config->get('form.filter_category');
-    $this->state = ($query->has('state')) ? $query->get('state') : $config->get('form.filter_state');
-
-    $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
-    $this->userStorage = $entity_type_manager->getStorage('user');
-    $this->roleStorage = $entity_type_manager->getStorage('user_role');
-
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    return new static(
-      $entity_type,
-      $container->get('entity_type.manager')->getStorage($entity_type->id()),
-      $container->get('request_stack'),
-      $container->get('current_user'),
-      $container->get('entity_type.manager'),
-      $container->get('config.factory')
-    );
+    /** @var \Drupal\webform\WebformEntityListBuilder $instance */
+    $instance = parent::createInstance($container, $entity_type);
+
+    $entity_type_manager = $container->get('entity_type.manager');
+
+    $instance->request = $container->get('request_stack')->getCurrentRequest();
+    $instance->configFactory = $container->get('config.factory');
+    $instance->currentUser = $container->get('current_user');
+    $instance->submissionStorage = $entity_type_manager->getStorage('webform_submission');
+    $instance->userStorage = $entity_type_manager->getStorage('user');
+    $instance->roleStorage = $entity_type_manager->getStorage('user_role');
+    $instance->initialize();
+    return $instance;
+  }
+
+  /**
+   * Initialize WebformEntityListBuilder object.
+   */
+  protected function initialize() {
+    $query = $this->request->query;
+    $config = $this->configFactory->get('webform.settings');
+    $this->keys = ($query->has('search')) ? $query->get('search') : '';
+    $this->category = ($query->has('category')) ? $query->get('category') : $config->get('form.filter_category');
+    $this->state = ($query->has('state')) ? $query->get('state') : $config->get('form.filter_state');
   }
 
   /**
@@ -206,7 +191,7 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
     // Display info.
     if ($this->currentUser->hasPermission('administer webform') && ($total = $this->getTotal($this->keys, $this->category, $this->state))) {
       return [
-        '#markup' => $this->formatPlural($total, '@total webform', '@total webforms', ['@total' => $total]),
+        '#markup' => $this->formatPlural($total, '@count webform', '@count webforms'),
         '#prefix' => '<div>',
         '#suffix' => '</div>',
       ];

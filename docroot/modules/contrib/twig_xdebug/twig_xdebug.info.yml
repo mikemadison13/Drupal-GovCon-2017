@@ -4,3 +4,8 @@ core: 8.x
 core_version_requirement: ^8 || ^9
 description: 'Enables Xdebug breakpoints in Twig.'
 package: Development
+
+# Information added by Drupal.org packaging script on 2020-04-28
+version: '8.x-1.2'
+project: 'twig_xdebug'
+datestamp: 1588041098

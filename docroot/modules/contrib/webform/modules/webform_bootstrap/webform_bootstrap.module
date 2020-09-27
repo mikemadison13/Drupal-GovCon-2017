@@ -46,13 +46,6 @@ function webform_bootstrap_webform_element_alter(array &$element, FormStateInter
     return;
   }
 
-  // Remove jQuery Tooltip and use Bootstrap Tooltip.
-  // @see \Drupal\webform\Plugin\WebformElementBase::prepare
-  if (isset($element['#attached']['library'][0]) && $element['#attached']['library'][0] === 'webform/webform.tooltip') {
-    unset($element['#attached']['library'][0]);
-    $element['#attached']['library'] = array_values($element['#attached']['library']);
-  }
-
   // Convert #description are being changed smart descriptions which
   // contain render arrays to rendered markup.
   // @see \Drupal\bootstrap\Utility\Element::smartDescription
@@ -98,28 +91,6 @@ function webform_bootstrap_webform_element_alter(array &$element, FormStateInter
         }
       }
     }
-  }
-}
-
-/**
- * Implements hook_js_alter().
- */
-function webform_bootstrap_js_alter(&$javascript, AttachedAssetsInterface $assets) {
-  if (!_webform_bootstrap_is_active_theme()) {
-    return;
-  }
-
-  $path = drupal_get_path('module', 'webform_bootstrap');
-  // Make sure jQuery tooltip is never loaded and use custom
-  // webform.element.help.js.
-  unset(
-    $javascript['core/assets/vendor/jquery.ui/ui/tooltip-min.js'],
-    $javascript['core/assets/vendor/jquery.ui/ui/widgets/tooltip-min.js']
-  );
-
-  $webform_help_path = drupal_get_path('module', 'webform') . '/js/webform.element.help.js';
-  if (isset($javascript[$webform_help_path])) {
-    $javascript[$webform_help_path]['data'] = $path . '/js/webform.element.help.js';
   }
 }
 
@@ -271,7 +242,21 @@ function _webform_bootstrap_convert_button_classes(array &$classes) {
  *   TRUE if Bootstrap is the active theme.
  */
 function _webform_bootstrap_is_active_theme() {
-  /** @var \Drupal\webform\WebformThemeManagerInterface $theme_manager */
-  $theme_manager = \Drupal::service('webform.theme_manager');
-  return $theme_manager->isActiveTheme('bootstrap');
+  $is_active_theme = &drupal_static(__FUNCTION__);
+  if (isset($is_active_theme)) {
+    return $is_active_theme;
+  }
+
+  // Catch 'TypeError' in Drupal\webform\WebformThemeManager::__construct()
+  // which is triggered by service argument changes before the cache is cleared.
+  try {
+    /** @var \Drupal\webform\WebformThemeManagerInterface $theme_manager */
+    $theme_manager = \Drupal::service('webform.theme_manager');
+    $is_active_theme = $theme_manager->isActiveTheme('bootstrap');
+  }
+  catch (\TypeError $error) {
+    $is_active_theme = FALSE;
+  }
+
+  return $is_active_theme;
 }

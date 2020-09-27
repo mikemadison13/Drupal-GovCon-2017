@@ -3,10 +3,8 @@
 namespace Drupal\webform\Form;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\WebformInterface;
-use Drupal\webform\WebformRequestInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -64,29 +62,16 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
   protected $requestHandler;
 
   /**
-   * Constructs a WebformResultsDeleteFormBase object.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\webform\WebformRequestInterface $request_handler
-   *   The webform request handler.
-   */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, WebformRequestInterface $request_handler) {
-    $this->entityTypeManager = $entity_type_manager;
-    $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
-    $this->requestHandler = $request_handler;
-
-    list($this->webform, $this->sourceEntity) = $this->requestHandler->getWebformEntities();
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity_type.manager'),
-      $container->get('webform.request')
-    );
+    $instance = parent::create($container);
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->submissionStorage = $instance->entityTypeManager->getStorage('webform_submission');
+    $instance->requestHandler = $container->get('webform.request');
+    list($instance->webform, $instance->sourceEntity) = $instance->requestHandler->getWebformEntities();
+    return $instance;
+
   }
 
   /**

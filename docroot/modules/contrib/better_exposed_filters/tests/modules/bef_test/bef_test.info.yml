@@ -1,7 +1,7 @@
 name: BEF Test
 type: module
 description: Test module for Better Exposed Filters
-core: 8.x
+core_version_requirement: ^8.8 || ^9
 package: Views
 dependencies:
   - better_exposed_filters:better_exposed_filters
@@ -11,6 +11,6 @@ dependencies:
   - drupal:user
 
 # Information added by Drupal.org packaging script on 2020-07-07
-version: '8.x-4.0-beta2'
+version: '8.x-5.0-beta1'
 project: 'better_exposed_filters'
-datestamp: 1594138020
+datestamp: 1594141894

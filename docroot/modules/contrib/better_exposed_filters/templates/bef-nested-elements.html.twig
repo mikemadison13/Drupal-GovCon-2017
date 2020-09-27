@@ -12,7 +12,7 @@
     - loop: The loop variable from the iterator that calls this template.
       Requires the loop.first and loop.last elements.
 #}
-{% spaceless %}
+{% apply spaceless %}
   {% set delta = (current_nesting_level - new_nesting_level) | abs %}
   {% if loop.first %}
     <ul>
@@ -36,4 +36,4 @@
       </li></ul>
     {% endfor %}
   {% endif %}
-{% endspaceless %}
+{% endapply %}

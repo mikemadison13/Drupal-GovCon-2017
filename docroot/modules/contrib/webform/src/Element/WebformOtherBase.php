@@ -5,8 +5,10 @@ namespace Drupal\webform\Element;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\OptGroup;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\webform\Utility\WebformElementHelper;
+use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 
 /**
@@ -198,7 +200,7 @@ abstract class WebformOtherBase extends FormElement {
     $element['#attached']['library'][] = 'webform/webform.element.other';
 
     // Process states.
-    webform_process_states($element, '#wrapper_attributes');
+    WebformFormHelper::processStates($element, '#wrapper_attributes');
 
     return $element;
   }
@@ -208,9 +210,6 @@ abstract class WebformOtherBase extends FormElement {
    */
   public static function validateWebformOther(&$element, FormStateInterface $form_state, &$complete_form) {
     $type = static::getElementType();
-
-    // Determine if the element is visible. (#access !== FALSE)
-    $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
 
     // Determine if the element has multiple values.
     $is_multiple = static::isMultiple($element);
@@ -239,7 +238,7 @@ abstract class WebformOtherBase extends FormElement {
     $other_is_empty = (isset($element_value[static::OTHER_OPTION]) && $other_value === '');
 
     // Display missing other or missing value error.
-    if ($has_access) {
+    if (Element::isVisibleElement($element)) {
       $required_error_title = (isset($element['#title'])) ? $element['#title'] : NULL;
       if ($other_is_empty) {
         WebformElementHelper::setRequiredError($element['other'], $form_state, $required_error_title);

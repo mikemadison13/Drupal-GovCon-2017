@@ -7,12 +7,9 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\webform\Access\WebformAccessResult;
-use Drupal\webform\Plugin\WebformSourceEntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Defines the access control handler for the webform entity type.
@@ -50,39 +47,15 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
   protected $accessRulesManager;
 
   /**
-   * WebformEntityAccessControlHandler constructor.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   *   The entity type definition.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\webform\Plugin\WebformSourceEntityManagerInterface $webform_source_entity_manager
-   *   Webform source entity plugin manager.
-   * @param \Drupal\webform\WebformAccessRulesManagerInterface $access_rules_manager
-   *   Webform access rules manager service.
-   */
-  public function __construct(EntityTypeInterface $entity_type, RequestStack $request_stack, EntityTypeManagerInterface $entity_type_manager, WebformSourceEntityManagerInterface $webform_source_entity_manager, WebformAccessRulesManagerInterface $access_rules_manager) {
-    parent::__construct($entity_type);
-
-    $this->requestStack = $request_stack;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->webformSourceEntityManager = $webform_source_entity_manager;
-    $this->accessRulesManager = $access_rules_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    return new static(
-      $entity_type,
-      $container->get('request_stack'),
-      $container->get('entity_type.manager'),
-      $container->get('plugin.manager.webform.source_entity'),
-      $container->get('webform.access_rules_manager')
-    );
+    $instance = new static($entity_type);
+    $instance->requestStack = $container->get('request_stack');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->webformSourceEntityManager = $container->get('plugin.manager.webform.source_entity');
+    $instance->accessRulesManager = $container->get('webform.access_rules_manager');
+    return $instance;
   }
 
   /**

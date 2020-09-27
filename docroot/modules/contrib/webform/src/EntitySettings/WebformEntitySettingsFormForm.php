@@ -10,7 +10,6 @@ use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformDateHelper;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\WebformInterface;
-use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,22 +25,12 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
   protected $tokenManager;
 
   /**
-   * Constructs a WebformEntitySettingsFormForm.
-   *
-   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
-   *   The webform token manager.
-   */
-  public function __construct(WebformTokenManagerInterface $token_manager) {
-    $this->tokenManager = $token_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('webform.token_manager')
-    );
+    $instance = parent::create($container);
+    $instance->tokenManager = $container->get('webform.token_manager');
+    return $instance;
   }
 
   /**
@@ -358,12 +347,34 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
     ];
     $form['wizard_settings']['wizard_auto_forward'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t("Auto-forward to next page when a page with a single click-able input is completed"),
-      '#description' => $this->t("If checked, the used will be moved to the next page when a single click-able input is checked (i.e. radios, rating, and image select)."),
+      '#title' => $this->t('Auto-forward to next card when a card with a single click-able input is completed'),
+      '#description' => $this->t('If checked, the used will be moved to the next card when a single click-able input is checked (i.e. radios, rating, and image select).'),
       '#return_value' => TRUE,
       '#default_value' => $settings['wizard_auto_forward'],
       '#access' => FALSE,
     ];
+    $form['wizard_settings']['wizard_auto_forward_hide_next_button'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Hide the next button when auto-forwarding'),
+      '#description' => $this->t('If checked, the next button will be hidden when the input is not filled and can be auto-forwarded.'),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['wizard_auto_forward_hide_next_button'],
+      '#access' => FALSE,
+      '#states' => [
+        'visible' => [
+          ':input[name="wizard_auto_forward]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['wizard_settings']['wizard_keyboard'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Navigate between cards using left or right arrow keys'),
+      '#description' => $this->t('If checked, users will be able to move between cards using the left or right arrow keys.'),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['wizard_keyboard'],
+      '#access' => FALSE,
+    ];
+
     $form['wizard_settings']['wizard_confirmation'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Include confirmation page in progress'),
