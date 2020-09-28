@@ -8,6 +8,11 @@ namespace Drupal\linkicon;
 interface LinkIconManagerInterface {
 
   /**
+   * Play safe predefined option on forms, where DRUPAL_REQUIRED = 2.
+   */
+  const LINKICON_PREDEFINED = 5;
+
+  /**
    * Returns available settings.
    *
    * @param string $setting_name

@@ -6,11 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-
-/**
- * Play safe predefined option on forms and settings, where DRUPAL_REQUIRED = 2.
- */
-const LINKICON_PREDEFINED = 5;
+use Drupal\linkicon\LinkIconManagerInterface;
 
 /**
  * Provides a convenient shortcut for procedural hooks.
@@ -26,32 +22,6 @@ function linkicon() {
   }
 
   return $manager;
-}
-
-/**
- * Implements hook_library_info_build().
- */
-function linkicon_library_info_build() {
-  $libraries = $paths = $library_path = [];
-
-  if ($font_path = linkicon()->getSetting('font')) {
-    if (strpos($font_path, ',') !== FALSE) {
-      $paths = array_map('trim', explode(',', $font_path));
-      foreach ($paths as $path) {
-        $library_path[$path] = [];
-      }
-    }
-    else {
-      $library_path = [$font_path => []];
-    }
-    $libraries['linkicon.font'] = [
-      'css' => [
-        'base' => $library_path,
-      ],
-    ];
-  }
-
-  return $libraries;
 }
 
 /**
@@ -71,6 +41,13 @@ function linkicon_theme() {
 }
 
 /**
+ * Implements hook_library_info_build().
+ */
+function linkicon_library_info_build() {
+  return linkicon()->libraryInfoBuild();
+}
+
+/**
  * Implements hook_field_info_alter().
  */
 function linkicon_field_info_alter(&$info) {
@@ -86,7 +63,7 @@ function linkicon_field_widget_link_default_form_alter(&$element, FormStateInter
   if (isset($element['uri']) && isset($element['title'])) {
     $items = $context['items'];
     // @todo drop 'predefined' for the new integer: LINKICON_PREDEFINED.
-    $predefined = $items->getSetting('title') === LINKICON_PREDEFINED || $items->getSetting('title') === 'predefined';
+    $predefined = $items->getSetting('title') === LinkIconManagerInterface::LINKICON_PREDEFINED || $items->getSetting('title') === 'predefined';
     if ($predefined && ($title_predefined = $items->getSetting('title_predefined')) !== NULL) {
       $options = linkicon()->extractAllowedValues($title_predefined);
       $element['title']['#type'] = 'select';
@@ -104,7 +81,7 @@ function linkicon_field_widget_link_default_form_alter(&$element, FormStateInter
 function linkicon_help($route_name) {
   if ($route_name == 'help.page.linkicon') {
     $output = file_get_contents(dirname(__FILE__) . '/README.md');
-    return function_exists('blazy_parse_markdown') && blazy_parse_markdown($output) ? blazy_parse_markdown($output) : '<pre>' . $output . '</pre>';
+    return function_exists('blazy_parse_markdown') ? blazy_parse_markdown($output) : '<pre>' . $output . '</pre>';
   }
   return '';
 }

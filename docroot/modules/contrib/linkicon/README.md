@@ -11,8 +11,8 @@ Drupal supports unlimited values, the limitation is your available icon fonts.
 
 Linkicon is an entity-based field formatter, like link.module, so once you are
 done with the Configuration, be sure to visit the assigned entity URL, e.g.:
-node/1/edit, or user/1/edit, or inform your members/editors, to add the actual
-icons at those URLs.
+`/node/1/edit`, or `/user/1/edit`, or inform your members/editors, to add the
+actual icons at those URLs.
 
 
 ## REQUIREMENTS
@@ -24,10 +24,11 @@ Install the module as usual, more info can be found on:
 
 [Installing Drupal 8 Modules](https://drupal.org/node/1897420)
 
+At `/admin/modules`, enable this module and its dependency, link.module
 
 ## FEATURES
 - Predefine allowed titles. Adding or removing more icons is as easy as adding
-  or removing another line of key|value pairs to the allowed titles.
+  or removing another line of `key|value` pairs to the allowed titles.
 - Optional icon API, and fontawesome modules integration.
 - Optional simple stylings: pure CSS tooltip, square, rounded and base colors,
   or disable it from outputting CSS, if you care to DIY. It's a starter anyway.
@@ -55,60 +56,60 @@ Install the module as usual, more info can be found on:
 
 
 ## CONFIGURATION
-Module-wide configurations are located within the *Configuration* options under
-*User Interface, Linkicon*.
+Module configurations are located within the *Configuration* options under
+*User Interface, Linkicon*: `/admin/config/user-interface/linkicon`
 
 Two important places to visit in the correct orders:
 
-  * Manage fields
-  * Manage display
+1. Manage fields
+2. Manage display
 
-Then follow:
-
-- Enable this module and its dependency, link.module
-
-- At `/admin/config/people/accounts/fields` or Content types, hit
+### MAIN STEPS
+1. At `/admin/config/people/accounts/fields` or Content types, hit
   **Manage fields**.
   Create a multi-value link field, make sure to choose **Predefined title** and
-  input your key|value pairs of titles where key is the icon name (without
+  input your `key|value` pairs of titles where key is the icon name (without
   prefix), and value title.
   If you have an icon named **icon-facebook** or **fa-facebook**, write, e.g.:
 
-  `facebook|Visit my Facebook page
-  google-plus|Google+`
+  + `facebook|Visit my Facebook page`
+  + `google-plus|Google+`  
 
   Sample with token:
 
-  `facebook|Facebook|[node:title]`
+  + `facebook|Facebook|[node:title]`
 
-  The first key translates to icon name **icon-facebook**
-  The second to the title.
-  The third to tooltip. If not provided, tooltip will use the second if enabled.
+    The first key translates to icon name **icon-facebook**.  
+    The second to the title.  
+    The third to tooltip. If not provided, it will use the second if enabled.
 
-  Avoid hardcoding icon name **prefixes** here. The prefix is defined at Display
-  formatter so that you are not stuck in database when the icon vendor change
-  prefixes from **icon-** to just **fa-**, etc. Or you change icon sets.
+  Avoid hard-coding icon name **prefixes** here. The prefix is defined at
+  Display formatter so that you are not stuck in database when the icon vendors
+  change prefixes from **icon-** to just **fa-**, etc. Or you change icon sets.
   Make sure the icon name is available at your icon set.
 
-- Download icon fonts from http://fontello.com or http://icomoon.io/app/.
-  Place it somewhere (e.g.: sites/all/libraries/fontawesome), or use icon API
-  import, and reference it either via this module Display formatter, or your
-  theme, or loaded automatically if using fontawesome.module or icon API.
-
-- Define path to icon font library at admin/config/user-interface/linkicon
-
-- At `/admin/config/people/accounts/fields` or Content types, hit
+2. At `/admin/config/people/accounts/fields` or Content types, hit
   **Manage display**.
 
-  Under **Format** of the active view mode, choose
-  **Link icon, based on title**.
+  + Under **Format** of the active view mode, choose
+    **Link icon, based on title**.
 
-- Click the **Configure** icon to have some extra options. There is option to
-  hide text so to display icon only, option to disable module from outputting
-  CSS, if you want total DIY on theming, and a few other.
+  + Click the **Configure** icon to have some extra options. There is option to
+    hide text so to display icon only, option to disable module from outputting
+    CSS, if you want total DIY on theming, and a few others.
 
-- The configuration is ready, now visit the configured entity edit page, e.g.:
-  node/1/edit, or user/1/edit, and add the links accordingly.
+3. The configuration is ready, now visit the configured entity edit page, e.g.:
+   `/node/1/edit`, or `/user/1/edit`, and add the links accordingly.
+
+### EXTRA STEPS
+1. Download icon fonts from [fontello.com](http://fontello.com) or
+   [icomoon.io](http://icomoon.io/app/)
+   + Place it somewhere (e.g.: `/libraries/fontawesome`),
+   + or use icon API import,
+   + and reference it either via this module Display formatter, or your
+   theme, or loaded automatically if using fontawesome.module or icon API.
+
+2. Define path to icon font library at `/admin/config/user-interface/linkicon`
 
 
 ## SETTINGS
@@ -120,8 +121,8 @@ Provide a valid path to a theme icon font CSS file, such as:
 
 
 ## USAGE
-Link icon usage can be found within entity configurations under Manage Display
-including:
+Link icon usage can be found within entity configurations under
+**Manage Display** including:
 
 * **Content Types**:
 
@@ -193,19 +194,23 @@ delicious|Delicious
 If using Views Fields under **Format**, be sure to check **Use field template**
 under **Style settings**, otherwise empty result.
 
-## FontAwesome 5+:
+## FONTAWESOME 5+:
 [Upgrading from v4](https://fontawesome.com/how-to-use/on-the-web/setup/upgrading-from-version-4)
 
-Basically to make FontAwesome 5+ and SVG with JS work with Linkicon:
+Basically to make FontAwesome 5+ and `SVG with JS` work with Linkicon:
 
 1. Empty the CSS library import `/admin/config/user-interface/linkicon`, since
-   it is all about JS. Unless Webfonts with CSS is preferred.
-2. A new option is added to add additional classes via UI, be sure to fill it
-   out with: `fab far fas` alike, while keeping the old fa intact for the Icon
-   prefix class option.
+   it is all about JS. Unless `Webfonts with CSS` is preferred.
+2. A new option `Additional icon classes` is added, be sure to fill it out with:
+   `fab far fas` alike, while keeping the old `fa` intact for the `Icon prefix`
+   class option.
+
+## FAQ
+Q: Is it required to install fontawesome.module to have fontawesome icons work?
+A: No, unless you want extra features. Simply import the icons into your theme
+   or import via this module config at `/admin/config/user-interface/linkicon`.
 
 ## MAINTAINERS
-
 * [Gaus Surahman](https://drupal.org/user/159062)
 * [Contributors](https://www.drupal.org/node/2208459/committers)
 * The CHANGELOG.txt for more helpful souls with suggestions, and bug reports.

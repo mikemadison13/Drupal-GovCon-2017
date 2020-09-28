@@ -47,6 +47,9 @@ field.formatter.settings.linkicon:
     linkicon_wrapper_class:
       type: string
       label: 'Additional wrapper class'
+    linkicon_icon_class:
+      type: string
+      label: 'Additional icon classes'
     linkicon_load:
       type: boolean
       label: 'Allow linkicon to provide CSS assets'

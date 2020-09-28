@@ -73,7 +73,7 @@ class LinkIconFormatter extends LinkFormatter {
    */
   public function prepareView(array $entities_items) {
     // @todo drop 'predefined' for the new integer: LINKICON_PREDEFINED.
-    if ($this->getFieldSetting('title') == LINKICON_PREDEFINED || $this->getFieldSetting('title') == 'predefined') {
+    if ($this->getFieldSetting('title') == LinkIconManagerInterface::LINKICON_PREDEFINED || $this->getFieldSetting('title') == 'predefined') {
       $settings = $this->getFieldSettings();
       if (!empty($settings['title_predefined'])) {
         $titles   = $this->linkIconManager->extractAllowedValues($settings['title_predefined']);
@@ -117,7 +117,7 @@ class LinkIconFormatter extends LinkFormatter {
       $icon_name     = $item->title;
       $display_title = isset($item->display_title) ? $item->display_title : $icon_name;
       $tooltip       = isset($item->tooltip) ? $item->tooltip : $display_title;
-      $icon_class    = Html::cleanCssIdentifier(Unicode::strtolower($prefix_class . '-' . $icon_name));
+      $icon_class    = Html::cleanCssIdentifier(mb_strtolower($prefix_class . '-' . $icon_name));
 
       // If title is overriden with a generic one, be sure the $icon_class is
       // not overridden.

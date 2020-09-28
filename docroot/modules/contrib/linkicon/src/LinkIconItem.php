@@ -29,7 +29,7 @@ class LinkIconItem extends LinkItem {
 
     // Appends our option to the title.
     $element['title']['#options'] += [
-      LINKICON_PREDEFINED => $this->t('Predefined'),
+      LinkIconManagerInterface::LINKICON_PREDEFINED => $this->t('Predefined'),
     ];
 
     $element['title_predefined'] = [
@@ -39,7 +39,7 @@ class LinkIconItem extends LinkItem {
       '#description' => '<p>' . $this->t("Enter the list of key|value pairs of predefined link texts separated by new line, where key is the icon name without prefix, e.g.: <br />for <em>icon-facebook</em>, place <em>facebook|Facebook</em>. The prefix is defined at Display formatter so that you are not stuck in database when the icon vendor change prefixes from 'icon-' to just 'fa-', etc. Make sure the icon name is available at your icon set. To have a tooltip different from the title, add a third pipe value. <br />Token relevant to this entity is supported, e.g.: <strong>facebook|Facebook|[node:title]</strong> or  <strong>facebook|Facebook|[user:name]'s Facebook page</strong>.<br /><strong>Warning!</strong> Pre-existing values will be reset.") . '<br><br></p>',
       '#states' => [
         'visible' => [
-          ':input[name="settings[title]"]' => ['value' => LINKICON_PREDEFINED],
+          ':input[name="settings[title]"]' => ['value' => LinkIconManagerInterface::LINKICON_PREDEFINED],
         ],
       ],
     ];

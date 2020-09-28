@@ -29,7 +29,6 @@ class LinkIconManager implements LinkIconManagerInterface {
    */
   public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler) {
     $this->config = $config_factory->get('linkicon.settings');
-    // @todo icon module.
     $this->moduleHandler = $module_handler;
   }
 
@@ -70,6 +69,30 @@ class LinkIconManager implements LinkIconManagerInterface {
       }
     }
     return $allowed_values;
+  }
+
+  /**
+   * Implements hook_library_info_build().
+   */
+  public function libraryInfoBuild() {
+    $libraries = [];
+    if ($font_path = $this->getSetting('font')) {
+      if (strpos($font_path, ',') !== FALSE) {
+        $paths = array_map('trim', explode(',', $font_path));
+        foreach ($paths as $path) {
+          $library_path[$path] = [];
+        }
+      }
+      else {
+        $library_path = [$font_path => []];
+      }
+      $libraries['linkicon.font'] = [
+        'css' => [
+          'base' => $library_path,
+        ],
+      ];
+    }
+    return $libraries;
   }
 
 }

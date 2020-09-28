@@ -227,7 +227,7 @@ trait LinkIconFormatterTrait {
     ];
 
     // Build a preview.
-    if (function_exists('icon_bundles')) {
+    if (function_exists('icon_providers')) {
       $providers = icon_providers();
 
       $provider_options = [];

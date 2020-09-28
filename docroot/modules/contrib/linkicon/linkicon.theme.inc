@@ -6,7 +6,6 @@
  */
 
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Template\Attribute;
 
 /**
@@ -68,7 +67,7 @@ function template_preprocess_linkicon_item(array &$variables) {
   $settings = $variables['settings'];
   $attributes = $variables['attributes'];
   $prefix = Html::escape(trim($settings['prefix']));
-  $icon_class = Html::cleanCssIdentifier(Unicode::strtolower($prefix . '-' . trim($variables['icon_name'])));
+  $icon_class = Html::cleanCssIdentifier(mb_strtolower($prefix . '-' . trim($variables['icon_name'])));
 
   $attributes['aria-hidden'] = 'true';
   $attributes['class'][] = 'linkicon__icon';
