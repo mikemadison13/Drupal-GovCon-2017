@@ -185,6 +185,11 @@ function _webform_update_webform_setting_settings(array $settings) {
     unset($settings['form_remote_addr']);
   }
 
+  // Issue #3151506: Remove .webform-elements wrapper around elements.
+  if (isset($settings['form_elements_attributes'])) {
+    unset($settings['form_elements_attributes']);
+  }
+
   return $settings;
 }
 

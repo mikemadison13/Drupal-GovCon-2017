@@ -7,6 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -70,6 +71,31 @@ class WebformTestEditorialController extends ControllerBase implements Container
     $instance->elementManager = $container->get('plugin.manager.webform.element');
     $instance->librariesManager = $container->get('webform.libraries_manager');
     return $instance;
+  }
+
+  /**
+   * Returns webform help index page.
+   *
+   * @return array
+   *   A renderable array containing webform help index page.
+   */
+  public function index() {
+    $path = drupal_get_path('module', 'webform_test_editorial') . '/webform_test_editorial.links.task.yml';
+    $tasks = Yaml::decode(file_get_contents($path));
+    $content = [];
+    foreach ($tasks as $id => $task) {
+      if (isset($task['parent_id'])) {
+        $content[$id] = [
+          'title' => $task['title'],
+          'description' => $task['description'],
+          'url' => Url::fromRoute($task['route_name']),
+        ];
+      }
+    }
+    return [
+      '#theme' => 'admin_block_content',
+      '#content' => $content,
+    ];
   }
 
   /****************************************************************************/

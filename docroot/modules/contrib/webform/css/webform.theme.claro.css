@@ -113,7 +113,6 @@ html.js .webform-message--close .webform-message__link:active {
 
 table th {
   height: auto;
-  position: inherit;
 }
 
 /**
@@ -277,25 +276,6 @@ div.webform-form-filter input.webform-form-filter-text {
 .webform-multiple-table td > .form-item:only-child .form-item {
   margin-top: 0;
   margin-bottom: 0;
-}
-
-/**
- * jQuery UI tabs.
- */
-.webform-tabs.ui-tabs .ui-tabs-nav li {
-  padding: 0 5px;
-}
-
-.webform-tabs.ui-tabs .ui-tabs-panel {
-  padding: 0;
-}
-
-.webform-tabs .ui-tabs-tab.ui-tab a {
-  border-radius: 0;
-}
-
-.webform-tabs .ui-tabs-active.ui-state-active a {
-  border-bottom: 3px solid #003cc5;
 }
 
 /**

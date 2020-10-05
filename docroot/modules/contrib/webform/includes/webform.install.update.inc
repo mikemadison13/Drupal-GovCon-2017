@@ -3872,6 +3872,44 @@ function webform_update_8206() {
   _webform_update_admin_settings();
 }
 
+/**
+ * Issue #3171834: Allow .webform-elements to support custom attributes.
+ */
+function webform_update_8207() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3151506: Remove .webform-elements wrapper around elements.
+ */
+function webform_update_8208() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3174132: Add (admin) notes to handlers.
+ */
+function webform_update_8209() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+
+    $data = $webform_config->getRawData();
+    $save = FALSE;
+    foreach ($data['handlers'] as &$handler) {
+      if (!isset($handler['notes'])) {
+        WebformArrayHelper::insertAfter($handler, 'label', 'notes', '');
+        $save = TRUE;
+      }
+    }
+
+    if ($save) {
+      $webform_config->setData($data);
+      $webform_config->save();
+    }
+  }
+}
+
 /******************************************************************************/
 // Webform 6.x.
 /******************************************************************************/
@@ -4088,4 +4126,53 @@ function webform_update_8615() {
  */
 function webform_update_8616() {
   _webform_update_admin_settings();
+}
+
+/**
+ * Issue #3171460: Confirmation URLs and Drupal paths - Settings Handlers.
+ *
+ * @see https://www.drupal.org/project/webform/issues/3160378
+ */
+function webform_update_8617() {
+  // Convert all confirmation URL to Drupal paths.
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $data = $webform_config->getRawData();
+    $has_settings_handler = FALSE;
+    foreach ($data['handlers'] as &$handler) {
+      if ($handler['id'] === 'settings') {
+        $confirmation_url = $handler['settings']['confirmation_url'];
+        if (strpos($confirmation_url, '/') === 0) {
+          $handler['settings']['confirmation_url'] = substr($confirmation_url, 1);
+          $has_settings_handler = TRUE;
+        }
+      }
+    }
+    if ($has_settings_handler) {
+      $webform_config->setData($data);
+      $webform_config->save();
+    }
+  }
+}
+
+/**
+ * Issue #3171834: Allow .webform-elements to support custom attributes.
+ */
+function webform_update_8618() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3151506: Remove .webform-elements wrapper around elements.
+ */
+function webform_update_8619() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3174132: Add (admin) notes to handlers.
+ */
+function webform_update_8620() {
+  webform_update_8209();
 }

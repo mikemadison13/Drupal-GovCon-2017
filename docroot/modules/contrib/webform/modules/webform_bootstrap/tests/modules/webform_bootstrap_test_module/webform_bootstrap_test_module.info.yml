@@ -9,7 +9,7 @@ dependencies:
 # Issue #3110478: [Webform 8.x-6.x] Track the D9 readiness state of the Webform module's (optional) dependencies.
 #  - 'styleguide:styleguide'
 
-# Information added by Drupal.org packaging script on 2020-09-17
-version: '6.0.0-alpha17'
+# Information added by Drupal.org packaging script on 2020-10-02
+version: '6.0.0-alpha19'
 project: 'webform'
-datestamp: 1600376455
+datestamp: 1601647884

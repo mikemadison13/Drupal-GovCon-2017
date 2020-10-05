@@ -7,9 +7,23 @@
 
   'use strict';
 
-  // Always perform clientside validation for webforms submitted using Ajax.
+  // Disable clientside validation for webforms submitted using Ajax.
+  // This prevents Computed elements with Ajax from breaking.
   // @see \Drupal\clientside_validation_jquery\Form\ClientsideValidationjQuerySettingsForm
-  drupalSettings.clientside_validation_jquery.validate_all_ajax_forms = 1;
+  drupalSettings.clientside_validation_jquery.validate_all_ajax_forms = 0;
+
+  /**
+   * Add .cv-validate-before-ajax to all webform submit buttons.
+   *
+   * @type {Drupal~behavior}
+   */
+  Drupal.behaviors.webformClientSideValidationAjax = {
+    attach: function (context) {
+      $('form.webform-submission-form .form-actions :submit:not([formnovalidate])')
+        .once('webform-clientside-validation-ajax')
+        .addClass('cv-validate-before-ajax');
+    }
+  };
 
   $(document).once('webform_cvjquery').on('cv-jquery-validate-options-update', function (event, options) {
     options.errorElement = 'strong';

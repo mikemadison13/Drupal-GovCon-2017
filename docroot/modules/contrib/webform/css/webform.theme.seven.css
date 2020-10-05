@@ -46,37 +46,6 @@ code {
   font-weight: bold;
 }
 
-.webform-tabs .ui-tabs-nav .ui-tabs-anchor {
-  text-decoration: inherit;
-}
-
-.webform-tabs .ui-tabs-active.ui-state-active {
-  text-decoration: none;
-  border: 1px solid #ed5;
-  background: #fe6;
-}
-
-.webform-tabs .ui-state-hover {
-  text-decoration: underline !important;
-}
-
-.webform-tabs .ui-state-active.ui-state-hover {
-  text-decoration: none !important;
-}
-
-/** Compress tabs for mobile */
-@media screen and (max-width: 600px) {
-  .webform-tabs.ui-tabs .ui-tabs-nav {
-    padding: 5px 0 4px 0;
-  }
-  .webform-tabs.ui-tabs .ui-tabs-nav li {
-    padding: 0;
-  }
-  .webform-tabs.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-    padding: 0.5em 0.7em;
-  }
-}
-
 /* Accordion icon */
 .ui-accordion-icons .ui-icon {
   display: inline-block;
@@ -175,11 +144,6 @@ pre.webform-codemirror-runmode {
   color: #840;
   border: solid 1px #ed5;
   background: #fe6;
-}
-
-/* jQuery UI tabs */
-.ui-tabs .ui-tabs-panel {
-  padding: 0;
 }
 
 /* Tweak details toggle state. */

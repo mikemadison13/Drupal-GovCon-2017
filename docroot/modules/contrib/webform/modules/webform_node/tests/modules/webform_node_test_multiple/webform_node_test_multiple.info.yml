@@ -13,7 +13,7 @@ dependencies:
   - 'webform:webform'
   - 'webform:webform_node'
 
-# Information added by Drupal.org packaging script on 2020-09-17
-version: '6.0.0-alpha17'
+# Information added by Drupal.org packaging script on 2020-10-02
+version: '6.0.0-alpha19'
 project: 'webform'
-datestamp: 1600376455
+datestamp: 1601647884
