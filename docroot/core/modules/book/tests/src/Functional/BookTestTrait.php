@@ -97,9 +97,6 @@ trait BookTestTrait {
     if ($nodes !== NULL) {
       $this->assertPattern($this->generateOutlinePattern($nodes));
     }
-    else {
-      $this->pass(new FormattableMarkup('Node %number does not have outline.', ['%number' => $number]));
-    }
 
     // Check previous, up, and next links.
     if ($previous) {

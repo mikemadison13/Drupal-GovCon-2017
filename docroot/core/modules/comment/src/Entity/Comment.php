@@ -404,7 +404,8 @@ class Comment extends ContentEntityBase implements CommentInterface {
    * {@inheritdoc}
    */
   public function getAuthorName() {
-    if ($this->get('uid')->target_id) {
+    // If their is a valid user id and the user entity exists return the label.
+    if ($this->get('uid')->target_id && $this->get('uid')->entity) {
       return $this->get('uid')->entity->label();
     }
     return $this->get('name')->value ?: \Drupal::config('user.settings')->get('anonymous');
@@ -477,14 +478,6 @@ class Comment extends ContentEntityBase implements CommentInterface {
   public function setCreatedTime($created) {
     $this->set('created', $created);
     return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getStatus() {
-    @trigger_error(__NAMESPACE__ . '\Comment::getStatus() is deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Entity\EntityPublishedInterface::isPublished() instead. See https://www.drupal.org/node/2830201', E_USER_DEPRECATED);
-    return $this->get('status')->value;
   }
 
   /**

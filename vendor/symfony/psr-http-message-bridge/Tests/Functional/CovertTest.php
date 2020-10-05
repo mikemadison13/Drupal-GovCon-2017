@@ -36,7 +36,7 @@ class CovertTest extends TestCase
 {
     private $tmpDir;
 
-    public function setup()
+    public function setUp(): void
     {
         if (!class_exists('Nyholm\Psr7\ServerRequest')) {
             $this->markTestSkipped('nyholm/psr7 is not installed.');
@@ -139,17 +139,24 @@ class CovertTest extends TestCase
             'Content'
         );
 
-        $psr7Request = (new Psr7Request('POST', 'http://tnyholm.se/foo/?bar=biz'))
-            ->withQueryParams(['bar' => 'biz']);
+        $psr7Requests = [
+            (new Psr7Request('POST', 'http://tnyholm.se/foo/?bar=biz'))
+                ->withQueryParams(['bar' => 'biz']),
+            new Psr7Request('GET', 'https://hey-octave.com/'),
+            new Psr7Request('GET', 'https://hey-octave.com:443/'),
+            new Psr7Request('GET', 'https://hey-octave.com:4242/'),
+            new Psr7Request('GET', 'http://hey-octave.com:80/'),
+        ];
 
         $nyholmFactory = new Psr17Factory();
         $psr17Factory = new PsrHttpFactory($nyholmFactory, $nyholmFactory, $nyholmFactory, $nyholmFactory);
         $symfonyFactory = new HttpFoundationFactory();
 
-        return [
+        return array_merge([
             [$sfRequest, $psr17Factory, $symfonyFactory],
-            [$psr7Request, $symfonyFactory, $psr17Factory],
-        ];
+        ], array_map(function ($psr7Request) use ($symfonyFactory, $psr17Factory) {
+            return [$psr7Request, $symfonyFactory, $psr17Factory];
+        }, $psr7Requests));
     }
 
     /**
@@ -229,11 +236,6 @@ class CovertTest extends TestCase
         $path = tempnam($this->tmpDir, uniqid());
         file_put_contents($path, $content);
 
-        if (class_exists('Symfony\Component\HttpFoundation\HeaderUtils')) {
-            // Symfony 4.1+
-            return new UploadedFile($path, $originalName, $mimeType, $error, true);
-        }
-
-        return new UploadedFile($path, $originalName, $mimeType, filesize($path), $error, true);
+        return new UploadedFile($path, $originalName, $mimeType, $error, true);
     }
 }

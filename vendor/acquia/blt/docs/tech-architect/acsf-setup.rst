@@ -1,11 +1,11 @@
 .. include:: ../../common/global.rst
 
-Configuring a project for use with Acquia Cloud Site Factory
+Configuring a project for use with Site Factory
 ============================================================
 
-To configure a project to run on Acquia Cloud Site Factory, complete the
+To configure a project to run on Site Factory, complete the
 following steps after initially configuring Acquia BLT, but *before* creating
-any websites in ACSF:
+any websites in Site Factory:
 
 #. From the project root, run the following command and commit any changes:
 
@@ -23,23 +23,20 @@ any websites in ACSF:
       <https://hechoendrupal.gitbooks.io/drupal-console/content/en/commands/generate-profile.html>`__.
 
 #. Ensure the ``acsf`` module will be enabled when you install websites on
-   Acquia Cloud Site Factory, either by adding it as a dependency to your
-   custom profile or by adding it to your remote environment configuration
-   splits.
+   Site Factory, either by adding it as a dependency to your custom profile or
+   by adding it to your remote environment configuration splits.
 
-#. Deploy to Acquia Cloud using ``blt artifact:deploy``. You can also
+#. Deploy to Cloud Platform using ``blt artifact:deploy``. You can also
    deploy code by using a :doc:`continuous integration configuration
    </blt/tech-architect/deploy/>`.
 
-#. Use the Acquia Cloud Site Factory ``update code`` feature to deploy the
-   artifact.
+#. Use the Site Factory ``update code`` feature to deploy the artifact.
 
 #. When creating a new website, select your custom profile as the profile.
 
-In all other respects, Acquia BLT treats Acquia Cloud Site Factory
+In all other respects, Acquia BLT treats Site Factory
 installations as multisite installations. To finish setup, including to set
-up a local development environment for your Acquia Cloud Site Factory
-project, see :doc:`/blt/tech-architect/multisite/`.
+up a local development environment for your Site Factory project, see :doc:`/blt/tech-architect/multisite/`.
 
 .. note::
 
@@ -54,7 +51,7 @@ Troubleshooting
 ---------------
 
 If you receive an error such as ``Could not retrieve the site standard_domain
-from the database`` when updating code on Acquia Cloud Site Factory, it
+from the database`` when updating code on Site Factory, it
 indicates one or more websites on your subscription don't have the ``acsf``
 connector module enabled and configured. You must enable this module
 and then try updating code again.
@@ -64,8 +61,8 @@ and then try updating code again.
 Resources
 ---------
 
--  :doc:`Acquia Cloud Site Factory documentation </site-factory/>`
--  `Acquia Cloud Site Factory Connector
+-  :doc:`Site Factory documentation </site-factory/>`
+-  `Site Factory Connector
    <https://www.drupal.org/project/acsf>`__ module on Drupal.org
 
-.. Next review date 20200417
+.. Next review date 20210727

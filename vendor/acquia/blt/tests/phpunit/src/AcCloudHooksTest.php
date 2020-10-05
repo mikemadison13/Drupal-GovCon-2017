@@ -1,13 +1,9 @@
 <?php
 
-namespace Acquia\Blt\Tests\BltProject;
-
-use Acquia\Blt\Tests\BltProjectTestBase;
+namespace Acquia\Blt\Tests;
 
 /**
  * Class AcCloudHooksTest.
- *
- * @group orca_ignore
  */
 class AcCloudHooksTest extends BltProjectTestBase {
 
@@ -24,8 +20,6 @@ class AcCloudHooksTest extends BltProjectTestBase {
     $filePermissions = substr(sprintf('%o', fileperms($commonPostCodeDeployScript)), -4);
     $this->assertEquals('0755', $filePermissions);
 
-    $this->installDrupalMinimal();
-
     // Mimics hooks/post-code-deploy/post-code-deploy.sh.
     list($status_code, $output) = $this->blt("artifact:ac-hooks:post-code-update", [
       'site' => 's1',
@@ -36,8 +30,8 @@ class AcCloudHooksTest extends BltProjectTestBase {
       'repo_type' => 'git',
     ]);
     $this->assertEquals(0, $status_code);
-    $this->assertContains('Running updates for environment: dev', $output);
-    $this->assertContains('Finished updates for environment: dev', $output);
+    $this->assertStringContainsString('Running updates for environment: dev', $output);
+    $this->assertStringContainsString('Finished updates for environment: dev', $output);
 
     // Mimics hooks/post-code-deploy/post-code-deploy.sh.
     list($status_code, $output) = $this->blt("artifact:ac-hooks:post-code-deploy", [
@@ -50,8 +44,8 @@ class AcCloudHooksTest extends BltProjectTestBase {
     ]);
     $this->assertEquals(0, $status_code);
     // @todo Test that using an ACSF env name fails. E.g., 01dev.
-    $this->assertContains('Running updates for environment: dev', $output);
-    $this->assertContains('Finished updates for environment: dev', $output);
+    $this->assertStringContainsString('Running updates for environment: dev', $output);
+    $this->assertStringContainsString('Finished updates for environment: dev', $output);
 
     // Mimics hooks/post-db-copy/db-scrub.sh.
     list($status_code, $output) = $this->blt("artifact:ac-hooks:db-scrub", [
@@ -62,7 +56,7 @@ class AcCloudHooksTest extends BltProjectTestBase {
     ]);
     $this->assertEquals(0, $status_code);
     // @todo Test that using an ACSF env name fails. E.g., 01dev.
-    $this->assertContains('Scrubbing database in dev', $output);
+    $this->assertStringContainsString('Scrubbing database in dev', $output);
   }
 
 }

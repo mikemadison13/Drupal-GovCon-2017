@@ -6,8 +6,3 @@ package: Testing
 hidden: true
 dependencies:
   - config_ignore
-
-# Information added by Drupal.org packaging script on 2019-12-16
-version: '8.x-2.2'
-project: 'config_ignore'
-datestamp: 1576528389

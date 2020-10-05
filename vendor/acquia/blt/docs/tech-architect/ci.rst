@@ -3,27 +3,12 @@
 Continuous integration
 ======================
 
-Acquia BLT provides automation commands used in most macOS and Linux
-environments. The Acquia BLT automation commands intend to be used both
-locally and on continuous integration (CI) platforms.
-
-Acquia BLT natively supports the following CI solutions:
-
-* :ref:`Acquia pipelines <blt-ci-pipelines>`
-* :ref:`Travis CI <blt-ci-travis-ci>`
-
-Acquia BLT provides one default instruction file (such as ``.travis.yml`` or
-``acquia-pipelines.yml``) for each of the CI solutions, allowing you to
-quickly have a working build. To use the default instruction file, you must
-run the :ref:`following initialization command <blt-ci-workflow>`. The command
-will copy the default instruction file to the required location, in the same
-manner that Drupal requires you to copy ``default.settings.php`` to
-``settings.php.``
-
-The instruction files are intended for customization. Acquia will provide
-updates to the default instruction files, but merging those updates into your
-customized files is your responsibility.
-
+Continuous integration (CI) is a software engineering best practice and should
+be a part of any Drupal project. Acquia BLT's automation commands perform
+common tasks such as site installs, tests, and artifact builds consistently
+across local, CI, development, and production environments. A robust CI process
+using Acquia BLT's commands is critical to testing, building, and deploying
+your project consistently.
 
 .. _blt-ci-workflow:
 
@@ -32,63 +17,102 @@ Workflow
 
 The typical CI workflow is as follows:
 
-#. A pull request or commit to GitHub triggers a CI build.
-#. The CI tool reads and executes an instruction file. The instruction file
-   executes Acquia BLT commands to build and test your application. For
-   example, the CI tool completes the following tasks:
+#. A pull request or commit to GitHub triggers a build on your CI platform.
+#. The CI platform reads and executes a series of build steps based on a script
+   stored in your repository root directory. The build steps execute Acquia BLT
+   commands to build and test the application incorporating changes from the
+   pull request.
 
-   -  Builds `Composer <https://getcomposer.org/>`__ dependencies.
-   -  Lints and validates code.
-   -  Installs Drupal.
-   -  Runs tests such as PHPUnit and Behat against the installed
-      instance of Drupal.
+   The CI scripts provided out of the box by BLT perform the following tasks:
 
-#. The CI tool reports the status of the build (success or failure) back
+   -  Configure the build environment to match the hosting environment.
+   -  Install dependencies (using `Composer <https://getcomposer.org/>`__ and,
+      if configured, a frontend dependency manager such as NPM).
+   -  Lint and validate code (using tools like
+      `PHPCS <https://github.com/squizlabs/PHP_CodeSniffer>`__). As of BLT 11,
+      validation also includes testing for deprecated code using the
+      `Drupal Check <https://github.com/mglaman/drupal-check>`__ library.
+   -  Install Drupal and import configuration using the chosen `configuration
+      management strategy <https://docs.acquia.com/blt/developer/configuration-management/>`__.
+   -  Run `automated tests <https://docs.acquia.com/blt/developer/testing/>`__
+      (using tools like `PHPUnit <https://phpunit.de/>`__, and
+      `Behat <https://docs.behat.org/en/latest/>`__) on the installed Drupal
+      site.
+
+#. The CI platform reports the status of the build (success or failure) back
    to GitHub.
-#. If the build is successful, you merge the pull request.
-#. The merge triggers another CI build, builds, and tests your application
-   again, and generates an artifact suitable for deployment.
-#. The CI tool deploys the artifact. If you automate deployment, the
-   deployment is *Continuous Deployment*.
+#. If the build is successful, a code reviewer merges the pull request.
+#. The merge triggers another CI job, testing your application again and
+   generating an artifact suitable for deployment.
+#. The CI platform pushes the artifact to a cloud hosting repository.
 
+Out of the box, Acquia BLT handles the deployment of code artifacts to hosting
+repositories, but doesn't interact with hosting providers to deploy code to
+specific environments. You can add such custom deployment steps to
+Acquia BLT's CI scripts to create a full *Continuous Deployment* workflow.
+
+.. _blt-supported-platforms:
+
+Supported CI platforms
+----------------------
+
+Acquia BLT natively supports the following CI platforms:
+
+* :ref:`Cloud Platform Pipelines <blt-ci-pipelines>`
+* :ref:`Travis CI <blt-ci-travis-ci>`
+
+The `Acquia BLT Plugins
+<https://support.acquia.com/hc/en-us/articles/360046918614-Acquia-BLT-Plugins/>`__
+page lists a number of community-developed plugins providing support for other
+CI platforms.
+
+Acquia BLT provides a template script file (such as ``.travis.yml`` or
+``acquia-pipelines.yml``) for each of the CI platforms, allowing you to
+quickly have a working build that follows the default steps outlined above.
+You can generate this template script file for your project using the commands
+detailed in the following sections.
+
+You can customize the template script files. Acquia will continuously update
+the default script files, but merging those updates into your customized files
+is your responsibility.
 
 .. _blt-ci-pipelines:
 
-Acquia Cloud pipelines feature
-------------------------------
+Cloud Platform Pipelines
+~~~~~~~~~~~~~---~~~~~~~~~
 
-The :doc:`Acquia Cloud pipelines feature
-</acquia-cloud/develop/pipelines/>` is a continuous integration and continuous
-deployment solution built on the Acquia Cloud infrastructure. For Acquia Cloud
-users, the pipelines feature provides the benefit of integrating directly with
-an Acquia Cloud subscription, which allows you to deploy build artifacts with
-less effort.
+:doc:`Cloud Platform Pipelines
+</cloud-platform/develop/pipelines/>` is a continuous integration and continuous
+deployment solution built on the Cloud Platform infrastructure. For
+Cloud Platform users, Pipelines provides the benefit of integrating directly
+with an Cloud Platform subscription, which allows you to deploy build artifacts
+with less effort.
 
-To initialize pipelines feature support for your Acquia BLT project, complete
-the following steps:
+To initialize Cloud Platform Pipelines support for your Acquia BLT project,
+complete the following steps:
 
-#. :doc:`Connect the pipelines service
-   </acquia-cloud/develop/pipelines/connect/>` to your GitHub or Bitbucket
+#. :doc:`Connect Cloud Platform Pipelines
+   </cloud-platform/develop/pipelines/connect/>` to your GitHub or Bitbucket
    repository
 
-#. Initialize pipelines for your project by running the following command:
+#. Initialize Cloud Platform Pipelines for your project:
 
    .. code-block:: bash
 
       blt recipes:ci:pipelines:init
 
    The preceding code will generate an :doc:`acquia-pipelines.yml file
-   </acquia-cloud/develop/pipelines/yaml/>` in your project root based on
+   </cloud-platform/develop/pipelines/yaml/>` in your project root based on
    `BLT's default acquia-pipelines.yml file
    <https://github.com/acquia/blt/blob/10.x/scripts/pipelines/acquia-pipelines.yml>`__.
 
 #. Change the :doc:`acquia-pipelines.yml file
-   </acquia-cloud/develop/pipelines/yaml/>` to
+   </cloud-platform/develop/pipelines/yaml/>` to
    :doc:`specify which databases to copy
-   </acquia-cloud/develop/pipelines/databases/>` into CDEs on deployment.
+   </cloud-platform/develop/pipelines/databases/>` into CDEs on deployment.
 
-#. Commit the new file, and push then it to your Acquia Git remote by using
-   commands based on the following example:
+#. Commit and push the new file to your Acquia Git remote using commands such
+   as the following:
 
    .. code-block:: bash
 
@@ -100,41 +124,35 @@ the following steps:
 
 Your new pull request will trigger a pipelines build to begin. The pull
 request's web page reflects the pipelines build status. If merged, the
-pipelines feature will generate a new branch on your Acquia Cloud
+pipelines feature will generate a new branch on your Cloud Platform
 subscription named ``pipelines-[source-branch]-build``. The branch will
 contain a deployment artifact deployable to an Acquia environment.
 
-Additional information
-~~~~~~~~~~~~~~~~~~~~~~
-
-You can use the Acquia Cloud pipelines user interface or :doc:`the pipelines
-CLI client </acquia-cloud/develop/pipelines/cli/install/>` to review the
+You can use the Cloud Platform Pipelines user interface or :doc:`the Pipelines
+CLI client </cloud-platform/develop/pipelines/cli/install/>` to review the
 status or logs for your build.
 
 If you encounter problems, see
-:doc:`/acquia-cloud/develop/pipelines/troubleshooting/`.
+:doc:`/cloud-platform/develop/pipelines/troubleshooting/`.
 
 
 .. _blt-ci-travis-ci:
 
 Travis CI
----------
+~~~~~~~~~
 
 `Travis CI <https://travis-ci.com/>`__ is a continuous integration and
-continuous deployment solution. Travis can integrate with Acquia Cloud,
-but requires more initial configuration work than the Acquia Cloud pipelines
+continuous deployment solution. Travis can integrate with Cloud Platform,
+but requires more initial configuration work than the Cloud Platform pipelines
 feature.
 
-Configuring Travis CI for automated deployments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You must configure Acquia Cloud, GitHub, and Travis CI to work together to
-configure the :ref:`workflow <blt-ci-workflow>`. To do this, complete the
-following steps:
+You must configure Cloud Platform, GitHub, and Travis CI to work together using
+the following steps:
 
 .. note::
 
-   The following instructions apply only to private GitHub repositories.
+   The following instructions apply to private GitHub repositories and may have
+   security implications for public repositories.
 
 #. Initialize Travis CI support for your project by running the following
    command:
@@ -143,30 +161,29 @@ following steps:
 
       blt recipes:ci:travis:init
 
-#. Run the following command to generate an SSH key locally to allow Travis
-   to authenticate to Acquia Cloud:
+#. Run the following command to generate an SSH key locally so Travis can
+   authenticate to Cloud Platform:
 
    .. code-block:: bash
 
       cd ~/.ssh
       ssh-keygen -t rsa -b 4096 -m PEM
 
-   Do not use a passphrase. Instead, name the SSH key something different than
-   your normal Acquia Cloud key (such as *travis*).
+   Don't use a passphrase. Give the SSH key a unique name (such as *travis*).
 
-   Due to Travis requiring a legacy RSA PEM keys, you must explicitly define
+   Due to Travis requiring legacy RSA PEM keys, you must explicitly define
    the format with the ``-m`` flag.
 
-#. Create a new Acquia Cloud account used primarily as a container for the SSH
-   keys granting Travis push access to Acquia Cloud. You can create a new
-   account by inviting a new team member on **Teams** in Acquia Cloud using an
+#. Create a new Cloud Platform account used primarily as a container for the SSH
+   keys granting Travis push access to Cloud Platform. You can create a new
+   account by inviting a new team member on **Teams** in Cloud Platform using an
    email address such as ``<email>+<project>.travis@acquia.com``. The team
-   member must have SSH push access with the *Team Lead* role. Acquia does not
+   member must have SSH push access with the *Team Lead* role. Acquia doesn't
    recommend using a personal account or re-using the shell account across
    projects posing a security risk, and causing deployments to fail if your
    account is removed from the project.
 
-#. Sign in to the new Acquia Cloud account and add the public SSH key from the
+#. Sign in to the new Cloud Platform account and add the public SSH key from the
    key pair generated in the preceding step by editing the profile and then
    clicking **Credentials**.
 
@@ -176,13 +193,13 @@ following steps:
 
    .. note::
 
-      If you do not have administrative control over your repository, you
-      cannot have direct access to the deployment keys settings on GitHub.
+      If you don't have administrative control over your repository, you
+      can't have direct access to the deployment keys settings on GitHub.
 
 #. Add the private SSH key to your project's Travis CI settings located at
    ``https://magnum.travis-ci.com/acquia-pso/[project-name]/settings``.
 
-#. Add your Acquia Cloud Git repository to the remotes section of your
+#. Add your Cloud Platform Git repository to the remotes section of your
    ``blt.yml`` file by running the following command and replacing
    ``[example]`` with your Git repository information:
 
@@ -191,9 +208,9 @@ following steps:
       remotes:
          - [example]@svn-14671.prod.hosting.acquia.com:[example].git
 
-#. Add your Acquia Cloud Git repository's server host name to
-   ``ssh_known_hosts`` in your ``.travis.yml`` file. Ensure you remove the
-   user name and file name (example.git) and use only the host name:
+#. Add your Cloud Platform Git repository's server host name to
+   ``ssh_known_hosts`` in your ``.travis.yml`` file. Use only the host name and
+   don't include the user name and file name (example.git):
 
    .. code-block:: text
 
@@ -204,22 +221,15 @@ following steps:
    .. note::
 
       If you are planning to run any ``drush sql-syncs`` or ``drush sql-rsync``
-      commands between Acquia Cloud and your environment, be sure to add the
+      commands between Cloud Platform and your environment, be sure to add the
       test or stage server host to the preceding code.
 
 Commits or merges to the develop branch on GitHub will now trigger a
-fully-built artifact deployed to your specified remotes.
-
-For information about manually deploying your project, see
-:doc:`/blt/tech-architect/deploy/`.
-
-Configuring Travis CI for automated deployments on several branches
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+fully built artifact deployed to your specified remotes.
 
 You can watch several branches on GitHub for deployment (for example,
-master, and integration) by adding another ``provider`` block to the deploy
-section of your project's ``.travis`` file as indicated in the following
-code. You can add several provider blocks, as needed.
+master, and integration) by adding one or more ``provider`` block to the deploy
+section of your project's ``.travis`` file.
 
 .. code-block:: text
 
@@ -229,5 +239,9 @@ code. You can add several provider blocks, as needed.
         skip_cleanup: true
         on:
           branch: integration
+
+For information about manually deploying your project, see
+:doc:`/blt/tech-architect/deploy/`.
+
 
 .. Next review date 20200419

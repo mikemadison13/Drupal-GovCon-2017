@@ -29,7 +29,7 @@ class ModuleTest extends ViewsKernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['field', 'user', 'block'];
+  protected static $modules = ['field', 'user', 'block'];
 
   /**
    * Stores the last triggered error.

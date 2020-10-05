@@ -62,20 +62,10 @@ WARNING;
    * @command source:build:settings
    *
    * @aliases blt:init:settings bis settings setup:settings
+   * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   public function generateSiteConfigFiles() {
-    if (!file_exists($this->getConfigValue('blt.config-files.local'))) {
-      $result = $this->taskFilesystemStack()
-        ->copy($this->getConfigValue('blt.config-files.example-local'), $this->getConfigValue('blt.config-files.local'))
-        ->stopOnFail()
-        ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
-        ->run();
-
-      if (!$result->wasSuccessful()) {
-        $filepath = $this->getInspector()->getFs()->makePathRelative($this->getConfigValue('blt.config-files.local'), $this->getConfigValue('repo.root'));
-        throw new BltException("Unable to create $filepath.");
-      }
-    }
+    $this->generateLocalConfigFile();
 
     // Generate hash file in salt.txt.
     $this->hashSalt();
@@ -191,7 +181,7 @@ WARNING;
         ->run();
 
       if (!$result->wasSuccessful()) {
-        $filepath = $this->getInspector()->getFs()->makePathRelative($project_settings_file, $this->getConfigValue('repo.root'));
+        $this->getInspector()->getFs()->makePathRelative($project_settings_file, $this->getConfigValue('repo.root'));
         throw new BltException("Unable to set permissions on $project_settings_file.");
       }
     }
@@ -204,13 +194,12 @@ WARNING;
   /**
    * Generates tests/behat/local.yml file for executing Behat tests locally.
    *
-   * @command tests:behat:init:config
-   * @aliases tbic setup:behat
+   * @command setup:behat
    */
   public function behat() {
     $copy_map = [
-      $this->getConfigValue('blt.root') . '/subtree-splits/blt-project/tests/behat/behat.yml' => $this->getConfigValue('repo.root') . '/tests/behat/behat.yml',
-      $this->getConfigValue('blt.root') . '/subtree-splits/blt-project/tests/behat/example.local.yml' => $this->defaultBehatLocalConfigFile,
+      $this->getConfigValue('blt.root') . '/scripts/behat/behat.yml' => $this->getConfigValue('repo.root') . '/tests/behat/behat.yml',
+      $this->getConfigValue('blt.root') . '/scripts/behat/example.local.yml' => $this->defaultBehatLocalConfigFile,
       $this->defaultBehatLocalConfigFile => $this->projectBehatLocalConfigFile,
     ];
 
@@ -359,6 +348,42 @@ WARNING;
     if (!$result->wasSuccessful()) {
       $filepath = $this->getInspector()->getFs()->makePathRelative($deployment_identifier_file, $this->getConfigValue('repo.root'));
       throw new BltException("Unable to write deployment identifier to $filepath.");
+    }
+  }
+
+  /**
+   * Generates local.blt.yml from example.local.blt.yml.
+   *
+   * @throws \Acquia\Blt\Robo\Exceptions\BltException
+   */
+  private function generateLocalConfigFile() {
+    $localConfigFile = $this->getConfigValue('blt.config-files.local');
+    $exampleLocalConfigFile = $this->getConfigValue('blt.config-files.example-local');
+    $localConfigFilepath = $this->getInspector()
+      ->getFs()
+      ->makePathRelative($localConfigFile, $this->getConfigValue('repo.root'));
+    $exampleLocalConfigFilepath = $this->getInspector()
+      ->getFs()
+      ->makePathRelative($exampleLocalConfigFile, $this->getConfigValue('repo.root'));
+
+    if (file_exists($localConfigFile)) {
+      // Don't overwrite an existing local.blt.yml.
+      return;
+    }
+
+    if (!file_exists($exampleLocalConfigFile)) {
+      $this->say("Could not find $exampleLocalConfigFilepath. Create and commit this file if you'd like to automatically generate $localConfigFilepath based on this template.");
+      return;
+    }
+
+    $result = $this->taskFilesystemStack()
+      ->copy($exampleLocalConfigFile, $localConfigFile)
+      ->stopOnFail()
+      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
+      ->run();
+
+    if (!$result->wasSuccessful()) {
+      throw new BltException("Unable to create $localConfigFilepath.");
     }
   }
 

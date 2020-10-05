@@ -30,7 +30,9 @@ final class SchedulerContext extends DrupalSubContextBase {
    */
   public function setUp() {
     // Use call_user_func() to get around the deprecation testing tools we use.
-    ini_set('date.timezone', call_user_func('drupal_get_user_timezone'));
+    if (function_exists('date_default_timezone_get')) {
+      ini_set('date.timezone', call_user_func('date_default_timezone_get'));
+    }
     $this->startTime = time();
   }
 

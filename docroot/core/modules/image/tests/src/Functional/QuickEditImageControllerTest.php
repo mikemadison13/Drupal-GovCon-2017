@@ -24,7 +24,7 @@ class QuickEditImageControllerTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'image', 'quickedit'];
+  protected static $modules = ['node', 'image', 'quickedit'];
 
   /**
    * {@inheritdoc}
@@ -48,7 +48,7 @@ class QuickEditImageControllerTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create the Article node type.
@@ -93,7 +93,7 @@ class QuickEditImageControllerTest extends BrowserTestBase {
     /** @var \Symfony\Component\BrowserKit\Client $client */
     $client = $this->getSession()->getDriver()->getClient();
     $client->request('POST', '/quickedit/image/upload/node/' . $node->id() . '/' . $this->fieldName . '/' . $node->language()->getId() . '/default');
-    $this->assertEquals('403', $client->getResponse()->getStatus());
+    $this->assertEquals('403', $client->getResponse()->getStatusCode());
   }
 
   /**

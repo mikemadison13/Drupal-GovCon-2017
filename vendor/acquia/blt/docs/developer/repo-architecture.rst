@@ -42,11 +42,11 @@ in the project template:
      ├── blt      - Contains custom build config files for CI solutions
      ├── box      - Contains DrupalVM Configuration (optional, created by
      |              `blt vm`)
-     ├── config   - Contains Drupal 8 configuration files
+     ├── config   - Contains Drupal configuration files
      ├── drush    - Contain drush configuration that is not site or
      |              environment specific
      ├── docroot  - The Drupal docroot
-     ├── hooks    - Contains Acquia Cloud hooks (optional, created by
+     ├── hooks    - Contains Cloud Platform hooks (optional, created by
      |              `blt recipes:cloud-hooks:init`)
      ├── patches  - Contains private patches to be used by composer.json
      ├── reports  - Contains output of automated tests; is .gitignored

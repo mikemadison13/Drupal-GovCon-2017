@@ -236,6 +236,9 @@ EOS;
 
     $signature_line .= implode(', ', $parameters);
     $signature_line .= ')';
+    if ($reflection_method->hasReturnType()) {
+      $signature_line .= ': ' . $reflection_method->getReturnType()->getName();
+    }
 
     $output = $signature_line . "\n{\n";
 
@@ -264,6 +267,9 @@ EOS;
     }
     elseif ($class = $parameter->getClass()) {
       $parameter_string .= '\\' . $class->getName() . ' ';
+    }
+    elseif ($parameter->hasType()) {
+      $parameter_string .= $parameter->getType()->getName() . ' ';
     }
 
     if ($parameter->isPassedByReference()) {
@@ -294,7 +300,12 @@ EOS;
     $function_name = $reflection_method->getName();
 
     if (!$reflection_method->isStatic()) {
-      $output .= '    return $this->lazyLoadItself()->' . $function_name . '(';
+      if ($reflection_method->getReturnType() && $reflection_method->getReturnType()->getName() === 'void') {
+        $output .= '    $this->lazyLoadItself()->' . $function_name . '(';
+      }
+      else {
+        $output .= '    return $this->lazyLoadItself()->' . $function_name . '(';
+      }
     }
     else {
       $class_name = $reflection_method->getDeclaringClass()->getName();

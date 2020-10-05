@@ -701,7 +701,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
       // sets it to 'text/html' by default. We also cannot detect the presence
       // of Apache either here in the CLI. For now having this documented here
       // is all we can do.
-      /* $this->assertSame(FALSE, $response->hasHeader('Content-Type')); */
+      /* $this->assertFalse($response->hasHeader('Content-Type')); */
       $this->assertSame('', (string) $response->getBody());
     }
     else {
@@ -1254,7 +1254,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $cacheability = static::getExpectedCollectionCacheability($this->account, $collection, NULL, $filtered);
     $cacheability->setCacheMaxAge($merged_response->getCacheableMetadata()->getCacheMaxAge());
 
-    $collection_response = ResourceResponse::create($merged_document);
+    $collection_response = new ResourceResponse($merged_document);
     $collection_response->addCacheableDependency($cacheability);
 
     if (is_null($included_paths)) {
@@ -1280,7 +1280,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
   }
 
   /**
-   * Tests GETing related resource of an individual resource.
+   * Tests GET of the related resource of an individual resource.
    *
    * Expected responses are built by making requests to 'relationship' routes.
    * Using the fetched resource identifiers, if any, all targeted resources are
@@ -1494,11 +1494,11 @@ abstract class ResourceTestBase extends BrowserTestBase {
         // Test POST: invalid target.
         $request_options[RequestOptions::BODY] = Json::encode(['data' => [$resource_identifier]]);
         $response = $this->request('POST', $url, $request_options);
-        $this->assertResourceErrorResponse(400, sprintf('The provided type (%s) does not mach the destination resource types (%s).', $resource_identifier['type'], $target_identifier['type']), $url, $response, FALSE);
+        $this->assertResourceErrorResponse(400, sprintf('The provided type (%s) does not match the destination resource types (%s).', $resource_identifier['type'], $target_identifier['type']), $url, $response, FALSE);
         // Test PATCH: invalid target.
         $request_options[RequestOptions::BODY] = Json::encode(['data' => [$resource_identifier]]);
         $response = $this->request('POST', $url, $request_options);
-        $this->assertResourceErrorResponse(400, sprintf('The provided type (%s) does not mach the destination resource types (%s).', $resource_identifier['type'], $target_identifier['type']), $url, $response, FALSE);
+        $this->assertResourceErrorResponse(400, sprintf('The provided type (%s) does not match the destination resource types (%s).', $resource_identifier['type'], $target_identifier['type']), $url, $response, FALSE);
       }
 
       // Test POST: duplicate targets, no arity.
@@ -2006,7 +2006,9 @@ abstract class ResourceTestBase extends BrowserTestBase {
         // properties are present, the server could be computing additional
         // properties.
         if (is_array($field_normalization)) {
-          $this->assertArraySubset($field_normalization, $created_entity_document['data']['attributes'][$field_name]);
+          foreach ($field_normalization as $value) {
+            $this->assertContains($value, $created_entity_document['data']['attributes'][$field_name]);
+          }
         }
         else {
           $this->assertSame($field_normalization, $created_entity_document['data']['attributes'][$field_name]);
@@ -2134,7 +2136,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
 
     // DX: 415 when no Content-Type request header.
     $response = $this->request('PATCH', $url, $request_options);
-    $this->assertsame(415, $response->getStatusCode());
+    $this->assertSame(415, $response->getStatusCode());
 
     $request_options[RequestOptions::HEADERS]['Content-Type'] = 'application/vnd.api+json';
 
@@ -2260,7 +2262,9 @@ abstract class ResourceTestBase extends BrowserTestBase {
       // properties are present, the server could be computing additional
       // properties.
       if (is_array($field_normalization)) {
-        $this->assertArraySubset($field_normalization, $updated_entity_document['data']['attributes'][$field_name]);
+        foreach ($field_normalization as $value) {
+          $this->assertContains($value, $updated_entity_document['data']['attributes'][$field_name]);
+        }
       }
       else {
         $this->assertSame($field_normalization, $updated_entity_document['data']['attributes'][$field_name]);

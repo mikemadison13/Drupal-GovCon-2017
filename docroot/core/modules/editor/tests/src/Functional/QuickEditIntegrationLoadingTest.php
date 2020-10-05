@@ -20,7 +20,7 @@ class QuickEditIntegrationLoadingTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['quickedit', 'filter', 'node', 'editor'];
+  protected static $modules = ['quickedit', 'filter', 'node', 'editor'];
 
   /**
    * {@inheritdoc}
@@ -41,7 +41,7 @@ class QuickEditIntegrationLoadingTest extends BrowserTestBase {
    */
   protected static $basicPermissions = ['access content', 'create article content', 'use text format filtered_html', 'access contextual links'];
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create a text format.

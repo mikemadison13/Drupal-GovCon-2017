@@ -2,8 +2,7 @@
  * @file
  * Replacement styles for table drag.
  *
- * Replaces both of tabledrag.module.css (from core/stable) and tabledrag.css
- * (from Classy theme).
+ * Replaces core's tabledrag.module.css.
  *
  * @see tabledrag.js
  */
@@ -280,7 +279,7 @@ body.drag {
  * Tree is the visual representation for the simultaneously moved draggable
  * rows.
  *
- * These rules are styleing the inline SVG that is placed inside the .indetation
+ * These rules are styling the inline SVG that is placed inside the .indentation
  * element.
  */
 .tree {

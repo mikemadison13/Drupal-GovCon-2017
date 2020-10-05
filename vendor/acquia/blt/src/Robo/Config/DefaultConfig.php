@@ -23,6 +23,7 @@ class DefaultConfig extends BltConfig {
     $this->set('docroot', $repo_root . '/docroot');
     $this->set('blt.root', $this->getBltRoot());
     $this->set('composer.bin', $repo_root . '/vendor/bin');
+    $this->set('tmp.dir', sys_get_temp_dir());
   }
 
   /**
@@ -39,7 +40,7 @@ class DefaultConfig extends BltConfig {
       dirname(dirname(dirname(__FILE__))),
     ];
     foreach ($possible_blt_roots as $possible_blt_root) {
-      if (file_exists("$possible_blt_root/subtree-splits/blt-project")) {
+      if (basename($possible_blt_root) == 'blt' && file_exists("$possible_blt_root/RoboFile.php")) {
         return $possible_blt_root;
       }
     }

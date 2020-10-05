@@ -1,8 +1,6 @@
 <?php
 
-namespace Acquia\Blt\Tests\BltProject;
-
-use Acquia\Blt\Tests\BltProjectTestBase;
+namespace Acquia\Blt\Tests;
 
 /**
  * Class AcsfHooksTests.
@@ -23,8 +21,6 @@ class AcsfHooksTest extends BltProjectTestBase {
     $this->assertFileExists($this->sandboxInstance . '/factory-hooks');
     list($status_code) = $this->blt("tests:acsf:validate");
     $this->assertEquals(0, $status_code);
-
-    $this->installDrupalMinimal();
 
     // Mimics factory-hooks/db-update/db-update.sh.
     list($status_code) = $this->blt("artifact:acsf-hooks:db-update", [

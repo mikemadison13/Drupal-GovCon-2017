@@ -1,13 +1,9 @@
 <?php
 
-namespace Acquia\Blt\Tests\BltProject;
-
-use Acquia\Blt\Tests\BltProjectTestBase;
+namespace Acquia\Blt\Tests;
 
 /**
  * Class DrushTest.
- *
- * @group orca_ignore
  */
 class DrushTest extends BltProjectTestBase {
 
@@ -15,6 +11,7 @@ class DrushTest extends BltProjectTestBase {
    * Tests that correct drush configuration is loaded.
    *
    * @group blted8
+   * @group orca_ignore
    */
   public function testDrushConfig() {
     // Test that drush can be run from the following directories.

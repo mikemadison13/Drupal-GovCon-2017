@@ -19,7 +19,7 @@ class LinkViewsTokensTest extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = ['link_test_views'];
+  protected static $modules = ['link_test_views'];
 
   /**
    * {@inheritdoc}
@@ -43,7 +43,7 @@ class LinkViewsTokensTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
     ViewTestData::createTestViews(get_class($this), ['link_test_views']);
 
@@ -86,7 +86,7 @@ class LinkViewsTokensTest extends ViewTestBase {
 
     foreach ($uris as $uri => $title) {
       // Formatted link: {{ field_link }}<br />
-      $this->assertRaw("Formated: <a href=\"$uri\" class=\"test-link-class\">$title</a>");
+      $this->assertRaw("Formatted: <a href=\"$uri\" class=\"test-link-class\">$title</a>");
 
       // Raw uri: {{ field_link__uri }}<br />
       $this->assertRaw("Raw uri: $uri");

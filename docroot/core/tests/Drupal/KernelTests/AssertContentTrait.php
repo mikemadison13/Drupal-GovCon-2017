@@ -7,7 +7,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Render\RenderContext;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 
 /**
@@ -128,16 +127,12 @@ trait AssertContentTrait {
       $html_dom = new \DOMDocument();
       @$html_dom->loadHTML('<?xml encoding="UTF-8">' . $this->getRawContent());
       if ($html_dom) {
-        $this->pass(new FormattableMarkup('Valid HTML found on "@path"', ['@path' => $this->getUrl()]), 'Browser');
         // It's much easier to work with simplexml than DOM, luckily enough
         // we can just simply import our DOM tree.
         $this->elements = simplexml_import_dom($html_dom);
       }
     }
-    if ($this->elements === FALSE) {
-      $this->fail('Parsed page successfully.', 'Browser');
-    }
-
+    $this->assertNotFalse($this->elements, 'The current HTML page should be available for DOM navigation.');
     return $this->elements;
   }
 
@@ -435,12 +430,7 @@ trait AssertContentTrait {
     if (!$message) {
       $message = 'Raw "' . Html::escape($raw) . '" found';
     }
-    if ($this instanceof TestCase) {
-      $this->assertStringContainsString((string) $raw, $this->getRawContent(), $message);
-    }
-    else {
-      return $this->assert(strpos($this->getRawContent(), (string) $raw) !== FALSE, $message, $group);
-    }
+    $this->assertStringContainsString((string) $raw, $this->getRawContent(), $message);
   }
 
   /**
@@ -468,12 +458,7 @@ trait AssertContentTrait {
     if (!$message) {
       $message = 'Raw "' . Html::escape($raw) . '" not found';
     }
-    if ($this instanceof TestCase) {
-      $this->assertStringNotContainsString((string) $raw, $this->getRawContent(), $message);
-    }
-    else {
-      return $this->assert(strpos($this->getRawContent(), (string) $raw) === FALSE, $message, $group);
-    }
+    $this->assertStringNotContainsString((string) $raw, $this->getRawContent(), $message);
   }
 
   /**
@@ -501,12 +486,7 @@ trait AssertContentTrait {
     if (!$message) {
       $message = 'Escaped "' . Html::escape($raw) . '" found';
     }
-    if ($this instanceof TestCase) {
-      $this->assertStringContainsString(Html::escape($raw), $this->getRawContent(), $message);
-    }
-    else {
-      return $this->assert(strpos($this->getRawContent(), Html::escape($raw)) !== FALSE, $message, $group);
-    }
+    $this->assertStringContainsString(Html::escape($raw), $this->getRawContent(), $message);
   }
 
   /**
@@ -535,12 +515,7 @@ trait AssertContentTrait {
     if (!$message) {
       $message = 'Escaped "' . Html::escape($raw) . '" not found';
     }
-    if ($this instanceof TestCase) {
-      $this->assertStringNotContainsString(Html::escape($raw), $this->getRawContent(), $message);
-    }
-    else {
-      return $this->assert(strpos($this->getRawContent(), Html::escape($raw)) === FALSE, $message, $group);
-    }
+    $this->assertStringNotContainsString(Html::escape($raw), $this->getRawContent(), $message);
   }
 
   /**
@@ -628,20 +603,10 @@ trait AssertContentTrait {
       $message = !$not_exists ? new FormattableMarkup('"@text" found', ['@text' => $text]) : new FormattableMarkup('"@text" not found', ['@text' => $text]);
     }
     if ($not_exists) {
-      if ($this instanceof TestCase) {
-        $this->assertStringNotContainsString((string) $text, $this->getTextContent(), $message);
-      }
-      else {
-        return $this->assert(strpos($this->getTextContent(), (string) $text) === FALSE, $message, $group);
-      }
+      $this->assertStringNotContainsString((string) $text, $this->getTextContent(), $message);
     }
     else {
-      if ($this instanceof TestCase) {
-        $this->assertStringContainsString((string) $text, $this->getTextContent(), $message);
-      }
-      else {
-        return $this->assert(strpos($this->getTextContent(), (string) $text) !== FALSE, $message, $group);
-      }
+      $this->assertStringContainsString((string) $text, $this->getTextContent(), $message);
     }
   }
 

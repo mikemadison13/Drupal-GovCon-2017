@@ -48,15 +48,15 @@ Adding, updating, or patching a dependency
 ------------------------------------------
 
 For information about managing core and contributed packages for your project,
-see :doc:`/blt/developer/dependency-management/`.
+see `Using Composer to manage dependencies <https://support.acquia.com/hc/en-us/articles/360048081273>`__.
 
 
 .. _blt-deploying-to-ac:
 
-Deploying to Acquia Cloud
--------------------------
+Deploying to Cloud Platform
+----------------------------
 
-For a detailed description of how to deploy to Acquia Cloud, see
+For a detailed description of how to deploy to Cloud Platform, see
 :doc:`/blt/tech-architect/deploy/`.
 
 
@@ -93,9 +93,6 @@ The project is configured to update the local environment with a both local
 Drush alias and a remote alias (as defined in ``blt/blt.yml`` or
 ``blt/local.yml``). Due to the fact that these aliases match those in
 ``drush/sites/``, you can update the website with Acquia BLT.
-
-For details about how to create these aliases, see
-:doc:`/blt/developer/drush/`.
 
 Refresh: Rebuild the codebase, copy the database, and run updates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

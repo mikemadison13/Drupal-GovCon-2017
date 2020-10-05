@@ -17,7 +17,7 @@ use Drupal\views\Views;
 class FilterInOperatorTest extends ViewsKernelTestBase {
   use StringTranslationTrait;
 
-  public static $modules = ['system'];
+  protected static $modules = ['system'];
 
   /**
    * Views used by this test.
@@ -234,7 +234,7 @@ class FilterInOperatorTest extends ViewsKernelTestBase {
   }
 
   /**
-   * Tests that the InOperator filter can handle TranslateableMarkup.
+   * Tests that the InOperator filter can handle TranslatableMarkup.
    */
   public function testFilterOptionAsMarkup() {
     $view = $this->prophesize(ViewExecutable::class);

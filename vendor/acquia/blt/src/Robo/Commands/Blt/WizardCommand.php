@@ -46,14 +46,6 @@ class WizardCommand extends BltTasks {
     if (!empty($answers['ci']['provider'])) {
       $this->invokeCommand("ci:{$answers['ci']['provider']}:init");
     }
-
-    if ($answers['vm']) {
-      $this->invokeCommand('vm', [
-        [
-          'no-boot' => '--no-interaction',
-        ],
-      ]);
-    }
   }
 
   /**
@@ -98,7 +90,6 @@ class WizardCommand extends BltTasks {
     $answers['prefix'] = $this->askDefault("Project prefix:", $default_prefix);
 
     $this->say("<info>Great. Now let's make some choices about how your project will be set up.</info>");
-    $answers['vm'] = $this->confirm('Do you want to create a VM?');
     $ci = $this->confirm('Do you want to use Continuous Integration?');
     if ($ci) {
       $provider_options = [
@@ -112,7 +103,6 @@ class WizardCommand extends BltTasks {
     if ($cm) {
       $strategy_options = [
         'config-split' => 'Config Split (recommended)',
-        'features' => 'Features',
         'core-only' => 'Core only',
       ];
       $answers['cm']['strategy'] = $this->askChoice('Choose a configuration management strategy:', $strategy_options, 'config-split');
@@ -141,15 +131,29 @@ class WizardCommand extends BltTasks {
   protected function updateProjectYml(array $answers) {
     $config_file = $this->getConfigValue('blt.config-files.project');
     $config = YamlMunge::parseFile($config_file);
+    if (!isset($config['project'])) {
+      $config['project'] = [];
+    }
     $config['project']['prefix'] = $answers['prefix'];
     $config['project']['machine_name'] = $answers['machine_name'];
     $config['project']['human_name'] = $answers['human_name'];
+    if (!isset($config['project']['profile'])) {
+      $config['project']['profile'] = [];
+    }
     $config['project']['profile']['name'] = $answers['profile'];
     // Hostname cannot contain underscores.
     $machine_name_safe = str_replace('_', '-', $answers['machine_name']);
-    $config['project']['local']['hostname'] = str_replace('${project.machine_name}', $machine_name_safe, $config['project']['local']['hostname']);
+    if (isset($config['project']['local']['hostname'])) {
+      $config['project']['local']['hostname'] = str_replace('${project.machine_name}', $machine_name_safe, $config['project']['local']['hostname']);
+    }
+    else {
+      $config['project']['local'] = ['hostname' => $machine_name_safe];
+    }
 
     if (isset($answers['cm']['strategy'])) {
+      if (!isset($config['cm'])) {
+        $config['cm'] = [];
+      }
       $config['cm']['strategy'] = $answers['cm']['strategy'];
     }
 

@@ -74,7 +74,7 @@ function _drupal_error_handler_real($error_level, $message, $filename, $line, $c
     _drupal_log_error([
       '%type' => isset($types[$error_level]) ? $severity_msg : 'Unknown error',
       // The standard PHP error handler considers that the error messages
-      // are HTML. We mimick this behavior here.
+      // are HTML. We mimic this behavior here.
       '@message' => Markup::create(Xss::filterAdmin($message)),
       '%function' => $caller['function'],
       '%file' => $caller['file'],
@@ -220,7 +220,7 @@ function _drupal_log_error($error, $fatal = FALSE) {
 
       // Attempt to reduce verbosity by removing DRUPAL_ROOT from the file path
       // in the message. This does not happen for (false) security.
-      if (\Drupal::hasService('app.root')) {
+      if (\Drupal::hasService('kernel')) {
         $root_length = strlen(\Drupal::root());
         if (substr($error['%file'], 0, $root_length) == \Drupal::root()) {
           $error['%file'] = substr($error['%file'], $root_length + 1);

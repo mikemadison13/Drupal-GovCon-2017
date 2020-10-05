@@ -18,7 +18,7 @@ class LocalTasksTest extends BrowserTestBase {
    *
    * @var string[]
    */
-  public static $modules = ['block', 'menu_test', 'entity_test', 'node'];
+  protected static $modules = ['block', 'menu_test', 'entity_test', 'node'];
 
   /**
    * {@inheritdoc}
@@ -35,7 +35,7 @@ class LocalTasksTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->sut = $this->drupalPlaceBlock('local_tasks_block', ['id' => 'tabs_block']);

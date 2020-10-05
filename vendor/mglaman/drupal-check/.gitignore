@@ -1,5 +1,0 @@
-# Composer
-/vendor/
-/.idea
-/*.phar
-.circleci/config_local.yml

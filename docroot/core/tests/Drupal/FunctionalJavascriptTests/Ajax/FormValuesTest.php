@@ -14,7 +14,7 @@ class FormValuesTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'ajax_test', 'ajax_forms_test'];
+  protected static $modules = ['node', 'ajax_test', 'ajax_forms_test'];
 
   /**
    * {@inheritdoc}
@@ -24,7 +24,7 @@ class FormValuesTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalLogin($this->drupalCreateUser(['access content']));
@@ -73,7 +73,7 @@ class FormValuesTest extends WebDriverTestBase {
       // The select element is disabled as the AJAX request is issued.
       $this->assertSession()->waitForElement('css', "select[name=\"$element_name\"]:disabled");
 
-      // The select element is enabled as the response is receieved.
+      // The select element is enabled as the response is received.
       $this->assertSession()->waitForElement('css', "select[name=\"$element_name\"]:enabled");
       $this->assertFileExists(DRUPAL_ROOT . '/' . $this->siteDirectory . '/error.log');
       $this->assertStringContainsString('"The specified #ajax callback is empty or not callable."', file_get_contents(DRUPAL_ROOT . '/' . $this->siteDirectory . '/error.log'));

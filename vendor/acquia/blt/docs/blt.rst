@@ -1,7 +1,7 @@
 .. include:: common/global.rst
 
-Acquia BLT
-==========
+BLT
+===
 
 .. toctree::
    :hidden:
@@ -12,15 +12,12 @@ Acquia BLT
    /blt/developer
    /blt/tech-architect
    /blt/extending-blt/
-   /blt/plugins
    /blt/contributing/
    /blt/support/
 
 Acquia BLT (Build and Launch Tool), `available on GitHub
 <https://github.com/acquia/blt>`__, provides an automation layer for testing,
-building, and launching Drupal 8 applications. Acquia BLT generates new Drupal
-projects using a standardized template based on Acquia Professional
-Services' best practices.
+building, and launching Drupal 8 and 9 applications.
 
 .. container:: message-status
 
@@ -71,7 +68,7 @@ Acquia BLT offers the following features for your organization's use:
    Includes building production-only dependencies and sanitizing
    production-environment code.
 -  :doc:`Continuous integration and deployment tools
-   </blt/tech-architect/ci/>`: Supports both the Acquia Cloud pipelines
+   </blt/tech-architect/ci/>`: Supports both the Cloud Platform pipelines
    feature and Travis CI.
 
 
@@ -88,14 +85,10 @@ documentation:
 -  :doc:`/blt/developer/repo-architecture/`: How code is organized, and why.
 -  :doc:`/blt/developer/project-tasks/`: How to complete tasks on your local
    computer.
--  :doc:`/blt/developer/dev-workflow/`: How to contribute your code to Acquia
-   BLT.
 -  :doc:`/blt/developer/testing/`: How to write and run tests, and why you
    should care.
 -  :doc:`/blt/tech-architect/deploy/`
--  :doc:`/blt/tech-architect/release-process/`
 -  :doc:`/blt/tech-architect/ci/`
--  :doc:`/blt/tech-architect/os-contribution/`
 
 
 .. _blt-videos:
@@ -105,7 +98,7 @@ Videos
 
 -  `Acquia BLT project creation
    <https://www.youtube.com/watch?v=KBwS0fsmXRs>`__
--  `Deploying to Acquia Cloud <https://www.youtube.com/watch?v=jjnPMvZ2x-c>`__
+-  `Deploying to Cloud Platform <https://www.youtube.com/watch?v=jjnPMvZ2x-c>`__
 
 
 .. _blt-releases-versioning:
@@ -145,26 +138,31 @@ Release support status
      - Support status
      - Drupal versions
      - Drush versions
-   * - 10.x
-     - Supported, stable
-     - 8.6 or greater
-     - 9.5.0 or greater
-   * - 9.2.x
+   * - 13.x
+     - Unsupported and unstable
+     -
+     -
+   * - 12.x
+     - Supported and stable
+     - 9.0
+     - 9.5.0 or greater, 10.0.1 or greater
+   * - 11.x
      - Bug fixes only
-     - 8.6 or greater
-     - 9.4.0 or greater
-   * - 9.x or earlier
+     - 8.8 or 8.9
+     - 9.5.0 or greater, 10.0.1 or greater
+   * - 10.x or earlier
      - Unsupported
-     - 8.5
-     - 9.1.0 or greater
+     -
+     -
 
 .. note::
 
     When the maintainer of a particular release of any package (such as
     Drupal or PHP) stops supporting that package, Acquia may end its
-    support for that release in Acquia BLT. For example, as of December
-    2019, Acquia BLT 10.x will stop supporting Drupal 8.6, and will instead
-    support Drupal 8.7 or greater, based on the Drupal security policy.
+    support for that release in Acquia BLT. For example, as of June
+    2021, Acquia BLT 12 will stop supporting Drupal 9.0, and will instead
+    support Drupal 9.1 or greater, based on the `Drupal release cycle
+    <https://www.drupal.org/core/release-cycle-overview>`__.
 
 For information about end-of-life announcements for Acquia's products, see
 :doc:`/support/eol/`.

@@ -3,8 +3,6 @@
 namespace Drupal\Core\Config;
 
 use Drupal\Core\Extension\ExtensionDiscovery;
-use Drupal\Core\Extension\ProfileExtensionList;
-use Drupal\Core\Extension\ProfileHandlerInterface;
 
 /**
  * Storage to access configuration and schema in enabled extensions.
@@ -44,29 +42,19 @@ class ExtensionInstallStorage extends InstallStorage {
    *   The active configuration store where the list of enabled modules and
    *   themes is stored.
    * @param string $directory
-   *   The directory to scan in each extension to scan for files. Defaults to
-   *   'config/install'. This parameter will be mandatory in Drupal 9.0.0.
+   *   The directory to scan in each extension to scan for files.
    * @param string $collection
-   *   (optional) The collection to store configuration in. Defaults to the
-   *   default collection. This parameter will be mandatory in Drupal 9.0.0.
+   *   The collection to store configuration in.
    * @param bool $include_profile
-   *   (optional) Whether to include the install profile in extensions to
-   *   search and to get overrides from. This parameter will be mandatory in
-   *   Drupal 9.0.0.
-   * @param string|null $profile
-   *   (optional) The current installation profile. This parameter will be
-   *   mandatory in Drupal 9.0.0.
-   * @param \Drupal\Core\Extension\ProfileExtensionList $profile_list
-   *   (optional) The profile extension list service.
+   *   Whether to include the install profile in extensions to
+   *   search and to get overrides from.
+   * @param string $profile
+   *   The current installation profile.
    */
-  public function __construct(StorageInterface $config_storage, $directory = self::CONFIG_INSTALL_DIRECTORY, $collection = StorageInterface::DEFAULT_COLLECTION, $include_profile = TRUE, $profile = NULL, ProfileExtensionList $profile_list = NULL) {
-    parent::__construct($directory, $collection, $profile_list);
+  public function __construct(StorageInterface $config_storage, $directory, $collection, $include_profile, $profile) {
+    parent::__construct($directory, $collection);
     $this->configStorage = $config_storage;
     $this->includeProfile = $include_profile;
-    if (!isset($profile) && count(func_get_args()) < 5) {
-      $profile = \Drupal::installProfile();
-      @trigger_error('All \Drupal\Core\Config\ExtensionInstallStorage::__construct() arguments will be required in drupal:9.0.0. See https://www.drupal.org/node/2538996', E_USER_DEPRECATED);
-    }
     $this->installProfile = $profile;
   }
 

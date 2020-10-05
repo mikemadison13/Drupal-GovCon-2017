@@ -251,7 +251,7 @@ function install_state_defaults() {
     // required translation file.
     'server_pattern' => 'http://ftp.drupal.org/files/translations/%core/%project/%project-%version.%language.po',
     // Installation tasks can set this to TRUE to force the page request to
-    // end (even if there is no themable output), in the case of an interactive
+    // end (even if there is no themeable output), in the case of an interactive
     // installation. This is needed only rarely; for example, it would be used
     // by an installation task that prints JSON output rather than returning a
     // themed page. The most common example of this is during batch processing,
@@ -334,7 +334,7 @@ function install_begin_request($class_loader, &$install_state) {
   }
 
   $site_path = empty($install_state['site_path']) ? DrupalKernel::findSitePath($request, FALSE) : $install_state['site_path'];
-  Settings::initialize(dirname(dirname(__DIR__)), $site_path, $class_loader);
+  Settings::initialize(dirname(__DIR__, 2), $site_path, $class_loader);
 
   // Ensure that procedural dependencies are loaded as early as possible,
   // since the error/exception handlers depend on them.
@@ -343,13 +343,11 @@ function install_begin_request($class_loader, &$install_state) {
   require_once __DIR__ . '/file.inc';
   require_once __DIR__ . '/install.inc';
   require_once __DIR__ . '/schema.inc';
-  require_once __DIR__ . '/database.inc';
   require_once __DIR__ . '/form.inc';
   require_once __DIR__ . '/batch.inc';
 
   // Load module basics (needed for hook invokes).
   include_once __DIR__ . '/module.inc';
-  require_once __DIR__ . '/entity.inc';
 
   // Create a minimal mocked container to support calls to t() in the pre-kernel
   // base system verification code paths below. The strings are not actually
@@ -391,7 +389,7 @@ function install_begin_request($class_loader, &$install_state) {
   }
   $install_state['database_verified'] = install_verify_database_settings($site_path);
   // A valid settings.php has database settings and a hash_salt value. Other
-  // settings like config_directories will be checked by system_requirements().
+  // settings will be checked by system_requirements().
   $install_state['settings_verified'] = $install_state['database_verified'] && (bool) Settings::get('hash_salt', FALSE);
 
   if ($install_state['settings_verified']) {
@@ -446,7 +444,7 @@ function install_begin_request($class_loader, &$install_state) {
     ->addTranslator($container->get('string_translator.file_translation'));
 
   // Add list of all available profiles to the installation state.
-  $listing = new ExtensionDiscovery($container->get('app.root'));
+  $listing = new ExtensionDiscovery($container->getParameter('app.root'));
   $listing->setProfileDirectories([]);
   $install_state['profiles'] += $listing->scan('profile');
 
@@ -794,7 +792,6 @@ function install_tasks($install_state) {
       'run' => $install_state['settings_verified'] ? INSTALL_TASK_SKIP : INSTALL_TASK_RUN_IF_NOT_COMPLETED,
       'function' => 'Drupal\Core\Installer\Form\SiteSettingsForm',
     ],
-    'install_write_profile' => [],
     'install_verify_database_ready' => [
       'run' => INSTALL_TASK_RUN_IF_NOT_COMPLETED,
     ],
@@ -1651,9 +1648,6 @@ function install_profile_themes(&$install_state) {
  *   An array of information about the current installation state.
  */
 function install_install_profile(&$install_state) {
-  // Install all the profiles.
-  $profiles = \Drupal::service('extension.list.profile')->getAncestors();
-  \Drupal::service('module_installer')->install(array_keys($profiles), FALSE);
   // Install all available optional config. During installation the module order
   // is determined by dependencies. If there are no dependencies between modules
   // then the order in which they are installed is dependent on random factors
@@ -1663,6 +1657,9 @@ function install_install_profile(&$install_state) {
   // any disparities that this creates.
   \Drupal::service('config.installer')->installOptionalConfig();
 
+  // Install all the profiles.
+  $profiles = \Drupal::service('extension.list.profile')->getAncestors();
+  \Drupal::service('module_installer')->install(array_keys($profiles), FALSE);
   // Ensure that the install profile's theme is used.
   // @see _drupal_maintenance_theme()
   \Drupal::theme()->resetActiveTheme();
@@ -1911,7 +1908,7 @@ function install_check_translations($langcode, $server_pattern) {
   $readable = FALSE;
   $writable = FALSE;
   // @todo: Make this configurable.
-  $site_path = \Drupal::service('site.path');
+  $site_path = \Drupal::getContainer()->getParameter('site.path');
   $files_directory = $site_path . '/files';
   $translations_directory = $site_path . '/files/translations';
   $translations_directory_exists = FALSE;
@@ -2090,7 +2087,7 @@ function install_check_requirements($install_state) {
   foreach ($default_files as $default_file_info) {
     $readable = FALSE;
     $writable = FALSE;
-    $site_path = './' . \Drupal::service('site.path');
+    $site_path = './' . \Drupal::getContainer()->getParameter('site.path');
     $file = $site_path . "/{$default_file_info['file']}";
     $default_file = "./sites/default/{$default_file_info['file_default']}";
     $exists = FALSE;
@@ -2307,33 +2304,6 @@ function install_display_requirements($install_state, $requirements) {
         throw new InstallerException(implode("\n\n", $failures));
       }
     }
-  }
-}
-
-/**
- * Installation task; writes profile to settings.php if possible.
- *
- * @param array $install_state
- *   An array of information about the current installation state.
- *
- * @see _install_select_profile()
- *
- * @deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. The
- *    install profile is written to core.extension.
- */
-function install_write_profile($install_state) {
-  // Only write the install profile to settings.php if it already exists. The
-  // value from settings.php is never used but drupal_rewrite_settings() does
-  // not support removing a setting. If the value is present in settings.php
-  // there will be an informational notice on the status report.
-  $settings_path = \Drupal::service('site.path') . '/settings.php';
-  if (is_writable($settings_path) && array_key_exists('install_profile', Settings::getAll())) {
-    // Remember the profile which was used.
-    $settings['settings']['install_profile'] = (object) [
-      'value' => $install_state['parameters']['profile'],
-      'required' => TRUE,
-    ];
-    drupal_rewrite_settings($settings);
   }
 }
 

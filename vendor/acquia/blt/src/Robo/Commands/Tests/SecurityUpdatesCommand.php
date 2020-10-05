@@ -12,9 +12,7 @@ class SecurityUpdatesCommand extends BltTasks {
   /**
    * Check local Drupal installation for security updates.
    *
-   * @command tests:security:check:updates
-   * @aliases tscu security tests:security-updates
-   * @executeInVm
+   * @command tests:security-drupal
    */
   public function testsSecurityUpdates() {
     $result = $this->taskDrush()
@@ -22,7 +20,7 @@ class SecurityUpdatesCommand extends BltTasks {
       ->run();
 
     if ($result->getExitCode()) {
-      $this->logger->notice('To disable security checks, set disable-targets.tests.security.check.updates to true in blt.yml.');
+      $this->logger->notice('To disable security checks, set disable-targets.tests.security-drupal to true in blt.yml.');
       return 1;
     }
     else {
@@ -34,9 +32,7 @@ class SecurityUpdatesCommand extends BltTasks {
   /**
    * Check composer.lock for security updates.
    *
-   * @command tests:security:check:composer
-   * @aliases tscom security tests:composer
-   * @executeInVm
+   * @command tests:security-composer
    */
   public function testsSecurityComposer() {
     $bin = $this->getConfigValue('composer.bin');
@@ -46,7 +42,7 @@ class SecurityUpdatesCommand extends BltTasks {
       ->run();
 
     if ($result->getExitCode()) {
-      $this->logger->notice('To disable security checks, set disable-targets.tests.security.check.composer to true in blt.yml.');
+      $this->logger->notice('To disable security checks, set disable-targets.tests.security-composer to true in blt.yml.');
       return 1;
     }
     else {

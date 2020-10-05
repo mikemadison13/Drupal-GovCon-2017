@@ -46,7 +46,7 @@ class SchemaTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->connection = Database::getConnection();
     $this->schema = $this->connection->schema();
@@ -124,12 +124,12 @@ class SchemaTest extends KernelTestBase {
 
     // Test for fake index and test for the boolean result of indexExists().
     $index_exists = $this->schema->indexExists('test_table', 'test_field');
-    $this->assertIdentical($index_exists, FALSE, 'Fake index does not exist');
+    $this->assertFalse($index_exists, 'Fake index does not exist');
     // Add index.
     $this->schema->addIndex('test_table', 'test_field', ['test_field'], $table_specification);
     // Test for created index and test for the boolean result of indexExists().
     $index_exists = $this->schema->indexExists('test_table', 'test_field');
-    $this->assertIdentical($index_exists, TRUE, 'Index created.');
+    $this->assertTrue($index_exists, 'Index created.');
 
     // Rename the table.
     $this->assertNull($this->schema->renameTable('test_table', 'test_table2'));
@@ -166,9 +166,9 @@ class SchemaTest extends KernelTestBase {
     $this->checkSchemaComment('Changed column description.', 'test_table', 'test_serial');
 
     $this->assertTrue($this->tryInsert(), 'Insert with a serial succeeded.');
-    $max1 = $this->connection->query('SELECT MAX(test_serial) FROM {test_table}')->fetchField();
+    $max1 = $this->connection->query('SELECT MAX([test_serial]) FROM {test_table}')->fetchField();
     $this->assertTrue($this->tryInsert(), 'Insert with a serial succeeded.');
-    $max2 = $this->connection->query('SELECT MAX(test_serial) FROM {test_table}')->fetchField();
+    $max2 = $this->connection->query('SELECT MAX([test_serial]) FROM {test_table}')->fetchField();
     $this->assertTrue($max2 > $max1, 'The serial is monotone.');
 
     $count = $this->connection->query('SELECT COUNT(*) FROM {test_table}')->fetchField();
@@ -186,9 +186,9 @@ class SchemaTest extends KernelTestBase {
     $this->assertSame(['test_serial'], $method->invoke($this->schema, 'test_table'));
 
     $this->assertTrue($this->tryInsert(), 'Insert with a serial succeeded.');
-    $max1 = $this->connection->query('SELECT MAX(test_serial) FROM {test_table}')->fetchField();
+    $max1 = $this->connection->query('SELECT MAX([test_serial]) FROM {test_table}')->fetchField();
     $this->assertTrue($this->tryInsert(), 'Insert with a serial succeeded.');
-    $max2 = $this->connection->query('SELECT MAX(test_serial) FROM {test_table}')->fetchField();
+    $max2 = $this->connection->query('SELECT MAX([test_serial]) FROM {test_table}')->fetchField();
     $this->assertTrue($max2 > $max1, 'The serial is monotone.');
 
     $count = $this->connection->query('SELECT COUNT(*) FROM {test_table}')->fetchField();
@@ -1246,6 +1246,29 @@ class SchemaTest extends KernelTestBase {
 
     // Go back to the initial connection.
     Database::setActiveConnection('default');
+  }
+
+  /**
+   * Tests handling of uppercase table names.
+   */
+  public function testUpperCaseTableName() {
+    $table_name = 'A_UPPER_CASE_TABLE_NAME';
+
+    // Create the tables.
+    $table_specification = [
+      'description' => 'Test table.',
+      'fields' => [
+        'id'  => [
+          'type' => 'int',
+          'default' => NULL,
+        ],
+      ],
+    ];
+    $this->schema->createTable($table_name, $table_specification);
+
+    $this->assertTrue($this->schema->tableExists($table_name), 'Table with uppercase table name exists');
+    $this->assertContains($table_name, $this->schema->findTables('%'));
+    $this->assertTrue($this->schema->dropTable($table_name), 'Table with uppercase table name dropped');
   }
 
 }

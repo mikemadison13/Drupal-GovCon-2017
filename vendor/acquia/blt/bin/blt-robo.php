@@ -17,6 +17,11 @@ require_once __DIR__ . '/blt-robo-run.php';
 /**
  * Finds the root directory for the repository.
  *
+ * Ordinarily this function is robust, but it can fail if you've symlinked BLT
+ * into your vendor directory (as with a Composer path repository) and are not
+ * running commands from the project root. In this state, BLT has no possible
+ * way to identify the root directory.
+ *
  * @return bool|string
  *   Root.
  */
@@ -31,10 +36,12 @@ function find_repo_root() {
     array_unshift($possible_repo_roots, $_SERVER['PWD']);
   }
   foreach ($possible_repo_roots as $possible_repo_root) {
-    if ($repo_root = find_directory_containing_files($possible_repo_root, ['vendor/bin/blt', 'vendor/autoload.php'])) {
+    if ($repo_root = find_directory_containing_files($possible_repo_root, ['vendor/acquia/blt', 'vendor/autoload.php'])) {
       return $repo_root;
     }
   }
+  print "Unable to determine the BLT root directory.\n";
+  exit(1);
 }
 
 /**
@@ -56,8 +63,7 @@ function find_repo_root() {
  */
 function find_directory_containing_files($working_directory, array $files, $max_height = 10) {
   // Find the root directory of the git repository containing BLT.
-  // We traverse the file tree upwards $max_height times until we find
-  // vendor/bin/blt.
+  // We traverse the file tree upwards $max_height times until we find $files.
   $file_path = $working_directory;
   for ($i = 0; $i <= $max_height; $i++) {
     if (files_exist($file_path, $files)) {

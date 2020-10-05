@@ -1,0 +1,29 @@
+{
+    "name": "acquia/drupal-environment-detector",
+    "description": "Provides common methods for detecting the current Acquia environment",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Acquia Engineering",
+            "homepage": "https://www.acquia.com",
+            "role": "Maintainer"
+        }
+    ],
+    "require-dev": {
+        "acquia/coding-standards": "^0.4.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+        "phpunit/phpunit": "^9.1"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "phpcodesniffer-search-depth": "4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Acquia\\DrupalEnvironmentDetector\\": "src/",
+            "Acquia\\DrupalEnvironmentDetector\\Tests\\": "tests/"
+        }
+    }
+}

@@ -13,7 +13,7 @@
  * - The initial content of the tabledrag-cell is wrapped into a new DOM element
  *   ".tabledrag-cell-content__item". This new element is moved into an another
  *   ".tabledrag-cell-content" division that contains the drag handle, the
- *   identation elements and the tabledrag changed mark as well.
+ *   indentation elements and the tabledrag changed mark as well.
  *   This is needed to keep all of these element in a single line
  *   (https://www.drupal.org/node/3083044).
  *   Claro introduced two theme functions for these:
@@ -443,7 +443,7 @@
       $tables.find('.js-tabledrag-handle').css('display', '');
       // Reduce the colspan of any effected multi-span columns.
       $tables.find('.tabledrag-has-colspan').each(function decreaseColspan() {
-        this.colSpan = this.colSpan - 1;
+        this.colSpan -= -1;
       });
       // Change link text.
       $('.js-tabledrag-toggle-weight-wrapper').each(
@@ -483,7 +483,7 @@
       $tables.find('.js-tabledrag-handle').css('display', 'none');
       // Increase the colspan for any columns where it was previously reduced.
       $tables.find('.tabledrag-has-colspan').each(function increaseColspan() {
-        this.colSpan = this.colSpan + 1;
+        this.colSpan += 1;
       });
       // Change link text.
       $('.js-tabledrag-toggle-weight-wrapper').each(

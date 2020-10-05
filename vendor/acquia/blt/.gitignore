@@ -1,11 +1,3 @@
-# Ignore blted8 files
-blted8/composer.lock
-blted8/vendor
-
-# Ignore config files
-/blt.yml
-local.*
-
 build
 
 # OS X
@@ -90,11 +82,6 @@ nbproject/*
 *.gz
 *.sql
 *.zip
-
-# Some files should be excluded from blt but not from the projects it
-# generates, so they must be specified here rather than blt-project .gitignore.
-subtree-splits/blt-project/.idea/.name
-subtree-splits/blt-project/composer.lock
 
 CHANGELOG.partial
 build
