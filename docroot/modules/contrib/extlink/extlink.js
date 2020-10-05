@@ -23,7 +23,7 @@
 
     // Strip the host name down, removing ports, subdomains, or www.
     var pattern = /^(([^\/:]+?\.)*)([^\.:]{1,})((\.[a-z0-9]{1,253})*)(:[0-9]{1,5})?$/;
-    var host = window.location.host.replace(pattern, '$2$3$6').replace('.', '\\.');
+    var host = window.location.host.replace(pattern, '$2$3$6');
     var subdomain = window.location.host.replace(host, '');
 
     // Determine what subdomains are considered internal.
