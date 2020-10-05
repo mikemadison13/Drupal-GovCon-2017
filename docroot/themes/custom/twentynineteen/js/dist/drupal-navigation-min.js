@@ -1,0 +1,1 @@
+"use strict";!function(e,t){e.behaviors.navgiation={attach:function(e,t){e.querySelectorAll(".menu-main__item > a"),e.querySelectorAll(".menu-submenu")}}}(Drupal,drupalSettings);
