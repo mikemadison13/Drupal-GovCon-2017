@@ -35,7 +35,7 @@
       $(this.currentForm).find('strong.error').addClass('form-item--error-message');
 
       // Move all radios, checkbox, and datelist errors to parent container.
-      $(this.currentForm).find('.form-checkboxes, .form-radios, .form-type-datelist .container-inline, .form-type-tel').each(function () {
+      $(this.currentForm).find('.form-checkboxes, .form-radios, .form-type-datelist .container-inline, .form-type-tel, .webform-type-webform-height .form--inline').each(function () {
         var $container = $(this);
         var $errorMessages = $container.find('strong.error.form-item--error-message');
         $errorMessages.insertAfter($container);

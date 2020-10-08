@@ -8,7 +8,7 @@
     "description": "MySQL 5.6 Driver for Drupal 9.0.",
     "license": "GPL-2.0-or-later",
     "require": {
-        "drupal/core": "~9.0.0-beta3"
+        "drupal/core": "~9.0.0-beta3 || 9.1.*"
     },
     "extra": {
         "installer-name": "mysql"

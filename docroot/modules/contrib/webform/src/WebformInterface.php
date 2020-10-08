@@ -1224,5 +1224,4 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    */
   public function unsetThirdPartySettings($module);
 
-
 }

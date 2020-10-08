@@ -83,7 +83,6 @@ function _webform_test_third_party_settings_form_validate(&$form, FormStateInter
   $form_state->setValue('third_party_settings', $third_party_settings);
 }
 
-
 /**
  * Implements hook_webform_submission_form_alter().
  */

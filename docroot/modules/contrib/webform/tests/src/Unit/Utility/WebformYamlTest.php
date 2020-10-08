@@ -127,7 +127,6 @@ class WebformYamlTest extends UnitTestCase {
     return $tests;
   }
 
-
   /**
    * Tests WebformYaml encode with WebformYaml::encode().
    *

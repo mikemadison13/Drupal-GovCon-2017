@@ -7,8 +7,3 @@ dependencies:
   - block_content
   - jquery_ui_droppable:jquery_ui_droppable
   - panels
-
-# Information added by Drupal.org packaging script on 2020-04-02
-version: '8.x-4.6'
-project: 'panels'
-datestamp: 1585870869

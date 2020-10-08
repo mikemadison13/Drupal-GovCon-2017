@@ -10,8 +10,3 @@ dependencies:
   - layout_discovery
 test_dependencies:
   - page_manager
-
-# Information added by Drupal.org packaging script on 2020-04-02
-version: '8.x-4.6'
-project: 'panels'
-datestamp: 1585870869

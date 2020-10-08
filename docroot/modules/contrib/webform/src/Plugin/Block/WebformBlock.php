@@ -8,6 +8,7 @@ use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\webform\Utility\WebformYaml;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -173,7 +174,7 @@ class WebformBlock extends BlockBase implements ContainerFactoryPluginInterface 
     $build = [
       '#type' => 'webform',
       '#webform' => $this->getWebform(),
-      '#default_data' => $this->configuration['default_data'],
+      '#default_data' => WebformYaml::decode($this->configuration['default_data']),
     ];
 
     // If redirect, set the #action property on the form.

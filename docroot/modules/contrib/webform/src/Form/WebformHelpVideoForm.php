@@ -100,7 +100,7 @@ class WebformHelpVideoForm extends FormBase {
         ],
         '#attributes' => ['class' => ['button', 'button--primary']],
       ];
-      if ($this->getRequest()->query->get('more')) {
+      if ($this->getRequest()->query->get('more') && $this->currentUser()->hasPermission('access webform help')) {
         $form['modal_actions']['more'] = [
           '#type' => 'link',
           '#title' => $this->t('▶ Watch more videos'),

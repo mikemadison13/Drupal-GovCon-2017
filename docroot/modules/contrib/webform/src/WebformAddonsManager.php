@@ -438,7 +438,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     $projects['webform_protected_downloads'] = [
       'title' => $this->t('Webform Protected Downloads'),
       'description' => $this->t('Provides protected file downloads using webforms.'),
-      'url' => Url::fromUri('https://github.com/timlovrecic/Webform-Protected-Downloads'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_protected_downloads'),
       'category' => 'enhancement',
     ];
 
@@ -763,6 +763,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Jira Integration'),
       'description' => $this->t('Provides integration for webform submission with Jira.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_jira'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Lightweight Webform Mailchimp.
+    $projects['ldbase_handlers'] = [
+      'title' => $this->t('LDbase Webform Handlers'),
+      'description' => $this->t('Webform handlers to create and update LDbase content nodes.'),
+      'url' => Url::fromUri('https://github.com/ldbase/ldbase_handlers'),
       'category' => 'integration',
     ];
 
