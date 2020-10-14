@@ -24,17 +24,6 @@ class Telemetry {
   private $apiUrl = 'https://api.amplitude.com/httpapi';
 
   /**
-   * Amplitude API key.
-   *
-   * This is not intended to be private. It is typically included in client
-   * side code. Fetching data requires an additional API secret.
-   *
-   * @var string
-   * @see https://developers.amplitude.com/#http-api
-   */
-  private $apiKey = 'f32aacddde42ad34f5a3078a621f37a9';
-
-  /**
    * The extension.list.module service.
    *
    * @var \Drupal\Core\Extension\ModuleExtensionList
@@ -92,6 +81,24 @@ class Telemetry {
   }
 
   /**
+   * Returns the Amplitude API key.
+   *
+   * This is not intended to be private. It is typically included in client
+   * side code. Fetching data requires an additional API secret.
+
+   * @see https://developers.amplitude.com/#http-api
+   *
+   * @return string
+   *   The Amplitude API key.
+   */
+  private function getApiKey() {
+    $key = $this->configFactory->get('acquia_telemetry.settings')
+      ->get('api_key');
+
+    return $key ?: 'f32aacddde42ad34f5a3078a621f37a9';
+  }
+
+  /**
    * Sends an event to Amplitude.
    *
    * @param array $event
@@ -105,7 +112,7 @@ class Telemetry {
   private function sendEvent(array $event) {
     $response = $this->httpClient->request('POST', $this->apiUrl, [
       'form_params' => [
-        'api_key' => $this->apiKey,
+        'api_key' => $this->getApiKey(),
         'event' => Json::encode($event),
       ],
     ]);

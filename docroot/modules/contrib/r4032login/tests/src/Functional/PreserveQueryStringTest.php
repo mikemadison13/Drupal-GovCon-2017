@@ -14,6 +14,11 @@ class PreserveQueryStringTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['r4032login'];
 
   /**

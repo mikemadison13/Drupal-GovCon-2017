@@ -7,8 +7,3 @@ dependencies:
   - drupal:block_content
   - lightning_media:lightning_media
   - slick_entityreference:slick_entityreference
-
-# Information added by Drupal.org packaging script on 2020-08-07
-version: '8.x-4.2'
-project: 'lightning_media'
-datestamp: 1596811585

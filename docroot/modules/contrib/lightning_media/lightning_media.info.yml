@@ -21,8 +21,3 @@ components:
   - lightning_media_slideshow
   - lightning_media_twitter
   - lightning_media_video
-
-# Information added by Drupal.org packaging script on 2020-08-07
-version: '8.x-4.2'
-project: 'lightning_media'
-datestamp: 1596811585

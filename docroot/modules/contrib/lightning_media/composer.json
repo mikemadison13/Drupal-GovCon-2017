@@ -21,7 +21,7 @@
         "drupal/slick_entityreference": "^2.0",
         "drupal/video_embed_field": "^2.0",
         "drupal/views_infinite_scroll": "^1.6",
-        "oomphinc/composer-installers-extender": "^1.1",
+        "oomphinc/composer-installers-extender": "^1.1 || ^2",
         "vardot/blazy": "^1.8"
     },
     "require-dev": {
@@ -96,20 +96,18 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "post-install-cmd": [
-            "@push"
-        ],
         "post-update-cmd": [
-            "@push"
+            "@putenv DIR=./docroot/modules/lightning_media",
+            "mkdir -p $DIR",
+            "ln -s -f $PWD/config $DIR",
+            "ln -s -f $PWD/css $DIR",
+            "ln -s -f $PWD/images $DIR",
+            "ln -s -f $PWD/modules $DIR",
+            "ln -s -f $PWD/src $DIR",
+            "ln -s -f $PWD/tests $DIR",
+            "find $PWD -name 'lightning_media.*' -depth 1 -exec ln -s -f {} $DIR ';'",
+            "cp -f phpunit.xml ./docroot/core"
         ],
-        "nuke": "rm -r -f docroot vendor",
-        "pull": "cp -R -f ./docroot/modules/contrib/lightning_media/* .",
-        "push": [
-            "rm -r -f ./docroot/modules/contrib/lightning_media",
-            "mkdir -p ./docroot/modules/contrib/lightning_media",
-            "@composer archive --file lightning_media",
-            "tar -x -f lightning_media.tar -C ./docroot/modules/contrib/lightning_media",
-            "rm lightning_media.tar"
-        ]
+        "nuke": "rm -r -f docroot vendor"
     }
 }

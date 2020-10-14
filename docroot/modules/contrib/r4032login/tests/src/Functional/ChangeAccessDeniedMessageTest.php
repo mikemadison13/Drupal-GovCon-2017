@@ -14,6 +14,11 @@ class ChangeAccessDeniedMessageTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['r4032login'];
 
   /**
@@ -34,7 +39,7 @@ class ChangeAccessDeniedMessageTest extends BrowserTestBase {
    */
   public function testChangeAccessDeniedMessage() {
     $this->drupalGet('admin/config');
-    $this->assertSession()->elementTextContains('css', '.messages', 'my custom message');
+    $this->assertSession()->elementTextContains('css', 'div[aria-label="Error message"]', 'my custom message');
   }
 
 }

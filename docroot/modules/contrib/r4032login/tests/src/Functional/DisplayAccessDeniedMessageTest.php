@@ -14,6 +14,11 @@ class DisplayAccessDeniedMessageTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['r4032login'];
 
   /**
@@ -27,14 +32,14 @@ class DisplayAccessDeniedMessageTest extends BrowserTestBase {
     $config->save();
 
     $this->drupalGet('admin/config');
-    $this->assertSession()->elementTextContains('css', '.messages', 'Access denied. You must log in to view this page.');
+    $this->assertSession()->elementTextContains('css', 'div[aria-label="Error message"]', 'Access denied. You must log in to view this page.');
 
     $config = $this->config('r4032login.settings');
     $config->set('display_denied_message', FALSE);
     $config->save();
 
     $this->drupalGet('admin/config');
-    $this->assertSession()->elementNotExists('css', '.messages');
+    $this->assertSession()->elementNotExists('css', 'div[aria-label="Error message"]');
   }
 
 }

@@ -14,6 +14,11 @@ class ChangeMessageTypeTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['r4032login'];
 
   /**
@@ -44,15 +49,15 @@ class ChangeMessageTypeTest extends BrowserTestBase {
     return [
       [
         'error',
-        '.messages--error',
+        'div[aria-label="Error message"]',
       ],
       [
         'warning',
-        '.messages--warning',
+        'div[aria-label="Warning message"]',
       ],
       [
         'status',
-        '.messages--status',
+        'div[aria-label="Status message"]',
       ],
     ];
   }

@@ -5,8 +5,3 @@ package: Lightning
 description: 'Image support for Lightning Media.'
 dependencies:
   - lightning_media:lightning_media
-
-# Information added by Drupal.org packaging script on 2020-08-07
-version: '8.x-4.2'
-project: 'lightning_media'
-datestamp: 1596811585
