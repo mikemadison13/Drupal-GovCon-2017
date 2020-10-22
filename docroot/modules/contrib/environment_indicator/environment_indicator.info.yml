@@ -16,7 +16,7 @@ stylesheets:
 
 configure: environment_indicator.settings
 
-# Information added by Drupal.org packaging script on 2020-06-23
-version: '4.0.0'
+# Information added by Drupal.org packaging script on 2020-10-14
+version: '4.0.1'
 project: 'environment_indicator'
-datestamp: 1592917882
+datestamp: 1602701109

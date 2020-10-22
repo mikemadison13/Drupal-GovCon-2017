@@ -178,7 +178,7 @@ class BltTasks implements ConfigAwareInterface, InspectorAwareInterface, LoggerA
       $result = $this->taskExecStack()
         ->exec($this->getConfigValue("command-hooks.$hook.command"))
         ->dir($this->getConfigValue("command-hooks.$hook.dir"))
-        ->interactive(FALSE)
+        ->interactive($this->input()->isInteractive())
         ->printOutput(TRUE)
         ->printMetadata(TRUE)
         ->stopOnFail()
