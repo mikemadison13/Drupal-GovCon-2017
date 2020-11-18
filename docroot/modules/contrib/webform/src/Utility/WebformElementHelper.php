@@ -246,7 +246,7 @@ class WebformElementHelper {
   public static function getProperties(array $element) {
     $properties = [];
     foreach ($element as $key => $value) {
-      if (Element::property($key)) {
+      if ($key && Element::property($key)) {
         $properties[$key] = $value;
       }
     }
@@ -560,7 +560,7 @@ class WebformElementHelper {
   public static function getFlattened(array $elements) {
     $flattened_elements = [];
     foreach ($elements as $key => &$element) {
-      if (!WebformElementHelper::isElement($element, $key)) {
+      if (!self::isElement($element, $key)) {
         continue;
       }
 

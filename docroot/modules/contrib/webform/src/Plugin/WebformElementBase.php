@@ -20,6 +20,7 @@ use Drupal\webform\Element\WebformCompositeFormElementTrait;
 use Drupal\webform\Element\WebformHtmlEditor;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Entity\WebformOptions;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Plugin\WebformElement\Checkbox;
 use Drupal\webform\Plugin\WebformElement\Checkboxes;
 use Drupal\webform\Plugin\WebformElement\ContainerBase;
@@ -52,6 +53,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
   use MessengerTrait;
   use WebformCompositeFormElementTrait;
   use WebformEntityInjectionTrait;
+  use WebformEntityStorageTrait;
 
   /**
    * A logger instance.
@@ -117,13 +119,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
   protected $librariesManager;
 
   /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $submissionStorage;
-
-  /**
    * An associative array of an element's default properties names and values.
    *
    * @var array
@@ -152,7 +147,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     $instance->elementManager = $container->get('plugin.manager.webform.element');
     $instance->tokenManager = $container->get('webform.token_manager');
     $instance->librariesManager = $container->get('webform.libraries_manager');
-    $instance->submissionStorage = $container->get('entity_type.manager')->getStorage('webform_submission');
 
     return $instance;
   }
@@ -299,7 +293,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       'placeholder',
       'markup',
       'test',
-      'default_value',
       'header_label',
       'add_more_button_label',
       'add_more_input_label',
@@ -1082,6 +1075,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
    *   An element with #states added to the #prefix and #suffix.
    */
   public static function preRenderFixStatesWrapper(array $element) {
+    // Allow Ajax callbacks to disable states wrapper.
+    // @see \Drupal\webform\Element\WebformComputedBase::ajaxWebformComputedCallback
+    // @see \Drupal\webform\Element\WebformMultiple::ajaxCallback
+    if (isset($element['#webform_wrapper']) && $element['#webform_wrapper'] === FALSE) {
+      return $element;
+    }
+
     WebformElementHelper::fixStatesWrapper($element);
     return $element;
   }
@@ -1096,6 +1096,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
    *   An element with flexbox wrapper added to the #prefix and #suffix.
    */
   public static function preRenderFixFlexboxWrapper(array $element) {
+    // Allow Ajax callbacks to disable flexbox wrapper.
+    // @see \Drupal\webform\Element\WebformComputedBase::ajaxWebformComputedCallback
+    // @see \Drupal\webform\Element\WebformMultiple::ajaxCallback
+    if (isset($element['#webform_wrapper']) && $element['#webform_wrapper'] === FALSE) {
+      return $element;
+    }
+
     $flex = (isset($element['#flex'])) ? $element['#flex'] : 1;
     $element += ['#prefix' => '', '#suffix' => ''];
     $element['#prefix'] = '<div class="webform-flex webform-flex--' . $flex . '"><div class="webform-flex--container">' . $element['#prefix'];
@@ -3271,7 +3278,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     // Disable #multiple if the element has submission data.
     if (!$form_object->isNew() && $this->hasProperty('multiple')) {
       $element_key = $form_object->getKey();
-      if ($this->submissionStorage->hasSubmissionValue($webform, $element_key)) {
+      if ($this->getSubmissionStorage()->hasSubmissionValue($webform, $element_key)) {
         $form['element']['multiple']['#disabled'] = TRUE;
         $form['element']['multiple']['#description'] = '<em>' . $this->t('There is data for this element in the database. This setting can no longer be changed.') . '</em>';
       }
@@ -3526,7 +3533,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     switch ($type) {
       case 'entity_autocomplete':
         $target_type = $property_element['#target_type'];
-        $target_storage = $this->entityTypeManager->getStorage($target_type);
+        $target_storage = $this->getEntityStorage($target_type);
         if (!empty($property_element['#tags'])) {
           $property_element['#default_value'] = ($default_value) ? $target_storage->loadMultiple($default_value) : [];
         }

@@ -35,6 +35,7 @@ jobs:
     - { name: "Isolated test w/ dev package versions", env: ORCA_JOB=ISOLATED_DEV }
     - { name: "Integrated test w/ dev package versions", env: ORCA_JOB=INTEGRATED_DEV }
     - { name: "Integrated test w/ dev package versions & next minor dev version of Drupal core", env: ORCA_JOB=CORE_NEXT }
+    - { name: "D9 readiness test", php: "7.3", env: ORCA_JOB=D9_READINESS}
     # Custom jobs.
     - { name: "CSS linting", env: CUSTOM_TEST=css }
   allow_failures:
@@ -43,7 +44,10 @@ jobs:
     - env: ORCA_JOB=CORE_NEXT
 
 before_install:
+  - composer self-update --1
   - composer create-project --no-dev acquia/orca ../orca "$ORCA_VERSION"
+  # Remove Acquia Search as its not actually installable.
+  - rm -Rf acquia_search
   - ../orca/bin/travis/before_install.sh
 
 install:

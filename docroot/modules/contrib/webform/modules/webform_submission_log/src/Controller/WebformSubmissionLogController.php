@@ -5,6 +5,7 @@ namespace Drupal\webform_submission_log\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -15,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Copied from: \Drupal\dblog\Controller\DbLogController.
  */
 class WebformSubmissionLogController extends ControllerBase {
+
+  use WebformEntityStorageTrait;
 
   /**
    * The database service.
@@ -29,27 +32,6 @@ class WebformSubmissionLogController extends ControllerBase {
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $dateFormatter;
-
-  /**
-   * The user storage.
-   *
-   * @var \Drupal\user\UserStorageInterface
-   */
-  protected $userStorage;
-
-  /**
-   * The webform storage.
-   *
-   * @var \Drupal\webform\WebformEntityStorageInterface
-   */
-  protected $webformStorage;
-
-  /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $webformSubmissionStorage;
 
   /**
    * The webform request handler.
@@ -76,9 +58,6 @@ class WebformSubmissionLogController extends ControllerBase {
     $instance->requestHandler = $container->get('webform.request');
     $instance->logManager = $container->get('webform_submission_log.manager');
     $instance->entityTypeManager = $container->get('entity_type.manager');
-    $instance->webformStorage = $instance->entityTypeManager->getStorage('webform');
-    $instance->webformSubmissionStorage = $instance->entityTypeManager->getStorage('webform_submission');
-    $instance->userStorage = $instance->entityTypeManager->getStorage('user');
     return $instance;
   }
 
@@ -135,7 +114,7 @@ class WebformSubmissionLogController extends ControllerBase {
       $row = [];
       $row['lid'] = $log->lid;
       if (empty($webform)) {
-        $log_webform = $this->webformStorage->load($log->webform_id);
+        $log_webform = $this->getWebformStorage()->load($log->webform_id);
         $row['webform_id'] = $log_webform->toLink($log_webform->label(), 'results-log');
       }
       if (empty($source_entity) && empty($webform_submission)) {
@@ -156,7 +135,7 @@ class WebformSubmissionLogController extends ControllerBase {
       }
       if (empty($webform_submission)) {
         if ($log->sid) {
-          $log_webform_submission = $this->webformSubmissionStorage->load($log->sid);
+          $log_webform_submission = $this->getSubmissionStorage()->load($log->sid);
           $row['sid'] = [
             'data' => [
               '#type' => 'link',
@@ -179,7 +158,7 @@ class WebformSubmissionLogController extends ControllerBase {
       $row['uid'] = [
         'data' => [
           '#theme' => 'username',
-          '#account' => $this->userStorage->load($log->uid),
+          '#account' => $this->getEntityStorage('user')->load($log->uid),
         ],
       ];
       $row['timestamp'] = $this->dateFormatter->format($log->timestamp, 'short');

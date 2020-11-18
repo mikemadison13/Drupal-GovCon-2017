@@ -17,6 +17,7 @@ use Drupal\webform\Element\WebformAjaxElementTrait;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Plugin\WebformExporterInterface;
 use Drupal\webform\Plugin\WebformExporterManagerInterface;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 
 /**
  * Webform submission exporter.
@@ -25,6 +26,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
 
   use StringTranslationTrait;
   use WebformAjaxElementTrait;
+  use WebformEntityStorageTrait;
 
   /**
    * The configuration object factory.
@@ -39,13 +41,6 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
    * @var \Drupal\Core\File\FileSystemInterface
    */
   protected $fileSystem;
-
-  /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $entityStorage;
 
   /**
    * The stream wrapper manager.
@@ -138,7 +133,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
   public function __construct(ConfigFactoryInterface $config_factory, FileSystemInterface $file_system, EntityTypeManagerInterface $entity_type_manager, StreamWrapperManagerInterface $stream_wrapper_manager, ArchiverManager $archiver_manager, WebformElementManagerInterface $element_manager, WebformExporterManagerInterface $exporter_manager) {
     $this->configFactory = $config_factory;
     $this->fileSystem = $file_system;
-    $this->entityStorage = $entity_type_manager->getStorage('webform_submission');
+    $this->entityTypeManager = $entity_type_manager;
     $this->streamWrapperManager = $stream_wrapper_manager;
     $this->archiverManager = $archiver_manager;
     $this->elementManager = $element_manager;
@@ -317,7 +312,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     $exporter_plugins = $this->exporterManager->getInstances($export_options);
 
     // Determine if the file can be downloaded or displayed in the file browser.
-    $total = $this->entityStorage->getTotal($this->getWebform(), $this->getSourceEntity());
+    $total = $this->getSubmissionStorage()->getTotal($this->getWebform(), $this->getSourceEntity());
     $default_batch_limit = $this->configFactory->get('webform.settings')->get('batch.default_batch_export_size') ?: 500;
     $download_access = ($total > $default_batch_limit) ? FALSE : TRUE;
 
@@ -539,7 +534,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       ];
       $source_entity = $this->getSourceEntity();
       if (!$source_entity) {
-        $entity_types = $this->entityStorage->getSourceEntityTypes($webform);
+        $entity_types = $this->getSubmissionStorage()->getSourceEntityTypes($webform);
         if ($entity_types) {
           $form['export']['download']['submitted'] = [
             '#type' => 'item',
@@ -559,7 +554,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
             '#default_value' => $export_options['entity_type'],
           ];
           if ($export_options['entity_type']) {
-            $source_entity_options = $this->entityStorage->getSourceEntityAsOptions($webform, $export_options['entity_type']);
+            $source_entity_options = $this->getSubmissionStorage()->getSourceEntityAsOptions($webform, $export_options['entity_type']);
             if ($source_entity_options) {
               $form['export']['download']['submitted']['container']['entity_id'] = [
                 '#type' => 'select',
@@ -885,7 +880,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     $webform = $this->getWebform();
     $source_entity = $this->getSourceEntity();
 
-    $query = $this->entityStorage->getQuery()->condition('webform_id', $webform->id());
+    $query = $this->getSubmissionStorage()->getQuery()->condition('webform_id', $webform->id());
 
     // Filter by source entity or submitted to.
     if ($source_entity) {
@@ -1089,7 +1084,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
   public function requiresBatch() {
     // Get the unfiltered total number of submissions for the webform and
     // source entity.
-    $total = $this->entityStorage->getTotal(
+    $total = $this->getSubmissionStorage()->getTotal(
       $this->getWebform(),
       $this->getSourceEntity()
     );

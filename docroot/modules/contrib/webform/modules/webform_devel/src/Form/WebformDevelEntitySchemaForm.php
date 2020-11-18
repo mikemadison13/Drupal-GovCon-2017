@@ -66,7 +66,7 @@ class WebformDevelEntitySchemaForm extends EntityForm {
 
       if ($webform_ui_exists) {
         // Only add 'Edit' link to main element and not composite sub-elements.
-        if (strpos($element_key, '.') === FALSE) {
+        if (strpos($element_key, '.') === FALSE && $webform->getElement($element_key)) {
           $element_url = new Url(
             'entity.webform_ui.element.edit_form',
             ['webform' => $webform->id(), 'key' => $element_key],

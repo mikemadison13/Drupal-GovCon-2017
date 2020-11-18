@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\webform\Access\WebformAccessResult;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,19 +19,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class WebformEntityAccessControlHandler extends EntityAccessControlHandler implements EntityHandlerInterface {
 
+  use WebformEntityStorageTrait;
+
   /**
    * The request stack.
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
 
   /**
    * The webform source entity plugin manager.
@@ -183,14 +179,11 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
       }
 
       if (in_array($operation, ['submission_page', 'submission_create'])) {
-        /** @var \Drupal\webform\WebformSubmissionStorageInterface $submission_storage */
-        $submission_storage = $this->entityTypeManager->getStorage('webform_submission');
-
         // Check limit total unique access.
         // @see \Drupal\webform\WebformSubmissionForm::setEntity
         if ($entity->getSetting('limit_total_unique')) {
           $source_entity = $this->webformSourceEntityManager->getSourceEntity('webform');
-          $last_submission = $submission_storage->getLastSubmission($entity, $source_entity, NULL, ['in_draft' => FALSE]);
+          $last_submission = $this->getSubmissionStorage()->getLastSubmission($entity, $source_entity, NULL, ['in_draft' => FALSE]);
           if ($last_submission && $last_submission->access('update')) {
             return WebformAccessResult::allowed($last_submission);
           }
@@ -204,7 +197,7 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
             return WebformAccessResult::forbidden($entity);
           }
           $source_entity = $this->webformSourceEntityManager->getSourceEntity('webform');
-          $last_submission = $submission_storage->getLastSubmission($entity, $source_entity, $account, ['in_draft' => FALSE]);
+          $last_submission = $this->getSubmissionStorage()->getLastSubmission($entity, $source_entity, $account, ['in_draft' => FALSE]);
           if ($last_submission && $last_submission->access('update')) {
             return WebformAccessResult::allowed($last_submission);
           }
@@ -214,7 +207,7 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
         $token = $this->requestStack->getCurrentRequest()->query->get('token');
         if ($token && $entity->isOpen()) {
           $source_entity = $this->webformSourceEntityManager->getSourceEntity('webform');
-          if ($submission = $submission_storage->loadFromToken($token, $entity, $source_entity)) {
+          if ($submission = $this->getSubmissionStorage()->loadFromToken($token, $entity, $source_entity)) {
             return WebformAccessResult::allowed($submission)
               ->addCacheContexts(['url']);
           }

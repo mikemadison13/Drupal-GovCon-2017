@@ -76,13 +76,8 @@ class WebformCustomComposite extends WebformCompositeBase {
       }
     }
 
-    // Default to displaying table header.
+    // Default to displaying table header and label.
     $element += ['#header' => TRUE];
-
-    // If header label is defined use it for the #header.
-    if (!empty($element['#multiple__header_label'])) {
-      $element['#header'] = $element['#multiple__header_label'];
-    }
 
     // Transfer '#{composite_key}_{property}' from main element to composite
     // element.

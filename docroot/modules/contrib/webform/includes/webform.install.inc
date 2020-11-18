@@ -332,6 +332,10 @@ function _webform_update_field_storage_definitions() {
  */
 function _webform_update_webform_submission_storage_schema() {
   $manager = \Drupal::entityDefinitionUpdateManager();
+  if (!$manager->getEntityType('webform_submission')) {
+	  $type = \Drupal::entityTypeManager()->getDefinition('webform_submission');
+    $manager->installEntityType($type);
+  }
   $manager->updateEntityType($manager->getEntityType('webform_submission'));
 }
 

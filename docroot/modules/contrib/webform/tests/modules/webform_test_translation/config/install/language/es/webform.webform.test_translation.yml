@@ -12,6 +12,18 @@ elements: |
       5: Cinco
       6: Seis
     '#other__option_label': 'Número personalizado…'
+  webform_image_select:
+    '#title': 'Seleccionar imagen'
+    '#images':
+      kitten_1:
+        text: 'Lindo gatito 1'
+        src: 'http://placekitten.com/220/200'
+      kitten_2:
+        text: 'Lindo gatito 2'
+        src: 'http://placekitten.com/220/200'
+      kitten_3:
+        text: 'Lindo gatito 3'
+        src: 'http://placekitten.com/220/200'
   details:
     '#title': Detalles
   markup:
@@ -34,9 +46,11 @@ elements: |
     '#state_province__title': 'Estado / Provincia'
     '#postal_code__title': 'ZIP / Código Postal'
     '#country__title': 'Acciones de país'
+  computed_token:
+    '#title': 'Computado (token)'
   actions:
     '#type': webform_actions
-    '#title': 'Submit button(s)'
+    '#title': 'Enviar botón (s)'
     '#submit__label': 'Enviar mensaje'
 settings:
   confirmation_message: 'Tu mensaje ha sido enviado.'

@@ -145,7 +145,7 @@ class WebformNodeAccess {
 
     switch ($operation) {
       case 'webform_submission_edit_all':
-        return WebformSubmissionAccess::checkEditAllAccess($webform_submission);
+        return WebformSubmissionAccess::checkWizardPagesAccess($webform_submission);
 
       case 'webform_submission_resend':
         return WebformSubmissionAccess::checkResendAccess($webform_submission, $account);

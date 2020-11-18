@@ -5,6 +5,7 @@ namespace Drupal\webform\Plugin\Condition;
 use Drupal\Core\Condition\ConditionPluginBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Utility\WebformElementHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -23,12 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class Webform extends ConditionPluginBase implements ContainerFactoryPluginInterface {
 
-  /**
-   * The entity storage.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $entityStorage;
+  use WebformEntityStorageTrait;
 
   /**
    * The webform entity reference manager.
@@ -42,7 +38,7 @@ class Webform extends ConditionPluginBase implements ContainerFactoryPluginInter
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = new static($configuration, $plugin_id, $plugin_definition);
-    $instance->entityStorage = $container->get('entity_type.manager')->getStorage('webform');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->webformEntityReferenceManager = $container->get('webform.entity_reference_manager');
     return $instance;
   }
@@ -52,7 +48,7 @@ class Webform extends ConditionPluginBase implements ContainerFactoryPluginInter
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $options = [];
-    $webforms = $this->entityStorage->loadMultiple();
+    $webforms = $this->getWebformStorage()->loadMultiple();
     foreach ($webforms as $webform) {
       $options[$webform->id()] = $webform->label();
     }

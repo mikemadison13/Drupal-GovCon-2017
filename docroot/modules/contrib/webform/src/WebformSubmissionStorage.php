@@ -12,6 +12,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Plugin\WebformElement\WebformManagedFileBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -19,6 +20,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Defines the webform submission storage.
  */
 class WebformSubmissionStorage extends SqlContentEntityStorage implements WebformSubmissionStorageInterface {
+
+  use WebformEntityStorageTrait;
 
   /**
    * Array used to element data schema.
@@ -399,6 +402,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
    *     Defaults to NULL
    *   - check_source_entity (boolean): Check that a source entity is defined.
    *   - interval (int): Limit total within an seconds interval.
+   *   - check_access (boolean): Check access to the submission.
    */
   public function addQueryConditions($query, WebformInterface $webform = NULL, EntityInterface $source_entity = NULL, AccountInterface $account = NULL, array $options = []) {
     // Set default options/conditions.
@@ -975,7 +979,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
 
     // Set serial number using the webform table.
     if (!$entity->serial() && !$entity->getWebform()->getSetting('serial_disabled')) {
-      $next_serial = $this->entityTypeManager->getStorage('webform')->getSerial($entity->getWebform());
+      $next_serial = $this->getWebformStorage()->getSerial($entity->getWebform());
       $entity->set('serial', $next_serial);
     }
 
@@ -1218,7 +1222,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
   public function purge($count) {
     $days_to_seconds = 60 * 60 * 24;
 
-    $query = $this->entityTypeManager->getStorage('webform')->getQuery();
+    $query = $this->getWebformStorage()->getQuery();
     $query->accessCheck(FALSE);
     $query->condition('settings.purge', [WebformSubmissionStorageInterface::PURGE_DRAFT, WebformSubmissionStorageInterface::PURGE_COMPLETED, WebformSubmissionStorageInterface::PURGE_ALL], 'IN');
     $query->condition('settings.purge_days', 0, '>');
@@ -1227,7 +1231,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
     $webform_submissions_to_purge = [];
 
     if (!empty($webforms_to_purge)) {
-      $webforms_to_purge = $this->entityTypeManager->getStorage('webform')->loadMultiple($webforms_to_purge);
+      $webforms_to_purge = $this->getWebformStorage()->loadMultiple($webforms_to_purge);
       foreach ($webforms_to_purge as $webform) {
         $query = $this->getQuery();
         // Since results of this query are never displayed to the user and we

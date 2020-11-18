@@ -159,11 +159,13 @@ function template_preprocess_webform_confirmation(array &$variables) {
   // Get query string parameters.
   $query = \Drupal::request()->query->all();
 
-  // Add Ajax trigger to back link.
+  // Add Ajax trigger to back link except for webform with unique limits which
+  // break the ajax callback.
   // @see \Drupal\webform\WebformSubmissionForm::getCustomForm
   // @see Drupal.behaviors.webformConfirmationBackAjax (js/webform.ajax.js)
   $is_ajax = (!empty($query['ajax_form'])) ? TRUE : FALSE;
-  if (!empty($is_ajax)) {
+  $is_limit_unique = ($webform  && ($webform->getSetting('limit_total_unique') || $webform ->getSetting('limit_user_unique')));
+  if (!empty($is_ajax) && !$is_limit_unique) {
     $variables['back_attributes']->addClass('js-webform-confirmation-back-link-ajax');
   }
 
@@ -326,14 +328,12 @@ function template_preprocess_webform_submission_information(array &$variables) {
     $variables['uri'] = Link::fromTextAndUrl($source_url->setAbsolute(FALSE)->toString(), $source_url);
   }
 
-  if ($webform->getSetting('token_view')) {
-    $token_view_url = $webform_submission->getTokenUrl('view');
-    $variables['token_view'] = Link::fromTextAndUrl($token_view_url->setAbsolute(FALSE)->toString(), $token_view_url);
-  }
-
-  if ($webform->getSetting('token_update')) {
-    $token_update_url = $webform_submission->getTokenUrl('update');
-    $variables['token_update'] = Link::fromTextAndUrl($token_update_url->setAbsolute(FALSE)->toString(), $token_update_url);
+  $token_operations = ['view', 'update', 'delete'];
+  foreach ($token_operations as $token_operation) {
+    if ($webform->getSetting('token_' . $token_operation)) {
+      $token_url = $webform_submission->getTokenUrl($token_operation);
+      $variables['token_' . $token_operation] = Link::fromTextAndUrl($token_url->setAbsolute(FALSE)->toString(), $token_url);
+    }
   }
 
   if (($source_entity = $webform_submission->getSourceEntity()) && $source_entity->hasLinkTemplate('canonical')) {

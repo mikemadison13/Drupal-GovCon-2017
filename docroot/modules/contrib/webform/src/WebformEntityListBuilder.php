@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Url;
 use Drupal\webform\Element\WebformHtmlEditor;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -17,6 +18,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * @see \Drupal\webform\Entity\Webform
  */
 class WebformEntityListBuilder extends ConfigEntityListBuilder {
+
+  use WebformEntityStorageTrait;
 
   /**
    * The current request.
@@ -61,41 +64,17 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
   protected $state;
 
   /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $submissionStorage;
-
-  /**
-   * The user storage.
-   *
-   * @var \Drupal\user\UserStorageInterface
-   */
-  protected $userStorage;
-
-  /**
-   * The role storage.
-   *
-   * @var \Drupal\user\RoleStorageInterface
-   */
-  protected $roleStorage;
-
-  /**
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     /** @var \Drupal\webform\WebformEntityListBuilder $instance */
     $instance = parent::createInstance($container, $entity_type);
 
-    $entity_type_manager = $container->get('entity_type.manager');
-
     $instance->request = $container->get('request_stack')->getCurrentRequest();
     $instance->configFactory = $container->get('config.factory');
     $instance->currentUser = $container->get('current_user');
-    $instance->submissionStorage = $entity_type_manager->getStorage('webform_submission');
-    $instance->userStorage = $entity_type_manager->getStorage('user');
-    $instance->roleStorage = $entity_type_manager->getStorage('user_role');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+
     $instance->initialize();
     return $instance;
   }
@@ -501,12 +480,12 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
 
       // Users and roles we need to scan all webforms.
       $access_value = NULL;
-      if ($accounts = $this->userStorage->loadByProperties(['name' => $keys])) {
+      if ($accounts = $this->getEntityStorage('user')->loadByProperties(['name' => $keys])) {
         $account = reset($accounts);
         $access_type = 'users';
         $access_value = $account->id();
       }
-      elseif ($role = $this->roleStorage->load($keys)) {
+      elseif ($role = $this->getEntityStorage('user_role')->load($keys)) {
         $access_type = 'roles';
         $access_value = $role->id();
       }

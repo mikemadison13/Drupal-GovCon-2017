@@ -8,6 +8,7 @@ use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Entity\Webform;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -16,6 +17,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Configure webform admin settings for forms.
  */
 class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
+
+  use WebformEntityStorageTrait;
 
   /**
    * The module handler.
@@ -30,13 +33,6 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
    * @var \Drupal\webform\WebformTokenManagerInterface
    */
   protected $tokenManager;
-
-  /**
-   * The webform storage.
-   *
-   * @var \Drupal\webform\WebformEntityStorageInterface
-   */
-  protected $webformStorage;
 
   /**
    * The webform third party settings manager.
@@ -71,7 +67,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
    */
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
-    $instance->webformStorage = $container->get('entity_type.manager')->getStorage('webform');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->moduleHandler = $container->get('module_handler');
     $instance->tokenManager = $container->get('webform.token_manager');
     $instance->thirdPartySettingsManager = $container->get('webform.third_party_settings_manager');
@@ -101,7 +97,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#type' => 'select',
       '#title' => $this->t('Filter webforms default category'),
       '#description' => $this->t('Select the filter webforms default category selected on the <a href=":href">webform overview page</a>.', $t_args),
-      '#options' => $this->webformStorage->getCategories(FALSE),
+      '#options' => $this->getWebformStorage()->getCategories(FALSE),
       '#empty_option' => $this->t('Show all webforms'),
       '#parents' => ['form', 'filter_category'],
       '#default_value' => $config->get('form.filter_category'),
@@ -132,7 +128,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#type' => 'textfield',
       '#title' => $this->t('Default base path for webform URLs'),
       '#description' => $this->t('Leave blank to disable the automatic generation of URL aliases for all webforms.')
-        . ' ' . $this->t('The base path has to start with a slash and cannot handler with a slash.'),
+        . ' ' . $this->t('The base path has to start with a slash and cannot end with a slash.'),
       '#pattern' => '^/.+(?<!/)$',
       '#default_value' => $settings['default_page_base_path'],
     ];

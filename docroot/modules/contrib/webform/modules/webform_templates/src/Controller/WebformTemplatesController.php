@@ -5,6 +5,7 @@ namespace Drupal\webform_templates\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Url;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -16,6 +17,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * Provides route responses for webform templates.
  */
 class WebformTemplatesController extends ControllerBase implements ContainerInjectionInterface {
+
+  use WebformEntityStorageTrait;
 
   /**
    * The current user.
@@ -32,20 +35,13 @@ class WebformTemplatesController extends ControllerBase implements ContainerInje
   protected $formBuilder;
 
   /**
-   * Webform storage.
-   *
-   * @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface
-   */
-  protected $webformStorage;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
     $instance->currentUser = $container->get('current_user');
     $instance->formBuilder = $container->get('form_builder');
-    $instance->webformStorage = $container->get('entity_type.manager')->getStorage('webform');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     return $instance;
   }
 
@@ -67,7 +63,7 @@ class WebformTemplatesController extends ControllerBase implements ContainerInje
 
     // Handler autocomplete redirect.
     if ($keys && preg_match('#\(([^)]+)\)$#', $keys, $match)) {
-      if ($webform = $this->webformStorage->load($match[1])) {
+      if ($webform = $this->getWebformStorage()->load($match[1])) {
         return new RedirectResponse($webform->toUrl()->setAbsolute(TRUE)->toString());
       }
     }
@@ -170,8 +166,8 @@ class WebformTemplatesController extends ControllerBase implements ContainerInje
       '#sticky' => TRUE,
       '#empty' => $this->t('There are no templates available.'),
       '#cache' => [
-        'contexts' => $this->webformStorage->getEntityType()->getListCacheContexts(),
-        'tags' => $this->webformStorage->getEntityType()->getListCacheTags(),
+        'contexts' => $this->getWebformStorage()->getEntityType()->getListCacheContexts(),
+        'tags' => $this->getWebformStorage()->getEntityType()->getListCacheTags(),
       ],
     ];
 
@@ -212,7 +208,7 @@ class WebformTemplatesController extends ControllerBase implements ContainerInje
    *   An array webform entity that are used as templates.
    */
   protected function getTemplates($keys = '', $category = '') {
-    $query = $this->webformStorage->getQuery();
+    $query = $this->getWebformStorage()->getQuery();
     $query->condition('template', TRUE);
     $query->condition('archive', FALSE);
     // Filter by key(word).
@@ -238,7 +234,7 @@ class WebformTemplatesController extends ControllerBase implements ContainerInje
     }
 
     /* @var $entities \Drupal\webform\WebformInterface[] */
-    $entities = $this->webformStorage->loadMultiple($entity_ids);
+    $entities = $this->getWebformStorage()->loadMultiple($entity_ids);
 
     // If the user is not a webform admin, check view access to each webform.
     if (!$this->isAdmin()) {

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
+class ComposerStaticInitad0505ac69b3e83230ffcecec6f642f2
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -12,7 +12,6 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
-        '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '9b38cf48e83f5d8f60375221cd213eee' => __DIR__ . '/..' . '/phpstan/phpstan/bootstrap.php',
@@ -97,7 +96,6 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Php73\\' => 23,
             'Symfony\\Polyfill\\Php72\\' => 23,
-            'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
@@ -328,10 +326,6 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Symfony\\Polyfill\\Php72\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
-        ),
-        'Symfony\\Polyfill\\Php70\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php70',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
@@ -1076,10 +1070,9 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Ajgl\\Twig\\Extension\\SymfonyBundle\\AjglBreakpointTwigExtensionBundle' => __DIR__ . '/..' . '/ajgl/breakpoint-twig-extension/src/SymfonyBundle/AjglBreakpointTwigExtensionBundle.php',
         'Ajgl\\Twig\\Extension\\SymfonyBundle\\DependencyInjection\\AjglBreakpointTwigExtensionExtension' => __DIR__ . '/..' . '/ajgl/breakpoint-twig-extension/src/SymfonyBundle/DependencyInjection/AjglBreakpointTwigExtensionExtension.php',
         'Archive_Tar' => __DIR__ . '/..' . '/pear/archive_tar/Archive/Tar.php',
-        'ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
         'Asm89\\Stack\\Cors' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/Cors.php',
         'Asm89\\Stack\\CorsService' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/CorsService.php',
-        'AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
+        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Behat\\Behat\\ApplicationFactory' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/ApplicationFactory.php',
         'Behat\\Behat\\Context\\Annotation\\AnnotationReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Annotation/AnnotationReader.php',
         'Behat\\Behat\\Context\\Argument\\ArgumentResolver' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Argument/ArgumentResolver.php',
@@ -2081,7 +2074,6 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Dflydev\\DotAccessData\\Data' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/Data.php',
         'Dflydev\\DotAccessData\\DataInterface' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/DataInterface.php',
         'Dflydev\\DotAccessData\\Util' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/Util.php',
-        'DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
         'Doctrine\\Common\\Annotations\\Annotation' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation.php',
         'Doctrine\\Common\\Annotations\\AnnotationException' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/AnnotationException.php',
         'Doctrine\\Common\\Annotations\\AnnotationReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/AnnotationReader.php',
@@ -2096,7 +2088,9 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Doctrine\\Common\\Annotations\\DocLexer' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/DocLexer.php',
         'Doctrine\\Common\\Annotations\\DocParser' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/DocParser.php',
         'Doctrine\\Common\\Annotations\\FileCacheReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/FileCacheReader.php',
+        'Doctrine\\Common\\Annotations\\ImplicitlyIgnoredAnnotationNames' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/ImplicitlyIgnoredAnnotationNames.php',
         'Doctrine\\Common\\Annotations\\IndexedReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/IndexedReader.php',
+        'Doctrine\\Common\\Annotations\\NamedArgumentConstructorAnnotation' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/NamedArgumentConstructorAnnotation.php',
         'Doctrine\\Common\\Annotations\\PhpParser' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/PhpParser.php',
         'Doctrine\\Common\\Annotations\\Reader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Reader.php',
         'Doctrine\\Common\\Annotations\\SimpleAnnotationReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/SimpleAnnotationReader.php',
@@ -2195,6 +2189,12 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Doctrine\\Common\\Proxy\\ProxyDefinition' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Proxy/ProxyDefinition.php',
         'Doctrine\\Common\\Proxy\\ProxyGenerator' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Proxy/ProxyGenerator.php',
         'Doctrine\\Common\\Reflection\\ClassFinderInterface' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/ClassFinderInterface.php',
+        'Doctrine\\Common\\Reflection\\Compatibility\\Php7\\ReflectionClass' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/Compatibility/Php7/ReflectionClass.php',
+        'Doctrine\\Common\\Reflection\\Compatibility\\Php7\\ReflectionMethod' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/Compatibility/Php7/ReflectionMethod.php',
+        'Doctrine\\Common\\Reflection\\Compatibility\\Php8\\ReflectionClass' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/Compatibility/Php8/ReflectionClass.php',
+        'Doctrine\\Common\\Reflection\\Compatibility\\Php8\\ReflectionMethod' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/Compatibility/Php8/ReflectionMethod.php',
+        'Doctrine\\Common\\Reflection\\Compatibility\\ReflectionClass' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/Compatibility/ReflectionClass.php',
+        'Doctrine\\Common\\Reflection\\Compatibility\\ReflectionMethod' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/Compatibility/ReflectionMethod.php',
         'Doctrine\\Common\\Reflection\\Psr0FindFile' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/Psr0FindFile.php',
         'Doctrine\\Common\\Reflection\\ReflectionProviderInterface' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/ReflectionProviderInterface.php',
         'Doctrine\\Common\\Reflection\\RuntimePublicReflectionProperty' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/RuntimePublicReflectionProperty.php',
@@ -4258,6 +4258,7 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Drupal\\Sniffs\\Commenting\\InlineCommentSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Sniffs/Commenting/InlineCommentSniff.php',
         'Drupal\\Sniffs\\Commenting\\InlineVariableCommentSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Sniffs/Commenting/InlineVariableCommentSniff.php',
         'Drupal\\Sniffs\\Commenting\\PostStatementCommentSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Sniffs/Commenting/PostStatementCommentSniff.php',
+        'Drupal\\Sniffs\\Commenting\\TodoCommentSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Sniffs/Commenting/TodoCommentSniff.php',
         'Drupal\\Sniffs\\Commenting\\VariableCommentSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Sniffs/Commenting/VariableCommentSniff.php',
         'Drupal\\Sniffs\\ControlStructures\\ControlSignatureSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Sniffs/ControlStructures/ControlSignatureSniff.php',
         'Drupal\\Sniffs\\ControlStructures\\ElseIfSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal/Sniffs/ControlStructures/ElseIfSniff.php',
@@ -4320,6 +4321,7 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Drupal\\Tests\\lightning_core\\Functional\\ConfigEntityDescriptionTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Functional/ConfigEntityDescriptionTest.php',
         'Drupal\\Tests\\lightning_core\\Functional\\RevisionUiTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Functional/RevisionUiTest.php',
         'Drupal\\Tests\\lightning_core\\Functional\\Update\\Update8006Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Functional/Update/Update8006Test.php',
+        'Drupal\\Tests\\lightning_core\\Functional\\Update\\UpdatePathTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Functional/Update/UpdatePathTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\Access\\AdministrativeRoleCheckTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/Access/AdministrativeRoleCheckTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\CompactUserRenderTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/CompactUserRenderTest.php',
         'Drupal\\Tests\\lightning_core\\Kernel\\ComponentDiscoveryTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/Kernel/ComponentDiscoveryTest.php',
@@ -4591,7 +4593,6 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Egulias\\EmailValidator\\Warning\\QuotedString' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/QuotedString.php',
         'Egulias\\EmailValidator\\Warning\\TLD' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/TLD.php',
         'Egulias\\EmailValidator\\Warning\\Warning' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/Warning.php',
-        'Error' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/Error.php',
         'Goutte\\Client' => __DIR__ . '/..' . '/fabpot/goutte/Goutte/Client.php',
         'Grasmash\\Expander\\Expander' => __DIR__ . '/..' . '/grasmash/expander/src/Expander.php',
         'Grasmash\\Expander\\Stringifier' => __DIR__ . '/..' . '/grasmash/expander/src/Stringifier.php',
@@ -4928,6 +4929,7 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Laminas\\Diactoros\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/Exception/ExceptionInterface.php',
         'Laminas\\Diactoros\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/Exception/InvalidArgumentException.php',
         'Laminas\\Diactoros\\Exception\\InvalidStreamPointerPositionException' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/Exception/InvalidStreamPointerPositionException.php',
+        'Laminas\\Diactoros\\Exception\\RuntimeException' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/Exception/RuntimeException.php',
         'Laminas\\Diactoros\\Exception\\SerializationException' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/Exception/SerializationException.php',
         'Laminas\\Diactoros\\Exception\\UnreadableStreamException' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/Exception/UnreadableStreamException.php',
         'Laminas\\Diactoros\\Exception\\UnrecognizedProtocolVersionException' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/Exception/UnrecognizedProtocolVersionException.php',
@@ -5475,7 +5477,6 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'PHPStan\\Rules\\Drupal\\PluginManager\\PluginManagerSetsCacheBackendRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/PluginManager/PluginManagerSetsCacheBackendRule.php',
         'PHPStan\\Type\\EntityTypeManagerGetStorageDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityTypeManagerGetStorageDynamicReturnTypeExtension.php',
         'PHPStan\\Type\\ServiceDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/ServiceDynamicReturnTypeExtension.php',
-        'ParseError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ParseError.php',
         'PhpParser\\Builder' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder.php',
         'PhpParser\\BuilderFactory' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/BuilderFactory.php',
         'PhpParser\\BuilderHelpers' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/BuilderHelpers.php',
@@ -6071,7 +6072,6 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'SensioLabs\\Security\\Exception\\RuntimeException' => __DIR__ . '/..' . '/sensiolabs/security-checker/SensioLabs/Security/Exception/RuntimeException.php',
         'SensioLabs\\Security\\Result' => __DIR__ . '/..' . '/sensiolabs/security-checker/SensioLabs/Security/Result.php',
         'SensioLabs\\Security\\SecurityChecker' => __DIR__ . '/..' . '/sensiolabs/security-checker/SensioLabs/Security/SecurityChecker.php',
-        'SessionUpdateTimestampHandlerInterface' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/SessionUpdateTimestampHandlerInterface.php',
         'SlevomatCodingStandard\\Helpers\\AnnotationHelper' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Helpers/AnnotationHelper.php',
         'SlevomatCodingStandard\\Helpers\\AnnotationTypeHelper' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Helpers/AnnotationTypeHelper.php',
         'SlevomatCodingStandard\\Helpers\\Annotation\\Annotation' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Helpers/Annotation/Annotation.php',
@@ -7593,7 +7593,6 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Symfony\\Polyfill\\Intl\\Idn\\Resources\\unidata\\Regex' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Resources/unidata/Regex.php',
         'Symfony\\Polyfill\\Intl\\Normalizer\\Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Normalizer.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
-        'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
         'Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
         'Symfony\\Polyfill\\Php73\\Php73' => __DIR__ . '/..' . '/symfony/polyfill-php73/Php73.php',
         'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
@@ -7975,7 +7974,6 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
         'Twig_Util_DeprecationCollector' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Util/DeprecationCollector.php',
         'Twig_Util_TemplateDirIterator' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Util/TemplateDirIterator.php',
         'TwitterAPIExchange' => __DIR__ . '/..' . '/j7mbo/twitter-api-php/TwitterAPIExchange.php',
-        'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'VariableAnalysis\\Lib\\Constants' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Lib/Constants.php',
@@ -8168,11 +8166,11 @@ class ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit24b9db46d50e7119b806ba43b0dd5442::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitad0505ac69b3e83230ffcecec6f642f2::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitad0505ac69b3e83230ffcecec6f642f2::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitad0505ac69b3e83230ffcecec6f642f2::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitad0505ac69b3e83230ffcecec6f642f2::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitad0505ac69b3e83230ffcecec6f642f2::$classMap;
 
         }, null, ClassLoader::class);
     }

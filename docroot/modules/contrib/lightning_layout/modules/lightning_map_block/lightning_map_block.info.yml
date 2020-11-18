@@ -8,3 +8,8 @@ dependencies:
   - drupal:block_content
   - lightning_layout:lightning_layout
   - simple_gmap:simple_gmap
+
+# Information added by Drupal.org packaging script on 2020-11-11
+version: '8.x-2.9'
+project: 'lightning_layout'
+datestamp: 1605114498

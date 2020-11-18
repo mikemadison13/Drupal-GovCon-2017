@@ -5,6 +5,7 @@ namespace Drupal\webform_submission_export_import\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Serialization\Yaml;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -13,19 +14,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class WebformSubmissionExportImportController extends ControllerBase implements ContainerInjectionInterface {
 
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $webformSubmissionStorage;
+  use WebformEntityStorageTrait;
 
   /**
    * The webform request handler.
@@ -55,7 +44,6 @@ class WebformSubmissionExportImportController extends ControllerBase implements 
     /** @var \Drupal\webform_submission_export_import\Controller\WebformSubmissionExportImportController $instance */
     $instance = parent::create($container);
     $instance->entityTypeManager = $container->get('entity_type.manager');
-    $instance->webformSubmissionStorage = $instance->entityTypeManager->getStorage('webform_submission');
     $instance->requestHandler = $container->get('webform.request');
     $instance->generate = $container->get('webform_submission.generate');
     $instance->importer = $container->get('webform_submission_export_import.importer');
@@ -133,7 +121,7 @@ class WebformSubmissionExportImportController extends ControllerBase implements 
     $webform = $this->requestHandler->getCurrentWebform();
     $source_entity = $this->requestHandler->getCurrentSourceEntity();
 
-    $users = $this->entityTypeManager->getStorage('user')->getQuery()->execute();
+    $users = $this->getEntityStorage('user')->getQuery()->execute();
     $uid = array_rand($users);
 
     $url = $webform->toUrl();
@@ -141,7 +129,7 @@ class WebformSubmissionExportImportController extends ControllerBase implements 
       $url = $source_entity->toUrl();
     }
 
-    return $this->webformSubmissionStorage->create([
+    return $this->getSubmissionStorage()->create([
       'sid' => $index,
       'serial' => $index,
       'webform_id' => $webform->id(),

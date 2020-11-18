@@ -102,9 +102,10 @@ class Telephone extends TextBase {
       // The utilsScript is fetched when the page has finished loading to
       // prevent blocking.
       // @see https://github.com/jackocnr/intl-tel-input
-      $utils_script = '/libraries/jquery.intl-tel-input/build/js/utils.js';
+      $library_path = $this->librariesManager->find('jquery.intl-tel-input');
+      $utils_script = ($library_path) ? '/' . $library_path . '/build/js/utils.js' : FALSE;
       // Load utils.js from CDN defined in webform.libraries.yml.
-      if (!file_exists(DRUPAL_ROOT . $utils_script)) {
+      if (!$utils_script || !file_exists(DRUPAL_ROOT . $utils_script)) {
         $intl_tel_input_library = $this->libraryDiscovery->getLibraryByName('webform', 'libraries.jquery.intl-tel-input');
         $cdn = reset($intl_tel_input_library['cdn']);
         $utils_script = $cdn . 'build/js/utils.js';

@@ -4,6 +4,7 @@ namespace Drupal\webform_access\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,6 +17,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class WebformAccessGroupEntityBlock extends BlockBase implements ContainerFactoryPluginInterface {
+
+  use WebformEntityStorageTrait;
 
   /**
    * The current user.
@@ -37,7 +40,7 @@ class WebformAccessGroupEntityBlock extends BlockBase implements ContainerFactor
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = new static($configuration, $plugin_id, $plugin_definition);
     $instance->currentUser = $container->get('current_user');
-    $instance->webformAccessGroupStorage = $container->get('entity_type.manager')->getStorage('webform_access_group');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     return $instance;
   }
 
@@ -46,7 +49,7 @@ class WebformAccessGroupEntityBlock extends BlockBase implements ContainerFactor
    */
   public function build() {
     /** @var \Drupal\node\NodeInterface[] $nodes */
-    $nodes = $this->webformAccessGroupStorage->getUserEntities($this->currentUser, 'node');
+    $nodes = $this->getEntityStorage('webform_access_group')->getUserEntities($this->currentUser, 'node');
     if (empty($nodes)) {
       return NULL;
     }

@@ -46,7 +46,7 @@ class AcquiaDrupalEnvironmentDetector {
   }
 
   /**
-   * Is AH prod.
+   * Is this a prod environment on Acquia hosting.
    *
    * @param string|null $ah_env
    *   Environment machine name.
@@ -63,7 +63,11 @@ class AcquiaDrupalEnvironmentDetector {
   }
 
   /**
-   * Is AH stage.
+   * Is this a stage environment on Acquia hosting.
+   *
+   * Legacy stage environments are typically named 'stg'. More recently they are
+   * named 'test'. Some applications may have non-standard environment names,
+   * these are not supported.
    *
    * @param string|null $ah_env
    *   Environment machine name.
@@ -80,7 +84,7 @@ class AcquiaDrupalEnvironmentDetector {
   }
 
   /**
-   * Is AH dev.
+   * Is this a dev environment on Acquia hosting.
    *
    * @param string|null $ah_env
    *   Environment machine name.
@@ -131,27 +135,38 @@ class AcquiaDrupalEnvironmentDetector {
 
   /**
    * Is AH devcloud.
+   *
+   * The devcloud realm includes Acquia Cloud Professional (ACP).
    */
   public static function isAhDevCloud() {
-    return (!empty($_SERVER['HTTP_HOST']) && strstr($_SERVER['HTTP_HOST'], 'devcloud'));
+    return self::getAhRealm() == 'devcloud';
   }
 
   /**
-   * Get AH group.
+   * Get Acquia hosting site group.
+   *
+   * @return string
+   *   Site group (usually a customer name).
    */
   public static function getAhGroup() {
     return getenv('AH_SITE_GROUP');
   }
 
   /**
-   * Get AH env.
+   * Get Acquia hosting environment.
+   *
+   * @return string
+   *   Environment name (e.g. dev, stage, prod).
    */
   public static function getAhEnv() {
     return getenv('AH_SITE_ENVIRONMENT');
   }
 
   /**
-   * Get AH realm.
+   * Get Acquia hosting realm.
+   *
+   * @return string
+   *   Realm name (e.g. prod, gardens).
    */
   public static function getAhRealm() {
     return getenv('AH_REALM');

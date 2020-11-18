@@ -74,7 +74,7 @@ class WebformImageFile extends WebformManagedFileBase {
     $formats[$label][":link"] = $this->t('@label: Link', $t_args);
     $formats[$label][":modal"] = $this->t('@label: Modal', $t_args);
     if ($this->moduleHandler->moduleExists('image')) {
-      $image_styles = $this->entityTypeManager->getStorage('image_style')->loadMultiple();
+      $image_styles = $this->getEntityStorage('image_style')->loadMultiple();
       foreach ($image_styles as $id => $image_style) {
         $label = (string) $image_style->label();
         $t_args = ['@label' => $label];

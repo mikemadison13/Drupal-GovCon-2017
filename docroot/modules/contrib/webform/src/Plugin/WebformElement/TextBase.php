@@ -37,7 +37,7 @@ abstract class TextBase extends WebformElementBase {
    * {@inheritdoc}
    */
   protected function defineTranslatableProperties() {
-    return array_merge(parent::defineTranslatableProperties(), ['counter_minimum_message', 'counter_maximum_message', 'pattern_error']);
+    return array_merge(parent::defineTranslatableProperties(), ['default_value', 'counter_minimum_message', 'counter_maximum_message', 'pattern_error']);
   }
 
   /****************************************************************************/

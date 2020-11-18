@@ -1075,7 +1075,7 @@ webform_element:
   default_key: ''
   category: ''
   description: 'Provides a generic form element.'
-  hidden: false
+  hidden: true
   multiline: false
   composite: false
   states_wrapper: false

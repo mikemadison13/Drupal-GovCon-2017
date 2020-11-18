@@ -200,6 +200,12 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
           $this->t("The 'tokenized' URL to update a submission will be available when viewing a submission's information and can be inserted into an email using the [webform_submission:token-update-url] token.") . ' ' .
           $this->t('Only webforms that are open to new submissions can be updated using the secure token.'),
       ],
+      'token_delete' => [
+        'title' => $this->t('Allow users to delete a submission using a secure token'),
+        'form_description' => $this->t("If checked users will be able to delete a submission using the webform's URL appended with the submission's (secure) token.") . ' ' .
+          $this->t("The 'tokenized' URL to update a submission will be available when viewing a submission's information and can be inserted into an email using the [webform_submission:token-delete-url] token.") . ' ' .
+          $this->t('Only webforms that are open to new submissions can be deleted using the secure token.'),
+      ],
       // Global behaviors.
       // @see \Drupal\webform\Form\WebformAdminSettingsForm
       'form_disable_remote_addr' => [
@@ -233,9 +239,11 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
           [':input[name="token_view"]' => ['checked' => TRUE]],
           'or',
           [':input[name="token_update"]' => ['checked' => TRUE]],
+          'or',
+          [':input[name="token_delete"]' => ['checked' => TRUE]],
         ],
       ],
-      '#weight' => $form['submission_behaviors']['token_update']['#weight'] + 1,
+      '#weight' => $form['submission_behaviors']['token_delete']['#weight'] + 1,
     ];
 
     // User settings.

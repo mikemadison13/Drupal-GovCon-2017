@@ -7,6 +7,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Url;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\WebformInterface;
@@ -21,33 +22,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class WebformNodeReferencesListController extends EntityListBuilder implements ContainerInjectionInterface {
 
+  use WebformEntityStorageTrait;
+
   /**
    * The date formatter service.
    *
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $dateFormatter;
-
-  /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $submissionStorage;
-
-  /**
-   * The node type storage.
-   *
-   * @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface
-   */
-  protected $nodeTypeStorage;
-
-  /**
-   * The field config storage.
-   *
-   * @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface
-   */
-  protected $fieldConfigStorage;
 
   /**
    * The webform entity reference manager.
@@ -105,10 +87,8 @@ class WebformNodeReferencesListController extends EntityListBuilder implements C
     $entity_type_manager = $container->get('entity_type.manager');
     $instance = static::createInstance($container, $entity_type_manager->getDefinition('node'));
 
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->dateFormatter = $container->get('date.formatter');
-    $instance->nodeTypeStorage = $entity_type_manager->getStorage('node_type');
-    $instance->fieldConfigStorage = $entity_type_manager->getStorage('field_config');
-    $instance->submissionStorage = $entity_type_manager->getStorage('webform_submission');
     $instance->webformEntityReferenceManager = $container->get('webform.entity_reference_manager');
 
     $instance->initialize();
@@ -123,9 +103,9 @@ class WebformNodeReferencesListController extends EntityListBuilder implements C
     $this->fieldNames = [];
 
     /** @var \Drupal\node\Entity\NodeType[] $node_types */
-    $node_types = $this->nodeTypeStorage->loadMultiple();
+    $node_types = $this->getEntityStorage('node_type')->loadMultiple();
     /** @var \Drupal\field\FieldConfigInterface[] $field_configs */
-    $field_configs = $this->fieldConfigStorage->loadByProperties(['entity_type' => 'node']);
+    $field_configs = $this->getEntityStorage('field_config')->loadByProperties(['entity_type' => 'node']);
     foreach ($field_configs as $field_config) {
       if ($field_config->get('field_type') === 'webform') {
         $bundle = $field_config->get('bundle');
@@ -226,7 +206,7 @@ class WebformNodeReferencesListController extends EntityListBuilder implements C
     $row['node_status'] = $entity->isPublished() ? $this->t('Published') : $this->t('Not published');
     $row['webform_status'] = $this->getWebformStatus($entity);
 
-    $result_total = $this->submissionStorage->getTotal($this->webform, $entity);
+    $result_total = $this->getSubmissionStorage()->getTotal($this->webform, $entity);
     $results_access = $entity->access('submission_view_any');
     $results_disabled = $this->webform->isResultsDisabled();
     if ($results_disabled || !$results_access) {

@@ -35,7 +35,6 @@ class WebformTestAjaxBlock extends BlockBase implements ContainerFactoryPluginIn
   protected $redirectDestination;
 
   /**
-<<<<<<< HEAD
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {

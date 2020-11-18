@@ -6,6 +6,7 @@ use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -14,19 +15,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class WebformAccessGroupStorage extends ConfigEntityStorage implements WebformAccessGroupStorageInterface {
 
+  use WebformEntityStorageTrait;
+
   /**
    * Active database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
   protected $database;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
 
   /**
    * {@inheritdoc}
@@ -222,7 +218,7 @@ class WebformAccessGroupStorage extends ConfigEntityStorage implements WebformAc
         }
       }
     }
-    return $this->entityTypeManager->getStorage($entity_type)->loadMultiple($source_entity_ids);
+    return $this->getEntityStorage($entity_type)->loadMultiple($source_entity_ids);
   }
 
 }

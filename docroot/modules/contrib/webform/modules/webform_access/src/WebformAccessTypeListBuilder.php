@@ -6,6 +6,7 @@ use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\webform\EntityListBuilder\WebformEntityListBuilderSortLabelTrait;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform_access\Entity\WebformAccessGroup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class WebformAccessTypeListBuilder extends ConfigEntityListBuilder {
 
   use WebformEntityListBuilderSortLabelTrait;
+  use WebformEntityStorageTrait;
 
   /**
    * {@inheritdoc}
@@ -25,18 +27,11 @@ class WebformAccessTypeListBuilder extends ConfigEntityListBuilder {
   protected $limit = FALSE;
 
   /**
-   * The access group storage.
-   *
-   * @var \Drupal\webform_access\WebformAccessGroupStorageInterface
-   */
-  protected $accessGroupStorage;
-
-  /**
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     $instance = parent::createInstance($container, $entity_type);
-    $instance->accessGroupStorage = $container->get('entity_type.manager')->getStorage('webform_access_group');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     return $instance;
   }
 
@@ -100,7 +95,7 @@ class WebformAccessTypeListBuilder extends ConfigEntityListBuilder {
     $row['label'] = $entity->toLink($entity->label(), 'edit-form');
 
     // Groups.
-    $entity_ids = $this->accessGroupStorage->getQuery()
+    $entity_ids = $this->getEntityStorage('webform_access_group')->getQuery()
       ->condition('type', $entity->id())
       ->execute();
     $items = [];

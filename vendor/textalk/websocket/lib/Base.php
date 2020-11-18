@@ -43,7 +43,9 @@ class Base implements LoggerAwareInterface
 
     public function isConnected()
     {
-        return $this->socket && get_resource_type($this->socket) == 'stream';
+        return $this->socket &&
+            (get_resource_type($this->socket) == 'stream' ||
+             get_resource_type($this->socket) == 'persistent stream');
     }
 
     public function setTimeout($timeout)
@@ -183,7 +185,7 @@ class Base implements LoggerAwareInterface
         $rsv3  = (bool) (ord($data[0]) & 1 << 4);
 
         // Parse opcode
-        $opcode_int = ord($data[0]) & 31; // Bits 4-7
+        $opcode_int = ord($data[0]) & 15; // Bits 4-7
         $opcode_ints = array_flip(self::$opcodes);
         if (!array_key_exists($opcode_int, $opcode_ints)) {
             $warning = "Bad opcode in websocket frame: {$opcode_int}";
@@ -191,11 +193,6 @@ class Base implements LoggerAwareInterface
             throw new ConnectionException($warning, ConnectionException::BAD_OPCODE);
         }
         $opcode = $opcode_ints[$opcode_int];
-
-        // Record the opcode if we are not receiving a continutation fragment
-        if ($opcode !== 'continuation') {
-            $this->last_opcode = $opcode;
-        }
 
         // Masking?
         $mask = (bool) (ord($data[1]) >> 7);  // Bit 0 in byte 1
@@ -232,10 +229,22 @@ class Base implements LoggerAwareInterface
             }
         }
 
-        // if we received a ping, send a pong
+        // if we received a ping, send a pong and wait for the next message
         if ($opcode === 'ping') {
             $this->logger->debug("Received 'ping', sending 'pong'.");
             $this->send($payload, 'pong', true);
+            return [null, false];
+        }
+
+        // if we received a pong, wait for the next message
+        if ($opcode === 'pong') {
+            $this->logger->debug("Received 'pong'.");
+            return [null, false];
+        }
+
+        // Record the opcode if we are not receiving a continutation fragment
+        if ($opcode !== 'continuation') {
+            $this->last_opcode = $opcode;
         }
 
         if ($opcode === 'close') {

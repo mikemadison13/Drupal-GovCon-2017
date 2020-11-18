@@ -31,6 +31,19 @@ elements: |
       5: Five
       6: Six
     '#other__option_label': 'Custom number…'
+  webform_image_select:
+    '#type': webform_image_select
+    '#title': 'Image select'
+    '#images':
+      kitten_1:
+        text: 'Cute Kitten 1'
+        src: 'http://placekitten.com/220/200'
+      kitten_2:
+        text: 'Cute Kitten 2'
+        src: 'http://placekitten.com/180/200'
+      kitten_3:
+        text: 'Cute Kitten 3'
+        src: 'http://placekitten.com/130/200'
   details:
     '#type': details
     '#title': Details
@@ -55,7 +68,7 @@ elements: |
   address:
     '#type': webform_address
     '#title': Address
-  token:
+  computed_token:
     '#type': webform_computed_token
     '#title': 'Computed (token)'
     '#value': 'Site name: [site:name]'
@@ -63,7 +76,7 @@ elements: |
     '#type': webform_actions
     '#title': 'Submit button(s)'
     '#submit__label': 'Send message'
-
+  
 css: ''
 javascript: ''
 settings:
@@ -193,6 +206,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:

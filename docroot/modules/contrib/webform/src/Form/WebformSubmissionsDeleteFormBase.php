@@ -4,6 +4,7 @@ namespace Drupal\webform\Form;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -11,6 +12,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Base webform for deleting webform submission.
  */
 abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
+
+  use WebformEntityStorageTrait;
 
   /**
    * Total number of submissions.
@@ -48,13 +51,6 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
   protected $entityTypeManager;
 
   /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $submissionStorage;
-
-  /**
    * The webform request handler.
    *
    * @var \Drupal\webform\WebformRequestInterface
@@ -67,7 +63,6 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
     $instance->entityTypeManager = $container->get('entity_type.manager');
-    $instance->submissionStorage = $instance->entityTypeManager->getStorage('webform_submission');
     $instance->requestHandler = $container->get('webform.request');
     list($instance->webform, $instance->sourceEntity) = $instance->requestHandler->getWebformEntities();
     return $instance;
@@ -86,8 +81,8 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_state->setRedirectUrl($this->getCancelUrl());
-    if ($this->submissionStorage->getTotal($this->webform, $this->sourceEntity) < $this->getBatchLimit()) {
-      $this->submissionStorage->deleteAll($this->webform, $this->sourceEntity);
+    if ($this->getSubmissionStorage()->getTotal($this->webform, $this->sourceEntity) < $this->getBatchLimit()) {
+      $this->getSubmissionStorage()->deleteAll($this->webform, $this->sourceEntity);
       $this->messenger()->addStatus($this->getFinishedMessage());
     }
     else {
@@ -139,7 +134,7 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
     $parameters = [
       $webform,
       $entity,
-      $this->submissionStorage->getMaxSubmissionId($webform, $entity),
+      $this->getSubmissionStorage()->getMaxSubmissionId($webform, $entity),
     ];
     $batch = [
       'title' => $this->t('Clear submissions'),
@@ -177,23 +172,15 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
    *   The batch current context.
    */
   public function batchProcess(WebformInterface $webform = NULL, EntityInterface $entity = NULL, $max_sid, &$context) {
-    // ISSUE:
-    // $this->submissionStorage is not being setup via
-    // WebformSubmissionsDeleteFormBase::__construct.
-    //
-    // WORKAROUND:
-    // Reset it for each batch process.
-    $this->submissionStorage = \Drupal::entityTypeManager()->getStorage('webform_submission');
-
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
-      $context['sandbox']['max'] = $this->submissionStorage->getTotal($webform, $entity, NULL, ['in_draft' => NULL]);
+      $context['sandbox']['max'] = $this->getSubmissionStorage()->getTotal($webform, $entity, NULL, ['in_draft' => NULL]);
       $context['results']['webform'] = $webform;
       $context['results']['entity'] = $entity;
     }
 
     // Track progress.
-    $context['sandbox']['progress'] += $this->submissionStorage->deleteAll($webform, $entity, $this->getBatchLimit(), $max_sid);
+    $context['sandbox']['progress'] += $this->getSubmissionStorage()->deleteAll($webform, $entity, $this->getBatchLimit(), $max_sid);
 
     $context['message'] = $this->t('Deleting @count of @total submissions…', ['@count' => $context['sandbox']['progress'], '@total' => $context['sandbox']['max']]);
 
@@ -230,7 +217,7 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
    */
   protected function getSubmissionTotal() {
     if (!isset($this->submissionTotal)) {
-      $this->submissionTotal = $this->submissionStorage->getTotal($this->webform, $this->sourceEntity, NULL, ['in_draft' => NULL]);
+      $this->submissionTotal = $this->getSubmissionStorage()->getTotal($this->webform, $this->sourceEntity, NULL, ['in_draft' => NULL]);
     }
     return $this->submissionTotal;
   }

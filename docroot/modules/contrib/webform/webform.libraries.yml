@@ -130,6 +130,7 @@ webform.ajax:
     - core/drupal.announce
     - core/jquery.once
     - core/jquery.form
+    - webform/webform.scroll
 
 # Announce.
 
@@ -266,6 +267,16 @@ webform.promotions:
   css:
     component:
       css/webform.promotions.css: {}
+
+# Scroll.
+
+webform.scroll:
+  version: VERSION
+  js:
+    js/webform.scroll.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
 
 # States.
 
@@ -997,15 +1008,15 @@ libraries.choices:
 
 libraries.codemirror.text:
   remote: https://github.com/codemirror/codemirror
-  version: &webform_codemirror_version '5.57.0'
+  version: &webform_codemirror_version '5.53.2'
   license: &webform_codemirror_license
     name: MIT
     url: http://codemirror.net/LICENSE
     gpl-compatible: true
   directory: &webform_codemirror_directory codemirror
   cdn: &webform_codemirror_cdn
-    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.57.0/
-    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.57.0/
+    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.53.2/
+    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.53.2/
   css:
     component:
       /libraries/codemirror/lib/codemirror.css: {}

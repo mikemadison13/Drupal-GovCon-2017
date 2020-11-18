@@ -206,6 +206,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'element',
     ];
 
+    // Element: Webform Entity View.
+    $projects['webform_entity_view'] = [
+      'title' => $this->t('Webform Entity View'),
+      'description' => $this->t('Provides an Entity Reference Webform element that can be picked in the build of a webform and will be rendered in the view.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_entity_view'),
+      'category' => 'element',
+    ];
+
     // Element: Webform Handsontable.
     $projects['handsontable_yml_webform'] = [
       'title' => $this->t('Webform Handsontable'),
@@ -314,6 +322,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Enhancement.
     /**************************************************************************/
 
+    // Enhancement: Dopup.
+    $projects['dopup'] = [
+      'title' => $this->t('Dopup'),
+      'description' => $this->t('Simple webform popups for lead generation and other marketing needs.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/dopup'),
+      'category' => 'enhancement',
+    ];
+
     // Enhancement: Formset.
     $projects['formset'] = [
       'title' => $this->t('Formset'),
@@ -335,6 +351,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Calculation'),
       'description' => $this->t('Provides ability to make dynamic calculations using Webform.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_calculation'),
+      'category' => 'enhancement',
+    ];
+
+    // Enhancement: Webform Cookie.
+    $projects['webform_cookie'] = [
+      'title' => $this->t('Webform Cookie'),
+      'description' => $this->t('Provides a Webform submission handler that sets an arbitrary cookie after submission.'),
+      'url' => Url::fromUri('https://github.com/r0nn1ef/webform_cookie'),
       'category' => 'enhancement',
     ];
 
@@ -439,6 +463,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Protected Downloads'),
       'description' => $this->t('Provides protected file downloads using webforms.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_protected_downloads'),
+      'category' => 'enhancement',
+    ];
+
+    // Enhancement: Webform Unsubscribe.
+    $projects['webform_unsubscribe'] = [
+      'title' => $this->t('Webform Unsubscribe'),
+      'description' => $this->t('Provides the token for creation of the link for removing a webform submission by an anonymous user.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_unsubscribe'),
       'category' => 'enhancement',
     ];
 
@@ -592,6 +624,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Headless Ninja React Webform'),
       'description' => $this->t('With this awesome React component, you can render complete Drupal Webforms in React. With validation, easy custom styling and a modern, clean interface.'),
       'url' => Url::fromUri('https://github.com/headless-ninja/hn-react-webform'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Marketo MA.
+    $projects['marketo_ma'] = [
+      'title' => $this->t('Marketo MA Webform'),
+      'description' => $this->t('Integrates Marketo MA with Webform module forms.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/marketo_ma'),
       'category' => 'integration',
     ];
 
@@ -1450,6 +1490,15 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Maestro Workflow Engine'),
       'description' => $this->t('A business process workflow solution that allows you to create and automate a sequence of tasks representing any business, document approval or collaboration process.'),
       'url' => Url::fromUri('https://www.drupal.org/project/maestro'),
+      'category' => 'workflow',
+      'recommended' => TRUE,
+    ];
+
+    // Workflow: Workflows Field.
+    $projects['workflows_field'] = [
+      'title' => $this->t('Workflows Field'),
+      'description' => $this->t('A business process workflow solution that allows you to create and automate a sequence of tasks representing any business, document approval or collaboration process.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/workflows_field'),
       'category' => 'workflow',
       'recommended' => TRUE,
     ];

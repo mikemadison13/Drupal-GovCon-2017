@@ -218,7 +218,7 @@ class WebformEntitySettingsGeneralForm extends WebformEntitySettingsBaseForm {
         '#type' => 'textfield',
         '#title' => $this->t('Webform URL alias'),
         '#description' => $this->t('Optionally specify an alternative URL by which the webform submit page can be accessed. Any value entered here will overwrite ALL aliases you may have created for this form via the <a href=":path_alias">path</a> module.', $t_args)
-           . ' ' . $this->t('The URL alias has to start with a slash and cannot handler with a slash.'),
+           . ' ' . $this->t('The URL alias has to start with a slash and cannot end with a slash.'),
        '#pattern' => '^/.+(?<!/)$',
         '#default_value' => $settings['page_submit_path'],
         '#states' => [
@@ -231,7 +231,7 @@ class WebformEntitySettingsGeneralForm extends WebformEntitySettingsBaseForm {
         '#type' => 'textfield',
         '#title' => $this->t('Confirmation page URL alias'),
         '#description' => $this->t('Optionally specify an alternative URL by which the webform confirmation page can be accessed.', $t_args)
-           . ' ' . $this->t('The URL alias has to start with a slash and cannot handler with a slash.'),
+           . ' ' . $this->t('The URL alias has to start with a slash and cannot end with a slash.'),
        '#pattern' => '^/.+(?<!/)$',
         '#default_value' => $settings['page_confirm_path'],
         '#states' => [
@@ -280,18 +280,6 @@ class WebformEntitySettingsGeneralForm extends WebformEntitySettingsBaseForm {
         ],
       ],
     ];
-    $form['ajax_settings']['ajax_container']['ajax_scroll_top'] = [
-      '#type' => 'select',
-      '#title' => $this->t('On Ajax load, scroll to the top of the…'),
-      '#description' => $this->t("Select where the page should be scrolled to when paging, saving of drafts, previews, submissions, and confirmations. Select 'None' to disable scrolling."),
-      '#options' => [
-        '' => $this->t('None'),
-        'form' => $this->t('Form'),
-        'page' => $this->t('Page'),
-      ],
-      '#default_value' => $settings['ajax_scroll_top'],
-      '#attributes' => ['data-webform-states-no-clear' => TRUE],
-    ];
     $form['ajax_settings']['ajax_container']['ajax_progress_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Ajax progress type'),
@@ -303,6 +291,18 @@ class WebformEntitySettingsGeneralForm extends WebformEntitySettingsBaseForm {
 
       ],
       '#default_value' => $settings['ajax_progress_type'],
+    ];
+    $form['ajax_settings']['ajax_container']['ajax_scroll_top'] = [
+      '#type' => 'select',
+      '#title' => $this->t('On Ajax load, scroll to the top of the…'),
+      '#description' => $this->t("Select where the page should be scrolled to when paging, saving of drafts, previews, submissions, and confirmations. Select 'None' to disable scrolling."),
+      '#options' => [
+        '' => $this->t('None'),
+        'form' => $this->t('Form'),
+        'page' => $this->t('Page'),
+      ],
+      '#default_value' => $settings['ajax_scroll_top'],
+      '#attributes' => ['data-webform-states-no-clear' => TRUE],
     ];
     $form['ajax_settings']['ajax_container']['ajax_effect'] = [
       '#type' => 'select',

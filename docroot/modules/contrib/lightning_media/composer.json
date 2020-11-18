@@ -16,7 +16,7 @@
         "drupal/image_widget_crop": "^2.1",
         "drupal/inline_entity_form": "^1.0-rc7",
         "drupal/lightning_core": "5.*",
-        "drupal/media_entity_instagram": "^2.0",
+        "drupal/media_entity_instagram": "^3",
         "drupal/media_entity_twitter": "^2.1",
         "drupal/slick_entityreference": "^2.0",
         "drupal/video_embed_field": "^2.0",

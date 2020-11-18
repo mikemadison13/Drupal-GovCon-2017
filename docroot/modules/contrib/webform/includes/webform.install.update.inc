@@ -3910,6 +3910,13 @@ function webform_update_8209() {
   }
 }
 
+/**
+ * Issue #3158114: Delete own submission with secure token not working.
+ */
+function webform_update_8210() {
+  _webform_update_webform_settings();
+}
+
 /******************************************************************************/
 // Webform 6.x.
 /******************************************************************************/
@@ -3931,11 +3938,14 @@ function webform_update_8601() {
   foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
     $webform_config = $config_factory->getEditable($webform_config_name);
     $yaml = Yaml::encode($webform_config->getRawData());
-    if (strpos($yaml, '[webform_submission:view-url]') !== FALSE
-      || strpos($yaml, '[webform_submission:update-url]') !== FALSE) {
-      $yaml = str_replace('[webform_submission:view-url]', '[webform_submission:token-view-url]', $yaml);
-      $yaml = str_replace('[webform_submission:update-url]', '[webform_submission:token-update-url]', $yaml);
+    if (strpos($yaml, '[webform_submission:view-url') !== FALSE
+      || strpos($yaml, '[webform_submission:update-url') !== FALSE
+      || strpos($yaml, '[webform_submission:delete-url') !== FALSE) {
+      $yaml = str_replace('[webform_submission:view-url', '[webform_submission:token-view-url', $yaml);
+      $yaml = str_replace('[webform_submission:update-url', '[webform_submission:token-update-url', $yaml);
+      $yaml = str_replace('[webform_submission:delete-url', '[webform_submission:token-delete-url', $yaml);
       $webform_config->setData(Yaml::decode($yaml));
+      $webform_config->save();
     }
   }
 }
@@ -4175,4 +4185,11 @@ function webform_update_8619() {
  */
 function webform_update_8620() {
   webform_update_8209();
+}
+
+  /**
+ * Issue #3158114: Delete own submission with secure token not working.
+ */
+function webform_update_8621() {
+  _webform_update_webform_settings();
 }

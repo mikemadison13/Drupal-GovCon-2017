@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\WebformSubmissionForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,12 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class WebformDevelSubmissionApiForm extends FormBase {
 
-  /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $submissionStorage;
+  use WebformEntityStorageTrait;
 
   /**
    * The webform request handler.
@@ -41,7 +37,7 @@ class WebformDevelSubmissionApiForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
-    $instance->submissionStorage = $container->get('entity_type.manager')->getStorage('webform_submission');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->requestHandler = $container->get('webform.request');
     $instance->generate = $container->get('webform_submission.generate');
     return $instance;
@@ -73,7 +69,7 @@ class WebformDevelSubmissionApiForm extends FormBase {
       $values['entity_id'] = $source_entity->id();
 
     }
-    WebformSubmission::preCreate($this->submissionStorage, $values);
+    WebformSubmission::preCreate($this->getSubmissionStorage(), $values);
 
     // Generate data as last value.
     unset($values['data']);

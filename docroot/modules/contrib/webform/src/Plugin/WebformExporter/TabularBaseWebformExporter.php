@@ -183,8 +183,8 @@ abstract class TabularBaseWebformExporter extends WebformExporterBase {
 
     $export_options = $this->getConfiguration();
 
-    $this->fieldDefinitions = $this->entityStorage->getFieldDefinitions();
-    $this->fieldDefinitions = $this->entityStorage->checkFieldDefinitionAccess($this->getWebform(), $this->fieldDefinitions);
+    $this->fieldDefinitions = $this->getSubmissionStorage()->getFieldDefinitions();
+    $this->fieldDefinitions = $this->getSubmissionStorage()->checkFieldDefinitionAccess($this->getWebform(), $this->fieldDefinitions);
     if ($export_options['excluded_columns']) {
       $this->fieldDefinitions = array_diff_key($this->fieldDefinitions, $export_options['excluded_columns']);
     }

@@ -42,7 +42,8 @@
           toggleHideLabel: $form.data('toggle-hide-label'),
           toggleShowLabel: $form.data('toggle-show-label'),
           ajaxEffect: $form.data('ajax-effect'),
-          ajaxSpeed: $form.data('ajax-speed')
+          ajaxSpeed: $form.data('ajax-speed'),
+          ajaxScrollTop: $form.data('ajax-scroll-top'),
         };
 
         var currentPage = $form.data('current-page');
@@ -149,6 +150,12 @@
               }
             }
 
+            // If input[type="radio"] ignore left/right keys which are used to
+            // navigate between radio buttons.
+            if (event.target.tagName === 'INPUT' && event.target.type === 'radio') {
+              return;
+            }
+
             switch (event.which) {
               // Left key triggers the previous button.
               case 37:
@@ -230,7 +237,11 @@
 
           // Show the active card.
           if (!initialize) {
+            // Show the active card.
             applyAjaxEffect($activeCard);
+
+            // Scroll to the top of the page or form.
+            Drupal.webformScrollTop($activeCard, options.ajaxScrollTop);
           }
 
           // Focus the active card's first visible input.

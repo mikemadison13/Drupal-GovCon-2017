@@ -236,6 +236,19 @@ class WebformSettingsLimitUniqueTest extends WebformNodeBrowserTestBase {
     $this->drupalGet('/webform/test_form_limit_user_unique/test');
     $this->assertFieldByName('name', 'Jane Doe');
     $this->assertRaw("<div><b>Submission ID:</b> $sid</div>");
+
+    /**************************************************************************/
+
+    // Check that access is allowed for manage own submission user.
+    $this->drupalLogin($manage_own_user);
+    $this->postSubmission($webform_user_unique, ['name' => 'John Adams']);
+    $this->assertFieldByName('name', 'John Adams');
+
+    // Check that manage own submission user can't update a closed webform.
+    $webform_user_unique->setStatus(FALSE)->save();
+    $this->drupalGet('/webform/test_form_limit_user_unique');
+    $this->assertNoFieldByName('name', 'John Adams');
+    $this->assertRaw('Sorry… This form is closed to new submissions.');
   }
 
 }

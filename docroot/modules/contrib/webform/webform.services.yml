@@ -74,6 +74,14 @@ services:
     class: Drupal\webform\WebformTranslationManager
     arguments: ['@current_route_match', '@language_manager', '@config.factory', '@messenger', '@plugin.manager.webform.element']
 
+  webform.translation_config_manager:
+    class: Drupal\webform\WebformTranslationConfigManager
+    arguments: ['@module_handler', '@form_builder', '@plugin.manager.webform.element', '@webform.translation_manager']
+
+  webform.translation_lingotek_manager:
+    class: Drupal\webform\WebformTranslationLingotekManager
+    arguments: ['@webform.translation_manager']
+
   webform.request:
     class: Drupal\webform\WebformRequest
     arguments: ['@router.route_provider', '@request_stack', '@router.admin_context', '@current_route_match', '@entity_type.manager', '@entity_type.repository', '@webform.entity_reference_manager', '@plugin.manager.webform.source_entity']

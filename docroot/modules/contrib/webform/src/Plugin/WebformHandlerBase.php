@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\WebformInterface;
@@ -24,6 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class WebformHandlerBase extends PluginBase implements WebformHandlerInterface {
 
   use WebformEntityInjectionTrait;
+  use WebformEntityStorageTrait;
 
   /**
    * The webform.
@@ -110,13 +112,6 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
   protected $renderer;
 
   /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $submissionStorage;
-
-  /**
    * The webform submission (server-side) conditions (#states) validator.
    *
    * @var \Drupal\webform\WebformSubmissionConditionsValidator
@@ -148,7 +143,7 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
     $instance->loggerFactory = $container->get('logger.factory');
     $instance->configFactory = $container->get('config.factory');
     $instance->renderer = $container->get('renderer');
-    $instance->submissionStorage = $container->get('entity_type.manager')->getStorage('webform_submission');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->conditionsValidator = $container->get('webform_submission.conditions_validator');
     $instance->tokenManager = $container->get('webform.token_manager');
 

@@ -6,7 +6,7 @@
     "require": {
         "cweagans/composer-patches": "^1.6",
         "drupal/bg_image_formatter": "^1.10",
-        "drupal/core": "^8.7.13 || ~9.0.0",
+        "drupal/core": "^8.7.13 || ^9.0.0",
         "drupal/ctools": "^3.0",
         "drupal/entity_block": "^1.0",
         "drupal/entity_browser_block": "^1.0",
@@ -20,10 +20,10 @@
         "drupal/simple_gmap": "^3.0"
     },
     "require-dev": {
+        "composer/installers": "^1.9",
         "drupal/core-composer-scaffold": "*",
         "drupal/core-dev": "*",
         "drush/drush": ">=9.7",
-        "oomphinc/composer-installers-extender": "^1.1",
         "symfony/options-resolver": ">=4",
         "vijaycs85/drupal-quality-checker": "^1.0"
     },
@@ -57,9 +57,7 @@
                 "type:drupal-core"
             ],
             "docroot/libraries/{$name}": [
-                "type:drupal-library",
-                "type:bower-asset",
-                "type:npm-asset"
+                "type:drupal-library"
             ],
             "docroot/modules/contrib/{$name}": [
                 "type:drupal-module"
@@ -71,10 +69,6 @@
                 "type:drupal-theme"
             ]
         },
-        "installer-types": [
-            "bower-asset",
-            "npm-asset"
-        ],
         "patchLevel": {
             "drupal/core": "-p2"
         },

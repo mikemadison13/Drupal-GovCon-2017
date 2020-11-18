@@ -675,7 +675,7 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
     // If no element is found try checking file uploads which use
     // :input[name="files[ELEMENT_KEY].
     // @see \Drupal\webform\Plugin\WebformElement\WebformManagedFileBase::getElementSelectorOptions
-    if (!$element && strpos($selector, ':input[name="files[') === 0) {
+    if (!$element && strpos($selector, ':input[name="files[') !== FALSE) {
       $element_key = static::getInputNameAsArray($input_name, 1);
       $element = $webform_submission->getWebform()->getElement($element_key);
     }

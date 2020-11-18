@@ -124,6 +124,13 @@ abstract class WebformCompositeBase extends WebformElementBase implements Webfor
     ] + parent::defineDefaultMultipleProperties();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function defineTranslatableProperties() {
+    return array_merge(parent::defineTranslatableProperties(), ['default_value']);
+  }
+
   /****************************************************************************/
   // Property methods.
   /****************************************************************************/

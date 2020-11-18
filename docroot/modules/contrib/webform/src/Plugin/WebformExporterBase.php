@@ -4,6 +4,7 @@ namespace Drupal\webform\Plugin;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\WebformSubmissionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -16,6 +17,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see plugin_api
  */
 abstract class WebformExporterBase extends PluginBase implements WebformExporterInterface {
+
+  use WebformEntityStorageTrait;
 
   /**
    * A logger instance.
@@ -30,20 +33,6 @@ abstract class WebformExporterBase extends PluginBase implements WebformExporter
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $entityStorage;
 
   /**
    * The webform element manager.
@@ -75,7 +64,6 @@ abstract class WebformExporterBase extends PluginBase implements WebformExporter
     $instance->logger = $container->get('logger.factory')->get('webform');
     $instance->configFactory = $container->get('config.factory');
     $instance->entityTypeManager = $container->get('entity_type.manager');
-    $instance->entityStorage = $container->get('entity_type.manager')->getStorage('webform_submission');
     $instance->elementManager = $container->get('plugin.manager.webform.element');
     $instance->tokenManager = $container->get('webform.token_manager');
 

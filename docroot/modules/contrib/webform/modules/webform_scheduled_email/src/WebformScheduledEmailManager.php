@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\WebformEntityReferenceManagerInterface;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
@@ -24,6 +25,7 @@ use Drupal\webform\WebformTokenManagerInterface;
 class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterface {
 
   use StringTranslationTrait;
+  use WebformEntityStorageTrait;
 
   /**
    * The time service.
@@ -59,20 +61,6 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
-
-  /**
-   * The webform storage.
-   *
-   * @var \Drupal\webform\WebformEntityStorageInterface
-   */
-  protected $webformStorage;
-
-  /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\webform\WebformSubmissionStorageInterface
-   */
-  protected $submissionStorage;
 
   /**
    * The token manager.
@@ -114,8 +102,7 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
     $this->languageManager = $language_manager;
     $this->configFactory = $config_factory;
     $this->loggerFactory = $logger_factory;
-    $this->webformStorage = $entity_type_manager->getStorage('webform');
-    $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
+    $this->entityTypeManager = $entity_type_manager;
     $this->tokenManager = $token_manager;
     $this->entityReferenceManager = $entity_reference_manager;
   }
@@ -569,9 +556,9 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
 
     // Bulk load webforms and submission to improve performance.
     if ($webform_ids) {
-      $this->webformStorage->loadMultiple($webform_ids);
+      $this->getWebformStorage()->loadMultiple($webform_ids);
     }
-    $webform_submissions = $sids ? $this->submissionStorage->loadMultiple($sids) : [];
+    $webform_submissions = $sids ? $this->getSubmissionStorage()->loadMultiple($sids) : [];
 
     // Now update all the emails.
     foreach ($records as $record) {
@@ -656,7 +643,7 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
       $eids[] = $record->eid;
 
       /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
-      $webform_submission = $this->submissionStorage->load($sid);
+      $webform_submission = $this->getSubmissionStorage()->load($sid);
       // This should rarely happen and the orphaned record will be deleted.
       if (!$webform_submission) {
         continue;
@@ -684,11 +671,11 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
         if ($switch_languages) {
           $this->languageManager->setConfigOverrideLanguage($webform_submission->language());
           // Reset the webform, submission, and handler.
-          $this->webformStorage->resetCache([$webform_id]);
-          $this->submissionStorage->resetCache([$sid]);
+          $this->getWebformStorage()->resetCache([$webform_id]);
+          $this->getSubmissionStorage()->resetCache([$sid]);
           // Reload the webform, submission, and handler.
-          $webform = $this->webformStorage->load($webform_id);
-          $webform_submission = $this->submissionStorage->load($sid);
+          $webform = $this->getWebformStorage()->load($webform_id);
+          $webform_submission = $this->getSubmissionStorage()->load($sid);
           $handler = $webform->getHandler($handler_id);
         }
 
@@ -700,11 +687,11 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
         if ($switch_languages) {
           $this->languageManager->setConfigOverrideLanguage($original_language);
           // Reset the webform, submission, and handler.
-          $this->webformStorage->resetCache([$webform_id]);
-          $this->submissionStorage->resetCache([$sid]);
+          $this->getWebformStorage()->resetCache([$webform_id]);
+          $this->getSubmissionStorage()->resetCache([$sid]);
           // Reload the webform, submission, and handler.
-          $webform = $this->webformStorage->load($webform_id);
-          $webform_submission = $this->submissionStorage->load($sid);
+          $webform = $this->getWebformStorage()->load($webform_id);
+          $webform_submission = $this->getSubmissionStorage()->load($sid);
           $handler = $webform->getHandler($handler_id);
         }
 

@@ -318,7 +318,7 @@
         .once('webform-radios-required')
         .each(function () {
           var $element = $(this);
-          setTimeout(function () {radiosRequired($(this))});
+          setTimeout(function () {radiosRequired($element)});
         });
     }
   };

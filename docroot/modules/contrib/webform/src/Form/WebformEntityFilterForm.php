@@ -4,6 +4,7 @@ namespace Drupal\webform\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -11,6 +12,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides the webform filter form.
  */
 class WebformEntityFilterForm extends FormBase {
+
+  use WebformEntityStorageTrait;
 
   /**
    * {@inheritdoc}
@@ -20,18 +23,11 @@ class WebformEntityFilterForm extends FormBase {
   }
 
   /**
-   * The webform storage.
-   *
-   * @var \Drupal\webform\WebformEntityStorageInterface
-   */
-  protected $webformStorage;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
-    $instance->webformStorage = $container->get('entity_type.manager')->getStorage('webform');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
     return $instance;
   }
 
@@ -61,7 +57,7 @@ class WebformEntityFilterForm extends FormBase {
       '#type' => 'select',
       '#title' => $this->t('Category'),
       '#title_display' => 'invisible',
-      '#options' => $this->webformStorage->getCategories(FALSE),
+      '#options' => $this->getWebformStorage()->getCategories(FALSE),
       '#empty_option' => ($category) ? $this->t('Show all webforms') : $this->t('Filter by category'),
       '#default_value' => $category,
     ];
