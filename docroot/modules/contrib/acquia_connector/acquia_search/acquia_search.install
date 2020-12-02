@@ -16,7 +16,8 @@ function acquia_search_install() {
   $module_installer = \Drupal::service('module_installer');
   $module_installer->uninstall(['acquia_search']);
 
-  throw new \Exception('Acquia Search Legacy must not be installed again! Please use Acquia Search Solr instead.');
+  $messenger = \Drupal::messenger();
+  $messenger->addWarning(t('Acquia Search Legacy must not be installed again! Please use Acquia Search Solr instead.'));
 }
 
 /**

@@ -41,8 +41,7 @@ class WebformCompositeCustomFileTest extends WebformElementManagedFileTestBase {
     // Check that file was uploaded.
     $this->assertRaw(basename($first_file->uri));
 
-    // Add another empty row and check t
-    //hat file is still uploaded and attached.
+    // Add another empty row and check that file is still uploaded and attached.
     $this->drupalPostForm(NULL, [], 'webform_custom_composite_file_table_add');
     $this->assertRaw(basename($first_file->uri));
 

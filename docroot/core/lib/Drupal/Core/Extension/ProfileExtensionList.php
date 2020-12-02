@@ -22,7 +22,7 @@ class ProfileExtensionList extends ExtensionList {
     'description' => '',
     'package' => 'Other',
     'version' => NULL,
-    'php' => DRUPAL_MINIMUM_PHP,
+    'php' => \Drupal::MINIMUM_PHP,
     'themes' => ['stark'],
     'hidden' => FALSE,
     'base profile' => '',
@@ -101,7 +101,8 @@ class ProfileExtensionList extends ExtensionList {
     $distributions = $this->listDistributions();
 
     if ($profiles) {
-      $distributions = array_intersect_key($distributions, array_flip($profiles));
+      $distributions = array_intersect_key($distributions,
+        array_flip($profiles));
     }
 
     // Remove any distributions which are extended by another one.
@@ -151,7 +152,6 @@ class ProfileExtensionList extends ExtensionList {
 
         // Add the current profile as a child of the ancestor.
         $ancestor->children[] = $profile_name;
-
         // Inherit all of the ancestor's modules and themes except for the ones
         // in the 'exclude' list.
         $info['install'] = array_diff(array_merge($info['install'], $ancestor->info['install']), $info['exclude']);

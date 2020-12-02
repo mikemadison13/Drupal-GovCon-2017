@@ -1295,10 +1295,10 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
    *
    * @param \Drupal\file\FileInterface $file
    *   A file.
-   * @param \Drupal\Core\Session\AccountInterface|NULL $account
+   * @param \Drupal\Core\Session\AccountInterface|null $account
    *   A user account.
    *
-   * @return bool|NULL
+   * @return bool|null
    *   Returns NULL if the file is not attached to a webform submission.
    *   Returns FALSE if the user can't access the file.
    *   Returns TRUE if the user can access the file.

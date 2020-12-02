@@ -5,6 +5,7 @@ namespace Drupal\Tests\Core\Database;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Site\Settings;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Tests for database URL to/from database connection array conversions.
@@ -29,16 +30,11 @@ class UrlConversionTest extends UnitTestCase {
     $this->root = dirname(__FILE__, 7);
     // Mock the container so we don't need to mock drupal_valid_test_ua().
     // @see \Drupal\Core\Extension\ExtensionDiscovery::scan()
-    $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
-    $container->expects($this->any())
-      ->method('has')
-      ->with('kernel')
-      ->willReturn(TRUE);
-    $container->expects($this->any())
-      ->method('getParameter')
-      ->with('site.path')
-      ->willReturn('');
-    \Drupal::setContainer($container);
+    $container = $this->prophesize(ContainerInterface::class);
+    $container->has('kernel')->willReturn(TRUE);
+    $container->has('extension.list.profile')->willReturn(FALSE);
+    $container->getParameter('site.path')->willReturn('');
+    \Drupal::setContainer($container->reveal());
 
     new Settings(['extension_discovery_scan_tests' => TRUE]);
   }
@@ -48,13 +44,13 @@ class UrlConversionTest extends UnitTestCase {
    *
    * @dataProvider providerConvertDbUrlToConnectionInfo
    */
-  public function testDbUrltoConnectionConversion($root, $url, $database_array) {
+  public function testDbUrlToConnectionConversion($root, $url, $database_array) {
     $result = Database::convertDbUrlToConnectionInfo($url, $root ?: $this->root);
     $this->assertEquals($database_array, $result);
   }
 
   /**
-   * Dataprovider for testDbUrltoConnectionConversion().
+   * Data provider for testDbUrlToConnectionConversion().
    *
    * @return array
    *   Array of arrays with the following elements:
@@ -216,7 +212,7 @@ class UrlConversionTest extends UnitTestCase {
   }
 
   /**
-   * Dataprovider for testGetInvalidArgumentExceptionInUrlConversion().
+   * Data provider for testGetInvalidArgumentExceptionInUrlConversion().
    *
    * @return array
    *   Array of arrays with the following elements:
@@ -248,7 +244,7 @@ class UrlConversionTest extends UnitTestCase {
   }
 
   /**
-   * Dataprovider for testGetConnectionInfoAsUrl().
+   * Data provider for testGetConnectionInfoAsUrl().
    *
    * @return array
    *   Array of arrays with the following elements:
@@ -376,7 +372,7 @@ class UrlConversionTest extends UnitTestCase {
   }
 
   /**
-   * Dataprovider for testGetInvalidArgumentGetConnectionInfoAsUrl().
+   * Data provider for testGetInvalidArgumentGetConnectionInfoAsUrl().
    *
    * @return array
    *   Array of arrays with the following elements:

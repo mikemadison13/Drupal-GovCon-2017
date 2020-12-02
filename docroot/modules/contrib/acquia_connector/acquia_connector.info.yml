@@ -5,7 +5,7 @@ package: Acquia
 core_version_requirement: ^8.8 || ^9
 configure: acquia_connector.settings
 
-# Information added by Drupal.org packaging script on 2020-11-13
-version: '8.x-2.0-rc2'
+# Information added by Drupal.org packaging script on 2020-11-18
+version: '8.x-2.0-rc3'
 project: 'acquia_connector'
-datestamp: 1605298188
+datestamp: 1605728164

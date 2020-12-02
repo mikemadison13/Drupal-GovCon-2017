@@ -55,7 +55,9 @@
   }
 
   .container-inline .webform-flex--container > .form-item > input:not([type="checkbox"]),
-  .container-inline .webform-flex--container > .form-item > select {
+  .container-inline .webform-flex--container > .form-item > select,
+  .webform-flex--container > .form-item.webform-element--title-inline  > input:not([type="checkbox"]),
+  .webform-flex--container > .form-item.webform-element--title-inline  > select {
     width: inherit;
   }
 

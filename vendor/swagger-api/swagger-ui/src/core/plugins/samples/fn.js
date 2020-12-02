@@ -202,6 +202,10 @@ export const sampleFromSchemaGeneric = (schema, config={}, exampleOverride = und
         if (schema && props[propName] && props[propName].writeOnly && !includeWriteOnly) {
           continue
         }
+        if (schema && props[propName] && props[propName].xml && props[propName].xml.attribute && !(example && example[propName])) {
+          _attr[props[propName].xml.name || propName] = sample[propName]
+          continue
+        }
         if (schema && props[propName] && props[propName].xml && props[propName].xml.attribute) {
           _attr[props[propName].xml.name || propName] = example[propName]
           continue
@@ -328,14 +332,14 @@ export const inferSchema = (thing) => {
   return thing // Hopefully this will have something schema like in it... `type` for example
 }
 
-export const createXMLExample = (schema, config={}, o) => {
+export const createXMLExample = (schema, config, o) => {
   const json = sampleFromSchemaGeneric(schema, config, o, true)
   if (!json) { return }
 
   return XML(json, { declaration: true, indent: "\t" })
 }
 
-export const sampleFromSchema = (schema, config={}, o) =>
+export const sampleFromSchema = (schema, config, o) =>
   sampleFromSchemaGeneric(schema, config, o, false)
 
 export const memoizedCreateXMLExample = memoizee(createXMLExample)

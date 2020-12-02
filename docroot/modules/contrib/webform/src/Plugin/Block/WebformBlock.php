@@ -31,6 +31,13 @@ class WebformBlock extends BlockBase implements ContainerFactoryPluginInterface 
   protected $requestStack;
 
   /**
+   * The route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
    * Entity type manager.
    *
    * @var \Drupal\core\Entity\EntityTypeManagerInterface
@@ -50,6 +57,7 @@ class WebformBlock extends BlockBase implements ContainerFactoryPluginInterface 
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = new static($configuration, $plugin_id, $plugin_definition);
     $instance->requestStack = $container->get('request_stack');
+    $instance->routeMatch = $container->get('current_route_match');
     $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->tokenManager = $container->get('webform.token_manager');
     return $instance;
@@ -171,9 +179,19 @@ class WebformBlock extends BlockBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public function build() {
+    $webform = $this->getWebform();
+    if (!$webform) {
+      if (strpos($this->routeMatch->getRouteName(), 'layout_builder.') === 0) {
+        return ['#markup' => $this->t('The webform (@webform) is broken or missing.', ['@webform' => $this->configuration['webform_id']])];
+      }
+      else {
+        return NULL;
+      }
+    }
+
     $build = [
       '#type' => 'webform',
-      '#webform' => $this->getWebform(),
+      '#webform' => $webform,
       '#default_data' => WebformYaml::decode($this->configuration['default_data']),
     ];
 

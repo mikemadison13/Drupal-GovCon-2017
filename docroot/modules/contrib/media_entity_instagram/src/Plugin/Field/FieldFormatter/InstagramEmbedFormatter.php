@@ -90,6 +90,7 @@ class InstagramEmbedFormatter extends OEmbedFormatter {
         default:
           $element[$delta] = [
             '#theme' => 'media_oembed_iframe',
+            '#resource' => $resource,
             '#media' => IFrameMarkup::create($resource->getHtml()),
             '#attached' => [
               'library' => [

@@ -1,6 +1,8 @@
 title: 'Prueba: Traducción'
 description: 'Prueba de la traducción de un formulario.'
 elements: |
+  processed_text:
+    '#text': '<p><strong>Algún texto</strong></p>'
   textfield:
     '#title': 'Campo de texto'
   select_options:

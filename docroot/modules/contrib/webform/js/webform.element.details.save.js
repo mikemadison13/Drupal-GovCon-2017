@@ -36,7 +36,6 @@
       $('details > summary', context).once('webform-details-summary-save').click(function () {
         var $details = $(this).parent();
 
-
         // @see https://css-tricks.com/snippets/jquery/make-an-jquery-hasattr/
         if ($details[0].hasAttribute('data-webform-details-nosave')) {
           return;
@@ -87,6 +86,11 @@
    */
   Drupal.webformDetailsSaveGetName = function ($details) {
     if (!hasLocalStorage) {
+      return '';
+    }
+
+    // Ignore details that are vertical tabs pane.
+    if ($details.hasClass('vertical-tabs__pane')) {
       return '';
     }
 

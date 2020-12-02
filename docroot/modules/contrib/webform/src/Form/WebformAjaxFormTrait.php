@@ -444,4 +444,3 @@ trait WebformAjaxFormTrait {
   }
 
 }
-

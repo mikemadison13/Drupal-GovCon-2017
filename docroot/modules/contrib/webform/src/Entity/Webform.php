@@ -3079,7 +3079,8 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         $plugin_definition = $handler->getPluginDefinition();
         $provider = $plugin_definition['provider'];
         if (in_array($provider, $dependencies['module'])) {
-          $this->deleteWebformHandler($handler);
+          $handler->setWebform($this);
+          $this->getHandlers()->removeInstanceId($handler->getHandlerId());
           $changed = TRUE;
         }
       }
@@ -3091,7 +3092,8 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
         $plugin_definition = $variant->getPluginDefinition();
         $provider = $plugin_definition['provider'];
         if (in_array($provider, $dependencies['module'])) {
-          $this->deleteWebformVariant($variant);
+          $variant->setWebform($this);
+          $this->getVariants()->removeInstanceId($variant->getVariantId());
           $changed = TRUE;
         }
       }

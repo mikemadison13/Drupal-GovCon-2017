@@ -16,6 +16,10 @@ title: 'Test: Translations'
 description: 'Test translating a webform.'
 category: null
 elements: |
+  processed_text:
+    '#type': processed_text
+    '#text': '<p><strong>Some text</strong></p>'
+    '#format': basic_html
   textfield:
     '#type': textfield
     '#title': 'Text field'
@@ -76,7 +80,7 @@ elements: |
     '#type': webform_actions
     '#title': 'Submit button(s)'
     '#submit__label': 'Send message'
-  
+
 css: ''
 javascript: ''
 settings:

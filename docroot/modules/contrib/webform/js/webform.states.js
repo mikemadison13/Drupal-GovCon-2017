@@ -318,7 +318,7 @@
         .once('webform-radios-required')
         .each(function () {
           var $element = $(this);
-          setTimeout(function () {radiosRequired($element)});
+          setTimeout(function () {radiosRequired($element);});
         });
     }
   };
@@ -530,6 +530,7 @@
    * @param {element} $input
    *   An input.
    * @param {boolean} required
+   *   Is input required.
    */
   function toggleRequired($input, required) {
     if (required) {

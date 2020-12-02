@@ -159,17 +159,26 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         '#suffix' => '</dt>',
       ];
       $info[$library_name]['description'] = [
-        'content' => [
-          '#markup' => $description,
-        ],
-        'status' => (!empty($library['deprecated'])) ? [
-          '#markup' => $library['deprecated'],
-          '#prefix' => '<div class="color-warning"><strong>',
-          '#suffix' => '</strong></div>',
-        ] : [],
         '#prefix' => '<dd>',
         '#suffix' => '</dd>',
       ];
+      $info[$library_name]['description']['content'] = [
+        '#markup' => $description,
+      ];
+      if (!empty($library['notes'])) {
+        $info[$library_name]['description']['notes'] = [
+          '#markup' => $library['notes'],
+          '#prefix' => '<div><em>(',
+          '#suffix' => '}</em></div>',
+        ];
+      }
+      if (!empty($library['deprecated'])) {
+        $info[$library_name]['description']['status'] = [
+          '#markup' => $library['deprecated'],
+          '#prefix' => '<div class="color-warning"><strong>',
+          '#suffix' => '</strong></div>',
+        ];
+      }
     }
 
     // Description.
@@ -536,8 +545,11 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       if (strpos($library_name, 'ckeditor.') === 0) {
         $library_path = $this->find($library_name)
           ?: $this->find(str_replace('ckeditor.', '', $library_name));
-        $libraries[$library_name]['plugin_path'] = str_replace('libraries/' . $library_name, $library_path, $library['plugin_path']);
+        if ($library_path) {
+          $libraries[$library_name]['plugin_path'] = str_replace('libraries/' . $library_name, $library_path, $library['plugin_path']);
+        }
       }
+
     }
 
     // Move deprecated libraries last.

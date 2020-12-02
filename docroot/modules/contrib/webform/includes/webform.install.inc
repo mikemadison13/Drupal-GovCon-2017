@@ -194,7 +194,7 @@ function _webform_update_webform_setting_settings(array $settings) {
 }
 
 /**
- * Update webform handler settings to reflect changes in a handler's default configuration.
+ * Update webform handler settings to reflect changes in the handler's settings.
  *
  * @see \Drupal\webform\Plugin\WebformHandlerInterface
  */
@@ -333,7 +333,7 @@ function _webform_update_field_storage_definitions() {
 function _webform_update_webform_submission_storage_schema() {
   $manager = \Drupal::entityDefinitionUpdateManager();
   if (!$manager->getEntityType('webform_submission')) {
-	  $type = \Drupal::entityTypeManager()->getDefinition('webform_submission');
+    $type = \Drupal::entityTypeManager()->getDefinition('webform_submission');
     $manager->installEntityType($type);
   }
   $manager->updateEntityType($manager->getEntityType('webform_submission'));

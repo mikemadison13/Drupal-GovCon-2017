@@ -67,7 +67,6 @@ class WebformElementCheckboxesJavaScriptTest extends WebformWebDriverTestBase {
     $assert_session->checkboxChecked('edit-checkboxes-both-three');
     $assert_session->checkboxChecked('edit-checkboxes-both-all');
 
-
     // Check that 'all' is checked when form is prepopulated.
     $options = [
       'query' => [

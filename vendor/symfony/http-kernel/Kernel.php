@@ -76,11 +76,11 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
 
     private static $freshCache = [];
 
-    const VERSION = '4.4.16';
-    const VERSION_ID = 40416;
+    const VERSION = '4.4.17';
+    const VERSION_ID = 40417;
     const MAJOR_VERSION = 4;
     const MINOR_VERSION = 4;
-    const RELEASE_VERSION = 16;
+    const RELEASE_VERSION = 17;
     const EXTRA_VERSION = '';
 
     const END_OF_MAINTENANCE = '11/2022';
@@ -262,7 +262,7 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
         $bundleName = substr($name, 1);
         $path = '';
         if (false !== strpos($bundleName, '/')) {
-            list($bundleName, $path) = explode('/', $bundleName, 2);
+            [$bundleName, $path] = explode('/', $bundleName, 2);
         }
 
         $isResource = 0 === strpos($path, 'Resources') && null !== $dir;
@@ -893,7 +893,7 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
     public function unserialize($data)
     {
         @trigger_error(sprintf('The "%s" method is deprecated since Symfony 4.3.', __METHOD__), \E_USER_DEPRECATED);
-        list($environment, $debug) = unserialize($data, ['allowed_classes' => false]);
+        [$environment, $debug] = unserialize($data, ['allowed_classes' => false]);
 
         $this->__construct($environment, $debug);
     }

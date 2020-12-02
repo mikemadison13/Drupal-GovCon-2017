@@ -487,7 +487,6 @@ function webform_toolbar_alter(&$items) {
   }
 }
 
-
 /**
  * Implements hook_menu_links_discovered_alter().
  */
@@ -887,7 +886,7 @@ function webform_webform_access_rules() {
 /******************************************************************************/
 
 /**
- * Implements hook_devel_generate_info_alter()
+ * Implements hook_devel_generate_info_alter().
  */
 function webform_devel_generate_info_alter(array &$generators) {
   if (!isset($generators['webform_submission'])) {

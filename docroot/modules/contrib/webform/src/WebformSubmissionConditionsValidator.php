@@ -4,7 +4,6 @@ namespace Drupal\webform;
 
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\webform\Plugin\WebformElement\TextBase;
 use Drupal\webform\Plugin\WebformElement\WebformCompositeBase;
@@ -303,7 +302,7 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
   protected function validateFormRecursive(array $form, FormStateInterface $form_state) {
     foreach ($form as $key => $element) {
       if (!WebformElementHelper::isElement($element, $key)
-        || !Element::isVisibleElement($element)) {
+        || !WebformElementHelper::isAccessibleElement($element)) {
         continue;
       }
       $this->validateFormElement($element, $form_state);
@@ -967,8 +966,8 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
         $element['#_webform_access'] = $element['#access'];
       }
 
-      // Skip if element is not visible.
-      if (!Element::isVisibleElement($element)) {
+      // Skip if element is not accessible.
+      if (!WebformElementHelper::isAccessibleElement($element)) {
         continue;
       }
 

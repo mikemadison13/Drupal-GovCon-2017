@@ -17,7 +17,7 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['block', 'webform', 'webform_ui', 'webform_test_translation'];
+  public static $modules = ['block', 'filter', 'webform', 'webform_ui', 'webform_test_translation'];
 
   /**
    * {@inheritdoc}
@@ -27,6 +27,9 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
 
     // Place blocks.
     $this->placeBlocks();
+
+    // Create filters.
+    $this->createFilters();
   }
 
   /**
@@ -61,6 +64,9 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
     // Check Spanish translation.
     $this->drupalGet('/admin/structure/webform/manage/test_translation/translate/es/edit');
     $this->assertFieldByName('translation[config_names][webform.webform.test_translation][title]', 'Prueba: Traducción');
+
+    // Check processed text translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][processed_text][text][value]', '<p><strong>Algún texto</strong></p>');
 
     // Check textfield translation.
     $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][textfield][title]', 'Campo de texto');
@@ -101,7 +107,6 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
     // Check action translation.
     $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][actions][title]', 'Enviar botón (s)');
     $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][actions][submit__label]', 'Enviar mensaje');
-
 
     // Check form builder is not translated.
     $this->drupalGet('/es/admin/structure/webform/manage/test_translation');

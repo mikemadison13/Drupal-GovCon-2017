@@ -1119,6 +1119,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'recommended' => TRUE,
     ];
 
+    // Spam: SpamAway.
+    $projects['spamaway'] = [
+      'title' => $this->t('Honeypot'),
+      'description' => $this->t('Provides a webform handler which will mark submissions as SPAM'),
+      'url' => Url::fromUri('https://www.drupal.org/project/spamaway'),
+      'category' => 'spam',
+    ];
+
     /**************************************************************************/
 
     // Spam: CleanTalk.

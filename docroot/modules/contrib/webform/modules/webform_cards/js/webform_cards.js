@@ -203,15 +203,31 @@
          * @param {jQuery} $activeCard
          *   An jQuery object containing the active card.
          * @param {boolean} initialize
-         *   Are cards being initialize
+         *   Are cards being initialize.
+         *   If TRUE, no transition or scrolling effects will be triggered.
          */
         function setActiveCard($activeCard, initialize) {
           if (!$activeCard.length) {
             return;
           }
 
-          // Unset the active card
-          $allCards.filter('.webform-card--active').removeClass('webform-card--active');
+          // Track the previous active card.
+          var $prevCard = $allCards.filter('.webform-card--active');
+
+          // Unset the previous active card and set the active card.
+          $prevCard.removeClass('webform-card--active');
+          $activeCard.addClass('webform-card--active');
+
+          // Trigger card change event.
+          $form.trigger('webform_cards:change', [$activeCard]);
+
+          // Allow card change event to reset the active card, this allows for
+          // card change event handler to apply custom validation
+          // and conditional logic.
+          $activeCard = $allCards.filter('.webform-card--active');
+          if ($activeCard.get(0) === $prevCard.get(0)) {
+            initialize = true;
+          }
 
           // Set the previous and next labels.
           $previousButton.val($activeCard.data('prev-button-label') || $previousButton.data('default-label'));
@@ -226,9 +242,6 @@
           $previewButton.toggle(!hasNextCard);
           $submitButton.toggle(!hasNextCard);
           $nextButton.toggle(hasNextCard);
-
-          // Activate the card.
-          $activeCard.addClass('webform-card--active');
 
           // Hide the next button when auto-forwarding.
           if (hideAutoForwardNextButton()) {
@@ -257,8 +270,6 @@
           // Track progress.
           trackProgress();
 
-          // Trigger card change event.
-          $form.trigger('webform_cards:change', [$activeCard]);
         }
 
         /**

@@ -110,6 +110,9 @@ class Telephone extends TextBase {
         $cdn = reset($intl_tel_input_library['cdn']);
         $utils_script = $cdn . 'build/js/utils.js';
       }
+      else {
+        $utils_script = base_path() . $library_path . '/build/js/utils.js';
+      }
       $element['#attached']['drupalSettings']['webform']['intlTelInput']['utilsScript'] = $utils_script;
     }
 
