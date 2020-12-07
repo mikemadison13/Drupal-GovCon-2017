@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1e03cc23f9c3da6408982baa075888e7
+class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -5812,6 +5812,7 @@ class ComposerStaticInit1e03cc23f9c3da6408982baa075888e7
         'Psy\\CodeCleaner\\FunctionReturnInWriteContextPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/FunctionReturnInWriteContextPass.php',
         'Psy\\CodeCleaner\\ImplicitReturnPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ImplicitReturnPass.php',
         'Psy\\CodeCleaner\\InstanceOfPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/InstanceOfPass.php',
+        'Psy\\CodeCleaner\\IssetPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/IssetPass.php',
         'Psy\\CodeCleaner\\LabelContextPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/LabelContextPass.php',
         'Psy\\CodeCleaner\\LeavePsyshAlonePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/LeavePsyshAlonePass.php',
         'Psy\\CodeCleaner\\ListPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ListPass.php',
@@ -8040,6 +8041,7 @@ class ComposerStaticInit1e03cc23f9c3da6408982baa075888e7
         'VariableAnalysis\\Lib\\Constants' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Lib/Constants.php',
         'VariableAnalysis\\Lib\\Helpers' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Lib/Helpers.php',
         'VariableAnalysis\\Lib\\ScopeInfo' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Lib/ScopeInfo.php',
+        'VariableAnalysis\\Lib\\ScopeType' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Lib/ScopeType.php',
         'VariableAnalysis\\Lib\\VariableInfo' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Lib/VariableInfo.php',
         'VariableAnalysis\\Sniffs\\CodeAnalysis\\VariableAnalysisSniff' => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis/Sniffs/CodeAnalysis/VariableAnalysisSniff.php',
         'WatchdogContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/WatchdogContext.behat.inc',
@@ -8227,11 +8229,11 @@ class ComposerStaticInit1e03cc23f9c3da6408982baa075888e7
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1e03cc23f9c3da6408982baa075888e7::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1e03cc23f9c3da6408982baa075888e7::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit1e03cc23f9c3da6408982baa075888e7::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit1e03cc23f9c3da6408982baa075888e7::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit1e03cc23f9c3da6408982baa075888e7::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$classMap;
 
         }, null, ClassLoader::class);
     }

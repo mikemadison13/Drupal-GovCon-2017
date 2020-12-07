@@ -6,8 +6,6 @@ use Drupal\acquia_telemetry\Telemetry;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
- * @group lightning
- * @group lightning_core
  * @group acquia_telemetry
  */
 class HooksTest extends KernelTestBase {

@@ -12,11 +12,11 @@
         "return": ""
     },
     {
-        "function": "fclose",
+        "function": "get_resource_type",
         "params": [
             "@mock-stream"
         ],
-        "return":true
+        "return": "stream"
     },
     {
         "function": "stream_get_meta_data",
@@ -32,5 +32,12 @@
             "unread_bytes": 2,
             "seekable": false
         }
+    },
+    {
+        "function": "fclose",
+        "params": [
+            "@mock-stream"
+        ],
+        "return":true
     }
 ]

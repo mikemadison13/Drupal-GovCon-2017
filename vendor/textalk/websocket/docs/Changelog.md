@@ -1,10 +1,15 @@
-[Client](Client.md) • [Server](Server.md) • Changelog • [Contributing](Contributing.md)
+[Client](Client.md) • [Server](Server.md) • [Examples](Examples.md) • Changelog • [Contributing](Contributing.md)
 
 # Websocket: Changelog
 
 ## `v1.4`
 
  > PHP version `^7.1`
+
+#### `1.4.3`
+
+ * Solve stream closure/get meta conflict (@sirn-se)
+ * Examples and documentation overhaul (@sirn-se)
 
 #### `1.4.2`
 

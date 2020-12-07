@@ -183,13 +183,13 @@ class IgnoreKernelTest extends KernelTestBase {
 //          ],
 //        ],
 //      ],
-//      'new config with only key ignored (issue 3137437)' => [
-//        ['strict'],
-//        ['config_test.*:label'],
-//        ['' => ['config_test.dynamic.exist' => ['id' => 'exist', 'label' => 'E']]],
-//        [],
-//        [],
-//      ],
+      'new config with only key ignored (issue 3137437)' => [
+        ['strict'],
+        ['config_test.*:label'],
+        ['' => ['config_test.dynamic.exist' => ['id' => 'exist', 'label' => 'E']]],
+        [],
+        [],
+      ],
 //      'new config with  only key ignored lenient (issue 3137437)' => [
 //        ['lenient'],
 //        ['config_test.*:label'],

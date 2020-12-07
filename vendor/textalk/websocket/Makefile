@@ -9,10 +9,10 @@ test: composer.lock
 	./vendor/bin/phpunit
 
 cs-check: composer.lock
-	./vendor/bin/phpcs --standard=codestandard.xml lib tests
+	./vendor/bin/phpcs --standard=codestandard.xml lib tests examples
 
 coverage: composer.lock build
-	./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+	XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 	./vendor/bin/php-coveralls -v
 
 composer.phar:

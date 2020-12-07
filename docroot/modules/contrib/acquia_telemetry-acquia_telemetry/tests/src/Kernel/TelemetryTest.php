@@ -7,8 +7,6 @@ use GuzzleHttp\ClientInterface;
 use Prophecy\Argument;
 
 /**
- * @group lightning
- * @group lightning_core
  * @group acquia_telemetry
  *
  * @coversDefaultClass \Drupal\acquia_telemetry\Telemetry
