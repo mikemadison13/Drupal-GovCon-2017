@@ -33,7 +33,7 @@
       }
 
       // Summary click event handler.
-      $('details > summary', context).once('webform-details-summary-save').click(function () {
+      $('details > summary', context).once('webform-details-summary-save').on('click', function () {
         var $details = $(this).parent();
 
         // @see https://css-tricks.com/snippets/jquery/make-an-jquery-hasattr/

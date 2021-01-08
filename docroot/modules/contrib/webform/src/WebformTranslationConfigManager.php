@@ -231,7 +231,7 @@ class WebformTranslationConfigManager implements WebformTranslationConfigManager
     // Tweak form elements.
     $element_alterations = [
       // Form settings.
-      'title' => ['#maxlength' => 255],
+      'title' => ['#maxlength' => NULL],
       // Submission settings.
       'submission_label' => ['#maxlength' => NULL],
       // Email handler.
@@ -469,6 +469,7 @@ class WebformTranslationConfigManager implements WebformTranslationConfigManager
           '#type' => 'textfield',
           '#title' => $this->t('@text (@value)', $t_args),
           '#title_display' => 'invisible',
+          '#maxlength' => NULL,
           '#default_value' => $option_text,
           '#parents' => array_merge($property_parents, [$option_value]),
         ],

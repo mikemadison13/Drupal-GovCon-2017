@@ -7,6 +7,8 @@ use Drupal\Core\Serialization\Yaml;
 use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Utility\WebformArrayHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\Component\Datetime\TimeInterface;
 
 /**
  * Provides a WebformSubmissionDevelGenerate plugin.
@@ -65,6 +67,13 @@ trait WebformSubmissionDevelGenerateTrait {
   protected $messenger;
 
   /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -75,6 +84,7 @@ trait WebformSubmissionDevelGenerateTrait {
     $instance->messenger = $container->get('messenger');
     $instance->webformSubmissionGenerate = $container->get('webform_submission.generate');
     $instance->webformEntityReferenceManager = $container->get('webform.entity_reference_manager');
+    $instance->time = $container->get('datetime.time');
     return $instance;
   }
 
@@ -224,11 +234,11 @@ trait WebformSubmissionDevelGenerateTrait {
     }
     if (!empty($values['webform_ids'])) {
       $this->initializeGenerate($values);
-      $start = time();
+      $start = $this->time->getRequestTime();
       for ($i = 1; $i <= $values['num']; $i++) {
         $this->generateSubmission($values);
         if (function_exists('drush_log') && $i % drush_get_option('feedback', 1000) === 0) {
-          $now = time();
+          $now = $this->time->getRequestTime();
           $dt_args = [
             '@feedback' => drush_get_option('feedback', 1000),
             '@rate' => (drush_get_option('feedback', 1000) * 60) / ($now - $start),
@@ -274,7 +284,7 @@ trait WebformSubmissionDevelGenerateTrait {
 
     // Set created min and max.
     $values['created_min'] = strtotime('-1 month');
-    $values['created_max'] = time();
+    $values['created_max'] = $this->time->getRequestTime();
 
     // Set entity type and id default value.
     $values += [

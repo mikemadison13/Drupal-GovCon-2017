@@ -228,10 +228,7 @@ abstract class WebformCompositeBase extends FormElement implements WebformCompos
     $element_manager = \Drupal::service('plugin.manager.webform.element');
 
     foreach ($composite_elements as $composite_key => &$composite_element) {
-      // Make sure the composite key is a string.
-      $composite_key = (string) $composite_key;
-
-      if (Element::property($composite_key)) {
+      if (WebformElementHelper::property($composite_key)) {
         continue;
       }
 

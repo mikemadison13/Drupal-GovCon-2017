@@ -12,7 +12,7 @@
         "drupal/redirect": "^1.5",
         "drupal/search_api": "^1.16",
         "drupal/token": "^1.7",
-        "phpdocumentor/reflection-docblock": "^4"
+        "phpdocumentor/reflection-docblock": "^5"
     },
     "conflict": {
         "drupal/drupal-extension": "<3.4.0"
@@ -106,7 +106,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "post-update-cmd": [
+        "post-install-cmd": [
             "@putenv DIR=./docroot/modules/lightning_core",
             "mkdir -p $DIR",
             "ln -s -f $PWD/config $DIR",

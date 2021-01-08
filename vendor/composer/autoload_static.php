@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
+class ComposerStaticInit6ea584a05c4347013730cb72ddf59330
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -48,7 +48,6 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
         'd6b246ac924292702635bb2349f4a64b' => __DIR__ . '/..' . '/lcobucci/jwt/compat/lcobucci-clock-polyfill.php',
         'fbeead2280a8f3911a1fe6dd034f7d5e' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvancedInterface.php',
         '96f8d8288528d52059397cad6ec61f17' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvanced.php',
-        '14b77cb26adb5cc1fc5a5f05dfb5af2d' => __DIR__ . '/..' . '/acquia/blt/RoboFile.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -935,6 +934,7 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
     public static $classMap = array (
         'Acquia\\BltBehat\\Blt\\Plugin\\Commands\\BehatCommand' => __DIR__ . '/..' . '/acquia/blt-behat/src/Blt/Plugin/Commands/BehatCommand.php',
         'Acquia\\BltBehat\\Blt\\Plugin\\Commands\\BehatTestCommand' => __DIR__ . '/..' . '/acquia/blt-behat/src/Blt/Plugin/Commands/BehatTestCommand.php',
+        'Acquia\\BltBehat\\Blt\\Wizards\\TestsWizard' => __DIR__ . '/..' . '/acquia/blt-behat/src/Blt/Wizards/TestsWizard.php',
         'Acquia\\BltPhpcs\\Blt\\Plugin\\Commands\\PhpcsCommand' => __DIR__ . '/..' . '/acquia/blt-phpcs/src/Blt/Plugin/Commands/PhpcsCommand.php',
         'Acquia\\BltPhpcs\\Composer\\BltPhpcsPlugin' => __DIR__ . '/..' . '/acquia/blt-phpcs/src/Composer/BltPhpcsPlugin.php',
         'Acquia\\Blt\\Annotations\\Fileset' => __DIR__ . '/..' . '/acquia/blt/src/Annotations/Fileset.php',
@@ -1033,29 +1033,7 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
         'Acquia\\Blt\\Robo\\Tasks\\PhpUnitTask' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Tasks/PhpUnitTask.php',
         'Acquia\\Blt\\Robo\\Tasks\\RunTestsTask' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Tasks/RunTestsTask.php',
         'Acquia\\Blt\\Robo\\Wizards\\SetupWizard' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Wizards/SetupWizard.php',
-        'Acquia\\Blt\\Robo\\Wizards\\TestsWizard' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Wizards/TestsWizard.php',
         'Acquia\\Blt\\Robo\\Wizards\\Wizard' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Wizards/Wizard.php',
-        'Acquia\\Blt\\Tests\\AcCloudHooksTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/AcCloudHooksTest.php',
-        'Acquia\\Blt\\Tests\\AcsfHooksTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/AcsfHooksTest.php',
-        'Acquia\\Blt\\Tests\\BltConfigTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/BltConfigTest.php',
-        'Acquia\\Blt\\Tests\\BltProjectTestBase' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/BltProjectTestBase.php',
-        'Acquia\\Blt\\Tests\\BufferedConsoleOutput' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/BufferedConsoleOutput.php',
-        'Acquia\\Blt\\Tests\\CiPipelinesTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/CiPipelinesTest.php',
-        'Acquia\\Blt\\Tests\\CiTravisTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/CiTravisTest.php',
-        'Acquia\\Blt\\Tests\\ConfigImportTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/ConfigImportTest.php',
-        'Acquia\\Blt\\Tests\\DeployTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/DeployTest.php',
-        'Acquia\\Blt\\Tests\\DoctorTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/DoctorTest.php',
-        'Acquia\\Blt\\Tests\\DrupalSettingsTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/DrupalSettingsTest.php',
-        'Acquia\\Blt\\Tests\\DrushTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/DrushTest.php',
-        'Acquia\\Blt\\Tests\\FrontendTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/FrontendTest.php',
-        'Acquia\\Blt\\Tests\\Robo\\ArrayManipulatorTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/Robo/ArrayManipulatorTest.php',
-        'Acquia\\Blt\\Tests\\Robo\\TextMungeTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/Robo/TextMungeTest.php',
-        'Acquia\\Blt\\Tests\\Robo\\YamlMungeTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/Robo/YamlMungeTest.php',
-        'Acquia\\Blt\\Tests\\SetupCommandTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/SetupCommandTest.php',
-        'Acquia\\Blt\\Tests\\SetupGitHooksTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/SetupGitHooksTest.php',
-        'Acquia\\Blt\\Tests\\SetupToggleModulesTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/SetupToggleModulesTest.php',
-        'Acquia\\Blt\\Tests\\ValidateCommandTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/ValidateCommandTest.php',
-        'Acquia\\Blt\\Tests\\WizardTest' => __DIR__ . '/..' . '/acquia/blt/tests/phpunit/src/WizardTest.php',
         'Acquia\\Blt\\Update\\DoPackagistConverter' => __DIR__ . '/..' . '/acquia/blt/src/Update/DoPackagistConverter.php',
         'Acquia\\Blt\\Update\\Updater' => __DIR__ . '/..' . '/acquia/blt/src/Update/Updater.php',
         'Acquia\\Blt\\Update\\Updates' => __DIR__ . '/..' . '/acquia/blt/src/Update/Updates.php',
@@ -1684,7 +1662,7 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
         'Caxy\\HtmlDiff\\ListDiffLines' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/ListDiffLines.php',
         'Caxy\\HtmlDiff\\ListDiff\\DiffList' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/ListDiff/DiffList.php',
         'Caxy\\HtmlDiff\\ListDiff\\DiffListItem' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/ListDiff/DiffListItem.php',
-        'Caxy\\HtmlDiff\\Match' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Match.php',
+        'Caxy\\HtmlDiff\\MatchingBlock' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/MatchingBlock.php',
         'Caxy\\HtmlDiff\\Operation' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Operation.php',
         'Caxy\\HtmlDiff\\Preprocessor' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Preprocessor.php',
         'Caxy\\HtmlDiff\\Strategy\\EqualMatchStrategy' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Strategy/EqualMatchStrategy.php',
@@ -6102,6 +6080,11 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
         'Robo\\Task\\Gulp\\Base' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Gulp/Base.php',
         'Robo\\Task\\Gulp\\Run' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Gulp/Run.php',
         'Robo\\Task\\Gulp\\loadTasks' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Gulp/loadTasks.php',
+        'Robo\\Task\\Logfile\\BaseLogfile' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Logfile/BaseLogfile.php',
+        'Robo\\Task\\Logfile\\RotateLog' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Logfile/RotateLog.php',
+        'Robo\\Task\\Logfile\\Shortcuts' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Logfile/Shortcuts.php',
+        'Robo\\Task\\Logfile\\Tasks' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Logfile/Tasks.php',
+        'Robo\\Task\\Logfile\\TruncateLog' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Logfile/TruncateLog.php',
         'Robo\\Task\\Npm\\Base' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Npm/Base.php',
         'Robo\\Task\\Npm\\Install' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Npm/Install.php',
         'Robo\\Task\\Npm\\Update' => __DIR__ . '/..' . '/consolidation/robo/src/Task/Npm/Update.php',
@@ -6261,7 +6244,6 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
         'SlevomatCodingStandard\\Sniffs\\Variables\\DuplicateAssignmentToVariableSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Variables/DuplicateAssignmentToVariableSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Variables\\UnusedVariableSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Variables/UnusedVariableSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Variables\\UselessVariableSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Variables/UselessVariableSniff.php',
-        'Spoons\\ScriptHandler' => __DIR__ . '/../..' . '/docroot/modules/contrib/devel/.spoons/ScriptHandler.php',
         'Stack\\Builder' => __DIR__ . '/..' . '/stack/builder/src/Stack/Builder.php',
         'Stack\\StackedHttpKernel' => __DIR__ . '/..' . '/stack/builder/src/Stack/StackedHttpKernel.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
@@ -8109,6 +8091,13 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
         'WebSocket\\Client' => __DIR__ . '/..' . '/textalk/websocket/lib/Client.php',
         'WebSocket\\ConnectionException' => __DIR__ . '/..' . '/textalk/websocket/lib/ConnectionException.php',
         'WebSocket\\Exception' => __DIR__ . '/..' . '/textalk/websocket/lib/Exception.php',
+        'WebSocket\\Message\\Binary' => __DIR__ . '/..' . '/textalk/websocket/lib/Message/Binary.php',
+        'WebSocket\\Message\\Close' => __DIR__ . '/..' . '/textalk/websocket/lib/Message/Close.php',
+        'WebSocket\\Message\\Factory' => __DIR__ . '/..' . '/textalk/websocket/lib/Message/Factory.php',
+        'WebSocket\\Message\\Message' => __DIR__ . '/..' . '/textalk/websocket/lib/Message/Message.php',
+        'WebSocket\\Message\\Ping' => __DIR__ . '/..' . '/textalk/websocket/lib/Message/Ping.php',
+        'WebSocket\\Message\\Pong' => __DIR__ . '/..' . '/textalk/websocket/lib/Message/Pong.php',
+        'WebSocket\\Message\\Text' => __DIR__ . '/..' . '/textalk/websocket/lib/Message/Text.php',
         'WebSocket\\Server' => __DIR__ . '/..' . '/textalk/websocket/lib/Server.php',
         'WebSocket\\TimeoutException' => __DIR__ . '/..' . '/textalk/websocket/lib/TimeoutException.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
@@ -8162,11 +8151,11 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Deprecated' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Deprecated.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Example' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Example.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Factory\\StaticMethod' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Factory/StaticMethod.php',
-        'phpDocumentor\\Reflection\\DocBlock\\Tags\\Factory\\Strategy' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Factory/Strategy.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Formatter' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Formatter.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Formatter\\AlignFormatter' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Formatter/AlignFormatter.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Formatter\\PassthroughFormatter' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Formatter/PassthroughFormatter.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Generic' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Generic.php',
+        'phpDocumentor\\Reflection\\DocBlock\\Tags\\InvalidTag' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/InvalidTag.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Link' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Link.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Method' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Method.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Param' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Param.php',
@@ -8186,6 +8175,7 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Var_' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Var_.php',
         'phpDocumentor\\Reflection\\DocBlock\\Tags\\Version' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock/Tags/Version.php',
         'phpDocumentor\\Reflection\\Element' => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src/Element.php',
+        'phpDocumentor\\Reflection\\Exception\\PcreException' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/Exception/PcreException.php',
         'phpDocumentor\\Reflection\\File' => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src/File.php',
         'phpDocumentor\\Reflection\\Fqsen' => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src/Fqsen.php',
         'phpDocumentor\\Reflection\\FqsenResolver' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/FqsenResolver.php',
@@ -8224,16 +8214,17 @@ class ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680
         'phpDocumentor\\Reflection\\Types\\String_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/String_.php',
         'phpDocumentor\\Reflection\\Types\\This' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/This.php',
         'phpDocumentor\\Reflection\\Types\\Void_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Void_.php',
+        'phpDocumentor\\Reflection\\Utils' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/Utils.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitd02f134a3d4c835bcc2d3f9131e58680::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit6ea584a05c4347013730cb72ddf59330::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit6ea584a05c4347013730cb72ddf59330::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit6ea584a05c4347013730cb72ddf59330::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit6ea584a05c4347013730cb72ddf59330::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit6ea584a05c4347013730cb72ddf59330::$classMap;
 
         }, null, ClassLoader::class);
     }

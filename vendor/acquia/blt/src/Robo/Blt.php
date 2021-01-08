@@ -11,7 +11,6 @@ use Acquia\Blt\Robo\Inspector\Inspector;
 use Acquia\Blt\Robo\Inspector\InspectorAwareInterface;
 use Acquia\Blt\Robo\Log\BltLogStyle;
 use Acquia\Blt\Robo\Wizards\SetupWizard;
-use Acquia\Blt\Robo\Wizards\TestsWizard;
 use Acquia\Blt\Update\Updater;
 use Composer\Autoload\ClassLoader;
 use Consolidation\AnnotatedCommand\CommandFileDiscovery;
@@ -38,11 +37,6 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
   use ContainerAwareTrait;
   use LoggerAwareTrait;
   use IO;
-
-  /**
-   * The BLT version.
-   */
-  const VERSION = '12.4.0';
 
   /**
    * The Robo task runner.
@@ -78,7 +72,7 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
   ) {
 
     $this->setConfig($config);
-    $application = new Application('BLT', Blt::VERSION);
+    $application = new Application('BLT', Blt::getVersion());
     $container = Robo::createDefaultContainer($input, $output, $application,
       $config, $classLoader);
     $this->setContainer($container);
@@ -95,6 +89,23 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
     $this->setLogger($container->get('logger'));
 
     $this->initializeAmplitude();
+  }
+
+  /**
+   * Get installed BLT version.
+   *
+   * @return mixed|null
+   *   BLT version.
+   */
+  public static function getVersion() {
+    if (class_exists('\Composer\InstalledVersions')) {
+      // phpcs:ignore
+      if (\Composer\InstalledVersions::isInstalled('acquia/blt') && $version = \Composer\InstalledVersions::getVersion('acquia/blt')) {
+        return $version;
+      }
+    }
+
+    return 'Unknown';
   }
 
   /**
@@ -212,8 +223,6 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
 
     $container->add(SetupWizard::class)
       ->withArgument('executor');
-    $container->add(TestsWizard::class)
-      ->withArgument('executor');
 
     $container->share('filesetManager', FilesetManager::class);
 
@@ -246,7 +255,8 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
     $userConfig = new UserConfig(self::configDir());
     $event_properties = $userConfig->getTelemetryUserData();
     $event_properties['exit_code'] = $status_code;
-    Amplitude::getInstance()->queueEvent('blt ' . $input->getFirstArgument(), $event_properties);
+    $event_properties['command'] = $input->getFirstArgument();
+    Amplitude::getInstance()->queueEvent('run command', $event_properties);
 
     return $status_code;
   }

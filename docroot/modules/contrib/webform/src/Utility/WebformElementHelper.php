@@ -72,6 +72,19 @@ class WebformElementHelper {
   protected static $allowedSubPropertiesRegExp;
 
   /**
+   * Checks if the key is string and a property.
+   *
+   * @param string $key
+   *   The key to check.
+   *
+   * @return bool
+   *   TRUE of the key is string and a property., FALSE otherwise.
+   */
+  public static function property($key) {
+    return ($key && is_string($key) && $key[0] == '#');
+  }
+
+  /**
    * Determine if an element and its key is a renderable array.
    *
    * @param array|mixed $element
@@ -259,9 +272,7 @@ class WebformElementHelper {
   public static function getProperties(array $element) {
     $properties = [];
     foreach ($element as $key => $value) {
-      // Make sure the element key is a string.
-      $key = (string) $key;
-      if ($key && Element::property($key)) {
+      if (static::property($key)) {
         $properties[$key] = $value;
       }
     }
@@ -279,7 +290,7 @@ class WebformElementHelper {
    */
   public static function removeProperties(array $element) {
     foreach ($element as $key => $value) {
-      if (Element::property($key)) {
+      if (static::property($key)) {
         unset($element[$key]);
       }
     }
@@ -391,7 +402,7 @@ class WebformElementHelper {
   public static function getIgnoredProperties(array $element) {
     $ignored_properties = [];
     foreach ($element as $key => $value) {
-      if (Element::property($key)) {
+      if (static::property($key)) {
         if (self::isIgnoredProperty($key)) {
           // Computed elements use #ajax as boolean and should not be ignored.
           // @see \Drupal\webform\Element\WebformComputedBase
@@ -436,7 +447,7 @@ class WebformElementHelper {
    */
   public static function removeIgnoredProperties(array $element) {
     foreach ($element as $key => $value) {
-      if ($key && is_string($key) && Element::property($key) && self::isIgnoredProperty($key)) {
+      if (static::property($key) && self::isIgnoredProperty($key)) {
         // Computed elements use #ajax as boolean and should not be ignored.
         // @see \Drupal\webform\Element\WebformComputedBase
         $is_ajax_computed = ($key === '#ajax' && is_bool($value));
@@ -545,7 +556,7 @@ class WebformElementHelper {
 
     foreach ($element as $key => &$value) {
       // Make sure to only merge properties.
-      if (!Element::property($key) || empty($translation[$key])) {
+      if (!static::property($key) || empty($translation[$key])) {
         continue;
       }
 

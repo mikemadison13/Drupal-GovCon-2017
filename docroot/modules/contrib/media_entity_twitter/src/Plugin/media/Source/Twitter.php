@@ -14,6 +14,7 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media\MediaSourceBase;
 use Drupal\media\MediaTypeInterface;
+use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Drupal\media_entity_twitter\TweetFetcherInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Field\FieldTypePluginManagerInterface;
@@ -33,7 +34,7 @@ use Drupal\media\MediaSourceFieldConstraintsInterface;
  *   }
  * )
  */
-class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInterface {
+class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInterface, OEmbedInterface {
 
   /**
    * The renderer.
@@ -379,8 +380,7 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
    */
   public function getSourceFieldConstraints() {
     return [
-      'TweetEmbedCode' => [],
-      'TweetVisible' => [],
+      'oembed_resource' => [],
     ];
   }
 
@@ -478,6 +478,13 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
     );
 
     return $this->tweetFetcher->fetchTweet($id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getProviders() {
+    return ['Twitter'];
   }
 
 }

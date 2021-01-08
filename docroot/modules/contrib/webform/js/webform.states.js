@@ -212,7 +212,7 @@
 
   $document.on('state:checked', function (e) {
     if (e.trigger) {
-      $(e.target).change();
+      $(e.target).trigger('change');
     }
   });
 

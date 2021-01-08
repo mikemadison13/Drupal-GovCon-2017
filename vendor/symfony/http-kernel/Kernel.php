@@ -76,15 +76,15 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
 
     private static $freshCache = [];
 
-    const VERSION = '4.4.17';
-    const VERSION_ID = 40417;
-    const MAJOR_VERSION = 4;
-    const MINOR_VERSION = 4;
-    const RELEASE_VERSION = 17;
-    const EXTRA_VERSION = '';
+    public const VERSION = '4.4.18';
+    public const VERSION_ID = 40418;
+    public const MAJOR_VERSION = 4;
+    public const MINOR_VERSION = 4;
+    public const RELEASE_VERSION = 18;
+    public const EXTRA_VERSION = '';
 
-    const END_OF_MAINTENANCE = '11/2022';
-    const END_OF_LIFE = '11/2023';
+    public const END_OF_MAINTENANCE = '11/2022';
+    public const END_OF_LIFE = '11/2023';
 
     public function __construct(string $environment, bool $debug)
     {
@@ -858,6 +858,9 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
                 // replace multiple new lines with a single newline
                 $rawChunk .= preg_replace(['/\n{2,}/S'], "\n", $token[1]);
             } elseif (\in_array($token[0], [\T_COMMENT, \T_DOC_COMMENT])) {
+                if (!\in_array($rawChunk[\strlen($rawChunk) - 1], [' ', "\n", "\r", "\t"], true)) {
+                    $rawChunk .= ' ';
+                }
                 $ignoreSpace = true;
             } else {
                 $rawChunk .= $token[1];
@@ -865,6 +868,8 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
                 // The PHP-open tag already has a new-line
                 if (\T_OPEN_TAG === $token[0]) {
                     $ignoreSpace = true;
+                } else {
+                    $ignoreSpace = false;
                 }
             }
         }

@@ -18,6 +18,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformDialogHelper;
+use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
 
@@ -467,7 +468,7 @@ function _webform_cards_form_alter_elements(array &$form, array $elements) {
         continue;
       }
 
-      if (Element::property($key)) {
+      if (WebformElementHelper::property($key)) {
         $form[$container_key][$key] = $element;
       }
       elseif (is_array($container)) {

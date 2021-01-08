@@ -19,7 +19,7 @@ class BehatCommand extends BltTasks {
    * @throws \Acquia\Blt\Robo\Exceptions\BltException
    */
   public function init() {
-    $source = $this->getConfigValue('blt.root') . '/scripts/behat';
+    $source = $this->getConfigValue('blt.root') . '/../blt-behat/scripts';
     $dest = $this->getConfigValue('repo.root') . '/tests/behat';
     $result = $this->taskCopyDir([$source => $dest])
       ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)

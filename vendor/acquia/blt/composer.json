@@ -38,6 +38,7 @@
         "zumba/amplitude-php": "^1.0"
     },
     "conflict": {
+        "acquia/blt-behat": "<=1.0.0",
         "drupal/drupal": "*"
     },
     "require-dev": {
@@ -73,10 +74,7 @@
             "Acquia\\Blt\\": "src/",
             "Acquia\\Blt\\Tests\\": "tests/phpunit/src/",
             "Acquia\\Blt\\Tests\\Robo\\": "tests/phpunit/Robo/"
-        },
-        "files": [
-            "RoboFile.php"
-        ]
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

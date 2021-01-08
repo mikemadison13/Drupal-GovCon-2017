@@ -998,7 +998,7 @@ elements: |
           checked: true
   webform_variant:
     '#type': webform_variant
-    '#title': 'Variant [EXPERIMENTAL]'
+    '#title': 'Variant'
     '#states':
       disabled:
         ':input[name="trigger"]':
@@ -1016,7 +1016,7 @@ elements: |
       required:
         ':input[name="trigger"]':
           checked: true
-  
+
 css: ''
 javascript: ''
 settings:

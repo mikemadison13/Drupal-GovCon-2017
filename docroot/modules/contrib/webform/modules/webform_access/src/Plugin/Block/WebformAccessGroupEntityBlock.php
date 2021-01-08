@@ -3,6 +3,7 @@
 namespace Drupal\webform_access\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
+
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -35,12 +36,20 @@ class WebformAccessGroupEntityBlock extends BlockBase implements ContainerFactor
   protected $webformAccessGroupStorage;
 
   /**
+   * The 'language_manager' service.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = new static($configuration, $plugin_id, $plugin_definition);
     $instance->currentUser = $container->get('current_user');
     $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->languageManager = $container->get('language_manager');
     return $instance;
   }
 
@@ -54,9 +63,13 @@ class WebformAccessGroupEntityBlock extends BlockBase implements ContainerFactor
       return NULL;
     }
 
+    $langcode = $this->languageManager->getCurrentLanguage()->getId();
     $items = [];
     foreach ($nodes as $node) {
       if ($node->access()) {
+        if ($node->hasTranslation($langcode)) {
+          $node = $node->getTranslation($langcode);
+        }
         $items[] = $node->toLink()->toRenderable();
       }
     }

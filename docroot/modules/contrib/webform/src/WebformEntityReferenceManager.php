@@ -87,12 +87,12 @@ class WebformEntityReferenceManager implements WebformEntityReferenceManagerInte
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    */
-  public function __construct(RouteMatchInterface $route_match, AccountInterface $current_user, UserDataInterface $user_data, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(RouteMatchInterface $route_match, AccountInterface $current_user, UserDataInterface $user_data, ModuleHandlerInterface $module_handler = NULL, EntityTypeManagerInterface $entity_type_manager = NULL) {
     $this->routeMatch = $route_match;
     $this->currentUser = $current_user;
     $this->userData = $user_data;
-    $this->moduleHandler = $module_handler;
-    $this->entityTypeManager = $entity_type_manager;
+    $this->moduleHandler = $module_handler ?: \Drupal::moduleHandler();
+    $this->entityTypeManager = $entity_type_manager ?: \Drupal::entityTypeManager();
   }
 
   /****************************************************************************/
@@ -272,7 +272,6 @@ class WebformEntityReferenceManager implements WebformEntityReferenceManagerInte
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   An entity.
-   *
    * @param array $target_entities
    *   An associate array of targeted webfrom entities.
    * @param array $sorted_entities
@@ -296,14 +295,18 @@ class WebformEntityReferenceManager implements WebformEntityReferenceManagerInte
 
       foreach ($entity->get($paragraph_field) as $paragraph_item) {
         $paragraph = $paragraph_item->entity;
-        $webform_field_names = $this->getFieldNames($paragraph);
-        foreach ($webform_field_names as $webform_field_name) {
-          foreach ($paragraph->$webform_field_name as $webform_field_item) {
-            $sorted_entities[$webform_field_item->target_id] = (method_exists($webform_field_item->entity, 'getWeight')) ? $webform_field_item->entity->getWeight() : 0;
-            $target_entities[$webform_field_item->target_id] = $webform_field_item->entity;
+        if ($paragraph) {
+          $webform_field_names = $this->getFieldNames($paragraph);
+          foreach ($webform_field_names as $webform_field_name) {
+            foreach ($paragraph->$webform_field_name as $webform_field_item) {
+              if ($webform_field_item->entity) {
+                $sorted_entities[$webform_field_item->target_id] = (method_exists($webform_field_item->entity, 'getWeight')) ? $webform_field_item->entity->getWeight() : 0;
+                $target_entities[$webform_field_item->target_id] = $webform_field_item->entity;
+              }
+            }
           }
+          $this->getParagraphWebformsRecursive($paragraph, $target_entities, $sorted_entities);
         }
-        $this->getParagraphWebformsRecursive($paragraph, $target_entities, $sorted_entities);
       }
     }
   }

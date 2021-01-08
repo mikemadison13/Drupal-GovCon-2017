@@ -4,7 +4,8 @@ namespace Acquia\BltBehat\Blt\Plugin\Commands;
 
 use Acquia\Blt\Robo\Commands\Tests\TestsCommandBase;
 use Acquia\Blt\Robo\Exceptions\BltException;
-use Acquia\Blt\Robo\Wizards\TestsWizard;
+use Acquia\BltBehat\Blt\Wizards\TestsWizard;
+use Robo\Contract\VerbosityThresholdInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -27,6 +28,47 @@ class BehatTestCommand extends TestsCommandBase {
   public function initialize() {
     parent::initialize();
     $this->behatLogDir = $this->getConfigValue('tests.reports.localDir') . "/behat";
+    $this->container->add(TestsWizard::class)->withArgument('executor');
+  }
+
+  /**
+   * Generates tests/behat/local.yml file for executing Behat tests locally.
+   *
+   * @command tests:behat:init
+   */
+  public function setupBehat() {
+    $defaultBehatLocalConfigFile = $this->getConfigValue('repo.root') . '/tests/behat/example.local.yml';
+    $projectBehatLocalConfigFile = $this->getConfigValue('repo.root') . '/tests/behat/local.yml';
+    $copy_map = [
+      $defaultBehatLocalConfigFile => $projectBehatLocalConfigFile,
+    ];
+
+    $task = $this->taskFilesystemStack()
+      ->stopOnFail()
+      ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE);
+
+    // Copy files without overwriting.
+    foreach ($copy_map as $from => $to) {
+      if (file_exists($to)) {
+        unset($copy_map[$from]);
+      }
+    }
+
+    if ($copy_map) {
+      $this->say("Generating Behat configuration files...");
+      foreach ($copy_map as $from => $to) {
+        $task->copy($from, $to);
+      }
+      $result = $task->run();
+      foreach ($copy_map as $from => $to) {
+        $this->getConfig()->expandFileProperties($to);
+      }
+
+      if (!$result->wasSuccessful()) {
+        $filepath = $this->getInspector()->getFs()->makePathRelative($defaultBehatLocalConfigFile, $this->getConfigValue('repo.root'));
+        throw new BltException("Unable to copy $filepath into your repository.");
+      }
+    }
   }
 
   /**
@@ -56,7 +98,7 @@ class BehatTestCommand extends TestsCommandBase {
    */
   public function behat() {
     if ($this->getConfigValue('behat.validate')) {
-      /** @var \Acquia\Blt\Robo\Wizards\TestsWizard $tests_wizard */
+      /** @var \Acquia\BltBehat\Blt\Wizards\TestsWizard $tests_wizard */
       $tests_wizard = $this->getContainer()->get(TestsWizard::class);
       $tests_wizard->wizardConfigureBehat();
       if (!$this->getInspector()->isBehatConfigured()) {

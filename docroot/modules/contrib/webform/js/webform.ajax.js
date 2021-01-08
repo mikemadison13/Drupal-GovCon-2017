@@ -94,12 +94,12 @@
     attach: function (context) {
       $('.js-webform-confirmation-back-link-ajax', context)
         .once('webform-confirmation-back-ajax')
-        .click(function (event) {
+        .on('click', function (event) {
           var $form = $(this).parents('form');
 
           // Trigger the Ajax call back for the hidden submit button.
           // @see \Drupal\webform\WebformSubmissionForm::getCustomForm
-          $form.find('.js-webform-confirmation-back-submit-ajax').click();
+          $form.find('.js-webform-confirmation-back-submit-ajax').trigger('click');
 
           // Move the progress indicator from the submit button to after this link.
           // @todo Figure out a better way to set a progress indicator.
@@ -156,7 +156,7 @@
       var addSelector = (addElement === '_root_')
         ? '#webform-ui-add-element'
         : '[data-drupal-selector="edit-webform-ui-elements-' + addElement + '-add"]';
-      $(addSelector).click();
+      $(addSelector).trigger('click');
     }
 
     // If not add element, then scroll to and highlight the updated table row.
@@ -168,14 +168,14 @@
       setTimeout(function () {$element.removeClass('color-success');}, 3000);
 
       // Focus first tabbable item for the updated elements and handlers.
-      $element.find(':tabbable:not(.tabledrag-handle)').eq(0).focus();
+      $element.find(':tabbable:not(.tabledrag-handle)').eq(0).trigger('focus');
 
       // Scroll element into view.
       Drupal.webformScrolledIntoView($element);
     }
     else {
       // Focus main content.
-      $('#main-content').focus();
+      $('#main-content').trigger('focus');
     }
 
     // Display main page's status message in a floating container.
@@ -224,7 +224,7 @@
     // @see \Drupal\webform\Form\WebformAjaxFormTrait::buildAjaxForm
     var $form = $(response.selector + '-content').find('form');
     if (!$form.hasClass('js-webform-autofocus')) {
-      $(response.selector + '-content').focus();
+      $(response.selector + '-content').trigger('focus');
     }
   };
 
@@ -255,7 +255,7 @@
     if (a.pathname === window.location.pathname && $('.webform-ajax-refresh').length) {
       updateKey = (response.url.match(/[?|&]update=([^&]+)($|&)/)) ? RegExp.$1 : null;
       addElement = (response.url.match(/[?|&]add_element=([^&]+)($|&)/)) ? RegExp.$1 : null;
-      $('.webform-ajax-refresh').click();
+      $('.webform-ajax-refresh').trigger('click');
     }
     else {
       // Clear unsaved information flag so that the current webform page

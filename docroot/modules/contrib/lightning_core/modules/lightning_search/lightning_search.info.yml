@@ -9,7 +9,7 @@ dependencies:
   - search_api:search_api
   - drupal:views
 
-# Information added by Drupal.org packaging script on 2020-11-10
-version: '8.x-5.4'
+# Information added by Drupal.org packaging script on 2020-12-15
+version: '8.x-5.5'
 project: 'lightning_core'
-datestamp: 1605048239
+datestamp: 1608044703

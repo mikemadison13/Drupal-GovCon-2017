@@ -34,6 +34,8 @@ class ComponentsLoaderTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
+   *
+   * @throws \Twig\Error\LoaderError
    */
   public function setUp() {
     parent::setUp();
@@ -132,6 +134,7 @@ class ComponentsLoaderTest extends UnitTestCase {
    * Tests checking the active theme.
    *
    * @covers ::checkActiveTheme
+   * @throws \Twig\Error\LoaderError
    */
   public function testCheckActiveTheme() {
     $result = $this->systemUnderTest->checkActiveTheme();
@@ -144,6 +147,7 @@ class ComponentsLoaderTest extends UnitTestCase {
    * Tests prepending paths to a namespace.
    *
    * @covers ::setActiveTheme
+   * @throws \Twig\Error\LoaderError
    */
   public function testSetActiveTheme() {
     $namespaces = [
@@ -204,6 +208,7 @@ class ComponentsLoaderTest extends UnitTestCase {
    * Tests the use of the active theme cache.
    *
    * @covers ::setActiveTheme
+   * @throws \Twig\Error\LoaderError
    */
   public function testSetActiveThemeCache() {
     // Add a path to the sol namespace.
@@ -226,6 +231,7 @@ class ComponentsLoaderTest extends UnitTestCase {
    * Tests adding paths to a namespace.
    *
    * @covers ::addPath
+   * @throws \Twig\Error\LoaderError
    */
   public function testAddPath() {
     $expected = ['/sol/templates', '/test/templates'];
@@ -244,6 +250,7 @@ class ComponentsLoaderTest extends UnitTestCase {
    * Tests prepending paths to a namespace.
    *
    * @covers ::prependPath
+   * @throws \Twig\Error\LoaderError
    */
   public function testPrependPath() {
     $expected = ['/test/templates', '/sol/templates'];

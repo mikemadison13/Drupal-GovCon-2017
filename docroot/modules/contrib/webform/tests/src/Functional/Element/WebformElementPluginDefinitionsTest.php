@@ -1868,7 +1868,7 @@ webform_variant:
   deprecated: false
   deprecated_message: ''
   id: webform_variant
-  label: 'Variant [EXPERIMENTAL]'
+  label: 'Variant'
   class: Drupal\webform\Plugin\WebformElement\WebformVariant
   provider: webform
   input: true

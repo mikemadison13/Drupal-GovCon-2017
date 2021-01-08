@@ -58,6 +58,8 @@ class ComponentsLoader extends FilesystemLoader {
    *   The components info service.
    * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
    *   The theme manager service.
+   *
+   * @throws \Twig\Error\LoaderError
    */
   public function __construct(
     ComponentsInfo $components_info,
@@ -76,6 +78,8 @@ class ComponentsLoader extends FilesystemLoader {
    *
    * @return string
    *   The name of the active theme.
+   *
+   * @throws \Twig\Error\LoaderError
    */
   public function checkActiveTheme() {
     $active_theme = $this->themeManager->getActiveTheme();
@@ -93,6 +97,8 @@ class ComponentsLoader extends FilesystemLoader {
    *
    * @param \Drupal\Core\Theme\ActiveTheme $active_theme
    *   The active theme.
+   *
+   * @throws \Twig\Error\LoaderError
    */
   protected function setActiveTheme(ActiveTheme $active_theme) {
     $this->activeTheme = $active_theme->getName();
@@ -183,12 +189,7 @@ class ComponentsLoader extends FilesystemLoader {
   }
 
   /**
-   * Adds a path where templates are stored.
-   *
-   * @param string $path
-   *   A path where to look for templates.
-   * @param string $namespace
-   *   (optional) A path namespace.
+   * {@inheritdoc}
    */
   public function addPath($path, $namespace = self::MAIN_NAMESPACE) {
     // Invalidate the cache.
@@ -197,12 +198,7 @@ class ComponentsLoader extends FilesystemLoader {
   }
 
   /**
-   * Prepends a path where templates are stored.
-   *
-   * @param string $path
-   *   A path where to look for templates.
-   * @param string $namespace
-   *   (optional) A path namespace.
+   * {@inheritdoc}
    */
   public function prependPath($path, $namespace = self::MAIN_NAMESPACE) {
     // Invalidate the cache.
@@ -220,6 +216,8 @@ class ComponentsLoader extends FilesystemLoader {
 
   /**
    * {@inheritdoc}
+   *
+   * @throws \Twig\Error\LoaderError
    */
   protected function findTemplate($name, $throw = TRUE) {
     // The active theme might change during the request, so we double check

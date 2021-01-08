@@ -108,12 +108,12 @@ function webform_token_info() {
     'description' => t('Is the webform submission in draft.'),
   ];
   $webform_submission['state'] = [
-    'name' => t('State'),
-    'description' => t('The state of the webform submission. (Unsaved, Draft, Completed, Updated, Locked, or Converted)'),
+    'name' => t('State (Name)'),
+    'description' => t('The state of the webform submission. (unsaved, draft, completed, updated, locked, or converted)'),
   ];
-  $webform_submission['state:raw'] = [
-    'name' => t('State (Raw value)'),
-    'description' => t('The state raw value untranslated of the webform submission. (unsaved, draft, completed, updated, locked, or converted)'),
+  $webform_submission['state:label'] = [
+    'name' => t('State (Label)'),
+    'description' => t('The state raw value untranslated of the webform submission. (Unsaved, Draft, Completed, Updated, Locked, or Converted)'),
   ];
   $webform_submission['label'] = [
     'name' => t('Label'),

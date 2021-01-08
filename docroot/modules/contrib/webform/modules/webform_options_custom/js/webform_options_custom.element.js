@@ -118,12 +118,12 @@
               });
               if (event.which === 37 || event.which === 38) {
                 if ($prev) {
-                  $prev.focus();
+                  $prev.trigger('focus');
                 }
               }
               else if (event.which === 39 || event.which === 40) {
                 if ($next) {
-                  $next.focus();
+                  $next.trigger('focus');
                 }
               }
               event.preventDefault();
@@ -235,10 +235,10 @@
               .find('[data-option-value="' + value + '"]')
               .not('text')
               .first()
-              .focus();
+              .trigger('focus');
           }
 
-          $select.change();
+          $select.trigger('change');
         }
 
         /* ****************************************************************** */
@@ -334,8 +334,8 @@
           var options = $.extend({
           }, Drupal.webformOptionsCustom.panAndZoom.options);
           var panZoom = window.svgPanZoom($svg[0], options);
-          $(window).resize(function () {
-            panZoom.resize();
+          $(window).on('resize', function () {
+            panZoom.trigger('resize');
             panZoom.fit();
             panZoom.center();
           });

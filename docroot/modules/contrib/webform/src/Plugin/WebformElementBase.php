@@ -1443,11 +1443,11 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
         foreach ($items as $index => &$item) {
           $build[] = (is_array($item)) ? $item : ['#markup' => $item];
           if ($total === 2 && $index === 0) {
-            $build[] = ['#markup' => ' ' . t('and') . ' '];
+            $build[] = ['#markup' => ' ' . $this->t('and') . ' '];
           }
           elseif ($index !== ($total - 1)) {
             if ($index === ($total - 2)) {
-              $build[] = ['#markup' => ', ' . t('and') . ' '];
+              $build[] = ['#markup' => ', ' . $this->t('and') . ' '];
             }
             else {
               $build[] = ['#markup' => ', '];
@@ -2330,7 +2330,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     $form['element_description']['description'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Description'),
-      '#description' => $this->t('A short description of the element used as help for the user when he/she uses the webform.'),
+      '#description' => $this->t('A short description of the element used as help for the user when they use the webform.'),
     ];
     $form['element_description']['help'] = [
       '#type' => 'details',
@@ -2949,9 +2949,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
         'form_element' => $this->t('Form element'),
         'container' => $this->t('Container'),
       ],
-      '#description' => '<b>' . t('Fieldset') . ':</b> ' . t('Wraps inputs in a fieldset.') . ' <strong>' . t('Recommended') . '</strong>' .
-        '<br/><br/><b>' . t('Form element') . ':</b> ' . t('Wraps inputs in a basic form element with title and description.') .
-        '<br/><br/><b>' . t('Container') . ':</b> ' . t('Wraps inputs in a basic div with no title or description.'),
+      '#description' => '<b>' . $this->t('Fieldset') . ':</b> ' . $this->t('Wraps inputs in a fieldset.') . ' <strong>' . $this->t('Recommended') . '</strong>' .
+        '<br/><br/><b>' . $this->t('Form element') . ':</b> ' . $this->t('Wraps inputs in a basic form element with title and description.') .
+        '<br/><br/><b>' . $this->t('Container') . ':</b> ' . $this->t('Wraps inputs in a basic div with no title or description.'),
     ];
     // Hide element description and display when using a container wrapper.
     if ($this->hasProperty('wrapper_type')) {
@@ -3469,7 +3469,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
 
     foreach ($form as $property_name => &$property_element) {
       // Skip all properties.
-      if (is_string($property_name) && Element::property($property_name)) {
+      if (WebformElementHelper::property($property_name)) {
         continue;
       }
 
@@ -3724,7 +3724,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public static function trustedCallbacks() {
     return ['preRenderFixStatesWrapper', 'preRenderFixFlexboxWrapper', 'preRenderWebformCompositeFormElement'];

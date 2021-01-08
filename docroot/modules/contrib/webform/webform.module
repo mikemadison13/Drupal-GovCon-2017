@@ -944,11 +944,11 @@ function webform_process_options(&$element, FormStateInterface $form_state, &$co
     foreach (Element::children($element) as $key) {
       $title = (string) $element[$key]['#title'];
       // Check for -- delimiter.
-      if (strpos($title, WebformOptionsHelper::DESCRIPTION_DELIMITER) === FALSE) {
+      if (!WebformOptionsHelper::hasOptionDescription($title)) {
         continue;
       }
 
-      list($title, $description) = explode(WebformOptionsHelper::DESCRIPTION_DELIMITER, $title);
+      list($title, $description) = WebformOptionsHelper::splitOption($title);
       $element[$key]['#title'] = $title;
       $element[$key]['#webform_element'] = TRUE;
       $element[$key][$description_property_name] = $description;

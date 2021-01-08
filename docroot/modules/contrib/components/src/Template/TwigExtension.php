@@ -2,15 +2,13 @@
 
 namespace Drupal\components\Template;
 
-use ArrayAccess;
-use Exception;
 use Twig\Error\RuntimeError;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 /**
- * A class providing components's Twig extensions.
+ * A class providing components' Twig extensions.
  */
 class TwigExtension extends AbstractExtension {
 
@@ -28,8 +26,12 @@ class TwigExtension extends AbstractExtension {
    */
   public function getFilters() {
     return [
-      'set' => new TwigFilter('set', ['Drupal\components\Template\TwigExtension', 'setFilter']),
-      'add' => new TwigFilter('add', ['Drupal\components\Template\TwigExtension', 'addFilter']),
+      'set' => new TwigFilter('set', [
+        'Drupal\components\Template\TwigExtension', 'setFilter',
+      ]),
+      'add' => new TwigFilter('add', [
+        'Drupal\components\Template\TwigExtension', 'addFilter',
+      ]),
     ];
   }
 
@@ -89,7 +91,7 @@ class TwigExtension extends AbstractExtension {
    */
   public function template($_name, array $variables = []) {
     if ($_name[0] === '@') {
-      throw new Exception('Templates with namespaces are not yet supported; "' . $_name . '" given.');
+      throw new \Exception('Templates with namespaces are not supported; "' . $_name . '" given.');
     }
     if (is_array($_name)) {
       $hook = $_name;
@@ -160,7 +162,7 @@ class TwigExtension extends AbstractExtension {
       throw new RuntimeError(sprintf('The add filter only works with arrays or "Traversable", got "%s" as first argument.', gettype($element)));
     }
 
-    if ($element instanceof ArrayAccess) {
+    if ($element instanceof \ArrayAccess) {
       $filtered_element = clone $element;
     }
     else {

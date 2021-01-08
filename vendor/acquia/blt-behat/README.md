@@ -7,6 +7,8 @@ This plugin provides a set of commands in the `tests` namespace that use these f
 
 This plugin is **community-supported**. Acquia does not provide any direct support for this software or provide any warranty as to its stability.
 
+This plugin is provided solely as a backwards-compatible shim for customers upgrading from BLT 11. We recommend that anyone implementing new tests on a Drupal project use PHPUnit instead of Behat. PHPUnit now even supports Gherkin syntax if you prefer to preserve your human-readable Gherkin features: https://medium.com/@jonathanjfshaw/write-better-tests-by-using-behat-with-phpunit-ddb08d449b73
+
 ## Installation and usage
 
 To use this plugin, you must already have a Drupal project using BLT 12 or higher.

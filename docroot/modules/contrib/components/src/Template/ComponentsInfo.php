@@ -80,9 +80,14 @@ class ComponentsInfo {
             $paths = [$paths];
           }
 
-          // Add the project's path to the namespace paths.
+          // Add the full path to the namespace paths.
           foreach ($paths as $key => $path) {
-            $info['namespaces'][$namespace][$key] = $extension_path . '/' . $path;
+            // Determine if the given path is relative to the Drupal root or to
+            // the extension.
+            $parent_path = ($path[0] === '/')
+              ? \Drupal::root()
+              : $extension_path . '/';
+            $info['namespaces'][$namespace][$key] = $parent_path . $path;
           }
         }
       }

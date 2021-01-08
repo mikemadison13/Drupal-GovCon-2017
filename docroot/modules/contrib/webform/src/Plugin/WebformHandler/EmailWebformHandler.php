@@ -463,7 +463,7 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
     $form['from']['from_name']['from_name']['#states'] = [
       '!visible' => [
         ':input[name="settings[from_mail][other]"]' => ['value' => ['pattern' => ',']],
-      ]
+      ],
     ];
 
     // Settings: Reply-to.
@@ -1466,7 +1466,7 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
    * @return array
    *   A select other element.
    */
-  protected function buildElement($name, $title, $label, $required = FALSE, array $element_options, array $options_options = NULL, array $role_options = NULL, array $other_options = NULL) {
+  protected function buildElement($name, $title, $label, $required = FALSE, array $element_options = [], array $options_options = NULL, array $role_options = NULL, array $other_options = NULL) {
     list($element_name, $element_type) = (strpos($name, '_') !== FALSE) ? explode('_', $name) : [$name, 'text'];
 
     $default_option = $this->getDefaultConfigurationValue($name);
@@ -1476,7 +1476,7 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
     if ($default_option) {
       $options[(string) $this->t('Default')] = [static::DEFAULT_VALUE => $default_option];
     }
-    if ($element_options) {
+    if (!empty($element_options)) {
       $options[(string) $this->t('Elements')] = $element_options;
     }
     if ($options_options) {

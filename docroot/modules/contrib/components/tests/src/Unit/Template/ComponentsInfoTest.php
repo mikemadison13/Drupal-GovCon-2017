@@ -3,6 +3,7 @@
 namespace Drupal\Tests\components\Unit\Template;
 
 use Drupal\components\Template\ComponentsInfo;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -33,6 +34,27 @@ class ComponentsInfoTest extends UnitTestCase {
   protected $systemUnderTest;
 
   /**
+   * Path to the mocked drupal directory.
+   *
+   * @var string
+   */
+  protected $rootDir;
+
+  /**
+   * Path to the mocked modules directory.
+   *
+   * @var string
+   */
+  protected $modulesDir;
+
+  /**
+   * Path to the mocked themes directory.
+   *
+   * @var string
+   */
+  protected $themesDir;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -45,13 +67,28 @@ class ComponentsInfoTest extends UnitTestCase {
 
     $this->moduleExtensionList = $this->createMock('\Drupal\Core\Extension\ModuleExtensionList');
     $this->themeExtensionList = $this->createMock('\Drupal\Core\Extension\ThemeExtensionList');
+
+    $this->rootDir = '/drupal';
+    $this->modulesDir = '/drupal/modules';
+    $this->themesDir = '/drupal/themes';
+
+    // Ensure \Drupal::root() is available.
+    $container = new ContainerBuilder();
+    // Mock Drupal 8 Drupal::root().
+    $container->set('app.root', $this->rootDir);
+    // Mock Drupal 9 Drupal::root().
+    $container->setParameter('app.root', $this->rootDir);
+    \Drupal::setContainer($container);
   }
 
   /**
    * Creates a ComponentsInfo service after the dependencies are set up.
    */
   public function newSystemUnderTest() {
-    $this->systemUnderTest = new ComponentsInfo($this->moduleExtensionList, $this->themeExtensionList);
+    $this->systemUnderTest = new ComponentsInfo(
+      $this->moduleExtensionList,
+      $this->themeExtensionList
+    );
   }
 
   /**
@@ -105,6 +142,14 @@ class ComponentsInfoTest extends UnitTestCase {
             ],
           ],
         ],
+        // Namespace path is relative to Drupal root.
+        'tracy_chapman' => [
+          'components' => [
+            'namespaces' => [
+              'chapman' => ['templates', '/libraries/chapman/components'],
+            ],
+          ],
+        ],
         // Manual opt-in.
         'components' => [
           'components' => [
@@ -112,9 +157,17 @@ class ComponentsInfoTest extends UnitTestCase {
           ],
         ],
       ]);
-    $this->moduleExtensionList->expects($this->exactly(5))
+    $this->moduleExtensionList
+      ->expects($this->exactly(6))
       ->method('getPath')
-      ->willReturn('/system', '/tubman', '/wheatley', '/lewis', '/components');
+      ->willReturn(
+        $this->rootDir . '/core/modules/system',
+        $this->modulesDir . '/tubman',
+        $this->modulesDir . '/wheatley',
+        $this->modulesDir . '/lewis',
+        $this->modulesDir . '/chapman',
+        $this->modulesDir . '/components'
+      );
 
     $this->themeExtensionList
       ->method('getAllInstalledInfo')
@@ -125,33 +178,45 @@ class ComponentsInfoTest extends UnitTestCase {
     $expected = [
       'harriet_tubman' => [
         'namespaces' => [
-          'harriet_tubman' => ['/tubman/deprecated'],
+          'harriet_tubman' => [$this->modulesDir . '/tubman/deprecated'],
         ],
-        'extensionPath' => '/tubman',
+        'extensionPath' => $this->modulesDir . '/tubman',
       ],
       'phillis_wheatley' => [
         'namespaces' => [
-          'phillis_wheatley' => ['/wheatley/templates'],
-          'wheatley' => ['/wheatley/components'],
+          'phillis_wheatley' => [$this->modulesDir . '/wheatley/templates'],
+          'wheatley' => [$this->modulesDir . '/wheatley/components'],
         ],
-        'extensionPath' => '/wheatley',
+        'extensionPath' => $this->modulesDir . '/wheatley',
       ],
       'edna_lewis' => [
         'includedKey' => 'included',
         'namespaces' => [
-          'lewis' => ['/lewis/templates', '/lewis/components'],
+          'lewis' => [
+            $this->modulesDir . '/lewis/templates',
+            $this->modulesDir . '/lewis/components',
+          ],
         ],
-        'extensionPath' => '/lewis',
+        'extensionPath' => $this->modulesDir . '/lewis',
+      ],
+      'tracy_chapman' => [
+        'namespaces' => [
+          'chapman' => [
+            $this->modulesDir . '/chapman/templates',
+            $this->rootDir . '/libraries/chapman/components',
+          ],
+        ],
+        'extensionPath' => $this->modulesDir . '/chapman',
       ],
       'components' => [
         'allow_default_namespace_reuse' => TRUE,
-        'extensionPath' => '/components',
+        'extensionPath' => $this->modulesDir . '/components',
       ],
     ];
     $result = $this->systemUnderTest->getAllModuleInfo();
     $this->assertEquals($expected, $result);
 
-    $expected = ['system', 'edna_lewis'];
+    $expected = ['system', 'edna_lewis', 'tracy_chapman'];
     $result = $this->systemUnderTest->getProtectedNamespaces();
     $this->assertEquals($expected, $result);
   }
@@ -180,7 +245,7 @@ class ComponentsInfoTest extends UnitTestCase {
     $this->moduleExtensionList
       ->expects($this->exactly(2))
       ->method('getPath')
-      ->willReturn('/foo', '/bar');
+      ->willReturn($this->modulesDir . '/foo', $this->modulesDir . '/bar');
 
     $this->themeExtensionList
       ->method('getAllInstalledInfo')
@@ -190,7 +255,7 @@ class ComponentsInfoTest extends UnitTestCase {
 
     $expected = [
       'included' => 'bar',
-      'extensionPath' => '/bar',
+      'extensionPath' => $this->modulesDir . '/bar',
     ];
     $result = $this->systemUnderTest->getModuleInfo('bar');
     $this->assertEquals($expected, $result);
@@ -218,7 +283,7 @@ class ComponentsInfoTest extends UnitTestCase {
     $this->moduleExtensionList
       ->expects($this->exactly(2))
       ->method('getPath')
-      ->willReturn('/foo', '/bar');
+      ->willReturn($this->modulesDir . '/foo', $this->modulesDir . '/bar');
 
     $this->themeExtensionList
       ->method('getAllInstalledInfo')
@@ -229,7 +294,7 @@ class ComponentsInfoTest extends UnitTestCase {
     $expected = [
       'bar' => [
         'included' => 'not-ignored',
-        'extensionPath' => '/bar',
+        'extensionPath' => $this->modulesDir . '/bar',
       ],
     ];
     $result = $this->systemUnderTest->getAllModuleInfo();
@@ -264,13 +329,13 @@ class ComponentsInfoTest extends UnitTestCase {
     $this->themeExtensionList
       ->expects($this->exactly(2))
       ->method('getPath')
-      ->willReturn('/foo', '/bar');
+      ->willReturn($this->themesDir . '/foo', $this->themesDir . '/bar');
 
     $this->newSystemUnderTest();
 
     $expected = [
       'included' => 'bar',
-      'extensionPath' => '/bar',
+      'extensionPath' => $this->themesDir . '/bar',
     ];
     $result = $this->systemUnderTest->getThemeInfo('bar');
     $this->assertEquals($expected, $result);
@@ -302,14 +367,14 @@ class ComponentsInfoTest extends UnitTestCase {
     $this->themeExtensionList
       ->expects($this->exactly(2))
       ->method('getPath')
-      ->willReturn('/foo', '/bar');
+      ->willReturn($this->themesDir . '/foo', $this->themesDir . '/bar');
 
     $this->newSystemUnderTest();
 
     $expected = [
       'bar' => [
         'included' => 'not-ignored',
-        'extensionPath' => '/bar',
+        'extensionPath' => $this->themesDir . '/bar',
       ],
     ];
     $result = $this->systemUnderTest->getAllThemeInfo();
@@ -346,8 +411,7 @@ class ComponentsInfoTest extends UnitTestCase {
         ],
       ]);
     $this->moduleExtensionList->expects($this->exactly(5))
-      ->method('getPath')
-      ->willReturn('/some-path');
+      ->method('getPath');
 
     $this->themeExtensionList
       ->method('getAllInstalledInfo')

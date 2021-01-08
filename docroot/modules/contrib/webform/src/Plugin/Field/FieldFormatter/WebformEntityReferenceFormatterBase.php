@@ -29,6 +29,13 @@ abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormat
   protected $configFactory;
 
   /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -43,6 +50,7 @@ abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormat
     );
     $instance->configFactory = $container->get('config.factory');
     $instance->renderer = $container->get('renderer');
+    $instance->time = $container->get('datetime.time');
     return $instance;
   }
 
@@ -102,8 +110,8 @@ abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormat
     foreach ($states as $state) {
       if ($item->status === WebformInterface::STATUS_SCHEDULED) {
         $item_state = $item->$state;
-        if ($item_state && strtotime($item_state) > time()) {
-          $item_seconds = strtotime($item_state) - time();
+        if ($item_state && strtotime($item_state) > $this->time->getRequestTime()) {
+          $item_seconds = strtotime($item_state) - $this->time->getRequestTime();
           if (!$max_age && $item_seconds > $max_age) {
             $max_age = $item_seconds;
           }
@@ -111,8 +119,8 @@ abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormat
       }
       if ($webform->status() === WebformInterface::STATUS_SCHEDULED) {
         $webform_state = $webform->get($state);
-        if ($webform_state && strtotime($webform_state) > time()) {
-          $webform_seconds = strtotime($webform_state) - time();
+        if ($webform_state && strtotime($webform_state) > $this->time->getRequestTime()) {
+          $webform_seconds = strtotime($webform_state) - $this->time->getRequestTime();
           if (!$max_age && $webform_seconds > $max_age) {
             $max_age = $webform_seconds;
           }
