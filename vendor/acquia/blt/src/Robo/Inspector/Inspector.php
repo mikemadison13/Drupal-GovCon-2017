@@ -22,7 +22,7 @@ use Robo\Contract\VerbosityThresholdInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Class Inspector.
+ * Inspects various details about the current project.
  *
  * @package Acquia\Blt\Robo\Common
  */
@@ -597,6 +597,20 @@ class Inspector implements BuilderAwareInterface, ConfigAwareInterface, Containe
       ->getMessage();
 
     return $version;
+  }
+
+  /**
+   * Checks if a Composer package is installed.
+   *
+   * @return bool
+   *   True if package exists, false otherwise.
+   */
+  public function isComposerPackageInstalled($package_name) {
+    $result = $this->executor->execute("composer show $package_name")
+      ->interactive(FALSE)
+      ->silent(TRUE)
+      ->run();
+    return $result->wasSuccessful();
   }
 
   /**

@@ -9,6 +9,9 @@ lightning_media.settings:
         choose_display:
           type: boolean
           label: 'Allow user to choose display plugin for embedded media'
+    revision_ui:
+      type: boolean
+      label: 'Show revision UI on media forms'
 
 entity_browser.browser.widget.embed_code:
   type: mapping

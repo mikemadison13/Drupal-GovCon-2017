@@ -183,17 +183,19 @@ class DateTime extends DateBase {
     if (!$this->datePickerExists()) {
       unset($form['date']['date_date_element']['#options']['datepicker']);
     }
-    $form['date']['date_date_datepicker_button'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Show date picker button'),
-      '#description' => $this->t('If checked, date picker will include a calendar button'),
-      '#return_value' => TRUE,
-      '#states' => [
-        'visible' => [
-          [':input[name="properties[date_date_element]"]' => ['value' => 'datepicker']],
+    if ($this->datePickerExists()) {
+      $form['date']['date_date_datepicker_button'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Show date picker button'),
+        '#description' => $this->t('If checked, date picker will include a calendar button'),
+        '#return_value' => TRUE,
+        '#states' => [
+          'visible' => [
+            [':input[name="properties[date_date_element]"]' => ['value' => 'datepicker']],
+          ],
         ],
-      ],
-    ];
+      ];
+    }
     $form['date']['date_date_element_datetime_warning'] = [
       '#type' => 'webform_message',
       '#message_type' => 'warning',

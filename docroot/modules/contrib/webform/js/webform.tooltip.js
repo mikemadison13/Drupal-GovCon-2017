@@ -66,11 +66,15 @@
       }
 
       $(context).find('.js-webform-tooltip-link').once('webform-tooltip-link').each(function () {
-        var options = $.extend({
-          allowHTML: true
-        }, Drupal.webform.tooltipLink.options);
+        var title = $(this).attr('title');
+        if (title) {
+          var options = $.extend({
+            content: title,
+            allowHTML: true
+          }, Drupal.webform.tooltipLink.options);
 
-        tippy(this, options);
+          tippy(this, options);
+        }
       });
     }
   };

@@ -143,8 +143,7 @@ export const sampleFromSchemaGeneric = (schema, config={}, exampleOverride = und
   let addPropertyToResult
   if(respectXML) {
     addPropertyToResult = (propName, overrideE = undefined) => {
-
-      if(schema) {
+      if(schema && props[propName]) {
         // case it is an xml attribute
         props[propName].xml = props[propName].xml || {}
 
@@ -168,6 +167,13 @@ export const sampleFromSchemaGeneric = (schema, config={}, exampleOverride = und
           return
         }
         props[propName].xml.name = props[propName].xml.name || propName
+      } else if(!props[propName] && additionalProperties !== false) {
+        // case only additionalProperty that is not defined in schema
+        props[propName] = {
+          xml: {
+            name: propName
+          }
+        }
       }
 
       let t = sampleFromSchemaGeneric(schema && props[propName] || undefined, config, overrideE, respectXML)
@@ -197,7 +203,21 @@ export const sampleFromSchemaGeneric = (schema, config={}, exampleOverride = und
 
     // if json just return
     if(!respectXML) {
-      return sample
+      // spacial case yaml parser can not know about
+      if(typeof sample === "number" && type === "string") {
+        return `${sample}`
+      }
+      // return if sample does not need any parsing
+      if(typeof sample !== "string" || type === "string") {
+        return sample
+      }
+      // check if sample is parsable or just a plain string
+      try {
+        return JSON.parse(sample)
+      } catch(e) {
+        // sample is just plain string return it
+        return sample
+      }
     }
 
     // recover missing type
@@ -208,6 +228,9 @@ export const sampleFromSchemaGeneric = (schema, config={}, exampleOverride = und
     // generate xml sample recursively for array case
     if(type === "array") {
       if (!Array.isArray(sample)) {
+        if(typeof sample === "string") {
+          return sample
+        }
         sample = [sample]
       }
       const itemSchema = schema
@@ -233,6 +256,10 @@ export const sampleFromSchemaGeneric = (schema, config={}, exampleOverride = und
 
     // generate xml sample recursively for object case
     if(type === "object") {
+      // case literal example
+      if(typeof sample === "string") {
+        return sample
+      }
       for (let propName in sample) {
         if (!sample.hasOwnProperty(propName)) {
           continue
@@ -376,7 +403,9 @@ export const inferSchema = (thing) => {
 export const createXMLExample = (schema, config, o) => {
   const json = sampleFromSchemaGeneric(schema, config, o, true)
   if (!json) { return }
-
+  if(typeof json === "string") {
+    return json
+  }
   return XML(json, { declaration: true, indent: "\t" })
 }
 

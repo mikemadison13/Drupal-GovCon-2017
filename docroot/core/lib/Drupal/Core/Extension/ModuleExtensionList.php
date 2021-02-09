@@ -94,6 +94,11 @@ class ModuleExtensionList extends ExtensionList {
     return $discovery;
   }
 
+  private function getInstalledProfiles() : array {
+    $installed_extensions = $this->getInstalledExtensionNames();
+    return array_intersect_key($this->profileList->getList(), array_flip($installed_extensions));
+  }
+
   /**
    * Finds all installation profile paths.
    *
@@ -105,7 +110,10 @@ class ModuleExtensionList extends ExtensionList {
    */
   protected function getProfileDirectories(ExtensionDiscovery $discovery) {
     $discovery->setProfileDirectories([]);
-    $profiles = $this->profileList->getAncestors($this->installProfile);
+    $profiles = array_merge(
+      $this->profileList->getAncestors($this->installProfile),
+      $this->getInstalledProfiles()
+    );
 
     $profile_directories = array_map(function (Extension $profile) {
       return $profile->getPath();
@@ -132,12 +140,10 @@ class ModuleExtensionList extends ExtensionList {
    * {@inheritdoc}
    */
   protected function doScanExtensions() {
-    $extensions = parent::doScanExtensions();
-    // Merge in the install profile and any profile ancestors.
-    $profiles = $this->profileList->getAncestors($this->installProfile);
-    $extensions = array_merge($extensions, $profiles);
-
-    return $extensions;
+    return array_merge(
+      parent::doScanExtensions(),
+      $this->profileList->getList()
+    );
   }
 
   /**

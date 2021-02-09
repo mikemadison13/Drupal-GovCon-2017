@@ -55,7 +55,7 @@ class TwigExtension extends AbstractExtension {
    * @code
    * {% set list = template(
    *     "item-list.html.twig",
-   *     title = "Animals not yet in Drupal core"
+   *     title = "Animals not yet in Drupal core",
    *     items = ["lemur", "weasel", "honey badger"],
    *   )
    * %}
@@ -71,7 +71,7 @@ class TwigExtension extends AbstractExtension {
    * @code
    * {% set list = template(
    *     "item_list__node",
-   *     title = "Fictional animals not yet in Drupal core"
+   *     title = "Fictional animals not yet in Drupal core",
    *     items = ["domo", "ponycorn"],
    *   )
    * %}

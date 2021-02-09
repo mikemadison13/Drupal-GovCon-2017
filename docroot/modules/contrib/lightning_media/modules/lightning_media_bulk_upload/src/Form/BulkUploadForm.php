@@ -129,6 +129,7 @@ class BulkUploadForm extends FormBase {
       /** @var \Drupal\file\FileInterface $file */
       $file = $this->entityTypeManager->getStorage('file')->create([
         'uri' => $upload['path'],
+        'uid' => $this->currentUser()->id(),
       ]);
       $file->setTemporary();
       $file->save();

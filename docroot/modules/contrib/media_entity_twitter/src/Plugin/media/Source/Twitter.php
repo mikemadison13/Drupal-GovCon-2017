@@ -115,6 +115,8 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
    *   The tweet fetcher.
    * @param \Drupal\Core\Logger\LoggerChannelInterface $logger
    *   The logger channel.
+   * @param \Drupal\Core\File\FileSystemInterface $file_system
+   *   The file system.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, FieldTypePluginManagerInterface $field_type_manager, ConfigFactoryInterface $config_factory, RendererInterface $renderer, TweetFetcherInterface $tweet_fetcher, LoggerChannelInterface $logger, FileSystemInterface $file_system) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_field_manager, $field_type_manager, $config_factory);
@@ -210,7 +212,6 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
           '#avatar' => $this->getMetadata($media, 'profile_image_url_https'),
         ];
         $svg = $this->renderer->renderRoot($thumbnail);
-
 
         return $this->fileSystem->saveData($svg, $thumbnail_uri, FileSystemInterface::EXISTS_ERROR) ?: parent::getMetadata($media, $attribute_name);
     }
@@ -448,7 +449,7 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
     $matches = [];
 
     $source_field = $this->getSourceFieldDefinition($media->bundle->entity)->getName();
-    if ($media->hasField($source_field)) {
+    if ($media->hasField($source_field) && !$media->get($source_field)->isEmpty()) {
       $property_name = $media->get($source_field)->first()->mainPropertyName();
       foreach (static::$validationRegexp as $pattern => $key) {
         if (preg_match($pattern, $media->get($source_field)->{$property_name}, $matches)) {

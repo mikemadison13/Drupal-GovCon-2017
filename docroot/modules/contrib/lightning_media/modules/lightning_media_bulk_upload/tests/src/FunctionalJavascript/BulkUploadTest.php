@@ -78,7 +78,7 @@ class BulkUploadTest extends WebDriverTestBase {
       $this->getSession()->executeScript('Dropzone.instances[0].hiddenFileInput.name = "file"');
       $page->attachFileToField('file', $file);
 
-      // @todo: React when the upload actually completes.
+      // @todo React when the upload actually completes.
       sleep(3);
     }
     $page->pressButton('Continue');
@@ -86,6 +86,16 @@ class BulkUploadTest extends WebDriverTestBase {
     for ($i = 0; $i < count($files); $i++) {
       $page->pressButton('Save');
     }
+
+    // Ensure all the files were actually saved, and have the current user as
+    // their owner.
+    $saved_files = $this->container->get('entity_type.manager')
+      ->getStorage('file')
+      ->loadByProperties([
+        'filename' => $files,
+        'uid' => $account->id(),
+      ]);
+    $this->assertSame(count($saved_files), count($files));
 
     $this->drupalGet('/admin/content/media');
     // @todo Make this linkExists. For whatever reason, that assertion fails and

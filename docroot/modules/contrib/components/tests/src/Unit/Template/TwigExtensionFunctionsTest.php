@@ -71,7 +71,7 @@ class TwigExtensionFunctionsTest extends UnitTestCase {
         '{{ template("@stable/item-list.html.twig", items = [ link ] ) }}',
         ['link' => '']
       );
-      $this->fail('Expected Exception, none was thrown.');
+      $exception = FALSE;
     }
     catch (\Exception $e) {
       $needle = 'Templates with namespaces are not supported; "@stable/item-list.html.twig" given.';
@@ -81,6 +81,10 @@ class TwigExtensionFunctionsTest extends UnitTestCase {
       else {
         $this->assertContains($needle, $e->getMessage());
       }
+      $exception = TRUE;
+    }
+    if (!$exception) {
+      $this->fail('Expected Exception, none was thrown.');
     }
   }
 
@@ -89,43 +93,37 @@ class TwigExtensionFunctionsTest extends UnitTestCase {
    *
    * @param string $template
    *   The inline template to render.
-   * @param string $message
-   *   The error message to show if test fails.
+   * @param array $variables
+   *   An array of variables to provide to the template.
+   * @param array $expected
+   *   The render array expected to be returned.
+   * @param string $rendered_output
+   *   The HTML output from the rendered $expected array.
    *
    * @covers ::template
    *
-   * @dataProvider providerTemplate
+   * @dataProvider providerTestTemplate
    */
-  public function testTemplate(string $template, string $message) {
-    $link = [
-      '#type' => 'link',
-      '#title' => 'example link',
-      '#url' => 'https://example.com',
-    ];
-    $expected_render_array = [
-      '#theme' => 'item_list',
-      '#items' => [$link],
-      '#printed' => FALSE,
-    ];
-    $expected = '<ul><li><a href="https://example.com">example link</a></li></ul>';
-
-    $this->renderer->expects($this->exactly(1))
+  public function testTemplate(
+    string $template,
+    array $variables,
+    array $expected,
+    string $rendered_output
+  ) {
+    $this->renderer
+      ->expects($this->exactly(1))
       ->method('render')
-      ->with($expected_render_array)
-      ->willReturn($expected);
+      ->with($expected)
+      ->willReturn($rendered_output);
 
+    $result = NULL;
     try {
-      $result = $this->twigEnvironment->render(
-        $template,
-        [
-          'link' => $link,
-        ]
-      );
-      $this->assertEquals($expected, $result, $message);
+      $result = $this->twigEnvironment->render($template, $variables);
     }
     catch (\Exception $e) {
-      $this->fail('No Exception expected; "' . $e->getMessage() . '" thrown.');
+      $this->fail('No Exception expected; "' . $e->getMessage() . '" thrown during: ' . $this->getName());
     }
+    $this->assertEquals($rendered_output, $result, $this->getName());
   }
 
   /**
@@ -133,54 +131,45 @@ class TwigExtensionFunctionsTest extends UnitTestCase {
    *
    * @see testTemplate()
    */
-  public function providerTemplate(): array {
-    return [
-      'Template name' => [
-        'template' => '{{ template("item-list.html.twig", items = [ link ] ) }}',
-        'message' => 'Works with template name',
-      ],
-      'Theme hook' => [
-        'template' => '{{ template("item_list", items = [ link ] ) }}',
-        'message' => 'Works with theme hook',
-      ],
-    ];
-  }
-
-  /**
-   * Tests template function when using an array of theme hooks.
-   *
-   * @covers ::template
-   */
-  public function testTemplateWithThemeHookArray() {
+  public function providerTestTemplate(): array {
     $link = [
       '#type' => 'link',
       '#title' => 'example link',
       '#url' => 'https://example.com',
     ];
-    $expected_render_array = [
-      '#theme' => ['item_list__dogs', 'item_list__cats'],
-      '#items' => [$link],
-      '#printed' => FALSE,
+
+    return [
+      'Works with template name' => [
+        'template' => '{{ template("item-list.html.twig", items = [ link ] ) }}',
+        'variables' => ['link' => $link],
+        'expected' => [
+          '#theme' => 'item_list',
+          '#items' => [$link],
+          '#printed' => FALSE,
+        ],
+        'rendered_output' => '<ul><li><a href="https://example.com">example link</a></li></ul>',
+      ],
+      'Works with theme hook' => [
+        'template' => '{{ template("item_list", items = [ link ] ) }}',
+        'variables' => ['link' => $link],
+        'expected' => [
+          '#theme' => 'item_list',
+          '#items' => [$link],
+          '#printed' => FALSE,
+        ],
+        'rendered_output' => '<ul><li><a href="https://example.com">example link</a></li></ul>',
+      ],
+      'Works with an array of theme hooks' => [
+        'inline_template' => '{{ template([ "item_list__dogs", "item_list__cats" ], items = [ link ] ) }}',
+        'variables' => ['link' => $link],
+        'expected' => [
+          '#theme' => ['item_list__dogs', 'item_list__cats'],
+          '#items' => [$link],
+          '#printed' => FALSE,
+        ],
+        'rendered_output' => '<ul><li><a href="https://example.com">example link</a></li></ul>',
+      ],
     ];
-    $expected = '<ul><li><a href="https://example.com">example link</a></li></ul>';
-
-    $this->renderer->expects($this->exactly(1))
-      ->method('render')
-      ->with($expected_render_array)
-      ->willReturn($expected);
-
-    try {
-      $result = $this->twigEnvironment->render(
-        '{{ template([ "item_list__dogs", "item_list__cats" ], items = [ link ] ) }}',
-        [
-          'link' => $link,
-        ]
-      );
-      $this->assertEquals($expected, $result, 'Works with an array of theme hooks');
-    }
-    catch (\Exception $e) {
-      $this->fail('No Exception expected; "' . $e->getMessage() . '" thrown.');
-    }
   }
 
 }

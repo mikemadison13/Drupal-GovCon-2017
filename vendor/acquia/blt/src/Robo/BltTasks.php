@@ -84,8 +84,14 @@ class BltTasks implements ConfigAwareInterface, InspectorAwareInterface, LoggerA
       $application = $this->getContainer()->get('application');
       $command = $application->find($command_name);
 
+      // Build a new input object that inherits options from parent command.
+      if ($this->input()->hasParameterOption('--environment')) {
+        $args['--environment'] = $this->input()->getParameterOption('--environment');
+      }
       $input = new ArrayInput($args);
       $input->setInteractive($this->input()->isInteractive());
+
+      // Now run the command.
       $prefix = str_repeat(">", $this->invokeDepth);
       $this->output->writeln("<comment>$prefix $command_name</comment>");
       $exit_code = $application->runCommand($command, $input, $this->output());

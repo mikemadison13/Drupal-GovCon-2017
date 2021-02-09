@@ -325,7 +325,7 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
     $webform = Webform::load('test_translation');
     $variants = $webform->getVariants();
     foreach ($variants as $variant) {
-       $webform->deleteWebformVariant($variant);
+      $webform->deleteWebformVariant($variant);
     }
     $webform->deleteElement('variant');
     $webform->save();

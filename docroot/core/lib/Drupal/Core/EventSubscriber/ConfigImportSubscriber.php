@@ -104,7 +104,7 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
         // If this error has occurred the other checks are irrelevant.
         return;
       }
-      else {
+      elseif ($install_profile !== 'lightning' && $install_profile !== 'headless_lightning') {
         $config_importer->logError($this->t('Cannot change the install profile from %profile to %new_profile once Drupal is installed.', [
           '%profile' => $install_profile,
           '%new_profile' => $core_extension['profile'],
@@ -166,7 +166,7 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
     // Don't allow profiles to be uninstalled. It's possible for no profile to
     // be set yet if the config is being imported during initial site install.
     if ($main_profile instanceof \Drupal\Core\Extension\Extension) {
-      if (in_array($main_profile->getName(), $uninstalls, TRUE)) {
+      if (in_array($main_profile->getName(), $uninstalls, TRUE) && ($main_profile->getName() !== 'lightning' && $main_profile->getName() !== 'headless_lightning')) {
         // Ensure that the active profile is not being uninstalled.
         $profile_name = $main_profile->info['name'];
         $config_importer->logError($this->t('Unable to uninstall the %profile profile since it is the main install profile.', ['%profile' => $profile_name]));

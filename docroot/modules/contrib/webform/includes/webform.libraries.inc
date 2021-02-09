@@ -67,7 +67,9 @@ function webform_library_info_alter(&$libraries, $extension) {
   }
 
   // If webform date element in D8 use the old dependency on 'core/drupal.date'.
-  if (isset($libraries['webform.element.date']) && floatval(\Drupal::VERSION) < 9) {
+  if (isset($libraries['webform.element.date'])
+    && floatval(\Drupal::VERSION) < 9
+    && !\Drupal::moduleHandler()->moduleExists('jquery_ui_datepicker')) {
     $libraries['webform.element.date']['dependencies'] = ['core/drupal.date', 'core/drupalSettings'];
   }
 

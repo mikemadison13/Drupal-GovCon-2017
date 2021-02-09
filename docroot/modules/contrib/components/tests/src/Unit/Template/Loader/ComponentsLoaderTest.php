@@ -88,8 +88,28 @@ class ComponentsLoaderTest extends UnitTestCase {
       ]);
     $this->componentsInfo
       ->expects($this->atLeastOnce())
-      ->method('getProtectedNamespaces')
-      ->willReturn(['system']);
+      ->method('isProtectedNamespace')
+      ->will($this->returnValueMap([
+        ['system', TRUE],
+        ['components', FALSE],
+        ['components_extras', FALSE],
+        ['earth', FALSE],
+        ['jupiter', FALSE],
+        ['jupiter_extras', FALSE],
+        ['luna', FALSE],
+        ['luna_extras', FALSE],
+        ['sol', FALSE],
+        ['sol_extras', FALSE],
+      ]));
+    $this->componentsInfo
+      ->expects($this->atLeastOnce())
+      ->method('getProtectedNamespaceExtensionInfo')
+      ->will($this->returnValueMap([
+        [
+          'system',
+          ['name' => 'System', 'type' => 'module', 'package' => 'Core'],
+        ],
+      ]));
 
     // Set up theme manager data.
     $themes = [
@@ -128,12 +148,14 @@ class ComponentsLoaderTest extends UnitTestCase {
       ->willReturn($active_themes['luna'], $active_themes['jupiter'], $active_themes['luna']);
 
     $this->systemUnderTest = new ComponentsLoader($this->componentsInfo, $this->themeManager);
+    $this->systemUnderTest->checkActiveTheme();
   }
 
   /**
    * Tests checking the active theme.
    *
    * @covers ::checkActiveTheme
+   *
    * @throws \Twig\Error\LoaderError
    */
   public function testCheckActiveTheme() {
@@ -147,6 +169,7 @@ class ComponentsLoaderTest extends UnitTestCase {
    * Tests prepending paths to a namespace.
    *
    * @covers ::setActiveTheme
+   *
    * @throws \Twig\Error\LoaderError
    */
   public function testSetActiveTheme() {
@@ -208,6 +231,7 @@ class ComponentsLoaderTest extends UnitTestCase {
    * Tests the use of the active theme cache.
    *
    * @covers ::setActiveTheme
+   *
    * @throws \Twig\Error\LoaderError
    */
   public function testSetActiveThemeCache() {
@@ -230,45 +254,95 @@ class ComponentsLoaderTest extends UnitTestCase {
   /**
    * Tests adding paths to a namespace.
    *
+   * @param string $path
+   *   Path to prepend.
+   * @param string $namespace
+   *   Namespace to alter.
+   * @param array $expected
+   *   Expected namespace paths.
+   *
    * @covers ::addPath
+   *
    * @throws \Twig\Error\LoaderError
+   *
+   * @dataProvider providerTestAddPath
    */
-  public function testAddPath() {
-    $expected = ['/sol/templates', '/test/templates'];
-    $this->systemUnderTest->addPath('/test/templates', 'sol');
-    $result = $this->systemUnderTest->getPaths('sol');
+  public function testAddPath(string $path, string $namespace, array $expected) {
+    $this->systemUnderTest->addPath($path, $namespace);
+    $result = $this->systemUnderTest->getPaths($namespace);
     $this->assertEquals($expected, $result);
+  }
 
-    // Test trimming the trailing slash off of the path.
-    $expected = ['/sol/templates', '/test/templates', '/test/trim'];
-    $this->systemUnderTest->addPath('/test/trim/', 'sol');
-    $result = $this->systemUnderTest->getPaths('sol');
-    $this->assertEquals($expected, $result);
+  /**
+   * Data provider for testAddPath().
+   *
+   * @see testAddPath()
+   */
+  public function providerTestAddPath(): array {
+    return [
+      'basic add' => [
+        'path' => '/test/templates',
+        'namespace' => 'sol',
+        'expected' => ['/sol/templates', '/test/templates'],
+      ],
+      'Test appending on a namespace that does not exist' => [
+        'path' => '/pluto/templates',
+        'namespace' => 'pluto',
+        'expected' => ['/pluto/templates'],
+      ],
+      'Test trimming the trailing slash off of the path' => [
+        'path' => '/test/trim/',
+        'namespace' => 'sol',
+        'expected' => ['/sol/templates', '/test/trim'],
+      ],
+    ];
   }
 
   /**
    * Tests prepending paths to a namespace.
    *
+   * @param string $path
+   *   Path to prepend.
+   * @param string $namespace
+   *   Namespace to alter.
+   * @param array $expected
+   *   Expected namespace paths.
+   *
    * @covers ::prependPath
+   *
    * @throws \Twig\Error\LoaderError
+   *
+   * @dataProvider providerTestPrependPath
    */
-  public function testPrependPath() {
-    $expected = ['/test/templates', '/sol/templates'];
-    $this->systemUnderTest->prependPath('/test/templates', 'sol');
-    $result = $this->systemUnderTest->getPaths('sol');
+  public function testPrependPath(string $path, string $namespace, array $expected) {
+    $this->systemUnderTest->prependPath($path, $namespace);
+    $result = $this->systemUnderTest->getPaths($namespace);
     $this->assertEquals($expected, $result);
+  }
 
-    // Test prepending on a namespace that does not exist.
-    $expected = ['/pluto/templates'];
-    $this->systemUnderTest->prependPath('/pluto/templates', 'pluto');
-    $result = $this->systemUnderTest->getPaths('pluto');
-    $this->assertEquals($expected, $result);
-
-    // Test trimming the trailing slash off of the path.
-    $expected = ['/test/trim', '/test/templates', '/sol/templates'];
-    $this->systemUnderTest->prependPath('/test/trim/', 'sol');
-    $result = $this->systemUnderTest->getPaths('sol');
-    $this->assertEquals($expected, $result);
+  /**
+   * Data provider for testPrependPath().
+   *
+   * @see testPrependPath()
+   */
+  public function providerTestPrependPath(): array {
+    return [
+      'basic prepend' => [
+        'path' => '/test/templates',
+        'namespace' => 'sol',
+        'expected' => ['/test/templates', '/sol/templates'],
+      ],
+      'Test prepending on a namespace that does not exist' => [
+        'path' => '/pluto/templates',
+        'namespace' => 'pluto',
+        'expected' => ['/pluto/templates'],
+      ],
+      'Test trimming the trailing slash off of the path' => [
+        'path' => '/test/trim/',
+        'namespace' => 'sol',
+        'expected' => ['/test/trim', '/sol/templates'],
+      ],
+    ];
   }
 
 }

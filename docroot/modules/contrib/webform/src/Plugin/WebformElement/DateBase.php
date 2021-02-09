@@ -78,6 +78,16 @@ abstract class DateBase extends WebformElementBase {
     // Parse #default_value date input format.
     $this->parseInputFormat($element, '#default_value');
 
+    // If date picker does not exist, remove date picker related properties.
+    if (!$this->datePickerExists()) {
+      unset(
+        $element['#datepicker'],
+        $element['#datepicker_button'],
+        $element['#date_date_format'],
+        $element['#date_date_datepicker_button']
+      );
+    }
+
     // Set date min/max attributes.
     // This overrides extra attributes set via Datetime::processDatetime.
     // @see \Drupal\Core\Datetime\Element\Datetime::processDatetime
@@ -286,11 +296,14 @@ abstract class DateBase extends WebformElementBase {
       '#title' => $this->t('Date days of the week'),
       '#options' => DateHelper::weekDaysAbbr(TRUE),
       '#element_validate' => [['\Drupal\webform\Utility\WebformElementHelper', 'filterValues']],
-      '#description' => $this->t('Specifies the day(s) of the week. Please note, the date picker will disable unchecked days of the week.'),
+      '#description' => $this->t('Specifies the day(s) of the week.'),
       '#options_display' => 'side_by_side',
       '#required' => TRUE,
       '#weight' => 20,
     ];
+    if ($this->datePickerExists()) {
+      $form['date']['date_days']['#description'] .= ' ' . $this->t('Please note, the date picker will disable unchecked days of the week.');
+    }
 
     // Date/time min/max validation.
     if ($this->hasProperty('date_date_min')
@@ -692,10 +705,14 @@ abstract class DateBase extends WebformElementBase {
    * Determine if the the jQuery UI date picker is supported.
    *
    * @return bool
-   *   TRUE if the the jQuery UI date picker is supported.
+   *   TRUE if Drupal 8 or for Drupal 9 support the jQuery UI date picker
+   *   module is installed.
+   *
+   * @see \webform_library_info_alter
    */
   protected function datePickerExists() {
-    return $this->moduleHandler->moduleExists('jquery_ui_datepicker');
+    return (floatval(\Drupal::VERSION) < 9)
+      || $this->moduleHandler->moduleExists('jquery_ui_datepicker');
   }
 
 }

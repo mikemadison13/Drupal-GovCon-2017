@@ -5,7 +5,6 @@ namespace Acquia\Blt\Robo\Commands\Tests;
 use Acquia\Blt\Robo\BltTasks;
 use Acquia\Blt\Robo\Common\EnvironmentDetector;
 use Acquia\Blt\Robo\Exceptions\BltException;
-use Exception;
 use Robo\Contract\VerbosityThresholdInterface;
 
 /**
@@ -105,7 +104,7 @@ class TestsCommandBase extends BltTasks {
     $this->logger->info("Launching headless chrome...");
     $this->getContainer()
       ->get('executor')
-      ->execute("'$chrome_bin' --headless --disable-web-security --remote-debugging-port={$this->chromePort} {$this->chromeArgs} $chrome_host")
+      ->execute("'$chrome_bin' --headless --no-sandbox --disable-web-security --remote-debugging-port={$this->chromePort} {$this->chromeArgs} $chrome_host")
       ->background(TRUE)
       ->printOutput(TRUE)
       ->printMetadata(TRUE)
@@ -241,7 +240,7 @@ class TestsCommandBase extends BltTasks {
     try {
       $executor->waitForUrlAvailable($this->seleniumUrl);
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       if (!$result->wasSuccessful()) {
         $message = $e->getMessage();
         if (file_exists($log_file)) {

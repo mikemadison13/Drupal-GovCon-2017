@@ -362,7 +362,7 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
       '#access' => FALSE,
       '#states' => [
         'visible' => [
-          ':input[name="wizard_auto_forward]' => ['checked' => TRUE],
+          ':input[name="wizard_auto_forward"]' => ['checked' => TRUE],
         ],
       ],
     ];

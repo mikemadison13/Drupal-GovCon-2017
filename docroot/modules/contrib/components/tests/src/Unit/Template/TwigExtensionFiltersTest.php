@@ -55,7 +55,7 @@ class TwigExtensionFiltersTest extends UnitTestCase {
   public function testSetFilterException() {
     try {
       TwigExtension::setFilter('not-an-array', ['key' => 'value']);
-      $this->fail('Expected Exception, none was thrown.');
+      $exception = FALSE;
     }
     catch (\Exception $e) {
       $needle = 'The set filter only works with arrays or "Traversable", got "string" as first argument.';
@@ -65,52 +65,80 @@ class TwigExtensionFiltersTest extends UnitTestCase {
       else {
         $this->assertContains($needle, $e->getMessage());
       }
+      $exception = TRUE;
+    }
+    if (!$exception) {
+      $this->fail('Expected Exception, none was thrown.');
     }
   }
 
   /**
    * Tests the set filter.
    *
+   * @param array $element
+   *   The element to alter.
+   * @param array $value
+   *   The value to set.
+   * @param array $expected
+   *   The expected result.
+   *
    * @covers ::setFilter
+   *
+   * @dataProvider providerTestSetFilter
    */
-  public function testSetFilter() {
-    $element = [
-      'existing' => 'value',
-      'element' => [
-        'type' => 'element',
-        'attributes' => [
-          'class' => ['old-value-1', 'old-value-2'],
-          'id' => 'element',
-        ],
-      ],
-    ];
-    $value = [
-      'element' => [
-        'attributes' => [
-          'class' => ['new-value'],
-          'placeholder' => 'Label',
-        ],
-      ],
-    ];
-    $expected = [
-      'existing' => 'value',
-      'element' => [
-        'type' => 'element',
-        'attributes' => [
-          'class' => ['new-value', 'old-value-2'],
-          'id' => 'element',
-          'placeholder' => 'Label',
-        ],
-      ],
-    ];
+  public function testSetFilter(array $element, array $value, array $expected) {
+    $result = NULL;
     try {
       $result = TwigExtension::setFilter($element, $value);
-      $this->assertEquals($expected, $result);
-      $this->assertEquals(array_replace_recursive($element, $value), $result);
     }
     catch (\Exception $e) {
-      $this->fail('No Exception expected; "' . $e->getMessage() . '" thrown.');
+      $this->fail('No Exception expected; "' . $e->getMessage() . '" thrown during: ' . $this->getName());
     }
+    $this->assertEquals($expected, $result, $this->getName());
+    $this->assertEquals(array_replace_recursive($element, $value), $result, $this->getName());
+  }
+
+  /**
+   * Data provider for testSetFilter().
+   *
+   * @see testSetFilter()
+   */
+  public function providerTestSetFilter(): array {
+    return [
+      'Recursively sets values' => [
+        'element' => [
+          'existing' => 'value',
+          'element' => [
+            'type' => 'element',
+            'attributes' => [
+              'class' => ['old-value-1', 'old-value-2'],
+              'id' => 'element',
+            ],
+          ],
+        ],
+        'value' => [
+          'extra' => 'extra-value',
+          'element' => [
+            'attributes' => [
+              'class' => ['new-value'],
+              'placeholder' => 'Label',
+            ],
+          ],
+        ],
+        'expected' => [
+          'existing' => 'value',
+          'extra' => 'extra-value',
+          'element' => [
+            'type' => 'element',
+            'attributes' => [
+              'class' => ['new-value', 'old-value-2'],
+              'id' => 'element',
+              'placeholder' => 'Label',
+            ],
+          ],
+        ],
+      ],
+    ];
   }
 
   /**
@@ -121,7 +149,7 @@ class TwigExtensionFiltersTest extends UnitTestCase {
   public function testAddFilterException() {
     try {
       TwigExtension::addFilter('not-an-array', 'key', 'value');
-      $this->fail('Expected Exception, none was thrown.');
+      $exception = FALSE;
     }
     catch (\Exception $e) {
       $needle = 'The add filter only works with arrays or "Traversable", got "string" as first argument.';
@@ -131,6 +159,10 @@ class TwigExtensionFiltersTest extends UnitTestCase {
       else {
         $this->assertContains($needle, $e->getMessage());
       }
+      $exception = TRUE;
+    }
+    if (!$exception) {
+      $this->fail('Expected Exception, none was thrown.');
     }
   }
 
@@ -146,7 +178,7 @@ class TwigExtensionFiltersTest extends UnitTestCase {
    *
    * @covers ::addFilter
    *
-   * @dataProvider providerAddFilter
+   * @dataProvider providerTestAddFilter
    */
   public function testAddFilter(string $path, $value, array $expected) {
     $element = [
@@ -165,7 +197,7 @@ class TwigExtensionFiltersTest extends UnitTestCase {
       $result = TwigExtension::addFilter($element, $path, $value);
     }
     catch (\Exception $e) {
-      $this->fail('No Exception expected; "' . $e->getMessage() . '" thrown.');
+      $this->fail('No Exception expected; "' . $e->getMessage() . '" thrown during: ' . $this->getName());
     }
     $this->assertEquals($expected, $result, 'Failed to replace a value.');
   }
@@ -175,7 +207,7 @@ class TwigExtensionFiltersTest extends UnitTestCase {
    *
    * @see testAddFilter()
    */
-  public function providerAddFilter(): array {
+  public function providerTestAddFilter(): array {
     return [
       'replacing a value' => [
         'path' => 'element.attributes.id',

@@ -6,7 +6,7 @@ package: Lightning
 dependencies:
   - lightning_media:lightning_media
 
-# Information added by Drupal.org packaging script on 2020-10-23
-version: '8.x-4.4'
+# Information added by Drupal.org packaging script on 2021-02-08
+version: '8.x-4.6'
 project: 'lightning_media'
-datestamp: 1603487267
+datestamp: 1612802526

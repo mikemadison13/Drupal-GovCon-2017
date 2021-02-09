@@ -449,7 +449,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
       return $value;
     }
 
-    return $this->getFileStorage()->load($value);
+    return $this->entityTypeManager->getStorage('file')->loadUnchanged($value);
   }
 
   /**
@@ -469,7 +469,9 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     if (empty($value)) {
       return [];
     }
-    return $this->getFileStorage()->loadMultiple((array) $value);
+    $fids = (array) $value;
+    $this->entityTypeManager->getStorage('file')->resetCache($fids);
+    return $this->entityTypeManager->getStorage('file')->loadMultiple($fids);
   }
 
   /**
@@ -1207,6 +1209,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
         $file->setFileUri($destination_uri);
         $file->setFileName($this->fileSystem->basename($destination_uri));
         $file->save();
+        $this->entityTypeManager->getStorage('file')->resetCache([$file->id()]);
       }
 
       // Update file usage table.

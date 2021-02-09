@@ -1316,7 +1316,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    *   An associative array of flattened form elements with each element's
    *   operation access checked.
    */
-  protected function checkElementsFlattenedAccess($operation = NULL, array $elements) {
+  protected function checkElementsFlattenedAccess($operation = NULL, array $elements = []) {
     if ($operation === NULL) {
       return $elements;
     }
@@ -2377,12 +2377,12 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
 
     // If 'Allow users to post submission from a dedicated URL' is disabled,
     // delete all existing paths.
-    if (empty($this->settings['page'])) {
+    if (empty($this->getSetting('page'))) {
       $this->deletePaths();
       return;
     }
 
-    $page_submit_path = $this->settings['page_submit_path'];
+    $page_submit_path = $this->getSetting('page_submit_path');
     $default_page_base_path = \Drupal::config('webform.settings')->get('settings.default_page_base_path');
 
     // Skip generating paths if submit path and base path are empty.
@@ -2396,8 +2396,8 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     foreach ($path_suffixes as $path_suffix) {
       $path_source = '/webform/' . $this->id() . $path_suffix;
       $path_alias = $path_base_alias . $path_suffix;
-      if ($path_suffix === '/confirmation' && $this->settings['page_confirm_path']) {
-        $path_alias = $this->settings['page_confirm_path'];
+      if ($path_suffix === '/confirmation' && $this->getSetting('page_confirm_path')) {
+        $path_alias = $this->getSetting('page_confirm_path');
       }
       $this->updatePath($path_source, $path_alias, $this->langcode);
       $this->updatePath($path_source, $path_alias, LanguageInterface::LANGCODE_NOT_SPECIFIED);

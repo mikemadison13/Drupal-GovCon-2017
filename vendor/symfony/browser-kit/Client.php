@@ -117,7 +117,7 @@ abstract class Client
      */
     public function insulate($insulated = true)
     {
-        if ($insulated && !class_exists('Symfony\\Component\\Process\\Process')) {
+        if ($insulated && !class_exists(\Symfony\Component\Process\Process::class)) {
             throw new \LogicException('Unable to isolate requests as the Symfony Process Component is not installed.');
         }
 
@@ -157,7 +157,7 @@ abstract class Client
      */
     public function getServerParameter($key, $default = '')
     {
-        return isset($this->server[$key]) ? $this->server[$key] : $default;
+        return $this->server[$key] ?? $default;
     }
 
     public function xmlHttpRequest(string $method, string $uri, array $parameters = [], array $files = [], array $server = [], string $content = null, bool $changeHistory = true): Crawler
@@ -527,7 +527,7 @@ abstract class Client
      */
     protected function createCrawlerFromContent($uri, $content, $type)
     {
-        if (!class_exists('Symfony\Component\DomCrawler\Crawler')) {
+        if (!class_exists(Crawler::class)) {
             return null;
         }
 
@@ -671,7 +671,7 @@ abstract class Client
         } else {
             $currentUri = sprintf('http%s://%s/',
                 isset($this->server['HTTPS']) ? 's' : '',
-                isset($this->server['HTTP_HOST']) ? $this->server['HTTP_HOST'] : 'localhost'
+                $this->server['HTTP_HOST'] ?? 'localhost'
             );
         }
 
