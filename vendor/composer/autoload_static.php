@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit551463beb16c0e93869f88ee670aa6dd
+class ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -2357,6 +2357,7 @@ class ComposerStaticInit551463beb16c0e93869f88ee670aa6dd
         'Doctrine\\Common\\Annotations\\Annotation\\Attributes' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/Attributes.php',
         'Doctrine\\Common\\Annotations\\Annotation\\Enum' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/Enum.php',
         'Doctrine\\Common\\Annotations\\Annotation\\IgnoreAnnotation' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/IgnoreAnnotation.php',
+        'Doctrine\\Common\\Annotations\\Annotation\\NamedArgumentConstructor' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/NamedArgumentConstructor.php',
         'Doctrine\\Common\\Annotations\\Annotation\\Required' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/Required.php',
         'Doctrine\\Common\\Annotations\\Annotation\\Target' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/Target.php',
         'Doctrine\\Common\\Annotations\\CachedReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/CachedReader.php',
@@ -6591,6 +6592,8 @@ class ComposerStaticInit551463beb16c0e93869f88ee670aa6dd
         'Stack\\Builder' => __DIR__ . '/..' . '/stack/builder/src/Stack/Builder.php',
         'Stack\\StackedHttpKernel' => __DIR__ . '/..' . '/stack/builder/src/Stack/StackedHttpKernel.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\ArgumentValueResolver\\PsrServerRequestResolver' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/ArgumentValueResolver/PsrServerRequestResolver.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\EventListener\\PsrResponseListener' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/EventListener/PsrResponseListener.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\HttpFoundationFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/HttpFoundationFactory.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\PsrHttpFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/PsrHttpFactory.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\UploadedFile' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/UploadedFile.php',
@@ -8556,11 +8559,11 @@ class ComposerStaticInit551463beb16c0e93869f88ee670aa6dd
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit551463beb16c0e93869f88ee670aa6dd::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit551463beb16c0e93869f88ee670aa6dd::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit551463beb16c0e93869f88ee670aa6dd::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit551463beb16c0e93869f88ee670aa6dd::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit551463beb16c0e93869f88ee670aa6dd::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$classMap;
 
         }, null, ClassLoader::class);
     }
