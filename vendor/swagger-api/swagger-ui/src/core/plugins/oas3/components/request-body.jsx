@@ -83,7 +83,18 @@ const RequestBody = ({
 
   const mediaTypeValue = requestBodyContent.get(contentType, OrderedMap())
   const schemaForMediaType = mediaTypeValue.get("schema", OrderedMap())
-  const examplesForMediaType = mediaTypeValue.get("examples", null)
+  const rawExamplesOfMediaType = mediaTypeValue.get("examples", null)
+  const sampleForMediaType = rawExamplesOfMediaType?.map((container, key) => {
+    const val = container?.get("value", null)
+    if(val) {
+      container = container.set("value",   getDefaultRequestBodyValue(
+        requestBody,
+        contentType,
+        key,
+      ), val)
+    }
+    return container
+  })
 
   const handleExamplesSelect = (key /*, { isSyntheticChange } */) => {
     updateActiveExamplesKey(key)
@@ -144,11 +155,18 @@ const RequestBody = ({
               const currentValue = requestBodyValue.getIn([key, "value"])
               const currentErrors = requestBodyValue.getIn([key, "errors"]) || requestBodyErrors
               const included = requestBodyInclusionSetting.get(key) || false
-              let hasNonEmptyInitialVal = prop.has("default") || prop.has("example") || prop.hasIn(["items", "example"]) || prop.hasIn(["items", "default"]) || prop.has("enum") && prop.get("enum").size === 1
+
+              const useInitialValFromSchemaSamples = prop.has("default")
+                || prop.has("example")
+                || prop.hasIn(["items", "example"])
+                || prop.hasIn(["items", "default"])
+              const useInitialValFromEnum = prop.has("enum") && (prop.get("enum").size === 1 || required)
+              const useInitialValue = useInitialValFromSchemaSamples || useInitialValFromEnum
+              
               let initialValue = ""
-              if(type === "array" && !hasNonEmptyInitialVal) {
+              if(type === "array" && !useInitialValue) {
                 initialValue = []
-              } else if (hasNonEmptyInitialVal) {
+              } else if (useInitialValue) {
                 // TODO: what about example or examples from requestBody could be passed as exampleOverride
                 initialValue = getSampleSchema(prop, false, {
                   includeWriteOnly: true
@@ -223,10 +241,10 @@ const RequestBody = ({
       <Markdown source={requestBodyDescription} />
     }
     {
-      examplesForMediaType ? (
+      sampleForMediaType ? (
         <ExamplesSelectValueRetainer
             userHasEditedBody={userHasEditedBody}
-            examples={examplesForMediaType}
+            examples={sampleForMediaType}
             currentKey={activeExamplesKey}
             currentUserInputValue={requestBodyValue}
             onSelect={handleExamplesSelect}
@@ -269,9 +287,9 @@ const RequestBody = ({
       )
     }
     {
-       examplesForMediaType ? (
+      sampleForMediaType ? (
         <Example
-          example={examplesForMediaType.get(activeExamplesKey)}
+          example={sampleForMediaType.get(activeExamplesKey)}
           getComponent={getComponent}
           getConfigs={getConfigs}
         />

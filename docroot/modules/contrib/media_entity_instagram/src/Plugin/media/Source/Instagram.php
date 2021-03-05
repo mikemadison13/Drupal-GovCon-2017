@@ -76,7 +76,7 @@ class Instagram extends OEmbed {
 
       case 'shortcode':
         $matches = $this->matchRegexp($media);
-        if ($matches['shortcode']) {
+        if (is_array($matches) && !empty($matches['shortcode'])) {
           return $matches['shortcode'];
         }
         return FALSE;

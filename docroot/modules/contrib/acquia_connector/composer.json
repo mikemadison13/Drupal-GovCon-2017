@@ -5,21 +5,16 @@
     "license": "GPL-2.0-or-later",
     "require": {
         "ext-json": "*",
-        "drupal/core": "^8.8 || ^9.0.0-alpha1"
-    },
-    "require-dev": {
-        "acquia/coding-standards": "^0.4.1",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"
+        "drupal/core": "^8.9 || ^9"
     },
     "extra": {
         "branch-alias": {
-            "dev-8.x-2.x": "2.x-dev"
+            "dev-3.x": "3.x-dev"
         },
         "drush": {
             "services": {
-                "drush.services.yml": "^9"
+                "drush.services.yml": "^9 || ^10"
             }
-        },
-        "phpcodesniffer-search-depth": 4
+        }
     }
 }

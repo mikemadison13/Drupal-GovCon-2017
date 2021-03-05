@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17
+class ComposerStaticInit9dda672efcbd095502a7cec637ff8e58
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -7139,6 +7139,7 @@ class ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17
         'Symfony\\Component\\Finder\\Iterator\\FileTypeFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/FileTypeFilterIterator.php',
         'Symfony\\Component\\Finder\\Iterator\\FilecontentFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/FilecontentFilterIterator.php',
         'Symfony\\Component\\Finder\\Iterator\\FilenameFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/FilenameFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\LazyIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/LazyIterator.php',
         'Symfony\\Component\\Finder\\Iterator\\MultiplePcreFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/MultiplePcreFilterIterator.php',
         'Symfony\\Component\\Finder\\Iterator\\PathFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/PathFilterIterator.php',
         'Symfony\\Component\\Finder\\Iterator\\RecursiveDirectoryIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/RecursiveDirectoryIterator.php',
@@ -8559,11 +8560,11 @@ class ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitb1917d352aa522cf8d51fc16b3131d17::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$classMap;
 
         }, null, ClassLoader::class);
     }

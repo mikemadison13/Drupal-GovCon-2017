@@ -172,7 +172,7 @@ class Twitter extends MediaSourceBase implements MediaSourceFieldConstraintsInte
   public function getMetadata(MediaInterface $media, $attribute_name) {
     $matches = $this->matchRegexp($media);
 
-    if (!$matches['id']) {
+    if (!is_array($matches) || empty($matches['id'])) {
       return NULL;
     }
 
