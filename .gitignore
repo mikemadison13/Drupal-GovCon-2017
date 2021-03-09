@@ -1,4 +1,4 @@
-# This file will be copied into the docroot of the build artifact.
+# This file will be copied into the root directory of the build artifact.
 local.*
 *.local
 local.blt.yml
@@ -257,3 +257,10 @@ Session.vim
 # Temporary files.
 .netrwhist
 *~
+
+# ------------
+# - Prevent supply chain attacks
+# - Reference: https://www.bleepingcomputer.com/news/security/researcher-hacks-over-35-tech-firms-in-novel-supply-chain-attack/
+# ------------
+package.json
+package-lock.json

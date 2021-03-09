@@ -33,9 +33,13 @@ class Composer
             $packages = array_merge($json['packages'], isset($json['packages-dev']) ? $json['packages-dev'] : []);
         }
 
+        if (empty($packages)) {
+            return [];
+        }
+
         return array_merge(...array_map(function ($package) {
             return [$package['name'] => [
-                'version' => str_replace('v', '', $package['version']),
+                'version' => ltrim($package['version'], 'v'),
                 'time' => isset($package['time']) ? $package['time'] : null,
             ]];
         }, $packages));

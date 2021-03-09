@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit9dda672efcbd095502a7cec637ff8e58
+class ComposerStaticInita00299a85baa69e0f12ac66379f8ef38
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -1068,6 +1068,8 @@ class ComposerStaticInit9dda672efcbd095502a7cec637ff8e58
         'Acquia\\Blt\\Update\\Updater' => __DIR__ . '/..' . '/acquia/blt/src/Update/Updater.php',
         'Acquia\\Blt\\Update\\Updates' => __DIR__ . '/..' . '/acquia/blt/src/Update/Updates.php',
         'Acquia\\DrupalEnvironmentDetector\\AcquiaDrupalEnvironmentDetector' => __DIR__ . '/..' . '/acquia/drupal-environment-detector/src/AcquiaDrupalEnvironmentDetector.php',
+        'Acquia\\DrupalEnvironmentDetector\\EnvironmentNames' => __DIR__ . '/..' . '/acquia/drupal-environment-detector/src/EnvironmentNames.php',
+        'Acquia\\DrupalEnvironmentDetector\\FilePaths' => __DIR__ . '/..' . '/acquia/drupal-environment-detector/src/FilePaths.php',
         'Acquia\\LightningExtension\\Context\\AwaitTrait' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/AwaitTrait.inc',
         'Acquia\\LightningExtension\\Context\\CkEditorContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/CkEditorContext.behat.inc',
         'Acquia\\LightningExtension\\Context\\DebugContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/contexts/DebugContext.behat.inc',
@@ -2283,7 +2285,6 @@ class ComposerStaticInit9dda672efcbd095502a7cec637ff8e58
         'Consolidation\\OutputFormatters\\Validate\\ValidDataTypesInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Validate/ValidDataTypesInterface.php',
         'Consolidation\\OutputFormatters\\Validate\\ValidDataTypesTrait' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Validate/ValidDataTypesTrait.php',
         'Consolidation\\OutputFormatters\\Validate\\ValidationInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Validate/ValidationInterface.php',
-        'Consolidation\\SiteAlias\\Cli\\SiteAliasCommands' => __DIR__ . '/..' . '/consolidation/site-alias/src/Cli/SiteAliasCommands.php',
         'Consolidation\\SiteAlias\\DataFileLoaderInterface' => __DIR__ . '/..' . '/consolidation/site-alias/src/DataFileLoaderInterface.php',
         'Consolidation\\SiteAlias\\HostPath' => __DIR__ . '/..' . '/consolidation/site-alias/src/HostPath.php',
         'Consolidation\\SiteAlias\\SiteAlias' => __DIR__ . '/..' . '/consolidation/site-alias/src/SiteAlias.php',
@@ -2309,7 +2310,6 @@ class ComposerStaticInit9dda672efcbd095502a7cec637ff8e58
         'Consolidation\\SiteProcess\\ProcessManager' => __DIR__ . '/..' . '/consolidation/site-process/src/ProcessManager.php',
         'Consolidation\\SiteProcess\\ProcessManagerAwareInterface' => __DIR__ . '/..' . '/consolidation/site-process/src/ProcessManagerAwareInterface.php',
         'Consolidation\\SiteProcess\\ProcessManagerAwareTrait' => __DIR__ . '/..' . '/consolidation/site-process/src/ProcessManagerAwareTrait.php',
-        'Consolidation\\SiteProcess\\Remo\\RemoCommands' => __DIR__ . '/..' . '/consolidation/site-process/src/Remo/RemoCommands.php',
         'Consolidation\\SiteProcess\\SiteProcess' => __DIR__ . '/..' . '/consolidation/site-process/src/SiteProcess.php',
         'Consolidation\\SiteProcess\\Transport\\DockerComposeTransport' => __DIR__ . '/..' . '/consolidation/site-process/src/Transport/DockerComposeTransport.php',
         'Consolidation\\SiteProcess\\Transport\\LocalTransport' => __DIR__ . '/..' . '/consolidation/site-process/src/Transport/LocalTransport.php',
@@ -4728,6 +4728,7 @@ class ComposerStaticInit9dda672efcbd095502a7cec637ff8e58
         'Drush\\Drupal\\Commands\\core\\LanguageCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/LanguageCommands.php',
         'Drush\\Drupal\\Commands\\core\\LocaleCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/LocaleCommands.php',
         'Drush\\Drupal\\Commands\\core\\MessengerCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/MessengerCommands.php',
+        'Drush\\Drupal\\Commands\\core\\MigrateRunnerCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/MigrateRunnerCommands.php',
         'Drush\\Drupal\\Commands\\core\\QueueCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/QueueCommands.php',
         'Drush\\Drupal\\Commands\\core\\RoleCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/RoleCommands.php',
         'Drush\\Drupal\\Commands\\core\\StateCommands' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Commands/core/StateCommands.php',
@@ -4751,6 +4752,13 @@ class ComposerStaticInit9dda672efcbd095502a7cec637ff8e58
         'Drush\\Drupal\\ExtensionDiscovery' => __DIR__ . '/..' . '/drush/drush/src/Drupal/ExtensionDiscovery.php',
         'Drush\\Drupal\\FindCommandsCompilerPass' => __DIR__ . '/..' . '/drush/drush/src/Drupal/FindCommandsCompilerPass.php',
         'Drush\\Drupal\\InstallerKernel' => __DIR__ . '/..' . '/drush/drush/src/Drupal/InstallerKernel.php',
+        'Drush\\Drupal\\Migrate\\MigrateEvents' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Migrate/MigrateEvents.php',
+        'Drush\\Drupal\\Migrate\\MigrateExecutable' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Migrate/MigrateExecutable.php',
+        'Drush\\Drupal\\Migrate\\MigrateIdMapFilter' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Migrate/MigrateIdMapFilter.php',
+        'Drush\\Drupal\\Migrate\\MigrateMessage' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Migrate/MigrateMessage.php',
+        'Drush\\Drupal\\Migrate\\MigrateMissingSourceRowsEvent' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Migrate/MigrateMissingSourceRowsEvent.php',
+        'Drush\\Drupal\\Migrate\\MigratePrepareRowEvent' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Migrate/MigratePrepareRowEvent.php',
+        'Drush\\Drupal\\Migrate\\MigrateUtils' => __DIR__ . '/..' . '/drush/drush/src/Drupal/Migrate/MigrateUtils.php',
         'Drush\\Drupal\\UpdateKernel' => __DIR__ . '/..' . '/drush/drush/src/Drupal/UpdateKernel.php',
         'Drush\\Drush' => __DIR__ . '/..' . '/drush/drush/src/Drush.php',
         'Drush\\Exceptions\\CommandFailedException' => __DIR__ . '/..' . '/drush/drush/src/Exceptions/CommandFailedException.php',
@@ -8441,6 +8449,7 @@ class ComposerStaticInit9dda672efcbd095502a7cec637ff8e58
         'WebSocket\\Server' => __DIR__ . '/..' . '/textalk/websocket/lib/Server.php',
         'WebSocket\\TimeoutException' => __DIR__ . '/..' . '/textalk/websocket/lib/TimeoutException.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
+        'Webmozart\\Assert\\InvalidArgumentException' => __DIR__ . '/..' . '/webmozart/assert/src/InvalidArgumentException.php',
         'Webmozart\\Assert\\Mixin' => __DIR__ . '/..' . '/webmozart/assert/src/Mixin.php',
         'Webmozart\\PathUtil\\Path' => __DIR__ . '/..' . '/webmozart/path-util/src/Path.php',
         'Webmozart\\PathUtil\\Url' => __DIR__ . '/..' . '/webmozart/path-util/src/Url.php',
@@ -8560,11 +8569,11 @@ class ComposerStaticInit9dda672efcbd095502a7cec637ff8e58
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit9dda672efcbd095502a7cec637ff8e58::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInita00299a85baa69e0f12ac66379f8ef38::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInita00299a85baa69e0f12ac66379f8ef38::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInita00299a85baa69e0f12ac66379f8ef38::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInita00299a85baa69e0f12ac66379f8ef38::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInita00299a85baa69e0f12ac66379f8ef38::$classMap;
 
         }, null, ClassLoader::class);
     }

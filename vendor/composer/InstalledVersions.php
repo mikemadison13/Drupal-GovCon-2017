@@ -37,12 +37,12 @@ class InstalledVersions
   array (
     'acquia/blt' => 
     array (
-      'pretty_version' => '12.7.0',
-      'version' => '12.7.0.0',
+      'pretty_version' => '12.8.1',
+      'version' => '12.8.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'ce857cf07a25f7e638b9cde5bf7adc42085eb40b',
+      'reference' => 'f52dd2785bef54b253be5308f8c2eb81f47969c8',
     ),
     'acquia/blt-behat' => 
     array (
@@ -82,12 +82,12 @@ class InstalledVersions
     ),
     'acquia/drupal-environment-detector' => 
     array (
-      'pretty_version' => 'v1.2.1',
-      'version' => '1.2.1.0',
+      'pretty_version' => 'v1.3.0',
+      'version' => '1.3.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '75a6038aec028c8f2c0136e1e291d6305b94f64e',
+      'reference' => '7bd7903feeff29e37b239e65db8b0f1612a887b8',
     ),
     'acquia/lightning' => 
     array (
@@ -397,21 +397,21 @@ class InstalledVersions
     ),
     'consolidation/site-alias' => 
     array (
-      'pretty_version' => '3.0.1',
-      'version' => '3.0.1.0',
+      'pretty_version' => '3.1.0',
+      'version' => '3.1.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'fd40a03f80f8fd4684b10bef8c8c4ec5a9a9bf26',
+      'reference' => '9ed3c590be9fcf9fea69c73456c2fd4b27f5204c',
     ),
     'consolidation/site-process' => 
     array (
-      'pretty_version' => '4.0.0',
-      'version' => '4.0.0.0',
+      'pretty_version' => '4.1.0',
+      'version' => '4.1.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'ad86475eb3fe73490eb1b6ff2e74ee0f09952e9d',
+      'reference' => 'ef57711d7049f7606ce936ded16ad93f1ad7f02c',
     ),
     'container-interop/container-interop' => 
     array (
@@ -2352,12 +2352,12 @@ class InstalledVersions
     ),
     'drush/drush' => 
     array (
-      'pretty_version' => '10.3.6',
-      'version' => '10.3.6.0',
+      'pretty_version' => '10.4.0',
+      'version' => '10.4.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'fc985a95c6010e04891a2dbcf3f39984b8c9ef0a',
+      'reference' => '507cecd32b05850cf2f70c8922ddad247cd9ce10',
     ),
     'egulias/email-validator' => 
     array (
@@ -2370,12 +2370,12 @@ class InstalledVersions
     ),
     'enlightn/security-checker' => 
     array (
-      'pretty_version' => 'v1.5.0',
-      'version' => '1.5.0.0',
+      'pretty_version' => 'v1.7.0',
+      'version' => '1.7.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '85ada478c641a304112ddd43e0c67dd18ce7c51e',
+      'reference' => '1ac108ba278ba0c2e71d2ce2ac4fac07ed6e8a29',
     ),
     'enshrined/svg-sanitize' => 
     array (
@@ -2451,12 +2451,12 @@ class InstalledVersions
     ),
     'guzzlehttp/promises' => 
     array (
-      'pretty_version' => '1.4.0',
-      'version' => '1.4.0.0',
+      'pretty_version' => '1.4.1',
+      'version' => '1.4.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => '60d379c243457e073cff02bc323a2a86cb355631',
+      'reference' => '8e7d04f1f6450fef59366c399cfad4b9383aa30d',
     ),
     'guzzlehttp/psr7' => 
     array (
@@ -2586,12 +2586,12 @@ class InstalledVersions
     ),
     'league/container' => 
     array (
-      'pretty_version' => '2.4.1',
-      'version' => '2.4.1.0',
+      'pretty_version' => '2.5.0',
+      'version' => '2.5.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '43f35abd03a12977a60ffd7095efd6a7808488c0',
+      'reference' => '8438dc47a0674e3378bcce893a0a04d79a2c22b3',
     ),
     'league/event' => 
     array (
@@ -3042,12 +3042,12 @@ class InstalledVersions
     ),
     'symfony/config' => 
     array (
-      'pretty_version' => 'v4.4.19',
-      'version' => '4.4.19.0',
+      'pretty_version' => 'v4.4.20',
+      'version' => '4.4.20.0',
       'aliases' => 
       array (
       ),
-      'reference' => '2c4c7827a7e143f5cf375666641b0f448eab8802',
+      'reference' => '98606c6fa1a8f55ff964ccdd704275bf5b9f71b3',
     ),
     'symfony/console' => 
     array (
@@ -3423,12 +3423,12 @@ class InstalledVersions
     ),
     'webmozart/assert' => 
     array (
-      'pretty_version' => '1.9.1',
-      'version' => '1.9.1.0',
+      'pretty_version' => '1.10.0',
+      'version' => '1.10.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'bafc69caeb4d49c39fd0779086c03a3738cbb389',
+      'reference' => '6964c76c7804814a842473e0c8fd15bab0f18e25',
     ),
     'webmozart/path-util' => 
     array (
