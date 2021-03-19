@@ -5,7 +5,7 @@ package: Testing
 dependencies:
   - memcache:memcache
 
-# Information added by Drupal.org packaging script on 2020-09-25
-version: '8.x-2.2'
+# Information added by Drupal.org packaging script on 2021-03-03
+version: '8.x-2.3'
 project: 'memcache'
-datestamp: 1601053268
+datestamp: 1614802367
