@@ -3,19 +3,20 @@
 namespace Drupal\r4032login\EventSubscriber;
 
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Cache\CacheableRedirectResponse;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\EventSubscriber\HttpExceptionSubscriberBase;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Path\PathMatcherInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\r4032login\Event\RedirectEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Component\Utility\Xss;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 
 /**
  * Redirect 403 to User Login event subscriber.
@@ -35,13 +36,6 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $currentUser;
-
-  /**
-   * The request stack service.
-   *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
-   */
-  protected $requestStack;
 
   /**
    * The path matcher.
@@ -71,8 +65,6 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
    *   The configuration factory.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack service.
    * @param \Drupal\Core\Path\PathMatcherInterface $path_matcher
    *   The path matcher.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
@@ -80,10 +72,9 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, AccountInterface $current_user, RequestStack $request_stack, PathMatcherInterface $path_matcher, EventDispatcherInterface $event_dispatcher, MessengerInterface $messenger) {
+  public function __construct(ConfigFactoryInterface $config_factory, AccountInterface $current_user, PathMatcherInterface $path_matcher, EventDispatcherInterface $event_dispatcher, MessengerInterface $messenger) {
     $this->configFactory = $config_factory;
     $this->currentUser = $current_user;
-    $this->requestStack = $request_stack;
     $this->pathMatcher = $path_matcher;
     $this->eventDispatcher = $event_dispatcher;
     $this->messenger = $messenger;
@@ -99,13 +90,14 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
   /**
    * Redirects on 403 Access Denied kernel exceptions.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
    *   The Event to process.
    */
-  public function on403(GetResponseEvent $event) {
+  public function on403(GetResponseForExceptionEvent $event) {
     $config = $this->configFactory->get('r4032login.settings');
 
-    $currentPath = $this->requestStack->getCurrentRequest()->getPathInfo();
+    $request = $event->getRequest();
+    $currentPath = $request->getPathInfo();
 
     // Check if the path should be ignored.
     if (($noRedirectPages = trim($config->get('match_noredirect_pages')))
@@ -139,11 +131,14 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
             'absolute' => TRUE,
           ])->toString();
         }
+        elseif ($currentPath == '/') {
+          $destination = $currentPath;
+        }
         else {
           $destination = substr($currentPath, 1);
         }
 
-        if ($queryString = $this->requestStack->getCurrentRequest()->getQueryString()) {
+        if ($queryString = $request->getQueryString()) {
           $destination .= '?' . $queryString;
         }
 
@@ -154,6 +149,9 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
           $options['query'][$config->get('destination_parameter_override')] = $destination;
         }
       }
+
+      // Remove the destination parameter to allow redirection.
+      $request->query->remove('destination');
 
       // Allow to alter the url or options before to redirect.
       $redirectEvent = new RedirectEvent($redirectPath, $options);
@@ -171,7 +169,7 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
         if ($this->currentUser->isAnonymous() && $config->get('display_denied_message')) {
           $message = $config->get('access_denied_message');
           $messageType = $config->get('access_denied_message_type');
-          $this->messenger->addMessage(Xss::filterAdmin($message), $messageType);
+          $this->messenger->addMessage(Markup::create(Xss::filterAdmin($message)), $messageType);
         }
 
         if ($redirectPath === '<front>') {
@@ -182,8 +180,15 @@ class R4032LoginSubscriber extends HttpExceptionSubscriberBase {
         }
 
         $code = $config->get('default_redirect_code');
-        $response = new RedirectResponse($url, $code);
+        $response = new CacheableRedirectResponse($url, $code);
       }
+
+      // Add caching dependencies so the cache of the redirection will be
+      // updated when necessary.
+      $cacheMetadata = new CacheableMetadata();
+      $cacheMetadata->addCacheTags(['4xx-response']);
+      $cacheMetadata->addCacheableDependency($config);
+      $response->addCacheableDependency($cacheMetadata);
 
       $event->setResponse($response);
     }

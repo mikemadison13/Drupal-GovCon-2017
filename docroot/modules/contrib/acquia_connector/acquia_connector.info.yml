@@ -8,7 +8,7 @@ configure: acquia_connector.settings
 dependencies:
   - drupal:path_alias
 
-# Information added by Drupal.org packaging script on 2021-02-26
-version: '3.0.1'
+# Information added by Drupal.org packaging script on 2021-03-30
+version: '3.0.2'
 project: 'acquia_connector'
-datestamp: 1614300587
+datestamp: 1617129058

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf
+class ComposerStaticInit7d0b5d8291672c0d5002e2059d59faea
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -213,6 +213,7 @@ class ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf
             'Drupal\\Driver\\Database\\mysql\\' => 29,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\' => 12,
+            'Drupal\\Composer\\Plugin\\Scaffold\\' => 32,
             'Drupal\\Component\\' => 17,
             'Drupal\\' => 7,
             'DrupalPractice\\' => 15,
@@ -668,6 +669,10 @@ class ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf
         'Drupal\\Core\\' => 
         array (
             0 => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core',
+        ),
+        'Drupal\\Composer\\Plugin\\Scaffold\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/drupal/core-composer-scaffold',
         ),
         'Drupal\\Component\\' => 
         array (
@@ -2873,6 +2878,29 @@ class ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf
         'Drupal\\Component\\Uuid\\Uuid' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Uuid/Uuid.php',
         'Drupal\\Component\\Uuid\\UuidInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Uuid/UuidInterface.php',
         'Drupal\\Component\\Version\\Constraint' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Version/Constraint.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\AllowedPackages' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/AllowedPackages.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\CommandProvider' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/CommandProvider.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ComposerScaffoldCommand' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ComposerScaffoldCommand.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\GenerateAutoloadReferenceFile' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/GenerateAutoloadReferenceFile.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Git' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Git.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Handler' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Handler.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Interpolator' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Interpolator.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ManageGitIgnore' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ManageGitIgnore.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ManageOptions' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ManageOptions.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\AbstractOperation' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/AbstractOperation.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\AppendOp' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/AppendOp.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\OperationData' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/OperationData.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\OperationFactory' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/OperationFactory.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\OperationInterface' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/OperationInterface.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\ReplaceOp' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/ReplaceOp.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\ScaffoldFileCollection' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/ScaffoldFileCollection.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\ScaffoldResult' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/ScaffoldResult.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\SkipOp' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/SkipOp.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Plugin' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Plugin.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\PostPackageEventListenerInterface' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/PostPackageEventListenerInterface.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ScaffoldFileInfo' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ScaffoldFileInfo.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ScaffoldFilePath' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ScaffoldFilePath.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ScaffoldOptions' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ScaffoldOptions.php',
         'Drupal\\Core\\Access\\AccessArgumentsResolverFactory' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Access/AccessArgumentsResolverFactory.php',
         'Drupal\\Core\\Access\\AccessArgumentsResolverFactoryInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Access/AccessArgumentsResolverFactoryInterface.php',
         'Drupal\\Core\\Access\\AccessCheckInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Access/AccessCheckInterface.php',
@@ -5367,6 +5395,8 @@ class ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf
         'Laminas\\Feed\\Reader\\Extension\\DublinCore\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/DublinCore/Feed.php',
         'Laminas\\Feed\\Reader\\Extension\\GooglePlayPodcast\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/GooglePlayPodcast/Entry.php',
         'Laminas\\Feed\\Reader\\Extension\\GooglePlayPodcast\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/GooglePlayPodcast/Feed.php',
+        'Laminas\\Feed\\Reader\\Extension\\PodcastIndex\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/PodcastIndex/Entry.php',
+        'Laminas\\Feed\\Reader\\Extension\\PodcastIndex\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/PodcastIndex/Feed.php',
         'Laminas\\Feed\\Reader\\Extension\\Podcast\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/Podcast/Entry.php',
         'Laminas\\Feed\\Reader\\Extension\\Podcast\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/Podcast/Feed.php',
         'Laminas\\Feed\\Reader\\Extension\\Slash\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/Slash/Entry.php',
@@ -5413,6 +5443,10 @@ class ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf
         'Laminas\\Feed\\Writer\\Extension\\ITunes\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/ITunes/Feed.php',
         'Laminas\\Feed\\Writer\\Extension\\ITunes\\Renderer\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/ITunes/Renderer/Entry.php',
         'Laminas\\Feed\\Writer\\Extension\\ITunes\\Renderer\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/ITunes/Renderer/Feed.php',
+        'Laminas\\Feed\\Writer\\Extension\\PodcastIndex\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/PodcastIndex/Entry.php',
+        'Laminas\\Feed\\Writer\\Extension\\PodcastIndex\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/PodcastIndex/Feed.php',
+        'Laminas\\Feed\\Writer\\Extension\\PodcastIndex\\Renderer\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/PodcastIndex/Renderer/Entry.php',
+        'Laminas\\Feed\\Writer\\Extension\\PodcastIndex\\Renderer\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/PodcastIndex/Renderer/Feed.php',
         'Laminas\\Feed\\Writer\\Extension\\RendererInterface' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/RendererInterface.php',
         'Laminas\\Feed\\Writer\\Extension\\Slash\\Renderer\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/Slash/Renderer/Entry.php',
         'Laminas\\Feed\\Writer\\Extension\\Threading\\Renderer\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/Threading/Renderer/Entry.php',
@@ -8570,11 +8604,11 @@ class ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitff4d5e09bfd5313fadb4d7901bc130bf::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7d0b5d8291672c0d5002e2059d59faea::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7d0b5d8291672c0d5002e2059d59faea::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit7d0b5d8291672c0d5002e2059d59faea::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit7d0b5d8291672c0d5002e2059d59faea::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit7d0b5d8291672c0d5002e2059d59faea::$classMap;
 
         }, null, ClassLoader::class);
     }
