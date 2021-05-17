@@ -199,6 +199,8 @@ class ComponentsInfo {
    *
    * @return array
    *   The components info.
+   *
+   * @internal
    */
   public function getModuleInfo($name) {
     $this->init();
@@ -216,6 +218,8 @@ class ComponentsInfo {
    *
    * @return array
    *   The components info, keyed by module name.
+   *
+   * @internal
    */
   public function getAllModuleInfo() {
     $this->init();
@@ -231,6 +235,8 @@ class ComponentsInfo {
    *
    * @return array
    *   The components info.
+   *
+   * @internal
    */
   public function getThemeInfo($name) {
     $this->init();
@@ -248,6 +254,8 @@ class ComponentsInfo {
    *
    * @return array
    *   The components info, keyed by theme name.
+   *
+   * @internal
    */
   public function getAllThemeInfo() {
     $this->init();
@@ -270,6 +278,8 @@ class ComponentsInfo {
    *
    * @return bool
    *   Whether the namespace is protected or not.
+   *
+   * @internal
    */
   public function isProtectedNamespace(string $namespace): bool {
     $this->init();
@@ -305,6 +315,8 @@ class ComponentsInfo {
    *   - type: The extension type: module, theme, or profile.
    *   - package: The package name the module is listed under or an empty
    *     string.
+   *
+   * @internal
    */
   public function getProtectedNamespaceExtensionInfo(string $namespace) {
     $this->init();
@@ -327,8 +339,7 @@ class ComponentsInfo {
    * @return array
    *   List of protected namespaces.
    *
-   * @deprecated in components:8.x-2.1 and is removed from components:3.0.0. Use
-   *   ::isProtectedNamespace() instead.
+   * @internal
    */
   public function getProtectedNamespaces() {
     $this->init();

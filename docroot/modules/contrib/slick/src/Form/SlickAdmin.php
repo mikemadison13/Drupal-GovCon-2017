@@ -178,6 +178,15 @@ class SlickAdmin implements SlickAdminInterface {
       ];
     }
 
+    if (empty($definition['_views'])) {
+      $form['use_theme_field'] = [
+        '#title'       => $this->t('Use field template'),
+        '#type'        => 'checkbox',
+        '#description' => $this->t('Wrap Slick field output into regular field markup (field.html.twig). Vanilla output otherwise.'),
+        '#weight'      => -106,
+      ];
+    }
+
     if (!empty($definition['thumb_positions'])) {
       $form['thumbnail_position'] = [
         '#type'        => 'select',

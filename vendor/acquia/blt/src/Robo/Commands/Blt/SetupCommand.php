@@ -28,7 +28,6 @@ class SetupCommand extends BltTasks {
     switch ($this->getConfigValue('setup.strategy')) {
       case 'install':
         $commands[] = 'drupal:install';
-        $commands[] = 'drupal:toggle:modules';
         break;
 
       case 'sync':
@@ -40,8 +39,6 @@ class SetupCommand extends BltTasks {
         $commands[] = 'drupal:update';
         break;
     }
-
-    $commands[] = 'blt:init:shell-alias';
 
     $this->invokeCommands($commands);
   }

@@ -7,7 +7,7 @@
         "cweagans/composer-patches": "^1.6",
         "drupal/bg_image_formatter": "^1.10",
         "drupal/core": "^8.7.13 || ^9.0.0",
-        "drupal/ctools": "^3.0",
+        "drupal/ctools": "^3.6",
         "drupal/entity_block": "^1.0",
         "drupal/entity_browser_block": "^1.0",
         "drupal/layout_builder_restrictions": "^2.7",
@@ -34,21 +34,21 @@
     },
     "extra": {
         "drupal-scaffold": {
-            "locations": {
-                "web-root": "docroot/"
-            },
             "file-mapping": {
-                "[project-root]/.gitattributes": false,
                 "[project-root]/.editorconfig": false,
-                "[web-root]/example.gitignore": false,
+                "[project-root]/.gitattributes": false,
                 "[web-root]/.csslintrc": false,
+                "[web-root]/INSTALL.txt": false,
+                "[web-root]/example.gitignore": false,
                 "[web-root]/modules/README.txt": false,
                 "[web-root]/profiles/README.txt": false,
+                "[web-root]/robots.txt": false,
                 "[web-root]/sites/README.txt": false,
                 "[web-root]/themes/README.txt": false,
-                "[web-root]/INSTALL.txt": false,
-                "[web-root]/robots.txt": false,
                 "[web-root]/web.config": false
+            },
+            "locations": {
+                "web-root": "docroot/"
             }
         },
         "enable-patching": true,
@@ -73,11 +73,11 @@
             "drupal/core": "-p2"
         },
         "patches": {
-            "drupal/panels": {
-                "2878684 - Use String.match to correlate regions when switching Layouts in Panels IPE": "https://www.drupal.org/files/issues/panels-ipe-2878684-3.patch"
-            },
             "drupal/panelizer": {
                 "2778565 - Multilingual support for Panelizer": "https://www.drupal.org/files/issues/2020-03-23/2778565-47.patch"
+            },
+            "drupal/panels": {
+                "2878684 - Use String.match to correlate regions when switching Layouts in Panels IPE": "https://www.drupal.org/files/issues/panels-ipe-2878684-3.patch"
             }
         }
     },
@@ -95,19 +95,15 @@
     "prefer-stable": true,
     "scripts": {
         "post-install-cmd": [
-            "@push"
+            "@putenv DIR=./docroot/modules/lightning_layout",
+            "mkdir -p $DIR",
+            "ln -s -f $PWD/config $DIR",
+            "ln -s -f $PWD/modules $DIR",
+            "ln -s -f $PWD/src $DIR",
+            "ln -s -f $PWD/tests $DIR",
+            "find $PWD -name 'lightning_layout.*' -depth 1 -exec ln -s -f {} $DIR ';'",
+            "cp -f phpunit.xml ./docroot/core"
         ],
-        "post-update-cmd": [
-            "@push"
-        ],
-        "nuke": "rm -r -f docroot vendor",
-        "pull": "cp -R -f ./docroot/modules/contrib/lightning_layout/* .",
-        "push": [
-            "rm -r -f ./docroot/modules/contrib/lightning_layout",
-            "mkdir -p ./docroot/modules/contrib/lightning_layout",
-            "@composer archive --file lightning_layout",
-            "tar -x -f lightning_layout.tar -C ./docroot/modules/contrib/lightning_layout",
-            "rm lightning_layout.tar"
-        ]
+        "nuke": "rm -r -f docroot vendor"
     }
 }

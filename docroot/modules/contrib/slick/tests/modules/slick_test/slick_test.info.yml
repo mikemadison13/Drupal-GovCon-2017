@@ -8,7 +8,7 @@ dependencies:
   - blazy:blazy_test (>= 2.x)
   - slick:slick (>= 2.x)
 
-# Information added by Drupal.org packaging script on 2020-05-07
-version: '8.x-2.2'
+# Information added by Drupal.org packaging script on 2021-04-17
+version: '8.x-2.3'
 project: 'slick'
-datestamp: 1588861106
+datestamp: 1618668941

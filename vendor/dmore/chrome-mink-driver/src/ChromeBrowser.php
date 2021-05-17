@@ -1,4 +1,5 @@
 <?php
+
 namespace DMore\ChromeDriver;
 
 use Behat\Mink\Exception\DriverException;
@@ -6,15 +7,25 @@ use WebSocket\ConnectionException;
 
 class ChromeBrowser extends DevToolsConnection
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $context_id;
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $headless = true;
-    /** @var HttpClient */
+    /**
+     * @var HttpClient
+     */
     private $http_client;
-    /** @var string */
+    /**
+     * @var string
+     */
     private $http_uri;
-    /** @var string */
+    /**
+     * @var string
+     */
     private $version;
 
     /**
@@ -38,26 +49,34 @@ class ChromeBrowser extends DevToolsConnection
      */
     public function start()
     {
-        $versionInfo = json_decode($this->http_client->get($this->http_uri . '/json/version'));
+        $response = $this->http_client->get($this->http_uri . '/json/version');
+        $versionInfo = json_decode($response);
 
         // Detect if Chrome is running
         if (null === $versionInfo) {
+            $jsonError = json_last_error_msg();
+
             throw new \RuntimeException(
                 sprintf(
-                    'Could not fetch version information from %s. Please check if Chrome is running. Please see docs/troubleshooting.md if Chrome crashed unexpected.',
-                    $this->http_uri.'/json/version'
+                    "Could not fetch version information from %s. Check if Chrome is running. " .
+                    "See docs/troubleshooting.md if Chrome crashed unexpectedly." . PHP_EOL .
+                    "Json Error: %s." . PHP_EOL .
+                    "Response was: %s",
+                    $this->http_uri . '/json/version',
+                    $jsonError,
+                    $response
                 )
             );
         }
 
         // Detect Browser version
-        if(property_exists($versionInfo, 'Browser')) {
+        if (property_exists($versionInfo, 'Browser')) {
             $start = strpos($versionInfo->Browser, '/') + 1;
             $this->version = (int) substr($versionInfo->Browser, $start, strpos($versionInfo->Browser, '.') - $start);
         }
 
         // Detect if Chrome has been started in Headless Mode
-        if(property_exists($versionInfo, 'Browser') && strpos($versionInfo->Browser, 'Headless') === false) {
+        if (property_exists($versionInfo, 'Browser') && strpos($versionInfo->Browser, 'Headless') === false) {
             $this->headless = false;
         }
 
@@ -65,14 +84,16 @@ class ChromeBrowser extends DevToolsConnection
             try {
                 $versionInfo = json_decode($this->http_client->get($this->http_uri . '/json/version'));
                 // handling chrome versions 62+ where Target.createBrowserContext moved to new location
-                if(property_exists($versionInfo, 'webSocketDebuggerUrl')) {
+                if (property_exists($versionInfo, 'webSocketDebuggerUrl')) {
                     $debugUrl = $versionInfo->webSocketDebuggerUrl;
                     $this->connect($debugUrl);
                 }
 
                 $this->context_id = $this->send('Target.createBrowserContext')['browserContextId'];
-                $data = $this->send('Target.createTarget',
-                    ['url' => 'about:blank', 'browserContextId' => $this->context_id]);
+                $data = $this->send(
+                    'Target.createTarget',
+                    ['url' => 'about:blank', 'browserContextId' => $this->context_id]
+                );
                 return $data['targetId'];
             } catch (DriverException $exception) {
                 if ($exception->getCode() == '-32601' || $exception->getCode() == '-32000') {

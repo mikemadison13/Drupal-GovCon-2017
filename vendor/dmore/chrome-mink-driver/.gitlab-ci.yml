@@ -1,8 +1,9 @@
 variables:
   DOCROOT: "${CI_PROJECT_DIR}/vendor/mink/driver-testsuite/web-fixtures"
-  CHROME_DEBUG_URL: http://127.0.0.1:9222
+  CHROME_DEBUG_URL: http://localhost:9222
 
 stages:
+  - lint
   - test
 
 .test_template: &test_template
@@ -10,10 +11,25 @@ stages:
   tags: [docker]
   retry: 2
   script:
+    - bin/wait-for-chrome.sh
     - composer install -o --prefer-dist --ansi --no-progress
     - test -z "${AUTOSTART_XVFB}" || sed -i '27s#^#//#' vendor/mink/driver-testsuite/tests/Basic/BasicAuthTest.php
-    - bin/wait-for-chrome.sh
-    - vendor/bin/phpunit --colors=always
+    - vendor/bin/phpunit --colors=always --log-junit junit.xml
+  needs: []
+  artifacts:
+    paths:
+      - junit.xml
+    reports:
+      junit:
+        - junit.xml
+
+GrumPHP:
+  image: composer:2.0.8
+  stage: lint
+  tags: [docker]
+  script:
+    - composer require phpro/grumphp ergebnis/composer-normalize enlightn/security-checker --prefer-dist --ansi --no-progress --sort-packages
+    - vendor/bin/grumphp run -n
 
 PHP 5.6:
   <<: *test_template

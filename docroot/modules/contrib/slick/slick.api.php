@@ -46,17 +46,17 @@
  *     // Use $formatter->getBlazy($element) to have lazyLoad where $element
  *     // contains:
  *     // item: Drupal\image\Plugin\Field\FieldType\ImageItem.
- *     'slide'   => '<img src="https://drupal.org/files/One.gif" />',
+ *     'slide'   => ['#markup' => '<img src="https://drupal.org/files/One.gif" />'],
  *     'caption' => ['title' => t('Description #1')],
  *   ];
  *
  *   $items[] = [
- *     'slide'   => '<img src="https://drupal.org/files/Two.gif" />',
+ *     'slide'   => ['#markup' => '<img src="https://drupal.org/files/Two.gif" />'],
  *     'caption' => ['title' => t('Description #2')],
  *   ];
  *
  *   $items[] = [
- *     'slide'   => '<img src="https://drupal.org/files/Three.gif" />',
+ *     'slide'   => ['#markup' => '<img src="https://drupal.org/files/Three.gif" />'],
  *     'caption' => ['title' => t('Description #3')],
  *   ];
  *

@@ -32,7 +32,14 @@ trait SlickFormatterViewTrait {
     $this->formatter->postBuildElements($build, $items, $entities);
 
     // Pass to manager for easy updates to all Blazy formatters.
-    return $this->manager->build($build);
+    if (empty($settings['use_theme_field'])) {
+      // Return field-vanilla without field markup.
+      return $this->manager->build($build);
+    }
+    else {
+      // Return as array to render in regular field.html.twig:
+      return [$this->manager->build($build)];
+    }
   }
 
 }

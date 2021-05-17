@@ -1,13 +1,20 @@
 <?php
+
 namespace DMore\ChromeDriver;
 
 class StreamReadException extends \Exception
 {
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $eof;
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $timed_out;
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $blocked;
 
     public function __construct($eof, $timed_out, $blocked)

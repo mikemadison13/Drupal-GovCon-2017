@@ -74,3 +74,14 @@ function slick_update_8204() {
 function slick_update_8205() {
   // Do nothing to clear cache.
 }
+
+/**
+ * Removing traces of the Slick media module after merging.
+ */
+function slick_update_8206() {
+  $moduleHandler = \Drupal::moduleHandler();
+  if (!$moduleHandler->moduleExists('slick_media')) {
+    $schema_store = \Drupal::keyValue('system.schema');
+    $schema_store->delete('slick_media');
+  }
+}

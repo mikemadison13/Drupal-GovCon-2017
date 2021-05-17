@@ -1,0 +1,8 @@
+grumphp:
+    tasks:
+        composer: ~
+        composer_normalize: ~
+        phpcs:
+            standard: PSR12
+        securitychecker_enlightn:
+            run_always: false

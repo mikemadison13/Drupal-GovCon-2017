@@ -74,7 +74,7 @@
       }
       else {
         // Useful to hide caption during loading, but watch out setBackground().
-        $('.media--loading', t).closest('.slide__content').addClass('is-loading');
+        $('.media', t).closest('.slide__content').addClass('is-loading');
       }
 
       t.on('setPosition.sl', function (e, slick) {

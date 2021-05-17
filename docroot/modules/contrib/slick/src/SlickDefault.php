@@ -17,12 +17,13 @@ class SlickDefault extends BlazyDefault {
    */
   public static function baseSettings() {
     return [
-      'optionset'    => 'default',
-      'override'     => FALSE,
-      'overridables' => [],
-      'skin'         => '',
-      'skin_arrows'  => '',
-      'skin_dots'    => '',
+      'optionset'       => 'default',
+      'override'        => FALSE,
+      'overridables'    => [],
+      'skin'            => '',
+      'skin_arrows'     => '',
+      'skin_dots'       => '',
+      'use_theme_field' => FALSE,
     ] + parent::baseSettings();
   }
 

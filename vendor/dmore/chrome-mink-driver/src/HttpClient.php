@@ -1,4 +1,5 @@
 <?php
+
 namespace DMore\ChromeDriver;
 
 class HttpClient
@@ -12,13 +13,13 @@ class HttpClient
         // Host header with IP address or localhost.
         $parsed_url = parse_url($url);
         if ($parsed_url['host'] != 'localhost') {
-          $host = gethostbyname($parsed_url['host']);
-          if ($host != $parsed_url['host']) {
-            if (!empty($parsed_url['port'])) {
-              $host .= ':' . $parsed_url['port'];
+            $host = gethostbyname($parsed_url['host']);
+            if ($host != $parsed_url['host']) {
+                if (!empty($parsed_url['port'])) {
+                    $host .= ':' . $parsed_url['port'];
+                }
+                curl_setopt($curl, CURLOPT_HTTPHEADER, ["Host: $host"]);
             }
-            curl_setopt($curl, CURLOPT_HTTPHEADER, ["Host: $host"]);
-          }
         }
         return curl_exec($curl);
     }

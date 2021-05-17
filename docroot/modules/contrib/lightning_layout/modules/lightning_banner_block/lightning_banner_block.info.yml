@@ -12,7 +12,7 @@ dependencies:
   - lightning_layout:lightning_layout
   - token:token
 
-# Information added by Drupal.org packaging script on 2020-11-11
-version: '8.x-2.9'
+# Information added by Drupal.org packaging script on 2021-05-14
+version: '8.x-2.10'
 project: 'lightning_layout'
-datestamp: 1605114498
+datestamp: 1621032310
