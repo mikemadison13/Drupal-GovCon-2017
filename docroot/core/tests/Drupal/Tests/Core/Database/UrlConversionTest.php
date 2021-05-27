@@ -5,7 +5,6 @@ namespace Drupal\Tests\Core\Database;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Site\Settings;
 use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Tests for database URL to/from database connection array conversions.
@@ -30,11 +29,16 @@ class UrlConversionTest extends UnitTestCase {
     $this->root = dirname(__FILE__, 7);
     // Mock the container so we don't need to mock drupal_valid_test_ua().
     // @see \Drupal\Core\Extension\ExtensionDiscovery::scan()
-    $container = $this->prophesize(ContainerInterface::class);
-    $container->has('kernel')->willReturn(TRUE);
-    $container->has('extension.list.profile')->willReturn(FALSE);
-    $container->getParameter('site.path')->willReturn('');
-    \Drupal::setContainer($container->reveal());
+    $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
+    $container->expects($this->any())
+      ->method('has')
+      ->with('kernel')
+      ->willReturn(TRUE);
+    $container->expects($this->any())
+      ->method('getParameter')
+      ->with('site.path')
+      ->willReturn('');
+    \Drupal::setContainer($container);
 
     new Settings(['extension_discovery_scan_tests' => TRUE]);
   }

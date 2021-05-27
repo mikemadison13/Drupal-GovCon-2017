@@ -1,6 +1,0 @@
-name: 'Install Helper'
-core_version_requirement: '^8.8 || ^9'
-type: module
-hidden: true
-package: Lightning
-description: 'Provides helpful under-the-hood functionality used while installing Lightning.'

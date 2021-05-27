@@ -531,6 +531,7 @@ function _drupal_rewrite_settings_dump_one(\stdClass $variable, $prefix = '', $s
  *   The list of modules to install.
  */
 function drupal_verify_profile($install_state) {
+  $profile = $install_state['parameters']['profile'];
   $info = $install_state['profile_info'];
 
   // Get the list of available modules for the selected installation profile.
@@ -539,11 +540,10 @@ function drupal_verify_profile($install_state) {
   foreach ($listing->scan('module') as $present_module) {
     $present_modules[] = $present_module->getName();
   }
-  // Get the list of available profiles, which may be used as base profiles or
-  // ancestors of the selected installation profile.
-  foreach ($listing->scan('profile') as $present_profile) {
-    $present_modules[] = $present_profile->getName();
-  }
+
+  // The installation profile is also a module, which needs to be installed
+  // after all the other dependencies have been installed.
+  $present_modules[] = $profile;
 
   // Verify that all of the profile's required modules are present.
   $missing_modules = array_diff($info['install'], $present_modules);
@@ -1063,9 +1063,6 @@ function drupal_check_module($module) {
  *       Drupal's default installer theme.
  *     - finish_url: A destination to visit after the installation of the
  *       distribution is finished
- * - base profile: The shortname of the base installation profile. Existence of
- *   this key denotes that the installation profile depends on a parent
- *   installation profile.
  *
  * Note that this function does an expensive file system scan to get info file
  * information for dependencies. If you only need information from the info
@@ -1093,8 +1090,20 @@ function install_profile_info($profile, $langcode = 'en') {
   static $cache = [];
 
   if (!isset($cache[$profile][$langcode])) {
+    // Set defaults for module info.
+    $defaults = [
+      'dependencies' => [],
+      'install' => [],
+      'themes' => ['stark'],
+      'description' => '',
+      'version' => NULL,
+      'hidden' => FALSE,
+      'php' => \Drupal::MINIMUM_PHP,
+      'config_install_path' => NULL,
+    ];
     $profile_path = drupal_get_path('profile', $profile);
-    $info = \Drupal::service('extension.list.profile')->getExtensionInfo($profile);
+    $info = \Drupal::service('info_parser')->parse("$profile_path/$profile.info.yml");
+    $info += $defaults;
 
     $dependency_name_function = function ($dependency) {
       return Dependency::createFromString($dependency)->getName();

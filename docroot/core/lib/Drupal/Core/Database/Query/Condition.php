@@ -302,9 +302,24 @@ class Condition implements ConditionInterface, \Countable {
             $condition['value'] = [$condition['value']];
           }
           // Process all individual values.
-          list ($value_fragment, $fragment_arguments) = $this->compileValueList($condition['value'], $connection, $queryPlaceholder);
+          $value_fragment = [];
+          foreach ($condition['value'] as $value) {
+            if ($value instanceof SelectInterface) {
+              // Right hand part is a subquery. Compile, put brackets around it
+              // and collect any arguments.
+              $value->compile($connection, $queryPlaceholder);
+              $value_fragment[] = '(' . (string) $value . ')';
+              $arguments += $value->arguments();
+            }
+            else {
+              // Right hand part is a normal value. Replace the value with a
+              // placeholder and add the value as an argument.
+              $placeholder = ':db_condition_placeholder_' . $queryPlaceholder->nextPlaceholder();
+              $value_fragment[] = $placeholder;
+              $arguments[$placeholder] = $value;
+            }
+          }
           $value_fragment = $operator['prefix'] . implode($operator['delimiter'], $value_fragment) . $operator['postfix'];
-          $arguments += $fragment_arguments;
         }
 
         // Concatenate the left hand part, operator and right hand part.
@@ -317,46 +332,6 @@ class Condition implements ConditionInterface, \Countable {
       $this->arguments = $arguments;
       $this->changed = FALSE;
     }
-  }
-
-  /**
-   * Compiles the values (right side of operator) of a conditional.
-   *
-   * @param $values
-   *   The values to compile.
-   * @param $connection
-   *   The database connection for which to compile the conditionals.
-   * @param $queryPlaceholder
-   *   The query this condition belongs to. If not given, the current query is
-   *   used.
-   *
-   * @return
-   *   A two item array:
-   *   - The first item is an array of SQL fragments for the list, containing
-   *     placeholders for values as needed.
-   *   - The second item is an associative array mapping each placeholder name
-   *     to a value.
-   */
-  protected function compileValueList(array $values, Connection $connection, PlaceholderInterface $queryPlaceholder) {
-    $value_fragment = [];
-    $arguments = [];
-    foreach ($values as $value) {
-      if ($value instanceof SelectInterface) {
-        // Right hand part is a subquery. Compile, put brackets around it
-        // and collect any arguments.
-        $value->compile($connection, $queryPlaceholder);
-        $value_fragment[] = '(' . (string) $value . ')';
-        $arguments += $value->arguments();
-      }
-      else {
-        // Right hand part is a normal value. Replace the value with a
-        // placeholder and add the value as an argument.
-        $placeholder = ':db_condition_placeholder_' . $queryPlaceholder->nextPlaceholder();
-        $value_fragment[] = $placeholder;
-        $arguments[$placeholder] = $value;
-      }
-    }
-    return [$value_fragment, $arguments];
   }
 
   /**

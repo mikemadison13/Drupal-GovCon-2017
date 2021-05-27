@@ -41,11 +41,16 @@ class DatabaseTest extends UnitTestCase {
     // Mock the container so we don't need to mock drupal_valid_test_ua().
     // @see \Drupal\Core\Extension\ExtensionDiscovery::scan()
     $this->root = dirname(__DIR__, 6);
-    $container = $this->prophesize(ContainerInterface::class);
-    $container->has('kernel')->willReturn(TRUE);
-    $container->has('extension.list.profile')->willReturn(FALSE);
-    $container->getParameter('site.path')->willReturn('');
-    \Drupal::setContainer($container->reveal());
+    $container = $this->createMock(ContainerInterface::class);
+    $container->expects($this->any())
+      ->method('has')
+      ->with('kernel')
+      ->willReturn(TRUE);
+    $container->expects($this->any())
+      ->method('getParameter')
+      ->with('site.path')
+      ->willReturn('');
+    \Drupal::setContainer($container);
   }
 
   /**
