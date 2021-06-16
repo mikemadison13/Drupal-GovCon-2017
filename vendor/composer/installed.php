@@ -1012,12 +1012,12 @@
             'dev_requirement' => false,
         ),
         'drupal/ctools' => array(
-            'pretty_version' => '3.6.0',
-            'version' => '3.6.0.0',
+            'pretty_version' => '3.7.0',
+            'version' => '3.7.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/ctools',
             'aliases' => array(),
-            'reference' => '8.x-3.6',
+            'reference' => '8.x-3.7',
             'dev_requirement' => false,
         ),
         'drupal/ctools_block' => array(
