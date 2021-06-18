@@ -7,7 +7,6 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
-use Drupal\entity_test\Entity\EntityTestMulRev;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\language\Entity\ConfigurableLanguage;
@@ -30,7 +29,6 @@ class EntityViewBuilderTest extends EntityKernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['user', 'entity_test']);
-    $this->installEntitySchema('entity_test_mulrev');
 
     // Give anonymous users permission to view test entities.
     Role::load(RoleInterface::ANONYMOUS_ID)
@@ -346,65 +344,17 @@ class EntityViewBuilderTest extends EntityKernelTestBase {
   }
 
   /**
-   * Test correct contextual links are rendered.
+   * Tests an entity type with an external canonical rel.
    */
-  public function testContextualLinks() {
-    $view_builder = $this->container->get('entity.manager')->getViewBuilder('entity_test_mulrev');
-    $storage = $this->container->get('entity.manager')->getStorage('entity_test_mulrev');
-
-    $entity_test_mulrev = EntityTestMulRev::create([]);
-    $entity_test_mulrev->save();
-    $original_revision_id = $entity_test_mulrev->getRevisionId();
-    // By default contextual links will be added for the group matching the
-    // entity type ID.
-    $built = $view_builder->build($view_builder->view($entity_test_mulrev, 'full'));
-    $this->assertEquals([
-      'entity_test_mulrev' => [
-        'route_parameters' => [
-          'entity_test_mulrev' => $entity_test_mulrev->id(),
-        ],
-      ],
-    ], $built['#contextual_links']);
-
-    // Create a new pending revision.
-    $entity_test_mulrev->setNewRevision(TRUE);
-    $entity_test_mulrev->isDefaultRevision(FALSE);
-    $entity_test_mulrev->save();
-    // The latest non-default revision will contain both the "revision" group
-    // and the "latest_version" group.
-    $built = $view_builder->build($view_builder->view($entity_test_mulrev, 'full'));
-    $this->assertEquals([
-      'entity_test_mulrev_revision' => [
-        'route_parameters' => [
-          'entity_test_mulrev' => $entity_test_mulrev->id(),
-          'entity_test_mulrev_revision' => $entity_test_mulrev->getRevisionId(),
-        ],
-      ],
-      'entity_test_mulrev_latest_version' => [
-        'route_parameters' => [
-          'entity_test_mulrev' => $entity_test_mulrev->id(),
-          'entity_test_mulrev_revision' => $entity_test_mulrev->getRevisionId(),
-        ],
-      ],
-    ], $built['#contextual_links']);
-
-    // Create a new default revision and load the original (now non-default)
-    // revision.
-    $entity_test_mulrev->isDefaultRevision(TRUE);
-    $entity_test_mulrev->setNewRevision(TRUE);
-    $entity_test_mulrev->save();
-    // Non-default revisions which are not the latest revision will only contain
-    // the "revision" group.
-    $original_revision = $storage->loadRevision($original_revision_id);
-    $built = $view_builder->build($view_builder->view($original_revision, 'full'));
-    $this->assertEquals([
-      'entity_test_mulrev_revision' => [
-        'route_parameters' => [
-          'entity_test_mulrev' => $original_revision->id(),
-          'entity_test_mulrev_revision' => $original_revision->getRevisionId(),
-        ],
-      ],
-    ], $built['#contextual_links']);
+  public function testExternalEntity() {
+    $this->installEntitySchema('entity_test_external');
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
+    $renderer = $this->container->get('renderer');
+    $entity_test = $this->createTestEntity('entity_test_external');
+    $entity_test->save();
+    $view = $this->container->get('entity_type.manager')->getViewBuilder('entity_test_external')->view($entity_test);
+    $renderer->renderRoot($view);
+    $this->assertArrayNotHasKey('#contextual_links', $view);
   }
 
 }
