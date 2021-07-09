@@ -6,7 +6,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
- * Implements LinkIconManagerInterface.
+ * Provides LinkIconManager service.
  */
 class LinkIconManager implements LinkIconManagerInterface {
 

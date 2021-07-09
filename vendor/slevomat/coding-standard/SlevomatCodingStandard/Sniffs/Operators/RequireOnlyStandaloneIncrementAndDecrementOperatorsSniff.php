@@ -28,7 +28,7 @@ class RequireOnlyStandaloneIncrementAndDecrementOperatorsSniff implements Sniff
 	public const CODE_POST_DECREMENT_OPERATOR_NOT_USED_STANDALONE = 'PostDecrementOperatorNotUsedStandalone';
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -39,8 +39,8 @@ class RequireOnlyStandaloneIncrementAndDecrementOperatorsSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $operatorPointer
 	 */
 	public function process(File $phpcsFile, $operatorPointer): void
@@ -95,7 +95,11 @@ class RequireOnlyStandaloneIncrementAndDecrementOperatorsSniff implements Sniff
 		$tokens = $phpcsFile->getTokens();
 
 		$pointerBeforeInstructionStart = TokenHelper::findPreviousEffective($phpcsFile, $instructionStartPointer - 1);
-		if (!in_array($tokens[$pointerBeforeInstructionStart]['code'], [T_SEMICOLON, T_COLON, T_OPEN_CURLY_BRACKET, T_CLOSE_CURLY_BRACKET, T_OPEN_TAG], true)) {
+		if (!in_array(
+			$tokens[$pointerBeforeInstructionStart]['code'],
+			[T_SEMICOLON, T_COLON, T_OPEN_CURLY_BRACKET, T_CLOSE_CURLY_BRACKET, T_OPEN_TAG],
+			true
+		)) {
 			return false;
 		}
 

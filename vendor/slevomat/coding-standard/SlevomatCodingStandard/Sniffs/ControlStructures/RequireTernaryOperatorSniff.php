@@ -2,17 +2,21 @@
 
 namespace SlevomatCodingStandard\Sniffs\ControlStructures;
 
-use Exception;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
 use SlevomatCodingStandard\Helpers\IdentificatorHelper;
 use SlevomatCodingStandard\Helpers\TokenHelper;
 use function array_key_exists;
 use function sprintf;
+use const T_BITWISE_AND;
 use const T_ELSE;
 use const T_EQUAL;
 use const T_IF;
 use const T_INLINE_THEN;
+use const T_LOGICAL_AND;
+use const T_LOGICAL_OR;
+use const T_LOGICAL_XOR;
 use const T_RETURN;
 use const T_SEMICOLON;
 use const T_WHITESPACE;
@@ -26,7 +30,7 @@ class RequireTernaryOperatorSniff implements Sniff
 	public $ignoreMultiLine = false;
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -36,8 +40,8 @@ class RequireTernaryOperatorSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $ifPointer
 	 */
 	public function process(File $phpcsFile, $ifPointer): void
@@ -45,7 +49,8 @@ class RequireTernaryOperatorSniff implements Sniff
 		$tokens = $phpcsFile->getTokens();
 
 		if (!array_key_exists('scope_closer', $tokens[$ifPointer])) {
-			throw new Exception('"if" without curly braces is not supported.');
+			// If without curly braces is not supported.
+			return;
 		}
 
 		$elsePointer = TokenHelper::findNextEffective($phpcsFile, $tokens[$ifPointer]['scope_closer'] + 1);
@@ -54,7 +59,8 @@ class RequireTernaryOperatorSniff implements Sniff
 		}
 
 		if (!array_key_exists('scope_closer', $tokens[$elsePointer])) {
-			throw new Exception('"else" without curly braces is not supported.');
+			// Else without curly braces is not supported.
+			return;
 		}
 
 		if (
@@ -79,7 +85,22 @@ class RequireTernaryOperatorSniff implements Sniff
 
 	private function checkIfWithReturns(File $phpcsFile, int $ifPointer, int $elsePointer, int $returnInIf, int $returnInElse): void
 	{
-		$fix = $phpcsFile->addFixableError('Use ternary operator.', $ifPointer, self::CODE_TERNARY_OPERATOR_NOT_USED);
+		$ifContainsComment = $this->containsComment($phpcsFile, $ifPointer);
+		$elseContainsComment = $this->containsComment($phpcsFile, $elsePointer);
+		$conditionContainsLogicalOperators = $this->containsLogicalOperators($phpcsFile, $ifPointer);
+
+		$errorParameters = [
+			'Use ternary operator.',
+			$ifPointer,
+			self::CODE_TERNARY_OPERATOR_NOT_USED,
+		];
+
+		if ($ifContainsComment || $elseContainsComment || $conditionContainsLogicalOperators) {
+			$phpcsFile->addError(...$errorParameters);
+			return;
+		}
+
+		$fix = $phpcsFile->addFixableError(...$errorParameters);
 
 		if (!$fix) {
 			return;
@@ -95,6 +116,9 @@ class RequireTernaryOperatorSniff implements Sniff
 
 		$phpcsFile->fixer->beginChangeset();
 		$phpcsFile->fixer->replaceToken($ifPointer, 'return');
+		if ($ifPointer + 1 === $tokens[$ifPointer]['parenthesis_opener']) {
+			$phpcsFile->fixer->addContent($ifPointer, ' ');
+		}
 		$phpcsFile->fixer->replaceToken($tokens[$ifPointer]['parenthesis_opener'], '');
 		$phpcsFile->fixer->replaceToken($tokens[$ifPointer]['parenthesis_closer'], ' ? ');
 
@@ -114,7 +138,13 @@ class RequireTernaryOperatorSniff implements Sniff
 		$phpcsFile->fixer->endChangeset();
 	}
 
-	private function checkIfWithAssignments(File $phpcsFile, int $ifPointer, int $elsePointer, int $firstPointerInIf, int $firstPointerInElse): void
+	private function checkIfWithAssignments(
+		File $phpcsFile,
+		int $ifPointer,
+		int $elsePointer,
+		int $firstPointerInIf,
+		int $firstPointerInElse
+	): void
 	{
 		$tokens = $phpcsFile->getTokens();
 
@@ -135,20 +165,46 @@ class RequireTernaryOperatorSniff implements Sniff
 		$assignmentPointerInIf = TokenHelper::findNextEffective($phpcsFile, $identificatorEndPointerInIf + 1);
 		$assignmentPointerInElse = TokenHelper::findNextEffective($phpcsFile, $identificatorEndPointerInElse + 1);
 
-		if ($tokens[$assignmentPointerInIf]['code'] !== T_EQUAL || $tokens[$assignmentPointerInElse]['code'] !== T_EQUAL) {
+		if (
+			$tokens[$assignmentPointerInIf]['code'] !== T_EQUAL
+			|| $tokens[$assignmentPointerInElse]['code'] !== T_EQUAL
+		) {
 			return;
 		}
 
-		$fix = $phpcsFile->addFixableError('Use ternary operator.', $ifPointer, self::CODE_TERNARY_OPERATOR_NOT_USED);
+		$pointerAfterAssignmentInIf = TokenHelper::findNextEffective($phpcsFile, $assignmentPointerInIf + 1);
+		$pointerAfterAssignmentInElse = TokenHelper::findNextEffective($phpcsFile, $assignmentPointerInElse + 1);
+
+		if (
+			$tokens[$pointerAfterAssignmentInIf]['code'] === T_BITWISE_AND ||
+			$tokens[$pointerAfterAssignmentInElse]['code'] === T_BITWISE_AND
+		) {
+			return;
+		}
+
+		$ifContainsComment = $this->containsComment($phpcsFile, $ifPointer);
+		$elseContainsComment = $this->containsComment($phpcsFile, $elsePointer);
+		$conditionContainsLogicalOperators = $this->containsLogicalOperators($phpcsFile, $ifPointer);
+
+		$errorParameters = [
+			'Use ternary operator.',
+			$ifPointer,
+			self::CODE_TERNARY_OPERATOR_NOT_USED,
+		];
+
+		if ($ifContainsComment || $elseContainsComment || $conditionContainsLogicalOperators) {
+			$phpcsFile->addError(...$errorParameters);
+			return;
+		}
+
+		$fix = $phpcsFile->addFixableError(...$errorParameters);
 
 		if (!$fix) {
 			return;
 		}
 
-		$pointerAfterAssignmentInIf = TokenHelper::findNextEffective($phpcsFile, $assignmentPointerInIf + 1);
 		/** @var int $semicolonAfterAssignmentInIf */
 		$semicolonAfterAssignmentInIf = TokenHelper::findNext($phpcsFile, T_SEMICOLON, $pointerAfterAssignmentInIf + 1);
-		$pointerAfterAssignmentInElse = TokenHelper::findNextEffective($phpcsFile, $assignmentPointerInElse + 1);
 		$semicolonAfterAssignmentInElse = TokenHelper::findNext($phpcsFile, T_SEMICOLON, $pointerAfterAssignmentInElse + 1);
 
 		$phpcsFile->fixer->beginChangeset();
@@ -188,13 +244,41 @@ class RequireTernaryOperatorSniff implements Sniff
 
 		if ($this->ignoreMultiLine) {
 			$firstContentPointer = TokenHelper::findNextEffective($phpcsFile, $scopeOpenerPointer + 1);
-			if (TokenHelper::findNextContent($phpcsFile, T_WHITESPACE, $phpcsFile->eolChar, $firstContentPointer + 1, $semicolonPointer) !== null) {
+			if (TokenHelper::findNextContent(
+				$phpcsFile,
+				T_WHITESPACE,
+				$phpcsFile->eolChar,
+				$firstContentPointer + 1,
+				$semicolonPointer
+			) !== null) {
 				return false;
 			}
 		}
 
 		$pointerAfterSemicolon = TokenHelper::findNextEffective($phpcsFile, $semicolonPointer + 1);
 		return $pointerAfterSemicolon === $scopeCloserPointer;
+	}
+
+	private function containsComment(File $phpcsFile, int $scopeOwnerPointer): bool
+	{
+		$tokens = $phpcsFile->getTokens();
+		return TokenHelper::findNext(
+			$phpcsFile,
+			Tokens::$commentTokens,
+			$tokens[$scopeOwnerPointer]['scope_opener'] + 1,
+			$tokens[$scopeOwnerPointer]['scope_closer']
+		) !== null;
+	}
+
+	private function containsLogicalOperators(File $phpcsFile, int $scopeOwnerPointer): bool
+	{
+		$tokens = $phpcsFile->getTokens();
+		return TokenHelper::findNext(
+			$phpcsFile,
+			[T_LOGICAL_AND, T_LOGICAL_OR, T_LOGICAL_XOR],
+			$tokens[$scopeOwnerPointer]['parenthesis_opener'] + 1,
+			$tokens[$scopeOwnerPointer]['parenthesis_closer']
+		) !== null;
 	}
 
 }

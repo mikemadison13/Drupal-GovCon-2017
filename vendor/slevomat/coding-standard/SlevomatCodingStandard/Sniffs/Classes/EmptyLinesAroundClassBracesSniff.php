@@ -35,7 +35,7 @@ class EmptyLinesAroundClassBracesSniff implements Sniff
 	public $linesCountBeforeClosingBrace = 1;
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -48,8 +48,8 @@ class EmptyLinesAroundClassBracesSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $stackPointer
 	 */
 	public function process(File $phpcsFile, $stackPointer): void
@@ -77,7 +77,9 @@ class EmptyLinesAroundClassBracesSniff implements Sniff
 			$fix = $phpcsFile->addFixableError(
 				sprintf('There must be one empty line after %s opening brace.', $typeToken['content']),
 				$openerPointer,
-				$lines === 0 ? self::CODE_NO_EMPTY_LINE_AFTER_OPENING_BRACE : self::CODE_MULTIPLE_EMPTY_LINES_AFTER_OPENING_BRACE
+				$lines === 0
+					? self::CODE_NO_EMPTY_LINE_AFTER_OPENING_BRACE
+					: self::CODE_MULTIPLE_EMPTY_LINES_AFTER_OPENING_BRACE
 			);
 		} else {
 			$fix = $phpcsFile->addFixableError(sprintf(
@@ -91,22 +93,22 @@ class EmptyLinesAroundClassBracesSniff implements Sniff
 			return;
 		}
 
+		$phpcsFile->fixer->beginChangeset();
+
 		if ($lines < $linesCountAfterOpeningBrace) {
-			$phpcsFile->fixer->beginChangeset();
 			for ($i = $lines; $i < $linesCountAfterOpeningBrace; $i++) {
 				$phpcsFile->fixer->addNewline($openerPointer);
 			}
-			$phpcsFile->fixer->endChangeset();
 		} else {
-			$phpcsFile->fixer->beginChangeset();
 			for ($i = $openerPointer + $linesCountAfterOpeningBrace + 2; $i < $nextPointerAfterOpeningBrace; $i++) {
 				if ($tokens[$i]['content'] !== $phpcsFile->eolChar) {
 					break;
 				}
 				$phpcsFile->fixer->replaceToken($i, '');
 			}
-			$phpcsFile->fixer->endChangeset();
 		}
+
+		$phpcsFile->fixer->endChangeset();
 	}
 
 	private function processClosingBrace(File $phpcsFile, int $stackPointer): void
@@ -128,7 +130,9 @@ class EmptyLinesAroundClassBracesSniff implements Sniff
 			$fix = $phpcsFile->addFixableError(
 				sprintf('There must be one empty line before %s closing brace.', $typeToken['content']),
 				$closerPointer,
-				$lines === 0 ? self::CODE_NO_EMPTY_LINE_BEFORE_CLOSING_BRACE : self::CODE_MULTIPLE_EMPTY_LINES_BEFORE_CLOSING_BRACE
+				$lines === 0
+					? self::CODE_NO_EMPTY_LINE_BEFORE_CLOSING_BRACE
+					: self::CODE_MULTIPLE_EMPTY_LINES_BEFORE_CLOSING_BRACE
 			);
 		} else {
 			$fix = $phpcsFile->addFixableError(sprintf(
@@ -142,19 +146,19 @@ class EmptyLinesAroundClassBracesSniff implements Sniff
 			return;
 		}
 
+		$phpcsFile->fixer->beginChangeset();
+
 		if ($lines < $linesCountBeforeClosingBrace) {
-			$phpcsFile->fixer->beginChangeset();
 			for ($i = $lines; $i < $linesCountBeforeClosingBrace; $i++) {
 				$phpcsFile->fixer->addNewlineBefore($closerPointer);
 			}
-			$phpcsFile->fixer->endChangeset();
 		} else {
-			$phpcsFile->fixer->beginChangeset();
 			for ($i = $previousPointerBeforeClosingBrace + $linesCountBeforeClosingBrace + 2; $i < $closerPointer; $i++) {
 				$phpcsFile->fixer->replaceToken($i, '');
 			}
-			$phpcsFile->fixer->endChangeset();
 		}
+
+		$phpcsFile->fixer->endChangeset();
 	}
 
 }

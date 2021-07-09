@@ -2,7 +2,6 @@ name: 'Link Icon'
 type: module
 description: 'A link field formatter to create icon classes based on predefined titles'
 package: 'Field types'
-core: 8.x
 core_version_requirement: ^8 || ^9
 configure: linkicon.settings
 dependencies:

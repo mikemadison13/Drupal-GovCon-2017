@@ -6,8 +6,10 @@ use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use SlevomatCodingStandard\Helpers\ClassHelper;
 use SlevomatCodingStandard\Helpers\FunctionHelper;
+use SlevomatCodingStandard\Helpers\SniffSettingsHelper;
 use SlevomatCodingStandard\Helpers\TokenHelper;
 use function in_array;
+use function ltrim;
 use function sprintf;
 use function strtolower;
 use const T_CLASS_C;
@@ -15,7 +17,6 @@ use const T_DOUBLE_COLON;
 use const T_NS_SEPARATOR;
 use const T_OBJECT_OPERATOR;
 use const T_OPEN_PARENTHESIS;
-use const T_STRING;
 use const T_VARIABLE;
 
 class ModernClassNameReferenceSniff implements Sniff
@@ -24,24 +25,29 @@ class ModernClassNameReferenceSniff implements Sniff
 	public const CODE_CLASS_NAME_REFERENCED_VIA_MAGIC_CONSTANT = 'ClassNameReferencedViaMagicConstant';
 	public const CODE_CLASS_NAME_REFERENCED_VIA_FUNCTION_CALL = 'ClassNameReferencedViaFunctionCall';
 
+	/** @var bool|null */
+	public $enableOnObjects = null;
+
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
-		return [
-			T_CLASS_C,
-			T_STRING,
-		];
+		$tokens = TokenHelper::getOnlyNameTokenCodes();
+		$tokens[] = T_CLASS_C;
+
+		return $tokens;
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $pointer
 	 */
 	public function process(File $phpcsFile, $pointer): void
 	{
+		$this->enableOnObjects = SniffSettingsHelper::isEnabledByPhpVersion($this->enableOnObjects, 80000);
+
 		$tokens = $phpcsFile->getTokens();
 
 		if ($tokens[$pointer]['code'] === T_CLASS_C) {
@@ -54,7 +60,11 @@ class ModernClassNameReferenceSniff implements Sniff
 
 	private function checkMagicConstant(File $phpcsFile, int $pointer): void
 	{
-		$fix = $phpcsFile->addFixableError('Class name referenced via magic constant.', $pointer, self::CODE_CLASS_NAME_REFERENCED_VIA_MAGIC_CONSTANT);
+		$fix = $phpcsFile->addFixableError(
+			'Class name referenced via magic constant.',
+			$pointer,
+			self::CODE_CLASS_NAME_REFERENCED_VIA_MAGIC_CONSTANT
+		);
 
 		if (!$fix) {
 			return;
@@ -69,7 +79,7 @@ class ModernClassNameReferenceSniff implements Sniff
 	{
 		$tokens = $phpcsFile->getTokens();
 
-		$functionName = strtolower($tokens[$functionPointer]['content']);
+		$functionName = ltrim(strtolower($tokens[$functionPointer]['content']), '\\');
 
 		$functionNames = [
 			'get_class',
@@ -91,15 +101,14 @@ class ModernClassNameReferenceSniff implements Sniff
 			return;
 		}
 
-		$parameterPointer = TokenHelper::findNextEffective($phpcsFile, $openParenthesisPointer + 1, $tokens[$openParenthesisPointer]['parenthesis_closer']);
+		$parameterPointer = TokenHelper::findNextEffective(
+			$phpcsFile,
+			$openParenthesisPointer + 1,
+			$tokens[$openParenthesisPointer]['parenthesis_closer']
+		);
 
-		$isThisParameter = function () use ($phpcsFile, $tokens, $openParenthesisPointer, $parameterPointer): bool {
+		$isObjectParameter = static function () use ($phpcsFile, $tokens, $openParenthesisPointer, $parameterPointer): bool {
 			if ($tokens[$parameterPointer]['code'] !== T_VARIABLE) {
-				return false;
-			}
-
-			$parameterName = strtolower($tokens[$parameterPointer]['content']);
-			if ($parameterName !== '$this') {
 				return false;
 			}
 
@@ -107,11 +116,22 @@ class ModernClassNameReferenceSniff implements Sniff
 			return $pointerAfterParameterPointer === $tokens[$openParenthesisPointer]['parenthesis_closer'];
 		};
 
+		$isThisParameter = static function () use ($tokens, $parameterPointer, $isObjectParameter): bool {
+			if (!$isObjectParameter()) {
+				return false;
+			}
+
+			$parameterName = strtolower($tokens[$parameterPointer]['content']);
+			return $parameterName === '$this';
+		};
+
 		if ($functionName === 'get_class') {
 			if ($parameterPointer === null) {
 				$fixedContent = 'self::class';
 			} elseif ($isThisParameter()) {
 				$fixedContent = 'static::class';
+			} elseif ($this->enableOnObjects && $isObjectParameter()) {
+				$fixedContent = sprintf('%s::class', $tokens[$parameterPointer]['content']);
 			} else {
 				return;
 			}
@@ -134,7 +154,11 @@ class ModernClassNameReferenceSniff implements Sniff
 			$fixedContent = 'static::class';
 		}
 
-		$fix = $phpcsFile->addFixableError(sprintf('Class name referenced via call of function %s().', $functionName), $functionPointer, self::CODE_CLASS_NAME_REFERENCED_VIA_FUNCTION_CALL);
+		$fix = $phpcsFile->addFixableError(
+			sprintf('Class name referenced via call of function %s().', $functionName),
+			$functionPointer,
+			self::CODE_CLASS_NAME_REFERENCED_VIA_FUNCTION_CALL
+		);
 
 		if (!$fix) {
 			return;

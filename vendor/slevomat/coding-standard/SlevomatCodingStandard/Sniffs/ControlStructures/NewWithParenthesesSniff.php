@@ -24,7 +24,7 @@ class NewWithParenthesesSniff implements Sniff
 	public const CODE_MISSING_PARENTHESES = 'MissingParentheses';
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -34,8 +34,8 @@ class NewWithParenthesesSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $newPointer
 	 */
 	public function process(File $phpcsFile, $newPointer): void
@@ -78,11 +78,18 @@ class NewWithParenthesesSniff implements Sniff
 			$shouldBeOpenParenthesisPointer++;
 		} while (true);
 
-		if ($shouldBeOpenParenthesisPointer !== null && $tokens[$shouldBeOpenParenthesisPointer]['code'] === T_OPEN_PARENTHESIS) {
+		if (
+			$shouldBeOpenParenthesisPointer !== null
+			&& $tokens[$shouldBeOpenParenthesisPointer]['code'] === T_OPEN_PARENTHESIS
+		) {
 			return;
 		}
 
-		$fix = $phpcsFile->addFixableError('Usage of "new" without parentheses is disallowed.', $newPointer, self::CODE_MISSING_PARENTHESES);
+		$fix = $phpcsFile->addFixableError(
+			'Usage of "new" without parentheses is disallowed.',
+			$newPointer,
+			self::CODE_MISSING_PARENTHESES
+		);
 		if (!$fix) {
 			return;
 		}

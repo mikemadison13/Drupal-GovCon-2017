@@ -13,6 +13,9 @@ use const T_CONST;
 use const T_NAMESPACE;
 use const T_STRING;
 
+/**
+ * @internal
+ */
 class ConstantHelper
 {
 
@@ -27,11 +30,13 @@ class ConstantHelper
 		$name = self::getName($phpcsFile, $constantPointer);
 		$namespace = NamespaceHelper::findCurrentNamespaceName($phpcsFile, $constantPointer);
 
-		return $namespace !== null ? sprintf('%s%s%s%s', NamespaceHelper::NAMESPACE_SEPARATOR, $namespace, NamespaceHelper::NAMESPACE_SEPARATOR, $name) : $name;
+		return $namespace !== null
+			? sprintf('%s%s%s%s', NamespaceHelper::NAMESPACE_SEPARATOR, $namespace, NamespaceHelper::NAMESPACE_SEPARATOR, $name)
+			: $name;
 	}
 
 	/**
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @param File $phpcsFile
 	 * @return string[]
 	 */
 	public static function getAllNames(File $phpcsFile): array
@@ -39,12 +44,12 @@ class ConstantHelper
 		$previousConstantPointer = 0;
 
 		return array_map(
-			function (int $constantPointer) use ($phpcsFile): string {
+			static function (int $constantPointer) use ($phpcsFile): string {
 				return self::getName($phpcsFile, $constantPointer);
 			},
 			array_filter(
 				iterator_to_array(self::getAllConstantPointers($phpcsFile, $previousConstantPointer)),
-				function (int $constantPointer) use ($phpcsFile): bool {
+				static function (int $constantPointer) use ($phpcsFile): bool {
 					foreach (array_reverse($phpcsFile->getTokens()[$constantPointer]['conditions']) as $conditionTokenCode) {
 						return $conditionTokenCode === T_NAMESPACE;
 					}
@@ -55,6 +60,11 @@ class ConstantHelper
 		);
 	}
 
+	/**
+	 * @param File $phpcsFile
+	 * @param int $previousConstantPointer
+	 * @return Generator<int>
+	 */
 	private static function getAllConstantPointers(File $phpcsFile, int &$previousConstantPointer): Generator
 	{
 		do {

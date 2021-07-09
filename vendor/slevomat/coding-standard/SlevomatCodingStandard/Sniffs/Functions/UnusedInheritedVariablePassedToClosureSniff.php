@@ -22,7 +22,7 @@ class UnusedInheritedVariablePassedToClosureSniff implements Sniff
 	public const CODE_UNUSED_INHERITED_VARIABLE = 'UnusedInheritedVariable';
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -32,8 +32,8 @@ class UnusedInheritedVariablePassedToClosureSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $usePointer
 	 */
 	public function process(File $phpcsFile, $usePointer): void
@@ -51,7 +51,12 @@ class UnusedInheritedVariablePassedToClosureSniff implements Sniff
 
 		$currentPointer = $parenthesisOpenerPointer + 1;
 		do {
-			$variablePointer = TokenHelper::findNext($phpcsFile, T_VARIABLE, $currentPointer, $tokens[$parenthesisOpenerPointer]['parenthesis_closer']);
+			$variablePointer = TokenHelper::findNext(
+				$phpcsFile,
+				T_VARIABLE,
+				$currentPointer,
+				$tokens[$parenthesisOpenerPointer]['parenthesis_closer']
+			);
 			if ($variablePointer === null) {
 				break;
 			}

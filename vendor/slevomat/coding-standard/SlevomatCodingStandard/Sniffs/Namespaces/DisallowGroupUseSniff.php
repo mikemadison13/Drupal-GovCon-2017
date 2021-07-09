@@ -12,7 +12,7 @@ class DisallowGroupUseSniff implements Sniff
 	public const CODE_DISALLOWED_GROUP_USE = 'DisallowedGroupUse';
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -22,13 +22,17 @@ class DisallowGroupUseSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $usePointer
 	 */
 	public function process(File $phpcsFile, $usePointer): void
 	{
-		$phpcsFile->addError('Group use declaration is disallowed, use single use for every import.', $usePointer, self::CODE_DISALLOWED_GROUP_USE);
+		$phpcsFile->addError(
+			'Group use declaration is disallowed, use single use for every import.',
+			$usePointer,
+			self::CODE_DISALLOWED_GROUP_USE
+		);
 	}
 
 }

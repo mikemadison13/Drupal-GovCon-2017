@@ -10,6 +10,7 @@ use SlevomatCodingStandard\Helpers\TypeHintHelper;
 use function array_merge;
 use function in_array;
 use function preg_match;
+use const T_ATTRIBUTE;
 use const T_DOC_COMMENT_OPEN_TAG;
 use const T_DOC_COMMENT_STAR;
 use const T_DOC_COMMENT_WHITESPACE;
@@ -21,7 +22,7 @@ class UselessInheritDocCommentSniff implements Sniff
 	public const CODE_USELESS_INHERIT_DOC_COMMENT = 'UselessInheritDocComment';
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -31,8 +32,8 @@ class UselessInheritDocCommentSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $docCommentOpenPointer
 	 */
 	public function process(File $phpcsFile, $docCommentOpenPointer): void
@@ -52,15 +53,34 @@ class UselessInheritDocCommentSniff implements Sniff
 			return;
 		}
 
-		/** @var int $docCommentOwnerPointer */
-		$docCommentOwnerPointer = TokenHelper::findNext($phpcsFile, array_merge(TokenHelper::$functionTokenCodes, TokenHelper::$typeHintTokenCodes), $tokens[$docCommentOpenPointer]['comment_closer'] + 1);
+		$searchPointer = $tokens[$docCommentOpenPointer]['comment_closer'] + 1;
+		do {
+			$docCommentOwnerPointer = TokenHelper::findNext(
+				$phpcsFile,
+				array_merge(TokenHelper::$functionTokenCodes, TokenHelper::getTypeHintTokenCodes(), [T_ATTRIBUTE]),
+				$searchPointer
+			);
+
+			if ($docCommentOwnerPointer === null) {
+				return;
+			}
+
+			if ($tokens[$docCommentOwnerPointer]['code'] === T_ATTRIBUTE) {
+				$searchPointer = $tokens[$docCommentOwnerPointer]['attribute_closer'] + 1;
+				continue;
+			}
+
+			break;
+
+		} while (true);
+
 		if (in_array($tokens[$docCommentOwnerPointer]['code'], TokenHelper::$functionTokenCodes, true)) {
 			$returnTypeHint = FunctionHelper::findReturnTypeHint($phpcsFile, $docCommentOwnerPointer);
 			if ($returnTypeHint === null) {
 				return;
 			}
 
-			if (TypeHintHelper::isSimpleIterableTypeHint($returnTypeHint->getTypeHint())) {
+			if (TypeHintHelper::isSimpleIterableTypeHint($returnTypeHint->getTypeHintWithoutNullabilitySymbol())) {
 				return;
 			}
 
@@ -76,7 +96,11 @@ class UselessInheritDocCommentSniff implements Sniff
 			}
 		}
 
-		$fix = $phpcsFile->addFixableError('Useless documentation comment with @inheritDoc.', $docCommentOpenPointer, self::CODE_USELESS_INHERIT_DOC_COMMENT);
+		$fix = $phpcsFile->addFixableError(
+			'Useless documentation comment with @inheritDoc.',
+			$docCommentOpenPointer,
+			self::CODE_USELESS_INHERIT_DOC_COMMENT
+		);
 
 		if (!$fix) {
 			return;

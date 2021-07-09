@@ -23,7 +23,7 @@ class ForbiddenCommentsSniff implements Sniff
 	public $forbiddenCommentPatterns = [];
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -33,8 +33,8 @@ class ForbiddenCommentsSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $docCommentOpenPointer
 	 */
 	public function process(File $phpcsFile, $docCommentOpenPointer): void
@@ -92,7 +92,13 @@ class ForbiddenCommentsSniff implements Sniff
 
 				if (preg_match('~^[\\s\*]*$~', $docCommentContent) !== 0) {
 					$pointerBeforeDocComment = $docCommentOpenPointer - 1;
-					$contentBeforeWithoutSpaces = preg_replace('~[\t ]+$~', '', $tokens[$pointerBeforeDocComment]['content'], -1, $replacedCount);
+					$contentBeforeWithoutSpaces = preg_replace(
+						'~[\t ]+$~',
+						'',
+						$tokens[$pointerBeforeDocComment]['content'],
+						-1,
+						$replacedCount
+					);
 					if ($replacedCount !== 0) {
 						$phpcsFile->fixer->replaceToken($pointerBeforeDocComment, $contentBeforeWithoutSpaces);
 					}
@@ -103,7 +109,13 @@ class ForbiddenCommentsSniff implements Sniff
 
 					$pointerAfterDocComment = $tokens[$docCommentOpenPointer]['comment_closer'] + 1;
 					if (array_key_exists($pointerAfterDocComment, $tokens)) {
-						$contentAfterWithoutSpaces = preg_replace('~^[\r\n]+~', '', $tokens[$pointerAfterDocComment]['content'], -1, $replacedCount);
+						$contentAfterWithoutSpaces = preg_replace(
+							'~^[\r\n]+~',
+							'',
+							$tokens[$pointerAfterDocComment]['content'],
+							-1,
+							$replacedCount
+						);
 						if ($replacedCount !== 0) {
 							$phpcsFile->fixer->replaceToken($pointerAfterDocComment, $contentAfterWithoutSpaces);
 						}

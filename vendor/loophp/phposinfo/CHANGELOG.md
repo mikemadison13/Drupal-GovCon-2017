@@ -5,10 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.7.0](https://github.com/loophp/phposinfo/compare/1.6.5...1.7.0)
+## [1.7.2](https://github.com/loophp/phposinfo/compare/1.7.1...1.7.2)
 
 ### Commits
 
+- chore: Update .gitattributes. [`597e5d3`](https://github.com/loophp/phposinfo/commit/597e5d3469e0d0946e18fc6b917088cdf2cfeae3)
+- fix: Autofix code style. [`683d13b`](https://github.com/loophp/phposinfo/commit/683d13b88bd7085bb4e8cc96f09e60edbd5525da)
+
+## [1.7.1](https://github.com/loophp/phposinfo/compare/1.7.0...1.7.1) - 2021-06-29
+
+### Commits
+
+- docs: Add/update CHANGELOG. [`43d2365`](https://github.com/loophp/phposinfo/commit/43d23653e49a24fa8a116210da97e5259e4b97d0)
+- docs: Add License header. [`ee112fc`](https://github.com/loophp/phposinfo/commit/ee112fc36f47d271f95fe5349bf276503e92b610)
+- chore: Update License. [`fe29042`](https://github.com/loophp/phposinfo/commit/fe290422f3f49c35b43ed48cac10d595ec8696c8)
+- docs: Add docker stack for generating Changelog. [`18fc78f`](https://github.com/loophp/phposinfo/commit/18fc78fbd8f7fffac481c120134dbb3fa03403f6)
+- refactor: Minimal PHP version required is 7.3. [`7030acb`](https://github.com/loophp/phposinfo/commit/7030acba5be60e8b442d171ee7527cd5561d9650)
+
+## [1.7.0](https://github.com/loophp/phposinfo/compare/1.6.5...1.7.0) - 2021-03-21
+
+### Commits
+
+- docs: Add Changelog. [`36eace3`](https://github.com/loophp/phposinfo/commit/36eace3287d94e3ccf6b938112819766877b9ccd)
 - ci: Enable Github release changelog parsing. [`ea357b4`](https://github.com/loophp/phposinfo/commit/ea357b4746ee6a636168c9cbfee2b381e65fdd4c)
 - Migration to Github organisation. [`d4cda34`](https://github.com/loophp/phposinfo/commit/d4cda342a8c25c07e12f5cb0b9218439eceea2e2)
 - chore: Update static files. [`6ca4b7b`](https://github.com/loophp/phposinfo/commit/6ca4b7baa1e02cc67037a374e0fe297a097ead56)

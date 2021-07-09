@@ -28,7 +28,7 @@ class ForbiddenAnnotationsSniff implements Sniff
 	private $normalizedForbiddenAnnotations;
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -38,8 +38,8 @@ class ForbiddenAnnotationsSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $docCommentOpenPointer
 	 */
 	public function process(File $phpcsFile, $docCommentOpenPointer): void
@@ -54,23 +54,40 @@ class ForbiddenAnnotationsSniff implements Sniff
 			}
 
 			foreach ($annotationsByName as $annotation) {
-				$fix = $phpcsFile->addFixableError(sprintf('Use of annotation %s is forbidden.', $annotationName), $annotation->getStartPointer(), self::CODE_ANNOTATION_FORBIDDEN);
+				$fix = $phpcsFile->addFixableError(
+					sprintf('Use of annotation %s is forbidden.', $annotationName),
+					$annotation->getStartPointer(),
+					self::CODE_ANNOTATION_FORBIDDEN
+				);
 				if (!$fix) {
 					continue;
 				}
 
-				/** @var int $annotationStartPointer */
-				$annotationStartPointer = TokenHelper::findPrevious($phpcsFile, T_DOC_COMMENT_STAR, $annotation->getStartPointer() - 1);
+				$starPointer = TokenHelper::findPrevious(
+					$phpcsFile,
+					T_DOC_COMMENT_STAR,
+					$annotation->getStartPointer() - 1,
+					$docCommentOpenPointer
+				);
+				$annotationStartPointer = $starPointer ?? $docCommentOpenPointer + 1;
 
 				/** @var int $nextPointer */
-				$nextPointer = TokenHelper::findNext($phpcsFile, [T_DOC_COMMENT_TAG, T_DOC_COMMENT_CLOSE_TAG], $annotation->getEndPointer() + 1);
+				$nextPointer = TokenHelper::findNext(
+					$phpcsFile,
+					[T_DOC_COMMENT_TAG, T_DOC_COMMENT_CLOSE_TAG],
+					$annotation->getEndPointer() + 1
+				);
 				if ($tokens[$nextPointer]['code'] === T_DOC_COMMENT_TAG) {
 					$nextPointer = TokenHelper::findPrevious($phpcsFile, T_DOC_COMMENT_STAR, $nextPointer - 1);
 				}
 				$annotationEndPointer = $nextPointer - 1;
 
-				if ($tokens[$nextPointer]['code'] === T_DOC_COMMENT_CLOSE_TAG) {
-					$pointerBeforeWhitespace = TokenHelper::findPreviousExcluding($phpcsFile, [T_DOC_COMMENT_WHITESPACE, T_DOC_COMMENT_STAR], $annotationStartPointer - 1);
+				if ($tokens[$nextPointer]['code'] === T_DOC_COMMENT_CLOSE_TAG && $starPointer !== null) {
+					$pointerBeforeWhitespace = TokenHelper::findPreviousExcluding(
+						$phpcsFile,
+						[T_DOC_COMMENT_WHITESPACE, T_DOC_COMMENT_STAR],
+						$annotationStartPointer - 1
+					);
 					/** @var int $annotationStartPointer */
 					$annotationStartPointer = TokenHelper::findNext($phpcsFile, T_DOC_COMMENT_STAR, $pointerBeforeWhitespace + 1);
 				}

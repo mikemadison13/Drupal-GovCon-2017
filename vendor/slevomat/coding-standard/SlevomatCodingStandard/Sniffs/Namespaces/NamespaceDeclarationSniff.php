@@ -21,7 +21,7 @@ class NamespaceDeclarationSniff implements Sniff
 	public const CODE_DISALLOWED_BRACKETED_SYNTAX = 'DisallowedBracketedSyntax';
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -31,8 +31,8 @@ class NamespaceDeclarationSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $namespacePointer
 	 */
 	public function process(File $phpcsFile, $namespacePointer): void
@@ -72,11 +72,7 @@ class NamespaceDeclarationSniff implements Sniff
 			? 'Expected one space after namespace statement, found tab.'
 			: sprintf('Expected one space after namespace statement, found %d.', strlen($tokens[$whitespacePointer]['content']));
 
-		$fix = $phpcsFile->addFixableError(
-			$errorMessage,
-			$namespacePointer,
-			self::CODE_INVALID_WHITESPACE_AFTER_NAMESPACE
-		);
+		$fix = $phpcsFile->addFixableError($errorMessage, $namespacePointer, self::CODE_INVALID_WHITESPACE_AFTER_NAMESPACE);
 
 		if (!$fix) {
 			return;
@@ -94,7 +90,11 @@ class NamespaceDeclarationSniff implements Sniff
 		}
 
 		$namespaceNameStartPointer = TokenHelper::findNextEffective($phpcsFile, $namespacePointer + 1);
-		$namespaceNameEndPointer = TokenHelper::findNextExcluding($phpcsFile, TokenHelper::$nameTokenCodes, $namespaceNameStartPointer + 1) - 1;
+		$namespaceNameEndPointer = TokenHelper::findNextExcluding(
+			$phpcsFile,
+			TokenHelper::getNameTokenCodes(),
+			$namespaceNameStartPointer + 1
+		) - 1;
 
 		/** @var int $namespaceSemicolonPointer */
 		$namespaceSemicolonPointer = TokenHelper::findNextLocal($phpcsFile, T_SEMICOLON, $namespaceNameEndPointer + 1);

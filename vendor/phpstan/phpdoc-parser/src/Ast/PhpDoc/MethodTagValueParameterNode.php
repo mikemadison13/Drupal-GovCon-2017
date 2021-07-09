@@ -4,10 +4,13 @@ namespace PHPStan\PhpDocParser\Ast\PhpDoc;
 
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprNode;
 use PHPStan\PhpDocParser\Ast\Node;
+use PHPStan\PhpDocParser\Ast\NodeAttributes;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 
 class MethodTagValueParameterNode implements Node
 {
+
+	use NodeAttributes;
 
 	/** @var TypeNode|null */
 	public $type;
@@ -36,10 +39,10 @@ class MethodTagValueParameterNode implements Node
 
 	public function __toString(): string
 	{
-		$type = $this->type ? "{$this->type} " : '';
+		$type = $this->type !== null ? "{$this->type} " : '';
 		$isReference = $this->isReference ? '&' : '';
 		$isVariadic = $this->isVariadic ? '...' : '';
-		$default = $this->defaultValue ? " = {$this->defaultValue}" : '';
+		$default = $this->defaultValue !== null ? " = {$this->defaultValue}" : '';
 		return "{$type}{$isReference}{$isVariadic}{$this->parameterName}{$default}";
 	}
 

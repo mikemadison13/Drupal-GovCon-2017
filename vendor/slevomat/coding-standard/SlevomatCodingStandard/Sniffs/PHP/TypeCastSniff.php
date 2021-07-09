@@ -32,7 +32,7 @@ class TypeCastSniff implements Sniff
 	];
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -47,8 +47,8 @@ class TypeCastSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $pointer
 	 */
 	public function process(File $phpcsFile, $pointer): void
@@ -66,23 +66,35 @@ class TypeCastSniff implements Sniff
 		}
 
 		if ($castNameLower === 'unset') {
-			$phpcsFile->addError(sprintf('Cast "%s" is forbidden, use "unset(...)" or assign "null" instead.', $cast), $pointer, self::CODE_FORBIDDEN_CAST_USED);
+			$phpcsFile->addError(
+				sprintf('Cast "%s" is forbidden, use "unset(...)" or assign "null" instead.', $cast),
+				$pointer,
+				self::CODE_FORBIDDEN_CAST_USED
+			);
 
 			return;
 		}
 
 		if ($castNameLower === 'binary') {
-			$fix = $phpcsFile->addFixableError(sprintf('"Cast "%s" is forbidden and has no effect.', $cast), $pointer, self::CODE_FORBIDDEN_CAST_USED);
+			$fix = $phpcsFile->addFixableError(
+				sprintf('"Cast "%s" is forbidden and has no effect.', $cast),
+				$pointer,
+				self::CODE_FORBIDDEN_CAST_USED
+			);
 
 			if (!$fix) {
 				return;
 			}
 
-			for ($i = $pointer, $end = TokenHelper::findNextEffective($phpcsFile, $pointer + 1); $i < $end; $i++) {
-				$phpcsFile->fixer->beginChangeset();
+			$end = TokenHelper::findNextEffective($phpcsFile, $pointer + 1);
+
+			$phpcsFile->fixer->beginChangeset();
+
+			for ($i = $pointer; $i < $end; $i++) {
 				$phpcsFile->fixer->replaceToken($i, '');
-				$phpcsFile->fixer->endChangeset();
 			}
+
+			$phpcsFile->fixer->endChangeset();
 
 			return;
 		}

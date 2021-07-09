@@ -2,17 +2,28 @@
 
 namespace SlevomatCodingStandard\Helpers;
 
+use PHP_CodeSniffer\Files\File;
+use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprFloatNode;
+use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprIntegerNode;
+use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprStringNode;
+use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode;
+use PHPStan\PhpDocParser\Ast\Type\ArrayShapeNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\CallableTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\CallableTypeParameterNode;
+use PHPStan\PhpDocParser\Ast\Type\ConstTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\ThisTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use function array_merge;
+use function count;
+use function in_array;
 use function preg_replace;
+use function strtolower;
 use function substr;
 
 /**
@@ -22,13 +33,21 @@ class AnnotationTypeHelper
 {
 
 	/**
-	 * @param \PHPStan\PhpDocParser\Ast\Type\TypeNode $typeNode
-	 * @return \PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode[]|\PHPStan\PhpDocParser\Ast\Type\ThisTypeNode[]
+	 * @param TypeNode $typeNode
+	 * @return IdentifierTypeNode[]|ThisTypeNode[]
 	 */
 	public static function getIdentifierTypeNodes(TypeNode $typeNode): array
 	{
 		if ($typeNode instanceof ArrayTypeNode) {
 			return self::getIdentifierTypeNodes($typeNode->type);
+		}
+
+		if ($typeNode instanceof ArrayShapeNode) {
+			$identifierTypeNodes = [];
+			foreach ($typeNode->items as $arrayShapeItemNode) {
+				$identifierTypeNodes = array_merge($identifierTypeNodes, self::getIdentifierTypeNodes($arrayShapeItemNode->valueType));
+			}
+			return $identifierTypeNodes;
 		}
 
 		if (
@@ -62,14 +81,74 @@ class AnnotationTypeHelper
 			return $identifierTypeNodes;
 		}
 
-		/** @var \PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode|\PHPStan\PhpDocParser\Ast\Type\ThisTypeNode $typeNode */
+		if ($typeNode instanceof ConstTypeNode) {
+			return [];
+		}
+
+		/** @var IdentifierTypeNode|ThisTypeNode $typeNode */
 		$typeNode = $typeNode;
 		return [$typeNode];
 	}
 
 	/**
-	 * @param \PHPStan\PhpDocParser\Ast\Type\TypeNode $typeNode
-	 * @return \PHPStan\PhpDocParser\Ast\Type\UnionTypeNode[]
+	 * @param TypeNode $typeNode
+	 * @return ConstTypeNode[]
+	 */
+	public static function getConstantTypeNodes(TypeNode $typeNode): array
+	{
+		if ($typeNode instanceof ArrayTypeNode) {
+			return self::getConstantTypeNodes($typeNode->type);
+		}
+
+		if ($typeNode instanceof ArrayShapeNode) {
+			$constTypeNodes = [];
+			foreach ($typeNode->items as $arrayShapeItemNode) {
+				$constTypeNodes = array_merge($constTypeNodes, self::getConstantTypeNodes($arrayShapeItemNode->valueType));
+			}
+			return $constTypeNodes;
+		}
+
+		if (
+			$typeNode instanceof UnionTypeNode
+			|| $typeNode instanceof IntersectionTypeNode
+		) {
+			$constTypeNodes = [];
+			foreach ($typeNode->types as $innerTypeNode) {
+				$constTypeNodes = array_merge($constTypeNodes, self::getConstantTypeNodes($innerTypeNode));
+			}
+			return $constTypeNodes;
+		}
+
+		if ($typeNode instanceof GenericTypeNode) {
+			$constTypeNodes = [];
+			foreach ($typeNode->genericTypes as $innerTypeNode) {
+				$constTypeNodes = array_merge($constTypeNodes, self::getConstantTypeNodes($innerTypeNode));
+			}
+			return $constTypeNodes;
+		}
+
+		if ($typeNode instanceof NullableTypeNode) {
+			return self::getConstantTypeNodes($typeNode->type);
+		}
+
+		if ($typeNode instanceof CallableTypeNode) {
+			$constTypeNodes = self::getConstantTypeNodes($typeNode->returnType);
+			foreach ($typeNode->parameters as $callableParameterNode) {
+				$constTypeNodes = array_merge($constTypeNodes, self::getConstantTypeNodes($callableParameterNode->type));
+			}
+			return $constTypeNodes;
+		}
+
+		if (!$typeNode instanceof ConstTypeNode) {
+			return [];
+		}
+
+		return [$typeNode];
+	}
+
+	/**
+	 * @param TypeNode $typeNode
+	 * @return UnionTypeNode[]
 	 */
 	public static function getUnionTypeNodes(TypeNode $typeNode): array
 	{
@@ -83,6 +162,14 @@ class AnnotationTypeHelper
 
 		if ($typeNode instanceof ArrayTypeNode) {
 			return self::getUnionTypeNodes($typeNode->type);
+		}
+
+		if ($typeNode instanceof ArrayShapeNode) {
+			$unionTypeNodes = [];
+			foreach ($typeNode->items as $arrayShapeItemNode) {
+				$unionTypeNodes = array_merge($unionTypeNodes, self::getUnionTypeNodes($arrayShapeItemNode->valueType));
+			}
+			return $unionTypeNodes;
 		}
 
 		if ($typeNode instanceof IntersectionTypeNode) {
@@ -113,13 +200,21 @@ class AnnotationTypeHelper
 	}
 
 	/**
-	 * @param \PHPStan\PhpDocParser\Ast\Type\TypeNode $typeNode
-	 * @return \PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode[]
+	 * @param TypeNode $typeNode
+	 * @return ArrayTypeNode[]
 	 */
 	public static function getArrayTypeNodes(TypeNode $typeNode): array
 	{
 		if ($typeNode instanceof ArrayTypeNode) {
 			return array_merge([$typeNode], self::getArrayTypeNodes($typeNode->type));
+		}
+
+		if ($typeNode instanceof ArrayShapeNode) {
+			$arrayTypeNodes = [];
+			foreach ($typeNode->items as $arrayShapeItemNode) {
+				$arrayTypeNodes = array_merge($arrayTypeNodes, self::getArrayTypeNodes($arrayShapeItemNode->valueType));
+			}
+			return $arrayTypeNodes;
 		}
 
 		if ($typeNode instanceof NullableTypeNode) {
@@ -157,7 +252,7 @@ class AnnotationTypeHelper
 	}
 
 	/**
-	 * @param \PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode|\PHPStan\PhpDocParser\Ast\Type\ThisTypeNode $typeNode
+	 * @param IdentifierTypeNode|ThisTypeNode $typeNode
 	 * @return string
 	 */
 	public static function getTypeHintFromNode(TypeNode $typeNode): string
@@ -211,13 +306,30 @@ class AnnotationTypeHelper
 				$genericTypes[] = self::change($genericTypeNode, $typeNodeToChange, $changedTypeNode);
 			}
 
-			/** @var \PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode $identificatorTypeNode */
+			/** @var IdentifierTypeNode $identificatorTypeNode */
 			$identificatorTypeNode = self::change($masterTypeNode->type, $typeNodeToChange, $changedTypeNode);
 			return new GenericTypeNode($identificatorTypeNode, $genericTypes);
 		}
 
 		if ($masterTypeNode instanceof ArrayTypeNode) {
 			return new ArrayTypeNode(self::change($masterTypeNode->type, $typeNodeToChange, $changedTypeNode));
+		}
+
+		if ($masterTypeNode instanceof ArrayShapeNode) {
+			$arrayShapeItemNodes = [];
+			foreach ($masterTypeNode->items as $arrayShapeItemNode) {
+				$arrayShapeItemNodes[] = self::change($arrayShapeItemNode, $typeNodeToChange, $changedTypeNode);
+			}
+
+			return new ArrayShapeNode($arrayShapeItemNodes);
+		}
+
+		if ($masterTypeNode instanceof ArrayShapeItemNode) {
+			return new ArrayShapeItemNode(
+				$masterTypeNode->keyName,
+				$masterTypeNode->optional,
+				self::change($masterTypeNode->valueType, $typeNodeToChange, $changedTypeNode)
+			);
 		}
 
 		if ($masterTypeNode instanceof NullableTypeNode) {
@@ -236,7 +348,7 @@ class AnnotationTypeHelper
 				);
 			}
 
-			/** @var \PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode $identificatorTypeNode */
+			/** @var IdentifierTypeNode $identificatorTypeNode */
 			$identificatorTypeNode = self::change($masterTypeNode->identifier, $typeNodeToChange, $changedTypeNode);
 			return new CallableTypeNode(
 				$identificatorTypeNode,
@@ -246,6 +358,337 @@ class AnnotationTypeHelper
 		}
 
 		return clone $masterTypeNode;
+	}
+
+	public static function containsStaticOrThisType(TypeNode $typeNode): bool
+	{
+		if ($typeNode instanceof ThisTypeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof IdentifierTypeNode) {
+			return strtolower($typeNode->name) === 'static';
+		}
+
+		if (
+			$typeNode instanceof UnionTypeNode
+			|| $typeNode instanceof IntersectionTypeNode
+		) {
+			foreach ($typeNode->types as $innerTypeNode) {
+				if (self::containsStaticOrThisType($innerTypeNode)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public static function containsOneType(TypeNode $typeNode): bool
+	{
+		if ($typeNode instanceof IdentifierTypeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof ThisTypeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof GenericTypeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof CallableTypeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof ArrayShapeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof ArrayTypeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof ConstTypeNode) {
+			if ($typeNode->constExpr instanceof ConstExprIntegerNode) {
+				return true;
+			}
+
+			if ($typeNode->constExpr instanceof ConstExprFloatNode) {
+				return true;
+			}
+
+			if ($typeNode->constExpr instanceof ConstExprStringNode) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static function containsJustTwoTypes(TypeNode $typeNode): bool
+	{
+		if (
+			!$typeNode instanceof UnionTypeNode
+			&& !$typeNode instanceof IntersectionTypeNode
+		) {
+			return false;
+		}
+
+		return count($typeNode->types) === 2;
+	}
+
+	/**
+	 * @param TypeNode $typeNode
+	 * @param File $phpcsFile
+	 * @param int $pointer
+	 * @param array<int, string> $traversableTypeHints
+	 * @return bool
+	 */
+	public static function containsTraversableType(TypeNode $typeNode, File $phpcsFile, int $pointer, array $traversableTypeHints): bool
+	{
+		if ($typeNode instanceof GenericTypeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof ArrayShapeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof ArrayTypeNode) {
+			return true;
+		}
+
+		if ($typeNode instanceof IdentifierTypeNode) {
+			$fullyQualifiedType = TypeHintHelper::getFullyQualifiedTypeHint($phpcsFile, $pointer, $typeNode->name);
+			return TypeHintHelper::isTraversableType($fullyQualifiedType, $traversableTypeHints);
+		}
+
+		if (
+			$typeNode instanceof UnionTypeNode
+			|| $typeNode instanceof IntersectionTypeNode
+		) {
+			foreach ($typeNode->types as $innerTypeNode) {
+				if (self::containsTraversableType($innerTypeNode, $phpcsFile, $pointer, $traversableTypeHints)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param TypeNode $typeNode
+	 * @param File $phpcsFile
+	 * @param int $pointer
+	 * @param array<int, string> $traversableTypeHints
+	 * @param bool $inTraversable
+	 * @return bool
+	 */
+	public static function containsItemsSpecificationForTraversable(
+		TypeNode $typeNode,
+		File $phpcsFile,
+		int $pointer,
+		array $traversableTypeHints,
+		bool $inTraversable = false
+	): bool
+	{
+		if ($typeNode instanceof GenericTypeNode) {
+			foreach ($typeNode->genericTypes as $genericType) {
+				if (!self::containsItemsSpecificationForTraversable($genericType, $phpcsFile, $pointer, $traversableTypeHints, true)) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		if ($typeNode instanceof ArrayShapeNode) {
+			foreach ($typeNode->items as $arrayShapeItemNode) {
+				if (!self::containsItemsSpecificationForTraversable(
+					$arrayShapeItemNode->valueType,
+					$phpcsFile,
+					$pointer,
+					$traversableTypeHints,
+					true
+				)) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		if ($typeNode instanceof NullableTypeNode) {
+			return self::containsItemsSpecificationForTraversable($typeNode->type, $phpcsFile, $pointer, $traversableTypeHints, true);
+		}
+
+		if ($typeNode instanceof IdentifierTypeNode) {
+			if (!$inTraversable) {
+				return false;
+			}
+
+			return !TypeHintHelper::isTraversableType(
+				TypeHintHelper::getFullyQualifiedTypeHint($phpcsFile, $pointer, $typeNode->name),
+				$traversableTypeHints
+			);
+		}
+
+		if ($typeNode instanceof ConstTypeNode) {
+			return $inTraversable;
+		}
+
+		if ($typeNode instanceof CallableTypeNode) {
+			return $inTraversable;
+		}
+
+		if ($typeNode instanceof ArrayTypeNode) {
+			return self::containsItemsSpecificationForTraversable($typeNode->type, $phpcsFile, $pointer, $traversableTypeHints, true);
+		}
+
+		if (
+			$typeNode instanceof UnionTypeNode
+			|| $typeNode instanceof IntersectionTypeNode
+		) {
+			foreach ($typeNode->types as $innerTypeNode) {
+				if (
+					!$inTraversable
+					&& $innerTypeNode instanceof IdentifierTypeNode
+					&& strtolower($innerTypeNode->name) === 'null'
+				) {
+					continue;
+				}
+
+				if (self::containsItemsSpecificationForTraversable(
+					$innerTypeNode,
+					$phpcsFile,
+					$pointer,
+					$traversableTypeHints,
+					$inTraversable
+				)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param CallableTypeNode|GenericTypeNode|IdentifierTypeNode|ThisTypeNode|ArrayTypeNode|ArrayShapeNode|ConstTypeNode $typeNode
+	 * @param bool $enableUnionTypeHint
+	 * @return string
+	 */
+	public static function getTypeHintFromOneType(TypeNode $typeNode, bool $enableUnionTypeHint = false): string
+	{
+		if ($typeNode instanceof GenericTypeNode) {
+			return $typeNode->type->name;
+		}
+
+		if ($typeNode instanceof IdentifierTypeNode) {
+			if (strtolower($typeNode->name) === 'true') {
+				return 'bool';
+			}
+
+			if (strtolower($typeNode->name) === 'false') {
+				return $enableUnionTypeHint ? 'false' : 'bool';
+			}
+
+			if (in_array(strtolower($typeNode->name), ['class-string', 'trait-string', 'callable-string', 'numeric-string'], true)) {
+				return 'string';
+			}
+
+			return $typeNode->name;
+		}
+
+		if ($typeNode instanceof CallableTypeNode) {
+			return $typeNode->identifier->name;
+		}
+
+		if ($typeNode instanceof ArrayTypeNode) {
+			return 'array';
+		}
+
+		if ($typeNode instanceof ArrayShapeNode) {
+			return 'array';
+		}
+
+		if ($typeNode instanceof ConstTypeNode) {
+			if ($typeNode->constExpr instanceof ConstExprIntegerNode) {
+				return 'int';
+			}
+
+			if ($typeNode->constExpr instanceof ConstExprFloatNode) {
+				return 'float';
+			}
+
+			if ($typeNode->constExpr instanceof ConstExprStringNode) {
+				return 'string';
+			}
+		}
+
+		return (string) $typeNode;
+	}
+
+	/**
+	 * @param UnionTypeNode|IntersectionTypeNode $typeNode
+	 * @param File $phpcsFile
+	 * @param int $pointer
+	 * @param array<int, string> $traversableTypeHints
+	 * @param bool $enableUnionTypeHint
+	 * @return string[]
+	 */
+	public static function getTraversableTypeHintsFromType(
+		TypeNode $typeNode,
+		File $phpcsFile,
+		int $pointer,
+		array $traversableTypeHints,
+		bool $enableUnionTypeHint = false
+	): array
+	{
+		$typeHints = [];
+
+		foreach ($typeNode->types as $type) {
+			if (
+				$type instanceof GenericTypeNode
+				|| $type instanceof ThisTypeNode
+				|| $type instanceof IdentifierTypeNode
+			) {
+				$typeHints[] = self::getTypeHintFromOneType($type);
+			}
+		}
+
+		if (!$enableUnionTypeHint && count($typeHints) > 1) {
+			return [];
+		}
+
+		foreach ($typeHints as $typeHint) {
+			if (!TypeHintHelper::isTraversableType(
+				TypeHintHelper::getFullyQualifiedTypeHint($phpcsFile, $pointer, $typeHint),
+				$traversableTypeHints
+			)) {
+				return [];
+			}
+		}
+
+		return $typeHints;
+	}
+
+	/**
+	 * @param UnionTypeNode|IntersectionTypeNode $typeNode
+	 * @return ?TypeNode
+	 */
+	public static function getItemsSpecificationTypeFromType(TypeNode $typeNode): ?TypeNode
+	{
+		foreach ($typeNode->types as $type) {
+			if ($type instanceof ArrayTypeNode) {
+				return $type;
+			}
+		}
+
+		return null;
 	}
 
 }

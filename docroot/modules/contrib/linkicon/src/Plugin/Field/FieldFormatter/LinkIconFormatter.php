@@ -83,9 +83,10 @@ class LinkIconFormatter extends LinkFormatter {
           $new_values = [];
           foreach ($items as $item) {
             $values = $item->getValue();
-            $new_values['display_title'] = isset($titles[$values['title']]) ? $titles[$values['title']] : '';
-            if (isset($tooltips[$values['title']]) && $tooltips[$values['title']]) {
-              $new_values['tooltip'] = $tooltips[$values['title']];
+            $title = isset($values['title']) ? $values['title'] : 'nix';
+            $new_values['display_title'] = isset($titles[$title]) ? $titles[$title] : '';
+            if (isset($tooltips[$title]) && $tooltips[$title]) {
+              $new_values['tooltip'] = $tooltips[$title];
             }
             $merged_values = array_merge($values, $new_values);
             $item->setValue($merged_values);

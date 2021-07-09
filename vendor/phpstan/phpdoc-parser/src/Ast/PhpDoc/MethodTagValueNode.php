@@ -2,10 +2,13 @@
 
 namespace PHPStan\PhpDocParser\Ast\PhpDoc;
 
+use PHPStan\PhpDocParser\Ast\NodeAttributes;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 
 class MethodTagValueNode implements PhpDocTagValueNode
 {
+
+	use NodeAttributes;
 
 	/** @var bool */
 	public $isStatic;
@@ -35,7 +38,7 @@ class MethodTagValueNode implements PhpDocTagValueNode
 	public function __toString(): string
 	{
 		$static = $this->isStatic ? 'static ' : '';
-		$returnType = $this->returnType ? "{$this->returnType} " : '';
+		$returnType = $this->returnType !== null ? "{$this->returnType} " : '';
 		$parameters = implode(', ', $this->parameters);
 		$description = $this->description !== '' ? " {$this->description}" : '';
 		return "{$static}{$returnType}{$this->methodName}({$parameters}){$description}";

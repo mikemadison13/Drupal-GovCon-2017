@@ -4,6 +4,7 @@ namespace SlevomatCodingStandard\Sniffs\Operators;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
 use SlevomatCodingStandard\Helpers\IdentificatorHelper;
 use SlevomatCodingStandard\Helpers\TokenHelper;
 use function array_key_exists;
@@ -11,6 +12,7 @@ use function sprintf;
 use const T_BITWISE_AND;
 use const T_BITWISE_OR;
 use const T_BITWISE_XOR;
+use const T_CLOSE_SQUARE_BRACKET;
 use const T_DIVIDE;
 use const T_EQUAL;
 use const T_MINUS;
@@ -18,6 +20,7 @@ use const T_MODULUS;
 use const T_MULTIPLY;
 use const T_PLUS;
 use const T_POW;
+use const T_SEMICOLON;
 use const T_SL;
 use const T_SR;
 use const T_STRING_CONCAT;
@@ -28,7 +31,7 @@ class RequireCombinedAssignmentOperatorSniff implements Sniff
 	public const CODE_REQUIRED_COMBINED_ASSIGMENT_OPERATOR = 'RequiredCombinedAssigmentOperator';
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -38,12 +41,14 @@ class RequireCombinedAssignmentOperatorSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $equalPointer
 	 */
 	public function process(File $phpcsFile, $equalPointer): void
 	{
+		$tokens = $phpcsFile->getTokens();
+
 		/** @var int $variableStartPointer */
 		$variableStartPointer = TokenHelper::findNextEffective($phpcsFile, $equalPointer + 1);
 		$variableEndPointer = IdentificatorHelper::findEndPointer($phpcsFile, $variableStartPointer);
@@ -53,7 +58,6 @@ class RequireCombinedAssignmentOperatorSniff implements Sniff
 		}
 
 		$operatorPointer = TokenHelper::findNextEffective($phpcsFile, $variableEndPointer + 1);
-		$tokens = $phpcsFile->getTokens();
 
 		$operators = [
 			T_BITWISE_AND => '&=',
@@ -90,11 +94,27 @@ class RequireCombinedAssignmentOperatorSniff implements Sniff
 			return;
 		}
 
-		$fix = $phpcsFile->addFixableError(
-			sprintf('Use "%s" operator instead of "=" and "%s".', $operators[$tokens[$operatorPointer]['code']], $tokens[$operatorPointer]['content']),
-			$equalPointer,
-			self::CODE_REQUIRED_COMBINED_ASSIGMENT_OPERATOR
+		$semicolonPointer = TokenHelper::findNext($phpcsFile, T_SEMICOLON, $equalPointer + 1);
+		if (TokenHelper::findNext($phpcsFile, Tokens::$operators, $operatorPointer + 1, $semicolonPointer) !== null) {
+			return;
+		}
+
+		$errorMessage = sprintf(
+			'Use "%s" operator instead of "=" and "%s".',
+			$operators[$tokens[$operatorPointer]['code']],
+			$tokens[$operatorPointer]['content']
 		);
+
+		// Not fixable with possible string offset
+		$isFixable = $tokens[$variableEndPointer]['code'] !== T_CLOSE_SQUARE_BRACKET;
+
+		if (!$isFixable) {
+			$phpcsFile->addError($errorMessage, $equalPointer, self::CODE_REQUIRED_COMBINED_ASSIGMENT_OPERATOR);
+
+			return;
+		}
+
+		$fix = $phpcsFile->addFixableError($errorMessage, $equalPointer, self::CODE_REQUIRED_COMBINED_ASSIGMENT_OPERATOR);
 
 		if (!$fix) {
 			return;

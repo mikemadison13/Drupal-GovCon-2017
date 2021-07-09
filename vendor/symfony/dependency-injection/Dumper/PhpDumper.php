@@ -1812,6 +1812,8 @@ EOF;
 
                 return $code;
             }
+        } elseif ($value instanceof \UnitEnum) {
+            return sprintf('\%s::%s', \get_class($value), $value->name);
         } elseif (\is_object($value) || \is_resource($value)) {
             throw new RuntimeException('Unable to dump a service container if a parameter is an object or a resource.');
         }
@@ -2147,7 +2149,9 @@ EOF;
         $classes = [];
 
         while ($definition instanceof Definition) {
-            $classes[] = trim($definition->getClass(), '\\');
+            if ($class = $definition->getClass()) {
+                $classes[] = trim($class, '\\');
+            }
             $factory = $definition->getFactory();
 
             if (!\is_array($factory)) {
@@ -2164,6 +2168,6 @@ EOF;
             $definition = $factory[0];
         }
 
-        return array_filter($classes);
+        return $classes;
     }
 }

@@ -11,7 +11,7 @@ use function strtolower;
 class UseStatement
 {
 
-	public const TYPE_DEFAULT = ReferencedName::TYPE_DEFAULT;
+	public const TYPE_CLASS = ReferencedName::TYPE_CLASS;
 	public const TYPE_FUNCTION = ReferencedName::TYPE_FUNCTION;
 	public const TYPE_CONSTANT = ReferencedName::TYPE_CONSTANT;
 
@@ -49,26 +49,6 @@ class UseStatement
 		$this->alias = $alias;
 	}
 
-	public static function getUniqueId(string $type, string $name): string
-	{
-		$normalizedName = self::normalizedNameAsReferencedInFile($type, $name);
-
-		if ($type === self::TYPE_DEFAULT) {
-			return $normalizedName;
-		}
-
-		return sprintf('%s %s', $type, $normalizedName);
-	}
-
-	public static function normalizedNameAsReferencedInFile(string $type, string $name): string
-	{
-		if ($type === self::TYPE_CONSTANT) {
-			return $name;
-		}
-
-		return strtolower($name);
-	}
-
 	public function getNameAsReferencedInFile(): string
 	{
 		return $this->nameAsReferencedInFile;
@@ -99,6 +79,11 @@ class UseStatement
 		return $this->alias;
 	}
 
+	public function isClass(): bool
+	{
+		return $this->type === self::TYPE_CLASS;
+	}
+
 	public function isConstant(): bool
 	{
 		return $this->type === self::TYPE_CONSTANT;
@@ -112,6 +97,26 @@ class UseStatement
 	public function hasSameType(self $that): bool
 	{
 		return $this->type === $that->type;
+	}
+
+	public static function getUniqueId(string $type, string $name): string
+	{
+		$normalizedName = self::normalizedNameAsReferencedInFile($type, $name);
+
+		if ($type === self::TYPE_CLASS) {
+			return $normalizedName;
+		}
+
+		return sprintf('%s %s', $type, $normalizedName);
+	}
+
+	public static function normalizedNameAsReferencedInFile(string $type, string $name): string
+	{
+		if ($type === self::TYPE_CONSTANT) {
+			return $name;
+		}
+
+		return strtolower($name);
 	}
 
 	public static function getTypeName(string $type): ?string

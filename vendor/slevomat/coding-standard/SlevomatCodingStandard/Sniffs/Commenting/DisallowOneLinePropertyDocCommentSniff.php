@@ -26,8 +26,8 @@ class DisallowOneLinePropertyDocCommentSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $propertyPointer
 	 */
 	public function process(File $phpcsFile, $propertyPointer): void
@@ -45,7 +45,7 @@ class DisallowOneLinePropertyDocCommentSniff implements Sniff
 		}
 
 		/** @var int $docCommentStartPointer */
-		$docCommentStartPointer = DocCommentHelper::findDocCommentOpenToken($phpcsFile, $propertyPointer);
+		$docCommentStartPointer = DocCommentHelper::findDocCommentOpenPointer($phpcsFile, $propertyPointer);
 		$docCommentEndPointer = $tokens[$docCommentStartPointer]['comment_closer'];
 		$lineDifference = $tokens[$docCommentEndPointer]['line'] - $tokens[$docCommentStartPointer]['line'];
 
@@ -94,7 +94,10 @@ class DisallowOneLinePropertyDocCommentSniff implements Sniff
 		$phpcsFile->fixer->addContent($docCommentStartPointer, '*');
 
 		if ($docCommentEndPointer - 1 !== $docCommentStartPointer) {
-			$phpcsFile->fixer->replaceToken($docCommentEndPointer - 1, rtrim($phpcsFile->fixer->getTokenContent($docCommentEndPointer - 1), ' '));
+			$phpcsFile->fixer->replaceToken(
+				$docCommentEndPointer - 1,
+				rtrim($phpcsFile->fixer->getTokenContent($docCommentEndPointer - 1), ' ')
+			);
 		}
 
 		$phpcsFile->fixer->addContentBefore($docCommentEndPointer, $indent);

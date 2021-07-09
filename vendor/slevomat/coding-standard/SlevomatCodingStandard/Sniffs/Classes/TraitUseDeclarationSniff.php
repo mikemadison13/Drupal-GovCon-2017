@@ -20,7 +20,7 @@ class TraitUseDeclarationSniff implements Sniff
 	public const CODE_MULTIPLE_TRAITS_PER_DECLARATION = 'MultipleTraitsPerDeclaration';
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -32,8 +32,8 @@ class TraitUseDeclarationSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $classPointer
 	 */
 	public function process(File $phpcsFile, $classPointer): void
@@ -44,7 +44,6 @@ class TraitUseDeclarationSniff implements Sniff
 			$this->checkDeclaration($phpcsFile, $usePointer);
 		}
 	}
-
 
 	private function checkDeclaration(File $phpcsFile, int $usePointer): void
 	{
@@ -57,11 +56,19 @@ class TraitUseDeclarationSniff implements Sniff
 
 		$tokens = $phpcsFile->getTokens();
 		if ($tokens[$endPointer]['code'] === T_OPEN_CURLY_BRACKET) {
-			$phpcsFile->addError('Multiple traits per use statement are forbidden.', $usePointer, self::CODE_MULTIPLE_TRAITS_PER_DECLARATION);
+			$phpcsFile->addError(
+				'Multiple traits per use statement are forbidden.',
+				$usePointer,
+				self::CODE_MULTIPLE_TRAITS_PER_DECLARATION
+			);
 			return;
 		}
 
-		$fix = $phpcsFile->addFixableError('Multiple traits per use statement are forbidden.', $usePointer, self::CODE_MULTIPLE_TRAITS_PER_DECLARATION);
+		$fix = $phpcsFile->addFixableError(
+			'Multiple traits per use statement are forbidden.',
+			$usePointer,
+			self::CODE_MULTIPLE_TRAITS_PER_DECLARATION
+		);
 
 		if (!$fix) {
 			return;
@@ -69,7 +76,10 @@ class TraitUseDeclarationSniff implements Sniff
 
 		$indentation = '';
 		$currentPointer = $usePointer - 1;
-		while ($tokens[$currentPointer]['code'] === T_WHITESPACE && $tokens[$currentPointer]['content'] !== $phpcsFile->eolChar) {
+		while (
+			$tokens[$currentPointer]['code'] === T_WHITESPACE
+			&& $tokens[$currentPointer]['content'] !== $phpcsFile->eolChar
+		) {
 			$indentation .= $tokens[$currentPointer]['content'];
 			$currentPointer--;
 		}

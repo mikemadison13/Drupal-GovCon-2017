@@ -4,18 +4,15 @@ namespace SlevomatCodingStandard\Sniffs\Namespaces;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Util\Tokens;
 use SlevomatCodingStandard\Helpers\SniffSettingsHelper;
 use SlevomatCodingStandard\Helpers\TokenHelper;
 use function array_key_exists;
-use function array_merge;
-use function in_array;
+use function preg_match;
 use function rtrim;
 use function sprintf;
 use function strlen;
 use function substr;
 use function substr_count;
-use const T_COMMENT;
 use const T_NAMESPACE;
 use const T_OPEN_TAG;
 use const T_SEMICOLON;
@@ -34,7 +31,7 @@ class NamespaceSpacingSniff implements Sniff
 	public $linesCountAfterNamespace = 1;
 
 	/**
-	 * @return (int|string)[]
+	 * @return array<int, (int|string)>
 	 */
 	public function register(): array
 	{
@@ -44,8 +41,8 @@ class NamespaceSpacingSniff implements Sniff
 	}
 
 	/**
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+	 * @param File $phpcsFile
 	 * @param int $namespacePointer
 	 */
 	public function process(File $phpcsFile, $namespacePointer): void
@@ -63,11 +60,11 @@ class NamespaceSpacingSniff implements Sniff
 
 		$whitespaceBeforeNamespace = '';
 
-		$commentTokensWithEolChar = array_merge([T_COMMENT], Tokens::$phpcsCommentTokens);
+		$isInlineCommentBefore = (bool) preg_match('~^(?://|#)(.*)~', $tokens[$pointerBeforeNamespace]['content']);
 
 		if ($tokens[$pointerBeforeNamespace]['code'] === T_OPEN_TAG) {
 			$whitespaceBeforeNamespace .= substr($tokens[$pointerBeforeNamespace]['content'], strlen('<?php'));
-		} elseif (in_array($tokens[$pointerBeforeNamespace]['code'], $commentTokensWithEolChar, true)) {
+		} elseif ($isInlineCommentBefore) {
 			$whitespaceBeforeNamespace .= $phpcsFile->eolChar;
 		}
 
@@ -84,8 +81,9 @@ class NamespaceSpacingSniff implements Sniff
 
 		$fix = $phpcsFile->addFixableError(
 			sprintf(
-				'Expected %d lines before namespace statement, found %d.',
+				'Expected %d line%s before namespace statement, found %d.',
 				$requiredLinesCountBeforeNamespace,
+				$requiredLinesCountBeforeNamespace === 1 ? '' : 's',
 				$actualLinesCountBeforeNamespace
 			),
 			$namespacePointer,
@@ -100,8 +98,11 @@ class NamespaceSpacingSniff implements Sniff
 
 		if ($tokens[$pointerBeforeNamespace]['code'] === T_OPEN_TAG) {
 			$phpcsFile->fixer->replaceToken($pointerBeforeNamespace, '<?php');
-		} elseif (in_array($tokens[$pointerBeforeNamespace]['code'], $commentTokensWithEolChar, true)) {
-			$phpcsFile->fixer->replaceToken($pointerBeforeNamespace, rtrim($tokens[$pointerBeforeNamespace]['content'], $phpcsFile->eolChar));
+		} elseif ($isInlineCommentBefore) {
+			$phpcsFile->fixer->replaceToken(
+				$pointerBeforeNamespace,
+				rtrim($tokens[$pointerBeforeNamespace]['content'], $phpcsFile->eolChar)
+			);
 		}
 
 		for ($i = $pointerBeforeNamespace + 1; $i < $namespacePointer; $i++) {
@@ -138,8 +139,9 @@ class NamespaceSpacingSniff implements Sniff
 
 		$fix = $phpcsFile->addFixableError(
 			sprintf(
-				'Expected %d lines after namespace statement, found %d.',
+				'Expected %d line%s after namespace statement, found %d.',
 				$requiredLinesCountAfterNamespace,
+				$requiredLinesCountAfterNamespace === 1 ? '' : 's',
 				$actualLinesCountAfterNamespace
 			),
 			$namespacePointer,

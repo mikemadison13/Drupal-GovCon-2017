@@ -54,6 +54,7 @@ function template_preprocess_linkicon(array &$variables) {
  *       tag.
  *
  *   Note: String variables in the template are now autoescaped by Twig.
+ *
  * @see https://drupal.org/node/2296163
  */
 function template_preprocess_linkicon_item(array &$variables) {
@@ -85,7 +86,7 @@ function template_preprocess_linkicon_item(array &$variables) {
 
   $attributes['class'][] = $prefix . ' ' . $icon_class;
 
-  // @todo: icon API integration, none by D8 3/2/14.
+  // @todo Icon API integration, none by D8 3/2/14.
   if (!empty($settings['bundle'])) {
     // @see https://www.drupal.org/node/2195739
     $icon = [

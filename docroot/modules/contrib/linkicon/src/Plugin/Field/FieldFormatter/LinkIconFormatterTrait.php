@@ -261,54 +261,57 @@ trait LinkIconFormatterTrait {
       $element['#default_value'] = isset($settings[$key]) ? $settings[$key] : $default;
     }
 
+    // Previews.
+    $field_settings = $this->getFieldSettings();
     $has_icon_path = $this->linkIconManager->getSetting('font');
     $config = $this->linkIconManager->simplifySettings($settings);
+    $icon_previews = [];
 
-    if (!empty($config['bundle']) || $has_icon_path) {
-      $icon_previews = [];
-      $linkicon_item = [
-        '#theme'     => 'linkicon_item',
-        '#title'     => 'Twitter',
-        '#icon_name' => 'twitter',
-        '#settings'  => $config,
-      ];
+    $linkicon_item = [
+      '#theme'     => 'linkicon_item',
+      '#title'     => 'Twitter',
+      '#icon_name' => 'twitter',
+      '#settings'  => $config,
+    ];
 
-      $icon = $this->renderer->render($linkicon_item);
-      $tooltip = '';
-      if ($config['tooltip']) {
-        $tooltip = ' data-title="Twitter"';
+    if (!empty($field_settings['title_predefined'])) {
+      $values = $this->linkIconManager->extractAllowedValues($field_settings['title_predefined']);
+      if (!isset($values['twitter'])) {
+        $linkicon_item['#icon_name'] = key($values);
+        $linkicon_item['#title'] = current($values);
       }
-
-      foreach ($icon_sizes as $key => $size) {
-        $is_active = $key == $config['size'] ? ' active' : '';
-        $icon_previews[] = ['#markup' => '<a class="linkicon__item linkicon--' . $key . $is_active . '" href="#"' . $tooltip . '>' . $icon . '</a>'];
-      }
-
-      $config['_preview'] = TRUE;
-      $preview = [
-        '#theme'       => 'linkicon',
-        '#linkicon_id' => 'linkicon-preview',
-        '#items'       => $icon_previews,
-        '#config'      => $config,
-      ];
-
-      if ($config['load']) {
-        if ($has_icon_path) {
-          $elements['#attached']['library'][] = 'linkicon/linkicon.font';
-        }
-        $elements['#attached']['library'][] = 'linkicon/linkicon';
-      }
-
-      $elements['linkicon_size_preview'] = [
-        '#type'   => 'item',
-        '#markup' => $this->renderer->render($preview),
-        '#states' => [
-          'visible' => [
-            ':input[name*="linkicon_link"]' => ['checked' => FALSE],
-          ],
-        ],
-      ];
     }
+
+    $icon = $this->renderer->render($linkicon_item);
+    $tooltip = '';
+    if ($config['tooltip']) {
+      $tooltip = ' data-title="Twitter"';
+    }
+
+    foreach ($icon_sizes as $key => $size) {
+      $is_active = $key == $config['size'] ? ' active' : '';
+      $icon_previews[] = ['#markup' => '<a class="linkicon__item linkicon--' . $key . $is_active . '" href="#"' . $tooltip . '>' . $icon . '</a>'];
+    }
+
+    $config['_preview'] = TRUE;
+    if ($config['load']) {
+      if ($has_icon_path) {
+        $elements['#attached']['library'][] = 'linkicon/linkicon.font';
+      }
+      $elements['#attached']['library'][] = 'linkicon/linkicon';
+    }
+
+    $elements['linkicon_size_preview'] = [
+      '#theme'       => 'linkicon',
+      '#linkicon_id' => 'linkicon-preview',
+      '#items'       => $icon_previews,
+      '#config'      => $config,
+      '#states' => [
+        'visible' => [
+          ':input[name*="linkicon_link"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
 
     return $elements;
   }
