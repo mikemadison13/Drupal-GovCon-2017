@@ -9,6 +9,7 @@ return array(
     'Acquia\\BltBehat\\Blt\\Plugin\\Commands\\BehatCommand' => $vendorDir . '/acquia/blt-behat/src/Blt/Plugin/Commands/BehatCommand.php',
     'Acquia\\BltBehat\\Blt\\Plugin\\Commands\\BehatTestCommand' => $vendorDir . '/acquia/blt-behat/src/Blt/Plugin/Commands/BehatTestCommand.php',
     'Acquia\\BltBehat\\Blt\\Wizards\\TestsWizard' => $vendorDir . '/acquia/blt-behat/src/Blt/Wizards/TestsWizard.php',
+    'Acquia\\BltLando\\Blt\\Plugin\\Commands\\LandoCommand' => $vendorDir . '/mikemadison13/blt-lando/src/Blt/Plugin/Commands/LandoCommand.php',
     'Acquia\\BltPhpcs\\Blt\\Plugin\\Commands\\PhpcsCommand' => $vendorDir . '/acquia/blt-phpcs/src/Blt/Plugin/Commands/PhpcsCommand.php',
     'Acquia\\BltPhpcs\\Composer\\BltPhpcsPlugin' => $vendorDir . '/acquia/blt-phpcs/src/Composer/BltPhpcsPlugin.php',
     'Acquia\\Blt\\Annotations\\Fileset' => $vendorDir . '/acquia/blt/src/Annotations/Fileset.php',

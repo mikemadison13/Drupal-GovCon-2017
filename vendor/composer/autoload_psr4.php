@@ -131,7 +131,7 @@ return array(
     'CloudFlarePhpSdk\\' => array($vendorDir . '/d8-contrib-modules/cloudflarephpsdk/src'),
     'Behat\\Transliterator\\' => array($vendorDir . '/behat/transliterator/src/Behat/Transliterator'),
     'Behat\\Testwork\\' => array($vendorDir . '/behat/behat/src/Behat/Testwork'),
-    'Behat\\Mink\\Driver\\' => array($vendorDir . '/behat/mink-selenium2-driver/src', $vendorDir . '/behat/mink-browserkit-driver/src', $vendorDir . '/behat/mink-goutte-driver/src'),
+    'Behat\\Mink\\Driver\\' => array($vendorDir . '/behat/mink-goutte-driver/src', $vendorDir . '/behat/mink-browserkit-driver/src', $vendorDir . '/behat/mink-selenium2-driver/src'),
     'Behat\\Mink\\' => array($vendorDir . '/behat/mink/src'),
     'Behat\\Behat\\' => array($vendorDir . '/behat/behat/src/Behat/Behat'),
     'Asm89\\Stack\\' => array($vendorDir . '/asm89/stack-cors/src/Asm89/Stack'),
@@ -143,5 +143,6 @@ return array(
     'Acquia\\Blt\\Tests\\' => array($vendorDir . '/acquia/blt/tests/phpunit/src'),
     'Acquia\\Blt\\' => array($vendorDir . '/acquia/blt/src'),
     'Acquia\\BltPhpcs\\' => array($vendorDir . '/acquia/blt-phpcs/src'),
+    'Acquia\\BltLando\\' => array($vendorDir . '/mikemadison13/blt-lando/src'),
     'Acquia\\BltBehat\\' => array($vendorDir . '/acquia/blt-behat/src'),
 );

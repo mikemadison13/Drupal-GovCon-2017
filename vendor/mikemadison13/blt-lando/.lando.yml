@@ -1,5 +1,5 @@
-name: drupalgovcon
-recipe: acquia
+name: <machine_name>
+recipe: drupal9
 config:
   webroot: docroot
   xdebug: false
@@ -25,7 +25,7 @@ services:
           source: "${LANDO_SSH_AUTH_SOCK:-/run/host-services/ssh-auth.sock}"
           target: /run/host-services/ssh-auth.sock
       environment:
-        DRUSH_OPTIONS_URI: "https://drupalgovcon.lndo.site/"
+        DRUSH_OPTIONS_URI: "https://<host_name>/"
         SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
       cap_add:
         - SYS_ADMIN

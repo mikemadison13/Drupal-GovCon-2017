@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit56202385bea3b32b9431ac49c71552e2
+class ComposerStaticInit5552a1ce07fc2739d9f69046eab56464
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -258,6 +258,7 @@ class ComposerStaticInit56202385bea3b32b9431ac49c71552e2
             'Acquia\\Blt\\Tests\\' => 17,
             'Acquia\\Blt\\' => 11,
             'Acquia\\BltPhpcs\\' => 16,
+            'Acquia\\BltLando\\' => 16,
             'Acquia\\BltBehat\\' => 16,
         ),
     );
@@ -772,9 +773,9 @@ class ComposerStaticInit56202385bea3b32b9431ac49c71552e2
         ),
         'Behat\\Mink\\Driver\\' => 
         array (
-            0 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
+            0 => __DIR__ . '/..' . '/behat/mink-goutte-driver/src',
             1 => __DIR__ . '/..' . '/behat/mink-browserkit-driver/src',
-            2 => __DIR__ . '/..' . '/behat/mink-goutte-driver/src',
+            2 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
         ),
         'Behat\\Mink\\' => 
         array (
@@ -819,6 +820,10 @@ class ComposerStaticInit56202385bea3b32b9431ac49c71552e2
         'Acquia\\BltPhpcs\\' => 
         array (
             0 => __DIR__ . '/..' . '/acquia/blt-phpcs/src',
+        ),
+        'Acquia\\BltLando\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mikemadison13/blt-lando/src',
         ),
         'Acquia\\BltBehat\\' => 
         array (
@@ -930,6 +935,7 @@ class ComposerStaticInit56202385bea3b32b9431ac49c71552e2
         'Acquia\\BltBehat\\Blt\\Plugin\\Commands\\BehatCommand' => __DIR__ . '/..' . '/acquia/blt-behat/src/Blt/Plugin/Commands/BehatCommand.php',
         'Acquia\\BltBehat\\Blt\\Plugin\\Commands\\BehatTestCommand' => __DIR__ . '/..' . '/acquia/blt-behat/src/Blt/Plugin/Commands/BehatTestCommand.php',
         'Acquia\\BltBehat\\Blt\\Wizards\\TestsWizard' => __DIR__ . '/..' . '/acquia/blt-behat/src/Blt/Wizards/TestsWizard.php',
+        'Acquia\\BltLando\\Blt\\Plugin\\Commands\\LandoCommand' => __DIR__ . '/..' . '/mikemadison13/blt-lando/src/Blt/Plugin/Commands/LandoCommand.php',
         'Acquia\\BltPhpcs\\Blt\\Plugin\\Commands\\PhpcsCommand' => __DIR__ . '/..' . '/acquia/blt-phpcs/src/Blt/Plugin/Commands/PhpcsCommand.php',
         'Acquia\\BltPhpcs\\Composer\\BltPhpcsPlugin' => __DIR__ . '/..' . '/acquia/blt-phpcs/src/Composer/BltPhpcsPlugin.php',
         'Acquia\\Blt\\Annotations\\Fileset' => __DIR__ . '/..' . '/acquia/blt/src/Annotations/Fileset.php',
@@ -8352,11 +8358,11 @@ class ComposerStaticInit56202385bea3b32b9431ac49c71552e2
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit56202385bea3b32b9431ac49c71552e2::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit56202385bea3b32b9431ac49c71552e2::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit56202385bea3b32b9431ac49c71552e2::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit56202385bea3b32b9431ac49c71552e2::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit56202385bea3b32b9431ac49c71552e2::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$classMap;
 
         }, null, ClassLoader::class);
     }

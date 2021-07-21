@@ -2470,6 +2470,17 @@
             'reference' => 'b8b6642861662cefb86bf19d9faab01715f38b68',
             'dev_requirement' => false,
         ),
+        'mikemadison13/blt-lando' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mikemadison13/blt-lando',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '4982c932ecb7fcf1ef1dbd2781b44ace404e97b9',
+            'dev_requirement' => false,
+        ),
         'mkalkbrenner/php-htmldiff-advanced' => array(
             'pretty_version' => '0.0.8',
             'version' => '0.0.8.0',

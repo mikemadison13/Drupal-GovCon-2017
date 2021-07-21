@@ -13706,6 +13706,48 @@
             "install-path": "../mglaman/phpstan-drupal"
         },
         {
+            "name": "mikemadison13/blt-lando",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikemadison13/blt-lando.git",
+                "reference": "4982c932ecb7fcf1ef1dbd2781b44ace404e97b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikemadison13/blt-lando/zipball/4982c932ecb7fcf1ef1dbd2781b44ace404e97b9",
+                "reference": "4982c932ecb7fcf1ef1dbd2781b44ace404e97b9",
+                "shasum": ""
+            },
+            "time": "2021-07-08T16:05:54+00:00",
+            "default-branch": true,
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Acquia\\BltLando\\": "./src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Mike Madison",
+                    "homepage": "https://mikemadison.net",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Lando integration for Acquia BLT.",
+            "support": {
+                "issues": "https://github.com/mikemadison13/blt-lando/issues",
+                "source": "https://github.com/mikemadison13/blt-lando/tree/main"
+            },
+            "install-path": "../mikemadison13/blt-lando"
+        },
+        {
             "name": "mkalkbrenner/php-htmldiff-advanced",
             "version": "0.0.8",
             "version_normalized": "0.0.8.0",
