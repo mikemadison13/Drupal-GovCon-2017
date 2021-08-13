@@ -4,12 +4,12 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5552a1ce07fc2739d9f69046eab56464
+class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
 {
     public static $files = array (
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
         '9b38cf48e83f5d8f60375221cd213eee' => __DIR__ . '/..' . '/phpstan/phpstan/bootstrap.php',
@@ -773,9 +773,9 @@ class ComposerStaticInit5552a1ce07fc2739d9f69046eab56464
         ),
         'Behat\\Mink\\Driver\\' => 
         array (
-            0 => __DIR__ . '/..' . '/behat/mink-goutte-driver/src',
+            0 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
             1 => __DIR__ . '/..' . '/behat/mink-browserkit-driver/src',
-            2 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
+            2 => __DIR__ . '/..' . '/behat/mink-goutte-driver/src',
         ),
         'Behat\\Mink\\' => 
         array (
@@ -8358,11 +8358,11 @@ class ComposerStaticInit5552a1ce07fc2739d9f69046eab56464
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit5552a1ce07fc2739d9f69046eab56464::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$classMap;
 
         }, null, ClassLoader::class);
     }
