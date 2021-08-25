@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
+class ComposerStaticInitad1269c90344f87eb8279ad1c9ced869
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -44,9 +44,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '952683d815ff0a7bf322b93c0be7e4e4' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/bootstrap.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
-        '256c1545158fc915c75e51a931bdba60' => __DIR__ . '/..' . '/lcobucci/jwt/compat/class-aliases.php',
-        '0d273777b2b0d96e49fb3d800c6b0e81' => __DIR__ . '/..' . '/lcobucci/jwt/compat/json-exception-polyfill.php',
-        'd6b246ac924292702635bb2349f4a64b' => __DIR__ . '/..' . '/lcobucci/jwt/compat/lcobucci-clock-polyfill.php',
         'fbeead2280a8f3911a1fe6dd034f7d5e' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvancedInterface.php',
         '96f8d8288528d52059397cad6ec61f17' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvanced.php',
         '2d0bd6b7e257b7230c706e6559d6a87b' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/drupal-phpunit-hack.php',
@@ -68,10 +65,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         'e' => 
         array (
             'enshrined\\svgSanitize\\' => 22,
-        ),
-        'd' => 
-        array (
-            'drupol\\phposinfo\\' => 17,
         ),
         'c' => 
         array (
@@ -166,10 +159,7 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         ),
         'L' => 
         array (
-            'League\\OAuth2\\Server\\' => 21,
-            'League\\Event\\' => 13,
             'League\\Container\\' => 17,
-            'Lcobucci\\JWT\\' => 13,
             'Laminas\\ZendFrameworkBridge\\' => 28,
             'Laminas\\Text\\' => 13,
             'Laminas\\Stdlib\\' => 15,
@@ -204,7 +194,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
             'Drush\\' => 6,
             'Drupal\\Tests\\lightning_workflow\\' => 32,
             'Drupal\\Tests\\lightning_core\\' => 28,
-            'Drupal\\Tests\\lightning_api\\' => 27,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\' => 12,
             'Drupal\\Composer\\Plugin\\Scaffold\\' => 32,
@@ -220,7 +209,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
-            'Defuse\\Crypto\\' => 14,
             'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 55,
             'DMore\\ChromeExtension\\' => 22,
             'DMore\\ChromeDriver\\' => 19,
@@ -281,10 +269,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         'enshrined\\svgSanitize\\' => 
         array (
             0 => __DIR__ . '/..' . '/enshrined/svg-sanitize/src',
-        ),
-        'drupol\\phposinfo\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/drupol/phposinfo/src',
         ),
         'cweagans\\Composer\\' => 
         array (
@@ -532,21 +516,9 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         array (
             0 => __DIR__ . '/..' . '/masterminds/html5/src',
         ),
-        'League\\OAuth2\\Server\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/league/oauth2-server/src',
-        ),
-        'League\\Event\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/league/event/src',
-        ),
         'League\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/container/src',
-        ),
-        'Lcobucci\\JWT\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
         'Laminas\\ZendFrameworkBridge\\' => 
         array (
@@ -636,10 +608,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         array (
             0 => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src',
         ),
-        'Drupal\\Tests\\lightning_api\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src',
-        ),
         'Drupal\\Driver\\' => 
         array (
             0 => __DIR__ . '/../..' . '/docroot/drivers/lib/Drupal/Driver',
@@ -702,10 +670,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
             1 => __DIR__ . '/..' . '/doctrine/event-manager/lib/Doctrine/Common',
             2 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
             3 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
-        ),
-        'Defuse\\Crypto\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/defuse/php-encryption/src',
         ),
         'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 
         array (
@@ -2040,20 +2004,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         'DMore\\ChromeExtension\\Behat\\ServiceContainer\\ChromeExtension' => __DIR__ . '/..' . '/dmore/behat-chrome-extension/src/Behat/ServiceContainer/ChromeExtension.php',
         'DMore\\ChromeExtension\\Behat\\ServiceContainer\\Driver\\ChromeFactory' => __DIR__ . '/..' . '/dmore/behat-chrome-extension/src/Behat/ServiceContainer/Driver/ChromeFactory.php',
         'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin' => __DIR__ . '/..' . '/dealerdirect/phpcodesniffer-composer-installer/src/Plugin.php',
-        'Defuse\\Crypto\\Core' => __DIR__ . '/..' . '/defuse/php-encryption/src/Core.php',
-        'Defuse\\Crypto\\Crypto' => __DIR__ . '/..' . '/defuse/php-encryption/src/Crypto.php',
-        'Defuse\\Crypto\\DerivedKeys' => __DIR__ . '/..' . '/defuse/php-encryption/src/DerivedKeys.php',
-        'Defuse\\Crypto\\Encoding' => __DIR__ . '/..' . '/defuse/php-encryption/src/Encoding.php',
-        'Defuse\\Crypto\\Exception\\BadFormatException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/BadFormatException.php',
-        'Defuse\\Crypto\\Exception\\CryptoException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/CryptoException.php',
-        'Defuse\\Crypto\\Exception\\EnvironmentIsBrokenException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/EnvironmentIsBrokenException.php',
-        'Defuse\\Crypto\\Exception\\IOException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/IOException.php',
-        'Defuse\\Crypto\\Exception\\WrongKeyOrModifiedCiphertextException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/WrongKeyOrModifiedCiphertextException.php',
-        'Defuse\\Crypto\\File' => __DIR__ . '/..' . '/defuse/php-encryption/src/File.php',
-        'Defuse\\Crypto\\Key' => __DIR__ . '/..' . '/defuse/php-encryption/src/Key.php',
-        'Defuse\\Crypto\\KeyOrPassword' => __DIR__ . '/..' . '/defuse/php-encryption/src/KeyOrPassword.php',
-        'Defuse\\Crypto\\KeyProtectedByPassword' => __DIR__ . '/..' . '/defuse/php-encryption/src/KeyProtectedByPassword.php',
-        'Defuse\\Crypto\\RuntimeTests' => __DIR__ . '/..' . '/defuse/php-encryption/src/RuntimeTests.php',
         'Dflydev\\DotAccessData\\Data' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/Data.php',
         'Dflydev\\DotAccessData\\DataInterface' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/DataInterface.php',
         'Dflydev\\DotAccessData\\Util' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/Util.php',
@@ -4345,11 +4295,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         'Drupal\\Tests\\Driver\\Drupal7FieldHandlerTest' => __DIR__ . '/..' . '/drupal/drupal-driver/tests/Drupal/Tests/Driver/Drupal7FieldHandlerTest.php',
         'Drupal\\Tests\\Driver\\DrushDriverTest' => __DIR__ . '/..' . '/drupal/drupal-driver/tests/Drupal/Tests/Driver/DrushDriverTest.php',
         'Drupal\\Tests\\Driver\\FieldHandlerAbstractTest' => __DIR__ . '/..' . '/drupal/drupal-driver/tests/Drupal/Tests/Driver/FieldHandlerAbstractTest.php',
-        'Drupal\\Tests\\lightning_api\\FixtureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/FixtureContext.php',
-        'Drupal\\Tests\\lightning_api\\Functional\\ApiTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/Functional/ApiTest.php',
-        'Drupal\\Tests\\lightning_api\\Functional\\BasicUsageTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/Functional/BasicUsageTest.php',
-        'Drupal\\Tests\\lightning_api\\Functional\\Update8401Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/Functional/Update8401Test.php',
-        'Drupal\\Tests\\lightning_api\\Kernel\\OAuthKeyFormTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/tests/src/Kernel/OAuthKeyFormTest.php',
         'Drupal\\Tests\\lightning_core\\FixtureBase' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/FixtureBase.php',
         'Drupal\\Tests\\lightning_core\\FixtureContext' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/FixtureContext.php',
         'Drupal\\Tests\\lightning_core\\FunctionalJavascript\\QuickEditLatestRevisionTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_core/tests/src/FunctionalJavascript/QuickEditLatestRevisionTest.php',
@@ -4391,7 +4336,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         'Drupal\\Tests\\lightning_workflow\\Kernel\\ModerationControlTest' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_workflow/tests/src/Kernel/ModerationControlTest.php',
         'Drupal\\Tests\\lightning_workflow\\Kernel\\Update230Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_workflow/tests/src/Kernel/Update230Test.php',
         'Drupal\\Tests\\lightning_workflow\\Kernel\\Update330Test' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_workflow/tests/src/Kernel/Update330Test.php',
-        'Drupal\\lightning_api\\LightningApiServiceProvider' => __DIR__ . '/../..' . '/docroot/modules/contrib/lightning_api/src/LightningApiServiceProvider.php',
         'Drush\\Application' => __DIR__ . '/..' . '/drush/drush/src/Application.php',
         'Drush\\Backend\\BackendPathEvaluator' => __DIR__ . '/..' . '/drush/drush/src/Backend/BackendPathEvaluator.php',
         'Drush\\Boot\\AutoloaderAwareInterface' => __DIR__ . '/..' . '/drush/drush/src/Boot/AutoloaderAwareInterface.php',
@@ -5250,68 +5194,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         'Laminas\\ZendFrameworkBridge\\Module' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Module.php',
         'Laminas\\ZendFrameworkBridge\\Replacements' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Replacements.php',
         'Laminas\\ZendFrameworkBridge\\RewriteRules' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/RewriteRules.php',
-        'Lcobucci\\JWT\\Builder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Builder.php',
-        'Lcobucci\\JWT\\Claim' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim.php',
-        'Lcobucci\\JWT\\Claim\\Basic' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Basic.php',
-        'Lcobucci\\JWT\\Claim\\EqualsTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/EqualsTo.php',
-        'Lcobucci\\JWT\\Claim\\Factory' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Factory.php',
-        'Lcobucci\\JWT\\Claim\\GreaterOrEqualsTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/GreaterOrEqualsTo.php',
-        'Lcobucci\\JWT\\Claim\\LesserOrEqualsTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/LesserOrEqualsTo.php',
-        'Lcobucci\\JWT\\Claim\\Validatable' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Validatable.php',
-        'Lcobucci\\JWT\\Configuration' => __DIR__ . '/..' . '/lcobucci/jwt/src/Configuration.php',
-        'Lcobucci\\JWT\\Encoding\\CannotDecodeContent' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoding/CannotDecodeContent.php',
-        'Lcobucci\\JWT\\Encoding\\CannotEncodeContent' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoding/CannotEncodeContent.php',
-        'Lcobucci\\JWT\\Exception' => __DIR__ . '/..' . '/lcobucci/jwt/src/Exception.php',
-        'Lcobucci\\JWT\\Parser' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parser.php',
-        'Lcobucci\\JWT\\Parsing\\Decoder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parsing/Decoder.php',
-        'Lcobucci\\JWT\\Parsing\\Encoder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parsing/Encoder.php',
-        'Lcobucci\\JWT\\Signature' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signature.php',
-        'Lcobucci\\JWT\\Signer' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer.php',
-        'Lcobucci\\JWT\\Signer\\BaseSigner' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/BaseSigner.php',
-        'Lcobucci\\JWT\\Signer\\CannotSignPayload' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/CannotSignPayload.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\ConversionFailed' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/ConversionFailed.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/MultibyteStringConverter.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha256.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha384.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha512.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\SignatureConverter' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/SignatureConverter.php',
-        'Lcobucci\\JWT\\Signer\\Hmac' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac.php',
-        'Lcobucci\\JWT\\Signer\\Hmac\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha256.php',
-        'Lcobucci\\JWT\\Signer\\Hmac\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha384.php',
-        'Lcobucci\\JWT\\Signer\\Hmac\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha512.php',
-        'Lcobucci\\JWT\\Signer\\InvalidKeyProvided' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/InvalidKeyProvided.php',
-        'Lcobucci\\JWT\\Signer\\Key' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Key.php',
-        'Lcobucci\\JWT\\Signer\\Key\\FileCouldNotBeRead' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Key/FileCouldNotBeRead.php',
-        'Lcobucci\\JWT\\Signer\\Key\\InMemory' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Key/InMemory.php',
-        'Lcobucci\\JWT\\Signer\\Key\\LocalFileReference' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Key/LocalFileReference.php',
-        'Lcobucci\\JWT\\Signer\\Keychain' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Keychain.php',
-        'Lcobucci\\JWT\\Signer\\None' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/None.php',
-        'Lcobucci\\JWT\\Signer\\OpenSSL' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/OpenSSL.php',
-        'Lcobucci\\JWT\\Signer\\Rsa' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa.php',
-        'Lcobucci\\JWT\\Signer\\Rsa\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha256.php',
-        'Lcobucci\\JWT\\Signer\\Rsa\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha384.php',
-        'Lcobucci\\JWT\\Signer\\Rsa\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha512.php',
-        'Lcobucci\\JWT\\Token' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token.php',
-        'Lcobucci\\JWT\\Token\\DataSet' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/DataSet.php',
-        'Lcobucci\\JWT\\Token\\InvalidTokenStructure' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/InvalidTokenStructure.php',
-        'Lcobucci\\JWT\\Token\\RegisteredClaimGiven' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/RegisteredClaimGiven.php',
-        'Lcobucci\\JWT\\Token\\RegisteredClaims' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/RegisteredClaims.php',
-        'Lcobucci\\JWT\\Token\\UnsupportedHeaderFound' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/UnsupportedHeaderFound.php',
-        'Lcobucci\\JWT\\ValidationData' => __DIR__ . '/..' . '/lcobucci/jwt/src/ValidationData.php',
-        'Lcobucci\\JWT\\Validation\\Constraint' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint.php',
-        'Lcobucci\\JWT\\Validation\\ConstraintViolation' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/ConstraintViolation.php',
-        'Lcobucci\\JWT\\Validation\\Constraint\\IdentifiedBy' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/IdentifiedBy.php',
-        'Lcobucci\\JWT\\Validation\\Constraint\\IssuedBy' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/IssuedBy.php',
-        'Lcobucci\\JWT\\Validation\\Constraint\\LeewayCannotBeNegative' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/LeewayCannotBeNegative.php',
-        'Lcobucci\\JWT\\Validation\\Constraint\\PermittedFor' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/PermittedFor.php',
-        'Lcobucci\\JWT\\Validation\\Constraint\\RelatedTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/RelatedTo.php',
-        'Lcobucci\\JWT\\Validation\\Constraint\\SignedWith' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/SignedWith.php',
-        'Lcobucci\\JWT\\Validation\\Constraint\\ValidAt' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/ValidAt.php',
-        'Lcobucci\\JWT\\Validation\\NoConstraintsGiven' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/NoConstraintsGiven.php',
-        'Lcobucci\\JWT\\Validation\\RequiredConstraintsViolated' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/RequiredConstraintsViolated.php',
-        'Lcobucci\\JWT\\Validation\\Validator' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Validator.php',
-        'Lcobucci\\JWT\\Validator' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validator.php',
         'League\\Container\\Argument\\ArgumentResolverInterface' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverInterface.php',
         'League\\Container\\Argument\\ArgumentResolverTrait' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverTrait.php',
         'League\\Container\\Argument\\RawArgument' => __DIR__ . '/..' . '/league/container/src/Argument/RawArgument.php',
@@ -5342,70 +5224,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         'League\\Container\\ServiceProvider\\ServiceProviderAggregateInterface' => __DIR__ . '/..' . '/league/container/src/ServiceProvider/ServiceProviderAggregateInterface.php',
         'League\\Container\\ServiceProvider\\ServiceProviderInterface' => __DIR__ . '/..' . '/league/container/src/ServiceProvider/ServiceProviderInterface.php',
         'League\\Container\\ServiceProvider\\SignatureServiceProviderInterface' => __DIR__ . '/..' . '/league/container/src/ServiceProvider/SignatureServiceProviderInterface.php',
-        'League\\Event\\AbstractEvent' => __DIR__ . '/..' . '/league/event/src/AbstractEvent.php',
-        'League\\Event\\AbstractListener' => __DIR__ . '/..' . '/league/event/src/AbstractListener.php',
-        'League\\Event\\BufferedEmitter' => __DIR__ . '/..' . '/league/event/src/BufferedEmitter.php',
-        'League\\Event\\CallbackListener' => __DIR__ . '/..' . '/league/event/src/CallbackListener.php',
-        'League\\Event\\Emitter' => __DIR__ . '/..' . '/league/event/src/Emitter.php',
-        'League\\Event\\EmitterAwareInterface' => __DIR__ . '/..' . '/league/event/src/EmitterAwareInterface.php',
-        'League\\Event\\EmitterAwareTrait' => __DIR__ . '/..' . '/league/event/src/EmitterAwareTrait.php',
-        'League\\Event\\EmitterInterface' => __DIR__ . '/..' . '/league/event/src/EmitterInterface.php',
-        'League\\Event\\EmitterTrait' => __DIR__ . '/..' . '/league/event/src/EmitterTrait.php',
-        'League\\Event\\Event' => __DIR__ . '/..' . '/league/event/src/Event.php',
-        'League\\Event\\EventInterface' => __DIR__ . '/..' . '/league/event/src/EventInterface.php',
-        'League\\Event\\Generator' => __DIR__ . '/..' . '/league/event/src/Generator.php',
-        'League\\Event\\GeneratorInterface' => __DIR__ . '/..' . '/league/event/src/GeneratorInterface.php',
-        'League\\Event\\GeneratorTrait' => __DIR__ . '/..' . '/league/event/src/GeneratorTrait.php',
-        'League\\Event\\ListenerAcceptor' => __DIR__ . '/..' . '/league/event/src/ListenerAcceptor.php',
-        'League\\Event\\ListenerAcceptorInterface' => __DIR__ . '/..' . '/league/event/src/ListenerAcceptorInterface.php',
-        'League\\Event\\ListenerInterface' => __DIR__ . '/..' . '/league/event/src/ListenerInterface.php',
-        'League\\Event\\ListenerProviderInterface' => __DIR__ . '/..' . '/league/event/src/ListenerProviderInterface.php',
-        'League\\Event\\OneTimeListener' => __DIR__ . '/..' . '/league/event/src/OneTimeListener.php',
-        'League\\OAuth2\\Server\\AuthorizationServer' => __DIR__ . '/..' . '/league/oauth2-server/src/AuthorizationServer.php',
-        'League\\OAuth2\\Server\\AuthorizationValidators\\AuthorizationValidatorInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/AuthorizationValidators/AuthorizationValidatorInterface.php',
-        'League\\OAuth2\\Server\\AuthorizationValidators\\BearerTokenValidator' => __DIR__ . '/..' . '/league/oauth2-server/src/AuthorizationValidators/BearerTokenValidator.php',
-        'League\\OAuth2\\Server\\CryptKey' => __DIR__ . '/..' . '/league/oauth2-server/src/CryptKey.php',
-        'League\\OAuth2\\Server\\CryptTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/CryptTrait.php',
-        'League\\OAuth2\\Server\\Entities\\AccessTokenEntityInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/AccessTokenEntityInterface.php',
-        'League\\OAuth2\\Server\\Entities\\AuthCodeEntityInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/AuthCodeEntityInterface.php',
-        'League\\OAuth2\\Server\\Entities\\ClientEntityInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/ClientEntityInterface.php',
-        'League\\OAuth2\\Server\\Entities\\RefreshTokenEntityInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/RefreshTokenEntityInterface.php',
-        'League\\OAuth2\\Server\\Entities\\ScopeEntityInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/ScopeEntityInterface.php',
-        'League\\OAuth2\\Server\\Entities\\TokenInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/TokenInterface.php',
-        'League\\OAuth2\\Server\\Entities\\Traits\\AccessTokenTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/AccessTokenTrait.php',
-        'League\\OAuth2\\Server\\Entities\\Traits\\AuthCodeTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/AuthCodeTrait.php',
-        'League\\OAuth2\\Server\\Entities\\Traits\\ClientTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/ClientTrait.php',
-        'League\\OAuth2\\Server\\Entities\\Traits\\EntityTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/EntityTrait.php',
-        'League\\OAuth2\\Server\\Entities\\Traits\\RefreshTokenTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/RefreshTokenTrait.php',
-        'League\\OAuth2\\Server\\Entities\\Traits\\ScopeTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/ScopeTrait.php',
-        'League\\OAuth2\\Server\\Entities\\Traits\\TokenEntityTrait' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/Traits/TokenEntityTrait.php',
-        'League\\OAuth2\\Server\\Entities\\UserEntityInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Entities/UserEntityInterface.php',
-        'League\\OAuth2\\Server\\Exception\\OAuthServerException' => __DIR__ . '/..' . '/league/oauth2-server/src/Exception/OAuthServerException.php',
-        'League\\OAuth2\\Server\\Exception\\UniqueTokenIdentifierConstraintViolationException' => __DIR__ . '/..' . '/league/oauth2-server/src/Exception/UniqueTokenIdentifierConstraintViolationException.php',
-        'League\\OAuth2\\Server\\Grant\\AbstractAuthorizeGrant' => __DIR__ . '/..' . '/league/oauth2-server/src/Grant/AbstractAuthorizeGrant.php',
-        'League\\OAuth2\\Server\\Grant\\AbstractGrant' => __DIR__ . '/..' . '/league/oauth2-server/src/Grant/AbstractGrant.php',
-        'League\\OAuth2\\Server\\Grant\\AuthCodeGrant' => __DIR__ . '/..' . '/league/oauth2-server/src/Grant/AuthCodeGrant.php',
-        'League\\OAuth2\\Server\\Grant\\ClientCredentialsGrant' => __DIR__ . '/..' . '/league/oauth2-server/src/Grant/ClientCredentialsGrant.php',
-        'League\\OAuth2\\Server\\Grant\\GrantTypeInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Grant/GrantTypeInterface.php',
-        'League\\OAuth2\\Server\\Grant\\ImplicitGrant' => __DIR__ . '/..' . '/league/oauth2-server/src/Grant/ImplicitGrant.php',
-        'League\\OAuth2\\Server\\Grant\\PasswordGrant' => __DIR__ . '/..' . '/league/oauth2-server/src/Grant/PasswordGrant.php',
-        'League\\OAuth2\\Server\\Grant\\RefreshTokenGrant' => __DIR__ . '/..' . '/league/oauth2-server/src/Grant/RefreshTokenGrant.php',
-        'League\\OAuth2\\Server\\Middleware\\AuthorizationServerMiddleware' => __DIR__ . '/..' . '/league/oauth2-server/src/Middleware/AuthorizationServerMiddleware.php',
-        'League\\OAuth2\\Server\\Middleware\\ResourceServerMiddleware' => __DIR__ . '/..' . '/league/oauth2-server/src/Middleware/ResourceServerMiddleware.php',
-        'League\\OAuth2\\Server\\Repositories\\AccessTokenRepositoryInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Repositories/AccessTokenRepositoryInterface.php',
-        'League\\OAuth2\\Server\\Repositories\\AuthCodeRepositoryInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Repositories/AuthCodeRepositoryInterface.php',
-        'League\\OAuth2\\Server\\Repositories\\ClientRepositoryInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Repositories/ClientRepositoryInterface.php',
-        'League\\OAuth2\\Server\\Repositories\\RefreshTokenRepositoryInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Repositories/RefreshTokenRepositoryInterface.php',
-        'League\\OAuth2\\Server\\Repositories\\RepositoryInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Repositories/RepositoryInterface.php',
-        'League\\OAuth2\\Server\\Repositories\\ScopeRepositoryInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Repositories/ScopeRepositoryInterface.php',
-        'League\\OAuth2\\Server\\Repositories\\UserRepositoryInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/Repositories/UserRepositoryInterface.php',
-        'League\\OAuth2\\Server\\RequestEvent' => __DIR__ . '/..' . '/league/oauth2-server/src/RequestEvent.php',
-        'League\\OAuth2\\Server\\RequestTypes\\AuthorizationRequest' => __DIR__ . '/..' . '/league/oauth2-server/src/RequestTypes/AuthorizationRequest.php',
-        'League\\OAuth2\\Server\\ResourceServer' => __DIR__ . '/..' . '/league/oauth2-server/src/ResourceServer.php',
-        'League\\OAuth2\\Server\\ResponseTypes\\AbstractResponseType' => __DIR__ . '/..' . '/league/oauth2-server/src/ResponseTypes/AbstractResponseType.php',
-        'League\\OAuth2\\Server\\ResponseTypes\\BearerTokenResponse' => __DIR__ . '/..' . '/league/oauth2-server/src/ResponseTypes/BearerTokenResponse.php',
-        'League\\OAuth2\\Server\\ResponseTypes\\RedirectResponse' => __DIR__ . '/..' . '/league/oauth2-server/src/ResponseTypes/RedirectResponse.php',
-        'League\\OAuth2\\Server\\ResponseTypes\\ResponseTypeInterface' => __DIR__ . '/..' . '/league/oauth2-server/src/ResponseTypes/ResponseTypeInterface.php',
         'Masterminds\\HTML5' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5.php',
         'Masterminds\\HTML5\\Elements' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Elements.php',
         'Masterminds\\HTML5\\Entities' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Entities.php',
@@ -8245,13 +8063,6 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
         'cweagans\\Composer\\PatchEvent' => __DIR__ . '/..' . '/cweagans/composer-patches/src/PatchEvent.php',
         'cweagans\\Composer\\PatchEvents' => __DIR__ . '/..' . '/cweagans/composer-patches/src/PatchEvents.php',
         'cweagans\\Composer\\Patches' => __DIR__ . '/..' . '/cweagans/composer-patches/src/Patches.php',
-        'drupol\\phposinfo\\Enum\\Enum' => __DIR__ . '/..' . '/drupol/phposinfo/src/Enum/Enum.php',
-        'drupol\\phposinfo\\Enum\\Family' => __DIR__ . '/..' . '/drupol/phposinfo/src/Enum/Family.php',
-        'drupol\\phposinfo\\Enum\\FamilyName' => __DIR__ . '/..' . '/drupol/phposinfo/src/Enum/FamilyName.php',
-        'drupol\\phposinfo\\Enum\\Os' => __DIR__ . '/..' . '/drupol/phposinfo/src/Enum/Os.php',
-        'drupol\\phposinfo\\Enum\\OsName' => __DIR__ . '/..' . '/drupol/phposinfo/src/Enum/OsName.php',
-        'drupol\\phposinfo\\OsInfo' => __DIR__ . '/..' . '/drupol/phposinfo/src/OsInfo.php',
-        'drupol\\phposinfo\\OsInfoInterface' => __DIR__ . '/..' . '/drupol/phposinfo/src/OsInfoInterface.php',
         'enshrined\\svgSanitize\\ElementReference\\Resolver' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/ElementReference/Resolver.php',
         'enshrined\\svgSanitize\\ElementReference\\Subject' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/ElementReference/Subject.php',
         'enshrined\\svgSanitize\\ElementReference\\Usage' => __DIR__ . '/..' . '/enshrined/svg-sanitize/src/ElementReference/Usage.php',
@@ -8358,11 +8169,11 @@ class ComposerStaticInit66c35455bb8b9de392d674e66919ea8a
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit66c35455bb8b9de392d674e66919ea8a::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitad1269c90344f87eb8279ad1c9ced869::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitad1269c90344f87eb8279ad1c9ced869::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitad1269c90344f87eb8279ad1c9ced869::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitad1269c90344f87eb8279ad1c9ced869::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitad1269c90344f87eb8279ad1c9ced869::$classMap;
 
         }, null, ClassLoader::class);
     }
