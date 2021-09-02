@@ -31,7 +31,7 @@ class SettingsForm extends ConfigFormBase {
     $config = $this->config('moderation_dashboard.settings');
     $form['redirect_on_login'] = [
       '#type' => 'checkbox',
-      '#title' => t('Redirect on login'),
+      '#title' => $this->t('Redirect on login'),
       '#default_value' => $config->get('redirect_on_login'),
       '#description' => $this->t('Redirect to moderation dashboard after login.'),
     ];
