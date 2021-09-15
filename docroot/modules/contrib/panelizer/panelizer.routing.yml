@@ -20,7 +20,8 @@ panelizer.wizard.add:
     _title: 'Panelizer Wizard'
     tempstore_id: 'panelizer.wizard'
   requirements:
-    _access: 'FALSE'
+    _panelizer_default_access: 'TRUE'
+    _permission: 'administer panelizer'
 
 panelizer.wizard.add.step:
   path: '/admin/structure/panelizer/add/{machine_name}/{step}'
@@ -29,7 +30,7 @@ panelizer.wizard.add.step:
     _title: 'Panelizer Wizard'
     tempstore_id: 'panelizer.wizard'
   requirements:
-    _access: 'FALSE'
+    _permission: 'administer panelizer'
 
 panelizer.wizard.edit:
   path: '/admin/structure/panelizer/edit/{machine_name}/{step}'
@@ -39,7 +40,7 @@ panelizer.wizard.edit:
     tempstore_id: 'panelizer.wizard'
     step: 'general'
   requirements:
-    _access: 'FALSE'
+    _permission: 'administer panelizer'
 
 panelizer.default.delete:
   path: '/admin/structure/panelizer/delete/{machine_name}'
@@ -67,7 +68,7 @@ panelizer.wizard.step.context.add:
     _title: 'Add custom context'
     tempstore_id: 'panelizer.wizard'
   requirements:
-    _access: 'FALSE'
+    _permission: 'administer panelizer'
 
 panelizer.wizard.step.context.edit:
   path: '/admin/panelizer/wizard/{machine_name}/contexts/edit/{context_id}'
@@ -76,7 +77,7 @@ panelizer.wizard.step.context.edit:
     _title: 'Edit context'
     tempstore_id: 'panelizer.wizard'
   requirements:
-    _access: 'FALSE'
+    _permission: 'administer panelizer'
 
 panelizer.wizard.step.context.delete:
   path: '/admin/panelizer/wizard/{machine_name}/context/delete/{context_id}'
@@ -85,11 +86,4 @@ panelizer.wizard.step.context.delete:
     _title: 'Delete static context'
     tempstore_id: 'panelizer.wizard'
   requirements:
-    _access: 'FALSE'
-
-panelizer.layout_builder_migration:
-  path: '/admin/panelizer/migrate/{entity_type_id}/{bundle}/{view_mode}'
-  defaults:
-    _form: '\Drupal\panelizer\Form\LayoutBuilderMigrationConfirmForm'
-  requirements:
-    _custom_access: '\Drupal\panelizer\Form\LayoutBuilderMigrationConfirmForm::access'
+    _permission: 'administer panelizer'

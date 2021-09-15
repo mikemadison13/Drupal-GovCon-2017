@@ -67,8 +67,6 @@ class RecursiveExtensionFilterIterator extends \RecursiveFilterIterator {
     'js',
     'misc',
     'templates',
-    'node_modules',
-    'bower_components',
     // Legacy subdirectories.
     'includes',
     // Test subdirectories.

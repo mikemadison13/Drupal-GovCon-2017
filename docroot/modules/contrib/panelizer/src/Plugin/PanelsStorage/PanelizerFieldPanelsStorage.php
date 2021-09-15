@@ -123,7 +123,7 @@ class PanelizerFieldPanelsStorage extends PanelsStorageBase implements Container
    *   The context.
    */
   protected function getEntityContext($entity_type_id, EntityInterface $entity) {
-    return new AutomaticContext(new EntityContextDefinition('entity:' . $entity_type_id, NULL, TRUE), $entity);
+    return new AutomaticContext(EntityContextDefinition::fromEntityTypeId($entity_type_id), $entity);
   }
 
   /**

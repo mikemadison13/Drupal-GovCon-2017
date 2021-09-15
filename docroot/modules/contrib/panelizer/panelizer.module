@@ -204,11 +204,6 @@ function panelizer_form_entity_view_display_edit_form_alter(&$form, FormStateInt
   if ($panelizer_manager->hasDefinition($entity_type_id)) {
     $settings = $panelizer->getPanelizerSettings($entity_type_id, $bundle, $mode, $display);
 
-    // If Panelizer is not already enabled, do not allow it.
-    if (empty($settings['enable'])) {
-      return;
-    }
-
     // Always put the field table below the Panelizer options.
     $form['fields']['#weight'] = 10;
 
@@ -235,17 +230,13 @@ function panelizer_form_entity_view_display_edit_form_alter(&$form, FormStateInt
       '#parents' => ['panelizer'],
     ];
 
-    // Only show the per-entity customization checkbox if it is already enabled.
-    if (!empty($settings['custom'])) {
-      $form['panelizer']['options']['custom'] = [
-        '#type' => 'checkbox',
-        '#title' => t('Allow each @entity to have its display customized', [
-          '@entity' => $entity_type->getSingularLabel(),
-        ]),
-        '#default_value' => $settings['custom'],
-      ];
-    }
-
+    $form['panelizer']['options']['custom'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Allow each @entity to have its display customized', [
+        '@entity' => $entity_type->getSingularLabel(),
+      ]),
+      '#default_value' => isset($settings['custom']) ? $settings['custom'] : FALSE,
+    ];
     $form['panelizer']['options']['allow'] = [
       '#type' => 'checkbox',
       '#title' => t('Allow users to select which display to use'),
@@ -295,30 +286,11 @@ function panelizer_form_entity_view_display_edit_form_alter(&$form, FormStateInt
         ];
       }
       $form['fields']['#access'] = FALSE;
-
-      $form['panelizer']['layout_builder'] = [
-        '#type' => 'submit',
-        '#value' => t('Migrate to Layout Builder'),
-        '#submit' => [
-          '_panelizer_migrate_to_layout_builder',
-        ],
-      ];
     }
 
     $form['#attached']['library'][] = 'panelizer/panelizer_default_form';
     $form['actions']['submit']['#submit'][] = 'panelizer_form_entity_view_display_edit_submit';
   }
-}
-
-function _panelizer_migrate_to_layout_builder(array &$form, FormStateInterface $form_state) {
-  /** @var \Drupal\layout_builder\Entity\LayoutEntityDisplayInterface $display */
-  $display = $form_state->getFormObject()->getEntity();
-
-  $form_state->setRedirect('panelizer.layout_builder_migration', [
-    'entity_type_id' => $display->getTargetEntityTypeId(),
-    'bundle' => $display->getTargetBundle(),
-    'view_mode' => $display->getMode(),
-  ]);
 }
 
 function panelizer_form_entity_view_display_edit_submit(&$form, FormStateInterface $form_state) {

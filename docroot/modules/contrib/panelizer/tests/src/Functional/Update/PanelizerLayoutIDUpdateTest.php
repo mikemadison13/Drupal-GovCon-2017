@@ -25,23 +25,12 @@ class PanelizerLayoutIDUpdateTest extends UpdatePathTestBase {
    * Test updates.
    */
   public function testUpdate() {
-    $module_handler = $this->container->get('module_handler');
-    $this->assertFalse($module_handler->moduleExists('layout_builder'));
-    $this->assertFalse($module_handler->moduleExists('core_context'));
-    $this->assertFalse($module_handler->moduleExists('layout_library'));
-
     $this->runUpdates();
 
-    $module_handler = $this->container->get('module_handler');
-    $this->assertTrue($module_handler->moduleExists('layout_builder'));
-    $this->assertTrue($module_handler->moduleExists('core_context'));
-    $this->assertTrue($module_handler->moduleExists('layout_library'));
-
     $this->drupalLogin($this->rootUser);
-    // Defaults are not editable in Panelizer 5.x.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->clickLink('Edit', 1);
-    $this->assertResponse(403);
+    $this->assertResponse(200);
 
     $this->drupalGet('node/1');
     $this->assertResponse(200);

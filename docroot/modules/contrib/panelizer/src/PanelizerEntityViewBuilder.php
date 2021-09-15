@@ -210,7 +210,7 @@ class PanelizerEntityViewBuilder implements EntityViewBuilderInterface, EntityHa
    *   The context.
    */
   protected function getEntityContext(EntityInterface $entity) {
-    return new AutomaticContext(new EntityContextDefinition('entity:' . $this->entityTypeId, NULL, TRUE), $entity);
+    return new AutomaticContext(EntityContextDefinition::fromEntityTypeId($this->entityTypeId), $entity);
   }
 
   /*

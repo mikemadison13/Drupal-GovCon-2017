@@ -21,12 +21,7 @@ class PanelizerQuickEditTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
-    'contextual',
-    'field_ui',
-    'node',
-    'panelizer_quickedit',
-  ];
+  public static $modules = ['contextual', 'field_ui', 'node', 'panelizer_quickedit'];
 
   /**
    * {@inheritdoc}
@@ -77,7 +72,7 @@ class PanelizerQuickEditTest extends WebDriverTestBase {
     ]);
     $this->drupalLogin($user);
 
-    // Enable Panelizer for pages.
+    // Enable Panelizer for Articles.
     $this->drupalGet('admin/structure/types/manage/page/display');
     $this->container->get('panelizer')
       ->setPanelizerSettings('node', 'page', 'default', [

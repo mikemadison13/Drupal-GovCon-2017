@@ -201,7 +201,7 @@ class PanelizerFieldPanelsStorageTest extends UnitTestCase {
     $this->storage->load('123')->willReturn($entity->reveal())->shouldBeCalled();
 
     $this->expectException('Exception');
-    $this->expectExceptionMessage("Save failed");
+    $this->expectExceptionMessage('Save failed');
     $this->panelsStorage->save($panels_display->reveal());
   }
 

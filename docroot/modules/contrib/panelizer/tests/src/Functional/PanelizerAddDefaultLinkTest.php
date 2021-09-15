@@ -19,10 +19,21 @@ class PanelizerAddDefaultLinkTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
+  public static $modules = [
+    // Modules for core functionality.
+    'field',
     'field_ui',
     'node',
+
+    // Core dependencies.
+    'layout_discovery',
+
+    // Contrib dependencies.
+    'ctools',
+    'panels',
     'panels_ipe',
+
+    // This module.
     'panelizer',
   ];
 
@@ -30,8 +41,6 @@ class PanelizerAddDefaultLinkTest extends BrowserTestBase {
    * Confirm a content type can be panelized and unpanelized.
    */
   public function test() {
-    $assert_session = $this->assertSession();
-
     // Place the local actions block in the theme so that we can assert the
     // presence of local actions and such.
     $this->drupalPlaceBlock('local_actions_block', [
@@ -47,24 +56,17 @@ class PanelizerAddDefaultLinkTest extends BrowserTestBase {
     // Create the content type.
     $this->drupalCreateContentType(['type' => $content_type, 'name' => 'Page']);
 
-    $this->container->get('panelizer')
-      ->setPanelizerSettings('node', 'page', 'default', [
-        'enable' => TRUE,
-        'allow' => FALSE,
-        'custom' => FALSE,
-        'default' => 'default',
-      ]);
-
-    $this->drupalGet('/admin/structure/types/manage/page/display');
+    // Panelize the content type.
+    $this->panelize($content_type);
 
     // Confirm that the content type is now panelized.
-    $assert_session->linkNotExists('Add a new Panelizer default display');
+    $this->assertLink('Add a new Panelizer default display');
 
     // Un-panelize the content type.
     $this->unpanelize($content_type);
 
     // Confirm that the content type is no longer panelized.
-    $assert_session->linkNotExists('Add a new Panelizer default display');
+    $this->assertNoLink('Add a new Panelizer default display');
   }
 
 }
