@@ -3,6 +3,7 @@
 namespace Drupal\core_context\ContextProvider;
 
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -31,6 +32,8 @@ final class LayoutBuilder extends RouteAwareContextProviderBase {
    *   The entity display repository service.
    * @param \Drupal\core_context\ContextProvider\CanonicalEntity $canonical
    *   The 'core_context.canonical_entity' service.
+   * @param mixed ...$arguments
+   *   Additional arguments to pass to the parent constructor.
    */
   public function __construct(EntityDisplayRepositoryInterface $entity_display_repository, CanonicalEntity $canonical, ...$arguments) {
     $this->entityDisplayRepository = $entity_display_repository;
@@ -48,7 +51,7 @@ final class LayoutBuilder extends RouteAwareContextProviderBase {
    * @param \Symfony\Component\Routing\Route $route
    *   The current route object.
    *
-   * @see @see \Drupal\layout_builder\Routing\LayoutBuilderRoutesTrait
+   * @see \Drupal\layout_builder\Routing\LayoutBuilderRoutesTrait
    *
    * @return string
    *   The entity type and view mode, separated by a period. If we are not on
@@ -84,6 +87,11 @@ final class LayoutBuilder extends RouteAwareContextProviderBase {
       // editing does not support bundles.
       $bundle_key = $this->routeMatch->getParameter('bundle_key');
       $bundle = isset($bundle_key) ? $this->routeMatch->getParameter($bundle_key) : $entity_type_id;
+      // With certain entity types, such as media items, the bundle is a fully
+      // loaded config entity. In such a case, we only need its ID.
+      if ($bundle instanceof EntityInterface) {
+        $bundle = $bundle->id();
+      }
       $view_mode = $this->routeMatch->getParameter('view_mode_name');
 
       $display = $this->entityDisplayRepository->getViewDisplay($entity_type_id, $bundle, $view_mode);

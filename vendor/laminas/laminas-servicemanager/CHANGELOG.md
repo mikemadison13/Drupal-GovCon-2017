@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.8.0 - 2021-09-14
+
+
+-----
+
+### Release Notes for [3.8.0](https://github.com/laminas/laminas-servicemanager/milestone/15)
+
+Feature release (minor)
+
+### 3.8.0
+
+- Total issues resolved: **0**
+- Total pull requests resolved: **3**
+- Total contributors: **3**
+
+#### Enhancement
+
+ - [103: Provide PHP 8.1 support](https://github.com/laminas/laminas-servicemanager/pull/103) thanks to @weierophinney
+ - [100: Remove check for `php:&lt;7`, since support was dropped](https://github.com/laminas/laminas-servicemanager/pull/100) thanks to @internalsystemerror
+
+#### Documentation,Enhancement
+
+ - [99: Explicitly declare that factories support `array&lt;mixed&gt;` for construct-time options, instead of just declaring `array`](https://github.com/laminas/laminas-servicemanager/pull/99) thanks to @fezfez
+
+## 3.6.5 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 3.6.4 - 2021-02-03
 
 

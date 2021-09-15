@@ -5,7 +5,7 @@ description: 'Allows context values to be attached to entities in a field.'
 dependencies:
   - ctools:ctools
 
-# Information added by Drupal.org packaging script on 2020-04-21
-version: '8.x-1.0-beta4'
+# Information added by Drupal.org packaging script on 2021-07-26
+version: '8.x-1.0-beta5'
 project: 'core_context'
-datestamp: 1587474488
+datestamp: 1627275087

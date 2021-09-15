@@ -1,6 +1,6 @@
 # Websocket Client and Server for PHP
 
-[![Build Status](https://travis-ci.com/Textalk/websocket-php.svg?branch=master)](https://travis-ci.com/Textalk/websocket-php)
+[![Build Status](https://github.com/Textalk/websocket-php/actions/workflows/acceptance.yml/badge.svg)](https://github.com/Textalk/websocket-php/actions)
 [![Coverage Status](https://coveralls.io/repos/github/Textalk/websocket-php/badge.svg?branch=master)](https://coveralls.io/github/Textalk/websocket-php)
 
 This library contains WebSocket client and server for PHP.
@@ -64,4 +64,4 @@ Fredrik Liljegren, Armen Baghumian Sankbarani, Ruslan Bekenev,
 Joshua Thijssen, Simon Lipp, Quentin Bellus, Patrick McCarren, swmcdonnell,
 Ignas Bernotas, Mark Herhold, Andreas Palm, Sören Jensen, pmaasz, Alexey Stavrov,
 Michael Slezak, Pierre Seznec, rmeisler, Nickolay V. Shmyrev, Christoph Kempen,
-Marc Roberts.
+Marc Roberts, Antonio Mora, Simon Podlipsky.
