@@ -66,6 +66,26 @@ column:
   dependencies:
     - blazy/base
 
+flex:
+  css:
+    component:
+      css/components/blazy.flex.css: {}
+  js:
+    js/blazy.flex.js: {}
+  dependencies:
+    - blazy/load
+
+nativegrid:
+  css:
+    component:
+      css/components/blazy.nativegrid.css: {}
+
+nativegrid.masonry:
+  js:
+    js/blazy.nativegrid.masonry.js: {}
+  dependencies:
+    - blazy/nativegrid
+
 dblazy:
   js:
     js/dblazy.js: { weight: -4 }

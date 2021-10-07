@@ -24,7 +24,7 @@ class BlazyAdminFormatter extends BlazyAdminFormatterBase {
       unset($form['preserve_keys'], $form['visible_items']);
 
       if (isset($form['grid'])) {
-        $form['grid']['#description'] = $this->t('The amount of block grid columns for large monitors 64.063em+. <br /><strong>Requires</strong>:<ol><li>Display style.</li><li>A reasonable amount of contents.</li></ol>Unless required, leave empty to DIY, or to not build grids.');
+        $form['grid']['#description'] = $this->t('The amount of block grid columns (1 - 12, or empty)  for large monitors 64.063em+.');
       }
     }
 

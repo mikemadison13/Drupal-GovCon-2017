@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
+class ComposerStaticInit7741916fbaa61f7281aab8a5120a0f31
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -21,7 +21,6 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
         'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         '07d7f1a47144818725fd8d91a907ac57' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/create_uploaded_file.php',
         'da94ac5d3ca7d2dbab84ce561ce72bfd' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/marshal_headers_from_sapi.php',
@@ -160,7 +159,6 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'L' => 
         array (
             'League\\Container\\' => 17,
-            'Laminas\\ZendFrameworkBridge\\' => 28,
             'Laminas\\Text\\' => 13,
             'Laminas\\Stdlib\\' => 15,
             'Laminas\\ServiceManager\\' => 23,
@@ -519,10 +517,6 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'League\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/container/src',
-        ),
-        'Laminas\\ZendFrameworkBridge\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src',
         ),
         'Laminas\\Text\\' => 
         array (
@@ -927,7 +921,6 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'Acquia\\Blt\\Robo\\Commands\\Recipes\\CiCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/CiCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Recipes\\CloudHooksCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/CloudHooksCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Recipes\\ConfigSplitCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/ConfigSplitCommand.php',
-        'Acquia\\Blt\\Robo\\Commands\\Recipes\\PhpUnitCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/PhpUnitCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Recipes\\ScaffoldCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Recipes/ScaffoldCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Source\\BuildCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Source/BuildCommand.php',
         'Acquia\\Blt\\Robo\\Commands\\Source\\FrontendCommand' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Commands/Source/FrontendCommand.php',
@@ -1777,6 +1770,18 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'Consolidation\\AnnotatedCommand\\AnnotatedCommand' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotatedCommand.php',
         'Consolidation\\AnnotatedCommand\\AnnotatedCommandFactory' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotatedCommandFactory.php',
         'Consolidation\\AnnotatedCommand\\AnnotationData' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotationData.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\Argument' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/Argument.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\Command' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/Command.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\DefaultFields' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/DefaultFields.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\DefaultTableFields' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/DefaultTableFields.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\FieldLabels' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/FieldLabels.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\FilterDefaultField' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/FilterDefaultField.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\Help' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/Help.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\Hook' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/Hook.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\Misc' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/Misc.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\Option' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/Option.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\Topics' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/Topics.php',
+        'Consolidation\\AnnotatedCommand\\Attributes\\Usage' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Attributes/Usage.php',
         'Consolidation\\AnnotatedCommand\\Cache\\CacheWrapper' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Cache/CacheWrapper.php',
         'Consolidation\\AnnotatedCommand\\Cache\\NullCache' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Cache/NullCache.php',
         'Consolidation\\AnnotatedCommand\\Cache\\SimpleCacheInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Cache/SimpleCacheInterface.php',
@@ -1829,6 +1834,7 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'Consolidation\\AnnotatedCommand\\Parser\\CommandInfoDeserializer' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/CommandInfoDeserializer.php',
         'Consolidation\\AnnotatedCommand\\Parser\\CommandInfoSerializer' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/CommandInfoSerializer.php',
         'Consolidation\\AnnotatedCommand\\Parser\\DefaultsWithDescriptions' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/DefaultsWithDescriptions.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\Internal\\AttributesDocBlockParser' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/AttributesDocBlockParser.php',
         'Consolidation\\AnnotatedCommand\\Parser\\Internal\\BespokeDocBlockParser' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/BespokeDocBlockParser.php',
         'Consolidation\\AnnotatedCommand\\Parser\\Internal\\CommandDocBlockParserFactory' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/CommandDocBlockParserFactory.php',
         'Consolidation\\AnnotatedCommand\\Parser\\Internal\\CsvUtils' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/CsvUtils.php',
@@ -5192,11 +5198,6 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'Laminas\\Text\\Table\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Exception/UnexpectedValueException.php',
         'Laminas\\Text\\Table\\Row' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Row.php',
         'Laminas\\Text\\Table\\Table' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Table.php',
-        'Laminas\\ZendFrameworkBridge\\Autoloader' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Autoloader.php',
-        'Laminas\\ZendFrameworkBridge\\ConfigPostProcessor' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/ConfigPostProcessor.php',
-        'Laminas\\ZendFrameworkBridge\\Module' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Module.php',
-        'Laminas\\ZendFrameworkBridge\\Replacements' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Replacements.php',
-        'Laminas\\ZendFrameworkBridge\\RewriteRules' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/RewriteRules.php',
         'League\\Container\\Argument\\ArgumentResolverInterface' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverInterface.php',
         'League\\Container\\Argument\\ArgumentResolverTrait' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverTrait.php',
         'League\\Container\\Argument\\RawArgument' => __DIR__ . '/..' . '/league/container/src/Argument/RawArgument.php',
@@ -5290,6 +5291,7 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'Nette\\Utils\\Reflection' => __DIR__ . '/..' . '/nette/utils/src/Utils/Reflection.php',
         'Nette\\Utils\\RegexpException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\Utils\\Strings' => __DIR__ . '/..' . '/nette/utils/src/Utils/Strings.php',
+        'Nette\\Utils\\Type' => __DIR__ . '/..' . '/nette/utils/src/Utils/Type.php',
         'Nette\\Utils\\UnknownImageFileException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\Utils\\Validators' => __DIR__ . '/..' . '/nette/utils/src/Utils/Validators.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
@@ -5376,11 +5378,13 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'PHPStan\\Rules\\Deprecations\\DeprecatedScopeHelper' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/DeprecatedScopeHelper.php',
         'PHPStan\\Rules\\Deprecations\\FetchingClassConstOfDeprecatedClassRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/FetchingClassConstOfDeprecatedClassRule.php',
         'PHPStan\\Rules\\Deprecations\\FetchingDeprecatedConstRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/FetchingDeprecatedConstRule.php',
+        'PHPStan\\Rules\\Deprecations\\GetDeprecatedServiceRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/GetDeprecatedServiceRule.php',
         'PHPStan\\Rules\\Deprecations\\ImplementationOfDeprecatedInterfaceRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/ImplementationOfDeprecatedInterfaceRule.php',
         'PHPStan\\Rules\\Deprecations\\InheritanceOfDeprecatedClassRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/InheritanceOfDeprecatedClassRule.php',
         'PHPStan\\Rules\\Deprecations\\InheritanceOfDeprecatedInterfaceRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/InheritanceOfDeprecatedInterfaceRule.php',
         'PHPStan\\Rules\\Deprecations\\InstantiationOfDeprecatedClassRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/InstantiationOfDeprecatedClassRule.php',
         'PHPStan\\Rules\\Deprecations\\PluginAnnotationContextDefinitionsRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/PluginAnnotationContextDefinitionsRule.php',
+        'PHPStan\\Rules\\Deprecations\\StaticServiceDeprecatedServiceRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/StaticServiceDeprecatedServiceRule.php',
         'PHPStan\\Rules\\Deprecations\\TypeHintDeprecatedInClassMethodSignatureRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/TypeHintDeprecatedInClassMethodSignatureRule.php',
         'PHPStan\\Rules\\Deprecations\\TypeHintDeprecatedInClosureSignatureRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/TypeHintDeprecatedInClosureSignatureRule.php',
         'PHPStan\\Rules\\Deprecations\\TypeHintDeprecatedInFunctionSignatureRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/TypeHintDeprecatedInFunctionSignatureRule.php',
@@ -5393,8 +5397,9 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'PHPStan\\Rules\\Drupal\\PluginManager\\AbstractPluginManagerRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/PluginManager/AbstractPluginManagerRule.php',
         'PHPStan\\Rules\\Drupal\\PluginManager\\PluginManagerSetsCacheBackendRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/PluginManager/PluginManagerSetsCacheBackendRule.php',
         'PHPStan\\Rules\\Drupal\\Tests\\BrowserTestBaseDefaultThemeRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/Tests/BrowserTestBaseDefaultThemeRule.php',
+        'PHPStan\\Type\\ContainerDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/ContainerDynamicReturnTypeExtension.php',
+        'PHPStan\\Type\\DrupalServiceDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/DrupalServiceDynamicReturnTypeExtension.php',
         'PHPStan\\Type\\EntityTypeManagerGetStorageDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityTypeManagerGetStorageDynamicReturnTypeExtension.php',
-        'PHPStan\\Type\\ServiceDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/ServiceDynamicReturnTypeExtension.php',
         'PhpParser\\Builder' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder.php',
         'PhpParser\\BuilderFactory' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/BuilderFactory.php',
         'PhpParser\\BuilderHelpers' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/BuilderHelpers.php',
@@ -5430,6 +5435,7 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'PhpParser\\Lexer\\TokenEmulator\\AttributeEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/AttributeEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\CoaleseEqualTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/CoaleseEqualTokenEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\EnumTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/EnumTokenEmulator.php',
+        'PhpParser\\Lexer\\TokenEmulator\\ExplicitOctalEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/ExplicitOctalEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\FlexibleDocStringEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/FlexibleDocStringEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\FnTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/FnTokenEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\KeywordEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/KeywordEmulator.php',
@@ -5457,6 +5463,7 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'PhpParser\\Node\\Arg' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Arg.php',
         'PhpParser\\Node\\Attribute' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Attribute.php',
         'PhpParser\\Node\\AttributeGroup' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/AttributeGroup.php',
+        'PhpParser\\Node\\ComplexType' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/ComplexType.php',
         'PhpParser\\Node\\Const_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Const_.php',
         'PhpParser\\Node\\Expr' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr.php',
         'PhpParser\\Node\\Expr\\ArrayDimFetch' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/ArrayDimFetch.php',
@@ -5509,6 +5516,7 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'PhpParser\\Node\\Expr\\BinaryOp\\Spaceship' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/BinaryOp/Spaceship.php',
         'PhpParser\\Node\\Expr\\BitwiseNot' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/BitwiseNot.php',
         'PhpParser\\Node\\Expr\\BooleanNot' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/BooleanNot.php',
+        'PhpParser\\Node\\Expr\\CallLike' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/CallLike.php',
         'PhpParser\\Node\\Expr\\Cast' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/Cast.php',
         'PhpParser\\Node\\Expr\\Cast\\Array_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/Cast/Array_.php',
         'PhpParser\\Node\\Expr\\Cast\\Bool_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/Cast/Bool_.php',
@@ -5555,6 +5563,7 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'PhpParser\\Node\\Expr\\Yield_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/Yield_.php',
         'PhpParser\\Node\\FunctionLike' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/FunctionLike.php',
         'PhpParser\\Node\\Identifier' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Identifier.php',
+        'PhpParser\\Node\\IntersectionType' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/IntersectionType.php',
         'PhpParser\\Node\\MatchArm' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/MatchArm.php',
         'PhpParser\\Node\\Name' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Name.php',
         'PhpParser\\Node\\Name\\FullyQualified' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Name/FullyQualified.php',
@@ -5628,6 +5637,7 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'PhpParser\\Node\\Stmt\\While_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Stmt/While_.php',
         'PhpParser\\Node\\UnionType' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/UnionType.php',
         'PhpParser\\Node\\VarLikeIdentifier' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/VarLikeIdentifier.php',
+        'PhpParser\\Node\\VariadicPlaceholder' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/VariadicPlaceholder.php',
         'PhpParser\\Parser' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Parser.php',
         'PhpParser\\ParserAbstract' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/ParserAbstract.php',
         'PhpParser\\ParserFactory' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/ParserFactory.php',
@@ -8140,12 +8150,22 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'phpDocumentor\\Reflection\\Project' => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src/Project.php',
         'phpDocumentor\\Reflection\\ProjectFactory' => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src/ProjectFactory.php',
         'phpDocumentor\\Reflection\\PseudoType' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoType.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\CallableString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/CallableString.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\False_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/False_.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\HtmlEscapedString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/HtmlEscapedString.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\LiteralString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/LiteralString.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\LowercaseString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/LowercaseString.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\NonEmptyLowercaseString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/NonEmptyLowercaseString.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\NonEmptyString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/NonEmptyString.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\NumericString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/NumericString.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\PositiveInteger' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/PositiveInteger.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\TraitString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/TraitString.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\True_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/True_.php',
         'phpDocumentor\\Reflection\\Type' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Type.php',
         'phpDocumentor\\Reflection\\TypeResolver' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/TypeResolver.php',
         'phpDocumentor\\Reflection\\Types\\AbstractList' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/AbstractList.php',
         'phpDocumentor\\Reflection\\Types\\AggregatedType' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/AggregatedType.php',
+        'phpDocumentor\\Reflection\\Types\\ArrayKey' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/ArrayKey.php',
         'phpDocumentor\\Reflection\\Types\\Array_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Array_.php',
         'phpDocumentor\\Reflection\\Types\\Boolean' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Boolean.php',
         'phpDocumentor\\Reflection\\Types\\Callable_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Callable_.php',
@@ -8157,9 +8177,11 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
         'phpDocumentor\\Reflection\\Types\\Expression' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Expression.php',
         'phpDocumentor\\Reflection\\Types\\Float_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Float_.php',
         'phpDocumentor\\Reflection\\Types\\Integer' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Integer.php',
+        'phpDocumentor\\Reflection\\Types\\InterfaceString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/InterfaceString.php',
         'phpDocumentor\\Reflection\\Types\\Intersection' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Intersection.php',
         'phpDocumentor\\Reflection\\Types\\Iterable_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Iterable_.php',
         'phpDocumentor\\Reflection\\Types\\Mixed_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Mixed_.php',
+        'phpDocumentor\\Reflection\\Types\\Never_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Never_.php',
         'phpDocumentor\\Reflection\\Types\\Null_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Null_.php',
         'phpDocumentor\\Reflection\\Types\\Nullable' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Nullable.php',
         'phpDocumentor\\Reflection\\Types\\Object_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/Types/Object_.php',
@@ -8177,11 +8199,11 @@ class ComposerStaticInit8bbda299ab6d39fd10023f2119665f87
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit8bbda299ab6d39fd10023f2119665f87::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit8bbda299ab6d39fd10023f2119665f87::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit8bbda299ab6d39fd10023f2119665f87::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit8bbda299ab6d39fd10023f2119665f87::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit8bbda299ab6d39fd10023f2119665f87::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7741916fbaa61f7281aab8a5120a0f31::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7741916fbaa61f7281aab8a5120a0f31::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit7741916fbaa61f7281aab8a5120a0f31::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit7741916fbaa61f7281aab8a5120a0f31::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit7741916fbaa61f7281aab8a5120a0f31::$classMap;
 
         }, null, ClassLoader::class);
     }

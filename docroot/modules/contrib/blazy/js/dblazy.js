@@ -490,10 +490,10 @@
       }
       var bind = function (e) {
         if (el.attachEvent) {
-          el[(which === 'bind' ? 'attach' : 'detach') + 'Event']('on' + e, fn, extras);
+          el[(which === 'bind' ? 'attach' : 'detach') + 'Event']('on' + e.trim(), fn, extras);
         }
         else {
-          el[(which === 'bind' ? 'add' : 'remove') + 'EventListener'](e, fn, extras);
+          el[(which === 'bind' ? 'add' : 'remove') + 'EventListener'](e.trim(), fn, extras);
         }
       };
 

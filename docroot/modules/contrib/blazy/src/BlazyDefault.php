@@ -148,13 +148,21 @@ class BlazyDefault {
   /**
    * Returns optional grid field formatter and Views settings.
    */
-  public static function gridSettings() {
+  public static function gridBaseSettings() {
     return [
-      'grid'        => 0,
-      'grid_header' => '',
-      'grid_medium' => 0,
-      'grid_small'  => 0,
-    ] + self::anywhereSettings();
+      'grid'        => '',
+      'grid_medium' => '',
+      'grid_small'  => '',
+    ];
+  }
+
+  /**
+   * Returns optional grid field formatter and Views settings.
+   */
+  public static function gridSettings() {
+    return ['grid_header' => '']
+      + self::gridBaseSettings()
+      + self::anywhereSettings();
   }
 
   /**
@@ -227,6 +235,7 @@ class BlazyDefault {
       'use_field'  => FALSE,
       'unstyled'   => FALSE,
       'view_name'  => '',
+      'accessible_title' => '',
     ] + self::imageSettings() + self::uiSettings();
   }
 
@@ -296,6 +305,23 @@ class BlazyDefault {
    */
   public static function themeAttributes() {
     return ['caption', 'media', 'url', 'wrapper'];
+  }
+
+  /**
+   * Returns available components.
+   */
+  public static function components() {
+    return [
+      'column',
+      'filter',
+      'flex',
+      'grid',
+      'nativegrid',
+      'nativegrid.masonry',
+      'media',
+      'photobox',
+      'ratio',
+    ];
   }
 
 }

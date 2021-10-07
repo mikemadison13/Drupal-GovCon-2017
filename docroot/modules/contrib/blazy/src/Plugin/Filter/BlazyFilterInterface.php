@@ -8,39 +8,6 @@ namespace Drupal\blazy\Plugin\Filter;
 interface BlazyFilterInterface {
 
   /**
-   * Returns the main settings.
-   *
-   * @param string $text
-   *   The provided text.
-   *
-   * @return array
-   *   The main settings for current filter.
-   */
-  public function buildSettings($text);
-
-  /**
-   * Cleanups invalid nodes or those of which their contents are moved.
-   *
-   * @param \DOMDocument $dom
-   *   The HTML DOM object being modified.
-   */
-  public function cleanupNodes(\DOMDocument &$dom);
-
-  /**
-   * Build the grid.
-   *
-   * @param \DOMDocument $dom
-   *   The HTML DOM object being modified.
-   * @param array $settings
-   *   The settings array.
-   * @param array $elements
-   *   The renderable array of blazy item.
-   * @param array $grid_nodes
-   *   The grid nodes.
-   */
-  public function buildGrid(\DOMDocument &$dom, array &$settings, array $elements = [], array $grid_nodes = []);
-
-  /**
    * Returns the faked image item for the image, uploaded or hard-coded.
    *
    * @param array $build
@@ -56,6 +23,9 @@ interface BlazyFilterInterface {
    * @param array $build
    *   The content array being modified.
    * @param object $node
+   *   The HTML DOM object.
+   *
+   * @return object
    *   The HTML DOM object.
    */
   public function buildImageCaption(array &$build, &$node);
@@ -91,13 +61,24 @@ interface BlazyFilterInterface {
   public function getImageItemFromIframeSrc(array &$settings, &$node, $src);
 
   /**
+   * Returns the main settings.
+   *
+   * @param string $text
+   *   The provided text.
+   *
+   * @return array
+   *   The main settings for current filter.
+   */
+  public function buildSettings($text);
+
+  /**
    * Returns the item settings for the current $node.
    *
-   * @param array $settings
+   * @param array $build
    *   The settings being modified.
    * @param object $node
    *   The HTML DOM object.
    */
-  public function buildItemSettings(array &$settings, $node);
+  public function buildItemSettings(array &$build, $node);
 
 }

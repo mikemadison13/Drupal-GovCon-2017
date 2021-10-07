@@ -75,9 +75,9 @@ display:
           caption:
             filename: filename
             blazy_file: '0'
-          grid: 4
-          grid_medium: 3
-          grid_small: 2
+          grid: '4'
+          grid_medium: '3'
+          grid_small: '2'
           image: blazy_file
           thumbnail: ''
           overlay: ''

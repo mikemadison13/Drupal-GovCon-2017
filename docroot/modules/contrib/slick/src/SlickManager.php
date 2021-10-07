@@ -5,6 +5,7 @@ namespace Drupal\slick;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\Blazy;
+use Drupal\blazy\BlazyGrid;
 use Drupal\blazy\BlazyManagerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -101,6 +102,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     $settings = &$build['settings'];
     $settings += SlickDefault::htmlSettings();
+    $defaults = Slick::defaultSettings();
 
     // Adds helper class if thumbnail on dots hover provided.
     if (!empty($settings['thumbnail_effect']) && (!empty($settings['thumbnail_style']) || !empty($settings['thumbnail']))) {
@@ -115,6 +117,25 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     if (isset($dots_class) && !empty($build['optionset'])) {
       $dots_class[] = $build['optionset']->getSetting('dotsClass') ?: 'slick-dots';
       $js['dotsClass'] = implode(" ", $dots_class);
+    }
+
+    // Handle some accessible-slick options.
+    if ($settings['library'] == 'accessible-slick' && $build['optionset']->getSetting('autoplay') && $build['optionset']->getSetting('useAutoplayToggleButton')) {
+      foreach (['pauseIcon', 'playIcon'] as $setting) {
+        if ($classes = trim(strip_tags($build['optionset']->getSetting($setting)))) {
+          if ($classes != $defaults[$setting]) {
+            $js[$setting] = '<span class="' . $classes . '" aria-hidden="true"></span>';
+          }
+        }
+      }
+    }
+
+    // Checks for breaking changes: Slick 1.8.1 - 1.9.0 / Accessible Slick.
+    // @todo Remove this once the library has permanent solutions.
+    if (!empty($settings['breaking'])) {
+      if ($build['optionset']->getSetting('rows') == 1) {
+        $js['rows'] = 0;
+      }
     }
 
     // Overrides common options to re-use an optionset.
@@ -181,13 +202,58 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Returns items as a grid item display.
    */
   public function buildGridItem(array $items, $delta, array $settings = []) {
-    $slide = [
-      '#theme'    => 'slick_grid',
-      '#items'    => $items,
-      '#delta'    => $delta,
-      '#settings' => $settings,
-    ];
-    return ['slide' => $slide, 'settings' => $settings];
+    $output = [];
+
+    foreach ($items as $delta => $item) {
+      $sets = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
+      $attrs = empty($item['attributes']) ? [] : $item['attributes'];
+      $content_attrs = isset($item['content_attributes']) ? $item['content_attributes'] : [];
+      $sets['current_item'] = 'grid';
+      $sets['delta'] = $delta;
+
+      unset($item['settings'], $item['attributes'], $item['content_attributes']);
+
+      if (empty($settings['unslick'])) {
+        $attrs['class'][] = 'slide__grid';
+      }
+
+      $attrs['class'][] = 'grid--' . $delta;
+      foreach (['type', 'media_switch'] as $key) {
+        if (!empty($sets[$key])) {
+          $value = $sets[$key];
+          $attrs['class'][] = 'grid--' . str_replace('_', '-', $value);
+          if ($key == 'media_switch' && mb_strpos($value, 'box') !== FALSE) {
+            $attrs['class'][] = 'grid--litebox';
+          }
+        }
+      }
+
+      $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
+      $content = [
+        '#theme' => 'slick_' . $theme,
+        '#item' => $item,
+        '#delta' => $delta,
+        '#settings' => $sets,
+      ];
+
+      $slide = [
+        'content' => $content,
+        'attributes' => $attrs,
+        'content_attributes' => $content_attrs,
+        'settings' => $sets,
+      ];
+
+      $output[$delta] = $slide;
+      unset($slide);
+    }
+
+    $result = BlazyGrid::build($output, $settings);
+    $result['#attributes']['class'][] = empty($settings['unslick']) ? 'slide__content' : 'slick__grid';
+
+    $build = ['slide' => $result, 'settings' => $settings];
+
+    $this->moduleHandler->alter('slick_grid_item', $build, $settings);
+    return $build;
   }
 
   /**
@@ -236,9 +302,11 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Additional settings.
     $build['optionset']   = $build['optionset'] ?: Slick::loadWithFallback($settings['optionset']);
+    $settings['library']  = $this->configLoad('library', 'slick.settings');
+    $settings['breaking'] = $this->skinManager->isBreaking();
     $settings['count']    = empty($settings['count']) ? count($build['items']) : $settings['count'];
-    $settings['nav']      = $settings['nav'] ?: (empty($settings['vanilla']) && !empty($settings['optionset_thumbnail']) && isset($build['items'][1]));
-    $settings['navpos']   = $settings['nav'] && !empty($settings['thumbnail_position']);
+    $settings['nav']      = $settings['nav'] && (empty($settings['vanilla']) && !empty($settings['optionset_thumbnail']) && isset($build['items'][1]));
+    $settings['navpos']   = ($settings['nav'] && !empty($settings['thumbnail_position'])) ? $settings['thumbnail_position'] : '';
     $settings['vertical'] = $build['optionset']->getSetting('vertical');
     $mousewheel           = $build['optionset']->getSetting('mouseWheel');
 

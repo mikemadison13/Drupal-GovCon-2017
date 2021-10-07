@@ -38,6 +38,21 @@ slick:
   dependencies:
     - core/jquery
 
+accessible-slick:
+  remote: https://accessible360.github.io/accessible-slick/
+  version: 1.x
+  license:
+    name: MIT
+    url: https://github.com/Accessible360/accessible-slick/blob/master/LICENSE
+    gpl-compatible: true
+  js:
+    /libraries/accessible-slick/slick/slick.min.js: { weight: -3, minified: true }
+  css:
+    base:
+      /libraries/accessible-slick/slick/slick.min.css: {}
+  dependencies:
+    - core/jquery
+
 slick.load:
   version: VERSION
   js:
@@ -91,4 +106,11 @@ slick.colorbox:
     js/slick.colorbox.min.js: { weight: -0.04, minified: true }
   dependencies:
     - blazy/colorbox
+    - slick/slick
+
+vanilla:
+  version: VERSION
+  js:
+    js/slick.vanilla.min.js: { weight: -1, minified: true }
+  dependencies:
     - slick/slick

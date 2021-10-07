@@ -68,24 +68,32 @@ class BlazyLightbox {
     $is_video = isset($json['type']) && $json['type'] == 'video';
     $is_video = (isset($json['bundle']) && in_array($json['bundle'], $videos)) || $is_video;
 
-    // The _responsive_image_build_source_attributes is fatal if missing.
-    // @todo Remove _missing check once verified pre_render not being by-passed.
-    if (!empty($settings['box_style']) && $valid && empty($settings['_missing'])) {
-      if (!empty($settings['_resimage'])
+    if (!empty($settings['box_style']) && $valid) {
+      try {
+        // The _responsive_image_build_source_attributes is WSOD if missing.
+        if (!empty($settings['_resimage'])
         && $box_style = \blazy()->entityLoad($settings['box_style'], 'responsive_image_style')) {
-        if (!$is_video && empty($element['#lightbox_html'])) {
-          $is_resimage = TRUE;
-          $json['type'] = 'rich';
-          $element['#lightbox_html'] = [
-            '#theme' => 'responsive_image',
-            '#responsive_image_style_id' => $box_style->id(),
-            '#uri' => $uri,
-          ];
+          if (!$is_video && empty($element['#lightbox_html'])) {
+            $is_resimage = TRUE;
+            $json['type'] = 'rich';
+            $element['#lightbox_html'] = [
+              '#theme' => 'responsive_image',
+              '#responsive_image_style_id' => $box_style->id(),
+              '#uri' => $uri,
+            ];
+          }
         }
       }
-      elseif ($box_style = ImageStyle::load($settings['box_style'])) {
-        $dimensions = array_merge($dimensions, BlazyUtil::transformDimensions($box_style, $dimensions));
-        $settings['box_url'] = BlazyUtil::transformRelative($uri, $box_style);
+      catch (\Exception $e) {
+        // Silently failed like regular images when missing rather than WSOD.
+      }
+
+      // Use non-responsive images if not-so-configured.
+      if (!isset($is_resimage)) {
+        if ($box_style = ImageStyle::load($settings['box_style'])) {
+          $dimensions = array_merge($dimensions, BlazyUtil::transformDimensions($box_style, $dimensions));
+          $settings['box_url'] = BlazyUtil::transformRelative($uri, $box_style);
+        }
       }
     }
 
@@ -165,6 +173,7 @@ class BlazyLightbox {
         $html['#attributes']['style'] = 'width:' . $json['width'] . 'px; padding-bottom: ' . $pad . '%;';
       }
 
+      // Responsive image is unwrapped. Local videos wrapped.
       $content = isset($is_resimage) ? $element['#lightbox_html'] : $html;
       $content = \blazy()->getRenderer()->renderPlain($content);
       $json['html'] = trim($content);
@@ -240,7 +249,7 @@ class BlazyLightbox {
         break;
 
       default:
-        $caption = $settings['box_caption'];
+        $caption = $settings['box_caption'] == 'inline' ? '' : $settings['box_caption'];
     }
 
     return empty($caption)

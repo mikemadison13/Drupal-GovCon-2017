@@ -211,7 +211,8 @@
         // @todo: Remove temp fix for when total <= slidesToShow at 1.6.1+.
         // Ensures the fix doesn't break responsive options.
         // @see https://github.com/kenwheeler/slick/issues/262
-        if (less && slick.$slideTrack.width() <= slick.$slider.width()) {
+        if (less && ((slick.$slideTrack.width() <= slick.$slider.width())
+          || $(elm).hasClass('slick--thumbnail'))) {
           slick.$slideTrack.css({left: '', transform: ''});
         }
 
@@ -297,7 +298,12 @@
    */
   Drupal.behaviors.slick = {
     attach: function (context) {
-      $('.slick', context).once('slick').each(doSlick);
+
+      // Prevents potential missing due to the newly added sitewide option.
+      var $slick = $('.slick', context);
+      if ($slick && $slick.length) {
+        $('.slick', context).once('slick').each(doSlick);
+      }
     }
   };
 

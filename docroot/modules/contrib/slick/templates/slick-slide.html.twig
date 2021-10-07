@@ -19,7 +19,7 @@
 #}
 {%
   set classes = [
-    'slick__slide', 'slide', 'slide--' ~ delta,
+    'slide--' ~ delta,
     item.slide is empty ? 'slide--text',
     settings.layout ? 'slide--caption--' ~ settings.layout|clean_class,
     settings.class ? settings.class
@@ -48,7 +48,7 @@
 
 {% if settings.wrapper %}
   <div{{ attributes.addClass(classes) }}>
-  {% if settings.grid is empty %}<div{{ content_attributes.addClass(content_classes) }}>{% endif %}
+  {% if settings.use_ca %}<div{{ content_attributes.addClass(content_classes) }}>{% endif %}
 {% endif %}
 
   {% if item.slide %}

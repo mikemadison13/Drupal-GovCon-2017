@@ -7,16 +7,16 @@
  * - attributes: An array of attributes to apply to the element.
  * - items: A renderable array containing chunks of slick-slide.html.twig.
  * - settings: A renderable array containing the given settings.
+ *
+ * @deprecated in slick:8.x-2.3 and is removed from slick:8.x-3.0. Use
+ *   hook_slick_grid_item_alter if necessary instead.
+ * @see https://www.drupal.org/node/3239708
  */
 #}
 {%
   set classes = [
     settings.unslick ? 'slick__grid' : 'slide__content',
     'block-columngrid',
-    'block-' ~ grid_id,
-    settings.grid_small ? 'small-block-' ~ grid_id ~ '-' ~ settings.grid_small,
-    settings.grid_medium ? 'medium-block-' ~ grid_id ~ '-' ~ settings.grid_medium,
-    settings.grid ? 'large-block-' ~ grid_id ~ '-' ~ settings.grid
   ]
 %}
 {%
@@ -38,4 +38,3 @@
     </li>
   {% endfor %}
 </ul>
-

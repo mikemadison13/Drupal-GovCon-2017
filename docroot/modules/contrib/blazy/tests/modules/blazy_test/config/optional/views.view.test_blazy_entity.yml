@@ -74,9 +74,9 @@ display:
           caption:
             title: title
             view_node: '0'
-          grid: null
-          grid_medium: null
-          grid_small: null
+          grid: ''
+          grid_medium: ''
+          grid_small: ''
           image: ''
           thumbnail: ''
           overlay: ''

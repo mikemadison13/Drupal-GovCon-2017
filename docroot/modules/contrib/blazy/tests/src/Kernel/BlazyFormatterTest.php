@@ -126,9 +126,9 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     // Tests grid.
     $new_settings = $this->getFormatterSettings();
 
-    $new_settings['grid']         = 4;
-    $new_settings['grid_medium']  = 3;
-    $new_settings['grid_small']   = 2;
+    $new_settings['grid']         = '4';
+    $new_settings['grid_medium']  = '3';
+    $new_settings['grid_small']   = '2';
     $new_settings['media_switch'] = 'blazy_test';
     $new_settings['style']        = 'column';
     $new_settings['image_style']  = 'blazy_crop';

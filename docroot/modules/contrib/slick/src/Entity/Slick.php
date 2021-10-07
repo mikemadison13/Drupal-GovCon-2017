@@ -213,13 +213,16 @@ class Slick extends SlickBase implements SlickInterface {
   public static function getDependentOptions() {
     $down_arrow = ['downArrowTarget', 'downArrowOffset'];
     return [
-      'arrows'     => ['prevArrow', 'nextArrow', 'downArrow'] + $down_arrow,
+      'arrows'     => ['arrowsPlacement', 'prevArrow', 'nextArrow', 'downArrow'] + $down_arrow,
       'downArrow'  => $down_arrow,
       'autoplay'   => [
         'pauseOnHover',
         'pauseOnDotsHover',
         'pauseOnFocus',
         'autoplaySpeed',
+        'useAutoplayToggleButton',
+        'pauseIcon',
+        'playIcon',
       ],
       'centerMode' => ['centerPadding'],
       'dots'       => ['dotsClass', 'appendDots'],

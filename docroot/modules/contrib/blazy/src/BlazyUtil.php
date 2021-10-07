@@ -43,11 +43,13 @@ class BlazyUtil {
    *
    * @param array $attributes
    *   The given attributes to sanitize.
+   * @param bool $escaped
+   *   Sets to FALSE to avoid double escapes, for further processing.
    *
    * @return array
    *   The sanitized $attributes suitable for UGC, such as Blazy filter.
    */
-  public static function sanitize(array $attributes = []) {
+  public static function sanitize(array $attributes = [], $escaped = TRUE) {
     $clean_attributes = [];
     $tags = ['href', 'poster', 'src', 'about', 'data', 'action', 'formaction'];
     foreach ($attributes as $key => $value) {
@@ -61,7 +63,8 @@ class BlazyUtil {
         // make no sense to stick around within IMG or IFRAME tags.
         $kid = mb_substr($key, 0, 2) === 'on' || in_array($key, $tags);
         $key = $kid ? 'data-' . $key : $key;
-        $clean_attributes[$key] = $kid ? Html::cleanCssIdentifier($value) : Html::escape($value);
+        $escaped_value = $escaped ? Html::escape($value) : $value;
+        $clean_attributes[$key] = $kid ? Html::cleanCssIdentifier($value) : $escaped_value;
       }
     }
     return $clean_attributes;

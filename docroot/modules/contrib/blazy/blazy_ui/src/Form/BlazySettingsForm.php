@@ -70,7 +70,7 @@ class BlazySettingsForm extends ConfigFormBase {
       '#type'          => 'checkbox',
       '#title'         => $this->t('Use decoding'),
       '#default_value' => $config->get('decode'),
-      '#description'   => $this->t("Check to enable image decoding for improved performance. Uncheck if any issue. Known troubled browsers are Safari, IE as usual. See https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decode."),
+      '#description'   => $this->t("Check to enable image decoding for improved performance. Uncheck if any issue. Known troubled browsers are Safari, IE as usual. <a href=':url'>Read more</a>", [':url' => 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decode']),
     ];
 
     $form['noscript'] = [
@@ -92,14 +92,14 @@ class BlazySettingsForm extends ConfigFormBase {
       '#type'          => 'checkbox',
       '#title'         => $this->t('Responsive image 1px placeholder'),
       '#default_value' => $config->get('one_pixel'),
-      '#description'   => $this->t('By default a 1px Data URI image is the placeholder for lazyloaded Responsive image. Useful to perform a lot better. Uncheck to disable, and use Drupal-managed smallest/fallback image style instead. Or keep it checked, and override it per <b>Image style</b> option at blazy-related formatters instead. Be sure to add proper dimensions or at least min-height/min-width via CSS accordingly to avoid layout reflow, or choose an Aspect ratio via Blazy formatters. Disabling this will result in downloading fallback image as well for non-PICTURE element (double downloads).'),
+      '#description'   => $this->t('By default a 1px Data URI image is the placeholder for lazyloaded Responsive image. Useful to perform a lot better. Uncheck to disable, and use Drupal-managed smallest/fallback image style instead. Be sure to add proper dimensions or at least min-height/min-width via CSS accordingly to avoid layout reflow, or choose an Aspect ratio via Blazy formatters. Disabling this will result in downloading fallback image as well for non-PICTURE element (double downloads), unless <code>empty image</code> is selected for fallback at Responsive image style UI.'),
     ];
 
     $form['placeholder'] = [
       '#type'          => 'textfield',
       '#title'         => $this->t('Placeholder'),
       '#default_value' => $config->get('placeholder'),
-      '#description'   => $this->t("Overrides global 1px placeholder. Can be URL, e.g.: /blank.gif or /blank.svg. Be warned: unlike .svg, browsers have display issues with 1px .gif, see <a href=':url1'>#2795415</a>. Only useful if continuously using Views rewrite results, see <a href=':url2'>#2908861</a>. Alternatively use <code>hook_blazy_settings_alter()</code> for more fine-grained control. Leave it empty to use default inline SVG or Data URI to avoid extra HTTP requests. If you have 100 images on a page, you will save 100 extra HTTP requests by leaving it empty. The <b>blank.svg</b> content sample if not using blank.gif: <br><code>&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'/&gt;</code>", [
+      '#description'   => $this->t("Overrides global 1px placeholder. Can be URL, e.g.: /blank.gif or /blank.svg. Be warned: unlike .svg, browsers have display issues with 1px .gif, see <a href=':url1'>#2795415</a>. Only useful if continuously using Views rewrite results, see <a href=':url2'>#2908861</a>. Alternatively use <code>hook_blazy_settings_alter()</code> for more fine-grained control. Leave it empty to use default inline SVG or Data URI to avoid extra HTTP requests. If you have 100 images on a page, you will save 100 extra HTTP requests by leaving it empty. The <b>blank.svg</b> content sample if not using blank.gif: <br><code>&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'/&gt;</code><br>Save it at Drupal web root as <code>blank.svg</code>, and reference it as <code>/blank.svg</code> in the Placeholder field.", [
         ':url1' => 'https://drupal.org/node/2795415',
         ':url2' => 'https://drupal.org/node/2908861',
       ]),

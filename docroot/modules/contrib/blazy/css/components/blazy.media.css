@@ -35,6 +35,15 @@
   width: 80px;
 }
 
+button.media__icon--play,
+button.media__icon--close {
+  background: none;
+}
+
+button.media__icon--close {
+  border: 0;
+}
+
 .media__icon--close::before,
 .media__icon--close::after,
 .media__icon--play::before {

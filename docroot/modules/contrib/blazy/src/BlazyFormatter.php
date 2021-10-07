@@ -33,54 +33,31 @@ class BlazyFormatter extends BlazyManager implements BlazyFormatterInterface {
    */
   public function buildSettings(array &$build, $items) {
     $settings = &$build['settings'];
+    $entity   = $items->getEntity();
+
     $this->getCommonSettings($settings);
+    $this->getEntitySettings($settings, $entity);
 
     $count          = $items->count();
     $field          = $items->getFieldDefinition();
-    $entity         = $items->getEntity();
-    $entity_type_id = $entity->getEntityTypeId();
-    $entity_id      = $entity->id();
-    $bundle         = $entity->bundle();
     $field_name     = $field->getName();
     $field_clean    = str_replace("field_", '', $field_name);
-    $view_mode      = empty($settings['current_view_mode']) ? '_custom' : $settings['current_view_mode'];
+    $entity_type_id = $settings['entity_type_id'];
+    $entity_id      = $settings['entity_id'];
+    $bundle         = $settings['bundle'];
+    $view_mode      = $settings['current_view_mode'];
     $namespace      = $settings['namespace'];
     $id             = isset($settings['id']) ? $settings['id'] : '';
     $gallery_id     = "{$namespace}-{$entity_type_id}-{$bundle}-{$field_clean}-{$view_mode}";
     $id             = Blazy::getHtmlId("{$gallery_id}-{$entity_id}", $id);
-    $internal_path  = $absolute_path = NULL;
 
-    // Deals with UndefinedLinkTemplateException such as paragraphs type.
-    // @see #2596385, or fetch the host entity.
-    if (!$entity->isNew() && method_exists($entity, 'hasLinkTemplate')) {
-      if ($entity->hasLinkTemplate('canonical')) {
-
-        // Check if multilingual is enabled (@see #3214002).
-        if ($entity->hasTranslation($settings['current_language'])) {
-          // Load the translated url.
-          $url = $entity->getTranslation($settings['current_language'])->toUrl();
-        }
-        else {
-          // Otherwise keep the standard url.
-          $url = $entity->toUrl();
-        }
-
-        $internal_path = $url->getInternalPath();
-        $absolute_path = $url->setAbsolute()->toString();
-      }
-    }
-
-    $settings['bundle']         = $bundle;
+    // Provides formatter settings.
     $settings['cache_metadata'] = ['keys' => [$id, $count]];
     $settings['cache_tags'][]   = $entity_type_id . ':' . $entity_id;
     $settings['caption']        = empty($settings['caption']) ? [] : array_filter($settings['caption']);
-    $settings['content_url']    = $settings['absolute_path'] = $absolute_path;
     $settings['count']          = $count;
-    $settings['entity_id']      = $entity_id;
-    $settings['entity_type_id'] = $entity_type_id;
     $settings['gallery_id']     = str_replace('_', '-', $gallery_id . '-' . $settings['media_switch']);
     $settings['id']             = $id;
-    $settings['internal_path']  = $internal_path;
     $settings['use_field']      = !$settings['lightbox'] && isset($settings['third_party'], $settings['third_party']['linked_field']) && !empty($settings['third_party']['linked_field']['linked']);
 
     // Bail out if Vanilla mode is requested.

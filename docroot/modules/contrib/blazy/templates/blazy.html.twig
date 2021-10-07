@@ -66,11 +66,38 @@
   ]
 %}
 
+{% if settings.player %}
+  {% set attributes = attributes.setAttribute('aria-live', 'polite') %}
+
+  {% set play_title = 'Load and play video.'|t %}
+  {% set close_title = 'Stop and close video.'|t %}
+  {% if settings.accessible_title %}
+    {% set play_title = 'Load and play the video "@label".'|t({'@label': settings.accessible_title}) %}
+    {% set close_title = 'Stop and close the video "@label".'|t({'@label': settings.accessible_title}) %}
+  {% endif %}
+
+  {% set play_button_attributes = create_attribute({
+    'aria-label': play_title,
+    'class': ['media__icon', 'media__icon--play'],
+    'data-url': settings.embed_url,
+    'data-iframe-title': settings.accessible_title,
+    'title': play_title,
+    'type': 'button'
+  }) %}
+
+  {% set close_button_attributes = create_attribute({
+    'aria-label': close_title,
+    'class': ['media__icon', 'media__icon--close'],
+    'title': close_title,
+    'type': 'button'
+  }) %}
+{% endif %}
+
 {% set player %}
   {% block blazy_player %}
     {% if settings.player %}
-      <span class="media__icon media__icon--close"></span>
-      <span class="media__icon media__icon--play" data-url="{{ settings.embed_url }}"></span>
+      <button{{ close_button_attributes }}></button>
+      <button{{ play_button_attributes }}></button>
     {% else %}
       {{- iframe -}}
     {% endif %}

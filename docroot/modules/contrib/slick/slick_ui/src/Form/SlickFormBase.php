@@ -87,13 +87,19 @@ abstract class SlickFormBase extends EntityForm {
 
     // Change page title for the duplicate operation.
     if ($this->operation == 'duplicate') {
-      $form['#title'] = $this->t('<em>Duplicate %name optionset</em>: @label', ['%name' => static::$niceName, '@label' => $this->entity->label()]);
+      $form['#title'] = $this->t('<em>Duplicate %name optionset</em>: @label', [
+        '%name' => static::$niceName,
+        '@label' => $this->entity->label(),
+      ]);
       $this->entity = $this->entity->createDuplicate();
     }
 
     // Change page title for the edit operation.
     if ($this->operation == 'edit') {
-      $form['#title'] = $this->t('<em>Edit %name optionset</em>: @label', ['%name' => static::$niceName, '@label' => $this->entity->label()]);
+      $form['#title'] = $this->t('<em>Edit %name optionset</em>: @label', [
+        '%name' => static::$niceName,
+        '@label' => $this->entity->label(),
+      ]);
     }
 
     // Attach Slick admin library.

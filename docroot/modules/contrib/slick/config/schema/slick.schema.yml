@@ -5,6 +5,9 @@ slick.settings:
   type: config_object
   label: 'Slick settings'
   mapping:
+    library:
+      type: string
+      label: 'Library'
     module_css:
       type: boolean
       label: 'Enable Slick module slick.theme.css'
@@ -14,6 +17,9 @@ slick.settings:
     disable_old_skins:
       type: boolean
       label: 'Disable old skins'
+    sitewide:
+      type: integer
+      label: 'Load slick globally'
 
 # Slick JS settings managed by UI.
 slick_optionset:
@@ -29,12 +35,30 @@ slick_optionset:
     accessibility:
       type: boolean
       label: 'Accessibility'
+    regionLabel:
+      type: string
+      label: 'ARIA label'
+    useGroupRole:
+      type: boolean
+      label: Use group role
+    instructionsText:
+      type: text
+      label: 'Screen reader instructions'
     adaptiveHeight:
       type: boolean
       label: 'Adaptive height'
     autoplay:
       type: boolean
       label: 'Autoplay'
+    useAutoplayToggleButton:
+      type: boolean
+      label: 'Use autoplay toggle button'
+    pauseIcon:
+      type: string
+      label: 'Pause icon classes'
+    playIcon:
+      type: string
+      label: 'Play icon classes'
     pauseOnHover:
       type: boolean
       label: 'Pause on hover'
@@ -56,6 +80,9 @@ slick_optionset:
     nextArrow:
       type: text
       label: 'Next arrow'
+    arrowsPlacement:
+      type: text
+      label: 'Arrows placement'
     downArrow:
       type: boolean
       label: 'Use arrow down'
@@ -279,3 +306,14 @@ slick_media:
 field.formatter.settings.slick_media:
   type: slick_media
   label: 'Slick media display format settings'
+
+filter_settings.slick_filter:
+  type: slick_base
+  label: 'Slick filter'
+  mapping:
+    overridables:
+      type: sequence
+      label: Overridables
+      sequence:
+        - type: string
+          label: override

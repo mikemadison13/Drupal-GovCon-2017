@@ -101,7 +101,31 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
    * {@inheritdoc}
    */
   public static function defaultSettings($group = 'settings') {
-    return self::load('default')->options[$group];
+    $settings = self::load('default')->options[$group];
+    self::removeUnsupportedSettings($settings);
+    return $settings;
+  }
+
+  /**
+   * Remove settings that aren't supported by the active library.
+   */
+  public static function removeUnsupportedSettings(array &$settings = []) {
+    $library = \Drupal::config('slick.settings')->get('library');
+    // The `focusOnSelect`is required to sync asNavFor, but removed. Here must
+    // be kept for future fix, or less breaking changes due to different logic.
+    if ($library == 'accessible-slick') {
+      unset($settings['accessibility']);
+      unset($settings['focusOnChange']);
+    }
+    else {
+      unset($settings['regionLabel']);
+      unset($settings['useGroupRole']);
+      unset($settings['instructionsText']);
+      unset($settings['useAutoplayToggleButton']);
+      unset($settings['pauseIcon']);
+      unset($settings['playIcon']);
+      unset($settings['arrowsPlacement']);
+    }
   }
 
   /**

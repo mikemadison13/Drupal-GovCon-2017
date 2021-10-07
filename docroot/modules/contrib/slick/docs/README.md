@@ -36,14 +36,32 @@ officially supported now, Jan 2020.
 ***
 # <a name="requirements"> </a>REQUIREMENTS
 1. Slick library:
-   * Download Slick archive **>= 1.6 && <= 1.8.1** from
+
+   **Standard version**
+
+   * Download Slick archive **>= 1.6 && <= 1.8.0** from
      [Slick releases](https://github.com/kenwheeler/slick/releases)
-   * Master branch (1.9.0) is not supported. Instead download, rename one of the
-     official slick releases to slick. Extract and rename it to "slick", so the
+   * Master branch (1.9.0 but in code as 1.8.1) is not supported, and had been
+     removed from official repo 2019. Instead download, rename one of the
+     official slick releases to slick. Extract and rename it to `slick`, so the
      assets are at:
      + **/libraries/slick/slick/slick.css**
      + **/libraries/slick/slick/slick-theme.css** (optional)
      + **/libraries/slick/slick/slick.min.js**
+     + Or any path supported by core library finder as per Drupal 8.9+. If using
+       composer, the library directory is `slick-carousel`. They are fine.
+       Slick v1.6.0 is the only battle-tested, and less issues, only lacking
+       features such as extra lazy-load, etc.
+
+   **Accessible version**
+
+   * Download the Accessible Slick archive **>= 1.0.1** from
+     [Accessible Slick releases](https://github.com/Accessible360/accessible-slick/releases)
+   * Extract and rename the folder to `accessible-slick`, so the
+     assets are at:
+     + **/libraries/accessible-slick/slick/slick.css**
+     + **/libraries/accessible-slick/slick/slick-theme.css** (optional)
+     + **/libraries/accessible-slick/slick/slick.min.js**
      + Or any path supported by core library finder as per Drupal 8.9+.
 
 2. [Download jqeasing](https://github.com/gdsmith/jquery.easing), so available:
@@ -73,47 +91,15 @@ Slick to avoid headaches for just ~15-minute read.
 
 2. **COMPOSER:**
 
-   There are various ways to install third party bower/npm asset libraries.
-   Check out any below suitable to your workflow:
-
-   [3021902](https://www.drupal.org/project/blazy/issues/3021902)
-
-   [2907371](https://www.drupal.org/project/slick/issues/2907371)
-
-   Or jump here:
-
-   [2907371](https://drupal.org/project/slick/issues/2907371#comment-12882235)
-
-   It is up to you to decide which works best. Composer is not designed to
-   manage JS, CSS or HTML framework assets. It is for PHP. Then come Composer
-   plugins, and other workarounds to make Composer workflow easier.
-   As we have alternatives, it is not covered here.
-   Please find more info on the above-mentioned issues.
-
-   Slick has different namespace: `slick` as in github, and `slick-carousel` at
-   bower/ npm.
-
-   If using Composer with https://github.com/fxpio/composer-asset-plugin and via
-   bower-asset.
-   Watch out dots and dashes:
-
    ```
-   $ composer require bower-asset/blazy \
-   bower-asset/slick-carousel:^1.8 \
-   bower-asset/jquery-mousewheel \
-   bower-asset/jquery.easing \
+   $ composer require npm-asset/blazy \
+   npm-asset/slick-carousel:1.8.0 \
+   npm-asset/jquery-mousewheel \
+   npm-asset/jquery.easing \
    drupal/blazy \
    drupal/slick
    ```
-   Be sure to install `composer-asset-plugin` globally first:
-   ```
-   $ composer global require "fxp/composer-asset-plugin:~1.3"
-   ```
-
-   **Important! Use regular constraints (^ or ~) if any issue with versioning.**
-
-   And setup the required config first:
-   [2907371](https://drupal.org/project/slick/issues/2907371#comment-12882235)
+   See [Blazy composer](/admin/help/blazy_ui#composer) for details.
 
 
 ***
@@ -155,8 +141,8 @@ Slick supports enhancements and more complex layouts.
 * [Picture](https://drupal.org/project/picture) for more robust responsive
   image. Included in core as Responsive Image since D8.
 * [Paragraphs](https://drupal.org/project/paragraphs), to get more complex
-  slides at field level.  
-* [Field Collection](https://drupal.org/project/field_collection), idem ditto.    
+  slides at field level.
+* [Field Collection](https://drupal.org/project/field_collection), idem ditto.
 * [Mousewheel](https://github.com/brandonaaron/jquery-mousewheel) at:
   + **/libraries/mousewheel/jquery.mousewheel.min.js**
 
@@ -180,7 +166,7 @@ The Slick module has several sub-modules:
   to get Slick for entityreference and entityreference revisions.
 
 * [ElevateZoom Plus](https://drupal.org/project/elevatezoomplus)
-  to get ElevateZoom Plus with Slick Carousel and lightboxes, commerce ready.  
+  to get ElevateZoom Plus with Slick Carousel and lightboxes, commerce ready.
 
 * [Slick Example](https://drupal.org/project/slick_extras)
   to get up and running Slick quickly.

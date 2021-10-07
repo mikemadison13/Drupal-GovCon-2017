@@ -101,10 +101,11 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
    * {@inheritdoc}
    */
   public function getScopedFormElements() {
+    $captions = ['title' => $this->t('Title'), 'alt' => $this->t('Alt')];
     return [
       'namespace'       => 'slick',
       'nav'             => TRUE,
-      'thumb_captions'  => ['title' => $this->t('Title'), 'alt' => $this->t('Alt')],
+      'thumb_captions'  => $captions,
       'thumb_positions' => TRUE,
     ] + parent::getScopedFormElements();
   }

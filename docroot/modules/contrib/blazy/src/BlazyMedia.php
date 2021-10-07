@@ -83,12 +83,13 @@ class BlazyMedia implements BlazyMediaInterface {
     $item     = NULL;
     $settings = &$data['settings'];
 
-    $settings['bundle']       = $media->bundle();
-    $settings['source_field'] = $media->getSource()->getConfiguration()['source_field'];
-    $settings['media_url']    = $media->toUrl()->toString();
-    $settings['media_id']     = $media->id();
-    $settings['media_source'] = $media->getSource()->getPluginId();
-    $settings['view_mode']    = empty($settings['view_mode']) ? 'default' : $settings['view_mode'];
+    $settings['bundle']           = $media->bundle();
+    $settings['source_field']     = $media->getSource()->getConfiguration()['source_field'];
+    $settings['media_url']        = $media->toUrl()->toString();
+    $settings['media_id']         = $media->id();
+    $settings['media_source']     = $media->getSource()->getPluginId();
+    $settings['view_mode']        = empty($settings['view_mode']) ? 'default' : $settings['view_mode'];
+    $settings['accessible_title'] = $media->label();
 
     // Prioritize custom high-res or poster image such as (remote|file) video.
     if (!empty($settings['image'])) {
@@ -107,6 +108,7 @@ class BlazyMedia implements BlazyMediaInterface {
     if ($item) {
       $settings['file_tags'] = ['file:' . $item->target_id];
       $settings['uri'] = Blazy::uri($item);
+      $item->title = $media->label();
 
       // Pass through image item including poster image overrides.
       $data['item'] = $item;

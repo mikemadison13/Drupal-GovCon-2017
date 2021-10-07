@@ -28,7 +28,10 @@ abstract class SlickDeleteFormBase extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete the %name optionset %label?', ['%name' => static::$niceName, '%label' => $this->entity->label()]);
+    return $this->t('Are you sure you want to delete the %name optionset %label?', [
+      '%name' => static::$niceName,
+      '%label' => $this->entity->label(),
+    ]);
   }
 
   /**
@@ -44,8 +47,14 @@ abstract class SlickDeleteFormBase extends EntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    $this->messenger()->addMessage($this->t('The %name optionset %label has been deleted.', ['%name' => static::$niceName, '%label' => $this->entity->label()]));
-    $this->logger(static::$machineName)->notice('Deleted optionset %oid (%label)', ['%oid' => $this->entity->id(), '%label' => $this->entity->label()]);
+    $this->messenger()->addMessage($this->t('The %name optionset %label has been deleted.', [
+      '%name' => static::$niceName,
+      '%label' => $this->entity->label(),
+    ]));
+    $this->logger(static::$machineName)->notice('Deleted optionset %oid (%label)', [
+      '%oid' => $this->entity->id(),
+      '%label' => $this->entity->label(),
+    ]);
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

@@ -33,16 +33,20 @@
 
     $('select[name$="[style]"]', t).on('change', function () {
       var $select = $(this);
+      var value = $select.val();
 
       t.removeClass(function (index, css) {
         return (css.match(/(^|\s)form--style-\S+/g) || []).join(' ');
       });
 
-      if ($select.val() === '') {
-        t.addClass('form--style-off');
+      if (value === '') {
+        t.addClass('form--style-off form--style-is-grid');
       }
       else {
-        t.addClass('form--style-on form--style-' + $select.val());
+        t.addClass('form--style-on form--style-' + value);
+        if (value === 'column' || value === 'grid' || value === 'flex' || value === 'nativegrid') {
+          t.addClass('form--style-is-grid');
+        }
       }
     }).change();
 
@@ -59,12 +63,15 @@
 
     $('select[name$="[media_switch]"]', t).on('change', function () {
       var $select = $(this);
+      var value = $select.val();
 
       t.removeClass(function (index, css) {
         return (css.match(/(^|\s)form--media-switch-\S+/g) || []).join(' ');
       });
 
-      t[$select.val() === '' ? 'removeClass' : 'addClass']('form--media-switch-' + $select.val());
+      t[value === '' ? 'removeClass' : 'addClass']('form--media-switch-' + value);
+      var nobox = (value === '' || value === 'content' || value === 'media' || value === 'rendered');
+      t[nobox ? 'removeClass' : 'addClass']('form--media-switch-lightbox');
     }).change();
 
     t.on('mouseenter touchstart', '.b-hint', function () {

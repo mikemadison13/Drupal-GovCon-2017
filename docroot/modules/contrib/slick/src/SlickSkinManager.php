@@ -13,7 +13,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\slick\Entity\Slick;
 
 /**
- * Implements SlickSkinManagerInterface.
+ * Provides Slick skin manager.
  */
 class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerInterface, MapperInterface {
 
@@ -67,6 +67,13 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    * @var string|bool
    */
   protected $slickPath;
+
+  /**
+   * The breaking change: Slick 1.9.0, or Accessible Slick.
+   *
+   * @var bool
+   */
+  protected $isBreaking;
 
   /**
    * {@inheritdoc}
@@ -208,12 +215,22 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    */
   public function libraryInfoBuild() {
     if (!isset($this->libraryInfoBuild)) {
-      $libraries['slick.css'] = [
-        'dependencies' => ['slick/slick'],
-        'css' => [
-          'theme' => ['/libraries/slick/slick/slick-theme.css' => ['weight' => -2]],
-        ],
-      ];
+      if ($this->config('library') == 'accessible-slick') {
+        $libraries['slick.css'] = [
+          'dependencies' => ['slick/accessible-slick'],
+          'css' => [
+            'theme' => ['/libraries/accessible-slick/slick/accessible-slick-theme.min.css' => ['weight' => -2]],
+          ],
+        ];
+      }
+      else {
+        $libraries['slick.css'] = [
+          'dependencies' => ['slick/slick'],
+          'css' => [
+            'theme' => ['/libraries/slick/slick/slick-theme.css' => ['weight' => -2]],
+          ],
+        ];
+      }
 
       foreach ($this->getConstantSkins() as $group) {
         if ($skins = $this->getSkinsByGroup($group)) {
@@ -248,7 +265,19 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       $load['library'][] = 'slick/slick.easing';
     }
 
-    $load['library'][] = 'slick/slick.load';
+    if (!empty($attach['_vanilla'])) {
+      $load['library'][] = 'slick/vanilla';
+    }
+
+    // Allows Slick initializer to be disabled by a special flag _unload.
+    if (empty($attach['_unload'])) {
+      $load['library'][] = 'slick/slick.load';
+    }
+    else {
+      if ($this->config('slick_css')) {
+        $load['library'][] = 'slick/slick.css';
+      }
+    }
 
     foreach (['colorbox', 'mousewheel'] as $component) {
       if (!empty($attach[$component])) {
@@ -262,7 +291,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
 
     // Attach default JS settings to allow responsive displays have a lookup,
     // excluding wasted/trouble options, e.g.: PHP string vs JS object.
-    $excludes = explode(' ', 'mobileFirst appendArrows appendDots asNavFor prevArrow nextArrow respondTo');
+    $excludes = explode(' ', 'mobileFirst appendArrows appendDots asNavFor prevArrow nextArrow respondTo pauseIcon playIcon');
     $excludes = array_combine($excludes, $excludes);
     $load['drupalSettings']['slick'] = array_diff_key(Slick::defaultSettings(), $excludes);
   }
@@ -327,15 +356,23 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    */
   public function getSlickPath() {
     if (!isset($this->slickPath)) {
-      $library_path = slick_libraries_get_path('slick-carousel') ?: slick_libraries_get_path('slick');
-      if (!$library_path) {
-        $path = 'libraries/slick-carousel';
-        if (!is_file($this->root . '/' . $path . '/slick/slick.min.js')) {
-          $path = 'libraries/slick';
+      if ($this->config('library') == 'accessible-slick') {
+        $library_path = slick_libraries_get_path('accessible-slick');
+        if (!$library_path) {
+          $path = 'libraries/accessible-slick';
         }
-        if (is_file($this->root . '/' . $path . '/slick/slick.min.js')) {
-          $library_path = $path;
+      }
+      else {
+        $library_path = slick_libraries_get_path('slick-carousel') ?: slick_libraries_get_path('slick');
+        if (!$library_path) {
+          $path = 'libraries/slick-carousel';
+          if (!is_file($this->root . '/' . $path . '/slick/slick.min.js')) {
+            $path = 'libraries/slick';
+          }
         }
+      }
+      if (isset($path) && is_file($this->root . '/' . $path . '/slick/slick.min.js')) {
+        $library_path = $path;
       }
       $this->slickPath = $library_path;
     }
@@ -347,9 +384,25 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    */
   public function libraryInfoAlter(&$libraries, $extension) {
     if ($library_path = $this->getSlickPath()) {
-      $libraries['slick']['js'] = ['/' . $library_path . '/slick/slick.min.js' => ['weight' => -3]];
-      $libraries['slick']['css']['base'] = ['/' . $library_path . '/slick/slick.css' => []];
-      $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/slick-theme.css' => ['weight' => -2]];
+      if ($this->config('library') == 'accessible-slick') {
+        $libraries['accessible-slick']['js'] = ['/' . $library_path . '/slick/slick.min.js' => ['weight' => -3]];
+        $libraries['accessible-slick']['css']['base'] = ['/' . $library_path . '/slick/slick.min.css' => []];
+        $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/accessible-slick-theme.min.css' => ['weight' => -2]];
+        $libraries_to_alter = [
+          'slick.load',
+          'slick.colorbox',
+          'vanilla',
+        ];
+        foreach ($libraries_to_alter as $library_name) {
+          $key = array_search('slick/slick', $libraries[$library_name]['dependencies']);
+          $libraries[$library_name]['dependencies'][$key] = 'slick/accessible-slick';
+        }
+      }
+      else {
+        $libraries['slick']['js'] = ['/' . $library_path . '/slick/slick.min.js' => ['weight' => -3]];
+        $libraries['slick']['css']['base'] = ['/' . $library_path . '/slick/slick.css' => []];
+        $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/slick-theme.css' => ['weight' => -2]];
+      }
     }
 
     if ($library_easing = $this->getEasingPath()) {
@@ -360,6 +413,30 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
     if ($library_mousewheel) {
       $libraries['slick.mousewheel']['js'] = ['/' . $library_mousewheel . '/jquery.mousewheel.min.js' => ['weight' => -4]];
     }
+  }
+
+  /**
+   * Check for breaking libraries: Slick 1.9.0, or Accessible Slick.
+   */
+  public function isBreaking() {
+    if (!isset($this->isBreaking)) {
+      $this->isBreaking = FALSE;
+      if ($this->config('library') == 'accessible-slick') {
+        $this->isBreaking = TRUE;
+      }
+      else {
+        // The master reverted from 1.8.1 - 1.9.0 to 1.8.0. This is for old
+        // downloads. See https://github.com/kenwheeler/slick/pull/3688
+        // @todo Remove after another check.
+        if ($path = $this->getSlickPath()) {
+          if ($content = \file_get_contents($this->root . '/' . $path . '/package.json')) {
+            $this->isBreaking = strpos($content, '"version": "1.9.0"') !== FALSE
+              || strpos($content, '"version": "1.8.1"') !== FALSE;
+          }
+        }
+      }
+    }
+    return $this->isBreaking;
   }
 
   /**

@@ -144,13 +144,10 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       $form['style'] = [
         '#type'         => 'select',
         '#title'        => $this->t('Display style'),
-        '#description'  => $this->t('Either <strong>CSS3 Columns</strong> (experimental pure CSS Masonry) or <strong>Grid Foundation</strong> requires <strong>Grid</strong>. Difference: <strong>Columns</strong> is best with irregular image sizes (scale width, empty height), affects the natural order of grid items. <strong>Grid</strong> with regular cropped ones. Unless required, leave empty to use default formatter, or style.'),
+        '#description'  => $this->t('Unless otherwise specified, the styles require <strong>Grid</strong>. Difference: <ul><li><strong>Columns</strong> is best with irregular image sizes (scale width, empty height), affects the natural order of grid items, top-bottom, not left-right.</li><li><strong>Foundation</strong> with regular cropped ones, left-right.</li><li><strong>Flex Masonry</strong> uses Flexbox, supports (ir)-regular, left-right flow.</li><li><strong>Native Grid</strong> supports both one and two dimensional grid.</li></ul> Unless required, leave empty to use default formatter, or style. Save for <b>Grid Foundation</b>, the rest are experimental!'),
         '#enforced'     => TRUE,
-        '#empty_option' => '- None -',
-        '#options'      => [
-          'column' => $this->t('CSS3 Columns'),
-          'grid'   => $this->t('Grid Foundation'),
-        ],
+        '#empty_option' => $this->t('- None -'),
+        '#options'      => $this->blazyManager->getStyles(),
         '#required' => !empty($definition['grid_required']),
         '#weight'   => -112,
         '#wrapper_attributes' => [
@@ -219,8 +216,6 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    * Returns re-usable grid elements across field formatter and Views.
    */
   public function gridForm(array &$form, $definition = []) {
-    $range = range(1, 12);
-    $grid_options = array_combine($range, $range);
     $required = !empty($definition['grid_required']);
 
     $header = $this->t('Group individual items as block grid<small>Depends on the <strong>Display style</strong>.</small>');
@@ -231,32 +226,30 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     ];
 
     if ($required) {
-      $description = $this->t('The amount of block grid columns for large monitors 64.063em.');
+      $description = $this->t('The amount of block grid columns (1 - 12, or empty) for large monitors 64.063em (1025px) up.');
     }
     else {
-      $description = $this->t('Select <strong>- None -</strong> first if trouble with changing form states. The amount of block grid columns for large monitors 64.063em+. <br /><strong>Requires</strong>:<ol><li>Visible items,</li><li>Skin Grid for starter,</li><li>A reasonable amount of contents.</li></ol>Unless required, leave empty to DIY, or to not build grids.');
+      $description = $this->t('Empty the value first if trouble with changing form states. The amount of block grid columns (1 - 12, or empty) for large monitors 64.063em  (1025px) up. <br /><strong>Requires</strong>:<ol><li>Any grid-related Display style,</li><li>Visible items,</li><li>Skin Grid for starter,</li><li>A reasonable amount of contents.</li></ol>');
     }
+
     $form['grid'] = [
-      '#type'        => 'select',
+      '#type'        => 'textfield',
       '#title'       => $this->t('Grid large'),
-      '#options'     => $grid_options,
       '#description' => $description,
       '#enforced'    => TRUE,
       '#required'    => $required,
     ];
 
     $form['grid_medium'] = [
-      '#type'        => 'select',
+      '#type'        => 'textfield',
       '#title'       => $this->t('Grid medium'),
-      '#options'     => $grid_options,
-      '#description' => $this->t('The amount of block grid columns for medium devices 40.063em - 64em.'),
+      '#description' => $this->t('Only accepts uniform columns (1 - 12, or empty) for medium devices 40.063em - 64em (641px - 1024px) up, even for Native Grid due to being pure CSS without JS.'),
     ];
 
     $form['grid_small'] = [
-      '#type'        => 'select',
+      '#type'        => 'textfield',
       '#title'       => $this->t('Grid small'),
-      '#options'     => $grid_options,
-      '#description' => $this->t('The amount of block grid columns for small devices 0 - 40em. Specific to <strong>CSS3 Columns</strong>, only 1 - 2 column is respected due to small real estate at smallest device.'),
+      '#description' => $this->t('Only accepts uniform columns (1 - 2, or empty) for small devices 0 - 40em (640px) up due to small real estate, even for Native Grid due to being pure CSS without JS. Below this is alway one column.'),
     ];
 
     $form['visible_items'] = [
@@ -285,7 +278,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       $form[$key]['#enforced'] = TRUE;
       $form[$key]['#states'] = [
         'visible' => [
-          'select[name$="[grid]"]' => ['!value' => ''],
+          'input[name$="[grid]"]' => ['!value' => ''],
         ],
       ];
     }
@@ -353,7 +346,6 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
           '#type'        => 'select',
           '#title'       => $this->t('Lightbox image style'),
           '#options'     => $this->getResponsiveImageOptions() + $this->getEntityAsOptions('image_style'),
-          '#states'      => $this->getState(static::STATE_LIGHTBOX_ENABLED, $definition),
           '#weight'      => -97,
           '#description' => $this->t('Supports both Responsive and regular images.'),
         ];
@@ -367,9 +359,16 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
               ':url1' => 'https:drupal.org/project/blazy_photoswipe',
               ':url2' => 'https:drupal.org/project/slick_lightbox',
             ]),
-            '#states'      => $this->getState(static::STATE_LIGHTBOX_ENABLED, $definition),
             '#weight'      => -96,
           ];
+        }
+
+        if (empty($definition['box_stateless'])) {
+          foreach (['box_style', 'box_media_style'] as $key) {
+            if (isset($form[$key])) {
+              $form[$key]['#states'] = $this->getState(static::STATE_LIGHTBOX_ENABLED, $definition);
+            }
+          }
         }
       }
 
@@ -468,9 +467,12 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
           '#title'       => $this->t('Lightbox caption'),
           '#options'     => $this->getLightboxCaptionOptions(),
           '#weight'      => -95,
-          '#states'      => $this->getState(static::STATE_LIGHTBOX_ENABLED, $definition),
           '#description' => $this->t('Automatic will search for Alt text first, then Title text. Try selecting <strong>- None -</strong> first when changing if trouble with form states.'),
         ];
+
+        if (empty($definition['box_stateless'])) {
+          $form['box_caption']['#states'] = $this->getState(static::STATE_LIGHTBOX_ENABLED, $definition);
+        }
 
         $form['box_caption_custom'] = [
           '#title'       => $this->t('Lightbox custom caption'),
@@ -483,11 +485,14 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
         if ($is_token) {
           $types = isset($definition['entity_type']) ? [$definition['entity_type']] : [];
           $types = isset($definition['target_type']) ? array_merge($types, [$definition['target_type']]) : $types;
-          $form['box_caption_custom']['#field_suffix'] = [
-            '#theme'       => 'token_tree_link',
-            '#text'        => $this->t('Tokens'),
-            '#token_types' => $types,
-          ];
+
+          if ($types) {
+            $form['box_caption_custom']['#field_suffix'] = [
+              '#theme'       => 'token_tree_link',
+              '#text'        => $this->t('Tokens'),
+              '#token_types' => $types,
+            ];
+          }
         }
       }
     }
@@ -517,6 +522,11 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
 
     if (!empty($definition['field_type'])) {
       $classes .= ' form--' . str_replace('_', '-', $definition['field_type']);
+    }
+
+    if (isset($form['grid'], $form['grid']['#description'])) {
+      $description = $form['grid']['#description'];
+      $form['grid']['#description'] = $description . $this->nativeGridDescription();
     }
 
     $form['opening'] = [
@@ -693,6 +703,13 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       }
     }
     return $options;
+  }
+
+  /**
+   * Returns native grid description.
+   */
+  protected function nativeGridDescription() {
+    return $this->t('<br>Specific for <b>Native Grid</b>, two recipes: <ol><li><b>One-dimensional</b>: Input a single numeric column grid, acting as Masonry. <em>Best with</em>: scaled pictures.</li><li><b>Two-dimensional</b>: Input a space separated value with <code>WIDTHxHEIGHT</code> pair based on the amount of columns/ rows, at max 12, e.g.: <br><code>4x4 4x3 2x2 2x4 2x2 2x3 2x3 4x2 4x2</code> <br>This will resemble GridStack optionset <b>Tagore</b>. Any single value e.g.: <code>4x4</code> will repeat uniformly like one-dimesional. <br><em>Best with</em>: <ul><li><b>Use CSS background</b> ON.</li><li>Exact item amount or better more designated grids than lacking. Use a little math with the exact item amount to have gapless grids.</li><li>Disabled image aspect ratio to use grid ratio instead.</li></ul></li></ol>This requires any grid-related <b>Display style</b>. Unless required, leave empty to DIY, or to not build grids.');
   }
 
   /**

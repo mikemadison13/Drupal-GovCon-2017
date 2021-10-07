@@ -263,7 +263,8 @@ img[data-lazy] {
   text-align: center;
 }
 
-.slick--less .slick-slide {
+/* Fix for BigPipe CSS re-orders issue. */
+.slick.slick--less .slick-slide {
   float: none;
   display: inline-block;
   vertical-align: top;

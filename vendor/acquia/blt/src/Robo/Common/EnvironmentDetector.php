@@ -153,7 +153,6 @@ class EnvironmentDetector extends AcquiaDrupalEnvironmentDetector {
    *   Name of the OS family.
    */
   public static function getPlatform() {
-    // phpcs:ignore
     return OsInfo::family();
   }
 
@@ -290,7 +289,7 @@ class EnvironmentDetector extends AcquiaDrupalEnvironmentDetector {
       'prod' => self::isProdEnv(),
       'ci' => self::isCiEnv(),
       'ode' => self::isAhOdeEnv(),
-      'ah_other' => self::isAhEnv(),
+      'ah_other' => self::isAhEnv() && !self::isDevEnv() && !self::isStageEnv() && !self::isAhOdeEnv() && !self::isProdEnv(),
     ];
   }
 

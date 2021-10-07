@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SlickFileFormatter extends SlickFileFormatterBase {
 
-  // @@todo remove post blazy:2.x.
+  // @todo remove post blazy:2.x.
   use BlazyVideoTrait;
 
   /**

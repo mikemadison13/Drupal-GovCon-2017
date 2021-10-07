@@ -3,6 +3,7 @@
 namespace Drupal\blazy;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -12,6 +13,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\image\Plugin\Field\FieldType\ImageItem;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -229,7 +231,7 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
       }
     }
 
-    // Allow both variants of grid or column to co-exist for different fields.
+    // Allow variants of grid, columns, flexbox, native grid to co-exist.
     if (!empty($attach['style'])) {
       $attach[$attach['style']] = $attach['style'];
     }
@@ -238,8 +240,7 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
       $load['library'][] = 'blazy/fx.blur';
     }
 
-    $components = ['column', 'filter', 'grid', 'media', 'photobox', 'ratio'];
-    foreach ($components as $component) {
+    foreach (BlazyDefault::components() as $component) {
       if (!empty($attach[$component])) {
         $load['library'][] = 'blazy/' . $component;
       }
@@ -307,6 +308,48 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
       // Allows lightboxes to provide its own optionsets, e.g.: ElevateZoomPlus.
       $settings[$switch] = empty($settings[$switch]) ? $switch : $settings[$switch];
     }
+
+    // Formatters, Views style, not Filters.
+    if (!empty($settings['style'])) {
+      BlazyGrid::toNativeGrid($settings);
+    }
+  }
+
+  /**
+   * Returns the common settings extracted from the given entity.
+   */
+  public function getEntitySettings(array &$settings, $entity) {
+    $internal_path = $absolute_path = NULL;
+
+    // Deals with UndefinedLinkTemplateException such as paragraphs type.
+    // @see #2596385, or fetch the host entity.
+    if (!$entity->isNew()) {
+      try {
+        // Check if multilingual is enabled (@see #3214002).
+        if ($entity->hasTranslation($settings['current_language'])) {
+          // Load the translated url.
+          $url = $entity->getTranslation($settings['current_language'])->toUrl();
+        }
+        else {
+          // Otherwise keep the standard url.
+          $url = $entity->toUrl();
+        }
+
+        $internal_path = $url->getInternalPath();
+        $absolute_path = $url->setAbsolute()->toString();
+      }
+      catch (\Exception $ignore) {
+        // Do nothing.
+      }
+    }
+
+    // @todo Remove checks after another check, in case already set somewhere.
+    $settings['current_view_mode'] = empty($settings['current_view_mode']) ? '_custom' : $settings['current_view_mode'];
+    $settings['entity_id'] = empty($settings['entity_id']) ? $entity->id() : $settings['entity_id'];
+    $settings['entity_type_id'] = empty($settings['entity_type_id']) ? $entity->getEntityTypeId() : $settings['entity_type_id'];
+    $settings['bundle'] = empty($settings['bundle']) ? $entity->bundle() : $settings['bundle'];
+    $settings['content_url'] = $settings['absolute_path'] = $absolute_path;
+    $settings['internal_path'] = $internal_path;
   }
 
   /**
@@ -459,6 +502,37 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
       $cache_tags = Cache::mergeTags($cache_tags, $image_style->getCacheTags());
     }
     return ['caches' => $cache_tags, 'styles' => $image_styles];
+  }
+
+  /**
+   * Returns the thumbnail image using theme_image(), or theme_image_style().
+   */
+  public function getThumbnail(array $settings = [], $item = NULL) {
+    if (!empty($settings['uri'])) {
+      $external = UrlHelper::isExternal($settings['uri']);
+      return [
+        '#theme'      => $external ? 'image' : 'image_style',
+        '#style_name' => empty($settings['thumbnail_style']) ? 'thumbnail' : $settings['thumbnail_style'],
+        '#uri'        => $settings['uri'],
+        '#item'       => $item,
+        '#alt'        => $item && $item instanceof ImageItem ? $item->getValue()['alt'] : '',
+      ];
+    }
+    return [];
+  }
+
+  /**
+   * Provides alterable display styles.
+   */
+  public function getStyles() {
+    $styles = [
+      'column' => 'CSS3 Columns',
+      'grid' => 'Grid Foundation',
+      'flex' => 'Flexbox Masonry',
+      'nativegrid' => 'Native Grid',
+    ];
+    $this->moduleHandler->alter('blazy_style', $styles);
+    return $styles;
   }
 
   /**

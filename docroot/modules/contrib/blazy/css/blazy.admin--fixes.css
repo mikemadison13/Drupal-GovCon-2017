@@ -126,6 +126,12 @@
   margin: 0;
 }
 
+/** Fixed for things beyond Blazy. */
+.form--media-switch-lightbox .form-item--box-style,
+.form--media-switch-lightbox .form-item--box-media-style {
+  display: block !important; /* csslint allow: known-properties, important */
+}
+
 @media screen and (min-width: 760px) {
   .form--slick.form--blazy .vertical-tabs__menu {
     width: 190px;
@@ -188,6 +194,25 @@
     max-width: 100%;
   }
 
+  .form--half.form--slick div[class*="grid"] {
+    width: 49.9999%;
+  }
+
+  .form--half.form--slick .form-item--grid.form-item {
+    border-top: 1px solid #dadada;
+    clear: both;
+    float: none;
+    width: 100%;
+  }
+
+  .form--half.form--slick .form-item--grid.form-item label {
+    max-width: 32%;
+  }
+
+  .form--half.form--slick .form-item--grid.form-item input {
+    max-width: 60%;
+  }
+
   .ui-dialog-content .form--vanilla .form__header {
     font-size: 17px;
     min-height: 82px;
@@ -208,7 +233,7 @@
   }
 
   #field-display-overview .field-plugin-settings-edit-form .form--slick .form-item--style,
-  #field-display-overview .field-plugin-settings-edit-form .form--slick  div[class*="-vanilla"] {  /* csslint allow: ids */
+  #field-display-overview .field-plugin-settings-edit-form .form--slick div[class*="-vanilla"] {  /* csslint allow: ids */
     height: 42px;
     margin-top: -42px;
     min-height: 42px;

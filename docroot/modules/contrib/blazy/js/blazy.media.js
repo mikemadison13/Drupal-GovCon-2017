@@ -26,6 +26,7 @@
     }
 
     var url = btn.getAttribute('data-url');
+    var title = btn.getAttribute('data-iframe-title');
     var newIframe;
 
     /**
@@ -51,6 +52,7 @@
       var iframe = player.querySelector('iframe');
 
       url = target.getAttribute('data-url');
+      title = target.getAttribute('data-iframe-title');
 
       // First, reset any video to avoid multiple videos from playing.
       if (playing !== null) {
@@ -76,6 +78,7 @@
         newIframe.className = 'media__iframe media__element';
         newIframe.setAttribute('src', url);
         newIframe.setAttribute('allowfullscreen', true);
+        newIframe.setAttribute('title', title);
       }
 
       player.appendChild(newIframe);

@@ -60,6 +60,24 @@ class SlickDefault extends BlazyDefault {
   }
 
   /**
+   * Returns filter settings.
+   */
+  public static function filterSettings() {
+    $settings = self::imageSettings();
+    $unused = self::gridSettings() + [
+      'breakpoints' => [],
+      'sizes'       => '',
+      'grid_header' => '',
+    ];
+    foreach ($unused as $key => $value) {
+      if (isset($settings[$key])) {
+        unset($settings[$key]);
+      }
+    }
+    return $settings;
+  }
+
+  /**
    * Returns HTML or layout related settings to shut up notices.
    *
    * @return array
@@ -67,10 +85,12 @@ class SlickDefault extends BlazyDefault {
    */
   public static function htmlSettings() {
     return [
+      'breaking'      => FALSE,
       'display'       => 'main',
       'grid'          => 0,
       'id'            => '',
       'lazy'          => '',
+      'library'       => 'slick',
       'namespace'     => 'slick',
       'nav'           => FALSE,
       'navpos'        => FALSE,
@@ -95,6 +115,8 @@ class SlickDefault extends BlazyDefault {
       'lazyLoad'        => 'ondemand',
       'prevArrow'       => 'Previous',
       'nextArrow'       => 'Next',
+      'pauseIcon'       => 'slick-pause-icon',
+      'playIcon'        => 'slick-play-icon',
       'rows'            => 1,
       'slidesPerRow'    => 1,
       'slide'           => '',

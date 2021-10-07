@@ -64,6 +64,7 @@ If you don't find the below solve your issues, check out:
      **Solution:**
 
      Disable `Infinite` option.
+     UPDATE: 2021/6, added fix specific for Colorbox ported from Splide.
    * Colorbox integration is not working well with lazyload `onDemand`.  
      **Solution:**
 

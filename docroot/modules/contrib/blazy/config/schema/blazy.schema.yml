@@ -114,16 +114,10 @@ field.formatter.third_party.blazy:
       type: boolean
       label: Blazy
 
-filter_settings.blazy_filter:
-  type: filter
+blazy_filter:
+  type: mapping
   label: 'Blazy filter'
   mapping:
-    filter_tags:
-      type: sequence
-      label: 'HTML tags'
-      sequence:
-        - type: string
-          label: tag
     media_switch:
       type: string
       label: 'Media switcher'
@@ -136,6 +130,17 @@ filter_settings.blazy_filter:
     box_caption:
       type: string
       label: 'Lightbox caption'
+
+filter_settings.blazy_filter:
+  type: blazy_filter
+  label: 'Blazy filter'
+  mapping:
+    filter_tags:
+      type: sequence
+      label: 'HTML tags'
+      sequence:
+        - type: string
+          label: tag
     use_data_uri:
       type: string
       label: 'Trust data URI'

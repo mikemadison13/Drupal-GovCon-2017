@@ -86,7 +86,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
 
     $this->verifySlickOptionset($main);
 
-    // @todo: Use dataProvider.
+    // @todo Use dataProvider.
     try {
       $responsive_options = $main->getResponsiveOptions();
     }
@@ -163,7 +163,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     $nav->save();
     $this->assertNotEmpty($nav->getSetting('mobileFirst'));
 
-    // @todo: Use dataProvider.
+    // @todo Use dataProvider.
     try {
       $mobile_first = $nav->getOptions('settings', 'mobileFirst');
     }

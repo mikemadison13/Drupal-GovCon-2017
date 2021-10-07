@@ -5,6 +5,7 @@
  * [Requirements](#requirements)
  * [Recommended modules](#recommended-modules)
  * [Installation](#installation)
+ * [Installing libraries via Composer](#composer)
  * [Configuration](#configuration)
  * [Features](#features)
  * [Updating](#updating)
@@ -16,10 +17,7 @@
  * [Maintainers](#maintainers)
 
 
-.
 ***
-***
-.
 # <a name="introduction"></a>INTRODUCTION
 Provides integration with bLazy and or Intersection Observer API, or browser
 native lazy loading to lazy load and multi-serve images to save bandwidth and
@@ -27,10 +25,7 @@ server requests. The user will have faster load times and save data usage if
 they don't browse the whole page.
 
 
-.
 ***
-***
-.
 # <a name="requirements"> </a>REQUIREMENTS
 1. bLazy library:
    * [Download bLazy](https://github.com/dinbror/blazy)
@@ -41,10 +36,7 @@ they don't browse the whole page.
 2. Media and Filter module in core.
 
 
-.
 ***
-***
-.
 # <a name="recommended-modules"> </a>RECOMMENDED MODULES
 * [Markdown](https://www.drupal.org/project/markdown)
 
@@ -64,6 +56,8 @@ they don't browse the whole page.
 * [Slick Views](https://www.drupal.org/project/slick_views)
 * [Slick Paragraphs](https://www.drupal.org/project/slick_paragraphs)
 * [Slick Browser](https://www.drupal.org/project/slick_browser)
+* [Splide](https://www.drupal.org/project/splide)
+* [Splidebox](https://www.drupal.org/project/splidebox)
 * [Jumper](https://www.drupal.org/project/jumper)
 * [Zooming](https://www.drupal.org/project/zooming)
 * [ElevateZoom Plus](https://www.drupal.org/project/elevatezoomplus)
@@ -102,10 +96,7 @@ least 7 lightboxes, and likely more.
 [Lazyloader](https://www.drupal.org/project/lazyloader)
 
 
-.
 ***
-***
-.
 # <a name="installation"> </a>INSTALLATION
 1. **MANUAL:**
 
@@ -115,24 +106,10 @@ least 7 lightboxes, and likely more.
 
 2. **COMPOSER:**
 
-   There are various ways to install third party bower/npm asset libraries.
-   Check out any below suitable to your workflow:
-
-     + [#3021902](https://www.drupal.org/project/blazy/issues/3021902)
-     + [#2907371](https://www.drupal.org/project/slick/issues/2907371)
-     + [#2907371](https://www.drupal.org/project/slick/issues/2907371#comment-12882235)  
-
-   It is up to you to decide which works best. Composer is not designed to
-   manage JS, CSS or HTML framework assets. It is for PHP. Then come Composer
-   plugins, and other workarounds to make Composer workflow easier. As many
-   alternatives, it is not covered here. Please find more info on the
-   above-mentioned issues.
+   See [Composer](#composer) section below for details.
 
 
-.
 ***
-***
-.
 # <a name="configuration"> </a>CONFIGURATION
 Visit the following to configure and make use of Blazy:
 
@@ -143,8 +120,7 @@ Visit the following to configure and make use of Blazy:
    Responsive image into blazy-related formatters.
    Blazy UI can be uninstalled at production later without problems.
 
-2. Visit any entity types:
-
+2. Visit any entity types:  
   + `/admin/structure/types`
   + `/admin/structure/block/block-content/types`
   + `/admin/structure/paragraphs_type`
@@ -176,6 +152,7 @@ etc., try the following:
   + **blazy--photobox-gallery**
   + **blazy--photoswipe-gallery**
   + **blazy--slick-lightbox-gallery**
+  + **blazy--splidebox-gallery**
   + **blazy--zooming-gallery**
 
   Note the double dashes BEM modifier "**--**", just to make sure we are on the
@@ -200,10 +177,8 @@ is a standalone output from Views so to use field template in this case.
 
 Check out the relevant sub-module docs for details.
 
-.
+
 ***
-***
-.
 # <a name="features"> </a>FEATURES
 * Supports core Image.
 * Supports core Responsive image.
@@ -214,7 +189,8 @@ Check out the relevant sub-module docs for details.
   via Blazy Filter. Enable Blazy Filter at **/admin/config/content/formats**,
   and check out instructions at **/filter/tips**.
 * Field formatters: Blazy with Media integration.
-* Blazy Grid formatter for Image, Media and Text with multi-value.
+* Blazy Grid formatter for Image, Media and Text with multi-value:
+  CSS3 Columns, Grid Foundation, Flexbox, Native Grid.
 * Delay loading for below-fold images until 100px (configurable) before they are
   visible at viewport.
 * A simple effortless CSS loading indicator.
@@ -225,14 +201,11 @@ Check out the relevant sub-module docs for details.
 ## OPTIONAL FEATURES
 * Views fields for File Entity and Media integration, see
   [Slick Browser](https://www.drupal.org/project/slick_browser).
-* Views style plugin `Blazy Grid` for Grid Foundation or pure CSS3 Masonry.
+* Views style plugin `Blazy Grid` for CSS3 Columns, Grid Foundation, Flexbox,
+  and Native Grid.
 
 
-
-.
 ***
-***
-.
 # <a name="maintainers"> </a>MAINTAINERS/CREDITS
 * [Gaus Surahman](https://www.drupal.org/user/159062)
 * [geek-merlin](https://www.drupal.org/u/geek-merlin)

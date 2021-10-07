@@ -88,9 +88,9 @@ class BlazyViewsFileTest extends BlazyViewsTestBase {
     $this->assertInstanceOf('\Drupal\blazy_test\Form\BlazyAdminTestInterface', $style_plugin->admin(), 'BlazyAdmin implements interface.');
 
     $style_plugin->options                            = array_merge($style_plugin->options, $this->getDefaultFields(TRUE));
-    $style_plugin->options['grid']                    = 0;
-    $style_plugin->options['grid_medium']             = 3;
-    $style_plugin->options['grid_small']              = 1;
+    $style_plugin->options['grid']                    = '';
+    $style_plugin->options['grid_medium']             = '3';
+    $style_plugin->options['grid_small']              = '1';
     $style_plugin->options['image']                   = 'field_image';
     $style_plugin->options['media_switch']            = 'blazy_test';
     $style_plugin->options['overlay']                 = $this->testFieldName;

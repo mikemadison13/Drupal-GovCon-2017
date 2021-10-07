@@ -4,6 +4,7 @@ namespace Drupal\blazy;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Cache\Cache;
@@ -40,17 +41,9 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
     $settings += BlazyDefault::itemSettings();
     $settings['uri'] = $uri = $settings['uri'] ?: Blazy::uri($build['item']);
 
-    // Prevents _responsive_image_build_source_attributes from fatal if missing.
-    // External images are invalid URI, but can still be lazyloaded.
-    // The is_file seems fine against weird characters like czech ů at php 7.4,
-    // recheck russian characters in general, and lower PHP. No worries if
-    // transliterated, though.
-    $settings['_valid'] = BlazyUtil::isValidUri($uri);
-    $settings['_missing'] = $settings['_valid'] && !is_file($uri);
-
     // Respects content not handled by theme_blazy(), but passed through.
     // Yet allows rich contents which might still be processed by theme_blazy().
-    $content = (empty($uri) || $settings['_missing']) ? $build['content'] : [
+    $content = empty($uri) ? $build['content'] : [
       '#theme'       => 'blazy',
       '#delta'       => $settings['delta'],
       '#item'        => $build['item'],
@@ -111,6 +104,7 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
     $settings['extension'] = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
     $settings['unstyled'] = BlazyUtil::unstyled($settings);
     $settings['_richbox'] = !empty($settings['colorbox']) || !empty($settings['_richbox']);
+    $settings['is_external'] = UrlHelper::isExternal($settings['uri']);
 
     // Disable image style if so configured.
     if ($settings['unstyled']) {
@@ -169,6 +163,9 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
     $element['#url_attributes'] = $build['url_attributes'];
 
     // Preparing Blazy to replace other blazy-related content/ item markups.
+    // Composing or layering is crucial for mixed media (icon over CTA or text
+    // or lightbox links or iframe over image or CSS background over noscript
+    // which cannot be simply dumped as array without elaborate arrangements).
     foreach (['content', 'icon', 'overlay', 'preface', 'postscript'] as $key) {
       $element["#$key"] = empty($element["#$key"]) ? $build[$key] : NestedArray::mergeDeep($element["#$key"], $build[$key]);
     }
@@ -221,8 +218,15 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
     }
 
     // Responsive image integration, with/o CSS background so to work with.
+    // Prevents _responsive_image_build_source_attributes from WSOD if missing.
+    // Avoided is_file() check due to ramifications, see #3225859.
     if (!empty($settings['resimage']) && empty($settings['unstyled'])) {
-      $this->buildResponsiveImage($element, $attributes, $settings);
+      try {
+        $this->buildResponsiveImage($element, $attributes, $settings);
+      }
+      catch (\Exception $e) {
+        // Silently failed like regular images when missing rather than WSOD.
+      }
     }
 
     // Regular image, with/o CSS background so to work with.
@@ -360,7 +364,7 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
     $settings['placeholder_ui'] = $settings['placeholder'];
     $path = $style = '';
     // With CSS background, IMG may be empty, add thumbnail to the container.
-    if (!empty($settings['thumbnail_style'])) {
+    if (empty($settings['is_external']) && !empty($settings['thumbnail_style'])) {
       $style = $this->entityLoad($settings['thumbnail_style'], 'image_style');
       if ($style) {
         $path = $style->buildUri($settings['uri']);

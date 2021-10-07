@@ -3,7 +3,7 @@
 namespace Drupal\config_filter;
 
 /**
- * Interface for a ConfigFilterManager.
+ * Interface ConfigFilterManagerInterface.
  */
 interface ConfigFilterManagerInterface {
 

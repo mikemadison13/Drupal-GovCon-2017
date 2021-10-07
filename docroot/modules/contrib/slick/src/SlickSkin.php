@@ -5,7 +5,7 @@ namespace Drupal\slick;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
- * Implements SlickSkinInterface.
+ * Provides deprecated skins.
  *
  * @todo deprecated at 8.x-2.0, and is removed from slick:8.x-3.0. Use
  * Drupal\slick\SlickSkinPluginBase instead.

@@ -21,5 +21,8 @@
     "issues": "https://drupal.org/project/issues/blazy",
     "source": "https://git.drupalcode.org/project/blazy"
   },
-  "require": { }
+  "require": { },
+  "conflict": {
+    "drupal/csp": "<1.12"
+  }
 }

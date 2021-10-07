@@ -5,6 +5,7 @@
  * Slick carousel integration, the last carousel you'll ever need.
  */
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\blazy\Blazy;
 use Drupal\slick\SlickDefault;
 
@@ -90,6 +91,21 @@ function slick_libraries_get_path($name, $base_path = FALSE) {
     return $function($name, $base_path);
   }
   return FALSE;
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function slick_page_attachments(array &$attachments) {
+  $sitewide = slick()->configLoad('sitewide', 'slick.settings');
+
+  if ((!empty($sitewide) && $sitewide > 0) && !\Drupal::service('router.admin_context')->isAdminRoute()) {
+    $slicks = slick()->attach([
+      '_unload' => $sitewide == 2 || $sitewide == 3,
+      '_vanilla' => $sitewide == 2,
+    ]);
+    $attachments['#attached'] = empty($attachments['#attached']) ? $slicks : NestedArray::mergeDeep($slicks, $attachments['#attached']);
+  }
 }
 
 /**

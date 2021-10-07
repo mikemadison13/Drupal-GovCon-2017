@@ -1,7 +1,5 @@
-.
+
 ***
-***
-.
 # <a name="aspect-ratio-template"></a>ASPECT RATIO TEMPLATE
 ## Tools to check aspect ratio:
 http://size43.com/jqueryVideoTool.html

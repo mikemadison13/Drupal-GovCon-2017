@@ -68,8 +68,11 @@ class BlazyEntity implements BlazyEntityInterface {
 
     // Supports core Media via Drupal\blazy\BlazyOEmbed::getMediaItem().
     $data['settings'] = empty($data['settings']) ? [] : $data['settings'];
+
     $this->blazyManager->getCommonSettings($data['settings']);
+    $this->blazyManager->getEntitySettings($data['settings'], $entity);
     $this->oembed->getMediaItem($data, $entity);
+
     $settings = &$data['settings'];
 
     // Made Responsive image also available outside formatters here.

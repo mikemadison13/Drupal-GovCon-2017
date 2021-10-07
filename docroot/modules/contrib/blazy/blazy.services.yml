@@ -43,6 +43,13 @@ services:
     class: Drupal\blazy\Form\BlazyAdmin
     parent: blazy.admin.base
 
+  blazy.csp_subscriber:
+    class: Drupal\blazy\EventSubscriber\CspSubscriber
+    arguments:
+      - '@library.dependency_resolver'
+    tags:
+      - { name: event_subscriber }
+
   # @todo deprecate this if you can't make it non-static at blazy: 8.3+.
   blazy.media:
     class: Drupal\blazy\BlazyMedia
