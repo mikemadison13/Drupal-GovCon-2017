@@ -1671,12 +1671,12 @@
             'dev_requirement' => false,
         ),
         'drupal/purge' => array(
-            'pretty_version' => '3.2.0',
-            'version' => '3.2.0.0',
+            'pretty_version' => '3.0.0',
+            'version' => '3.0.0.0',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../docroot/modules/contrib/purge',
             'aliases' => array(),
-            'reference' => '8.x-3.2',
+            'reference' => '8.x-3.0',
             'dev_requirement' => false,
         ),
         'drupal/purge_queuer_url' => array(

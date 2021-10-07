@@ -20,7 +20,7 @@ class PluginManagerTest extends KernelPluginManagerTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
+  public static $modules = [
     'purge_check_test',
     'purge_check_error_test',
     'purge_check_warning_test',
@@ -50,6 +50,7 @@ class PluginManagerTest extends KernelPluginManagerTestBase {
     'capacity',
     'maxage',
     'memoryqueuewarning',
+    'page_cache',
     'processorsavailable',
     'purgersavailable',
     'queuersavailable',

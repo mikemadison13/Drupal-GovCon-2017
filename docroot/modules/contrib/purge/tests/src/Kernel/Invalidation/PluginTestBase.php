@@ -45,7 +45,7 @@ abstract class PluginTestBase extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['purge_purger_test'];
+  public static $modules = ['purge_purger_test'];
 
   /**
    * Set up the test.

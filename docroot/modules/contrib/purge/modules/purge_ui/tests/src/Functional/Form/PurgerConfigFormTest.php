@@ -15,7 +15,7 @@ class PurgerConfigFormTest extends PurgerConfigFormTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['purge_purger_test', 'purge_ui'];
+  public static $modules = ['purge_purger_test', 'purge_ui'];
 
   /**
    * {@inheritdoc}

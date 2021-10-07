@@ -22,7 +22,7 @@ abstract class BrowserTestBase extends RealBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['purge'];
+  public static $modules = ['purge'];
 
   /**
    * Set up the test object.
