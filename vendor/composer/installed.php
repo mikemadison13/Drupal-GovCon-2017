@@ -2242,6 +2242,15 @@
             'reference' => '8879e75d03e09b0d6787e6680cfa255afd4645a7',
             'dev_requirement' => false,
         ),
+        'laminas/laminas-zendframework-bridge' => array(
+            'pretty_version' => '1.4.0',
+            'version' => '1.4.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../laminas/laminas-zendframework-bridge',
+            'aliases' => array(),
+            'reference' => 'bf180a382393e7db5c1e8d0f2ec0c4af9c724baf',
+            'dev_requirement' => false,
+        ),
         'league/container' => array(
             'pretty_version' => '2.5.0',
             'version' => '2.5.0.0',

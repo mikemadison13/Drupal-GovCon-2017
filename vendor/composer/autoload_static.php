@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite8c74034d7dd0375d0175f42860d6397
+class ComposerStaticInitd6daaace722e651118ec70729ee4f245
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -46,6 +46,7 @@ class ComposerStaticInite8c74034d7dd0375d0175f42860d6397
         'fbeead2280a8f3911a1fe6dd034f7d5e' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvancedInterface.php',
         '96f8d8288528d52059397cad6ec61f17' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvanced.php',
         '2d0bd6b7e257b7230c706e6559d6a87b' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/drupal-phpunit-hack.php',
+        '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -159,6 +160,7 @@ class ComposerStaticInite8c74034d7dd0375d0175f42860d6397
         'L' => 
         array (
             'League\\Container\\' => 17,
+            'Laminas\\ZendFrameworkBridge\\' => 28,
             'Laminas\\Text\\' => 13,
             'Laminas\\Stdlib\\' => 15,
             'Laminas\\ServiceManager\\' => 23,
@@ -517,6 +519,10 @@ class ComposerStaticInite8c74034d7dd0375d0175f42860d6397
         'League\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/container/src',
+        ),
+        'Laminas\\ZendFrameworkBridge\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src',
         ),
         'Laminas\\Text\\' => 
         array (
@@ -5198,6 +5204,11 @@ class ComposerStaticInite8c74034d7dd0375d0175f42860d6397
         'Laminas\\Text\\Table\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Exception/UnexpectedValueException.php',
         'Laminas\\Text\\Table\\Row' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Row.php',
         'Laminas\\Text\\Table\\Table' => __DIR__ . '/..' . '/laminas/laminas-text/src/Table/Table.php',
+        'Laminas\\ZendFrameworkBridge\\Autoloader' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Autoloader.php',
+        'Laminas\\ZendFrameworkBridge\\ConfigPostProcessor' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/ConfigPostProcessor.php',
+        'Laminas\\ZendFrameworkBridge\\Module' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Module.php',
+        'Laminas\\ZendFrameworkBridge\\Replacements' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Replacements.php',
+        'Laminas\\ZendFrameworkBridge\\RewriteRules' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/RewriteRules.php',
         'League\\Container\\Argument\\ArgumentResolverInterface' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverInterface.php',
         'League\\Container\\Argument\\ArgumentResolverTrait' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverTrait.php',
         'League\\Container\\Argument\\RawArgument' => __DIR__ . '/..' . '/league/container/src/Argument/RawArgument.php',
@@ -8199,11 +8210,11 @@ class ComposerStaticInite8c74034d7dd0375d0175f42860d6397
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite8c74034d7dd0375d0175f42860d6397::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite8c74034d7dd0375d0175f42860d6397::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInite8c74034d7dd0375d0175f42860d6397::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInite8c74034d7dd0375d0175f42860d6397::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInite8c74034d7dd0375d0175f42860d6397::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd6daaace722e651118ec70729ee4f245::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd6daaace722e651118ec70729ee4f245::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitd6daaace722e651118ec70729ee4f245::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitd6daaace722e651118ec70729ee4f245::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitd6daaace722e651118ec70729ee4f245::$classMap;
 
         }, null, ClassLoader::class);
     }
