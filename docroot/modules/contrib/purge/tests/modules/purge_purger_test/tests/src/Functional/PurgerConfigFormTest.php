@@ -15,7 +15,7 @@ class PurgerConfigFormTest extends PurgerConfigFormTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['purge_purger_test'];
+  protected static $modules = ['purge_purger_test'];
 
   /**
    * {@inheritdoc}
@@ -63,10 +63,11 @@ class PurgerConfigFormTest extends PurgerConfigFormTestBase {
    */
   public function testSaveConfigurationSubmit(): void {
     $this->drupalLogin($this->adminUser);
+    $this->drupalGet($this->getPath());
     $edit = [
       'textfield' => "The moose in the noose ate the goose who was loose.",
     ];
-    $this->drupalPostForm($this->getPath(), $edit, 'Save configuration');
+    $this->submitForm($edit, 'Save configuration');
   }
 
 }
