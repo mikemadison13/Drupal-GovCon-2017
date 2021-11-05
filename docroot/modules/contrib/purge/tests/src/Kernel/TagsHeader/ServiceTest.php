@@ -21,7 +21,7 @@ class ServiceTest extends KernelServiceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['purge_tagsheader_test'];
+  public static $modules = ['purge_tagsheader_test'];
 
   /**
    * All tagsheader plugins that can be expected.

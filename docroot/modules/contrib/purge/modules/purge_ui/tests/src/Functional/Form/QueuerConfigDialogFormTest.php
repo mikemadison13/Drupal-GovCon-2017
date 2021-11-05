@@ -15,7 +15,7 @@ class QueuerConfigDialogFormTest extends QueuerConfigFormTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['purge_queuer_test', 'purge_ui'];
+  public static $modules = ['purge_queuer_test', 'purge_ui'];
 
   /**
    * {@inheritdoc}

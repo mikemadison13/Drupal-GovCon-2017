@@ -25,7 +25,7 @@ class ProxyItemTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['purge_purger_test'];
+  public static $modules = ['purge_purger_test'];
 
   /**
    * {@inheritdoc}

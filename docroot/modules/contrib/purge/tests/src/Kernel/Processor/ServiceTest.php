@@ -22,7 +22,7 @@ class ServiceTest extends KernelServiceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['purge_processor_test'];
+  public static $modules = ['purge_processor_test'];
 
   /**
    * Set up the test.

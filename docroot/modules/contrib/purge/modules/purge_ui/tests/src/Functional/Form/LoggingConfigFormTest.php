@@ -15,7 +15,7 @@ class LoggingConfigFormTest extends AjaxFormTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['purge_ui'];
+  public static $modules = ['purge_ui'];
 
   /**
    * {@inheritdoc}

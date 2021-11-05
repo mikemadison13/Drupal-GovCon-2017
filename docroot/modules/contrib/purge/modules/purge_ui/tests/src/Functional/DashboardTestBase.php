@@ -27,7 +27,7 @@ abstract class DashboardTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['purge_ui'];
+  public static $modules = ['purge_ui'];
 
   /**
    * Setup the test.

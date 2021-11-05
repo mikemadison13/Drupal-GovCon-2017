@@ -79,9 +79,7 @@ class DatabaseQueue extends CoreDatabaseQueue implements QueueInterface {
     }
 
     // Insert all of them using just one multi-row query.
-    $query = $this->connection
-      ->insert(static::TABLE_NAME, [])
-      ->fields(['data', 'created']);
+    $query = $this->connection->insert(static::TABLE_NAME, [])->fields(['data', 'created']);
     foreach ($records as $record) {
       $query->values($record);
     }
@@ -115,10 +113,11 @@ class DatabaseQueue extends CoreDatabaseQueue implements QueueInterface {
   /**
    * {@inheritdoc}
    *
-   * @todo \Drupal\Core\Queue\DatabaseQueue::claimItem() doesn't included
-   *   expired items in its query which means that its essentially broken and
-   *   makes our tests fail. Therefore we overload the implementation with one
-   *   that does it accurately. However, this should flow back to core.
+   * @todo
+   *   \Drupal\Core\Queue\DatabaseQueue::claimItem() doesn't included expired
+   *   items in its query which means that its essentially broken and makes our
+   *   tests fail. Therefore we overload the implementation with one that does
+   *   it accurately. However, this should flow back to core.
    */
   public function claimItem($lease_time = 3600) {
 
