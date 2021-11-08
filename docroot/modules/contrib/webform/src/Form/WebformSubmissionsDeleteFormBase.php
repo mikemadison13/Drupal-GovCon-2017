@@ -171,7 +171,7 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
    * @param mixed|array $context
    *   The batch current context.
    */
-  public function batchProcess(WebformInterface $webform = NULL, EntityInterface $entity = NULL, $max_sid, &$context) {
+  public function batchProcess(WebformInterface $webform = NULL, EntityInterface $entity = NULL, $max_sid = NULL, array &$context = []) {
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
       $context['sandbox']['max'] = $this->getSubmissionStorage()->getTotal($webform, $entity, NULL, ['in_draft' => NULL]);

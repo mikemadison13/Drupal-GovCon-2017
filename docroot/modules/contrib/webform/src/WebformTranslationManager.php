@@ -12,6 +12,7 @@ use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformYaml;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\webform\Plugin\WebformElement\WebformCustomComposite;
 
 /**
  * Defines a class to translate webform elements.
@@ -210,6 +211,7 @@ class WebformTranslationManager implements WebformTranslationManagerInterface {
 
     $element_type = (isset($element['#type'])) ? $element['#type'] : NULL;
     $translatable_properties = $this->getTranslatableProperties($element_type);
+    $element_plugin = $this->elementManager->getElementInstance($element);
     foreach ($element as $property_key => $property_value) {
       $translatable_property_key = $property_key;
 
@@ -223,7 +225,7 @@ class WebformTranslationManager implements WebformTranslationManagerInterface {
         // Unset options and answers that are webform option ids.
         unset($element[$property_key]);
       }
-      elseif ($translatable_property_key === '#element' && $element_type === 'webform_custom_composite') {
+      elseif ($translatable_property_key === '#element' && $element_plugin instanceof WebformCustomComposite) {
         foreach ($element[$property_key] as &$composite_element_value) {
           $this->removeUnTranslatablePropertiesFromElement($composite_element_value);
         }

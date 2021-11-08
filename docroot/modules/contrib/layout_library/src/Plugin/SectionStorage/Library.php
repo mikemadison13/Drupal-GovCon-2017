@@ -266,6 +266,8 @@ class Library extends SectionStorageBase implements ContainerFactoryPluginInterf
     $values = $this->getContextValues();
 
     if (!is_null($values['layout'])) {
+      $cacheability->addCacheableDependency($values['layout']);
+
       $entity = $values['layout']->getTargetEntityType();
       $bundle = $values['layout']->getTargetBundle();
       $view_mode = $values['view_mode'];
@@ -287,7 +289,7 @@ class Library extends SectionStorageBase implements ContainerFactoryPluginInterf
     $value = $context->getContextValue();
     // This cannot be done with constraints because the context handler does not
     // currently validate optional context definitions.
-    if ($name === 'entity' && $value instanceof FieldableEntityInterface && $value->hasField('layout_selection') && !$value->get('layout_selection')->isEmpty()) {
+    if ($name === 'entity' && $value instanceof FieldableEntityInterface && $value->hasField('layout_selection') && $value->get('layout_selection')->entity) {
       $name = 'layout';
       $context = EntityContext::fromEntity($value->get('layout_selection')->entity);
     }

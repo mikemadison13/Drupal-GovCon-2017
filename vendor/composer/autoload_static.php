@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitda22eec9021390d243d944c2a7071662
+class ComposerStaticInit207913afdc1733c5cf428b678c801cac
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -231,8 +231,10 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         array (
             'Behat\\Transliterator\\' => 21,
             'Behat\\Testwork\\' => 15,
+            'Behat\\Step\\' => 11,
             'Behat\\Mink\\Driver\\' => 18,
             'Behat\\Mink\\' => 11,
+            'Behat\\Hook\\' => 11,
             'Behat\\Behat\\' => 12,
         ),
         'A' => 
@@ -735,6 +737,10 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         array (
             0 => __DIR__ . '/..' . '/behat/behat/src/Behat/Testwork',
         ),
+        'Behat\\Step\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/behat/behat/src/Behat/Step',
+        ),
         'Behat\\Mink\\Driver\\' => 
         array (
             0 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
@@ -744,6 +750,10 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         'Behat\\Mink\\' => 
         array (
             0 => __DIR__ . '/..' . '/behat/mink/src',
+        ),
+        'Behat\\Hook\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/behat/behat/src/Behat/Hook',
         ),
         'Behat\\Behat\\' => 
         array (
@@ -1016,6 +1026,7 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Behat\\Behat\\ApplicationFactory' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/ApplicationFactory.php',
         'Behat\\Behat\\Context\\Annotation\\AnnotationReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Annotation/AnnotationReader.php',
+        'Behat\\Behat\\Context\\Annotation\\DocBlockHelper' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Annotation/DocBlockHelper.php',
         'Behat\\Behat\\Context\\Argument\\ArgumentResolver' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Argument/ArgumentResolver.php',
         'Behat\\Behat\\Context\\Argument\\ArgumentResolverFactory' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Argument/ArgumentResolverFactory.php',
         'Behat\\Behat\\Context\\Argument\\CompositeArgumentResolverFactory' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Argument/CompositeArgumentResolverFactory.php',
@@ -1023,6 +1034,7 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         'Behat\\Behat\\Context\\Argument\\NullFactory' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Argument/NullFactory.php',
         'Behat\\Behat\\Context\\Argument\\SuiteScopedResolverFactory' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Argument/SuiteScopedResolverFactory.php',
         'Behat\\Behat\\Context\\Argument\\SuiteScopedResolverFactoryAdapter' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Argument/SuiteScopedResolverFactoryAdapter.php',
+        'Behat\\Behat\\Context\\Attribute\\AttributeReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Attribute/AttributeReader.php',
         'Behat\\Behat\\Context\\Cli\\ContextSnippetsController' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Cli/ContextSnippetsController.php',
         'Behat\\Behat\\Context\\Cli\\InteractiveContextIdentifier' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Cli/InteractiveContextIdentifier.php',
         'Behat\\Behat\\Context\\Context' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Context.php',
@@ -1042,6 +1054,7 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         'Behat\\Behat\\Context\\Exception\\WrongContextClassException' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Exception/WrongContextClassException.php',
         'Behat\\Behat\\Context\\Initializer\\ContextInitializer' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Initializer/ContextInitializer.php',
         'Behat\\Behat\\Context\\Reader\\AnnotatedContextReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Reader/AnnotatedContextReader.php',
+        'Behat\\Behat\\Context\\Reader\\AttributeContextReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Reader/AttributeContextReader.php',
         'Behat\\Behat\\Context\\Reader\\ContextReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Reader/ContextReader.php',
         'Behat\\Behat\\Context\\Reader\\ContextReaderCachedPerContext' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Reader/ContextReaderCachedPerContext.php',
         'Behat\\Behat\\Context\\Reader\\ContextReaderCachedPerSuite' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Context/Reader/ContextReaderCachedPerSuite.php',
@@ -1069,6 +1082,7 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         'Behat\\Behat\\Definition\\Call\\When' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Definition/Call/When.php',
         'Behat\\Behat\\Definition\\Cli\\AvailableDefinitionsController' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Definition/Cli/AvailableDefinitionsController.php',
         'Behat\\Behat\\Definition\\Context\\Annotation\\DefinitionAnnotationReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Definition/Context/Annotation/DefinitionAnnotationReader.php',
+        'Behat\\Behat\\Definition\\Context\\Attribute\\DefinitionAttributeReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Definition/Context/Attribute/DefinitionAttributeReader.php',
         'Behat\\Behat\\Definition\\Definition' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Definition/Definition.php',
         'Behat\\Behat\\Definition\\DefinitionFinder' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Definition/DefinitionFinder.php',
         'Behat\\Behat\\Definition\\DefinitionRepository' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Definition/DefinitionRepository.php',
@@ -1167,6 +1181,7 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         'Behat\\Behat\\Hook\\Call\\RuntimeScenarioHook' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Hook/Call/RuntimeScenarioHook.php',
         'Behat\\Behat\\Hook\\Call\\RuntimeStepHook' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Hook/Call/RuntimeStepHook.php',
         'Behat\\Behat\\Hook\\Context\\Annotation\\HookAnnotationReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Hook/Context/Annotation/HookAnnotationReader.php',
+        'Behat\\Behat\\Hook\\Context\\Attribute\\HookAttributeReader' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Hook/Context/Attribute/HookAttributeReader.php',
         'Behat\\Behat\\Hook\\Scope\\AfterFeatureScope' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Hook/Scope/AfterFeatureScope.php',
         'Behat\\Behat\\Hook\\Scope\\AfterScenarioScope' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Hook/Scope/AfterScenarioScope.php',
         'Behat\\Behat\\Hook\\Scope\\AfterStepScope' => __DIR__ . '/..' . '/behat/behat/src/Behat/Behat/Hook/Scope/AfterStepScope.php',
@@ -1352,6 +1367,13 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         'Behat\\Gherkin\\Node\\TableNode' => __DIR__ . '/..' . '/behat/gherkin/src/Behat/Gherkin/Node/TableNode.php',
         'Behat\\Gherkin\\Node\\TaggedNodeInterface' => __DIR__ . '/..' . '/behat/gherkin/src/Behat/Gherkin/Node/TaggedNodeInterface.php',
         'Behat\\Gherkin\\Parser' => __DIR__ . '/..' . '/behat/gherkin/src/Behat/Gherkin/Parser.php',
+        'Behat\\Hook\\AfterFeature' => __DIR__ . '/..' . '/behat/behat/src/Behat/Hook/AfterFeature.php',
+        'Behat\\Hook\\AfterScenario' => __DIR__ . '/..' . '/behat/behat/src/Behat/Hook/AfterScenario.php',
+        'Behat\\Hook\\AfterStep' => __DIR__ . '/..' . '/behat/behat/src/Behat/Hook/AfterStep.php',
+        'Behat\\Hook\\BeforeFeature' => __DIR__ . '/..' . '/behat/behat/src/Behat/Hook/BeforeFeature.php',
+        'Behat\\Hook\\BeforeScenario' => __DIR__ . '/..' . '/behat/behat/src/Behat/Hook/BeforeScenario.php',
+        'Behat\\Hook\\BeforeStep' => __DIR__ . '/..' . '/behat/behat/src/Behat/Hook/BeforeStep.php',
+        'Behat\\Hook\\Hook' => __DIR__ . '/..' . '/behat/behat/src/Behat/Hook/Hook.php',
         'Behat\\MinkExtension\\Context\\Initializer\\MinkAwareInitializer' => __DIR__ . '/..' . '/behat/mink-extension/src/Behat/MinkExtension/Context/Initializer/MinkAwareInitializer.php',
         'Behat\\MinkExtension\\Context\\MinkAwareContext' => __DIR__ . '/..' . '/behat/mink-extension/src/Behat/MinkExtension/Context/MinkAwareContext.php',
         'Behat\\MinkExtension\\Context\\MinkContext' => __DIR__ . '/..' . '/behat/mink-extension/src/Behat/MinkExtension/Context/MinkContext.php',
@@ -1399,6 +1421,10 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
         'Behat\\Mink\\Selector\\Xpath\\Manipulator' => __DIR__ . '/..' . '/behat/mink/src/Selector/Xpath/Manipulator.php',
         'Behat\\Mink\\Session' => __DIR__ . '/..' . '/behat/mink/src/Session.php',
         'Behat\\Mink\\WebAssert' => __DIR__ . '/..' . '/behat/mink/src/WebAssert.php',
+        'Behat\\Step\\Definition' => __DIR__ . '/..' . '/behat/behat/src/Behat/Step/Definition.php',
+        'Behat\\Step\\Given' => __DIR__ . '/..' . '/behat/behat/src/Behat/Step/Given.php',
+        'Behat\\Step\\Then' => __DIR__ . '/..' . '/behat/behat/src/Behat/Step/Then.php',
+        'Behat\\Step\\When' => __DIR__ . '/..' . '/behat/behat/src/Behat/Step/When.php',
         'Behat\\Testwork\\ApplicationFactory' => __DIR__ . '/..' . '/behat/behat/src/Behat/Testwork/ApplicationFactory.php',
         'Behat\\Testwork\\Argument\\ArgumentOrganiser' => __DIR__ . '/..' . '/behat/behat/src/Behat/Testwork/Argument/ArgumentOrganiser.php',
         'Behat\\Testwork\\Argument\\ConstructorArgumentOrganiser' => __DIR__ . '/..' . '/behat/behat/src/Behat/Testwork/Argument/ConstructorArgumentOrganiser.php',
@@ -8210,11 +8236,11 @@ class ComposerStaticInitda22eec9021390d243d944c2a7071662
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitda22eec9021390d243d944c2a7071662::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitda22eec9021390d243d944c2a7071662::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitda22eec9021390d243d944c2a7071662::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitda22eec9021390d243d944c2a7071662::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitda22eec9021390d243d944c2a7071662::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit207913afdc1733c5cf428b678c801cac::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit207913afdc1733c5cf428b678c801cac::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit207913afdc1733c5cf428b678c801cac::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit207913afdc1733c5cf428b678c801cac::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit207913afdc1733c5cf428b678c801cac::$classMap;
 
         }, null, ClassLoader::class);
     }

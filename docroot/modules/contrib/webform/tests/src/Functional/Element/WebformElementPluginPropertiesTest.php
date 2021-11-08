@@ -4607,10 +4607,10 @@ webform_table_sort:
   field_prefix: ''
   field_suffix: ''
   flex: 1
-  format: ol
+  format: value
   format_attributes: {  }
   format_html: ''
-  format_items: comma
+  format_items: ol
   format_items_html: ''
   format_items_text: ''
   format_text: ''
@@ -4661,10 +4661,10 @@ webform_tableselect_sort:
   field_prefix: ''
   field_suffix: ''
   flex: 1
-  format: ol
+  format: value
   format_attributes: {  }
   format_html: ''
-  format_items: comma
+  format_items: ol
   format_items_html: ''
   format_items_text: ''
   format_text: ''

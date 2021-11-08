@@ -56,6 +56,7 @@ use Drupal\webform\WebformSubmissionStorageInterface;
  *       "add" = "Drupal\webform\WebformEntityAddForm",
  *       "duplicate" = "Drupal\webform\WebformEntityAddForm",
  *       "delete" = "Drupal\webform\WebformEntityDeleteForm",
+ *       "delete-multiple-confirm" = "Drupal\webform\Form\WebformEntityDeleteMultipleForm",
  *       "edit" = "Drupal\webform\WebformEntityElementsForm",
  *       "export" = "Drupal\webform\WebformEntityExportForm",
  *       "settings" = "Drupal\webform\EntitySettings\WebformEntitySettingsGeneralForm",
@@ -84,6 +85,7 @@ use Drupal\webform\WebformSubmissionStorageInterface;
  *     "test-form" = "/webform/{webform}/test",
  *     "duplicate-form" = "/admin/structure/webform/manage/{webform}/duplicate",
  *     "delete-form" = "/admin/structure/webform/manage/{webform}/delete",
+ *     "delete-multiple-form" = "/admin/structure/webform/delete",
  *     "export-form" = "/admin/structure/webform/manage/{webform}/export",
  *     "settings" = "/admin/structure/webform/manage/{webform}/settings",
  *     "settings-form" = "/admin/structure/webform/manage/{webform}/settings/form",
@@ -716,9 +718,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * {@inheritdoc}
    */
   public function isResultsDisabled() {
-    $elements = $this->getElementsDecoded();
-    $settings = $this->getSettings();
-    return (!empty($settings['results_disabled']) || !empty($elements['#method'])) ? TRUE : FALSE;
+    return ($this->getSetting('results_disabled') || $this->getSetting('form_method')) ? TRUE : FALSE;
   }
 
   /**
@@ -1099,6 +1099,9 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'form_access_denied_message' => '',
       'form_access_denied_attributes' => [],
       'form_file_limit' => '',
+      'form_method' => '',
+      'form_action' => '',
+      'form_attributes' => [],
       'share' => FALSE,
       'share_node' => FALSE,
       'share_theme_name' => '',
@@ -1677,7 +1680,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       $element['#webform_composite'] = FALSE;
 
       if (!empty($parent)) {
-        $parent_element =& $this->elementsInitializedAndFlattened[$parent];
+        $parent_element = &$this->elementsInitializedAndFlattened[$parent];
         // Add element to the parent element's children.
         $parent_element['#webform_children'][$key] = $key;
         // Set #parent_flexbox to TRUE is the parent element is a

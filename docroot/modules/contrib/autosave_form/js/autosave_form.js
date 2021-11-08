@@ -13,6 +13,7 @@
   Drupal.autosaveForm = {
     timer: null,
     interval: null,
+    onlyOnFormChange: false,
     autosaveFormRunning: false,
     autosaveFormInstances: {},
     initialized: false,
@@ -26,7 +27,8 @@
       active: true,
       message: Drupal.t('Saving draft...'),
       delay: 1000
-    }
+    },
+    form: null
   };
 
   /**
@@ -70,7 +72,9 @@
       // conditions and creating further autosave entries after the entity is
       // saved.
       if (autosave_submit.length > 0) {
-        $context.find('form').submit(function () {
+        Drupal.autosaveForm.form = $(autosave_submit[0]).parents('form.autosave-form');
+
+        Drupal.autosaveForm.form.submit(function () {
           if (Drupal.autosaveForm.autosaveFormRunning) {
             Drupal.autosaveForm.autosaveFormRunning = false;
             clearInterval(Drupal.autosaveForm.timer);
@@ -127,7 +131,7 @@
                 text: Drupal.t('Discard'),
                 class: 'autosave-form-reject-button',
                 click: function () {
-                  triggerAjaxSubmitWithoutProgressIndication(Drupal.autosaveForm.autosave_reject_class);
+                  triggerAjaxSubmitWithoutProgressIndication(Drupal.autosaveForm.autosave_reject_class, true);
                   $(this).dialog('close');
                 },
                 primary: true
@@ -185,17 +189,36 @@
        *
        * @param {string} ajax_class
        *   The class of the ajax element.
+       * @param {boolean} skip_checks
+       *   Skip checks.
        */
-      function triggerAjaxSubmitWithoutProgressIndication(ajax_class) {
+      function triggerAjaxSubmitWithoutProgressIndication(ajax_class, skip_checks = false) {
         // If the autosave button suddenly gets the 'is-disabled' class then
         // autosave submission should not run until the class is removed.
         if (Drupal.autosaveForm.autosaveSubmit.is(':disabled') || Drupal.autosaveForm.autosaveSubmit.hasClass('is-disabled')) {
           return;
         }
+
+        // If configured so run only in the specified interval only if there
+        // was a form change.
+        if (!skip_checks && Drupal.autosaveForm.onlyOnFormChange && !Drupal.autosaveForm.form.data('autosave-form-changed')) {
+          return;
+        }
+
         var ajax = findAjaxInstance(ajax_class);
         if (ajax) {
           if (Drupal.autosaveForm.notification.active) {
             $('#autosave-notification').fadeIn().delay(Drupal.autosaveForm.notification.delay).fadeOut();
+          }
+          ajax.success = function (response, status) {
+            // If interval submission is configured to happen only on form
+            // change, then reset the changed flag on successful autosave.
+            if (Drupal.autosaveForm.onlyOnFormChange && Drupal.autosaveForm.form.data('autosave-form-changed')) {
+              Drupal.autosaveForm.form.data('autosave-form-changed', false);
+            }
+
+            // Call original method with main functionality.
+            Drupal.Ajax.prototype.success.call(this, response, status);
           }
           ajax.options.error = function (xmlhttprequest, text_status, error_thrown) {
             if (xmlhttprequest.status === 0 || xmlhttprequest.status >= 400) {
@@ -248,7 +271,7 @@
           // @see https://www.drupal.org/node/2367655
           // @see https://www.drupal.org/node/2474019
           if (Drupal.autosaveForm.interval > 500) {
-            setTimeout(function () {triggerAjaxSubmitWithoutProgressIndication(Drupal.autosaveForm.autosave_submit_class);}, 500);
+            setTimeout(function () {triggerAjaxSubmitWithoutProgressIndication(Drupal.autosaveForm.autosave_submit_class, true);}, 500);
           }
 
           Drupal.autosaveForm.timer = setInterval(function () {
@@ -303,6 +326,77 @@
     };
 
     Drupal.AjaxCommands.prototype.openDialog(ajax, response, status);
+  };
+
+  /**
+   * Attach behaviors to monitor changes on entity forms.
+   *
+   * This is a modified version of the monitoring functionality provided by
+   * https://www.drupal.org/project/entity_form_monitor.
+   *
+   * @type {Drupal~behavior}
+   *
+   * @prop {Drupal~behaviorAttach} attach
+   *   Attaches triggers.
+   */
+  Drupal.behaviors.autosaveFormMonitor = {
+    attach: function (context, settings) {
+      var $context = $(context);
+      var $form = $context.find('form.autosave-form');
+      if ($form.length === 0) {
+        var $form = $context.parents('form.autosave-form');
+      }
+
+      // Disable autosave when the form is submitted in order to prevent race
+      // conditions and creating further autosave entries after the entity is
+      // saved.
+      if ($form.length > 0) {
+        // Detect new elements added through field widgets.
+        if ($context.find('.ajax-new-content').length > 0) {
+          $form.data('autosave-form-changed', true);
+        }
+
+        // Add a change handler that will help us determine if any inputs
+        // inside the entity forms have changed values.
+        $form.find(':input, [contenteditable="true"]')
+          // Filter out buttons
+          .not('button, input[type="button"]')
+          .once('autosave-form-input-monitor')
+          .on('change textInput input', function (event) {
+            var $form = $(event.target).parents('.autosave-form').first();
+            if ($form.length) {
+              var val = $(this).val();
+              if(val != $(this).attr('autosave-old-val') ){
+                $(this).attr('autosave-old-val',val);
+                $form.data('autosave-form-changed', true);
+              }
+            }
+          })
+          // Detect Ajax changes e.g. removing an element.
+          .on('mousedown', function (event) {
+            if (event.target.type === 'submit') {
+              $form.data('autosave-form-changed', true);
+            }
+          });
+
+        // Add change handlers to any CKEditor instances.
+        if (typeof CKEDITOR !== "undefined") {
+          CKEDITOR.on("instanceCreated", function (event) {
+            event.editor.on("change", function (event) {
+              // Handle CKEditor change events.
+              if (typeof event.editor !== "undefined" && typeof event.target === "undefined") {
+                event.target = event.editor.element.$;
+              }
+
+              var $form = $(event.target).parents('.autosave-form').first();
+              if ($form.length) {
+                $form.data('autosave-form-changed', true);
+              }
+            });
+          });
+        }
+      }
+    }
   };
 
 })(jQuery, Drupal, drupalSettings);

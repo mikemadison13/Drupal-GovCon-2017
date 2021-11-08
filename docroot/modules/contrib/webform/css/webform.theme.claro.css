@@ -148,12 +148,6 @@ table td > .button:only-child {
   margin-top: 0;
   margin-bottom: 0;
 }
-/**
- * Results table.
- */
-th.webform-results-table__icon.sortable-heading {
-  padding: 0 1rem;
-}
 
 /**
  * Table select element.

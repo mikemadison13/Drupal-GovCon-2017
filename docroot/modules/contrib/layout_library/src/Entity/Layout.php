@@ -142,7 +142,7 @@ class Layout extends ConfigEntityBase implements SectionListInterface {
   /**
    * {@inheritdoc}
    */
-  public function toUrl($rel = 'edit-form', array $options = []) {
+  public function toUrl($rel = 'layout-builder', array $options = []) {
     if ($rel === 'layout-builder') {
       $options += [
         'language' => NULL,

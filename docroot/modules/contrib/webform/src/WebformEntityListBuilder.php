@@ -64,6 +64,13 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
   protected $state;
 
   /**
+   * Bulk operations.
+   *
+   * @var bool
+   */
+  protected $bulkOperations;
+
+  /**
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
@@ -85,9 +92,12 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
   protected function initialize() {
     $query = $this->request->query;
     $config = $this->configFactory->get('webform.settings');
+
     $this->keys = ($query->has('search')) ? $query->get('search') : '';
     $this->category = ($query->has('category')) ? $query->get('category') : $config->get('form.filter_category');
     $this->state = ($query->has('state')) ? $query->get('state') : $config->get('form.filter_state');
+    $this->bulkOperations = $config->get('settings.webform_bulk_form') ?: FALSE;
+    $this->limit = $config->get('form.limit') ?: 50;
   }
 
   /**
@@ -113,6 +123,11 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
     $build += parent::render();
     $build['table']['#sticky'] = TRUE;
     $build['table']['#attributes']['class'][] = 'webform-forms';
+
+    // Bulk operations.
+    if ($this->bulkOperations && $this->currentUser->hasPermission('administer webform')) {
+      $build['table'] = \Drupal::formBuilder()->getForm('\Drupal\webform\Form\WebformEntityBulkForm', $build['table']);
+    }
 
     // Attachments.
     // Must preload libraries required by (modal) dialogs.
@@ -208,7 +223,7 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
       'specifier' => 'status',
       'field' => 'status',
     ];
-    $header['author'] = [
+    $header['owner'] = [
       'data' => $this->t('Author'),
       'class' => [RESPONSIVE_PRIORITY_LOW],
       'specifier' => 'uid',
@@ -301,10 +316,12 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
 
     // Results.
     $result_total = $this->storage->getTotalNumberOfResults($entity->id());
-    $results_access = $entity->access('submission_view_any');
     $results_disabled = $entity->isResultsDisabled();
+    $results_access = $entity->access('submission_view_any');
     if ($results_disabled || !$results_access) {
-      $row['results'] = $result_total . ($entity->isResultsDisabled() ? ' ' . $this->t('(Disabled)') : '');
+      $row['results'] = ($result_total ? $result_total : '')
+        . ($result_total && $results_disabled ? ' ' : '')
+        . ($results_disabled ? $this->t('(Disabled)') : '');
     }
     else {
       $row['results'] = [
@@ -315,7 +332,6 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
             'aria-label' => $this->formatPlural($result_total, '@count result for @label', '@count results for @label', ['@label' => $entity->label()]),
           ],
           '#url' => $entity->toUrl('results-submissions'),
-          '#suffix' => ($entity->isResultsDisabled() ? ' ' . $this->t('(Disabled)') : ''),
         ],
       ];
     }

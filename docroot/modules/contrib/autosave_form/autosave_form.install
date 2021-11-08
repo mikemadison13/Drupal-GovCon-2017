@@ -98,3 +98,14 @@ function autosave_form_update_8001() {
     $config->save(TRUE);
   }
 }
+
+/**
+ * Populates the setting "only_on_form_change".
+ */
+function autosave_form_update_8002() {
+  $config = \Drupal::configFactory()->getEditable('autosave_form.settings');
+  if ($config->get('only_on_form_change') === NULL) {
+    $config->set('only_on_form_change', FALSE);
+    $config->save(TRUE);
+  }
+}

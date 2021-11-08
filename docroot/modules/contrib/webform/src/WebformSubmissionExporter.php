@@ -273,6 +273,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       'range_latest' => '',
       'range_start' => '',
       'range_end' => '',
+      'uid' => '',
       'order' => 'asc',
       'state' => 'all',
       'locked' => '',
@@ -595,6 +596,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
         '#options' => [
           'all' => $this->t('All'),
           'latest' => $this->t('Latest'),
+          'uid' => $this->t('Submitted by'),
           'serial' => $this->t('Submission number'),
           'sid' => $this->t('Submission ID'),
           'date' => $this->t('Created date'),
@@ -616,6 +618,26 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
           '#title' => $this->t('Number of submissions'),
           '#min' => 1,
           '#default_value' => $export_options['range_latest'],
+        ],
+      ];
+      $form['export']['download']['submitted_by'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['container-inline']],
+        '#states' => [
+          'visible' => [
+            ':input[name="range_type"]' => ['value' => 'uid'],
+          ],
+        ],
+        'uid' => [
+          '#type' => 'entity_autocomplete',
+          '#title' => $this->t('User'),
+          '#target_type' => 'user',
+          '#default_value' => $export_options['uid'],
+          '#states' => [
+            'visible' => [
+              ':input[name="range_type"]' => ['value' => 'uid'],
+            ],
+          ],
         ],
       ];
       $ranges = [
@@ -927,6 +949,11 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
           $query->condition($date_field, strtotime('+1 day', strtotime($export_options['range_end'])), '<');
         }
         break;
+    }
+
+    // Filter by UID.
+    if ($export_options['uid'] !== '') {
+      $query->condition('uid', $export_options['uid'], '=');
     }
 
     // Filter by (completion) state.

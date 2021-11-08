@@ -17,15 +17,15 @@ To use this plugin, you must already have a Drupal project using BLT 11 (or high
 
 1. Add this plugin to your project using composer: 
 
-`composer require --dev mikemadison13/blt-lando`
+`composer require --dev mikemadison13/blt-lando --with-all-dependencies`
 
 Note: if you are using drupal/recommended-project (or another project template) that sets the minimum-stability to "stable" you may have trouble installing this plugin. You can either change your stability to "dev" or more specifically composer require like:
 
-`composer require mikemadison13/blt-lando:dev-main`
+`composer require mikemadison13/blt-lando:dev-main --with-all-dependencies`
 
 2. Ensure that your blt/blt.yml file has properly set the `project.machine_name` key (as this will be used during template generation by this plugin).
 
-3. Initialize the Gitlab integration by calling `blt recipes:vm:lando`, which is provided by this plugin.
+3. Initialize the Lando integration by calling `blt recipes:vm:lando`, which is provided by this plugin.
 
 This will copy a template version of the .lando.yml to your project root directory and instantiate a number of other BLT and Drupal settings files required to make Drupal bootstrap properly in a Lando container. Make sure to commit these files (where appropriate, remember that BLT gitignores local settings and local blt files by default, and these "local" specific files should not be committed) as well as your updated composer.json to Git.
 

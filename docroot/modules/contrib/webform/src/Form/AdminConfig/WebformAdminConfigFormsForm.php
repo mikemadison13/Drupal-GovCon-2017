@@ -93,6 +93,19 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
+    $form['filter_settings']['limit'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Webforms per page'),
+      '#options' => [
+        '10' => '10',
+        '20' => '20',
+        '30' => '30',
+        '40' => '40',
+        '50' => '50',
+      ],
+      '#parents' => ['form', 'limit'],
+      '#default_value' => $config->get('form.limit') ?: 50,
+    ];
     $form['filter_settings']['filter_category'] = [
       '#type' => 'select',
       '#title' => $this->t('Filter webforms default category'),
@@ -526,6 +539,9 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#default_value' => $settings['default_share_theme_name'],
     ];
 
+    // Bulk operation settings.
+    $form['bulk_form_settings'] = $this->buildBulkOperations($settings, 'webform');
+
     // Dialog settings.
     $form['dialog_settings'] = [
       '#type' => 'details',
@@ -694,6 +710,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       + $form_state->getValue('confirmation_settings')
       + $form_state->getValue('share_settings')
       + $form_state->getValue('ajax_settings')
+      + $form_state->getValue('bulk_form_settings')
       + $form_state->getValue('dialog_settings');
 
     // Track if we need to trigger an update of all webform paths

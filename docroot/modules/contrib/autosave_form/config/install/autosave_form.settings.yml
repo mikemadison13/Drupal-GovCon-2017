@@ -1,4 +1,5 @@
 interval: 60000
+only_on_form_change: FALSE
 active_on:
   content_entity_forms: TRUE
   config_entity_forms: FALSE

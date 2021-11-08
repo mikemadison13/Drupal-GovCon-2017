@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -153,6 +154,7 @@ elements: |
         <pre>{{ webform_debug(data|without('computed_twig_data_01', 'computed_twig_data_ajax_01', 'computed_twig_data_02', 'computed_twig_data_ajax_02', 'computed_twig_data_03', 'computed_twig_data_ajax_03') ) }}</pre>
         
       '#ajax': true
+  
 css: ''
 javascript: ''
 settings:
@@ -194,6 +196,9 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_method: ''
+  form_action: ''
+  form_attributes: {  }
   share: false
   share_node: false
   share_theme_name: ''

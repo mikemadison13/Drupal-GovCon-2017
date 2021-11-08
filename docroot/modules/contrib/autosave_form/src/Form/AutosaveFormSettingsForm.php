@@ -78,6 +78,12 @@ class AutosaveFormSettingsForm extends ConfigFormBase {
       '#title' => $this->t('The interval to use for triggering autosave in milliseconds.'),
       '#default_value' => $config->get('interval'),
     ];
+    $form['only_on_form_change'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Run only on form change.') . ' ' . $this->t('(Experimental)'),
+      '#description' => $this->t('If enabled an autosave submission will only occur if the form changed since the previous autosave submission.'),
+      '#default_value' => $config->get('only_on_form_change'),
+    ];
 
     $form['active_on'] = [
       '#type' => 'fieldset',
@@ -195,6 +201,7 @@ class AutosaveFormSettingsForm extends ConfigFormBase {
       $allowed_content_entity_types[$entity_type_id]['bundles'] = $allowed_bundles;
     }
     $config->set('interval', $form_state->getValue('interval'))
+      ->set('only_on_form_change', $form_state->getValue('only_on_form_change'))
       ->set('active_on', $form_state->getValue('active_on'))
       ->set('notification', $form_state->getValue('notification'))
       ->set('allowed_content_entity_types', $allowed_content_entity_types)

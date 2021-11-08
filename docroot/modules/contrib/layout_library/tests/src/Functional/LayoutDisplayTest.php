@@ -15,6 +15,11 @@ class LayoutDisplayTest extends BrowserTestBase {
   use ContentTypeCreationTrait;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array
@@ -94,6 +99,20 @@ class LayoutDisplayTest extends BrowserTestBase {
 
     $this->drupalGet($node->toUrl());
     $assert_session->pageTextContains('This is from the library');
+
+    // Only available in >= D9.1, see
+    // https://www.drupal.org/project/layout_library/issues/3082434.
+    if (class_exists('Drupal\layout_builder\Event\PrepareLayoutEvent')) {
+      // Enable layout overrides.
+      $this->drupalGet('admin/structure/types/manage/cats/display');
+      $page->checkField('layout[allow_custom]');
+      $page->pressButton('Save');
+
+      // Load the page and override the layout.
+      $this->drupalGet($node->toUrl());
+      $this->clickLink('Layout');
+      $assert_session->pageTextContains('This is from the library');
+    }
   }
 
 }

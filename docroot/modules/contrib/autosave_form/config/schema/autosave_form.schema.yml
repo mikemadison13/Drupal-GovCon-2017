@@ -7,6 +7,9 @@ autosave_form.settings:
     interval:
       type: integer
       label: 'The interval used to trigger autosave.'
+    only_on_form_change:
+      type: boolean
+      label: 'Run autosave submission within the specified interval only if there was a form change.'
     active_on:
       type: mapping
       label: 'Active on'

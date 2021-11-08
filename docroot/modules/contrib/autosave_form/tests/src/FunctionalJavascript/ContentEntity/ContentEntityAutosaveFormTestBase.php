@@ -265,7 +265,7 @@ abstract class ContentEntityAutosaveFormTestBase extends AutosaveFormTestBase {
 
     // Ensure that autosave submissions are running.
     $this->assertTrue($this->waitForAutosaveSubmits(2));
-    // Ensure no further auosave states are being created without changes.
+    // Ensure no further autosave states are being created without changes.
     $this->assertEquals($before_submission_autosave_entries, $this->getCountAutosaveEntries($entity->id()));
   }
 
@@ -597,14 +597,14 @@ abstract class ContentEntityAutosaveFormTestBase extends AutosaveFormTestBase {
    *   The timestamp of the last autosave entry.
    */
   protected function getLastAutosaveTimestamp($entity_id) {
-    $timestmap = \Drupal::database()
+    $timestamp = \Drupal::database()
       ->select(AutosaveEntityFormStorageInterface::AUTOSAVE_ENTITY_FORM_TABLE, 't')
       ->fields('t', ['timestamp'])
       ->condition('entity_id', $entity_id)
       ->orderBy('timestamp', 'DESC')
       ->execute()
       ->fetchField();
-    return $timestmap !== FALSE ? $timestmap : NULL;
+    return $timestamp !== FALSE ? $timestamp : NULL;
   }
 
   /**

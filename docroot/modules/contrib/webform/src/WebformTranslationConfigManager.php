@@ -2,6 +2,7 @@
 
 namespace Drupal\webform;
 
+use Drupal\block\Entity\Block;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Config\TypedConfigManagerInterface;
@@ -109,7 +110,7 @@ class WebformTranslationConfigManager implements WebformTranslationConfigManager
       if ($config_name === 'webform.settings') {
         $this->alterConfigSettingsForm($config_name, $config_element);
       }
-      elseif ($config_name === 'block.block.webform') {
+      elseif (strpos($config_name, 'block.block.') === 0) {
         $this->alterConfigBlockForm($config_name, $config_element);
       }
       elseif (strpos($config_name, 'field.field.') === 0) {
@@ -151,6 +152,11 @@ class WebformTranslationConfigManager implements WebformTranslationConfigManager
    *   The webform block configuration element.
    */
   protected function alterConfigBlockForm($config_name, array &$config_element) {
+    $block = Block::load(str_replace('block.block.', '', $config_name));
+    if (!$block || $block->getPluginId() !== 'webform_block') {
+      return;
+    }
+
     $this->alterTypedConfigElements($config_element['settings'], "block.settings.webform_block");
   }
 
@@ -319,7 +325,7 @@ class WebformTranslationConfigManager implements WebformTranslationConfigManager
    *   The current state of the form.
    */
   protected function alterConfigWebformFormHandlers($config_name, &$config_element, &$form, $form_state) {
-    $handlers =& $config_element['handlers'];
+    $handlers = &$config_element['handlers'];
     // Verify if the webform has any handler.
     if(!isset($handlers)){
       return;
@@ -375,7 +381,7 @@ class WebformTranslationConfigManager implements WebformTranslationConfigManager
     $source_elements = $this->translationManager->getSourceElements($webform);
     $translation_elements = $this->translationManager->getTranslationElements($webform, $translation_langcode);
 
-    $elements =& $config_element['elements'];
+    $elements = &$config_element['elements'];
 
     // Remove the #theme and source properties so that just the
     // translation details element is rendered.
@@ -437,7 +443,7 @@ class WebformTranslationConfigManager implements WebformTranslationConfigManager
       // NOTE: It is possible that all the below code could be moved into
       // the WebformElement plugin but this would create more abstraction.
       // For now, it is easier to keep all the logic in this one class/service.
-      if (is_array($property_value) && !WebformArrayHelper::isMultidimensional($property_value)) {
+      if (is_array($property_value) && !WebformArrayHelper::isMultidimensional($property_value) && !Element::properties($property_value)) {
         // Options.
         $elements[$property_key] = $this->buildConfigWebformFormOptionsPropertyElement(
           $element,
@@ -854,8 +860,8 @@ class WebformTranslationConfigManager implements WebformTranslationConfigManager
         continue;
       }
 
-      $element =& $elements[$element_key];
-      $schema =& $schema_mapping[$element_key];
+      $element = &$elements[$element_key];
+      $schema = &$schema_mapping[$element_key];
 
       if (isset($schema['type']) && $schema['type'] === 'mapping') {
         $this->alterSchemaElementsRecursive($element, $schema['mapping']);
@@ -926,6 +932,7 @@ class WebformTranslationConfigManager implements WebformTranslationConfigManager
       '#mode' => $mode,
       '#value' => $source_value,
       '#disabled' => TRUE,
+      '#skip_validation' => TRUE,
       '#attributes' => ['readonly' => TRUE],
     ];
     unset($element['source']['#markup']);

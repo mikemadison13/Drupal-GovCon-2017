@@ -284,14 +284,8 @@ class WebformSubmissionExportImportUploadForm extends ConfirmFormBase {
 
     // If a managed file has been create to the file's id and rebuild the form.
     if ($file) {
-      // Normalize carriage returns.
-      // This prevent issues with CSV files created in Excel.
-      $contents = file_get_contents($file->getFileUri());
-      $contents = preg_replace('~\R~u', "\r\n", $contents);
-      file_put_contents($file->getFileUri(), $contents);
-
       $this->importer->setImportUri($file->getFileUri());
-      if ($this->importer->getTotal()) {
+      if ($this->importer->getTotal() > 0) {
         $form_state->set('import_fid', $file->id());
         $form_state->setRebuild();
       }
@@ -578,7 +572,7 @@ class WebformSubmissionExportImportUploadForm extends ConfirmFormBase {
    * @param mixed|array $context
    *   The batch current context.
    */
-  public static function batchProcess(WebformInterface $webform, EntityInterface $source_entity = NULL, $import_uri = '', array $import_options = [], &$context) {
+  public static function batchProcess(WebformInterface $webform, EntityInterface $source_entity = NULL, $import_uri = '', array $import_options = [], array &$context = []) {
     /** @var \Drupal\webform_submission_export_import\WebformSubmissionExportImportImporterInterface $importer */
     $importer = \Drupal::service('webform_submission_export_import.importer');
     $importer->setWebform($webform);

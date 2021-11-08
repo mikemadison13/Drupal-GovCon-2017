@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -237,6 +238,7 @@ elements: |
           '#prefix': '<div><strong>Group 1</strong></div>'
         three:
           '#prefix': '<div><strong>Group 2</strong></div>'
+  
 css: ''
 javascript: ''
 settings:
@@ -278,6 +280,9 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_method: ''
+  form_action: ''
+  form_attributes: {  }
   share: false
   share_node: false
   share_theme_name: ''

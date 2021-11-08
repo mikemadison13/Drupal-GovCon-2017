@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -54,6 +55,20 @@ elements: |
       one: One
       two: Two
       three: Three
+  yaml_indexed_array:
+    '#type': webform_codemirror
+    '#mode': yaml
+    '#title': yaml_indexed_array
+    '#description': 'Pass an indexed array as the default value'
+    '#default_value':
+      - one
+  yaml_indexed_associative_array:
+    '#type': webform_codemirror
+    '#mode': yaml
+    '#title': yaml_indexed_associative_array
+    '#description': 'Pass an indexed associative array as the default value'
+    '#default_value':
+      - one: One
   yaml_decode_value:
     '#type': webform_codemirror
     '#mode': yaml
@@ -102,6 +117,7 @@ elements: |
       
       {% set value = "Hello" %}
       {{ value }}
+  
 css: ''
 javascript: ''
 settings:
@@ -143,6 +159,9 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_method: ''
+  form_action: ''
+  form_attributes: {  }
   share: false
   share_node: false
   share_theme_name: ''

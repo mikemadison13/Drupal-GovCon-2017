@@ -15,6 +15,11 @@ class LayoutLibraryTest extends BrowserTestBase {
   use ContentTypeCreationTrait;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array

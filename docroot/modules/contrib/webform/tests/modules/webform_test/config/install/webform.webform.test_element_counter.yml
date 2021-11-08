@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -87,6 +88,7 @@ elements: |
       '#counter_type': word
       '#counter_maximum': 10
       '#counter_maximum_message': '%d character(s) remaining. This is custom text'
+  
 css: ''
 javascript: ''
 settings:
@@ -128,6 +130,9 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_method: ''
+  form_action: ''
+  form_attributes: {  }
   share: false
   share_node: false
   share_theme_name: ''

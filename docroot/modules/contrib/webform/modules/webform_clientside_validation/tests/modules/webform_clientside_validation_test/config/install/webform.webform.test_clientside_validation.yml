@@ -235,7 +235,7 @@ elements: |
       '#type': webform_signature
       '#title': signature
       '#required': true
-
+  
 css: ''
 javascript: ''
 settings:
@@ -277,6 +277,9 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_method: ''
+  form_action: ''
+  form_attributes: {  }
   share: false
   share_node: false
   share_theme_name: ''

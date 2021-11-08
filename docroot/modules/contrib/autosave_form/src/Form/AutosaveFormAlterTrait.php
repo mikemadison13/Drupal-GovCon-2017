@@ -28,8 +28,10 @@ trait AutosaveFormAlterTrait {
       return;
     }
 
+    $form['#attributes']['class'][] = 'autosave-form';
     $form['#attached']['library'][] = 'autosave_form/drupal.autosave_form';
     $form['#attached']['drupalSettings']['autosaveForm']['interval'] = $this->configFactory->get('autosave_form.settings')->get('interval');
+    $form['#attached']['drupalSettings']['autosaveForm']['onlyOnFormChange'] = $this->configFactory->get('autosave_form.settings')->get('only_on_form_change');
     $form['#attached']['drupalSettings']['autosaveForm']['notification'] = $this->configFactory->get('autosave_form.settings')->get('notification');
     $input = $form_state->getUserInput();
 
@@ -117,11 +119,11 @@ trait AutosaveFormAlterTrait {
    * Form submission handler for restoring autosaved state.
    */
   public function autosaveFormRestoreSubmit($form, FormStateInterface $form_state) {
-    $trigering_element = $form_state->getTriggeringElement();
-    if (!empty($trigering_element['#autosave_form_state_timestamp'])) {
+    $triggering_element = $form_state->getTriggeringElement();
+    if (!empty($triggering_element['#autosave_form_state_timestamp'])) {
       // Set the timestamp of the autosaved state which has to be used to
       // restore the form on rebuild.
-      $form_state->set('autosave_form_state_timestamp', $trigering_element['#autosave_form_state_timestamp']);
+      $form_state->set('autosave_form_state_timestamp', $triggering_element['#autosave_form_state_timestamp']);
       $form_state->setRebuild();
     }
   }
@@ -199,7 +201,7 @@ trait AutosaveFormAlterTrait {
     // sufficient to detect changes in the fields.
     $form_state_input = $form_state->getUserInput();
 
-    $skip_from_comparision_keys = [
+    $skip_from_comparison_keys = [
       'form_build_id',
       'form_token',
       'ajax_page_state',
@@ -208,18 +210,18 @@ trait AutosaveFormAlterTrait {
       AutosaveFormInterface::AUTOSAVE_REJECT_ELEMENT_NAME,
       'autosave_restore_discard',
     ];
-    foreach ($skip_from_comparision_keys as $skip_from_comparision_key) {
-      unset($autosaved_form_state_input[$skip_from_comparision_key]);
-      unset($form_state_input[$skip_from_comparision_key]);
+    foreach ($skip_from_comparison_keys as $skip_from_comparison_key) {
+      unset($autosaved_form_state_input[$skip_from_comparison_key]);
+      unset($form_state_input[$skip_from_comparison_key]);
     }
 
     $store = $autosaved_form_state_input != $form_state_input;
     if ($store) {
-      $autosave_timestmap = $this->time->getRequestTime();
-      $form_state->set('autosave_form_last_autosave_timestamp', $autosave_timestmap);
-      $form_state->setTemporaryValue('autosave_form_last_autosave_timestamp', $autosave_timestmap);
+      $autosave_timestamp = $this->time->getRequestTime();
+      $form_state->set('autosave_form_last_autosave_timestamp', $autosave_timestamp);
+      $form_state->setTemporaryValue('autosave_form_last_autosave_timestamp', $autosave_timestamp);
 
-      $this->storeState($form_state, $autosave_form_session_id, $autosave_timestmap, $current_user_id);
+      $this->storeState($form_state, $autosave_form_session_id, $autosave_timestamp, $current_user_id);
       $this->keyValueExpirableFactory->get('autosave_form')->delete($autosave_form_session_id);
     }
 

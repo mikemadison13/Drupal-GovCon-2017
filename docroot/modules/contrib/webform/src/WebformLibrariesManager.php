@@ -118,8 +118,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         continue;
       }
 
-      $library_exists = $this->exists($library_name);
-      $library_path = ($library_exists) ? '/' . $this->find($library_name) : '/libraries/' . $library_name;
+      $library_exists = $this->exists($library['name']);
+      $library_path = ($library_exists) ? '/' . $this->find($library['name']) : '/libraries/' . $library['name'];
 
       $t_args = [
         '@title' => $library['title'],
@@ -152,7 +152,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         $stats['@missing']++;
         $title = $this->t('<span class="color-warning"><strong>@title @version</strong> (CDN).</span>', $t_args);
         $description = $this->t('Please download the <a href=":homepage_href">@title</a> library from <a href=":download_href">:download_href</a> and copy it to <b>@path</b> or use <a href=":install_href">Drush</a> to install this library.', $t_args);
-        $severity = REQUIREMENT_WARNING;
+        $severity = REQUIREMENT_ERROR;
       }
       else {
         // CDN.
@@ -191,12 +191,15 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
     }
 
     // Description.
-    $description = [
-      'info' => $info,
-    ];
-    if (!$cli && $severity === REQUIREMENT_WARNING) {
-      $description['cdn'] = ['#markup' => $this->t('<a href=":href">Disable CDN warning</a>', [':href' => Url::fromRoute('webform.config.advanced')->toString()])];
+    $description = [];
+    if (!$cli && $severity === REQUIREMENT_ERROR) {
+      $description['cdn'] = [
+        '#markup' => '<hr/>' .
+          $this->t('Relying on a CDN for external libraries can cause unexpected issues with Ajax and BigPipe support. For more information see: <a href=":href">Issue #1988968</a>', [':href' => 'https://www.drupal.org/project/drupal/issues/1988968']) . '<br/>' .
+          $this->t('<a href=":href">Disable CDN warning</a>', [':href' => Url::fromRoute('webform.config.advanced')->toString()]),
+      ];
     }
+    $description['info'] = $info;
 
     return [
       'webform_libraries' => [
@@ -546,19 +549,22 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
     // Sort libraries by key.
     ksort($libraries);
 
-    // Map ckeditor plugin libraries and support CKEditor plugins without
-    // the ckeditor.* prefix.
+    // Update ckeditor plugin libraries to support CKEditor plugins installed
+    // without the ckeditor.* prefix.
     // @see https://www.drupal.org/project/fakeobjects
     // @see https://www.drupal.org/project/anchor_link
     foreach ($libraries as $library_name => $library) {
+      // Add name to all libraries, so that it can be modified if a ckeditor
+      // plugin is installed without the ckeditor.* prefix.
+      $libraries[$library_name]['name'] = $library_name;
       if (strpos($library_name, 'ckeditor.') === 0) {
-        $library_path = $this->find($library_name)
-          ?: $this->find(str_replace('ckeditor.', '', $library_name));
+        $ckeditor_library_name = str_replace('ckeditor.', '', $library_name);
+        $library_path = $this->find($ckeditor_library_name);
         if ($library_path) {
+          $libraries[$library_name]['name'] = $ckeditor_library_name;
           $libraries[$library_name]['plugin_path'] = str_replace('libraries/' . $library_name, $library_path, $library['plugin_path']);
         }
       }
-
     }
 
     // Move deprecated libraries last.

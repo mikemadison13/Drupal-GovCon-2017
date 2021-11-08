@@ -12,6 +12,11 @@ use Drupal\Tests\BrowserTestBase;
 class LibraryAccessTest extends BrowserTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array

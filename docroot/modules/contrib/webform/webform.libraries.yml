@@ -44,7 +44,7 @@ webform.admin.dialog:
     js/webform.admin.js: {}
   dependencies:
     - core/drupal.dialog.ajax
-    - webform/jquery.ui.dialog
+    - webform/drupal.dialog
     - webform/webform.ajax
     - webform/webform.form
     - webform/webform.form.tabs
@@ -185,7 +185,6 @@ webform.confirmation.modal:
     - core/drupal.dialog
     - core/drupal.dialog.position
     - core/jquery.once
-    - core/jquery.ui.dialog
     - webform/webform.confirmation
 
 # Contextual
@@ -205,7 +204,14 @@ webform.dialog:
     js/webform.dialog.js: {}
   dependencies:
     - core/drupal.dialog.ajax
-    - webform/jquery.ui.dialog
+    - webform/drupal.dialog
+
+drupal.dialog:
+  version: VERSION
+  js:
+    js/webform.drupal.dialog.js: {}
+  dependencies:
+    - core/drupal.dialog
 
 # Help.
 
@@ -342,6 +348,12 @@ webform.theme.bartik:
   css:
     theme:
       css/webform.theme.bartik.css: {}
+
+webform.theme.gin:
+  version: VERSION
+  css:
+    theme:
+      css/webform.theme.gin.css: {}
 
 webform.theme.seven:
   version: VERSION
@@ -712,7 +724,6 @@ webform.element.image_file.modal:
     - core/drupalSettings
     - core/drupal.dialog.ajax
     - core/jquery.once
-    - core/jquery.ui.dialog
 
 webform.element.inputmask:
   version: VERSION
@@ -779,6 +790,12 @@ webform.element.message:
   dependencies:
     - core/drupal
     - core/jquery.once
+
+webform.element.message.info:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.message.info.css: {}
 
 webform.element.multiple:
   version: VERSION
@@ -893,8 +910,8 @@ webform.element.states:
     js/webform.element.states.js: {}
   dependencies:
     - core/drupal
+    - core/drupal.autocomplete
     - core/jquery.once
-    - core/jquery.ui.autocomplete
 
 webform.element.telephone:
   version: VERSION
@@ -922,7 +939,6 @@ webform.element.terms_of_service:
     - core/drupal
     - core/drupal.dialog.ajax
     - core/jquery.once
-    - core/jquery.ui.dialog
 
 webform.element.text_format:
   version: VERSION
@@ -981,15 +997,6 @@ webform.composite.telephone:
       css/webform.composite.telephone.css: {}
   dependencies:
     - webform/webform.composite
-
-# jQuery UI.
-
-jquery.ui.dialog:
-  version: VERSION
-  js:
-    js/webform.jquery.ui.dialog.js: {}
-  dependencies:
-    - core/jquery.ui.dialog
 
 # Contrib Module.
 

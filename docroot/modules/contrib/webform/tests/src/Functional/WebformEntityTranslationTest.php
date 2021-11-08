@@ -271,6 +271,7 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
 
     // Make sure the site language is English (en).
     \Drupal::configFactory()->getEditable('system.site')->set('default_langcode', 'en')->save();
+    drupal_flush_all_caches();
 
     $language_manager = \Drupal::languageManager();
 
@@ -304,6 +305,7 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
 
     // Make sure the site language is English (en).
     \Drupal::configFactory()->getEditable('system.site')->set('default_langcode', 'en')->save();
+    drupal_flush_all_caches();
 
     // Duplicate translated webform.
     $edit = [
