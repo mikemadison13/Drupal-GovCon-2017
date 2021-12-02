@@ -1,31 +1,11 @@
-@import '../../mixins', '../../includes', '../../variables';
+.mm-menu--fullscreen {
+  --mm-size: 100%;
+  --mm-min-size: 100%;
+  --mm-max-size: 100%;
 
-@if ($mm_include_fullscreen) {
-    @include mm_offcanvas_size(
-        '.mm-menu_fullscreen',
-        $mm_fullscreen_full,
-        $mm_fullscreen_min,
-        $mm_fullscreen_max
-    );
-
-    @include mm_position_right(
-        '.mm-menu_fullscreen',
-        $mm_fullscreen_full,
-        $mm_fullscreen_min,
-        $mm_fullscreen_max
-    );
-
-    @include mm_position_top(
-        '.mm-menu_fullscreen',
-        $mm_fullscreen_full,
-        $mm_fullscreen_min,
-        $mm_fullscreen_max
-    );
-
-    @include mm_position_bottom(
-        '.mm-menu_fullscreen',
-        $mm_fullscreen_full,
-        $mm_fullscreen_min,
-        $mm_fullscreen_max
-    );
+  &.mm-menu--opened ~ .mm-slideout {
+    --mm-size: 100%;
+    --mm-min-size: 100%;
+    --mm-max-size: 100%;
+  }
 }

@@ -34,7 +34,7 @@ class WebformCustomComposite extends WebformCompositeBase {
     return $properties;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -73,7 +73,7 @@ class WebformCustomComposite extends WebformCompositeBase {
     foreach ($multiple_properties as $multiple_property => $multiple_value) {
       if (strpos($multiple_property, 'multiple__') === 0) {
         $property_name = str_replace('multiple__', '', $multiple_property);
-        $element["#$property_name"] = (isset($element["#$multiple_property"])) ? $element["#$multiple_property"] : $multiple_value;
+        $element["#$property_name"] = $element["#$multiple_property"] ?? $multiple_value;
       }
     }
 
@@ -152,9 +152,9 @@ class WebformCustomComposite extends WebformCompositeBase {
     ];
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Preview method.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -182,9 +182,9 @@ class WebformCustomComposite extends WebformCompositeBase {
     ];
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Composite element methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}

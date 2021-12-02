@@ -35,7 +35,7 @@ class WebformImageFile extends WebformManagedFileBase {
     return $properties;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -97,7 +97,7 @@ class WebformImageFile extends WebformManagedFileBase {
       return parent::formatHtmlItem($element, $webform_submission, $options);
     }
     else {
-      list($style_name, $format) = explode(':', $format);
+      [$style_name, $format] = explode(':', $format);
       $theme = str_replace('webform_', 'webform_element_', $this->getPluginId());
       if (strpos($theme, 'webform_') !== 0) {
         $theme = 'webform_element_' . $theme;

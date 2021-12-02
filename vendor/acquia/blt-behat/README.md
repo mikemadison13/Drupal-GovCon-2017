@@ -11,11 +11,23 @@ This plugin is provided solely as a backwards-compatible shim for customers upgr
 
 ## Installation and usage
 
-To use this plugin, you must already have a Drupal project using BLT 12 or higher.
+Note: To use this plugin, you must already have a Drupal project using BLT 12 or higher.
+
+# Add this plugin
 
 In your project, require the plugin with Composer:
 
 `composer require acquia/blt-behat`
+
+# Initialize Config 
+
+Run the recipe to initialize the necessary behat files / directories
+
+`blt recipes:behat:init`
+
+# Write Test(s)
+
+Write at least one BLT feature and place inside the tests/behat/features directory
 
 # License
 

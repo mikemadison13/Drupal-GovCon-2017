@@ -235,9 +235,9 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     return $this->getExporter()->getConfiguration();
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Default options and webform.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -776,9 +776,9 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     $states[$state][] = [':input[name="exporter"]' => ['value' => $plugin_id]];
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Generate and write.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -952,7 +952,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     }
 
     // Filter by UID.
-    if ($export_options['uid'] !== '') {
+    if (!is_null($export_options['uid']) && $export_options['uid'] !== '') {
       $query->condition('uid', $export_options['uid'], '=');
     }
 
@@ -986,8 +986,8 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     }
     else {
       // Sort by created and sid in ASC or DESC order.
-      $query->sort('created', isset($export_options['order']) ? $export_options['order'] : 'ASC');
-      $query->sort('sid', isset($export_options['order']) ? $export_options['order'] : 'ASC');
+      $query->sort('created', $export_options['order'] ?? 'ASC');
+      $query->sort('sid', $export_options['order'] ?? 'ASC');
     }
 
     // Do not check access to submission since the exporter UI and Drush
@@ -1063,9 +1063,9 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     return ($this->getWebformExportAttachmentElements()) ? TRUE : FALSE;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Summary and download.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -1095,9 +1095,8 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
         /** @var \Drupal\webform\Plugin\WebformElementAttachmentInterface $attachment_element_plugin */
         $attachment_element_plugin = $this->elementManager->getElementInstance($attachment_element);
         $attachment_batch_limit = $attachment_element_plugin->getExportAttachmentsBatchLimit();
-        if ($attachment_batch_limit
-          && $attachment_batch_limit < $batch_limit)  {
-            $batch_limit = $attachment_batch_limit;
+        if ($attachment_batch_limit && $attachment_batch_limit < $batch_limit) {
+          $batch_limit = $attachment_batch_limit;
         }
       }
     }

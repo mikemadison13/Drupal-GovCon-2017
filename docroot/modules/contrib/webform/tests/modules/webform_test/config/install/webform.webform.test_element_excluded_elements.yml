@@ -22,6 +22,9 @@ elements: |
   markup:
     '#type': markup
     '#markup': markup
+  telephone:
+    '#type': webform_telephone
+    '#title': webform_telephone
   details:
     '#type': details
     '#title': details
@@ -38,7 +41,14 @@ elements: |
     '#default_value':
       webform_excluded_elements: webform_excluded_elements
       webform_excluded_elements_markup: webform_excluded_elements_markup
-  
+  webform_excluded_elements_telephone:
+    '#type': webform_excluded_elements
+    '#title': webform_excluded_elements_telephone
+    '#exclude_composite': false
+    '#default_value':
+      telephone__phone: telephone__phone
+      telephone__ext: telephone__ext
+
 css: ''
 javascript: ''
 settings:

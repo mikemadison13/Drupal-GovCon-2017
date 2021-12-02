@@ -158,16 +158,17 @@ class WebformMessage extends RenderElement {
     /** @var \Drupal\webform\WebformThemeManagerInterface $theme_manager */
     $theme_manager = \Drupal::service('webform.theme_manager');
     $is_gin_theme = $theme_manager->isActiveTheme('gin');
-    if ($message_type === 'info' && !$is_gin_theme) {
+    $is_olivero_theme = $theme_manager->isActiveTheme('olivero');
+    if ($message_type === 'info' && !$is_gin_theme && !$is_olivero_theme) {
       $element['#attached']['library'][] = 'webform/webform.element.message.info';
     }
 
     return $element;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Manage closed functions.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Is message closed via User Data, State API, or Custom.

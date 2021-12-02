@@ -23,10 +23,7 @@ class InstallTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [
-    'lightning_landing_page',
-    'metatag',
-  ];
+  protected static $modules = ['lightning_landing_page'];
 
   /**
    * Tests that Layout Builder overrides are enabled in the full node view mode.
@@ -46,12 +43,6 @@ class InstallTest extends BrowserTestBase {
     // The Layout select should not be displayed because there is no Layout
     // for Landing pages.
     $this->assertSession()->fieldNotExists('Layout');
-
-    // Assert that meta tag fields are present.
-    $meta_tags = $this->getSession()
-      ->getPage()
-      ->findAll('css', '[name^="field_meta_tags[0]["]');
-    $this->assertGreaterThan(0, count($meta_tags));
 
     // Add a Layout for Landing pages and assert the Layout select is there.
     Layout::create([

@@ -2,15 +2,10 @@
 
 namespace Drupal\webform\Plugin\WebformHandler;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformYaml;
-use Drupal\webform\WebformSubmissionConditionsValidatorInterface;
 use Drupal\webform\WebformSubmissionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

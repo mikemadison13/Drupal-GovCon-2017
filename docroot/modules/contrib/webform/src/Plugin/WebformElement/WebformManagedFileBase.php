@@ -38,7 +38,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
    *
    * @var array
    */
-  static protected $blacklistedMimeTypes = [
+  protected static $blacklistedMimeTypes = [
     'application/pdf',
     'application/xml',
     'image/svg+xml',
@@ -117,7 +117,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     return array_merge(parent::defineTranslatableProperties(), ['file_placeholder']);
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -262,7 +262,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
       '#upload_validators' => $upload_validators,
       '#cardinality' => (empty($element['#multiple'])) ? 1 : $element['#multiple'],
     ];
-    $file_help = (isset($element['#file_help'])) ? $element['#file_help'] : 'description';
+    $file_help = $element['#file_help'] ?? 'description';
     if ($file_help !== 'none') {
       if (isset($element["#$file_help"])) {
         if (is_array($element["#$file_help"])) {
@@ -501,10 +501,10 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     $original_data = $webform_submission->getOriginalData();
     $data = $webform_submission->getData();
 
-    $value = isset($data[$key]) ? $data[$key] : [];
+    $value = $data[$key] ?? [];
     $fids = (is_array($value)) ? $value : [$value];
 
-    $original_value = isset($original_data[$key]) ? $original_data[$key] : [];
+    $original_value = $original_data[$key] ?? [];
     $original_fids = (is_array($original_value)) ? $original_value : [$original_value];
 
     // Delete the old file uploads.
@@ -958,8 +958,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
         '#type' => 'webform_message',
         '#message_message' => '<strong>' . $this->t('Saving of results is disabled.') . '</strong> ' .
           $this->t('Uploaded files will be temporarily stored on the server and referenced in the database for %interval.', ['%interval' => $temporary_interval]) . ' ' .
-          $this->t('Uploaded files should be attached to an email and/or remote posted to an external server.')
-        ,
+          $this->t('Uploaded files should be attached to an email and/or remote posted to an external server.'),
         '#message_type' => 'warning',
         '#access' => TRUE,
       ];

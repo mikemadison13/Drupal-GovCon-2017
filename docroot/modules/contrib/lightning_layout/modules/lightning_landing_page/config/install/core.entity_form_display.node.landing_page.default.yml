@@ -57,12 +57,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_meta_tags:
-    type: metatag_firehose
-    region: content
-    weight: 8
-    settings: {  }
-    third_party_settings: {  }
   layout_selection:
     type: options_select
     region: content

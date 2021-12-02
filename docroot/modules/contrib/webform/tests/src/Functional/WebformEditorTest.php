@@ -4,7 +4,6 @@ namespace Drupal\Tests\webform\Functional;
 
 use Drupal\file\Entity\File;
 use Drupal\Tests\TestFileCreationTrait;
-use Drupal\webform\Entity\Webform;
 
 /**
  * Tests for webform editor.
@@ -254,9 +253,9 @@ class WebformEditorTest extends WebformBrowserTestBase {
     $this->assertTrue($images[2]->isTemporary());
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Helper functions.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Reload images.

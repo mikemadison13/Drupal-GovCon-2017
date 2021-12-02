@@ -17,7 +17,7 @@ components:
   - lightning_landing_page
   - lightning_map_block
 
-# Information added by Drupal.org packaging script on 2021-05-14
-version: '8.x-2.10'
+# Information added by Drupal.org packaging script on 2021-12-02
+version: '8.x-2.11'
 project: 'lightning_layout'
-datestamp: 1621032310
+datestamp: 1638454413

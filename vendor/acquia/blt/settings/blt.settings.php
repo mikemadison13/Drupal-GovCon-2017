@@ -38,7 +38,7 @@ if (getenv('REMOTE_ADDR')) {
 }
 
 // Check firstly for the bal and then check for an internal IP immediately.
-$settings['reverse_proxy_addresses'] = [];
+$settings['reverse_proxy_addresses'] = isset($settings['reverse_proxy_addresses']) ? $settings['reverse_proxy_addresses'] : [];
 $ip = array_pop($x_ips);
 if ($ip) {
   if (in_array($ip, $trusted_reverse_proxy_ips)) {
@@ -108,11 +108,15 @@ $blt_settings_files = [
   'config',
   'logging',
   'filesystem',
-  'simplesamlphp',
   'misc',
 ];
 foreach ($blt_settings_files as $blt_settings_file) {
   $settings_files[] = __DIR__ . "/$blt_settings_file.settings.php";
+}
+
+// Add 'simplesamlphp' settings.
+if (is_dir(DRUPAL_ROOT . '/../vendor/acquia/blt-simplesamlphp')) {
+  $settings_files[] = DRUPAL_ROOT . '/../vendor/acquia/blt-simplesamlphp/settings/simplesamlphp.settings.php';
 }
 
 // Custom global and site-specific settings.

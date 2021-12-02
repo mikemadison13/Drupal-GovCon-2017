@@ -133,7 +133,7 @@ class SettingsWebformHandler extends WebformHandlerBase {
       '#type' => 'textfield',
       '#title' => $this->t('Confirmation URL'),
       '#description' => $this->t('The URL or path to redirect the user to upon successful submission.') .
-        '<br/>' . t('Paths beginning with a forward slash (/) will redirect be treated as root-relative. Paths without a forward slash (/) will redirect be treated as Drupal relative path.'),
+        '<br/>' . $this->t('Paths beginning with a forward slash (/) will redirect be treated as root-relative. Paths without a forward slash (/) will redirect be treated as Drupal relative path.'),
       '#default_value' => $this->configuration['confirmation_url'],
       '#access' => !empty($this->configuration['confirmation_url']) || $has_confirmation_url,
       '#maxlength' => NULL,
@@ -270,9 +270,9 @@ class SettingsWebformHandler extends WebformHandlerBase {
     $this->displayDebug($webform_submission);
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Debug handlers.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Display debugging information about the current action.
@@ -329,9 +329,9 @@ class SettingsWebformHandler extends WebformHandlerBase {
     $this->messenger()->addWarning($this->renderer->renderPlain($build));
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Settings helpers.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Get webform setting definitions.

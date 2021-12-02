@@ -591,6 +591,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
           '#title_display' => 'invisible',
           '#field_suffix' => 'px',
           '#error_no_message' => TRUE,
+          '#attributes' => ['style' => 'width: 6em'],
         ],
         'height' => [
           '#type' => 'number',
@@ -598,6 +599,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
           '#title_display' => 'invisible',
           '#field_suffix' => 'px',
           '#error_no_message' => TRUE,
+          '#attributes' => ['style' => 'width: 6em'],
         ],
       ],
       '#error_no_message' => TRUE,

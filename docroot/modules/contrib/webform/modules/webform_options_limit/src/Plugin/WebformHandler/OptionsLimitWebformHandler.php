@@ -404,6 +404,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
         '#states' => [
           'visible' => [
             ':input[name="settings[option_message_display]"]' => ['value' => WebformOptionsLimitHandlerInterface::MESSAGE_DISPLAY_DESCRIPTION],
+            // phpcs:ignore Squiz.Arrays.ArrayDeclaration.NoKeySpecified
             $tableselect_states,
           ],
         ],
@@ -455,9 +456,9 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     }
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Alter element methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -513,9 +514,9 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     $element['#element_validate'][] = [get_called_class(), 'validateElement'];
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Element methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Validate webform element limit.
@@ -559,9 +560,9 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     ];
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Options element methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Set an options element's default value.
@@ -651,7 +652,6 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
    *   An options element's option limits.
    */
   protected function alterOptionsElementLabels(array &$options, array $limits) {
-    $message_display = $this->configuration['option_message_display'];
     foreach ($options as $option_value => $option_text) {
       if ($this->isTableSelectElement()) {
         if (isset($limits[$option_value])) {
@@ -663,9 +663,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
           $option = &$options[$option_value][0];
           switch ($message_display) {
             case WebformOptionsLimitHandlerInterface::MESSAGE_DISPLAY_DESCRIPTION:
-              list(
-                $option['value'],
-                $option['webform_options_limit']) = explode(' --', $label);
+              [$option['value'], $option['webform_options_limit']] = explode(' --', $label);
               break;
 
             case WebformOptionsLimitHandlerInterface::MESSAGE_DISPLAY_LABEL:
@@ -794,9 +792,9 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     }
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Boolean element methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Set a boolean element's default value.
@@ -915,9 +913,9 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     }
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Form methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -927,10 +925,10 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     Cache::invalidateTags(['webform:' . $this->getWebform()->id()]);
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Summary method.
   // @see \Drupal\webform_options_limit\Controller\WebformOptionsLimitController
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Build summary table.
@@ -1002,9 +1000,9 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     ];
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Element methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Get element.
@@ -1150,9 +1148,9 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     return ($element) ? OptGroup::flattenOptions($element['#options']) : [];
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Limits methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Get an associative array of options limits.
@@ -1181,7 +1179,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
       $limit = (isset($this->configuration['limits'][$option_key]))
         ? $this->configuration['limits'][$option_key]
         : $default_limit;
-      $total = (isset($totals[$option_key])) ? $totals[$option_key] : 0;
+      $total = $totals[$option_key] ?? 0;
       $limits[$option_key] = $this->getLimitInformation($option_label, $limit, $total);
     }
     return $limits;
@@ -1358,9 +1356,9 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     return $query;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Labels and messages methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Get an options or boolean element's limit status message.

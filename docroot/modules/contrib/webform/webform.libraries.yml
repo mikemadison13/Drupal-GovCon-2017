@@ -355,6 +355,12 @@ webform.theme.gin:
     theme:
       css/webform.theme.gin.css: {}
 
+webform.theme.olivero:
+  version: VERSION
+  css:
+    theme:
+      css/webform.theme.olivero.css: {}
+
 webform.theme.seven:
   version: VERSION
   css:
@@ -664,6 +670,17 @@ webform.element.details.toggle:
   dependencies:
     - core/drupal
     - core/drupal.announce
+    - core/jquery.once
+
+webform.element.excluded_elements:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.excluded_elements.css: {}
+  js:
+    js/webform.element.excluded_elements.js: {}
+  dependencies:
+    - core/drupal
     - core/jquery.once
 
 webform.element.file.button:

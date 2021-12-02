@@ -22,7 +22,7 @@ class InstagramUrlResolver extends UrlResolver {
     // Try to get the resource URL from the persistent cache.
     $cache_id = "media:oembed_resource_url:$url:$max_width:$max_height:" . serialize($settings);
 
-    $cached = $this->cacheGet($cache_id);
+    $cached = $this->cacheBackend->get($cache_id);
     if ($cached) {
       $this->urlCache[$url] = $cached->data;
       return $this->urlCache[$url];
@@ -47,7 +47,7 @@ class InstagramUrlResolver extends UrlResolver {
     $resource_url = $parsed_url['path'] . '?' . rawurldecode(UrlHelper::buildQuery($parsed_url['query']));
 
     $this->urlCache[$url] = $resource_url;
-    $this->cacheSet($cache_id, $resource_url);
+    $this->cacheBackend->set($cache_id, $resource_url);
 
     return $resource_url;
   }

@@ -107,9 +107,9 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
     $this->entityReferenceManager = $entity_reference_manager;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Scheduled message functions.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -200,9 +200,9 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
     return date_format($date, $this->getDateFormat());
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // State/actions functions.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -456,9 +456,9 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
     $query->execute();
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Queuing/sending functions (aka the tumbleweed).
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -502,7 +502,7 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
         $context['@handler'] = $entity->getHandler($handler_id)->label();
         $message = "@entity: Cron task executed '@handler' handler. (@summary)";
       }
-    };
+    }
     $this->getLogger()->notice($message, $context);
     $stats['_message'] = $message;
     $stats['_context'] = $context;
@@ -536,7 +536,7 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
       return $stats;
     }
 
-    list($webform, $webform_submission, $source_entity) = $this->getEntities($entity);
+    [$webform, $webform_submission, $source_entity] = $this->getEntities($entity);
 
     $query = $this->database->select('webform_scheduled_email', 'w')
       ->fields('w', ['eid', 'sid', 'webform_id', 'entity_type', 'entity_id', 'handler_id', 'state', 'send'])
@@ -623,7 +623,7 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
       return $stats;
     }
 
-    list($webform, $webform_submission, $source_entity) = $this->getEntities($entity);
+    [$webform, $webform_submission, $source_entity] = $this->getEntities($entity);
 
     // IMPORTANT: Only scheduled emails with state = ::SUBMISSION_SEND will
     // be sent.
@@ -736,9 +736,9 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
     return $stats;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Statistic/tracking functions.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -777,16 +777,16 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
    * {@inheritdoc}
    */
   public function total(EntityInterface $entity = NULL, $handler_id = NULL, $state = FALSE) {
-    list($webform, $webform_submission, $source_entity) = $this->getEntities($entity);
+    [$webform, $webform_submission, $source_entity] = $this->getEntities($entity);
 
     $query = $this->database->select('webform_scheduled_email', 'w');
     $this->addQueryConditions($query, $webform, $webform_submission, $source_entity, $handler_id, $state);
     return $query->countQuery()->execute()->fetchField();
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Helper functions.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Get webform or webform_submission logger.

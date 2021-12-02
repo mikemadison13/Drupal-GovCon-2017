@@ -19,10 +19,10 @@ div.block-help-block {
  */
 .webform-message .messages.messages--webform {
   color: #fff;
+  border: 2px solid transparent;
+  border-radius: 12px;
   background-color: #353641;
   box-shadow: none;
-  border-radius: 12px;
-  border: 2px solid transparent;
 }
 
 .webform-message .messages.messages--webform {

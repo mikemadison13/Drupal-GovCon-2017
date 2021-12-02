@@ -19,56 +19,7 @@
         "drupal/panels": "4.6 || 4.x-dev",
         "drupal/simple_gmap": "^3.0"
     },
-    "require-dev": {
-        "composer/installers": "^1.9",
-        "drupal/core-composer-scaffold": "*",
-        "drupal/core-dev": "*",
-        "drush/drush": ">=9.7",
-        "symfony/options-resolver": ">=4",
-        "vijaycs85/drupal-quality-checker": "^1.0"
-    },
-    "config": {
-        "preferred-install": {
-            "drupal/core": "dist"
-        }
-    },
     "extra": {
-        "drupal-scaffold": {
-            "file-mapping": {
-                "[project-root]/.editorconfig": false,
-                "[project-root]/.gitattributes": false,
-                "[web-root]/.csslintrc": false,
-                "[web-root]/INSTALL.txt": false,
-                "[web-root]/example.gitignore": false,
-                "[web-root]/modules/README.txt": false,
-                "[web-root]/profiles/README.txt": false,
-                "[web-root]/robots.txt": false,
-                "[web-root]/sites/README.txt": false,
-                "[web-root]/themes/README.txt": false,
-                "[web-root]/web.config": false
-            },
-            "locations": {
-                "web-root": "docroot/"
-            }
-        },
-        "enable-patching": true,
-        "installer-paths": {
-            "docroot/core": [
-                "type:drupal-core"
-            ],
-            "docroot/libraries/{$name}": [
-                "type:drupal-library"
-            ],
-            "docroot/modules/contrib/{$name}": [
-                "type:drupal-module"
-            ],
-            "docroot/profiles/contrib/{$name}": [
-                "type:drupal-profile"
-            ],
-            "docroot/themes/contrib/{$name}": [
-                "type:drupal-theme"
-            ]
-        },
         "patchLevel": {
             "drupal/core": "-p2"
         },
@@ -85,25 +36,8 @@
         "drupal": {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
-        },
-        "assets": {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "scripts": {
-        "post-install-cmd": [
-            "@putenv DIR=./docroot/modules/lightning_layout",
-            "mkdir -p $DIR",
-            "ln -s -f $PWD/config $DIR",
-            "ln -s -f $PWD/modules $DIR",
-            "ln -s -f $PWD/src $DIR",
-            "ln -s -f $PWD/tests $DIR",
-            "find $PWD -name 'lightning_layout.*' -depth 1 -exec ln -s -f {} $DIR ';'",
-            "cp -f phpunit.xml ./docroot/core"
-        ],
-        "nuke": "rm -r -f docroot vendor"
-    }
+    "prefer-stable": true
 }

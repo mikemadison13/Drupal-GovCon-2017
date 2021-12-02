@@ -894,7 +894,7 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
     foreach ($this->configuration as $configuration_key => $configuration_value) {
       // Get configuration name (to, cc, bcc, from, name, subject, mail)
       // and type (mail, options, or text).
-      list($configuration_name, $configuration_type) = (strpos($configuration_key, '_') !== FALSE) ? explode('_', $configuration_key) : [$configuration_key, 'text'];
+      [$configuration_name, $configuration_type] = (strpos($configuration_key, '_') !== FALSE) ? explode('_', $configuration_key) : [$configuration_key, 'text'];
 
       // Set options and continue.
       if ($configuration_type === 'options') {
@@ -1135,6 +1135,7 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
     // Don't send the message if the From address is not valid.
     if (class_exists('\Symfony\Component\Mime\Address')) {
       try {
+        // phpcs:ignore Drupal.Classes.FullyQualifiedNamespace.UseStatementMissing
         \Symfony\Component\Mime\Address::create($from);
       }
       catch (\Exception $exception) {
@@ -1508,7 +1509,7 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
    *   A select other element.
    */
   protected function buildElement($name, $title, $label, $required = FALSE, array $element_options = [], array $options_options = NULL, array $role_options = NULL, array $other_options = NULL) {
-    list($element_name, $element_type) = (strpos($name, '_') !== FALSE) ? explode('_', $name) : [$name, 'text'];
+    [$element_name, $element_type] = (strpos($name, '_') !== FALSE) ? explode('_', $name) : [$name, 'text'];
 
     $default_option = $this->getDefaultConfigurationValue($name);
 
@@ -1677,10 +1678,10 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
       ];
       if (!empty($attachment['_fileurl'])) {
         $t_args[':href'] = $attachment['_fileurl'];
-        $build[] = ['#markup' => $this->t('<strong><a href=":href">@filename</a></strong> (@filemime) - @filesize ', $t_args)];
+        $build[] = ['#markup' => $this->t('<strong><a href=":href">@filename</a></strong> (@filemime) - @filesize', $t_args)];
       }
       else {
-        $build[] = ['#markup' => $this->t('<strong>@filename</strong> (@filemime) - @filesize ', $t_args)];
+        $build[] = ['#markup' => $this->t('<strong>@filename</strong> (@filemime) - @filesize', $t_args)];
       }
     }
     return $build;

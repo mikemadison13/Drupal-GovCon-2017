@@ -40,7 +40,7 @@ abstract class TextBase extends WebformElementBase {
     return array_merge(parent::defineTranslatableProperties(), ['default_value', 'counter_minimum_message', 'counter_maximum_message', 'pattern_error']);
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -344,9 +344,9 @@ abstract class TextBase extends WebformElementBase {
     }
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Input masks.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Get input masks.

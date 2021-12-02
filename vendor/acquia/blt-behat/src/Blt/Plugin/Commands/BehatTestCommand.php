@@ -7,6 +7,7 @@ use Acquia\Blt\Robo\Exceptions\BltException;
 use Acquia\BltBehat\Blt\Wizards\TestsWizard;
 use Robo\Contract\VerbosityThresholdInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use League\Container\Definition\DefinitionInterface;
 
 /**
  * Defines commands in the "tests" namespace.
@@ -28,7 +29,15 @@ class BehatTestCommand extends TestsCommandBase {
   public function initialize() {
     parent::initialize();
     $this->behatLogDir = $this->getConfigValue('tests.reports.localDir') . "/behat";
-    $this->container->add(TestsWizard::class)->withArgument('executor');
+
+    if ($this::usingLegacyContainer()) {
+      $this->container->add(TestsWizard::class)->withArgument('executor');
+    }
+    else {
+      $this->container->add(TestsWizard::class)->addArgument('executor');
+    }
+
+
   }
 
   /**
@@ -37,6 +46,17 @@ class BehatTestCommand extends TestsCommandBase {
    * @command tests:behat:init
    */
   public function setupBehat() {
+
+    if (!$this->isBehatConfigured()) {
+        $confirm = $this->confirm("Behat configuration is not fully initialized. Run recipes:behat:init now? ", TRUE);
+        if ($confirm) {
+            $this->invokeCommands(['recipes:behat:init']);
+        }
+        else {
+            return FALSE;
+        }
+    }
+
     $defaultBehatLocalConfigFile = $this->getConfigValue('repo.root') . '/tests/behat/example.local.yml';
     $projectBehatLocalConfigFile = $this->getConfigValue('repo.root') . '/tests/behat/local.yml';
     $copy_map = [
@@ -101,9 +121,6 @@ class BehatTestCommand extends TestsCommandBase {
       /** @var \Acquia\BltBehat\Blt\Wizards\TestsWizard $tests_wizard */
       $tests_wizard = $this->getContainer()->get(TestsWizard::class);
       $tests_wizard->wizardConfigureBehat();
-      if (!$this->getInspector()->isBehatConfigured()) {
-        throw new BltException("Behat is not configured properly. Please run `blt doctor` to diagnose the issue.");
-      }
     }
 
     // Log config for debugging purposes.
@@ -154,9 +171,7 @@ class BehatTestCommand extends TestsCommandBase {
     if ($this->getConfigValue('behat.extra')) {
       $task->arg($this->getConfigValue('behat.extra'));
     }
-    $result = $task->run();
-
-    return $result;
+    return $task->run();
   }
 
   /**
@@ -231,5 +246,25 @@ class BehatTestCommand extends TestsCommandBase {
       }
     }
   }
+    /**
+     * Determines if Behat configuration exists in the project.
+     *
+     * @return bool
+     *   TRUE if Behat configuration exists.
+     */
+    public function isBehatConfigured() {
+        return file_exists($this->getConfigValue('repo.root') . '/tests/behat/behat.yml')
+            && file_exists($this->getConfigValue('repo.root') . '/tests/behat/example.local.yml');
+    }
+
+    /**
+     * Determine if the legacy version of league/container is in use.
+     *
+     * @return bool
+     *   TRUE if using the legacy container, FALSE otherwise.
+     */
+    protected static function usingLegacyContainer() {
+      return method_exists(DefinitionInterface::class, 'withArgument');
+    }
 
 }

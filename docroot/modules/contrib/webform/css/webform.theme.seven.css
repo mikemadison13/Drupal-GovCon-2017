@@ -97,7 +97,7 @@ pre.webform-codemirror-runmode {
  *
  * @see https://www.drupal.org/project/webform/issues/3228968
  */
-.webform-ui-dialog a.button--primary  {
+.webform-ui-dialog a.button--primary {
   color: #fff;
 }
 

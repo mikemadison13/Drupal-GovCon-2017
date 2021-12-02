@@ -32,5 +32,8 @@
     "psr-4": {
       "Acquia\\BltBehat\\": "./src/"
     }
+  },
+  "require-dev": {
+    "acquia/blt": "^13.2"
   }
 }

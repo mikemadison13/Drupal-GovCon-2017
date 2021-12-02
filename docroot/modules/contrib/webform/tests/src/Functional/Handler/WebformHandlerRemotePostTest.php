@@ -42,9 +42,9 @@ class WebformHandlerRemotePostTest extends WebformBrowserTestBase {
 
     $this->drupalLogin($this->rootUser);
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // POST.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_handler_remote_post');
@@ -210,9 +210,9 @@ options:
     $this->assertRaw('This is a custom 404 not found message.');
     $this->assertUrl($webform->toUrl('canonical', ['query' => ['error' => '1']])->setAbsolute()->toString());
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // PUT.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_handler_remote_put');
@@ -233,9 +233,9 @@ options:
     first_name: John
     last_name: Smith");
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // GET.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_handler_remote_get');
@@ -260,9 +260,9 @@ options:
     preg_match('/&quot;confirmation_number&quot;:&quot;([a-zA-z0-9]+)&quot;/', $this->getRawContent(), $match);
     $this->assertRaw('Your confirmation number is ' . $match[1] . '.');
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // POST File.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_handler_remote_post_file');
@@ -305,7 +305,7 @@ options:
     $handler = $webform->getHandler('remote_post');
     $handler->setSetting('file_data', FALSE);
     $webform->save();
-    $this->drupalPostForm("/admin/structure/webform/manage/test_handler_remote_post_file/submission/$sid/edit", [], t('Save'));
+    $this->drupalPostForm("/admin/structure/webform/manage/test_handler_remote_post_file/submission/$sid/edit", [], 'Save');
     $this->assertRaw("form_params:
   file: 1
   files:
@@ -324,9 +324,9 @@ options:
       mime: text/plain
       uuid: $files_uuid");
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // POST cast.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_handler_remote_post_cast');
@@ -368,9 +368,9 @@ options:
       checkbox: true
       number: 20.5");
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // POST error.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_handler_remote_post_error');

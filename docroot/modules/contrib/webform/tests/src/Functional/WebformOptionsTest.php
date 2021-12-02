@@ -40,7 +40,7 @@ class WebformOptionsTest extends WebformBrowserTestBase {
       'administer users',
     ]);
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $this->drupalLogin($normal_user);
 

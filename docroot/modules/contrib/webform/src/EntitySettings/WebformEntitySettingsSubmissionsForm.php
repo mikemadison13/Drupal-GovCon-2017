@@ -728,6 +728,7 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       '#type' => 'webform_excluded_elements',
       '#webform_id' => $this->getEntity()->id(),
       '#default_value' => $settings['autofill_excluded_elements'],
+      '#exclude_composite' => FALSE,
     ];
     $form['autofill_settings']['autofill_container']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 

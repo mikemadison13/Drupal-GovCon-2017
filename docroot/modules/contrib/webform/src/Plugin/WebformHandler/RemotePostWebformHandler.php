@@ -273,12 +273,14 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       '#title' => $this->t('Method'),
       '#description' => $this->t('The <b>POST</b> request method requests that a web server accept the data enclosed in the body of the request message. It is often used when uploading a file or when submitting a completed webform. In contrast, the HTTP <b>GET</b> request method retrieves information from the server.'),
       '#required' => TRUE,
+      // phpcs:disable DrupalPractice.General.OptionsT.TforValue
       '#options' => [
         'POST' => 'POST',
         'PUT' => 'PUT',
         'PATCH' => 'PATCH',
         'GET' => 'GET',
       ],
+      // phpcs:enable DrupalPractice.General.OptionsT.TforValue
       '#default_value' => $this->configuration['method'],
     ];
     $form['additional']['type'] = [
@@ -420,7 +422,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       ];
       $form['submission_data']['managed_file_message_no_data'] = [
         '#type' => 'webform_message',
-        '#message_message' => $this->t('Upload files will include the file\'s id, name and uri.'),
+        '#message_message' => $this->t("Upload files will include the file's id, name and uri."),
         '#message_type' => 'warning',
         '#message_close' => TRUE,
         '#message_id' => 'webform_node.references',
@@ -855,9 +857,9 @@ class RemotePostWebformHandler extends WebformHandlerBase {
     return $this->isDraftEnabled() && ($this->getWebform()->getSetting('form_convert_anonymous') === TRUE);
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Debug and exception handlers.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Display debugging information.
