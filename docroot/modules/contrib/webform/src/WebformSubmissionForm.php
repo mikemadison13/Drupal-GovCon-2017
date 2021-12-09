@@ -2419,7 +2419,7 @@ class WebformSubmissionForm extends ContentEntityForm {
           if ($confirmation_type === WebformInterface::CONFIRMATION_URL_MESSAGE) {
             $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_CONFIRMATION_MESSAGE);
           }
-          $redirect_url->setOptions($route_options);
+          $redirect_url->mergeOptions($route_options);
           $this->setTrustedRedirectUrl($form_state, $redirect_url);
         }
         else {

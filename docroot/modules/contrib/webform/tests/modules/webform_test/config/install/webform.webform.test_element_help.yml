@@ -37,7 +37,8 @@ elements: |
   help_xss:
     '#type': textfield
     '#title': help_xss
-    '#help': '{This is an example of help with <b>XSS <script>alert("XSS")</b>}'
+    '#help_title': '{This is an example of help title with <b>XSS <script>alert("XSS")</script></b> <img src="x" onerror="confirm(document.domain)" />}'
+    '#help': '{This is an example of help content with <b>XSS <script>alert("XSS")</script></b> <img src="x" onerror="confirm(document.domain)" />}'
   help_empty:
     '#type': textfield
     '#title': help_empty
@@ -137,7 +138,7 @@ elements: |
     '#help_display': element_after
     help_after_details:
       '#markup': '{This is markup}'
-  
+
 css: ''
 javascript: ''
 settings:

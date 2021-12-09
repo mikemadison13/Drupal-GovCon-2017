@@ -115,7 +115,7 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
   /**
    * The webform submission (server-side) conditions (#states) validator.
    *
-   * @var \Drupal\webform\WebformSubmissionConditionsValidator
+   * @var \Drupal\webform\WebformSubmissionConditionsValidatorInterface
    */
   protected $conditionsValidator;
 

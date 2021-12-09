@@ -274,8 +274,7 @@ class WebformHtmlEditor extends FormElement {
    *   HTML text with dis-allowed HTML tags removed.
    */
   public static function stripTags($text) {
-    $allowed_tags = '<' . implode('><', static::getAllowedTags()) . '>';
-    return strip_tags($text, $allowed_tags);
+    return Xss::filter($text, static::getAllowedTags());
   }
 
 }

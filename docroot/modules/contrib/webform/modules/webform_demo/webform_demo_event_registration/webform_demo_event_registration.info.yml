@@ -13,7 +13,7 @@ dependencies:
   - 'webform:webform_scheduled_email'
   - 'webform:webform_share'
 
-# Information added by Drupal.org packaging script on 2021-12-01
-version: '6.1.1'
+# Information added by Drupal.org packaging script on 2021-12-07
+version: '6.1.2'
 project: 'webform'
-datestamp: 1638398907
+datestamp: 1638917157
