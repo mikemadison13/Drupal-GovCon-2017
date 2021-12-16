@@ -5076,7 +5076,8 @@
                     }
                 },
                 "patches_applied": {
-                    "2869592 - Disabled update module shouldn't produce a status report warning": "https://www.drupal.org/files/issues/2020-02-07/2869592-remove-update-warning-34.patch"
+                    "2869592 - Disabled update module shouldn't produce a status report warning": "https://www.drupal.org/files/issues/2020-02-07/2869592-remove-update-warning-34.patch",
+                    "9.3 updb issues": "https://www.drupal.org/files/issues/2021-12-15/3254403-7.patch"
                 }
             },
             "installation-source": "dist",
