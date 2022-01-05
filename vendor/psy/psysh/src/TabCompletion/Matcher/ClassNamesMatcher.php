@@ -23,7 +23,7 @@ class ClassNamesMatcher extends AbstractMatcher
     /**
      * {@inheritdoc}
      */
-    public function getMatches(array $tokens, array $info = []): array
+    public function getMatches(array $tokens, array $info = [])
     {
         $class = $this->getNamespaceAndClass($tokens);
         if ($class !== '' && $class[0] === '\\') {
@@ -51,7 +51,7 @@ class ClassNamesMatcher extends AbstractMatcher
     /**
      * {@inheritdoc}
      */
-    public function hasMatched(array $tokens): bool
+    public function hasMatched(array $tokens)
     {
         $token = \array_pop($tokens);
         $prevToken = \array_pop($tokens);

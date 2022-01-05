@@ -97,7 +97,7 @@ class ListPass extends CodeCleanerPass
      *
      * @return bool
      */
-    private static function isValidArrayItem(Expr $item): bool
+    private static function isValidArrayItem(Expr $item)
     {
         $value = ($item instanceof ArrayItem) ? $item->value : $item;
 

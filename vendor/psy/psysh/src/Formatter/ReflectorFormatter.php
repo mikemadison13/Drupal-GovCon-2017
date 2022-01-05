@@ -21,5 +21,5 @@ interface ReflectorFormatter
      *
      * @return string
      */
-    public static function format(\Reflector $reflector): string;
+    public static function format(\Reflector $reflector);
 }

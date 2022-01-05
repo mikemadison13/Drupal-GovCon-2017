@@ -11,6 +11,7 @@
 
 namespace Psy;
 
+use PhpParser\Lexer;
 use PhpParser\Parser;
 use PhpParser\ParserFactory as OriginalParserFactory;
 
@@ -29,9 +30,21 @@ class ParserFactory
      *
      * @return array
      */
-    public static function getPossibleKinds(): array
+    public static function getPossibleKinds()
     {
         return ['ONLY_PHP5', 'ONLY_PHP7', 'PREFER_PHP5', 'PREFER_PHP7'];
+    }
+
+    /**
+     * Is this parser factory supports kinds?
+     *
+     * PHP parser < 2.0 doesn't support kinds, >= 2.0 — does.
+     *
+     * @return bool
+     */
+    public function hasKindsSupport()
+    {
+        return \class_exists(OriginalParserFactory::class);
     }
 
     /**
@@ -41,7 +54,9 @@ class ParserFactory
      */
     public function getDefaultKind()
     {
-        return static::ONLY_PHP7;
+        if ($this->hasKindsSupport()) {
+            return \version_compare(\PHP_VERSION, '7.0', '>=') ? static::ONLY_PHP7 : static::ONLY_PHP5;
+        }
     }
 
     /**
@@ -51,17 +66,25 @@ class ParserFactory
      *
      * @return Parser
      */
-    public function createParser($kind = null): Parser
+    public function createParser($kind = null)
     {
-        $originalFactory = new OriginalParserFactory();
+        if ($this->hasKindsSupport()) {
+            $originalFactory = new OriginalParserFactory();
 
-        $kind = $kind ?: $this->getDefaultKind();
+            $kind = $kind ?: $this->getDefaultKind();
 
-        if (!\in_array($kind, static::getPossibleKinds())) {
-            throw new \InvalidArgumentException('Unknown parser kind');
+            if (!\in_array($kind, static::getPossibleKinds())) {
+                throw new \InvalidArgumentException('Unknown parser kind');
+            }
+
+            $parser = $originalFactory->create(\constant(OriginalParserFactory::class.'::'.$kind));
+        } else {
+            if ($kind !== null) {
+                throw new \InvalidArgumentException('Install PHP Parser v2.x to specify parser kind');
+            }
+
+            $parser = new Parser(new Lexer());
         }
-
-        $parser = $originalFactory->create(\constant(OriginalParserFactory::class.'::'.$kind));
 
         return $parser;
     }

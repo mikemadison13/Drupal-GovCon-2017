@@ -82,7 +82,7 @@ class Docblock
      *
      * @param string $comment The docblock
      */
-    protected function setComment(string $comment)
+    protected function setComment($comment)
     {
         $this->desc = '';
         $this->tags = [];
@@ -98,7 +98,7 @@ class Docblock
      *
      * @return int Prefix length
      */
-    protected static function prefixLength(array $lines): int
+    protected static function prefixLength(array $lines)
     {
         // find only lines with interesting things
         $lines = \array_filter($lines, function ($line) {
@@ -132,7 +132,7 @@ class Docblock
      *
      * @param string $comment The docblock
      */
-    protected function parseComment(string $comment)
+    protected function parseComment($comment)
     {
         // Strip the opening and closing tags of the docblock
         $comment = \substr($comment, 3, -2);
@@ -201,7 +201,7 @@ class Docblock
      *
      * @return bool
      */
-    public function hasTag(string $tag): bool
+    public function hasTag($tag)
     {
         return \is_array($this->tags) && \array_key_exists($tag, $this->tags);
     }
@@ -213,7 +213,7 @@ class Docblock
      *
      * @return array
      */
-    public function tag(string $tag): array
+    public function tag($tag)
     {
         return $this->hasTag($tag) ? $this->tags[$tag] : null;
     }
@@ -225,7 +225,7 @@ class Docblock
      *
      * @return bool
      */
-    public static function isTagged(string $str): bool
+    public static function isTagged($str)
     {
         return isset($str[1]) && $str[0] === '@' && !\preg_match('/[^A-Za-z]/', $str[1]);
     }
@@ -237,7 +237,7 @@ class Docblock
      *
      * @return string|null
      */
-    public static function strTag(string $str)
+    public static function strTag($str)
     {
         if (\preg_match('/^@[a-z0-9_]+/', $str, $matches)) {
             return $matches[0];

@@ -98,12 +98,12 @@ class ReturnTypePass extends CodeCleanerPass
         }
     }
 
-    private function isFunctionNode(Node $node): bool
+    private function isFunctionNode(Node $node)
     {
         return $node instanceof Function_ || $node instanceof Closure;
     }
 
-    private function typeName(Node $node): string
+    private function typeName(Node $node)
     {
         if ($node instanceof NullableType) {
             return \strtolower($node->type->name);

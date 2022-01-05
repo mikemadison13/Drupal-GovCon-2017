@@ -19,6 +19,7 @@ trait LinkIconFormatterTrait {
       'target'                 => '',
       'linkicon_prefix'        => 'icon',
       'linkicon_icon_class'    => '',
+      'linkicon_label_class'   => '',
       'linkicon_wrapper_class' => '',
       'linkicon_load'          => FALSE,
       'linkicon_vertical'      => FALSE,
@@ -70,6 +71,12 @@ trait LinkIconFormatterTrait {
       '#type'        => 'textfield',
       '#title'       => $this->t('Additional icon classes'),
       '#description' => $this->t('Additional icon class for the actual icon apart from <strong>linkicon__icon icon</strong> separated by spaces, e.g: fab fas far.'),
+    ];
+
+    $elements['linkicon_label_class'] = [
+      '#type'        => 'textfield',
+      '#title'       => $this->t('Label classes'),
+      '#description' => $this->t('Additional icon class for the field label apart from Drupal <strong>field__label</strong> separated by spaces, e.g: <code>fa far fa-BLAH or icon icon-BLAH</code> depending on vendors. If using Layout Builder, be sure to disable <b>Display title</b> to avoid duplicated labels.'),
     ];
 
     $elements['linkicon_link'] = [

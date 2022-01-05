@@ -87,7 +87,7 @@ HELP
      *
      * @return mixed
      */
-    protected function resolveTarget(string $name)
+    protected function resolveTarget($name)
     {
         @\trigger_error('`resolveTarget` is deprecated; use `resolveCode` instead.', \E_USER_DEPRECATED);
 

@@ -18,7 +18,7 @@ abstract class AbstractDefaultParametersMatcher extends AbstractContextAwareMatc
      *
      * @return array
      */
-    public function getDefaultParameterCompletion(array $reflectionParameters): array
+    public function getDefaultParameterCompletion(array $reflectionParameters)
     {
         $parametersProcessed = [];
 
@@ -48,7 +48,7 @@ abstract class AbstractDefaultParametersMatcher extends AbstractContextAwareMatc
      *
      * @return string
      */
-    private function valueToShortString($value): string
+    private function valueToShortString($value)
     {
         if (!\is_array($value)) {
             return \json_encode($value);

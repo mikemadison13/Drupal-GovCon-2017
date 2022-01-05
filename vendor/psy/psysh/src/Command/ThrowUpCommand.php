@@ -112,7 +112,7 @@ HELP
      *
      * @return Arg[]
      */
-    private function prepareArgs(string $code = null): array
+    private function prepareArgs($code = null)
     {
         if (!$code) {
             // Default to last exception if nothing else was supplied
@@ -150,7 +150,7 @@ HELP
      *
      * @return array Statements
      */
-    private function parse(string $code): array
+    private function parse($code)
     {
         try {
             return $this->parser->parse($code);

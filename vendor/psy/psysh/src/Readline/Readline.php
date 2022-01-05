@@ -21,14 +21,7 @@ interface Readline
      *
      * @return bool
      */
-    public static function isSupported(): bool;
-
-    /**
-     * Check whether this Readline class supports bracketed paste.
-     *
-     * @return bool
-     */
-    public static function supportsBracketedPaste(): bool;
+    public static function isSupported();
 
     /**
      * Add a line to the command history.
@@ -37,28 +30,28 @@ interface Readline
      *
      * @return bool Success
      */
-    public function addHistory(string $line): bool;
+    public function addHistory($line);
 
     /**
      * Clear the command history.
      *
      * @return bool Success
      */
-    public function clearHistory(): bool;
+    public function clearHistory();
 
     /**
      * List the command history.
      *
      * @return array
      */
-    public function listHistory(): array;
+    public function listHistory();
 
     /**
      * Read the command history.
      *
      * @return bool Success
      */
-    public function readHistory(): bool;
+    public function readHistory();
 
     /**
      * Read a single line of input from the user.
@@ -67,7 +60,7 @@ interface Readline
      *
      * @return false|string
      */
-    public function readline(string $prompt = null);
+    public function readline($prompt = null);
 
     /**
      * Redraw readline to redraw the display.
@@ -79,5 +72,5 @@ interface Readline
      *
      * @return bool Success
      */
-    public function writeHistory(): bool;
+    public function writeHistory();
 }

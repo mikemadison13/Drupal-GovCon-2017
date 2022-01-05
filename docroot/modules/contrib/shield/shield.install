@@ -63,3 +63,49 @@ function shield_update_8003() {
     $config->set('shield_enable', TRUE)->save();
   }
 }
+
+/**
+ * Convert whitelist to allowlist.
+ */
+function shield_update_8004() {
+  $config = \Drupal::configFactory()->getEditable('shield.settings');
+  $config
+    ->set('allowlist', $config->get('whitelist'))
+    ->clear('whitelist')
+    ->save(TRUE);
+}
+
+/**
+ * Set the default value of new configs for existing sites.
+ */
+function shield_update_8005() {
+  $config = \Drupal::configFactory()->get('shield.settings');
+
+  $editable = \Drupal::configFactory()->getEditable('shield.settings');
+  if (is_null($config->get('domains'))) {
+    $editable->set('domains', '');
+  }
+  if (is_null($config->get('method'))) {
+    $editable->set('method', 0);
+  }
+  if (is_null($config->get('path'))) {
+    $editable->set('path', '');
+  }
+  if (is_null($config->get('unset_basic_auth_headers'))) {
+    $editable->set('unset_basic_auth_headers', TRUE);
+  }
+  $editable->save(TRUE);
+}
+
+/**
+ * Add the debug_header config.
+ */
+function shield_update_8006() {
+  $config = \Drupal::configFactory()->get('shield.settings');
+
+  if (is_null($config->get('debug_header'))) {
+    \Drupal::configFactory()->getEditable('shield.settings')
+      ->set('debug_header', FALSE)
+      ->save(TRUE);
+  }
+}

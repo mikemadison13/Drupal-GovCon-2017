@@ -26,9 +26,9 @@ class NoReturnValue
     /**
      * Get PhpParser AST expression for creating a new NoReturnValue.
      *
-     * @return New_
+     * @return \PhpParser\Node\Expr\New_
      */
-    public static function create(): New_
+    public static function create()
     {
         return new New_(new FullyQualifiedName(self::class));
     }

@@ -167,7 +167,7 @@ HELP
      *
      * @return string
      */
-    private function instrumentCode(string $code): string
+    private function instrumentCode($code)
     {
         return $this->printer->prettyPrint($this->traverser->traverse($this->parse($code)));
     }
@@ -179,7 +179,7 @@ HELP
      *
      * @return array Statements
      */
-    private function parse(string $code): array
+    private function parse($code)
     {
         $code = '<?php '.$code;
 

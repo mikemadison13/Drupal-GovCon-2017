@@ -21,5 +21,5 @@ interface EnvInterface
      *
      * @return string|null
      */
-    public function get(string $key);
+    public function get($key);
 }

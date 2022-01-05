@@ -73,7 +73,7 @@ class RequirePass extends CodeCleanerPass
      *
      * @return string Exactly the same as $file, unless $file collides with a path in the currently running phar
      */
-    public static function resolve($file, $lineNumber = null): string
+    public static function resolve($file, $lineNumber = null)
     {
         $file = (string) $file;
 
@@ -115,12 +115,12 @@ class RequirePass extends CodeCleanerPass
         return $file;
     }
 
-    private function isRequireNode(Node $node): bool
+    private function isRequireNode(Node $node)
     {
         return $node instanceof Include_ && \in_array($node->type, self::$requireTypes);
     }
 
-    private static function getIncludePath(): array
+    private static function getIncludePath()
     {
         if (\PATH_SEPARATOR === ':') {
             return \preg_split('#:(?!//)#', \get_include_path());

@@ -36,7 +36,6 @@
   %}
 {% endif %}
 
-{% spaceless %}
 <div{{ wrapper_attributes.addClass(wrapper_classes) }}>
   <ul{{ attributes.addClass('linkicon', classes) }}>
     {%- for item in items -%}
@@ -46,4 +45,3 @@
     {%- endfor -%}
   </ul>
 </div>
-{% endspaceless %}

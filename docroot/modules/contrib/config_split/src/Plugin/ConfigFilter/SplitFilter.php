@@ -43,11 +43,18 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
   protected $secondaryStorage;
 
   /**
-   * Filter lists shared with filters of new collections.
+   * Blacklist of configuration names.
    *
-   * @var \ArrayObject
+   * @var string[]
    */
-  protected $filterLists;
+  protected $blacklist;
+
+  /**
+   * Graylist of configuration names.
+   *
+   * @var string[]
+   */
+  protected $graylist;
 
   /**
    * Constructs a new SplitFilter.
@@ -67,7 +74,6 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->manager = $manager;
     $this->secondaryStorage = $secondary;
-    $this->filterLists = new \ArrayObject();
   }
 
   /**
@@ -106,10 +112,10 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
    *   The config names.
    */
   public function getBlacklist() {
-    if (!isset($this->filterLists['complete_split'])) {
-      $this->filterLists['complete_split'] = $this->calculateBlacklist();
+    if (empty($this->blacklist)) {
+      $this->calculateBlacklist();
     }
-    return $this->filterLists['complete_split'];
+    return $this->blacklist;
   }
 
   /**
@@ -119,10 +125,10 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
    *   The config names.
    */
   public function getGraylist() {
-    if (!isset($this->filterLists['conditional_split'])) {
-      $this->filterLists['conditional_split'] = $this->calculateGraylist();
+    if (empty($this->graylist)) {
+      $this->calculateGraylist();
     }
-    return $this->filterLists['conditional_split'];
+    return $this->graylist;
   }
 
   /**
@@ -311,10 +317,7 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
    */
   public function filterCreateCollection($collection) {
     if ($this->secondaryStorage) {
-      $filter = new static($this->configuration, $this->pluginId, $this->pluginDefinition, $this->manager, $this->secondaryStorage->createCollection($collection));
-      // Share the filter lists across collections.
-      $filter->filterLists = $this->filterLists;
-      return $filter;
+      return new static($this->configuration, $this->pluginId, $this->pluginDefinition, $this->manager, $this->secondaryStorage->createCollection($collection));
     }
 
     return $this;
@@ -333,9 +336,6 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
 
   /**
    * Calculate the blacklist by including dependents and resolving wild cards.
-   *
-   * @return string[]
-   *   The list of configuration to completely split.
    */
   protected function calculateBlacklist() {
     $blacklist = $this->configuration['blacklist'];
@@ -350,12 +350,6 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
     }
 
     $extensions = array_merge([], $modules, $themes);
-
-    if (empty($blacklist) && empty($extensions)) {
-      // Early return to short-circuit the expensive calculations.
-      return [];
-    }
-
     $blacklist = array_filter($this->manager->getConfigFactory()->listAll(), function ($name) use ($extensions, $blacklist) {
       // Filter the list of config objects since they are not included in
       // findConfigEntityDependents.
@@ -372,23 +366,14 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
     // Finally merge all dependencies of the blacklisted config.
     $blacklist = array_unique(array_merge($blacklist, array_keys($this->manager->findConfigEntityDependents('config', $blacklist))));
     // Exclude from the complete split what is conditionally split.
-    return array_diff($blacklist, $this->getGraylist());
+    $this->blacklist = array_diff($blacklist, $this->getGraylist());
   }
 
   /**
    * Calculate the graylist by including dependents and resolving wild cards.
-   *
-   * @return string[]
-   *   The list of configuration to conditionally split.
    */
   protected function calculateGraylist() {
     $graylist = $this->configuration['graylist'];
-
-    if (empty($graylist)) {
-      // Early return to short-circuit the expensive calculations.
-      return [];
-    }
-
     $graylist = array_filter($this->manager->getConfigFactory()->listAll(), function ($name) use ($graylist) {
       // Add the config name to the graylist if it is in the wildcard list.
       return self::inFilterList($name, $graylist);
@@ -400,7 +385,7 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
       $graylist = array_unique(array_merge($graylist, array_keys($this->manager->findConfigEntityDependents('config', $graylist))));
     }
 
-    return $graylist;
+    $this->graylist = $graylist;
   }
 
   /**

@@ -24,7 +24,7 @@ class TypeErrorException extends \Exception implements Exception
      * @param string $message (default: "")
      * @param int    $code    (default: 0)
      */
-    public function __construct(string $message = '', int $code = 0)
+    public function __construct($message = '', $code = 0)
     {
         $this->rawMessage = $message;
         $message = \preg_replace('/, called in .*?: eval\\(\\)\'d code/', '', $message);
@@ -36,7 +36,7 @@ class TypeErrorException extends \Exception implements Exception
      *
      * @return string
      */
-    public function getRawMessage(): string
+    public function getRawMessage()
     {
         return $this->rawMessage;
     }
@@ -46,9 +46,9 @@ class TypeErrorException extends \Exception implements Exception
      *
      * @param \TypeError $e
      *
-     * @return self
+     * @return TypeErrorException
      */
-    public static function fromTypeError(\TypeError $e): self
+    public static function fromTypeError(\TypeError $e)
     {
         return new self($e->getMessage(), $e->getCode());
     }

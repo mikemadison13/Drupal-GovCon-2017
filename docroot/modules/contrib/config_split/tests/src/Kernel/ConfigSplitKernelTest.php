@@ -12,7 +12,7 @@ use Drupal\KernelTests\KernelTestBase;
 use org\bovigo\vfs\vfsStream;
 
 /**
- * Integration test.
+ * Class ConfigSplitKernelTest.
  *
  * @group config_split
  */

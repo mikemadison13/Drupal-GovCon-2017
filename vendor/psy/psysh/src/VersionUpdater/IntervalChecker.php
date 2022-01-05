@@ -43,7 +43,7 @@ class IntervalChecker extends GitHubChecker
         return $release;
     }
 
-    private function getDateInterval(): \DateInterval
+    private function getDateInterval()
     {
         switch ($this->interval) {
             case Checker::DAILY:

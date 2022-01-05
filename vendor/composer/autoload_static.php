@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitf18a39aa44598d3109834d840c41a807
+class ComposerStaticInit81b31709f031ff1b61cd5be7a66632da
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -5784,6 +5784,7 @@ class ComposerStaticInitf18a39aa44598d3109834d840c41a807
         'Psy\\CodeCleaner\\StrictTypesPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/StrictTypesPass.php',
         'Psy\\CodeCleaner\\UseStatementPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/UseStatementPass.php',
         'Psy\\CodeCleaner\\ValidClassNamePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ValidClassNamePass.php',
+        'Psy\\CodeCleaner\\ValidConstantPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ValidConstantPass.php',
         'Psy\\CodeCleaner\\ValidConstructorPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ValidConstructorPass.php',
         'Psy\\CodeCleaner\\ValidFunctionNamePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ValidFunctionNamePass.php',
         'Psy\\Command\\BufferCommand' => __DIR__ . '/..' . '/psy/psysh/src/Command/BufferCommand.php',
@@ -8235,11 +8236,15 @@ class ComposerStaticInitf18a39aa44598d3109834d840c41a807
         'phpDocumentor\\Reflection\\PseudoTypes\\CallableString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/CallableString.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\False_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/False_.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\HtmlEscapedString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/HtmlEscapedString.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\IntegerRange' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/IntegerRange.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\List_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/List_.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\LiteralString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/LiteralString.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\LowercaseString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/LowercaseString.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\NegativeInteger' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/NegativeInteger.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\NonEmptyLowercaseString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/NonEmptyLowercaseString.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\NonEmptyString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/NonEmptyString.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\NumericString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/NumericString.php',
+        'phpDocumentor\\Reflection\\PseudoTypes\\Numeric_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/Numeric_.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\PositiveInteger' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/PositiveInteger.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\TraitString' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/TraitString.php',
         'phpDocumentor\\Reflection\\PseudoTypes\\True_' => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src/PseudoTypes/True_.php',
@@ -8281,11 +8286,11 @@ class ComposerStaticInitf18a39aa44598d3109834d840c41a807
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitf18a39aa44598d3109834d840c41a807::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitf18a39aa44598d3109834d840c41a807::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitf18a39aa44598d3109834d840c41a807::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitf18a39aa44598d3109834d840c41a807::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitf18a39aa44598d3109834d840c41a807::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit81b31709f031ff1b61cd5be7a66632da::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit81b31709f031ff1b61cd5be7a66632da::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit81b31709f031ff1b61cd5be7a66632da::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit81b31709f031ff1b61cd5be7a66632da::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit81b31709f031ff1b61cd5be7a66632da::$classMap;
 
         }, null, ClassLoader::class);
     }

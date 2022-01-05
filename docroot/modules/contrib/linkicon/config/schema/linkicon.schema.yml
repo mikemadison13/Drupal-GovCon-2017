@@ -50,6 +50,9 @@ field.formatter.settings.linkicon:
     linkicon_icon_class:
       type: string
       label: 'Additional icon classes'
+    linkicon_label_class:
+      type: string
+      label: 'Additional label classes'
     linkicon_load:
       type: boolean
       label: 'Allow linkicon to provide CSS assets'

@@ -45,7 +45,7 @@ class FatalErrorException extends \ErrorException implements Exception
      *
      * @return string
      */
-    public function getRawMessage(): string
+    public function getRawMessage()
     {
         return $this->rawMessage;
     }

@@ -32,7 +32,7 @@ class ImplicitReturnPass extends CodeCleanerPass
      *
      * @return array
      */
-    public function beforeTraverse(array $nodes): array
+    public function beforeTraverse(array $nodes)
     {
         return $this->addImplicitReturn($nodes);
     }
@@ -42,7 +42,7 @@ class ImplicitReturnPass extends CodeCleanerPass
      *
      * @return array
      */
-    private function addImplicitReturn(array $nodes): array
+    private function addImplicitReturn(array $nodes)
     {
         // If nodes is empty, it can't have a return value.
         if (empty($nodes)) {
@@ -118,7 +118,7 @@ class ImplicitReturnPass extends CodeCleanerPass
      *
      * @return bool
      */
-    private static function isNonExpressionStmt(Node $node): bool
+    private static function isNonExpressionStmt(Node $node)
     {
         return $node instanceof Stmt &&
             !$node instanceof Expression &&

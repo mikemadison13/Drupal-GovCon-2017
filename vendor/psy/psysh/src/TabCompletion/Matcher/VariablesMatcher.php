@@ -23,7 +23,7 @@ class VariablesMatcher extends AbstractContextAwareMatcher
     /**
      * {@inheritdoc}
      */
-    public function getMatches(array $tokens, array $info = []): array
+    public function getMatches(array $tokens, array $info = [])
     {
         $var = \str_replace('$', '', $this->getInput($tokens));
 
@@ -35,7 +35,7 @@ class VariablesMatcher extends AbstractContextAwareMatcher
     /**
      * {@inheritdoc}
      */
-    public function hasMatched(array $tokens): bool
+    public function hasMatched(array $tokens)
     {
         $token = \array_pop($tokens);
 

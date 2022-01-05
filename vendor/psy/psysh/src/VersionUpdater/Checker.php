@@ -22,10 +22,10 @@ interface Checker
     /**
      * @return bool
      */
-    public function isLatest(): bool;
+    public function isLatest();
 
     /**
      * @return string
      */
-    public function getLatest(): string;
+    public function getLatest();
 }

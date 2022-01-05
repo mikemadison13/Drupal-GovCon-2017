@@ -57,7 +57,7 @@ class FinalClassPass extends CodeCleanerPass
      *
      * @return bool
      */
-    private function isFinalClass(string $name): bool
+    private function isFinalClass($name)
     {
         if (!\class_exists($name)) {
             return isset($this->finalClasses[\strtolower($name)]);

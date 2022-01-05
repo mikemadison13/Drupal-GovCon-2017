@@ -44,7 +44,7 @@ class Context
      *
      * @return mixed
      */
-    public function get(string $name)
+    public function get($name)
     {
         switch ($name) {
             case '_':
@@ -95,7 +95,7 @@ class Context
      *
      * @return array
      */
-    public function getAll(): array
+    public function getAll()
     {
         return \array_merge($this->scopeVariables, $this->getSpecialVariables());
     }
@@ -105,7 +105,7 @@ class Context
      *
      * @return array
      */
-    public function getSpecialVariables(): array
+    public function getSpecialVariables()
     {
         $vars = [
             '_' => $this->returnValue,
@@ -198,7 +198,7 @@ class Context
      *
      * @param string $lastStdout
      */
-    public function setLastStdout(string $lastStdout)
+    public function setLastStdout($lastStdout)
     {
         $this->lastStdout = $lastStdout;
     }
@@ -288,7 +288,7 @@ class Context
      *
      * @return array
      */
-    public function getCommandScopeVariables(): array
+    public function getCommandScopeVariables()
     {
         return $this->commandScopeVariables;
     }
@@ -301,7 +301,7 @@ class Context
      *
      * @return array Array of unused variable names
      */
-    public function getUnusedCommandScopeVariableNames(): array
+    public function getUnusedCommandScopeVariableNames()
     {
         return \array_diff(self::$commandScopeNames, \array_keys($this->commandScopeVariables));
     }
@@ -313,7 +313,7 @@ class Context
      *
      * @return bool
      */
-    public static function isSpecialVariableName(string $name): bool
+    public static function isSpecialVariableName($name)
     {
         return \in_array($name, self::$specialNames) || \in_array($name, self::$commandScopeNames);
     }

@@ -21,7 +21,7 @@ class ConsoleColorFactory
     /**
      * @param string $colorMode
      */
-    public function __construct(string $colorMode)
+    public function __construct($colorMode)
     {
         // Nothing to see here
     }
@@ -32,7 +32,7 @@ class ConsoleColorFactory
      *
      * @return ConsoleColor
      */
-    public function getConsoleColor(): ConsoleColor
+    public function getConsoleColor()
     {
         return new ConsoleColor(); // /shrug
     }

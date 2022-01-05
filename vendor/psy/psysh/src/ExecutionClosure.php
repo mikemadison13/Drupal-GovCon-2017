@@ -45,6 +45,13 @@ class ExecutionClosure
                 }
 
                 throw $_e;
+            } catch (\Exception $_e) {
+                // Clean up on our way out.
+                if (\ob_get_level() > 0) {
+                    \ob_end_clean();
+                }
+
+                throw $_e;
             } finally {
                 // Won't be needing this anymore
                 \restore_error_handler();

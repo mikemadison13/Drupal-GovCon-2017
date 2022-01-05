@@ -76,7 +76,7 @@ class CalledClassPass extends CodeCleanerPass
         }
     }
 
-    private function isNull(Node $node): bool
+    private function isNull(Node $node)
     {
         return $node->value instanceof ConstFetch && \strtolower($node->value->name) === 'null';
     }

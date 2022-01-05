@@ -13,7 +13,7 @@ namespace Psy\TabCompletion\Matcher;
 
 class FunctionDefaultParametersMatcher extends AbstractDefaultParametersMatcher
 {
-    public function getMatches(array $tokens, array $info = []): array
+    public function getMatches(array $tokens, array $info = [])
     {
         \array_pop($tokens); // open bracket
 
@@ -30,7 +30,7 @@ class FunctionDefaultParametersMatcher extends AbstractDefaultParametersMatcher
         return $this->getDefaultParameterCompletion($parameters);
     }
 
-    public function hasMatched(array $tokens): bool
+    public function hasMatched(array $tokens)
     {
         $openBracket = \array_pop($tokens);
 

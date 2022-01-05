@@ -31,7 +31,7 @@ class FilterOptions
      *
      * @return InputOption[]
      */
-    public static function getOptions(): array
+    public static function getOptions()
     {
         return [
             new InputOption('grep', 'G', InputOption::VALUE_REQUIRED, 'Limit to items matching the given pattern (string or regex).'),
@@ -76,7 +76,7 @@ class FilterOptions
      *
      * @return bool
      */
-    public function hasFilter(): bool
+    public function hasFilter()
     {
         return $this->filter;
     }
@@ -89,7 +89,7 @@ class FilterOptions
      *
      * @return bool
      */
-    public function match(string $string, array &$matches = null): bool
+    public function match($string, array &$matches = null)
     {
         return $this->filter === false || (\preg_match($this->pattern, $string, $matches) xor $this->invert);
     }
@@ -119,7 +119,7 @@ class FilterOptions
      *
      * @return bool
      */
-    private function stringIsRegex(string $string): bool
+    private function stringIsRegex($string)
     {
         return \substr($string, 0, 1) === '/' && \substr($string, -1) === '/' && \strlen($string) >= 3;
     }
@@ -131,7 +131,7 @@ class FilterOptions
      *
      * @param string $pattern
      */
-    private function validateRegex(string $pattern)
+    private function validateRegex($pattern)
     {
         \set_error_handler([ErrorException::class, 'throwException']);
         try {
