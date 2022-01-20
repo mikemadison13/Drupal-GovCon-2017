@@ -16,15 +16,26 @@ class TaskStorageSchema extends SqlContentEntityStorageSchema {
   protected function getEntitySchema(ContentEntityTypeInterface $entity_type, $reset = FALSE): array {
     $schema = parent::getEntitySchema($entity_type, $reset);
 
-    if ($data_table = $this->storage->getBaseTable()) {
-      $data = 'data';
+    $data_table = $this->storage->getBaseTable();
+    if ($data_table) {
+      $column = 'data';
       // MySQL cannot handle UNIQUE indices on TEXT/BLOB fields without a prefix
       // length.
       if ($this->database->driver() === 'mysql') {
-        $data = ['data', 255];
+        // From the MySQL documentation:
+        // https://dev.mysql.com/doc/refman/8.0/en/innodb-limits.html
+        //
+        // The index key prefix length limit is 767 bytes for InnoDB tables that
+        // use the REDUNDANT or COMPACT row format. For example, you might hit
+        // this limit with a column prefix index of more than 191 characters on
+        // a TEXT or VARCHAR column, assuming a utf8mb4 character set and the
+        // maximum of 4 bytes for each character.
+        //
+        // To be on the safe side let's assume utf8mb4 character set.
+        $column = ['data', 191];
       }
       $schema[$data_table]['unique keys'] += [
-        'task__unique' => ['type', 'server_id', 'index_id', $data],
+        'task__unique' => ['type', 'server_id', 'index_id', $column],
       ];
     }
 

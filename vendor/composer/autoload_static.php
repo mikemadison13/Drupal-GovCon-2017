@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit202b2087e3008e3c13533e10c70d639f
+class ComposerStaticInit43eb1f81171367aa09a26f2ca1282b50
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -6244,15 +6244,17 @@ class ComposerStaticInit202b2087e3008e3c13533e10c70d639f
         'Symfony\\Bridge\\Twig\\Command\\DebugCommand' => __DIR__ . '/..' . '/symfony/twig-bridge/Command/DebugCommand.php',
         'Symfony\\Bridge\\Twig\\Command\\LintCommand' => __DIR__ . '/..' . '/symfony/twig-bridge/Command/LintCommand.php',
         'Symfony\\Bridge\\Twig\\DataCollector\\TwigDataCollector' => __DIR__ . '/..' . '/symfony/twig-bridge/DataCollector/TwigDataCollector.php',
+        'Symfony\\Bridge\\Twig\\ErrorRenderer\\TwigErrorRenderer' => __DIR__ . '/..' . '/symfony/twig-bridge/ErrorRenderer/TwigErrorRenderer.php',
         'Symfony\\Bridge\\Twig\\Extension\\AssetExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/AssetExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\CodeExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/CodeExtension.php',
+        'Symfony\\Bridge\\Twig\\Extension\\CsrfExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/CsrfExtension.php',
+        'Symfony\\Bridge\\Twig\\Extension\\CsrfRuntime' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/CsrfRuntime.php',
         'Symfony\\Bridge\\Twig\\Extension\\DumpExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/DumpExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\ExpressionExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/ExpressionExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\FormExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/FormExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\HttpFoundationExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/HttpFoundationExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\HttpKernelExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/HttpKernelExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\HttpKernelRuntime' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/HttpKernelRuntime.php',
-        'Symfony\\Bridge\\Twig\\Extension\\InitRuntimeInterface' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/InitRuntimeInterface.php',
         'Symfony\\Bridge\\Twig\\Extension\\LogoutUrlExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/LogoutUrlExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/ProfilerExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\RoutingExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/RoutingExtension.php',
@@ -6262,10 +6264,11 @@ class ComposerStaticInit202b2087e3008e3c13533e10c70d639f
         'Symfony\\Bridge\\Twig\\Extension\\WebLinkExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/WebLinkExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\WorkflowExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/WorkflowExtension.php',
         'Symfony\\Bridge\\Twig\\Extension\\YamlExtension' => __DIR__ . '/..' . '/symfony/twig-bridge/Extension/YamlExtension.php',
-        'Symfony\\Bridge\\Twig\\Form\\TwigRenderer' => __DIR__ . '/..' . '/symfony/twig-bridge/Form/TwigRenderer.php',
         'Symfony\\Bridge\\Twig\\Form\\TwigRendererEngine' => __DIR__ . '/..' . '/symfony/twig-bridge/Form/TwigRendererEngine.php',
-        'Symfony\\Bridge\\Twig\\Form\\TwigRendererEngineInterface' => __DIR__ . '/..' . '/symfony/twig-bridge/Form/TwigRendererEngineInterface.php',
-        'Symfony\\Bridge\\Twig\\Form\\TwigRendererInterface' => __DIR__ . '/..' . '/symfony/twig-bridge/Form/TwigRendererInterface.php',
+        'Symfony\\Bridge\\Twig\\Mime\\BodyRenderer' => __DIR__ . '/..' . '/symfony/twig-bridge/Mime/BodyRenderer.php',
+        'Symfony\\Bridge\\Twig\\Mime\\NotificationEmail' => __DIR__ . '/..' . '/symfony/twig-bridge/Mime/NotificationEmail.php',
+        'Symfony\\Bridge\\Twig\\Mime\\TemplatedEmail' => __DIR__ . '/..' . '/symfony/twig-bridge/Mime/TemplatedEmail.php',
+        'Symfony\\Bridge\\Twig\\Mime\\WrappedTemplatedEmail' => __DIR__ . '/..' . '/symfony/twig-bridge/Mime/WrappedTemplatedEmail.php',
         'Symfony\\Bridge\\Twig\\NodeVisitor\\Scope' => __DIR__ . '/..' . '/symfony/twig-bridge/NodeVisitor/Scope.php',
         'Symfony\\Bridge\\Twig\\NodeVisitor\\TranslationDefaultDomainNodeVisitor' => __DIR__ . '/..' . '/symfony/twig-bridge/NodeVisitor/TranslationDefaultDomainNodeVisitor.php',
         'Symfony\\Bridge\\Twig\\NodeVisitor\\TranslationNodeVisitor' => __DIR__ . '/..' . '/symfony/twig-bridge/NodeVisitor/TranslationNodeVisitor.php',
@@ -8268,11 +8271,11 @@ class ComposerStaticInit202b2087e3008e3c13533e10c70d639f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit202b2087e3008e3c13533e10c70d639f::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit202b2087e3008e3c13533e10c70d639f::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit202b2087e3008e3c13533e10c70d639f::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit202b2087e3008e3c13533e10c70d639f::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit202b2087e3008e3c13533e10c70d639f::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit43eb1f81171367aa09a26f2ca1282b50::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit43eb1f81171367aa09a26f2ca1282b50::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit43eb1f81171367aa09a26f2ca1282b50::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit43eb1f81171367aa09a26f2ca1282b50::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit43eb1f81171367aa09a26f2ca1282b50::$classMap;
 
         }, null, ClassLoader::class);
     }

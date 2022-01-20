@@ -15,7 +15,7 @@ class QueuerConfigFormTest extends QueuerConfigFormTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['purge_queuer_test'];
+  protected static $modules = ['purge_queuer_test'];
 
   /**
    * {@inheritdoc}
@@ -63,10 +63,11 @@ class QueuerConfigFormTest extends QueuerConfigFormTestBase {
    */
   public function testSaveConfigurationSubmit(): void {
     $this->drupalLogin($this->adminUser);
+    $this->drupalGet($this->getPath());
     $edit = [
       'textfield' => "The moose in the noose ate the goose who was loose.",
     ];
-    $this->drupalPostForm($this->getPath(), $edit, 'Save configuration');
+    $this->submitForm($edit, 'Save configuration');
   }
 
 }
