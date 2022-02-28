@@ -74,13 +74,6 @@ drush:
 ```
 - View all loaded site aliases: `drush site:alias`
 
-#### Cache directory 
-Specify a folder where Drush should store its file based caches. If unspecified, defaults to `$HOME/.drush`.
-```yml
-drush:  
-  cache-directory: /tmp/.drush
-```
-
 #### Backup directory
 Specify a folder where Drush should store backup files, including
 temporary sql dump files created during [sql:sync](https://www.drush.org/latest/commands/sql_sync/). If unspecified,
@@ -173,12 +166,12 @@ notify:
   duration: 30
   # Specify a command to run. Defaults to Notification Center (OSX) or libnotify (Linux)
   cmd: /path/to/program
-  # See https://github.com/drush-ops/drush/blob/10.x/src/Commands/core/NotifyCommands.php for more settings.
+  # See https://github.com/drush-ops/drush/blob/11.x/src/Commands/core/NotifyCommands.php for more settings.
 
 xh:
   # Start profiling via xhprof/tideways and show a link to the run report.
   link: http://xhprof.local
-  # See https://github.com/drush-ops/drush/blob/10.x/src/Commands/core/XhprofCommands.php for more settings.
+  # See https://github.com/drush-ops/drush/blob/11.x/src/Commands/core/XhprofCommands.php for more settings.
   profile-builtins: true
   profile-cpu: false
   profile-memory: false
