@@ -1,12 +1,12 @@
-***
-***
-# <a name="faq"></a>FAQ
 
-## PROGRAMATICALLY
+***
+## <a name="faq"></a>FAQ
+
+### PROGRAMATICALLY
 [**slick.api.php**](https://git.drupalcode.org/project/slick/blob/8.x-2.x/slick.api.php)
 
 
-## QUICK PERFORMANCE TIPS
+### QUICK PERFORMANCE TIPS
 * Use lazyLoad **ondemand / anticipated** for tons of images, not
   **progressive**. Unless within an ajaxified lightbox.
 * Use lazyload **Blazy** for carousels below the fold to delay loading them.
@@ -21,7 +21,7 @@
 * Enable Drupal cache, and CSS/ JS assets aggregation.
 
 
-## OPTIONSETS
+### OPTIONSETS
 To create optionsets, go to:
 
   [Slick UI](/admin/config/media/slick)
@@ -29,14 +29,14 @@ To create optionsets, go to:
 Enable Slick UI sub-module first, otherwise regular **Access denied**.
 They will be available at field formatter "Manage display", and Views UI.
 
-## VIEWS AND FIELDS
+### VIEWS AND FIELDS
 Slick works with Views and as field display formatters.
 Slick Views is available as a style plugin included at slick_views.module.
 Slick Fields formatters included as a plugin which supports:
 Image, Media, Field Collection, Paragraphs, Text.
 
 
-## NESTED SLICKS
+### NESTED SLICKS
 Nested slick is a parent Slick containing slides which contain individual child
 slick per slide. The child slicks are basically regular slide overlays like
 a single video over the large background image, only with nested slicks it can
@@ -45,7 +45,7 @@ Use Slick Fields with Field Collection or Paragraphs or Views to build one.
 Supported multi-value fields for nested slicks: Image, Text, Media.
 
 
-## <a name="skins"></a>SKINS
+### <a name="skins"></a>SKINS
 The main purpose of skins are to demonstrate that often some CSS lines are
 enough to build fairly variant layouts. No JS needed. Unless, of course, for
 more sophisticated slider like spiral 3D carousel which is beyond what CSS can
@@ -60,7 +60,7 @@ Some default complex layout skins applied to desktop only, adjust for the mobile
 accordingly. The provided skins are very basic to support the necessary layouts.
 It is not the module job to match your awesome design requirements.
 
-### Registering Slick skins:
+#### Registering Slick skins:
 [**slick.api.php**](https://git.drupalcode.org/project/slick/blob/8.x-2.x/slick.api.php#L337)
 
 1. Copy `\Drupal\slick\Plugin\slick\SlickSkin` into your module
@@ -76,7 +76,7 @@ and arrows skins respectively.
 The declared skins will be available for custom coded, or UI selections.
 Be sure to clear cache since skins are permanently cached!
 
-### Optional skins:
+#### Optional skins:
 * **None**
 
   It is all about DIY.
@@ -140,7 +140,7 @@ Some extra skins are WIP which may not work as expected.
 Use them as starters, not final products!
 
 
-## GRID
+### GRID
 To create Slick grid or multiple rows carousel, there are 3 options:
 
 1. **One row grid managed by library:**
@@ -177,7 +177,7 @@ The total amount of Views results must be bigger than `Visible slides`,
 otherwise broken Grid, see skin Grid above for more details.
 
 
-## <a name="html-structure"></a>HTML STRUCTURE
+### <a name="html-structure"></a>HTML STRUCTURE
 Note, non-BEM classes are added by JS.
 
 ```html
@@ -192,7 +192,7 @@ Note, non-BEM classes are added by JS.
 `asNavFor` should target `slick-initialized` class/ID attributes.
 
 
-## CURRENT DEVELOPMENT STATUS
+### CURRENT DEVELOPMENT STATUS
 A full release should be reasonable after proper feedback from the community,
 some code cleanup, and optimization where needed. Patches are very much welcome.
 
@@ -208,10 +208,10 @@ Regenerate CSS and JS as the latest fixes may contain changes to the assets.
 Have the latest or similar release Blazy to avoid trouble in the first place.
 
 
-## ROADMAP
+### ROADMAP
 * Bug fixes, code cleanup, optimization, and full release.
 
-## HOW CAN YOU HELP?
+### HOW CAN YOU HELP?
 Please consider helping in the issue queue, provide improvement, or helping with
 documentation.
 

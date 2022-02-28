@@ -6,6 +6,7 @@
  * [Recommended modules](#recommended-modules)
  * [Features](#features)
  * [Installation](#installation)
+ * [Uninstallation](#uninstallation)
  * [Configuration](#configuration)
  * [Slick Formatters](#formatters)
  * [Troubleshooting](#troubleshooting)
@@ -14,8 +15,7 @@
  * [Maintainers](#maintainers)
 
 ***
-***
-# <a name="introduction"></a>INTRODUCTION
+## <a name="introduction"></a>INTRODUCTION
 
 Visit **/admin/help/slick_ui** once Slick UI installed to read this in comfort.
 
@@ -33,8 +33,7 @@ officially supported now, Jan 2020.
 
 
 ***
-***
-# <a name="requirements"> </a>REQUIREMENTS
+## <a name="requirements"> </a>REQUIREMENTS
 1. Slick library:
 
    **Standard version**
@@ -78,8 +77,7 @@ officially supported now, Jan 2020.
 
 
 ***
-***
-# <a name="installation"> </a>INSTALLATION
+## <a name="installation"> </a>INSTALLATION
 Be sure to read the entire docs and form descriptions before working with
 Slick to avoid headaches for just ~15-minute read.
 
@@ -101,10 +99,16 @@ Slick to avoid headaches for just ~15-minute read.
    ```
    See [Blazy composer](/admin/help/blazy_ui#composer) for details.
 
+***
+## <a name="uninstallation"> </a>UNINSTALLATION
+Please check out below for solutions:  
+
+* [Slick 7.x](https://www.drupal.org/project/slick/issues/3261726#comment-14406766)
+* [Slick D8+](https://www.drupal.org/project/slick/issues/3257390)
+
 
 ***
-***
-# <a name="configuration"> </a>CONFIGURATION
+## <a name="configuration"> </a>CONFIGURATION
 Visit the following to configure Slick:
 
 1. `/admin/config/media/slick`
@@ -128,11 +132,10 @@ Visit the following to configure Slick:
 
 
 ***
-***
-# <a name="recommended-modules"> </a>RECOMMENDED MODULES
+## <a name="recommended-modules"> </a>RECOMMENDED MODULES
 Slick supports enhancements and more complex layouts.
 
-## OPTIONAL
+### OPTIONAL
 * [Media](https://drupal.org/project/media), to have richer contents: image,
   video, or a mix of em. Included in core since D8.6+.
 * [Colorbox](https://drupal.org/project/colorbox), to have grids/slides that
@@ -147,7 +150,7 @@ Slick supports enhancements and more complex layouts.
   + **/libraries/mousewheel/jquery.mousewheel.min.js**
 
 
-## SUB-MODULES
+### SUB-MODULES
 The Slick module has several sub-modules:
 * Slick UI, included, to manage optionsets, can be uninstalled at production.
 
@@ -172,8 +175,7 @@ The Slick module has several sub-modules:
   to get up and running Slick quickly.
 
 ***
-***
-# <a name="features"></a>FEATURES
+## <a name="features"></a>FEATURES
 * Fully responsive. Scales with its container.
 * Uses CSS3 when available. Fully functional when not.
 * Swipe enabled. Or disabled, if you prefer.

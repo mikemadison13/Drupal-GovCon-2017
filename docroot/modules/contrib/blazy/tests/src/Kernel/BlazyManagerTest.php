@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\blazy\Kernel;
 
-use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\BlazyTheme;
 
 /**
  * Tests the Blazy manager methods.
@@ -18,7 +18,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $bundle = $this->bundle;
@@ -39,15 +39,17 @@ class BlazyManagerTest extends BlazyKernelTestBase {
    *   Has the responsive image style ID.
    *
    * @covers ::preRenderBlazy
+   * @covers ::getCommonSettings
    * @covers \Drupal\blazy\BlazyLightbox::build
    * @covers \Drupal\blazy\BlazyLightbox::buildCaptions
    * @dataProvider providerTestPreRenderImage
    */
   public function testPreRenderImage(array $settings = [], $expected_has_responsive_image = FALSE) {
     $build = $this->data;
+    $this->blazyManager->getCommonSettings($settings);
     $settings['count'] = $this->maxItems;
     $settings['uri'] = $this->uri;
-    $settings['resimage'] = $expected_has_responsive_image ? $this->blazyManager->entityLoad('blazy_responsive_test', 'responsive_image_style') : NULL;
+    // @todo remove $settings['resimage'] = $expected_has_responsive_image ? $this->blazyManager->entityLoad('blazy_responsive_test', 'responsive_image_style') : NULL;
     $build['settings'] = array_merge($build['settings'], $settings);
     $switch_css = str_replace('_', '-', $settings['media_switch']);
 
@@ -62,7 +64,8 @@ class BlazyManagerTest extends BlazyKernelTestBase {
       $this->assertArrayHasKey('#url', $element);
     }
 
-    $this->assertEquals($expected_has_responsive_image, !empty($element['#settings']['responsive_image_style_id']));
+    $blazies = $element['#settings']['blazies'];
+    $this->assertEquals($expected_has_responsive_image, !empty($blazies->get('resimage.id')));
   }
 
   /**
@@ -117,8 +120,8 @@ class BlazyManagerTest extends BlazyKernelTestBase {
    * @param mixed|bool|int $expected
    *   The expected output.
    *
-   * @covers \Drupal\blazy\Blazy::preprocessBlazy
-   * @covers \Drupal\blazy\Blazy::urlAndDimensions
+   * @covers \Drupal\blazy\BlazyTheme::blazy
+   * @covers \Drupal\blazy\Media\BlazyFile::urlAndDimensions
    * @covers \Drupal\blazy\BlazyDefault::entitySettings
    * @dataProvider providerPreprocessBlazy
    */
@@ -140,7 +143,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
     $variables['element']['#item'] = $this->testItem;
     $variables['element']['#settings'] = $settings;
 
-    Blazy::preprocessBlazy($variables);
+    BlazyTheme::blazy($variables);
 
     $image = $expected == TRUE ? !empty($variables['image']) : empty($variables['image']);
     $iframe = $iframe == TRUE ? !empty($variables['iframe']) : empty($variables['iframe']);
@@ -208,7 +211,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
 
     $variables['img_element']['#uri'] = $this->uri;
 
-    Blazy::preprocessResponsiveImage($variables);
+    BlazyTheme::responsiveImage($variables);
 
     $this->assertEquals($expected, $variables['output_image_tag']);
   }

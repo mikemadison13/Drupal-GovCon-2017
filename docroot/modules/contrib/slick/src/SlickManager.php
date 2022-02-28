@@ -69,7 +69,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function slick(array $build = []) {
     foreach (SlickDefault::themeProperties() as $key) {
-      $build[$key] = isset($build[$key]) ? $build[$key] : [];
+      $build[$key] = $build[$key] ?? [];
     }
 
     return empty($build['items']) ? [] : [
@@ -85,7 +85,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   protected function prepareAttributes(array $build = []) {
     $settings = $build['settings'];
-    $attributes = isset($build['attributes']) ? $build['attributes'] : [];
+    $attributes = $build['attributes'] ?? [];
 
     if ($settings['display'] == 'main') {
       Blazy::containerAttributes($attributes, $settings);
@@ -153,7 +153,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     $build['attributes'] = $this->prepareAttributes($build);
-    $build['options'] = isset($js) ? array_merge($build['options'], $js) : $build['options'];
+    $build['options'] = array_merge($build['options'], (array) ($js ?? []));
 
     $this->moduleHandler->alter('slick_optionset', $build['optionset'], $settings);
 
@@ -205,9 +205,9 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $output = [];
 
     foreach ($items as $delta => $item) {
-      $sets = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
-      $attrs = empty($item['attributes']) ? [] : $item['attributes'];
-      $content_attrs = isset($item['content_attributes']) ? $item['content_attributes'] : [];
+      $sets = array_merge($settings, (array) ($item['settings'] ?? []));
+      $attrs = (array) ($item['attributes'] ?? []);
+      $content_attrs = (array) ($item['content_attributes'] ?? []);
       $sets['current_item'] = 'grid';
       $sets['delta'] = $delta;
 
@@ -261,7 +261,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function build(array $build = []) {
     foreach (SlickDefault::themeProperties() as $key) {
-      $build[$key] = isset($build[$key]) ? $build[$key] : [];
+      $build[$key] = $build[$key] ?? [];
     }
 
     $slick = [
@@ -351,7 +351,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   protected function buildNavigation(array &$build, array $thumbs) {
     $settings = $build['settings'];
     foreach (['items', 'options', 'settings'] as $key) {
-      $build[$key] = isset($thumbs[$key]) ? $thumbs[$key] : [];
+      $build[$key] = $thumbs[$key] ?? [];
     }
 
     $settings                     = array_merge($settings, $build['settings']);
@@ -378,7 +378,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $this->prepareSettings($element, $build);
 
     // Checks if we have thumbnail navigation.
-    $thumbs   = isset($build['thumb']) ? $build['thumb'] : [];
+    $thumbs   = $build['thumb'] ?? [];
     $settings = $build['settings'];
 
     // Prevents unused thumb going through the main display.

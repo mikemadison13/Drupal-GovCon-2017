@@ -144,7 +144,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       $form['style'] = [
         '#type'         => 'select',
         '#title'        => $this->t('Display style'),
-        '#description'  => $this->t('Unless otherwise specified, the styles require <strong>Grid</strong>. Difference: <ul><li><strong>Columns</strong> is best with irregular image sizes (scale width, empty height), affects the natural order of grid items, top-bottom, not left-right.</li><li><strong>Foundation</strong> with regular cropped ones, left-right.</li><li><strong>Flex Masonry</strong> uses Flexbox, supports (ir)-regular, left-right flow.</li><li><strong>Native Grid</strong> supports both one and two dimensional grid.</li></ul> Unless required, leave empty to use default formatter, or style. Save for <b>Grid Foundation</b>, the rest are experimental!'),
+        '#description'  => $this->t('Unless otherwise specified, the styles require <strong>Grid</strong>. Difference: <ul><li><strong>Columns</strong> is best with irregular image sizes (scale width, empty height), affects the natural order of grid items, top-bottom, not left-right.</li><li><strong>Foundation</strong> with regular cropped ones, left-right.</li><li><strong>Flex Masonry</strong> (@deprecated due to an epic failure) uses Flexbox, supports (ir)-regular, left-right flow.</li><li><strong>Native Grid</strong> supports both one and two dimensional grid.</li></ul> Unless required, leave empty to use default formatter, or style. Save for <b>Grid Foundation</b>, the rest are experimental!'),
         '#enforced'     => TRUE,
         '#empty_option' => $this->t('- None -'),
         '#options'      => $this->blazyManager->getStyles(),
@@ -238,6 +238,12 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       '#description' => $description,
       '#enforced'    => TRUE,
       '#required'    => $required,
+      '#wrapper_attributes' => [
+        'class' => [
+          'form-item--full',
+          'form-item--tooltip-bottom',
+        ],
+      ],
     ];
 
     $form['grid_medium'] = [
@@ -291,7 +297,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     if (isset($definition['current_view_mode'])) {
       $form['current_view_mode'] = [
         '#type'          => 'hidden',
-        '#default_value' => isset($definition['current_view_mode']) ? $definition['current_view_mode'] : '_custom',
+        '#default_value' => $definition['current_view_mode'] ?? '_custom',
         '#weight'        => 120,
       ];
     }
@@ -303,8 +309,9 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    * Returns simple form elements common for Views field, EB widget, formatters.
    */
   public function baseForm($definition = []) {
-    $settings   = isset($definition['settings']) ? $definition['settings'] : [];
+    $settings   = $definition['settings'] ?? [];
     $lightboxes = $this->blazyManager->getLightboxes();
+    $namespace  = $definition['namespace'] ?? '';
     $form       = [];
     $ui_url     = '/admin/config/media/blazy';
 
@@ -313,12 +320,55 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     }
 
     if (empty($definition['no_image_style'])) {
+      $form['preload'] = [
+        '#type'        => 'checkbox',
+        '#title'       => $this->t('Preload'),
+        '#weight'      => -111,
+        '#description' => $this->t("Preload to optimize the loading of late-discovered resources. Normally large or hero images below the fold. By preloading a resource, you tell the browser to fetch it sooner than the browser would otherwise discover it before Native lazy or lazyloader JavaScript kicks in, or starts its own preload or decoding. The browser caches preloaded resources so they are available immediately when needed. Nothing is loaded or executed at preloading stage. <br>Just a friendly heads up: do not overuse this option, because not everything are critical, <a href=':url'>read more</a>.", [
+          ':url' => 'https://www.drupal.org/node/3262804',
+        ]),
+        '#wrapper_attributes' => [
+          'class' => [
+            'form-item--preload',
+            'form-item--tooltip-bottom',
+          ],
+        ],
+      ];
+
+      $loadings = ['auto', 'eager', 'unlazy'];
+      $sliders = in_array($namespace, ['slick', 'splide']);
+      if (!empty($definitions['slider']) || $sliders) {
+        $loadings[] = 'slider';
+      }
+      $form['loading'] = [
+        '#type'         => 'select',
+        '#title'        => $this->t('Loading priority'),
+        '#options'      => array_combine($loadings, $loadings),
+        '#empty_option' => $this->t('lazy'),
+        '#weight'       => -111,
+        '#description'  => $this->t("Decide the `loading` attribute affected by the above fold aka onscreen critical contents. <ul><li>`lazy`, the default: defers loading below fold or offscreen images and iframes until users scroll near them.</li><li>`auto`: browser determines whether or not to lazily load. Only if uncertain about the above fold boundaries given different devices. </li><li>`eager`: loads right away. Similar effect like without `loading`, included for completeness. Good for above fold.</li><li>`unlazy`: explicitly removes loading attribute enforced by core. Also removes old `data-[SRC|SRCSET|LAZY]` if `No JavaScript` is disabled. Best for the above fold.</li><li>`slider`, if applicable: will `unlazy` the first visible, and leave the rest lazyloaded. Best for sliders (one visible at a time), not carousels (multiple visible slides at once).</li></ul><b>Note</b>: lazy loading images/ iframes for the above fold is anti-pattern, avoid, <a href=':url' target='_blank'>read more</a>.", [
+          ':url' => 'https://www.drupal.org/node/3262724',
+        ]),
+        '#wrapper_attributes' => [
+          'class' => [
+            'form-item--loading',
+            'form-item--tooltip-bottom',
+          ],
+        ],
+      ];
+
       $form['image_style'] = [
         '#type'        => 'select',
         '#title'       => $this->t('Image style'),
         '#options'     => $this->getEntityAsOptions('image_style'),
-        '#description' => $this->t('The content image style. This will be treated as the fallback image to override the global option <a href=":url">Responsive image 1px placeholder</a>, which is normally smaller, if Responsive image are provided. Shortly, leave it empty to make Responsive image fallback respected. Otherwise this is the only image displayed. This image style is also used to provide dimensions not only for image/iframe but also any media entity like local video, where no images are even associated with, to have the designated dimensions in tandem with aspect ratio as otherwise no UI to customize for.', [':url' => $ui_url]),
         '#weight'      => -100,
+        '#description' => $this->t('The content image style. This will be treated as the fallback image to override the global option <a href=":url">Responsive image 1px placeholder</a>, which is normally smaller, if Responsive image are provided. Shortly, leave it empty to make Responsive image fallback respected. Otherwise this is the only image displayed. This image style is also used to provide dimensions not only for image/iframe but also any media entity like local video, where no images are even associated with, to have the designated dimensions in tandem with aspect ratio as otherwise no UI to customize for.', [':url' => $ui_url]),
+        '#wrapper_attributes' => [
+          'class' => [
+            'form-item--image-style',
+            'form-item--tooltip-bottom',
+          ],
+        ],
       ];
     }
 
@@ -330,7 +380,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
           'content' => $this->t('Image linked to content'),
         ],
         '#empty_option' => $this->t('- None -'),
-        '#description'  => $this->t('May depend on the enabled supported or supportive modules: colorbox, photobox etc. Add Thumbnail style if using Photobox, Slick, or others which may need it. Try selecting "<strong>- None -</strong>" first before changing if trouble with this complex form states.'),
+        '#description'  => $this->t('May depend on the enabled supported or supportive modules: colorbox, photobox etc. See docs for details. Clear cache if they do not appear here due to being permanently cached. Add Thumbnail style if using Photobox, Slick, or others which may need it. Try selecting "<strong>- None -</strong>" first before changing if trouble with this complex form states.'),
         '#weight'       => -99,
       ];
 
@@ -338,6 +388,12 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       if (!empty($lightboxes)) {
         foreach ($lightboxes as $lightbox) {
           $name = Unicode::ucwords(str_replace('_', ' ', $lightbox));
+          if ($lightbox == 'photobox') {
+            $name .= ' (Deprecated)';
+          }
+          if ($lightbox == 'mfp') {
+            $name = 'Magnific Popup';
+          }
           $form['media_switch']['#options'][$lightbox] = $this->t('Image to @lightbox', ['@lightbox' => $name]);
         }
 
@@ -440,7 +496,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    * Returns re-usable media switch form elements.
    */
   public function mediaSwitchForm(array &$form, $definition = []) {
-    $settings   = isset($definition['settings']) ? $definition['settings'] : [];
+    $settings   = $definition['settings'] ?? [];
     $lightboxes = $this->blazyManager->getLightboxes();
     $is_token   = $this->blazyManager->getModuleHandler()->moduleExists('token');
 
@@ -504,8 +560,8 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    * Returns re-usable logic, styling and assets across fields and Views.
    */
   public function finalizeForm(array &$form, $definition = []) {
-    $namespace = isset($definition['namespace']) ? $definition['namespace'] : 'slick';
-    $settings = isset($definition['settings']) ? $definition['settings'] : [];
+    $namespace = $definition['namespace'] ?? 'slick';
+    $settings = $definition['settings'] ?? [];
     $vanilla = !empty($definition['vanilla']) ? ' form--vanilla' : '';
     $grid = !empty($definition['grid_required']) ? ' form--grid-required' : '';
     $plugind_id = !empty($definition['plugin_id']) ? ' form--plugin-' . str_replace('_', '-', $definition['plugin_id']) : '';
@@ -514,11 +570,8 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     $wide = $count > 2 ? ' form--wide form--caption-' . $count : ' form--caption-' . $count;
     $fallback = $namespace == 'slick' ? 'form--slick' : 'form--' . $namespace . ' form--slick';
     $plugins = ' form--namespace-' . $namespace;
-    $custom = isset($definition['opening_class']) ? ' ' . $definition['opening_class'] : '';
-    // @todo remove form_opening_classes for opening_class.
-    $classes = isset($definition['form_opening_classes'])
-      ? $definition['form_opening_classes']
-      : $fallback . ' form--half has-tooltip' . $wide . $vanilla . $grid . $plugind_id . $custom . $plugins;
+    $custom = $definition['opening_class'] ?? '';
+    $classes = ($fallback . ' form--half has-tooltip' . $wide . $vanilla . $grid . $plugind_id . ' ' . $custom . $plugins);
 
     if (!empty($definition['field_type'])) {
       $classes .= ' form--' . str_replace('_', '-', $definition['field_type']);
@@ -540,10 +593,17 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     ];
 
     // @todo Check if needed: 'button', 'container', 'submit'.
-    $admin_css = isset($definition['admin_css']) ? $definition['admin_css'] : '';
+    $admin_css = $definition['admin_css'] ?? FALSE;
     $admin_css = $admin_css ?: $this->blazyManager->configLoad('admin_css', 'blazy.settings');
-    $excludes  = ['details', 'fieldset', 'hidden', 'markup', 'item', 'table'];
-    $selects   = ['cache', 'optionset', 'view_mode'];
+    $excludes = ['details', 'fieldset', 'hidden', 'markup', 'item', 'table'];
+    $selects = ['cache', 'optionset', 'view_mode'];
+    $current_route_name = $this->blazyManager->getRouteName();
+
+    // Disable the admin css in the layout builder, to
+    // avoid conflicts with the active frontend theme.
+    if ($admin_css && !empty($current_route_name)) {
+      $admin_css = !str_starts_with($current_route_name, "layout_builder.");
+    }
 
     $this->blazyManager->getModuleHandler()->alter('blazy_form_element', $form, $definition);
 

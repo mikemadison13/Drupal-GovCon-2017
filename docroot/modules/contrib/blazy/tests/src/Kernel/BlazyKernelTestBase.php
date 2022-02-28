@@ -16,7 +16,7 @@ abstract class BlazyKernelTestBase extends FieldKernelTestBase {
    * Set to TRUE to strict check all configuration saved.
    *
    * Let's keep it enabled here for just in case core breaks it again related to
-   * responsive_image.styles.blazy_picture_test.
+   * resimage.styles.blazy_picture_test.
    *
    * @var bool
    * @see \Drupal\Core\Config\Development\ConfigSchemaChecker
@@ -51,7 +51,7 @@ abstract class BlazyKernelTestBase extends FieldKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->setUpVariables();

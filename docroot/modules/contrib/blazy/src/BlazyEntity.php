@@ -6,6 +6,9 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element;
+use Drupal\blazy\Media\BlazyResponsiveImage;
+use Drupal\blazy\Media\BlazyMedia;
+use Drupal\blazy\Media\BlazyOEmbedInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -66,9 +69,10 @@ class BlazyEntity implements BlazyEntityInterface {
       return [];
     }
 
-    // Supports core Media via Drupal\blazy\BlazyOEmbed::getMediaItem().
+    // Supports core Media via Drupal\blazy\Media\BlazyOEmbed::getMediaItem().
     $data['settings'] = empty($data['settings']) ? [] : $data['settings'];
 
+    $this->blazyManager->prepareData($data, $entity);
     $this->blazyManager->getCommonSettings($data['settings']);
     $this->blazyManager->getEntitySettings($data['settings'], $entity);
     $this->oembed->getMediaItem($data, $entity);
@@ -76,8 +80,9 @@ class BlazyEntity implements BlazyEntityInterface {
     $settings = &$data['settings'];
 
     // Made Responsive image also available outside formatters here.
-    if (!empty($settings['resimage']) && $settings['ratio'] == 'fluid') {
-      $this->blazyManager->setResponsiveImageDimensions($settings, FALSE);
+    $blazies = &$settings['blazies'];
+    if (!empty($blazies->get('resimage.style'))) {
+      BlazyResponsiveImage::dimensionsAndSources($settings, FALSE);
     }
 
     // Only pass to Blazy for known entities related to File or Media.
@@ -149,7 +154,7 @@ class BlazyEntity implements BlazyEntityInterface {
    * @todo make it usable for other file-related entities.
    */
   public function getFileOrMedia($file, array $settings, $use_file = TRUE) {
-    list($type,) = explode('/', $file->getMimeType(), 2);
+    [$type] = explode('/', $file->getMimeType(), 2);
     if ($type == 'video') {
       // As long as you are not being too creative by renaming or changing
       // fields provided by core, this should be your good friend.
@@ -189,7 +194,7 @@ class BlazyEntity implements BlazyEntityInterface {
       $values = $this->getFieldValue($entity, $field_name, $langcode);
 
       // Can be text, or link field.
-      $string = isset($values[0]['uri']) ? $values[0]['uri'] : (isset($values[0]['value']) ? $values[0]['value'] : '');
+      $string = $values[0]['uri'] ?? ($values[0]['value'] ?? '');
 
       if ($string && is_string($string)) {
         $string = $clean ? strip_tags($string, '<a><strong><em><span><small>') : Xss::filter($string, BlazyDefault::TAGS);
@@ -211,7 +216,7 @@ class BlazyEntity implements BlazyEntityInterface {
       // @see quickedit_preprocess_field().
       // @todo Remove when it respects plugin annotation.
       $view['#view_mode'] = '_custom';
-      $weight = isset($view['#weight']) ? $view['#weight'] : 0;
+      $weight = $view['#weight'] ?? 0;
 
       // Intentionally clean markups as this is not meant for vanilla.
       if ($multiple) {

@@ -9,6 +9,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\blazy\Dejavu\BlazyAdminExtended;
 use Drupal\slick\SlickManagerInterface;
+use Drupal\slick\SlickDefault;
 
 /**
  * Provides resusable admin functions, or form elements.
@@ -69,14 +70,14 @@ class SlickAdmin implements SlickAdminInterface {
   }
 
   /**
-   * Returns the main form elements.
+   * Modifies the main form elements.
    */
-  public function buildSettingsForm(array &$form, $definition = []) {
-    $definition['caches']           = isset($definition['caches']) ? $definition['caches'] : TRUE;
+  public function buildSettingsForm(array &$form, $definition = []): void {
+    $definition['caches']           = $definition['caches'] ?? TRUE;
     $definition['namespace']        = 'slick';
-    $definition['optionsets']       = isset($definition['optionsets']) ? $definition['optionsets'] : $this->getOptionsetsByGroupOptions('main');
-    $definition['skins']            = isset($definition['skins']) ? $definition['skins'] : $this->getSkinsByGroupOptions('main');
-    $definition['responsive_image'] = isset($definition['responsive_image']) ? $definition['responsive_image'] : TRUE;
+    $definition['optionsets']       = $definition['optionsets'] ?? $this->getOptionsetsByGroupOptions('main');
+    $definition['skins']            = $definition['skins'] ?? $this->getSkinsByGroupOptions('main');
+    $definition['responsive_image'] = $definition['responsive_image'] ?? TRUE;
 
     foreach (['optionsets', 'skins'] as $key) {
       if (isset($definition[$key]['default'])) {
@@ -115,10 +116,10 @@ class SlickAdmin implements SlickAdminInterface {
   }
 
   /**
-   * Returns the opening form elements.
+   * Modifies the opening form elements.
    */
-  public function openingForm(array &$form, &$definition = []) {
-    $path         = drupal_get_path('module', 'slick');
+  public function openingForm(array &$form, &$definition = []): void {
+    $path         = SlickDefault::getPath('module', 'slick');
     $is_slick_ui  = $this->manager()->getModuleHandler()->moduleExists('slick_ui');
     $is_help      = $this->manager()->getModuleHandler()->moduleExists('help');
     $route_name   = ['name' => 'slick_ui'];
@@ -239,9 +240,9 @@ class SlickAdmin implements SlickAdminInterface {
   }
 
   /**
-   * Returns the image formatter form elements.
+   * Modifies the image formatter form elements.
    */
-  public function mediaSwitchForm(array &$form, $definition = []) {
+  public function mediaSwitchForm(array &$form, $definition = []): void {
     $this->blazyAdmin->mediaSwitchForm($form, $definition);
 
     if (isset($form['media_switch'])) {
@@ -260,13 +261,13 @@ class SlickAdmin implements SlickAdminInterface {
   }
 
   /**
-   * Returns the image formatter form elements.
+   * Modifies the image formatter form elements.
    */
-  public function imageStyleForm(array &$form, $definition = []) {
-    $definition['thumbnail_style'] = isset($definition['thumbnail_style']) ? $definition['thumbnail_style'] : TRUE;
-    $definition['ratios'] = isset($definition['ratios']) ? $definition['ratios'] : TRUE;
+  public function imageStyleForm(array &$form, $definition = []): void {
+    $definition['thumbnail_style'] = $definition['thumbnail_style'] ?? TRUE;
+    $definition['ratios'] = $definition['ratios'] ?? TRUE;
 
-    $definition['thumbnail_effect'] = isset($definition['_thumbnail_effect']) ? $definition['_thumbnail_effect'] : [
+    $definition['thumbnail_effect'] = $definition['_thumbnail_effect'] ?? [
       'hover' => $this->t('Hoverable'),
       'grid'  => $this->t('Static grid'),
     ];
@@ -291,9 +292,9 @@ class SlickAdmin implements SlickAdminInterface {
   }
 
   /**
-   * Returns re-usable fieldable formatter form elements.
+   * Modifies re-usable fieldable formatter form elements.
    */
-  public function fieldableForm(array &$form, $definition = []) {
+  public function fieldableForm(array &$form, $definition = []): void {
     $this->blazyAdmin->fieldableForm($form, $definition);
 
     if (isset($form['thumbnail'])) {
@@ -307,9 +308,9 @@ class SlickAdmin implements SlickAdminInterface {
   }
 
   /**
-   * Returns re-usable grid elements across Slick field formatter and Views.
+   * Modifies re-usable grid elements across Slick field formatter and Views.
    */
-  public function gridForm(array &$form, $definition = []) {
+  public function gridForm(array &$form, $definition = []): void {
     if (!isset($form['grid'])) {
       $this->blazyAdmin->gridForm($form, $definition);
     }
@@ -322,9 +323,9 @@ class SlickAdmin implements SlickAdminInterface {
   }
 
   /**
-   * Returns the closing ending form elements.
+   * Modifies the closing ending form elements.
    */
-  public function closingForm(array &$form, $definition = []) {
+  public function closingForm(array &$form, $definition = []): void {
     if (empty($definition['_views']) && !empty($definition['field_name'])) {
       $form['use_theme_field'] = [
         '#title'       => $this->t('Use field template'),
@@ -362,7 +363,7 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * Returns overridable options to re-use one optionset.
    */
-  public function getOverridableOptions() {
+  public function getOverridableOptions(): array {
     $options = [
       'arrows'        => $this->t('Arrows'),
       'autoplay'      => $this->t('Autoplay'),
@@ -381,7 +382,7 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * Returns default layout options for the core Image, or Views.
    */
-  public function getLayoutOptions() {
+  public function getLayoutOptions(): array {
     return [
       'bottom'      => $this->t('Caption bottom'),
       'top'         => $this->t('Caption top'),
@@ -402,7 +403,7 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * Returns available slick optionsets by group.
    */
-  public function getOptionsetsByGroupOptions($group = '') {
+  public function getOptionsetsByGroupOptions($group = ''): array {
     $optionsets = $groups = $ungroups = [];
     $slicks = $this->manager->entityLoadMultiple('slick');
     foreach ($slicks as $slick) {
@@ -429,28 +430,28 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * Returns available slick skins for select options.
    */
-  public function getSkinsByGroupOptions($group = '') {
+  public function getSkinsByGroupOptions($group = ''): array {
     return $this->manager->skinManager()->getSkinsByGroup($group, TRUE);
   }
 
   /**
    * Return the field formatter settings summary.
    */
-  public function getSettingsSummary($definition = []) {
+  public function getSettingsSummary($definition = []): array {
     return $this->blazyAdmin->getSettingsSummary($definition);
   }
 
   /**
    * Returns available fields for select options.
    */
-  public function getFieldOptions($target_bundles = [], $allowed_field_types = [], $entity_type_id = 'media', $target_type = '') {
+  public function getFieldOptions($target_bundles = [], $allowed_field_types = [], $entity_type_id = 'media', $target_type = ''): array {
     return $this->blazyAdmin->getFieldOptions($target_bundles, $allowed_field_types, $entity_type_id, $target_type);
   }
 
   /**
-   * Returns re-usable logic, styling and assets across fields and Views.
+   * Modifies re-usable logic, styling and assets across fields and Views.
    */
-  public function finalizeForm(array &$form, $definition = []) {
+  public function finalizeForm(array &$form, $definition = []): void {
     $this->blazyAdmin->finalizeForm($form, $definition);
   }
 

@@ -21,9 +21,8 @@ use Drupal\blazy\Blazy;
  *   config_export = {
  *     "id",
  *     "name",
- *     "label",
- *     "status",
  *     "weight",
+ *     "label",
  *     "group",
  *     "skin",
  *     "breakpoints",

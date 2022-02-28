@@ -6,6 +6,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\slick\Entity\Slick;
+use Drupal\slick\SlickDefault;
 
 /**
  * Extends base form for slick instance configuration form.
@@ -17,7 +18,7 @@ class SlickForm extends SlickFormBase {
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form      = parent::form($form, $form_state);
-    $path      = drupal_get_path('module', 'slick');
+    $path      = SlickDefault::getPath('module', 'slick');
     $slick     = $this->entity;
     $options   = $slick->getOptions() ?: [];
     $tooltip   = ['class' => ['is-tooltip']];
@@ -133,10 +134,10 @@ class SlickForm extends SlickFormBase {
     ];
 
     foreach ($this->getFormElements() as $name => $element) {
-      $element['default'] = isset($element['default']) ? $element['default'] : '';
+      $element['default'] = $element['default'] ?? '';
       $default_value = (NULL !== $slick->getSetting($name)) ? $slick->getSetting($name) : $element['default'];
       $form['settings'][$name] = [
-        '#title'         => isset($element['title']) ? $element['title'] : '',
+        '#title'         => $element['title'] ?? '',
         '#default_value' => $default_value,
       ];
 
@@ -224,7 +225,7 @@ class SlickForm extends SlickFormBase {
     }
 
     $user_input = $form_state->getUserInput();
-    $breakpoints_input = isset($user_input['breakpoints']) ? (int) $user_input['breakpoints'] : $breakpoints_count;
+    $breakpoints_input = (int) ($user_input['breakpoints'] ?? $breakpoints_count);
 
     if ($breakpoints_input && ($breakpoints_input != $breakpoints_count)) {
       $form_state->setValue('breakpoints_count', $breakpoints_input);
@@ -301,11 +302,11 @@ class SlickForm extends SlickFormBase {
 
               // @fixme, boolean default is ignored at index 0 only.
               foreach ($responsive as $k => $item) {
-                $item['default'] = isset($item['default']) ? $item['default'] : '';
+                $item['default'] = $item['default'] ?? '';
                 $form['responsives']['responsive'][$i][$key][$k] = [
-                  '#title'         => isset($item['title']) ? $item['title'] : '',
-                  '#default_value' => isset($options['responsives']['responsive'][$i][$key][$k]) ? $options['responsives']['responsive'][$i][$key][$k] : $item['default'],
-                  '#description'   => isset($item['description']) ? $item['description'] : '',
+                  '#title'         => $item['title'] ?? '',
+                  '#default_value' => $options['responsives']['responsive'][$i][$key][$k] ?? $item['default'],
+                  '#description'   => $item['description'] ?? '',
                   '#attributes'    => $tooltip,
                 ];
 
@@ -765,7 +766,7 @@ class SlickForm extends SlickFormBase {
       $defaults = Slick::defaultSettings();
       foreach ($elements as $name => $element) {
         $default = $element['type'] == 'checkbox' ? FALSE : '';
-        $elements[$name]['default'] = isset($defaults[$name]) ? $defaults[$name] : $default;
+        $elements[$name]['default'] = $defaults[$name] ?? $default;
       }
 
       foreach (Slick::getDependentOptions() as $parent => $items) {
@@ -960,7 +961,7 @@ class SlickForm extends SlickFormBase {
 
     // Check if rows is set to 1 and show a warning.
     // See: https://www.drupal.org/project/slick/issues/3123787#comment-13532059
-    if (isset($form['settings']['rows']['#value']) && $form['settings']['rows']['#value'] == 1) {
+    if (($form['settings']['rows']['#value'] ?? -1) == 1) {
       $message = $this->t('Hint: You set Slicks "rows" option to "1" (optionset: %optionset), this will result in markup issues on Slick versions >1.9.0. Consider to set it to "0" instead, or leave it as if not using >1.9.0. Check out <a href=":url">this issue</a> for further information.', [
         ':url' => 'https://www.drupal.org/project/slick/issues/3123787',
         '%optionset' => $form['name']['#value'],
@@ -969,7 +970,7 @@ class SlickForm extends SlickFormBase {
     }
     // Check if slidesPerRow is set to 0 and show a warning.
     // See: https://www.drupal.org/project/slick/issues/3123787#comment-13532059
-    if (isset($form['settings']['slidesPerRow']['#value']) && $form['settings']['slidesPerRow']['#value'] == 0) {
+    if (($form['settings']['slidesPerRow']['#value'] ?? -1) == 0) {
       $message = $this->t('Important: You set Slicks "slidesPerRow" option to "0" (optionset: %optionset), this will result in browser crashes >1.9.0. Consider to set it to "1" instead. Consider to set it to "0" instead, or leave it as if not using >1.9.0. Check out <a href=":url">this issue</a> for further information.', [
         ':url' => 'https://www.drupal.org/project/slick/issues/3123787',
         '%optionset' => $form['name']['#value'],

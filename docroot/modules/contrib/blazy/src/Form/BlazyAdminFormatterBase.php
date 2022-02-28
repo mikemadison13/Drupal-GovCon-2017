@@ -4,6 +4,7 @@ namespace Drupal\blazy\Form;
 
 use Drupal\Core\Url;
 use Drupal\Component\Utility\Unicode;
+use Drupal\blazy\Blazy;
 
 /**
  * A base for field formatter admin to have re-usable methods in one place.
@@ -41,7 +42,10 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
     $is_responsive = function_exists('responsive_image_get_image_dimensions');
 
     if (empty($definition['no_image_style'])) {
-      $form['image_style'] = $this->baseForm($definition)['image_style'];
+      $base = $this->baseForm($definition);
+      foreach (['preload', 'loading', 'image_style'] as $key) {
+        $form[$key] = $base[$key];
+      }
     }
 
     if (!empty($definition['thumbnail_style'])) {
@@ -64,7 +68,7 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
       $form['thumbnail_effect'] = [
         '#type'    => 'select',
         '#title'   => $this->t('Thumbnail effect'),
-        '#options' => isset($definition['thumbnail_effect']) ? $definition['thumbnail_effect'] : [],
+        '#options' => $definition['thumbnail_effect'],
         '#weight'  => -100,
       ];
     }
@@ -73,7 +77,7 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
   /**
    * Return the field formatter settings summary.
    */
-  public function getSettingsSummary($definition = []) {
+  public function getSettingsSummary($definition = []): array {
     if (empty($definition['settings'])) {
       return [];
     }
@@ -92,7 +96,7 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
     ];
 
     $summary  = [];
-    $enforced = isset($definition['enforced']) ? $definition['enforced'] : $enforced;
+    $enforced = $definition['enforced'] ?? $enforced;
     $settings = array_filter($definition['settings']);
 
     foreach ($definition['settings'] as $key => $setting) {
@@ -146,7 +150,7 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
   public function getExcludedSettingsSummary(array &$definition = []) {
     $settings     = &$definition['settings'];
     $excludes     = empty($definition['excludes']) ? [] : $definition['excludes'];
-    $plugin_id    = isset($definition['plugin_id']) ? $definition['plugin_id'] : '';
+    $plugin_id    = $definition['plugin_id'] ?? '';
     $blazy        = $plugin_id && strpos($plugin_id, 'blazy') !== FALSE;
     $image_styles = $this->getEntityAsOptions('image_style');
     $lightboxes   = $this->blazyManager->getLightboxes();
@@ -201,7 +205,7 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
 
     // Fix for Views UI not recognizing Media bundles, unlike Formatters.
     if (empty($target_bundles)) {
-      $bundle_service = \Drupal::service('entity_type.bundle.info');
+      $bundle_service = Blazy::service('entity_type.bundle.info');
       $target_bundles = $bundle_service->getBundleInfo($entity_type);
     }
 
@@ -261,8 +265,8 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
    */
   public function settingsSummary($plugin, $definition = []) {
     @trigger_error('settingsSummary is deprecated in blazy:8.x-1.0 and is removed from blazy:8.x-2.0. Use \Drupal\blazy\BlazyAdminFormatterBase::getSettingsSummary() instead. See https://www.drupal.org/node/3103018', E_USER_DEPRECATED);
-    $definition = isset($definition) ? $definition : $plugin->getScopedFormElements();
-    $definition['settings'] = isset($definition['settings']) ? $definition['settings'] : $plugin->getSettings();
+    $definition = $definition ?? $plugin->getScopedFormElements();
+    $definition['settings'] = $definition['settings'] ?? $plugin->getSettings();
 
     return $this->getSettingsSummary($definition);
   }

@@ -1,6 +1,6 @@
 
 ***
-# <a name="composer"></a>INSTALLING THIRD-PARTY LIBRARIES VIA COMPOSER
+## <a name="composer"></a>INSTALLING THIRD-PARTY LIBRARIES VIA COMPOSER
 
 Until Drupal has an official [core management of the 3rd-party front-end libraries](https://www.drupal.org/project/drupal/issues/2873160), there are various ways to
 install third party bower (deprecated)/ npm asset libraries.
@@ -18,7 +18,7 @@ plugins, and other workarounds to make Composer workflow easier. As many
 alternatives, it is not covered here. Please find more info on the
 above-mentioned issues.
 
-## VIA ASSET-PACKAGIST.ORG
+### VIA ASSET-PACKAGIST.ORG
 If using [asset-packagist.org](https://asset-packagist.org/), regardless cons,
 be sure to set up your composer.json correctly, some distros use it, see
 [Slick](https://drupal.org/project/slick) project for the supporting distros to
@@ -57,17 +57,17 @@ Normally unwanted trailing commas.
   `composer require oomphinc/composer-installers-extender`
 
 4. Then require any libraries as usual only prefixed with `npm-asset`, or
-   `bower-asset` (deprecated):  
-   + Install [Blazy](https://www.drupal.org/project/blazy):  
-   `composer require npm-asset/blazy:"^1.8.2"`
+   `bower-asset` (deprecated). The versions must be re-checked, just samples:
+   + Install [Blazy](https://www.drupal.org/project/blazy):
+     `composer require npm-asset/blazy:^1.8.2` <= not required at Blazy 2.6.
    + If using [Slick](https://www.drupal.org/project/slick), the namespace is
-   `slick-carousel`, not `slick`. The supported versions are `1.6.0 - 1.8.0`,
-   not `1.8.1` up, use exact numbers:  
-   `composer require npm-asset/slick-carousel:"1.8.0"`
-   + If using [Splide](https://www.drupal.org/project/splide):  
-   `composer require npm-asset/splidejs--splide:"^2"`
-   + If using Colorbox:  
-   `composer require npm-asset/jquery-colorbox:"^1.6.4"`
+     `slick-carousel`, not `slick`. The supported versions are `1.6.0 - 1.8.0`,
+     not `1.8.1` up, use exact numbers:
+     `composer require npm-asset/slick-carousel:1.8.0`
+   + If using [Splide](https://www.drupal.org/project/splide):
+     `composer require npm-asset/splidejs--splide:^3`
+   + If using Colorbox, verify the latest supported version:
+     `composer require npm-asset/jquery-colorbox:^1.6.4`
    + etc.
 
 5. To update:  

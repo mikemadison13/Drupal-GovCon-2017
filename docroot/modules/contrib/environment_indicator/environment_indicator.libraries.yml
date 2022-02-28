@@ -9,3 +9,4 @@ drupal.environment_indicator:
       css/environment_indicator.css: {}
   dependencies:
     - color/drupal.color
+    - core/jquery.once

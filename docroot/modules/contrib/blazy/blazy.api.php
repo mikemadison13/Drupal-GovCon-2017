@@ -3,6 +3,8 @@
 /**
  * @file
  * Hooks and API provided by the Blazy module.
+ *
+ * @todo needs updating by the new decoupled lazy script options.
  */
 
 /**
@@ -25,6 +27,8 @@
  *
  *     // Explicitly request for Blazy.
  *     // This allows Slick lazyLoad to not load Blazy.
+ *     // May be ignored by your defined options at Blazy UI since 2.6+, unless
+ *     // flagged by a bool `unlazy` in tandem with `loading` option.
  *     'lazy' => 'blazy',
  *
  *     // Optionally provide an image style. Valid URI is a must:
@@ -56,7 +60,7 @@
  *   return $build;
  * }
  * @endcode
- * @see \Drupal\blazy\Blazy::preprocessBlazy()
+ * @see \Drupal\blazy\BlazyTheme::blazy()
  * @see \Drupal\blazy\BlazyDefault::imageSettings()
  *
  * A multiple image sample.
@@ -106,7 +110,7 @@
  * Pre-render callback sample to modify/ extend Blazy output.
  * @code
  * function my_module_pre_render(array $image) {
- *   $settings = isset($image['#settings']) ? $image['#settings'] : [];
+ *   $settings = $image['#settings'] ?? [];
  *
  *   // Video's HREF points to external site, adds URL to local image.
  *   if (!empty($settings['box_url']) && !empty($settings['embed_url'])) {
@@ -259,7 +263,15 @@ function hook_blazy_settings_alter(array &$build, $items) {
   // See https://drupal.org/node/2908861.
   if (isset($settings['entity_id'])
     && in_array($settings['entity_id'], [45, 67])) {
-    $settings['placeholder'] = '/blank.gif';
+    // After blazy:2.7+.
+    if (isset($settings['blazies'])) {
+      $blazies = &$settings['blazies'];
+      $blazies->set('ui.placeholder', '/blank.gif');
+    }
+    else {
+      // Before blazy:2.7.
+      $settings['placeholder'] = '/blank.gif';
+    }
   }
 
   // Alternatively override views blocks identified by `current_view_mode` with
@@ -270,7 +282,15 @@ function hook_blazy_settings_alter(array &$build, $items) {
   $blazy = isset($settings['plugin_id']) && $settings['plugin_id'] == 'blazy_media';
   $rewriten = ['block_categories', 'block_popular', 'block_related'];
   if ($blazy && isset($settings['current_view_mode']) && in_array($settings['current_view_mode'], $rewriten)) {
-    $settings['placeholder'] = '/blank.svg';
+    // After blazy:2.7+.
+    if (isset($settings['blazies'])) {
+      $blazies = &$settings['blazies'];
+      $blazies->set('ui.placeholder', '/blank.svg');
+    }
+    else {
+      // Before blazy:2.7.
+      $settings['placeholder'] = '/blank.svg';
+    }
   }
 }
 
@@ -292,7 +312,7 @@ function hook_blazy_settings_alter(array &$build, $items) {
  */
 function hook_blazy_form_element_alter(array &$form, array $definition = []) {
   // Limit the scope to Slick formatters, blazy, gridstack, etc. Or swap em all.
-  if (isset($definition['namespace']) && $definition['namespace'] == 'slick') {
+  if (($definition['namespace'] ?? FALSE) == 'slick') {
     // Extend the formatter form elements as needed.
   }
 }

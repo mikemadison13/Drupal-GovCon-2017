@@ -235,7 +235,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       foreach ($this->getConstantSkins() as $group) {
         if ($skins = $this->getSkinsByGroup($group)) {
           foreach ($skins as $key => $skin) {
-            $provider = isset($skin['provider']) ? $skin['provider'] : 'slick';
+            $provider = $skin['provider'] ?? 'slick';
             $id = $provider . '.' . $group . '.' . $key;
 
             foreach (['css', 'js', 'dependencies'] as $property) {
@@ -317,10 +317,10 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
     }
 
     foreach ($this->getConstantSkins() as $group) {
-      $skin = $group == 'main' ? $attach['skin'] : (isset($attach['skin_' . $group]) ? $attach['skin_' . $group] : '');
+      $skin = $group == 'main' ? $attach['skin'] : ($attach['skin_' . $group] ?? '');
       if (!empty($skin)) {
         $skins = $this->getSkinsByGroup($group);
-        $provider = isset($skins[$skin]['provider']) ? $skins[$skin]['provider'] : 'slick';
+        $provider = $skins[$skin]['provider'] ?? 'slick';
         $load['library'][] = 'slick/' . $provider . '.' . $group . '.' . $skin;
       }
     }
@@ -346,7 +346,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
           $easing_path = 'libraries/easing/jquery.easing.min.js';
         }
       }
-      $this->easingPath = isset($easing_path) ? $easing_path : FALSE;
+      $this->easingPath = $easing_path ?? FALSE;
     }
     return $this->easingPath;
   }
@@ -357,24 +357,11 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   public function getSlickPath() {
     if (!isset($this->slickPath)) {
       if ($this->config('library') == 'accessible-slick') {
-        $library_path = slick_libraries_get_path('accessible-slick');
-        if (!$library_path) {
-          $path = 'libraries/accessible-slick';
-        }
+        $this->slickPath = slick_libraries_get_path('accessible-slick');
       }
       else {
-        $library_path = slick_libraries_get_path('slick-carousel') ?: slick_libraries_get_path('slick');
-        if (!$library_path) {
-          $path = 'libraries/slick-carousel';
-          if (!is_file($this->root . '/' . $path . '/slick/slick.min.js')) {
-            $path = 'libraries/slick';
-          }
-        }
+        $this->slickPath = slick_libraries_get_path('slick-carousel') ?: slick_libraries_get_path('slick');
       }
-      if (isset($path) && is_file($this->root . '/' . $path . '/slick/slick.min.js')) {
-        $library_path = $path;
-      }
-      $this->slickPath = $library_path;
     }
     return $this->slickPath;
   }
@@ -423,17 +410,6 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       $this->isBreaking = FALSE;
       if ($this->config('library') == 'accessible-slick') {
         $this->isBreaking = TRUE;
-      }
-      else {
-        // The master reverted from 1.8.1 - 1.9.0 to 1.8.0. This is for old
-        // downloads. See https://github.com/kenwheeler/slick/pull/3688
-        // @todo Remove after another check.
-        if ($path = $this->getSlickPath()) {
-          if ($content = \file_get_contents($this->root . '/' . $path . '/package.json')) {
-            $this->isBreaking = strpos($content, '"version": "1.9.0"') !== FALSE
-              || strpos($content, '"version": "1.8.1"') !== FALSE;
-          }
-        }
       }
     }
     return $this->isBreaking;

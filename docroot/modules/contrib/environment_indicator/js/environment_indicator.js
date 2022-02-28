@@ -30,16 +30,18 @@
 
   Drupal.behaviors.environmentIndicatorTinycon = {
     attach: function (context, settings) {
-      if (typeof(settings.environmentIndicator) != 'undefined' &&
-        typeof(settings.environmentIndicator.addFavicon) != 'undefined' &&
-        settings.environmentIndicator.addFavicon) {
-        // Draw favicon label.
-        Tinycon.setBubble(settings.environmentIndicator.name.slice(0, 1));
-        Tinycon.setOptions({
-          background: settings.environmentIndicator.bgColor,
-          colour: settings.environmentIndicator.fgColor
-        });
-      }
+      $('html').once('env-ind-tinycon').each(function() {
+        if (typeof(settings.environmentIndicator) != 'undefined' &&
+          typeof(settings.environmentIndicator.addFavicon) != 'undefined' &&
+          settings.environmentIndicator.addFavicon) {
+          // Draw favicon label.
+          Tinycon.setBubble(settings.environmentIndicator.name.slice(0, 1).trim());
+          Tinycon.setOptions({
+            background: settings.environmentIndicator.bgColor,
+            colour: settings.environmentIndicator.fgColor
+          });
+        }
+      })
     }
   }
 

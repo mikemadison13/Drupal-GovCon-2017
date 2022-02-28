@@ -17,9 +17,9 @@ use Drupal\slick\Entity\Slick;
 function template_preprocess_slick(&$variables) {
   $element   = $variables['element'];
   $defaults  = SlickDefault::htmlSettings();
-  $settings  = isset($element['#settings']) ? array_merge($defaults, $element['#settings']) : $defaults;
-  $customs   = isset($element['#options']) ? $element['#options'] : [];
-  $optionset = isset($element['#optionset']) ? $element['#optionset'] : Slick::loadWithFallback($settings['optionset']);
+  $settings  = array_merge($defaults, (array) ($element['#settings'] ?? []));
+  $customs   = $element['#options'] ?? [];
+  $optionset = $element['#optionset'] ?? Slick::loadWithFallback($settings['optionset']);
   $js        = $customs ? array_merge($optionset->getSettings(), $customs) : $optionset->getSettings();
 
   // Prepare attributes.
@@ -33,11 +33,11 @@ function template_preprocess_slick(&$variables) {
   $attributes['id'] = $display == 'thumbnail' ? $id . '-thumbnail' : $id;
 
   // @see SlickManager::buildGrid(), and this should make sense.
-  $settings['count']   = isset($settings['count']) ? $settings['count'] : count($element['#items']);
+  $settings['count']   = $settings['count'] ?? count($element['#items']);
   $settings['unslick'] = $settings['unslick'] || $settings['count'] == 1;
 
   foreach (SlickDefault::jsSettings() as $key => $default) {
-    $settings[$key] = isset($js[$key]) ? strip_tags($js[$key]) : $default;
+    $settings[$key] = strip_tags($js[$key] ?? $default);
   }
 
   // Blazy can still lazyload an unslick.
@@ -87,7 +87,7 @@ function template_preprocess_slick(&$variables) {
     }
 
     // Add the configuration as JSON object into the slick container.
-    $js = isset($variables['js']) ? array_merge($js, $variables['js']) : $js;
+    $js = array_merge($js, (array) ($variables['js'] ?? []));
     if ($json = $optionset->removeDefaultValues($js)) {
       $content_attributes->setAttribute('data-slick', Json::encode($json));
     }
@@ -101,9 +101,9 @@ function template_preprocess_slick(&$variables) {
   // Process individual item.
   $variables['items'] = [];
   foreach ($element['#items'] as $delta => $item) {
-    $item_settings = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
-    $item_attrs = isset($item['attributes']) ? $item['attributes'] : [];
-    $content_attrs = isset($item['content_attributes']) ? $item['content_attributes'] : [];
+    $item_settings = array_merge($settings, (array) ($item['settings'] ?? []));
+    $item_attrs = (array) ($item['attributes'] ?? []);
+    $content_attrs = (array) ($item['content_attributes'] ?? []);
     $item_settings['current_item'] = $display;
 
     unset($item['settings'], $item['attributes'], $item['content_attributes'], $item['item']);
@@ -127,7 +127,7 @@ function template_preprocess_slick(&$variables) {
  */
 function template_preprocess_slick_wrapper(&$variables) {
   foreach (['attributes', 'items', 'settings'] as $key) {
-    $variables[$key] = isset($variables['element']["#$key"]) ? $variables['element']["#$key"] : [];
+    $variables[$key] = $variables['element']["#$key"] ?? [];
   }
 }
 
@@ -138,12 +138,12 @@ function _slick_preprocess_slick_item(&$variables) {
   $element = $variables['element'];
   foreach (['attributes', 'content_attributes', 'delta', 'item', 'settings'] as $key) {
     $default = $key == 'delta' ? NULL : [];
-    $variables[$key] = isset($element["#$key"]) ? $element["#$key"] : $default;
+    $variables[$key] = $element["#$key"] ?? $default;
   }
 
   // Because Twig prepends new classes, not appends as expected by BEM.
   $attributes = &$variables['attributes'];
-  $classes = empty($attributes['class']) ? [] : (array) $attributes['class'];
+  $classes = (array) ($attributes['class'] ?? []);
   $attributes['class'] = array_merge(['slick__slide', 'slide'], $classes);
 }
 
@@ -169,7 +169,7 @@ function template_preprocess_slick_slide(&$variables) {
 
   // All slide types -- main, thumbnail, grid, overlay -- may have captions.
   foreach (['alt', 'data', 'link', 'overlay', 'title'] as $key) {
-    $variables['item']['caption'][$key] = isset($variables['item']['caption'][$key]) ? $variables['item']['caption'][$key] : [];
+    $variables['item']['caption'][$key] = $variables['item']['caption'][$key] ?? [];
   }
 
   $item = &$variables['item'];
@@ -180,7 +180,7 @@ function template_preprocess_slick_slide(&$variables) {
   // fullwidth: If full skins, add wrappers to hold caption and overlay.
   // detroy: Remove .slide__content if it is an enforced unslick grid.
   // wrapper: Don't add divities for a single item to have clean markups.
-  $item['slide']     = isset($item['slide']) ? $item['slide'] : [];
+  $item['slide']     = $item['slide'] ?? [];
   $item['caption']   = array_filter($item['caption']);
   $sets['split']     = !empty($item) && (!empty($sets['caption']) || !empty($sets['title']));
   $sets['data']      = !empty($item['caption']['alt']) || !empty($item['caption']['title']) || !empty($item['caption']['data']);
@@ -206,9 +206,9 @@ function template_preprocess_slick_slide(&$variables) {
 function template_preprocess_slick_grid(&$variables) {
   $element                 = $variables['element'];
   $variables['settings']   = $sets = $element['#settings'];
-  $variables['delta']      = isset($element['#delta']) ? $element['#delta'] : 0;
+  $variables['delta']      = $element['#delta'] ?? 0;
   $variables['grid_id']    = 'grid';
-  $variables['attributes'] = isset($variables['attributes']) ? $variables['attributes'] : [];
+  $variables['attributes'] = $variables['attributes'] ?? [];
 
   $variables['items'] = [];
   foreach ($variables['element']['#items'] as $delta => $item) {

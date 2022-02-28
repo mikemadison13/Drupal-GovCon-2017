@@ -1,6 +1,5 @@
 
 ***
-***
 ## <a name="troubleshooting"></a>TROUBLESHOOTING
 Please read this before submitting issues. This 5-year+-old brief is worth
 reading to save you from headaches.

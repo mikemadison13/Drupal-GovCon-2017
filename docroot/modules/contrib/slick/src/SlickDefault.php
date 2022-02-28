@@ -139,4 +139,29 @@ class SlickDefault extends BlazyDefault {
     ];
   }
 
+  /**
+   * Returns a wrapper to pass tests, or DI where adding params is troublesome.
+   *
+   * @todo remove for Blazy::pathResolver() post Blazy:2.6+.
+   */
+  public static function pathResolver() {
+    return \Drupal::hasService('extension.path.resolver') ? \Drupal::service('extension.path.resolver') : NULL;
+  }
+
+  /**
+   * Returns the commonly used path, or just the base path.
+   *
+   * @todo remove drupal_get_path check when min D9.3.
+   */
+  public static function getPath($type, $name, $absolute = FALSE): string {
+    $function = 'drupal_get_path';
+    if ($resolver = self::pathResolver()) {
+      $path = $resolver->getPath($type, $name);
+    }
+    else {
+      $path = is_callable($function) ? $function($type, $name) : '';
+    }
+    return $absolute ? \base_path() . $path : $path;
+  }
+
 }

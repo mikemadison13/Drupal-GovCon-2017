@@ -155,6 +155,8 @@ abstract class SlickFormBase extends EntityForm {
    * @return array
    *   An array of available jQuery Easing options as fallback for browsers that
    *   don't support pure CSS easing.
+   *
+   * @todo remove for Drupal\blazy\Dejavu\BlazyEasingTrait before 3.0.0.
    */
   public function getJsEasingOptions() {
     if (!isset($this->jsEasingOptions)) {
@@ -208,6 +210,7 @@ abstract class SlickFormBase extends EntityForm {
    * @see https://github.com/kenwheeler/slick/issues/118
    * @see http://matthewlein.com/ceaser/
    * @see http://www.w3.org/TR/css3-transitions/
+   * @todo remove for Drupal\blazy\Dejavu\BlazyEasingTrait before 3.0.0.
    */
   public function getCssEasingOptions($map = FALSE) {
     $css_easings = [];
@@ -248,7 +251,7 @@ abstract class SlickFormBase extends EntityForm {
     ];
 
     foreach ($available_easings as $key => $easing) {
-      list($readable_easing, $css_easing) = array_pad(array_map('trim', explode("|", $easing, 2)), 2, NULL);
+      [$readable_easing, $css_easing] = array_pad(array_map('trim', explode("|", $easing, 2)), 2, NULL);
       $css_easings[$key] = $map ? $easing : $readable_easing;
       unset($css_easing);
     }
@@ -263,12 +266,14 @@ abstract class SlickFormBase extends EntityForm {
    *
    * @return string
    *   A string of unfriendly bezier equivalent, or NULL.
+   *
+   * @todo remove for Drupal\blazy\Dejavu\BlazyEasingTrait before 3.0.0.
    */
   public function getBezier($easing = NULL) {
     $css_easing = '';
     if ($easing) {
       $easings = $this->getCssEasingOptions(TRUE);
-      list($readable_easing, $bezier) = array_pad(array_map('trim', explode("|", $easings[$easing], 2)), 2, NULL);
+      [$readable_easing, $bezier] = array_pad(array_map('trim', explode("|", $easings[$easing], 2)), 2, NULL);
       $css_easing = $bezier;
       unset($readable_easing);
     }
