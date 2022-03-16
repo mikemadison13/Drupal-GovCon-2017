@@ -35,7 +35,7 @@ export default function (this: Mmenu) {
         /** The listitems */
         const listitems: HTMLElement[] = [];
         DOM.children(panel, '.mm-listview').forEach((listview) => {
-            listitems.push(...DOM.children(listview));
+            listitems.push(...DOM.children(listview, '.mm-listitem'));
         });
 
         counter.innerHTML = DOM.filterLI(listitems).length.toString();
@@ -44,7 +44,7 @@ export default function (this: Mmenu) {
     /** Mutation observer the the listitems. */
     const listitemObserver = new MutationObserver((mutationsList) => {
         mutationsList.forEach((mutation) => {
-            if (mutation.attributeName == 'class') {
+            if (mutation.attributeName == 'class') {                
                 count((mutation.target as HTMLLIElement).closest('.mm-panel'));
             }
         });

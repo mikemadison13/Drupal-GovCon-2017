@@ -1,3 +1,17 @@
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) {
+    if (!privateMap.has(receiver)) {
+        throw new TypeError("attempted to set private field on non-instance");
+    }
+    privateMap.set(receiver, value);
+    return value;
+};
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) {
+    if (!privateMap.has(receiver)) {
+        throw new TypeError("attempted to get private field on non-instance");
+    }
+    return privateMap.get(receiver);
+};
+var _panelObserver, _listviewObserver, _listitemObserver;
 import OPTIONS from './options';
 import CONFIGS from './configs';
 import translate from './translations';
@@ -18,6 +32,12 @@ export default class Mmenu {
      * @param {object} 				[configs]	Configuration options for the menu.
      */
     constructor(menu, options, configs) {
+        /** MutationObserver for adding a listview to a panel. */
+        _panelObserver.set(this, void 0);
+        /** MutationObserver for adding a listitem to a listview. */
+        _listviewObserver.set(this, void 0);
+        /** MutationObserver for adding a listview to a listitem. */
+        _listitemObserver.set(this, void 0);
         //	Extend options and configuration from defaults.
         this.opts = extend(options, OPTIONS);
         this.conf = extend(configs, CONFIGS);
@@ -41,7 +61,6 @@ export default class Mmenu {
         this.trigger('init:before');
         this._initObservers();
         this._initAddons();
-        this._initExtensions();
         this._initHooks();
         this._initAPI();
         this._initMenu();
@@ -123,9 +142,10 @@ export default class Mmenu {
      * Close a panel.
      * @param {HTMLElement} panel               Panel to close.
      * @param {boolean}     [animation=true]    Whether or not to use an animation.
+     * @param {boolean}     [setfocus=true]     Whether or not to set focus to the panel.
      */
-    closePanel(panel, animation = true) {
-        if (!panel) {
+    closePanel(panel, animation = true, setfocus = true) {
+        if (!panel || !panel.matches('.mm-panel--opened')) {
             return;
         }
         //	Invoke "before" hook.
@@ -139,13 +159,20 @@ export default class Mmenu {
             //  ... open its parent...
             if (panel.dataset.mmParent) {
                 const parent = DOM.find(this.node.pnls, `#${panel.dataset.mmParent}`)[0];
-                this.openPanel(parent, animation);
-                /// ... or the first panel.
+                this.openPanel(parent, animation, setfocus);
+                // ... or the last opened
             }
             else {
-                const firstPanel = DOM.children(this.node.pnls, '.mm-panel')[0];
-                if (panel !== firstPanel) {
-                    this.openPanel(firstPanel, animation);
+                const lastPanel = DOM.children(this.node.pnls, '.mm-panel--parent').pop();
+                if (lastPanel && lastPanel !== panel) {
+                    this.openPanel(lastPanel, animation, setfocus);
+                    // ... or the first panel.
+                }
+                else {
+                    const firstPanel = DOM.children(this.node.pnls, '.mm-panel')[0];
+                    if (firstPanel && firstPanel !== panel) {
+                        this.openPanel(firstPanel, animation, setfocus);
+                    }
                 }
             }
         }
@@ -210,7 +237,7 @@ export default class Mmenu {
      * Create the observers.
      */
     _initObservers() {
-        this.panelObserver = new MutationObserver((mutationsList) => {
+        __classPrivateFieldSet(this, _panelObserver, new MutationObserver((mutationsList) => {
             mutationsList.forEach((mutation) => {
                 mutation.addedNodes.forEach((listview) => {
                     if (listview.matches(this.conf.panelNodetype.join(', '))) {
@@ -218,24 +245,23 @@ export default class Mmenu {
                     }
                 });
             });
-        });
-        this.listviewObserver = new MutationObserver((mutationsList) => {
+        }));
+        __classPrivateFieldSet(this, _listviewObserver, new MutationObserver((mutationsList) => {
             mutationsList.forEach((mutation) => {
                 mutation.addedNodes.forEach((listitem) => {
                     this._initListitem(listitem);
                 });
             });
-        });
-        this.listitemObserver = new MutationObserver((mutationsList) => {
+        }));
+        __classPrivateFieldSet(this, _listitemObserver, new MutationObserver((mutationsList) => {
             mutationsList.forEach((mutation) => {
                 mutation.addedNodes.forEach((subpanel) => {
-                    console.log(subpanel);
                     if (subpanel === null || subpanel === void 0 ? void 0 : subpanel.matches(this.conf.panelNodetype.join(', '))) {
                         this._initSubPanel(subpanel);
                     }
                 });
             });
-        });
+        }));
     }
     /**
      * Create the API.
@@ -272,32 +298,6 @@ export default class Mmenu {
         }
         //	Invoke "after" hook.
         this.trigger('initAddons:after');
-    }
-    /**
-     * Initialize the extensions specified in the options.
-     */
-    _initExtensions() {
-        //	Invoke "before" hook.
-        this.trigger('initExtensions:before');
-        //	Convert array to object with array.
-        if (type(this.opts.extensions) == 'array') {
-            this.opts.extensions = {
-                all: this.opts.extensions,
-            };
-        }
-        //	Loop over object.
-        Object.keys(this.opts.extensions).forEach((query) => {
-            let classnames = this.opts.extensions[query].map((extension) => 'mm-menu--' + extension);
-            if (classnames.length) {
-                media.add(query, () => {
-                    this.node.menu.classList.add(...classnames);
-                }, () => {
-                    this.node.menu.classList.remove(...classnames);
-                });
-            }
-        });
-        //	Invoke "after" hook.
-        this.trigger('initExtensions:after');
     }
     /**
      * Initialize the menu.
@@ -417,7 +417,7 @@ export default class Mmenu {
             this._initListview(listview);
         });
         // Observe the panel for added listviews.
-        this.panelObserver.observe(panel, {
+        __classPrivateFieldGet(this, _panelObserver).observe(panel, {
             childList: true,
         });
         //	Invoke "after" hook.
@@ -530,7 +530,7 @@ export default class Mmenu {
             this._initListitem(listitem);
         });
         // Observe the listview for added listitems.
-        this.listviewObserver.observe(listview, {
+        __classPrivateFieldGet(this, _listviewObserver).observe(listview, {
             childList: true,
         });
         //	Invoke "after" hook.
@@ -564,7 +564,7 @@ export default class Mmenu {
             this._initSubPanel(subpanel);
         });
         // Observe the listitem for added listviews.
-        this.listitemObserver.observe(listitem, {
+        __classPrivateFieldGet(this, _listitemObserver).observe(listitem, {
             childList: true,
         });
         //	Invoke "after" hook.
@@ -659,6 +659,7 @@ export default class Mmenu {
         }
     }
 }
+_panelObserver = new WeakMap(), _listviewObserver = new WeakMap(), _listitemObserver = new WeakMap();
 /**	Available add-ons for the plugin. */
 Mmenu.addons = {};
 /**	Globally used HTML elements. */

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitf6905f9d8d512f72cc864e93613dff17
+class ComposerStaticInitd496b4a74aab75edbc5fed498de55af3
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -758,8 +758,8 @@ class ComposerStaticInitf6905f9d8d512f72cc864e93613dff17
         'Behat\\Mink\\Driver\\' => 
         array (
             0 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
-            1 => __DIR__ . '/..' . '/behat/mink-browserkit-driver/src',
-            2 => __DIR__ . '/..' . '/behat/mink-goutte-driver/src',
+            1 => __DIR__ . '/..' . '/behat/mink-goutte-driver/src',
+            2 => __DIR__ . '/..' . '/behat/mink-browserkit-driver/src',
         ),
         'Behat\\Mink\\' => 
         array (
@@ -3224,6 +3224,7 @@ class ComposerStaticInitf6905f9d8d512f72cc864e93613dff17
         'Drupal\\Core\\Entity\\Exception\\EntityTypeIdLengthException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Exception/EntityTypeIdLengthException.php',
         'Drupal\\Core\\Entity\\Exception\\FieldStorageDefinitionUpdateForbiddenException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Exception/FieldStorageDefinitionUpdateForbiddenException.php',
         'Drupal\\Core\\Entity\\Exception\\InvalidLinkTemplateException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Exception/InvalidLinkTemplateException.php',
+        'Drupal\\Core\\Entity\\Exception\\MissingBundleClassException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Exception/MissingBundleClassException.php',
         'Drupal\\Core\\Entity\\Exception\\NoCorrespondingEntityClassException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Exception/NoCorrespondingEntityClassException.php',
         'Drupal\\Core\\Entity\\Exception\\UndefinedLinkTemplateException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Exception/UndefinedLinkTemplateException.php',
         'Drupal\\Core\\Entity\\Exception\\UnsupportedEntityTypeDefinitionException' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Entity/Exception/UnsupportedEntityTypeDefinitionException.php',
@@ -5710,6 +5711,7 @@ class ComposerStaticInitf6905f9d8d512f72cc864e93613dff17
         'PhpParser\\Parser\\Tokens' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Parser/Tokens.php',
         'PhpParser\\PrettyPrinterAbstract' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/PrettyPrinterAbstract.php',
         'PhpParser\\PrettyPrinter\\Standard' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/PrettyPrinter/Standard.php',
+        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'Psr\\Cache\\CacheException' => __DIR__ . '/..' . '/psr/cache/src/CacheException.php',
         'Psr\\Cache\\CacheItemInterface' => __DIR__ . '/..' . '/psr/cache/src/CacheItemInterface.php',
         'Psr\\Cache\\CacheItemPoolInterface' => __DIR__ . '/..' . '/psr/cache/src/CacheItemPoolInterface.php',
@@ -7694,6 +7696,7 @@ class ComposerStaticInitf6905f9d8d512f72cc864e93613dff17
         'Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
         'Symfony\\Polyfill\\Php73\\Php73' => __DIR__ . '/..' . '/symfony/polyfill-php73/Php73.php',
         'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
+        'Symfony\\Polyfill\\Php80\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/PhpToken.php',
         'Symfony\\Polyfill\\Php81\\Php81' => __DIR__ . '/..' . '/symfony/polyfill-php81/Php81.php',
         'System' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/System.php',
         'TYPO3\\PharStreamWrapper\\Assertable' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Assertable.php',
@@ -8338,11 +8341,11 @@ class ComposerStaticInitf6905f9d8d512f72cc864e93613dff17
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitf6905f9d8d512f72cc864e93613dff17::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitf6905f9d8d512f72cc864e93613dff17::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitf6905f9d8d512f72cc864e93613dff17::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitf6905f9d8d512f72cc864e93613dff17::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitf6905f9d8d512f72cc864e93613dff17::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd496b4a74aab75edbc5fed498de55af3::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd496b4a74aab75edbc5fed498de55af3::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitd496b4a74aab75edbc5fed498de55af3::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitd496b4a74aab75edbc5fed498de55af3::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitd496b4a74aab75edbc5fed498de55af3::$classMap;
 
         }, null, ClassLoader::class);
     }
