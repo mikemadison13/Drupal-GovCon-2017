@@ -12,12 +12,16 @@
 
 drupal:
   db:
-    database: drupal9
-    username: drupal9
-    password: drupal9
+    database: acquia
+    username: acquia
+    password: acquia
     host: database
 
 project:
   local:
     protocol: http
     hostname: '${project.machine_name}.lndo.site'
+    uri: '${project.machine_name}.lndo.site:8080/'
+
+lando:
+  enable: true

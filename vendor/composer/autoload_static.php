@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitbe25a04b7d4d8f58cf22cfdf18f58fd2
+class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -923,6 +923,7 @@ class ComposerStaticInitbe25a04b7d4d8f58cf22cfdf18f58fd2
         'Acquia\\BltBehat\\Blt\\Plugin\\Commands\\BehatCommand' => __DIR__ . '/..' . '/acquia/blt-behat/src/Blt/Plugin/Commands/BehatCommand.php',
         'Acquia\\BltBehat\\Blt\\Plugin\\Commands\\BehatTestCommand' => __DIR__ . '/..' . '/acquia/blt-behat/src/Blt/Plugin/Commands/BehatTestCommand.php',
         'Acquia\\BltBehat\\Blt\\Wizards\\TestsWizard' => __DIR__ . '/..' . '/acquia/blt-behat/src/Blt/Wizards/TestsWizard.php',
+        'Acquia\\BltLando\\Blt\\Plugin\\Commands\\BehatLandoCommand' => __DIR__ . '/..' . '/mikemadison13/blt-lando/src/Blt/Plugin/Commands/BehatLandoCommand.php',
         'Acquia\\BltLando\\Blt\\Plugin\\Commands\\LandoCommand' => __DIR__ . '/..' . '/mikemadison13/blt-lando/src/Blt/Plugin/Commands/LandoCommand.php',
         'Acquia\\BltPhpcs\\Blt\\Plugin\\Commands\\PhpcsCommand' => __DIR__ . '/..' . '/acquia/blt-phpcs/src/Blt/Plugin/Commands/PhpcsCommand.php',
         'Acquia\\BltPhpcs\\Composer\\BltPhpcsPlugin' => __DIR__ . '/..' . '/acquia/blt-phpcs/src/Composer/BltPhpcsPlugin.php',
@@ -8341,11 +8342,11 @@ class ComposerStaticInitbe25a04b7d4d8f58cf22cfdf18f58fd2
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitbe25a04b7d4d8f58cf22cfdf18f58fd2::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitbe25a04b7d4d8f58cf22cfdf18f58fd2::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitbe25a04b7d4d8f58cf22cfdf18f58fd2::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitbe25a04b7d4d8f58cf22cfdf18f58fd2::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitbe25a04b7d4d8f58cf22cfdf18f58fd2::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$classMap;
 
         }, null, ClassLoader::class);
     }

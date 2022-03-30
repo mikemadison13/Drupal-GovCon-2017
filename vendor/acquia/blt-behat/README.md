@@ -9,25 +9,36 @@ This plugin is **community-supported**. Acquia does not provide any direct suppo
 
 This plugin is provided solely as a backwards-compatible shim for customers upgrading from BLT 11. We recommend that anyone implementing new tests on a Drupal project use PHPUnit instead of Behat. PHPUnit now even supports Gherkin syntax if you prefer to preserve your human-readable Gherkin features: https://medium.com/@jonathanjfshaw/write-better-tests-by-using-behat-with-phpunit-ddb08d449b73
 
-## Installation and usage
+# Installation and usage
 
 Note: To use this plugin, you must already have a Drupal project using BLT 12 or higher.
 
-# Add this plugin
+## Add this plugin
 
 In your project, require the plugin with Composer:
 
 `composer require acquia/blt-behat`
 
-# Initialize Config 
+## Initialize Config 
 
-Run the recipe to initialize the necessary behat files / directories
+Run the recipe to initialize the necessary behat files / directories.
 
-`blt recipes:behat:init`
+```bash
+blt recipes:behat:init
+blt tests:behat:init
+```
 
-# Write Test(s)
+## Write Test(s)
 
 Write at least one BLT feature and place inside the tests/behat/features directory
+
+## Run Tests
+
+Run the tests:
+
+```bash
+ blt tests:behat
+```
 
 # License
 
