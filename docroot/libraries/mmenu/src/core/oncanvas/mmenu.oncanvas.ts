@@ -203,7 +203,13 @@ export default class Mmenu {
             
             //  Focus the panels.
             if (setfocus) {                
-                this.node.pnls.focus();
+                panel.focus();
+
+                // Prevent panels from scrolling due to focus.
+                panel.scrollLeft = 0;
+                this.node.pnls.scrollLeft = 0;
+                document.body.scrollLeft = 0;
+                document.documentElement.scrollLeft = 0;
             }
         }
 
@@ -224,12 +230,19 @@ export default class Mmenu {
         animation: boolean = true,
         setfocus: boolean = true,
     ) {
-        if (!panel || !panel.matches('.mm-panel--opened')) {
+
+        if (!panel) {
+            return;
+        }
+        if (!panel.matches('.mm-panel--opened') && 
+            !panel.parentElement.matches('.mm-listitem--opened')
+        ) {
             return;
         }
         
         //	Invoke "before" hook.
         this.trigger('closePanel:before', [panel]);
+
 
         //	Close a "vertical" panel.
         if (panel.parentElement.matches('.mm-listitem--vertical')) {
@@ -281,7 +294,7 @@ export default class Mmenu {
             panel.matches('.mm-panel--opened')
         ) {
             fn = 'closePanel';
-        }        
+        }
 
         this[fn](panel);
     }
@@ -428,7 +441,7 @@ export default class Mmenu {
         this.node.menu.id = this.node.menu.id || uniqueId();
 
         //  Make menu able to receive focus.
-        this.node.menu.setAttribute('tabindex', '-1');
+        this.node.menu.tabIndex = -1;
 
         //  All nodes in the menu.
         const panels = DOM.children(this.node.menu).filter((panel) =>
@@ -440,7 +453,7 @@ export default class Mmenu {
         this.node.menu.append(this.node.pnls);
 
         //  Make panels able to receive focus.
-        this.node.pnls.setAttribute('tabindex', '-1');
+        // this.node.pnls.tabIndex = -1;
 
         //  Initiate all panel like nodes
         panels.forEach((panel) => {
@@ -542,6 +555,7 @@ export default class Mmenu {
         }
 
         panel.classList.add('mm-panel');
+        panel.tabIndex = -1;
 
         //  Append to the panels node if not vertically expanding
         if (!panel.parentElement?.matches('.mm-listitem--vertical')) {

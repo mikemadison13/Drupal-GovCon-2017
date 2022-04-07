@@ -37,26 +37,6 @@ export default function (this: Mmenu) {
     //	Add methods to the API.
     this._api.push('open', 'close', 'setPage');
 
-    //	Setup the UI blocker.
-    if (!Mmenu.node.blck) {
-        this.bind('initMenu:before', () => {
-            /** The UI blocker node. */
-            const blocker = DOM.create('a.mm-wrapper__blocker.mm-slideout');
-
-            blocker.id = uniqueId();
-            blocker.title = this.i18n(configs.screenReader.closeMenu);
-
-            //  Make the blocker able to receive focus.
-            blocker.setAttribute('tabindex', '-1');
-
-            //	Append the blocker node to the body.
-            document.querySelector(configs.menu.insertSelector).append(blocker);
-
-            //	Store the blocker node.
-            Mmenu.node.blck = blocker;
-        });
-    }
-
     //  Clone menu and prepend it to the <body>.
     this.bind('initMenu:before', () => {
         //	Clone if needed.
@@ -79,6 +59,26 @@ export default function (this: Mmenu) {
         //	Prepend to the <body>
         this.node.wrpr[configs.menu.insertMethod](this.node.menu);
     });
+
+    //	Setup the UI blocker.
+    if (!Mmenu.node.blck) {
+        this.bind('initMenu:before', () => {
+            /** The UI blocker node. */
+            const blocker = DOM.create('a.mm-wrapper__blocker.mm-blocker.mm-slideout');
+
+            blocker.id = uniqueId();
+            blocker.title = this.i18n(configs.screenReader.closeMenu);
+
+            //  Make the blocker able to receive focus.
+            blocker.tabIndex = 0;
+
+            //	Append the blocker node to the body.
+            document.querySelector(configs.menu.insertSelector).append(blocker);
+
+            //	Store the blocker node.
+            Mmenu.node.blck = blocker;
+        });
+    }
 
     this.bind('initMenu:after', () => {
 
@@ -128,17 +128,20 @@ export default function (this: Mmenu) {
         }
     });
 
-    //  Prevent tabbing outside the menu,
-    //  close the menu when:
-    //      1) the menu is opened,
-    //      2) the focus is not inside the menu,
-    document.addEventListener('keyup', (event: KeyboardEvent) => {
-
-        if (event.key == 'Tab' &&
-/* 1 */     this.node.menu.matches('.mm-menu--opened') &&
-/* 2 */     !document.activeElement?.closest(`#${this.node.menu.id}`)
+    // Tabbing
+    document.addEventListener('focusin', (event: KeyboardEvent) => {
+        // Focus inside the menu -> open the menu
+        if (document.activeElement?.closest(`#${this.node.menu.id}`) &&
+            !this.node.menu.matches('.mm-menu--opened')
         ) {
-            console.log(document.activeElement);
+            this.open();
+        }
+
+        // Focus outside the menu -> close menu
+        if (!document.activeElement?.closest(`#${this.node.menu.id}`) &&
+            !this.node.wrpr.matches('.mm-wrapper--sidebar-expanded') &&
+            this.node.menu.matches('.mm-menu--opened')
+        ) {
             this.close();            
         }
     });
@@ -155,15 +158,13 @@ Mmenu.prototype.open = function (this: Mmenu) {
     //	Invoke "before" hook.
     this.trigger('open:before');
 
-    var clsn = ['mm-wrapper--opened'];
-
-    this.node.wrpr.classList.add(...clsn);
-
     //	Open
     this.node.menu.classList.add('mm-menu--opened');
     this.node.wrpr.classList.add('mm-wrapper--opened');
+    Mmenu.node.blck.classList.add('mm-blocker--blocking');
 
     //  Focus the menu.
+    this.node.open = document.activeElement as HTMLElement;
     this.node.menu.focus();
 
     //	Invoke "after" hook.
@@ -180,10 +181,15 @@ Mmenu.prototype.close = function (this: Mmenu) {
 
     this.node.menu.classList.remove('mm-menu--opened');
     this.node.wrpr.classList.remove('mm-wrapper--opened');
-    
+    Mmenu.node.blck.classList.remove('mm-blocker--blocking');
+
     //  Focus opening link or page.
-    const focus = document.querySelector(`[href="#${this.node.menu.id}"]`) || this.node.page || null;
+    const focus = this.node.open || document.querySelector(`[href="#${this.node.menu.id}"]`) || Mmenu.node.page || null;
     (focus as HTMLElement)?.focus();
+    
+    // Prevent html/body from scrolling due to focus.
+    document.body.scrollLeft = 0;
+    document.documentElement.scrollLeft = 0;
 
     //	Invoke "after" hook.
     this.trigger('close:after');
@@ -236,7 +242,7 @@ Mmenu.prototype.setPage = function (this: Mmenu, page: HTMLElement) {
     this.trigger('setPage:before', [page]);
 
     //  Make the page able to receive focus.
-    page.setAttribute('tabindex', '-1');
+    page.tabIndex = -1;
 
     //  Set the classes
     page.classList.add('mm-page', 'mm-slideout');

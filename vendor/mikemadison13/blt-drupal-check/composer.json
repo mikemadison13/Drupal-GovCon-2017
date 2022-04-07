@@ -1,0 +1,39 @@
+{
+  "name": "mikemadison13/blt-drupal-check",
+  "description": "Drupal Check integration for Acquia BLT.",
+  "license": "GPL-2.0+",
+  "authors":[
+    {
+      "name": "Mike Madison",
+      "homepage": "https://mikemadison.net",
+      "role": "Maintainer"
+    }
+  ],
+  "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  },
+  "require": {
+    "mglaman/drupal-check": "^1.3"
+  },
+  "conflict": {
+    "acquia/blt": "<=12.5.1"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Acquia\\DrupalCheck\\": "./src/"
+    }
+  },
+  "require-dev": {
+    "acquia/blt": "^13.2"
+  },
+  "config": {
+    "allow-plugins": {
+      "acquia/blt": true
+    }
+  }
+}

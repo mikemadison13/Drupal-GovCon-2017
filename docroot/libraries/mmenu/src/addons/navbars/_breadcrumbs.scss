@@ -1,10 +1,13 @@
+@use "../../mixins" as m;
+@use "../../variables" as v;
+
 .mm-navbar__breadcrumbs {
-    @include mixins.mm_ellipsis;
+    @include m.mm_ellipsis;
 
     flex: 1 1 50%;
     display: flex;
     justify-content: flex-start;
-    padding: 0 variables.$mm_panelPadding;
+    padding: 0 v.$panelPadding;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 
@@ -12,7 +15,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding-right: 6px;
+        padding-inline-end: 6px; // right, left for RTL
     }
 
     > a {
@@ -20,10 +23,10 @@
     }
 
     &:not(:last-child) {
-        padding-right: 0;
+        padding-inline-end: 0; // right, left for RTL
     }
 
     .mm-btn:not(.mm-hidden) + & {
-        padding-left: 0;
+        padding-inline-start: 0; // left, right for RTL
     }
 }

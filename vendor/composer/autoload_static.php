@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
+class ComposerStaticInit7e415f5004f16ce8387607acc7d8399c
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -45,9 +45,9 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
+        '2d0bd6b7e257b7230c706e6559d6a87b' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/drupal-phpunit-hack.php',
         'fbeead2280a8f3911a1fe6dd034f7d5e' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvancedInterface.php',
         '96f8d8288528d52059397cad6ec61f17' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvanced.php',
-        '2d0bd6b7e257b7230c706e6559d6a87b' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/drupal-phpunit-hack.php',
         '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
     );
 
@@ -176,6 +176,10 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
             'Laminas\\Escaper\\' => 16,
             'Laminas\\Diactoros\\' => 18,
         ),
+        'J' => 
+        array (
+            'Jean85\\' => 7,
+        ),
         'I' => 
         array (
             'Interop\\Container\\' => 18,
@@ -208,6 +212,7 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
             'Drupal\\' => 7,
             'DrupalPractice\\' => 15,
             'DrupalCodeGenerator\\' => 20,
+            'DrupalCheck\\' => 12,
             'Doctrine\\Persistence\\' => 21,
             'Doctrine\\Inflector\\' => 19,
             'Doctrine\\Common\\Lexer\\' => 22,
@@ -230,7 +235,9 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
             'Consolidation\\Config\\' => 21,
             'Consolidation\\Comments\\' => 23,
             'Consolidation\\AnnotatedCommand\\' => 31,
+            'Composer\\XdebugHandler\\' => 23,
             'Composer\\Semver\\' => 16,
+            'Composer\\Pcre\\' => 14,
             'Composer\\Installers\\' => 20,
             'CloudFlarePhpSdk\\' => 17,
         ),
@@ -250,6 +257,7 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
             'Ajgl\\Twig\\Extension\\' => 20,
             'Acquia\\DrupalEnvironmentDetector\\Tests\\' => 39,
             'Acquia\\DrupalEnvironmentDetector\\' => 33,
+            'Acquia\\DrupalCheck\\' => 19,
             'Acquia\\CodingStandards\\' => 23,
             'Acquia\\Blt\\Tests\\Robo\\' => 22,
             'Acquia\\Blt\\Tests\\' => 17,
@@ -568,6 +576,10 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-diactoros/src',
         ),
+        'Jean85\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jean85/pretty-package-versions/src',
+        ),
         'Interop\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
@@ -652,6 +664,10 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         array (
             0 => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src',
         ),
+        'DrupalCheck\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mglaman/drupal-check/src',
+        ),
         'Doctrine\\Persistence\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Persistence',
@@ -731,9 +747,17 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         array (
             0 => __DIR__ . '/..' . '/consolidation/annotated-command/src',
         ),
+        'Composer\\XdebugHandler\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/xdebug-handler/src',
+        ),
         'Composer\\Semver\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/semver/src',
+        ),
+        'Composer\\Pcre\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/pcre/src',
         ),
         'Composer\\Installers\\' => 
         array (
@@ -788,6 +812,10 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         'Acquia\\DrupalEnvironmentDetector\\' => 
         array (
             0 => __DIR__ . '/..' . '/acquia/drupal-environment-detector/src',
+        ),
+        'Acquia\\DrupalCheck\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mikemadison13/blt-drupal-check/src',
         ),
         'Acquia\\CodingStandards\\' => 
         array (
@@ -1020,6 +1048,7 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         'Acquia\\Blt\\Robo\\Wizards\\Wizard' => __DIR__ . '/..' . '/acquia/blt/src/Robo/Wizards/Wizard.php',
         'Acquia\\Blt\\Update\\Updater' => __DIR__ . '/..' . '/acquia/blt/src/Update/Updater.php',
         'Acquia\\Blt\\Update\\Updates' => __DIR__ . '/..' . '/acquia/blt/src/Update/Updates.php',
+        'Acquia\\DrupalCheck\\Blt\\Plugin\\Commands\\DrupalCheckTestCommand' => __DIR__ . '/..' . '/mikemadison13/blt-drupal-check/src/Blt/Plugin/Commands/DrupalCheckTestCommand.php',
         'Acquia\\DrupalEnvironmentDetector\\AcquiaDrupalEnvironmentDetector' => __DIR__ . '/..' . '/acquia/drupal-environment-detector/src/AcquiaDrupalEnvironmentDetector.php',
         'Acquia\\DrupalEnvironmentDetector\\EnvironmentNames' => __DIR__ . '/..' . '/acquia/drupal-environment-detector/src/EnvironmentNames.php',
         'Acquia\\DrupalEnvironmentDetector\\FilePaths' => __DIR__ . '/..' . '/acquia/drupal-environment-detector/src/FilePaths.php',
@@ -1800,6 +1829,14 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         'Composer\\Installers\\YawikInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/YawikInstaller.php',
         'Composer\\Installers\\ZendInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ZendInstaller.php',
         'Composer\\Installers\\ZikulaInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ZikulaInstaller.php',
+        'Composer\\Pcre\\MatchAllResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchAllResult.php',
+        'Composer\\Pcre\\MatchAllWithOffsetsResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchAllWithOffsetsResult.php',
+        'Composer\\Pcre\\MatchResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchResult.php',
+        'Composer\\Pcre\\MatchWithOffsetsResult' => __DIR__ . '/..' . '/composer/pcre/src/MatchWithOffsetsResult.php',
+        'Composer\\Pcre\\PcreException' => __DIR__ . '/..' . '/composer/pcre/src/PcreException.php',
+        'Composer\\Pcre\\Preg' => __DIR__ . '/..' . '/composer/pcre/src/Preg.php',
+        'Composer\\Pcre\\Regex' => __DIR__ . '/..' . '/composer/pcre/src/Regex.php',
+        'Composer\\Pcre\\ReplaceResult' => __DIR__ . '/..' . '/composer/pcre/src/ReplaceResult.php',
         'Composer\\Semver\\Comparator' => __DIR__ . '/..' . '/composer/semver/src/Comparator.php',
         'Composer\\Semver\\CompilingMatcher' => __DIR__ . '/..' . '/composer/semver/src/CompilingMatcher.php',
         'Composer\\Semver\\Constraint\\Bound' => __DIR__ . '/..' . '/composer/semver/src/Constraint/Bound.php',
@@ -1812,6 +1849,10 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         'Composer\\Semver\\Intervals' => __DIR__ . '/..' . '/composer/semver/src/Intervals.php',
         'Composer\\Semver\\Semver' => __DIR__ . '/..' . '/composer/semver/src/Semver.php',
         'Composer\\Semver\\VersionParser' => __DIR__ . '/..' . '/composer/semver/src/VersionParser.php',
+        'Composer\\XdebugHandler\\PhpConfig' => __DIR__ . '/..' . '/composer/xdebug-handler/src/PhpConfig.php',
+        'Composer\\XdebugHandler\\Process' => __DIR__ . '/..' . '/composer/xdebug-handler/src/Process.php',
+        'Composer\\XdebugHandler\\Status' => __DIR__ . '/..' . '/composer/xdebug-handler/src/Status.php',
+        'Composer\\XdebugHandler\\XdebugHandler' => __DIR__ . '/..' . '/composer/xdebug-handler/src/XdebugHandler.php',
         'Console_Getopt' => __DIR__ . '/..' . '/pear/console_getopt/Console/Getopt.php',
         'Consolidation\\AnnotatedCommand\\AnnotatedCommand' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotatedCommand.php',
         'Consolidation\\AnnotatedCommand\\AnnotatedCommandFactory' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotatedCommandFactory.php',
@@ -2277,6 +2318,10 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         'Doctrine\\Persistence\\PropertyChangedListener' => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Persistence/PropertyChangedListener.php',
         'Doctrine\\Persistence\\Proxy' => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Persistence/Proxy.php',
         'Drupal' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal.php',
+        'DrupalCheck\\Application' => __DIR__ . '/..' . '/mglaman/drupal-check/src/Application.php',
+        'DrupalCheck\\Command\\CheckCommand' => __DIR__ . '/..' . '/mglaman/drupal-check/src/Command/CheckCommand.php',
+        'DrupalCheck\\ErrorHandler' => __DIR__ . '/..' . '/mglaman/drupal-check/src/ErrorHandler.php',
+        'DrupalCheck\\Util\\Tty' => __DIR__ . '/..' . '/mglaman/drupal-check/src/Util/Tty.php',
         'DrupalCodeGenerator\\Application' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Application.php',
         'DrupalCodeGenerator\\Asset\\Asset' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Asset/Asset.php',
         'DrupalCodeGenerator\\Asset\\AssetCollection' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Asset/AssetCollection.php',
@@ -2393,6 +2438,12 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         'DrupalCodeGenerator\\Command\\Yml\\Services' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Yml/Services.php',
         'DrupalCodeGenerator\\Command\\Yml\\ThemeInfo' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Yml/ThemeInfo.php',
         'DrupalCodeGenerator\\Command\\Yml\\ThemeLibraries' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Command/Yml/ThemeLibraries.php',
+        'DrupalCodeGenerator\\Compatibility\\Php7\\AskQuestionTrait' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Compatibility/Php7/AskQuestionTrait.php',
+        'DrupalCodeGenerator\\Compatibility\\Php7\\AskTrait' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Compatibility/Php7/AskTrait.php',
+        'DrupalCodeGenerator\\Compatibility\\Php7\\GeneratorStyleInterface' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Compatibility/Php7/GeneratorStyleInterface.php',
+        'DrupalCodeGenerator\\Compatibility\\Php8\\AskQuestionTrait' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Compatibility/Php8/AskQuestionTrait.php',
+        'DrupalCodeGenerator\\Compatibility\\Php8\\AskTrait' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Compatibility/Php8/AskTrait.php',
+        'DrupalCodeGenerator\\Compatibility\\Php8\\GeneratorStyleInterface' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Compatibility/Php8/GeneratorStyleInterface.php',
         'DrupalCodeGenerator\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Exception/ExceptionInterface.php',
         'DrupalCodeGenerator\\Exception\\RuntimeException' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/Exception/RuntimeException.php',
         'DrupalCodeGenerator\\GeneratorFactory' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/GeneratorFactory.php',
@@ -5055,6 +5106,11 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         'Interop\\Container\\ContainerInterface' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/ContainerInterface.php',
         'Interop\\Container\\Exception\\ContainerException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/ContainerException.php',
         'Interop\\Container\\Exception\\NotFoundException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/NotFoundException.php',
+        'Jean85\\Exception\\ProvidedPackageException' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Exception/ProvidedPackageException.php',
+        'Jean85\\Exception\\ReplacedPackageException' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Exception/ReplacedPackageException.php',
+        'Jean85\\Exception\\VersionMissingExceptionInterface' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Exception/VersionMissingExceptionInterface.php',
+        'Jean85\\PrettyVersions' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/PrettyVersions.php',
+        'Jean85\\Version' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Version.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
         'Laminas\\Diactoros\\AbstractSerializer' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/AbstractSerializer.php',
         'Laminas\\Diactoros\\CallbackStream' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/CallbackStream.php',
@@ -5384,6 +5440,25 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
         'Masterminds\\HTML5\\Serializer\\RulesInterface' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/RulesInterface.php',
         'Masterminds\\HTML5\\Serializer\\Traverser' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/Traverser.php',
         'MathieuViossat\\Util\\ArrayToTextTable' => __DIR__ . '/..' . '/mathieuviossat/arraytotexttable/src/ArrayToTextTable.php',
+        'Nette\\Neon\\Decoder' => __DIR__ . '/..' . '/nette/neon/src/Neon/Decoder.php',
+        'Nette\\Neon\\Encoder' => __DIR__ . '/..' . '/nette/neon/src/Neon/Encoder.php',
+        'Nette\\Neon\\Entity' => __DIR__ . '/..' . '/nette/neon/src/Neon/Entity.php',
+        'Nette\\Neon\\Exception' => __DIR__ . '/..' . '/nette/neon/src/Neon/Exception.php',
+        'Nette\\Neon\\Lexer' => __DIR__ . '/..' . '/nette/neon/src/Neon/Lexer.php',
+        'Nette\\Neon\\Neon' => __DIR__ . '/..' . '/nette/neon/src/Neon/Neon.php',
+        'Nette\\Neon\\Node' => __DIR__ . '/..' . '/nette/neon/src/Neon/Node.php',
+        'Nette\\Neon\\Node\\ArrayItemNode' => __DIR__ . '/..' . '/nette/neon/src/Neon/Node/ArrayItemNode.php',
+        'Nette\\Neon\\Node\\ArrayNode' => __DIR__ . '/..' . '/nette/neon/src/Neon/Node/ArrayNode.php',
+        'Nette\\Neon\\Node\\BlockArrayNode' => __DIR__ . '/..' . '/nette/neon/src/Neon/Node/BlockArrayNode.php',
+        'Nette\\Neon\\Node\\EntityChainNode' => __DIR__ . '/..' . '/nette/neon/src/Neon/Node/EntityChainNode.php',
+        'Nette\\Neon\\Node\\EntityNode' => __DIR__ . '/..' . '/nette/neon/src/Neon/Node/EntityNode.php',
+        'Nette\\Neon\\Node\\InlineArrayNode' => __DIR__ . '/..' . '/nette/neon/src/Neon/Node/InlineArrayNode.php',
+        'Nette\\Neon\\Node\\LiteralNode' => __DIR__ . '/..' . '/nette/neon/src/Neon/Node/LiteralNode.php',
+        'Nette\\Neon\\Node\\StringNode' => __DIR__ . '/..' . '/nette/neon/src/Neon/Node/StringNode.php',
+        'Nette\\Neon\\Parser' => __DIR__ . '/..' . '/nette/neon/src/Neon/Parser.php',
+        'Nette\\Neon\\Token' => __DIR__ . '/..' . '/nette/neon/src/Neon/Token.php',
+        'Nette\\Neon\\TokenStream' => __DIR__ . '/..' . '/nette/neon/src/Neon/TokenStream.php',
+        'Nette\\Neon\\Traverser' => __DIR__ . '/..' . '/nette/neon/src/Neon/Traverser.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
         'OS_Guess' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/OS/Guess.php',
         'OomphInc\\ComposerInstallersExtender\\Installers\\CustomInstaller' => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src/Installers/CustomInstaller.php',
@@ -8342,11 +8417,11 @@ class ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit2b283d85ac547de4ed7a1f83294b253b::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7e415f5004f16ce8387607acc7d8399c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7e415f5004f16ce8387607acc7d8399c::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit7e415f5004f16ce8387607acc7d8399c::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit7e415f5004f16ce8387607acc7d8399c::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit7e415f5004f16ce8387607acc7d8399c::$classMap;
 
         }, null, ClassLoader::class);
     }
