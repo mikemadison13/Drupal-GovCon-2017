@@ -2782,7 +2782,7 @@
             },
             "time": "2019-03-30T08:57:34+00:00",
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "DMore\\ChromeExtension\\": "src/"
@@ -2841,7 +2841,7 @@
                     "dev-master": "2.0.x-dev"
                 }
             },
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "DMore\\ChromeDriver\\": "src/"
