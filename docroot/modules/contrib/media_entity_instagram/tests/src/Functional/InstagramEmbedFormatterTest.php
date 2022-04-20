@@ -15,7 +15,7 @@ class InstagramEmbedFormatterTest extends OEmbedFormatterTest {
    * {@inheritdoc}
    */
   protected function getFixturesDirectory() {
-    return drupal_get_path('module', 'media_entity_instagram') . '/tests/fixtures/oembed';
+    return \Drupal::service('extension.list.module')->getPath('media_entity_instagram') . '/tests/fixtures/oembed';
   }
 
   /**

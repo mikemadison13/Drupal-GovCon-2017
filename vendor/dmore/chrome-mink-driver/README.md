@@ -99,7 +99,7 @@ $mink = new Mink(array(
 $mink->setDefaultSessionName('browser');
 
 // visit a page
-$mink->getSession()->visit('https://gitlab.com/DMore/chrome-mink-driver/blob/master/README.md');
+$mink->getSession()->visit('https://gitlab.com/behat-chrome/chrome-mink-driver/blob/master/README.md');
 
 /** @var ChromeDriver $driver */
 $driver = $mink->getSession()->getDriver();
@@ -119,7 +119,7 @@ google-chrome-stable --disable-gpu --headless --remote-debugging-address=0.0.0.0
 
 ## Behat
 
-See [the behat extension](https://gitlab.com/DMore/behat-chrome-extension) if you want to use this driver with behat.
+See [the behat extension](https://gitlab.com/behat-chrome/behat-chrome-extension) if you want to use this driver with behat.
 
 ## Contributing
 

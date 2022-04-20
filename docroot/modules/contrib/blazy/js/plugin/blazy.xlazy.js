@@ -145,7 +145,8 @@
 
     _erCounted = me[ok ? 'success' : 'error'](el, status, parent, opts);
 
-    if (ok) {
+    // Native may already remove `data-[SRC|SRCSET]` early on, except BG/Video.
+    if (ok && $.hasAttr(el, _data + _src)) {
       $.removeAttr(el, _imgSources, _data);
     }
 

@@ -32,9 +32,16 @@ function moderation_sidebar_toolbar() {
 
   /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
   $current_route = \Drupal::routeMatch();
-  $entity = $current_route->getParameter('node') ?: $current_route->getParameter('taxonomy_term');
+  $entity = NULL;
+  foreach ($current_route->getParameters() as $param) {
+    if ($param instanceof ContentEntityInterface) {
+      $entity = $param;
+      // Stop at the first found instance.
+      break;
+    }
+  }
 
-  if (!($entity instanceof ContentEntityInterface) || $admin_context->isAdminRoute()) {
+  if (!($entity instanceof ContentEntityInterface) || !($entity->getEntityType()->isRevisionable()) || $admin_context->isAdminRoute()) {
     $cacheability->applyTo($items['moderation_sidebar']);
     return $items;
   }

@@ -257,14 +257,14 @@ abstract class BlazyFilterBase extends FilterBase implements BlazyFilterInterfac
       // Attempts to get the correct URI with hard-coded URL if applicable.
       if ($uri = BlazyFile::buildUri($src)) {
         $settings['uri'] = $uri;
-        $data['item'] = Blazy::image($settings);
+        $data['item'] = BlazyFile::image($settings);
       }
       else {
         // At least provide root URI to figure out image dimensions.
         $settings['uri_root'] = mb_substr($src, 0, 4) === 'http' ? $src : $this->root . $src;
       }
     }
-    return $data['item'];
+    return $data['item'] ?? NULL;
   }
 
   /**
@@ -297,7 +297,7 @@ abstract class BlazyFilterBase extends FilterBase implements BlazyFilterInterfac
       // Runs after type, width and height set, if any, to not recheck them.
       $this->blazyOembed->build($settings);
     }
-    return $data['item'];
+    return $data['item'] ?? NULL;
   }
 
   /**

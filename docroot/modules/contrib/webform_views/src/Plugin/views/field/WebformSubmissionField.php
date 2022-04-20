@@ -58,6 +58,7 @@ class WebformSubmissionField extends FieldPluginBase {
     $options['webform_element_format'] = ['default' => ''];
     $options['webform_multiple_value'] = ['default' => TRUE];
     $options['webform_multiple_delta'] = ['default' => 0];
+    $options['webform_check_access'] = ['default' => 1];
 
     return $options;
   }
@@ -103,6 +104,13 @@ class WebformSubmissionField extends FieldPluginBase {
     ];
 
     $form['webform_element_format']['#access'] = !empty($form['webform_element_format']['#options']);
+
+    $form['webform_check_access'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Check view acces for this field'),
+      '#default_value' => $this->options['webform_check_access'],
+      '#description' => $this->t('Uncheck to disable field access permission checking.'),
+    ];
   }
 
   /**
@@ -119,6 +127,11 @@ class WebformSubmissionField extends FieldPluginBase {
         'field' => 'delta',
         'value' => 0,
       ];
+
+      $this->query->getTableInfo($this->tableAlias)['join']->extra[] = [
+        'field' => 'property',
+        'value' => '',
+      ];
     }
   }
 
@@ -129,7 +142,7 @@ class WebformSubmissionField extends FieldPluginBase {
     /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
     $webform_submission = $this->getEntity($values);
 
-    if ($webform_submission && $webform_submission->access('view')) {
+    if ($webform_submission && ($webform_submission->access('view') || !$this->options['webform_check_access'])) {
       $webform = $webform_submission->getWebform();
 
       // Get format and element key.
@@ -137,7 +150,7 @@ class WebformSubmissionField extends FieldPluginBase {
       $element_key = $this->definition['webform_submission_field'];
 
       // Get element and element handler plugin.
-      $element = $webform->getElement($element_key,TRUE);
+      $element = $webform->getElement($element_key, TRUE);
       if (!$element) {
         return [];
       }

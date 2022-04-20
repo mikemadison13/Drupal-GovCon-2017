@@ -82,7 +82,6 @@ class UnusedVariableSniff implements Sniff
 
 	/**
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
-	 * @param File $phpcsFile
 	 * @param int $variablePointer
 	 */
 	public function process(File $phpcsFile, $variablePointer): void
@@ -511,14 +510,21 @@ class UnusedVariableSniff implements Sniff
 
 	private function isValueInForeachAndErrorIsIgnored(File $phpcsFile, int $variablePointer): bool
 	{
-		if (!$this->ignoreUnusedValuesWhenOnlyKeysAreUsedInForeach) {
-			return false;
-		}
-
 		$tokens = $phpcsFile->getTokens();
 
 		$parenthesisOwnerPointer = $this->findNestedParenthesisWithOwner($phpcsFile, $variablePointer);
-		return $parenthesisOwnerPointer !== null && $tokens[$parenthesisOwnerPointer]['code'] === T_FOREACH;
+		$isInForeach = $parenthesisOwnerPointer !== null && $tokens[$parenthesisOwnerPointer]['code'] === T_FOREACH;
+
+		if (!$isInForeach) {
+			return false;
+		}
+
+		$pointerAfterVariable = TokenHelper::findNextEffective($phpcsFile, $variablePointer + 1);
+		if ($pointerAfterVariable !== null && $tokens[$pointerAfterVariable]['code'] === T_DOUBLE_ARROW) {
+			return false;
+		}
+
+		return $this->ignoreUnusedValuesWhenOnlyKeysAreUsedInForeach;
 	}
 
 	private function isStaticOrGlobalVariable(File $phpcsFile, int $functionPointer, string $variableName): bool
@@ -633,6 +639,10 @@ class UnusedVariableSniff implements Sniff
 			// Nothing
 		} else {
 			return false;
+		}
+
+		if ($tokens[$previousPointer]['code'] === T_OPEN_PARENTHESIS) {
+			$previousPointer = TokenHelper::findPreviousEffective($phpcsFile, $previousPointer - 1);
 		}
 
 		return in_array(

@@ -180,7 +180,7 @@ trait BlazyStyleOptionsTrait {
 
       // Entity reference label where the above $value can be term ID.
       if ($markup = $this->getField($index, $field_name)) {
-        $value = is_object($markup) ? trim(strip_tags($markup->__toString())) : $value;
+        $value = is_object($markup) ? trim(strip_tags($markup->__toString()) ?: '') : $value;
       }
 
       if (is_string($value)) {

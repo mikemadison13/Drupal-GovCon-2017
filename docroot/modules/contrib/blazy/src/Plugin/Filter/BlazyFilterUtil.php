@@ -46,7 +46,7 @@ class BlazyFilterUtil {
 
     $ini += strlen($start);
     $len = mb_strpos($string, $end, $ini) - $ini;
-    return trim(substr($string, $ini, $len));
+    return trim(substr($string, $ini, $len) ?: '');
   }
 
   /**

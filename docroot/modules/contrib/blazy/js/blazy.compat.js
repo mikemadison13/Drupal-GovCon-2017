@@ -122,6 +122,11 @@
    *
    * This only applies to Responsive images with aspect ratio fluid.
    * Static ratio (media--ratio--169, etc.) is ignored and uses CSS instead.
+   * The dimensions here are pre-determined server-side per image styles.
+   * Called during window.resize and window.onload to have a frame (setup
+   * dimensions) to minimize reflows. The real frame will be set after the
+   * image.onload/ decoded moment at blazy.drupal.js ::pad() method for more
+   * precise dimensions based on image natural dimensions, not server-side ones.
    *
    * @param {Element} cn
    *   The .media--ratio[--fluid] container HTML element.
@@ -136,17 +141,19 @@
   function updateRatio(cn, i, isResized) {
     cn = cn.target || cn;
 
+    // The actual third argument is object collections, unless being resized.
+    isResized = $.isBool(isResized) ? isResized : false;
+
     if (!$.isElm(cn)) {
       return;
     }
 
-    var me = this;
     // Blazy container (via formatter or Views style) is not always there.
     var root = $.closest(cn, '.' + _id);
     var ratios = $.parse($.attr(cn, _dataRatios));
 
     // Bail out if a static/ non-fluid aspect ratio.
-    if (!ratios) {
+    if ($.isEmpty(ratios)) {
       fallbackRatio(cn);
       return;
     }
@@ -164,12 +171,12 @@
       cn.style.paddingBottom = pad + '%';
     }
 
+    // @todo remove, already moved into bio.media.js for multi-breakpoint BG.
     // Update multi-breakpoint CSS background.
     // @todo move it out of ratio. ATM, requires ratio to update multi-BG.
-    if (isResized) {
-      me.update(cn, false, _winData);
-    }
-
+    // if (isResized) {
+    // me.update(cn, false, _winData);
+    // }
     // @todo refactor or remove into IO.
     // Fix for picture or bg element with resizing.
     // if (isResized && (isPicture || $.hasAttr(cn, _dataBg))) {
@@ -199,6 +206,7 @@
 
     // Update multi-breakpoint fluid aspect ratio, if any.
     if (els.length) {
+      $.each(els, updateRatio.bind(me));
       me.checkResize(els, updateRatio, doc);
     }
   }

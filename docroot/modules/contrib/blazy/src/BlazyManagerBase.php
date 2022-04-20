@@ -290,7 +290,7 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
    */
   public function getIoSettings(array $attach = []) {
     $io = [];
-    $thold = trim($this->configLoad('io.threshold'));
+    $thold = trim($this->configLoad('io.threshold') ?? "");
     $thold = str_replace(['[', ']'], '', $thold ?: '0');
 
     // @todo re-check, looks like the default 0 is broken sometimes.
@@ -344,11 +344,12 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
     // @todo remove some settings for `blazies` after sub-module updates.
     // @todo some plugin requires setting name by its name: blur, compat, etc.
-    $settings['fx'] = $fx = $settings['_fx'] ?? $settings['fx'];
-    $is_blur = $settings['fx'] == 'blur';
+    $settings['fx'] = $fx = $settings['_fx'] ?? $config['fx'];
+    $is_blur = $fx == 'blur';
     $settings['lightbox'] = $lightbox = ($switch && in_array($switch, $lightboxes)) ? $switch : $settings['lightbox'];
     $settings['loading'] = $settings['loading'] ?: 'lazy';
     $settings['route_name'] = $route_name = $this->getRouteName();
+    $settings['_resimage'] = $settings['_resimage'] ?: $this->moduleHandler->moduleExists('responsive_image');
 
     $current_language = $this->languageManager->getCurrentLanguage()->getId();
     $is_preview = $settings['is_preview'] = Blazy::isPreview();
@@ -358,16 +359,25 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
     $is_unload = !empty($config['nojs']['lazy']);
     $is_slider = $settings['loading'] == 'slider';
     $is_unloading = $settings['loading'] == 'unlazy';
+    $is_defer = $settings['loading'] == 'defer';
     $is_fluid = $settings['ratio'] == 'fluid';
     $is_static = $is_preview || $is_amp || $is_sandboxed;
     $is_undata = $is_static || $is_unloading;
     $is_nojs = $is_unload || $is_undata;
     $is_video = $settings['bundle'] == 'video' || in_array('video', $settings['bundles'] ?? []);
 
+    // When `defer` is chosen, overrides global `No JavaScript: lazy`, ensures
+    // to not affect AMP, CKEditor, or other preview pages where nojs is a must.
+    if ($is_nojs && $is_defer) {
+      $is_nojs = $is_undata;
+    }
+
+    // Compat is anything that Native lazy doesn't support.
     $is_compat = $fx
       || $is_bg
       || $is_fluid
       || $is_video
+      || $is_defer
       || $blazies->get('libs.compat');
 
     // Some should be refined per item against potential mixed media items.

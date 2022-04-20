@@ -37,7 +37,7 @@
       'dialog:beforecreate': function (event, dialog, $element, settings) {
         if ($element.find('.moderation-sidebar-container').length) {
           $('.toolbar-icon-moderation-sidebar').addClass('sidebar-open');
-          settings.dialogClass += ' ui-dialog-off-canvas';
+          settings.dialogClass += ' ui-dialog-off-canvas ui-dialog-moderation-sidebar';
         }
       },
       'dialog:beforeclose': function (event, dialog, $element) {

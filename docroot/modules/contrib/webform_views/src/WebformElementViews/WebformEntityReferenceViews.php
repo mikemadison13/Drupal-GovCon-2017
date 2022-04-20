@@ -45,11 +45,14 @@ class WebformEntityReferenceViews extends WebformDefaultViews {
     // this entity reference element.
     $target_entity_type = $this->getTargetEntityType($this->webformElementManager->getElementInstance($element), $element);
     if ($target_entity_type instanceof ContentEntityTypeInterface) {
-      $views_data[$target_entity_type->getDataTable() ?: $target_entity_type->getBaseTable()]['webform_submission'] = [
+      $dataTable = $target_entity_type->getDataTable() ?: $target_entity_type->getBaseTable();
+      $relationshipAlias = sprintf('webform_submission_reverse_reference__%s__%s', $webform->id(), $element['#webform_key']);
+      $views_data[$dataTable][$relationshipAlias] = [
         'title' => $this->t('Webform submission'),
-        'help' => $this->t('Webform submission(-s) that reference the @entity_label via %element_title element.', [
+        'help' => $this->t('Webform submission(-s) that reference the @entity_label via %element_title element in the %webform_label webform.', [
           '@entity_label' => $target_entity_type->getLabel(),
           '%element_title' => $element['#title'],
+          '%webform_label' => $webform->label(),
         ]),
         'relationship' => [
           'left_field' => $target_entity_type->getKey('id'),

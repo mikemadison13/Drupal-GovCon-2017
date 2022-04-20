@@ -8,6 +8,7 @@ use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Cache\Cache;
 use Drupal\blazy\Media\BlazyFile;
+use Drupal\blazy\Media\Placeholder;
 
 /**
  * Implements a public facing blazy manager.
@@ -39,7 +40,7 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
 
     $settings = &$build['settings'];
     $settings += BlazyDefault::itemSettings();
-    $settings['uri'] = $uri = $settings['uri'] ?: Blazy::uri($build['item']);
+    $settings['uri'] = $uri = $settings['uri'] ?: BlazyFile::uri($build['item']);
 
     // Respects content not handled by theme_blazy(), but passed through.
     // Yet allows rich contents which might still be processed by theme_blazy().
@@ -119,7 +120,7 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
 
     // Build thumbnail and optional placeholder based on thumbnail.
     // This must be set before Blazy::urlAndDimensions to provide placeholder.
-    BlazyFile::thumbnailAndPlaceholder($attributes, $settings);
+    Placeholder::thumbnail($attributes, $settings);
 
     // Prepare image URL and its dimensions, including for rich-media content,
     // such as for local video poster image if a poster URI is provided.
@@ -369,19 +370,8 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
     // Pass non-rich-media elements to theme_blazy().
     $element['#item_attributes'] = $item_attributes;
 
-    // The settings.bgs is output specific for CSS background purposes with BC.
-    if ($bgs = $blazies->get('bgs')) {
-      // @todo remove .media--background for .b-bg as more relevant for BG.
-      $attributes['class'][] = 'b-bg media--background';
-      $attributes['data-b-bg'] = Json::encode($bgs);
-
-      if ($blazies->get('is.static')) {
-        Blazy::inlineStyle($attributes, 'background-image: url(' . $settings['image_url'] . ');');
-      }
-    }
-
     if ($blazies->get('libs.blur')) {
-      BlazyUtil::blur($element, $attributes, $settings);
+      Placeholder::blur($element, $attributes, $settings);
     }
   }
 
@@ -392,52 +382,12 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
     $blazies = &$settings['blazies'];
     $responsive_image = $blazies->get('resimage');
     $element['#cache']['tags'] = $responsive_image['caches'];
-
-    // Makes Responsive image usable as CSS background image sources.
-    // @todo merge it with BlazyFormatter + BlazyFilter.
-    if ($settings['background']) {
-      $srcset = $ratios = [];
-      foreach ($responsive_image['styles'] as $style) {
-        $styled = array_merge($settings, BlazyFile::transformDimensions($style, $settings, FALSE));
-
-        // Sort image URLs based on width.
-        $data = BlazyFile::backgroundImage($styled, $style);
-        $srcset[$styled['width']] = $data;
-        $ratios[$styled['width']] = $data['ratio'];
-      }
-
-      // Sort the srcset from small to large image width or multiplier.
-      ksort($srcset);
-      ksort($ratios);
-
-      $blazies->set('bgs', $srcset)
-        ->set('ratios', $ratios)
-        ->set('item.padding_bottom', end($ratios));
-
-      // To make compatible with old bLazy which expects no placeholder, provide
-      // a real smallest image. Bio will map it to the current breakpoint later.
-      $bg = reset($srcset);
-      $unlazy = $settings['unlazy'] = $blazies->get('is.undata');
-      $settings['image_url'] = $unlazy ? $settings['image_url'] : $bg['src'];
-      Blazy::lazyAttributes($attributes, $settings);
-    }
   }
 
   /**
    * Build out image, or anything related, including cache, CSS background, etc.
    */
   private function buildImage(array &$element, array &$attributes, array &$item_attributes, array &$settings) {
-
-    $blazies = &$settings['blazies'];
-    if ($settings['background']) {
-
-      // Attach data attributes to either IMG tag, or DIV container.
-      $blazies->set('bgs.' . $settings['width'], BlazyFile::backgroundImage($settings));
-      $unlazy = $settings['unlazy'] = $blazies->get('is.undata');
-      $settings['image_url'] = $unlazy ? $settings['image_url'] : $blazies->get('ui.placeholder');
-      Blazy::lazyAttributes($attributes, $settings);
-    }
-
     if (empty($settings['_no_cache'])) {
       $file_tags = $settings['file_tags'] ?? [];
       $settings['cache_tags'] = empty($settings['cache_tags']) ? $file_tags : Cache::mergeTags($settings['cache_tags'], $file_tags);

@@ -97,10 +97,16 @@ class BlazyAlter {
 
       // Plugins extending dBlazy.
       foreach (BlazyDefault::plugins() as $id) {
-        $base = in_array($id, ['viewport', 'dataset', 'css', 'dom']);
+        $base = ['eventify', 'viewport', 'dataset', 'css', 'dom'];
+        $base = in_array($id, $base);
         $deps = $base ? ['blazy/dblazy', 'blazy/base'] : ['blazy/xlazy'];
         if ($id == 'xlazy') {
           $deps = ['blazy/viewport', 'blazy/dataset', 'blazy/dom'];
+        }
+
+        // @todo problematic weight, basically compat must be present.
+        if (in_array($id, ['animate', 'background'])) {
+          $deps[] = 'blazy/compat';
         }
         $weight = $base ? -5.6 : -5.5;
         $common = ['minified' => TRUE, 'weight' => $weight];

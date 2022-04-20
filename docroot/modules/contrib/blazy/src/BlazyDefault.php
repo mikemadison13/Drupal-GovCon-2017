@@ -236,6 +236,8 @@ class BlazyDefault {
   public static function blazies() {
     return [
       '_api' => FALSE,
+      'box' => ['resimage' => []],
+      'box_media' => [],
       'bgs' => [],
       'initial' => 0,
       'is' => [],
@@ -247,6 +249,7 @@ class BlazyDefault {
       'image' => ['style' => NULL],
       'item' => ['delta' => 0],
       'resimage' => ['sources' => [], 'style' => NULL],
+      'thumbnail' => [],
     ];
   }
 
@@ -265,12 +268,14 @@ class BlazyDefault {
       'check_blazy'      => FALSE,
       'namespace'        => 'blazy',
       'id'               => '',
+      '_image_url'       => '',
       '_richbox'         => FALSE,
       'route_name'       => '',
       'view_name'        => '',
       'first_image'      => NULL,
       'accessible_title' => '',
       'unlazy'           => FALSE,
+      '_resimage'        => FALSE,
 
       // @todo deprecated for blazies after sub-module updates:
       // 'unstyled'         => FALSE,
@@ -278,7 +283,6 @@ class BlazyDefault {
       'is_preview'       => FALSE,
       'lightbox'         => FALSE,
       'resimage'         => FALSE,
-      '_resimage'        => FALSE,
       // @todo revert  + self::uiSettings()
     ] + self::imageSettings() + self::gridSettings();
   }
@@ -376,6 +380,7 @@ class BlazyDefault {
    */
   public static function plugins(): array {
     return [
+      'eventify',
       'viewport',
       'xlazy',
       'css',

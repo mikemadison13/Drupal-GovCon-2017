@@ -30,7 +30,7 @@ class EntityBlock implements ContainerDeriverInterface {
   /**
    * The entity type manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -49,7 +49,7 @@ class EntityBlock implements ContainerDeriverInterface {
    *
    * @param string $base_plugin_id
    *   The base plugin ID.
-   * @param EntityTypeManagerInterface $entityTypeManager
+   * @param Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
    */
   public function __construct($base_plugin_id, EntityTypeManagerInterface $entityTypeManager) {

@@ -5,7 +5,6 @@ namespace Drupal\blazy\Media;
 use Drupal\Core\Cache\Cache;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazySettings;
-use Drupal\blazy\BlazyUtil;
 
 /**
  * Provides responsive image utilities.
@@ -129,6 +128,43 @@ class BlazyResponsiveImage {
   }
 
   /**
+   * Build out Responsive image.
+   */
+  public static function toBackground(array &$attributes, array &$settings) {
+    $blazies = &$settings['blazies'];
+
+    // Makes Responsive image usable as CSS background image sources.
+    // @todo merge it with BlazyFormatter + BlazyFilter.
+    if ($settings['background'] && $resimage = $blazies->get('resimage')) {
+      $srcset = $ratios = [];
+
+      foreach ($resimage['styles'] as $style) {
+        $styled = array_merge($settings, BlazyFile::transformDimensions($style, $settings, FALSE));
+
+        // Sort image URLs based on width.
+        $data = BlazyFile::backgroundImage($styled, $style);
+        $srcset[$styled['width']] = $data;
+        $ratios[$styled['width']] = $data['ratio'];
+      }
+
+      // Sort the srcset from small to large image width or multiplier.
+      ksort($srcset);
+      ksort($ratios);
+
+      $blazies->set('bgs', $srcset)
+        ->set('ratios', $ratios)
+        ->set('item.padding_bottom', end($ratios));
+
+      // To make compatible with old bLazy which expects no placeholder, provide
+      // a real smallest image. Bio will map it to the current breakpoint later.
+      $bg = reset($srcset);
+      $unlazy = $settings['unlazy'] = $blazies->get('is.undata');
+      $settings['image_url'] = $unlazy ? $settings['image_url'] : $bg['src'];
+      Blazy::lazyAttributes($attributes, $settings);
+    }
+  }
+
+  /**
    * Modifies fallback image style.
    */
   public static function fallback(array &$settings): void {
@@ -138,7 +174,7 @@ class BlazyResponsiveImage {
     if (empty($settings['image_style']) && $resimage = $blazies->get('resimage.style')) {
       $fallback = $resimage->getFallbackImageStyle();
       if ($fallback == '_empty image_') {
-        $placeholder = BlazyUtil::generatePlaceholder($settings['width'], $settings['height']);
+        $placeholder = Placeholder::generate($settings['width'], $settings['height']);
         $settings['image_url'] = $blazies->get('ui.placeholder') ?: $placeholder;
       }
       else {

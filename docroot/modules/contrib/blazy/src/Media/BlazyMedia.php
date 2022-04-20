@@ -111,9 +111,9 @@ class BlazyMedia implements BlazyMediaInterface {
     // Checks if Image item is available.
     if ($item) {
       $settings['file_tags'] = ['file:' . $item->target_id];
-      $settings['uri'] = Blazy::uri($item);
+      $settings['uri'] = BlazyFile::uri($item);
 
-      if (trim($item->title) == '') {
+      if (trim($item->title ?? '') == '') {
         $item->title = $media->label();
       }
 
@@ -158,7 +158,7 @@ class BlazyMedia implements BlazyMediaInterface {
       ];
 
       // Build item and settings.
-      $item             = Blazy::image($settings);
+      $item             = BlazyFile::image($settings);
       $item->entity     = $entity;
       $data['item']     = $item;
       $data['settings'] = empty($data['settings']) ? $settings : array_merge($data['settings'], $settings);
@@ -200,7 +200,7 @@ class BlazyMedia implements BlazyMediaInterface {
 
             // Collects cache tags to be added for each item in the field.
             $settings['file_tags'] = $file->referencedEntities()[0]->getCacheTags();
-            $settings['uri'] = Blazy::uri($data['item']);
+            $settings['uri'] = BlazyFile::uri($data['item']);
           }
         }
       }

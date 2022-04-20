@@ -12,7 +12,7 @@ class ChromeExtensionTest extends TestCase
     /** @var ChromeExtension */
     private $extension;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->extension = new ChromeExtension();
     }

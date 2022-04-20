@@ -140,7 +140,7 @@ abstract class BlazyEntityMediaBase extends BlazyEntityBase {
         if (isset($element['item']) && $item = $element['item']) {
           // Provides basic captions based on image attributes (Alt, Title).
           foreach (['title', 'alt'] as $key => $attribute) {
-            if ($name == $attribute && $caption = trim($item->get($attribute)->getString())) {
+            if ($name == $attribute && $caption = trim($item->get($attribute)->getString() ?: '')) {
               $markup = Xss::filter($caption, BlazyDefault::TAGS);
               $caption_items[$name] = ['#markup' => $markup];
               $weights[] = $key;

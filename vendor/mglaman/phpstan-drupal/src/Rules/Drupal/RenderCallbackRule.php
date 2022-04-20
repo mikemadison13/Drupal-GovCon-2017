@@ -4,6 +4,7 @@ namespace mglaman\PHPStanDrupal\Rules\Drupal;
 
 use mglaman\PHPStanDrupal\Drupal\ServiceMap;
 use PhpParser\Node;
+use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
@@ -62,6 +63,23 @@ final class RenderCallbackRule implements Rule
 
         // @todo Move into its own rule.
         if ($keyChecked === '#lazy_builder') {
+            // Check if being used in array_intersect_key.
+            // NOTE: This only works against existing patterns in Drupal core where the array with boolean values is
+            // being passed as the argument to array_intersect_key.
+            $parent = $node->getAttribute('parent');
+            if ($parent instanceof Node\Expr\Array_) {
+                $parent = $parent->getAttribute('parent');
+                if ($parent instanceof Node\Arg) {
+                    $parent = $parent->getAttribute('parent');
+                    if ($parent instanceof Node\Expr\FuncCall
+                        && $parent->name instanceof Name
+                        && $parent->name->toString() === 'array_intersect_key'
+                    ) {
+                        return [];
+                    }
+                }
+            }
+
             if (!$value instanceof Node\Expr\Array_) {
                 return [
                     RuleErrorBuilder::message(sprintf('The "%s" expects a callable array with arguments.', $keyChecked))
@@ -118,7 +136,7 @@ final class RenderCallbackRule implements Rule
             }
             // We can determine if the callback is callable through the type system. However, we cannot determine
             // if it is just a function or a static class call (MyClass::staticFunc).
-            if ($this->reflectionProvider->hasFunction(new Node\Name($type->getValue()), null)) {
+            if ($this->reflectionProvider->hasFunction(new Name($type->getValue()), null)) {
                 return RuleErrorBuilder::message(
                     sprintf("%s callback %s at key '%s' is not trusted.", $keyChecked, $type->describe(VerbosityLevel::value()), $pos)
                 )->line($errorLine)

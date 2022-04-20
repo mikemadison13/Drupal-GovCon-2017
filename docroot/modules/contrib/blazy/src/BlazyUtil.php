@@ -15,23 +15,6 @@ use Drupal\blazy\Media\BlazyFile;
 class BlazyUtil {
 
   /**
-   * Generates an SVG Placeholder.
-   *
-   * @param string $width
-   *   The image width.
-   * @param string $height
-   *   The image height.
-   *
-   * @return string
-   *   Returns a string containing an SVG.
-   */
-  public static function generatePlaceholder($width, $height): string {
-    $width = $width ?: 100;
-    $height = $height ?: 100;
-    return 'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D\'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg\'%20viewBox%3D\'0%200%20' . $width . '%20' . $height . '\'%2F%3E';
-  }
-
-  /**
    * Returns the sanitized attributes for user-defined (UGC Blazy Filter).
    *
    * When IMG and IFRAME are allowed for untrusted users, trojan horses are
@@ -65,33 +48,6 @@ class BlazyUtil {
       }
     }
     return $clean_attributes;
-  }
-
-  /**
-   * Build out the blur image.
-   */
-  public static function blur(array &$element, array &$attributes, array &$settings) {
-    $blazies = &$settings['blazies'];
-    if (!$blazies->get('is.unstyled')) {
-      $blur = [
-        '#theme' => 'image',
-        '#uri' => $settings['placeholder_ui'] ?: $blazies->get('ui.placeholder'),
-        '#attributes' => [
-          'class' => ['b-lazy', 'b-blur', 'b-blur--tmp'],
-          'data-src' => $settings['placeholder_fx'],
-          'loading' => 'lazy',
-          'decoding' => 'async',
-        ],
-      ];
-
-      // Reset as already stored.
-      unset($settings['placeholder_fx']);
-      $element['#preface']['blur'] = $blur;
-
-      if (($settings['width'] ?? 0) > 980) {
-        $attributes['class'][] = 'media--fx-lg';
-      }
-    }
   }
 
   /**
@@ -180,6 +136,17 @@ class BlazyUtil {
    */
   public static function imageUrl(array &$settings) {
     BlazyFile::imageUrl($settings);
+  }
+
+  /**
+   * Generates an SVG Placeholder.
+   *
+   * @todo deprecate at 2.7 and removed at 3.+. Use Placeholder::DATA anytime.
+   */
+  public static function generatePlaceholder($width, $height): string {
+    $width = $width ?: 100;
+    $height = $height ?: 100;
+    return 'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D\'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg\'%20viewBox%3D\'0%200%20' . $width . '%20' . $height . '\'%2F%3E';
   }
 
 }

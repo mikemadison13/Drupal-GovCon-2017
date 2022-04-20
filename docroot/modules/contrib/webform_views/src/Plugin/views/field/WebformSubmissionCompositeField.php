@@ -18,7 +18,7 @@ class WebformSubmissionCompositeField extends WebformSubmissionField {
     /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
     $webform_submission = $this->getEntity($values);
 
-    if ($webform_submission && $webform_submission->access('view')) {
+    if ($webform_submission && ($webform_submission->access('view') || !$this->options['webform_check_access'])) {
       $webform = $webform_submission->getWebform();
 
       // Get format and element key.

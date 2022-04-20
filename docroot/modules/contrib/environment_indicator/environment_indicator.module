@@ -205,11 +205,11 @@ function environment_indicator_toolbar() {
     return $items;
   }
   $release_info = \Drupal::state()->get('environment_indicator.current_release');
-  if (strlen($release_info)) {
+  if (!empty($release_info)) {
     $release_info = '(' . $release_info . ')';
   }
   $title = implode(' ', array_filter([$release_info, $title]));
-  if (!strlen($title)) {
+  if (empty($title)) {
     return $items;
   }
   $items['environment_indicator'] += [

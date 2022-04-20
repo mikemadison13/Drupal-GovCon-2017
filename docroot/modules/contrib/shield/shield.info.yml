@@ -9,7 +9,7 @@ dependencies:
 
 configure: shield.settings
 
-# Information added by Drupal.org packaging script on 2021-12-13
-version: '8.x-1.5'
+# Information added by Drupal.org packaging script on 2022-02-14
+version: '8.x-1.6'
 project: 'shield'
-datestamp: 1639410383
+datestamp: 1644835182

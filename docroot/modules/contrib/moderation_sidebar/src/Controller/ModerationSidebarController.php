@@ -8,6 +8,7 @@ use Drupal\content_moderation\ModerationInformation;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\TranslatableRevisionableStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;

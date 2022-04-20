@@ -58,7 +58,7 @@ abstract class BlazyEntityReferenceBase extends BlazyEntityMediaBase {
         $element['caption']['title'] = $this->blazyEntity()->getFieldTextOrLink($entity, $settings['title'], $settings);
       }
       elseif (isset($element['item']) && $item = $element['item']) {
-        if (($settings['title'] == 'title') && ($caption = trim($item->get('title')->getString()))) {
+        if (($settings['title'] == 'title') && ($caption = trim($item->get('title')->getString() ?: ''))) {
           $markup = Xss::filter($caption, BlazyDefault::TAGS);
           $element['caption']['title'] = ['#markup' => $markup];
         }

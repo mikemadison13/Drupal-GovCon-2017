@@ -18,7 +18,7 @@ class ShieldTest extends BrowserTestBase {
   protected static $modules = [
     'shield',
     'key',
-    'basic_auth'
+    'basic_auth',
   ];
 
   /**

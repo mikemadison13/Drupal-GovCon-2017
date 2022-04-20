@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
+class ComposerStaticInit933d38475837ebe762620acb3c75cf1c
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -21,6 +21,7 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        'c9d07b32a2e02bc0fc582d4f0c1b56cc' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/autoload.php',
         'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         '07d7f1a47144818725fd8d91a907ac57' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/create_uploaded_file.php',
         'da94ac5d3ca7d2dbab84ce561ce72bfd' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/marshal_headers_from_sapi.php',
@@ -179,10 +180,6 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'J' => 
         array (
             'Jean85\\' => 7,
-        ),
-        'I' => 
-        array (
-            'Interop\\Container\\' => 18,
         ),
         'G' => 
         array (
@@ -580,10 +577,6 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         array (
             0 => __DIR__ . '/..' . '/jean85/pretty-package-versions/src',
         ),
-        'Interop\\Container\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
-        ),
         'GuzzleHttp\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
@@ -927,6 +920,7 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
             'Behat\\MinkExtension' => 
             array (
                 0 => __DIR__ . '/..' . '/behat/mink-extension/src',
+                1 => __DIR__ . '/..' . '/friends-of-behat/mink-extension/src',
             ),
             'Behat\\Gherkin' => 
             array (
@@ -2478,6 +2472,7 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'DrupalPractice\\Sniffs\\FunctionCalls\\DbSelectBracesSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/FunctionCalls/DbSelectBracesSniff.php',
         'DrupalPractice\\Sniffs\\FunctionCalls\\DefaultValueSanitizeSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/FunctionCalls/DefaultValueSanitizeSniff.php',
         'DrupalPractice\\Sniffs\\FunctionCalls\\FormErrorTSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/FunctionCalls/FormErrorTSniff.php',
+        'DrupalPractice\\Sniffs\\FunctionCalls\\InsecureUnserializeSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/FunctionCalls/InsecureUnserializeSniff.php',
         'DrupalPractice\\Sniffs\\FunctionCalls\\LCheckPlainSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/FunctionCalls/LCheckPlainSniff.php',
         'DrupalPractice\\Sniffs\\FunctionCalls\\MessageTSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/FunctionCalls/MessageTSniff.php',
         'DrupalPractice\\Sniffs\\FunctionCalls\\TCheckPlainSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/FunctionCalls/TCheckPlainSniff.php',
@@ -2496,6 +2491,7 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'DrupalPractice\\Sniffs\\General\\OptionsTSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/General/OptionsTSniff.php',
         'DrupalPractice\\Sniffs\\General\\VariableNameSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/General/VariableNameSniff.php',
         'DrupalPractice\\Sniffs\\InfoFiles\\CoreVersionRequirementSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/InfoFiles/CoreVersionRequirementSniff.php',
+        'DrupalPractice\\Sniffs\\InfoFiles\\DescriptionSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/InfoFiles/DescriptionSniff.php',
         'DrupalPractice\\Sniffs\\InfoFiles\\NamespacedDependencySniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/InfoFiles/NamespacedDependencySniff.php',
         'DrupalPractice\\Sniffs\\Objects\\GlobalClassSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/Objects/GlobalClassSniff.php',
         'DrupalPractice\\Sniffs\\Objects\\GlobalDrupalSniff' => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice/Sniffs/Objects/GlobalDrupalSniff.php',
@@ -5103,9 +5099,6 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'HTMLPurifier_VarParser_Flexible' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/VarParser/Flexible.php',
         'HTMLPurifier_VarParser_Native' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/VarParser/Native.php',
         'HTMLPurifier_Zipper' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Zipper.php',
-        'Interop\\Container\\ContainerInterface' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/ContainerInterface.php',
-        'Interop\\Container\\Exception\\ContainerException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/ContainerException.php',
-        'Interop\\Container\\Exception\\NotFoundException' => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container/Exception/NotFoundException.php',
         'Jean85\\Exception\\ProvidedPackageException' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Exception/ProvidedPackageException.php',
         'Jean85\\Exception\\ReplacedPackageException' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Exception/ReplacedPackageException.php',
         'Jean85\\Exception\\VersionMissingExceptionInterface' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Exception/VersionMissingExceptionInterface.php',
@@ -5307,7 +5300,6 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'Laminas\\ServiceManager\\Initializer\\InitializerInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Initializer/InitializerInterface.php',
         'Laminas\\ServiceManager\\PluginManagerInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/PluginManagerInterface.php',
         'Laminas\\ServiceManager\\Proxy\\LazyServiceFactory' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Proxy/LazyServiceFactory.php',
-        'Laminas\\ServiceManager\\PsrContainerDecorator' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/PsrContainerDecorator.php',
         'Laminas\\ServiceManager\\ServiceLocatorInterface' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/ServiceLocatorInterface.php',
         'Laminas\\ServiceManager\\ServiceManager' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/ServiceManager.php',
         'Laminas\\ServiceManager\\Test\\CommonPluginManagerTrait' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/Test/CommonPluginManagerTrait.php',
@@ -5506,6 +5498,8 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'PHPStan\\PhpDocParser\\Ast\\Type\\ArrayTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/ArrayTypeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\CallableTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/CallableTypeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\CallableTypeParameterNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/CallableTypeParameterNode.php',
+        'PHPStan\\PhpDocParser\\Ast\\Type\\ConditionalTypeForParameterNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/ConditionalTypeForParameterNode.php',
+        'PHPStan\\PhpDocParser\\Ast\\Type\\ConditionalTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/ConditionalTypeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\ConstTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/ConstTypeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\GenericTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/GenericTypeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\IdentifierTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/IdentifierTypeNode.php',
@@ -6224,6 +6218,7 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'SlevomatCodingStandard\\Sniffs\\Classes\\ModernClassNameReferenceSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Classes/ModernClassNameReferenceSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Classes\\ParentCallSpacingSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Classes/ParentCallSpacingSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Classes\\PropertySpacingSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Classes/PropertySpacingSniff.php',
+        'SlevomatCodingStandard\\Sniffs\\Classes\\RequireAbstractOrFinalSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Classes/RequireAbstractOrFinalSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Classes\\RequireConstructorPropertyPromotionSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Classes/RequireConstructorPropertyPromotionSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Classes\\RequireMultiLineMethodSignatureSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Classes/RequireMultiLineMethodSignatureSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Classes\\RequireSingleLineMethodSignatureSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Classes/RequireSingleLineMethodSignatureSniff.php',
@@ -6276,6 +6271,7 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'SlevomatCodingStandard\\Sniffs\\ControlStructures\\UselessIfConditionWithReturnSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/ControlStructures/UselessIfConditionWithReturnSniff.php',
         'SlevomatCodingStandard\\Sniffs\\ControlStructures\\UselessTernaryOperatorSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/ControlStructures/UselessTernaryOperatorSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Exceptions\\DeadCatchSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Exceptions/DeadCatchSniff.php',
+        'SlevomatCodingStandard\\Sniffs\\Exceptions\\DisallowNonCapturingCatchSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Exceptions/DisallowNonCapturingCatchSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Exceptions\\ReferenceThrowableOnlySniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Exceptions/ReferenceThrowableOnlySniff.php',
         'SlevomatCodingStandard\\Sniffs\\Exceptions\\RequireNonCapturingCatchSniff' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Exceptions/RequireNonCapturingCatchSniff.php',
         'SlevomatCodingStandard\\Sniffs\\Files\\FilepathNamespaceExtractor' => __DIR__ . '/..' . '/slevomat/coding-standard/SlevomatCodingStandard/Sniffs/Files/FilepathNamespaceExtractor.php',
@@ -8271,6 +8267,7 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'loophp\\phposinfo\\OsInfoInterface' => __DIR__ . '/..' . '/loophp/phposinfo/src/OsInfoInterface.php',
         'mglaman\\PHPStanDrupal\\Drupal\\DrupalAutoloader' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Drupal/DrupalAutoloader.php',
         'mglaman\\PHPStanDrupal\\Drupal\\DrupalServiceDefinition' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Drupal/DrupalServiceDefinition.php',
+        'mglaman\\PHPStanDrupal\\Drupal\\DrupalStubFilesExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Drupal/DrupalStubFilesExtension.php',
         'mglaman\\PHPStanDrupal\\Drupal\\EntityData' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Drupal/EntityData.php',
         'mglaman\\PHPStanDrupal\\Drupal\\EntityDataRepository' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Drupal/EntityDataRepository.php',
         'mglaman\\PHPStanDrupal\\Drupal\\Extension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Drupal/Extension.php',
@@ -8287,12 +8284,14 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'mglaman\\PHPStanDrupal\\Rules\\Classes\\ClassExtendsInternalClassRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Classes/ClassExtendsInternalClassRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Classes\\PluginManagerInspectionRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Classes/PluginManagerInspectionRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\AccessDeprecatedConstant' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/AccessDeprecatedConstant.php',
+        'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\ConditionManagerCreateInstanceContextConfigurationRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/ConditionManagerCreateInstanceContextConfigurationRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\ConfigEntityConfigExportRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/ConfigEntityConfigExportRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\DeprecatedAnnotationsRuleBase' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/DeprecatedAnnotationsRuleBase.php',
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\GetDeprecatedServiceRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/GetDeprecatedServiceRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\PluginAnnotationContextDefinitionsRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/PluginAnnotationContextDefinitionsRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\StaticServiceDeprecatedServiceRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/StaticServiceDeprecatedServiceRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\Coder\\DiscouragedFunctionsRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/Coder/DiscouragedFunctionsRule.php',
+        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\EntityQuery\\EntityQueryHasAccessCheckRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/EntityQuery/EntityQueryHasAccessCheckRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\GlobalDrupalDependencyInjectionRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/GlobalDrupalDependencyInjectionRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\LoadIncludeBase' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/LoadIncludeBase.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\LoadIncludes' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/LoadIncludes.php',
@@ -8307,13 +8306,21 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
         'mglaman\\PHPStanDrupal\\Type\\DrupalClassResolverDynamicStaticReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/DrupalClassResolverDynamicStaticReturnTypeExtension.php',
         'mglaman\\PHPStanDrupal\\Type\\DrupalClassResolverReturnType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/DrupalClassResolverReturnType.php',
         'mglaman\\PHPStanDrupal\\Type\\DrupalServiceDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/DrupalServiceDynamicReturnTypeExtension.php',
+        'mglaman\\PHPStanDrupal\\Type\\DrupalStaticEntityQueryDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/DrupalStaticEntityQueryDynamicReturnTypeExtension.php',
         'mglaman\\PHPStanDrupal\\Type\\EntityAccessControlHandlerReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityAccessControlHandlerReturnTypeExtension.php',
+        'mglaman\\PHPStanDrupal\\Type\\EntityQuery\\ConfigEntityQueryType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityQuery/ConfigEntityQueryType.php',
+        'mglaman\\PHPStanDrupal\\Type\\EntityQuery\\ContentEntityQueryType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityQuery/ContentEntityQueryType.php',
+        'mglaman\\PHPStanDrupal\\Type\\EntityQuery\\EntityQueryAccessCheckDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityQuery/EntityQueryAccessCheckDynamicReturnTypeExtension.php',
         'mglaman\\PHPStanDrupal\\Type\\EntityQuery\\EntityQueryCountType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityQuery/EntityQueryCountType.php',
         'mglaman\\PHPStanDrupal\\Type\\EntityQuery\\EntityQueryDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityQuery/EntityQueryDynamicReturnTypeExtension.php',
+        'mglaman\\PHPStanDrupal\\Type\\EntityQuery\\EntityQueryExecuteWithoutAccessCheckCountType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityQuery/EntityQueryExecuteWithoutAccessCheckCountType.php',
+        'mglaman\\PHPStanDrupal\\Type\\EntityQuery\\EntityQueryExecuteWithoutAccessCheckType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityQuery/EntityQueryExecuteWithoutAccessCheckType.php',
+        'mglaman\\PHPStanDrupal\\Type\\EntityQuery\\EntityQueryType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityQuery/EntityQueryType.php',
         'mglaman\\PHPStanDrupal\\Type\\EntityStorage\\ConfigEntityStorageType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityStorage/ConfigEntityStorageType.php',
         'mglaman\\PHPStanDrupal\\Type\\EntityStorage\\ContentEntityStorageType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityStorage/ContentEntityStorageType.php',
         'mglaman\\PHPStanDrupal\\Type\\EntityStorage\\EntityStorageDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityStorage/EntityStorageDynamicReturnTypeExtension.php',
         'mglaman\\PHPStanDrupal\\Type\\EntityStorage\\EntityStorageType' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityStorage/EntityStorageType.php',
+        'mglaman\\PHPStanDrupal\\Type\\EntityStorage\\GetQueryReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityStorage/GetQueryReturnTypeExtension.php',
         'mglaman\\PHPStanDrupal\\Type\\EntityTypeManagerGetStorageDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/EntityTypeManagerGetStorageDynamicReturnTypeExtension.php',
         'mglaman\\PHPStanDrupal\\Type\\UrlToStringDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/UrlToStringDynamicReturnTypeExtension.php',
         'phpDocumentor\\Reflection\\DocBlock' => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src/DocBlock.php',
@@ -8417,11 +8424,11 @@ class ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit199d38a8bcdd9f46de03b7677c9b0717::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit933d38475837ebe762620acb3c75cf1c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit933d38475837ebe762620acb3c75cf1c::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit933d38475837ebe762620acb3c75cf1c::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit933d38475837ebe762620acb3c75cf1c::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit933d38475837ebe762620acb3c75cf1c::$classMap;
 
         }, null, ClassLoader::class);
     }

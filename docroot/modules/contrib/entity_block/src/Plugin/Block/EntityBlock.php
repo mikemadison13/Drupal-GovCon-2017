@@ -3,11 +3,14 @@
 namespace Drupal\entity_block\Plugin\Block;
 
 use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -105,7 +108,7 @@ class EntityBlock extends BlockBase implements ContainerFactoryPluginInterface {
       }
     }
 
-    $view_mode = isset($config['view_mode']) ? $config['view_mode'] : NULL;
+    $view_mode = $config['view_mode'] ?? NULL;
 
     $form['view_mode'] = [
       '#type' => 'select',
@@ -157,16 +160,67 @@ class EntityBlock extends BlockBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function build() {
-    if ($entity_id = $this->configuration['entity']) {
-      if (($entity = $this->entityStorage->load($entity_id)) && $entity->access('view')) {
-        $render_controller = \Drupal::entityTypeManager()->getViewBuilder($entity->getEntityTypeId());
-        $view_mode = isset($this->configuration['view_mode']) ? $this->configuration['view_mode'] : 'default';
+    if ($entity = $this->getEntity()) {
+      $render_controller = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
+      $view_mode = $this->configuration['view_mode'] ?? 'default';
 
-        return $render_controller->view($entity, $view_mode);
-      }
+      return $render_controller->view($entity, $view_mode);
     }
 
     return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function blockAccess(AccountInterface $account) {
+    $entity = $this->getEntity();
+    if ($entity && $entity->access('view', $account)) {
+      return AccessResult::allowed()
+        ->cachePerPermissions()
+        ->addCacheableDependency($entity);
+    }
+
+    return AccessResult::forbidden()
+      ->setReason($this->t('User does not have permission to view this entity.'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $entity = $this->getEntity();
+    $contexts = $entity ? $entity->getCacheContexts() : [];
+    return Cache::mergeContexts(parent::getCacheContexts(), $contexts);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $entity = $this->getEntity();
+    $cache_tags = $entity ? $entity->getCacheTags() : [];
+    return Cache::mergeTags(parent::getCacheTags(), $cache_tags);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    $entity = $this->getEntity();
+    $max_age = $entity ? $entity->getCacheMaxAge() : Cache::PERMANENT;
+    return Cache::mergeMaxAges(parent::getCacheMaxAge(), $max_age);
+  }
+
+  /**
+   * Gets our entity.
+   */
+  public function getEntity() {
+    if ($entity_id = $this->configuration['entity']) {
+      return $this->entityStorage->load($entity_id);
+    }
+
+    return NULL;
   }
 
 }

@@ -109,3 +109,19 @@ function shield_update_8006() {
       ->save(TRUE);
   }
 }
+
+/**
+ * Disable shield if the username is empty.
+ */
+function shield_update_8007() {
+  $config = \Drupal::configFactory()->get('shield.settings');
+
+  // If shield is enabled but the username is empty, disable shield.
+  if ($config->get('shield_enable')
+  && $config->get('credential_provider') === 'shield'
+  && empty($config->get('credentials.shield.user'))) {
+    \Drupal::configFactory()->getEditable('shield.settings')
+      ->set('shield_enable', FALSE)
+      ->save(TRUE);
+  }
+}

@@ -2,9 +2,11 @@
 
 <phpunit colors="true" bootstrap="vendor/autoload.php">
     <testsuites>
-        <testsuite name="Driver test suite">
-            <directory>tests</directory>
+        <testsuite name="Functional tests">
             <directory>vendor/mink/driver-testsuite/tests</directory>
+        </testsuite>
+        <testsuite name="Driver tests">
+            <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 

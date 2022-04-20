@@ -27,7 +27,9 @@ class WebformSubmissionComputedFilter extends WebformSubmissionFieldFilter {
     $operators = parent::operators();
 
     foreach ($operators as $k => $v) {
-      if ($operators[$k]['webform_views_element_type'] == WebformSubmissionFieldFilter::ELEMENT_TYPE) {
+      if (isset($operators[$k]['webform_views_element_type'])
+        && $operators[$k]['webform_views_element_type'] == WebformSubmissionFieldFilter::ELEMENT_TYPE
+      ) {
         $operators[$k]['webform_views_element_type'] = 'textfield';
       }
     }

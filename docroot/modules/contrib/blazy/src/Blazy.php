@@ -5,6 +5,8 @@ namespace Drupal\blazy;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\blazy\Media\BlazyFile;
+use Drupal\blazy\Media\BlazyResponsiveImage;
 
 /**
  * Provides common blazy utility static methods.
@@ -43,20 +45,40 @@ class Blazy implements BlazyInterface {
   private static $isSandboxed;
 
   /**
+   * Provides attachments when not using the provided API.
+   */
+  public static function attach(array &$variables, array $settings = []): void {
+    if ($blazy = self::service('blazy.manager')) {
+      $attachments = $blazy->attach($settings);
+      $variables['#attached'] = empty($variables['#attached']) ? $attachments : NestedArray::mergeDeep($variables['#attached'], $attachments);
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function buildMedia(array &$variables): void {
-    $settings = $variables['settings'];
+    $attributes = &$variables['attributes'];
+    $settings = &$variables['settings'];
     $blazies = &$settings['blazies'];
+    $resimage = $blazies->get('resimage.id');
 
     // (Responsive) image is optional for Video, or image as CSS background.
-    // Background image is built out at BlazyManager pre_render, not preprocess.
-    if (empty($settings['background'])) {
-      if ($blazies->get('resimage.id')) {
-        self::buildResponsiveImage($variables);
-      }
-      else {
-        self::buildImage($variables);
+    if ($resimage) {
+      self::buildResponsiveImage($variables);
+    }
+    else {
+      self::buildImage($variables);
+    }
+
+    // The settings.bgs is output specific for CSS background purposes with BC.
+    if ($bgs = $blazies->get('bgs')) {
+      // @todo remove .media--background for .b-bg as more relevant for BG.
+      $attributes['class'][] = 'b-bg media--background';
+      $attributes['data-b-bg'] = Json::encode($bgs);
+
+      if ($blazies->get('is.static') && $url = $settings['image_url']) {
+        self::inlineStyle($attributes, 'background-image: url(' . $url . ');');
       }
     }
 
@@ -75,35 +97,53 @@ class Blazy implements BlazyInterface {
    * {@inheritdoc}
    */
   public static function buildResponsiveImage(array &$variables): void {
-    $settings = $variables['settings'];
+    $settings = &$variables['settings'];
     $blazies = &$settings['blazies'];
-    $natives = ['decoding' => 'async'];
 
-    $attributes = ($settings['unlazy'] ? $natives : [
-      'data-b-lazy' => $blazies->get('ui.one_pixel'),
-      'data-placeholder' => $blazies->get('ui.placeholder'),
-    ]);
+    if (empty($settings['background'])) {
+      $natives = ['decoding' => 'async'];
 
-    $variables['image'] += [
-      '#type' => 'responsive_image',
-      '#responsive_image_style_id' => $blazies->get('resimage.id'),
-      '#uri' => $settings['uri'],
-      '#attributes' => $attributes,
-    ];
+      $attributes = ($settings['unlazy'] ? $natives : [
+        'data-b-lazy' => $blazies->get('ui.one_pixel'),
+        'data-placeholder' => $blazies->get('ui.placeholder'),
+      ]);
+
+      $variables['image'] += [
+        '#type' => 'responsive_image',
+        '#responsive_image_style_id' => $blazies->get('resimage.id'),
+        '#uri' => $settings['uri'],
+        '#attributes' => $attributes,
+      ];
+    }
+    else {
+      // Attach BG data attributes to a DIV container.
+      $attributes = &$variables['attributes'];
+      BlazyResponsiveImage::toBackground($attributes, $settings);
+    }
   }
 
   /**
    * Modifies variables for blazy (non-)lazyloaded image.
    */
   public static function buildImage(array &$variables): void {
-    $settings = $variables['settings'];
+    $attributes = &$variables['attributes'];
+    $settings = &$variables['settings'];
     $blazies = &$settings['blazies'];
 
     // Supports either lazy loaded image, or not.
-    $variables['image'] += [
-      '#theme' => 'image',
-      '#uri' => $settings['unlazy'] ? $settings['image_url'] : $blazies->get('ui.placeholder'),
-    ];
+    if (empty($settings['background'])) {
+      $variables['image'] += [
+        '#theme' => 'image',
+        '#uri' => $settings['unlazy'] ? $settings['image_url'] : $blazies->get('ui.placeholder'),
+      ];
+    }
+    else {
+      // Attach BG data attributes to a DIV container.
+      $blazies->set('bgs.' . $settings['width'], BlazyFile::backgroundImage($settings));
+      $unlazy = $settings['unlazy'] = $blazies->get('is.undata');
+      $settings['image_url'] = $unlazy ? $settings['image_url'] : $blazies->get('ui.placeholder');
+      self::lazyAttributes($attributes, $settings);
+    }
   }
 
   /**
@@ -153,7 +193,7 @@ class Blazy implements BlazyInterface {
     // https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decode.
     $attributes['decoding'] = 'async';
 
-    // Reserves UUID for sub-module lookups, relevant for BlazyFilter.
+    // Preserves UUID for sub-module lookups, relevant for BlazyFilter.
     if (!empty($settings['entity_uuid'])) {
       $attributes['data-entity-uuid'] = $settings['entity_uuid'];
     }
@@ -372,27 +412,6 @@ class Blazy implements BlazyInterface {
   }
 
   /**
-   * Returns URI from image item.
-   */
-  public static function uri($item): string {
-    $fallback = $item->uri ?? '';
-    return empty($item) ? '' : (($file = $item->entity) && empty($item->uri) ? $file->getFileUri() : $fallback);
-  }
-
-  /**
-   * Returns fake image item based on the given $attributes.
-   */
-  public static function image(array $attributes = []) {
-    $item = new \stdClass();
-    foreach (['uri', 'width', 'height', 'target_id', 'alt', 'title'] as $key) {
-      if (isset($attributes[$key])) {
-        $item->{$key} = $attributes[$key];
-      }
-    }
-    return $item;
-  }
-
-  /**
    * Returns a wrapper to pass tests, or DI where adding params is troublesome.
    */
   public static function streamWrapperManager() {
@@ -513,6 +532,24 @@ class Blazy implements BlazyInterface {
    */
   public static function service($service) {
     return \Drupal::hasService($service) ? \Drupal::service($service) : NULL;
+  }
+
+  /**
+   * Returns URI from image item.
+   *
+   * @todo deprecated and removed for BlazyFile::uri().
+   */
+  public static function uri($item): string {
+    return BlazyFile::uri($item);
+  }
+
+  /**
+   * Returns fake image item based on the given $attributes.
+   *
+   * @todo deprecated and removed for BlazyFile::image().
+   */
+  public static function image(array $attributes = []) {
+    return BlazyFile::image($attributes);
   }
 
 }

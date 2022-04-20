@@ -87,9 +87,12 @@ class ChromeDriver extends CoreDriver
     public function __construct(
         $api_url = 'http://localhost:9222',
         HttpClient $http_client = null,
-        $base_url,
+        $base_url = null,
         $options = []
     ) {
+        if (empty($base_url)) {
+            throw new \InvalidArgumentException("Base URL can not be empty.");
+        }
         if ($http_client == null) {
             $http_client = new HttpClient();
         }
@@ -420,7 +423,7 @@ JS;
             }
         } else {
             $url = $this->base_url . '/';
-            $value = urlencode($value);
+            $value = rawurlencode($value);
             $this->page->send('Network.setCookie', ['url' => $url, 'name' => $name, 'value' => $value]);
         }
     }
@@ -440,7 +443,7 @@ JS;
 
         foreach ($result['cookies'] as $cookie) {
             if ($cookie['name'] == $name) {
-                return urldecode($cookie['value']);
+                return rawurldecode($cookie['value']);
             }
         }
         return null;
@@ -760,7 +763,7 @@ JS;
      */
     private function setNonTextTypeValue($xpath, $value)
     {
-        $json_value = ctype_digit($value) ? $value : json_encode($value);
+        $json_value = is_numeric($value) ? $value : json_encode($value);
         $text_value = json_encode($value);
         $expression = <<<JS
     var expected_value = $json_value;
@@ -1228,15 +1231,16 @@ JS;
     }
 
     /**
-     * Clear the sotred console messages.
-     *
-     * @return array
+     * Clear the console messages.
      */
     public function clearConsoleMessages()
     {
-        return $this->page->getConsoleMessages();
+        $this->page->clearConsoleMessages();
     }
 
+    /**
+     * Clear browser cookies.
+     */
     protected function deleteAllCookies()
     {
         $this->page->send('Network.clearBrowserCookies');

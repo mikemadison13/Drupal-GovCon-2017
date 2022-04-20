@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\PathMatcherInterface;
-use Drupal\path_alias\AliasManager;
+use Drupal\path_alias\AliasManagerInterface;
 use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -57,7 +57,7 @@ class ShieldMiddleware implements HttpKernelInterface {
   /**
    * The path alias manager.
    *
-   * @var \Drupal\path_alias\AliasManager
+   * @var \Drupal\path_alias\AliasManagerInterface
    */
   protected $pathAliasManager;
 
@@ -93,7 +93,7 @@ class ShieldMiddleware implements HttpKernelInterface {
    *   The EntityTypeManager service.
    * @param \Drupal\Core\Path\PathMatcherInterface $path_matcher
    *   The path matcher service.
-   * @param \Drupal\path_alias\AliasManager $path_alias_manager
+   * @param \Drupal\path_alias\AliasManagerInterface $path_alias_manager
    *   The path alias manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   Language Manager.
@@ -106,7 +106,7 @@ class ShieldMiddleware implements HttpKernelInterface {
                               ConfigFactoryInterface $config_factory,
                               EntityTypeManagerInterface $entity_type_manager,
                               PathMatcherInterface $path_matcher,
-                              AliasManager $path_alias_manager,
+                              AliasManagerInterface $path_alias_manager,
                               LanguageManagerInterface $language_manager,
                               ModuleHandlerInterface $module_handler,
                               RequestStack $requestStack) {
@@ -246,10 +246,11 @@ class ShieldMiddleware implements HttpKernelInterface {
    * @param bool $catch
    *   Whether to catch exceptions or not.
    *
-   * @return Response
+   * @return \Symfony\Component\HttpFoundation\Response
    *   A Response instance.
    *
-   * @throws \Exception When an Exception occurs during processing
+   * @throws \Exception
+   *   When an Exception occurs during processing.
    */
   public function bypass(Request $request, $type, $catch) {
     $basic_auth_enabled = $this->moduleHandler->moduleExists('basic_auth');
@@ -331,7 +332,7 @@ class ShieldMiddleware implements HttpKernelInterface {
       // We need to push the current request to the request stack because
       // basic_auth uses a flood functionality which needs the client IP.
       $this->requestStack->push($request);
-      /* @var $basicAuthService \Drupal\basic_auth\Authentication\Provider\BasicAuth */
+      /** @var \Drupal\basic_auth\Authentication\Provider\BasicAuth $basicAuthService */
       $basicAuthService = \Drupal::service('basic_auth.authentication.basic_auth');
       if ($basicAuthService->authenticate($request)) {
         // Reset request stack, as we don't need it anymore.

@@ -252,7 +252,7 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
         $settings['width'] = $resource->getThumbnailWidth() ?: $resource->getWidth();
         $settings['height'] = $resource->getThumbnailHeight() ?: $resource->getHeight();
       }
-      return Blazy::image($settings);
+      return BlazyFile::image($settings);
     }
     return NULL;
   }

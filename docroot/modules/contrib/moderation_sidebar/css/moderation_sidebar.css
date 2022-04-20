@@ -9,6 +9,9 @@
 .toolbar .toolbar-bar .toolbar-tab.moderation-sidebar-toolbar-tab {
   float: right;
 }
+[dir='rtl'] .toolbar .toolbar-bar .toolbar-tab.moderation-sidebar-toolbar-tab {
+  float: left;
+}
 
 .ui-dialog-off-canvas #drupal-off-canvas .moderation-sidebar-link,
 .ui-dialog-off-canvas #drupal-off-canvas .moderation-sidebar-link:visited,
@@ -24,6 +27,12 @@
   border-radius: 2px;
   text-align: left;
   transition: .2s;
+}
+[dir='rtl'] .ui-dialog-off-canvas #drupal-off-canvas .moderation-sidebar-link,
+[dir='rtl'] .ui-dialog-off-canvas #drupal-off-canvas .moderation-sidebar-link:visited,
+[dir='rtl'] .ui-dialog-off-canvas #drupal-off-canvas .moderation-sidebar-link.button,
+[dir='rtl'] .ui-dialog-off-canvas #drupal-off-canvas .moderation-sidebar-translation-item .moderation-sidebar-link.button:only-of-type {
+  text-align: right;
 }
 
 .ui-dialog-off-canvas #drupal-off-canvas .moderation-sidebar-translation-item .translation-links-container {
@@ -71,6 +80,10 @@
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+}
+[dir='rtl'] .ui-dialog-off-canvas #drupal-off-canvas .moderation-sidebar-button-wrapper i.material-icons {
+  right: 5px;
+  direction: rtl;
 }
 
 .ui-dialog.ui-dialog-off-canvas {
@@ -163,6 +176,11 @@
   overflow: hidden;
 }
 
+[dir='rtl'] .toolbar a.toolbar-icon-moderation-sidebar {
+  padding-right: auto !important;
+  padding-left: 0 !important;
+}
+
 .toolbar-icon-moderation-sidebar:after {
   content: attr(data-label);
   margin-left: .5em;
@@ -172,6 +190,9 @@
   font-weight: bold;
   background: #444643;
   color: white;
+}
+[dir='rtl'] .toolbar-icon-moderation-sidebar:after {
+  margin-right: .5em;
 }
 
 .ui-dialog-off-canvas #drupal-off-canvas .moderation-sidebar-link.button--primary {
@@ -215,6 +236,13 @@
   }
   .toolbar-icon-moderation-sidebar.moderation-label-draft-available {
     background: #ffae00;
+  }
+}
+
+@media only screen and (min-width: 36em) {
+  [dir="rtl"] .toolbar .toolbar-bar .toolbar-tab > .toolbar-icon {
+    padding-right: 2.75em !important;
+    padding-left: 1.3333em !important;
   }
 }
 
