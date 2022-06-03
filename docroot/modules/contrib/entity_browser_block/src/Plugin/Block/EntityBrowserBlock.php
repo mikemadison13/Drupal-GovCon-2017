@@ -5,6 +5,7 @@ namespace Drupal\entity_browser_block\Plugin\Block;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -163,10 +164,13 @@ class EntityBrowserBlock extends BlockBase implements ContainerFactoryPluginInte
           'class' => ['draggable'],
           'data-entity-id' => $id,
         ],
-        'title' => ['#markup' => $entity->label()],
+        'title' => ['#markup' => ($entity->access('view label')) ? $entity->label() : t('- Restricted access - (@id)', ['@id' => $id])],
         'view_mode' => [
           '#type' => 'select',
-          '#options' => $display_repository->getViewModeOptions($entity->getEntityTypeId()),
+          '#options' => $display_repository->getViewModeOptionsByBundle(
+            $entity->getEntityTypeId(),
+            $entity->bundle()
+          ),
         ],
         'operations' => [
           'remove' => [
@@ -288,20 +292,24 @@ class EntityBrowserBlock extends BlockBase implements ContainerFactoryPluginInte
       if (!isset($view_builders[$id])) {
         $view_builders[$id] = $this->entityTypeManager->getViewBuilder($entity_type_id);
       }
-      if ($entity && $entity->access('view')) {
-        if (isset(static::$recursiveRenderDepth[$id])) {
-          static::$recursiveRenderDepth[$id]++;
-        }
-        else {
-          static::$recursiveRenderDepth[$id] = 1;
-        }
-
-        if (static::$recursiveRenderDepth[$id] > static::RECURSIVE_RENDER_LIMIT) {
-          return $build;
-        }
-
-        $build[] = $view_builders[$id]->view($entity, $this->configuration['view_modes'][$id]);
+      if (isset(static::$recursiveRenderDepth[$id])) {
+        static::$recursiveRenderDepth[$id]++;
       }
+      else {
+        static::$recursiveRenderDepth[$id] = 1;
+      }
+      if (static::$recursiveRenderDepth[$id] > static::RECURSIVE_RENDER_LIMIT) {
+        return $build;
+      }
+      $access = $entity->access('view', NULL, TRUE);
+      if ($access->isAllowed()) {
+        $render = $view_builders[$id]->view($entity, $this->configuration['view_modes'][$id]);
+      }
+      else {
+        $render = [];
+      }
+      CacheableMetadata::createFromObject($access)->applyTo($render);
+      $build[] = $render;
     }
 
     return $build;
