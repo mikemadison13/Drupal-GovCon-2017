@@ -4894,17 +4894,17 @@
         },
         {
             "name": "drupal/core",
-            "version": "9.3.15",
-            "version_normalized": "9.3.15.0",
+            "version": "9.3.16",
+            "version_normalized": "9.3.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core.git",
-                "reference": "c29310a4d08d5072d7f713da744c0831636b4779"
+                "reference": "eef5b91fa6689410325d569a0653878b2b1782ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core/zipball/c29310a4d08d5072d7f713da744c0831636b4779",
-                "reference": "c29310a4d08d5072d7f713da744c0831636b4779",
+                "url": "https://api.github.com/repos/drupal/core/zipball/eef5b91fa6689410325d569a0653878b2b1782ed",
+                "reference": "eef5b91fa6689410325d569a0653878b2b1782ed",
                 "shasum": ""
             },
             "require": {
@@ -4926,7 +4926,7 @@
                 "ext-spl": "*",
                 "ext-tokenizer": "*",
                 "ext-xml": "*",
-                "guzzlehttp/guzzle": "^6.5.6",
+                "guzzlehttp/guzzle": "^6.5.7",
                 "laminas/laminas-diactoros": "^2.1",
                 "laminas/laminas-feed": "^2.12",
                 "masterminds/html5": "^2.1",
@@ -5071,7 +5071,7 @@
                 "drupal/workflows": "self.version",
                 "drupal/workspaces": "self.version"
             },
-            "time": "2022-06-01T15:45:43+00:00",
+            "time": "2022-06-10T19:08:28+00:00",
             "type": "drupal-core",
             "extra": {
                 "drupal-scaffold": {
@@ -5151,14 +5151,14 @@
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
             "support": {
-                "source": "https://github.com/drupal/core/tree/9.3.15"
+                "source": "https://github.com/drupal/core/tree/9.3.16"
             },
             "install-path": "../../docroot/core"
         },
         {
             "name": "drupal/core-composer-scaffold",
-            "version": "9.3.15",
-            "version_normalized": "9.3.15.0",
+            "version": "9.3.16",
+            "version_normalized": "9.3.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-composer-scaffold.git",
@@ -5204,7 +5204,7 @@
                 "drupal"
             ],
             "support": {
-                "source": "https://github.com/drupal/core-composer-scaffold/tree/9.3.15"
+                "source": "https://github.com/drupal/core-composer-scaffold/tree/9.3.16"
             },
             "install-path": "../drupal/core-composer-scaffold"
         },
@@ -11331,17 +11331,17 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.5.6",
-            "version_normalized": "6.5.6.0",
+            "version": "6.5.7",
+            "version_normalized": "6.5.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "f092dd734083473658de3ee4bef093ed77d2689c"
+                "reference": "724562fa861e21a4071c652c8a159934e4f05592"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f092dd734083473658de3ee4bef093ed77d2689c",
-                "reference": "f092dd734083473658de3ee4bef093ed77d2689c",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/724562fa861e21a4071c652c8a159934e4f05592",
+                "reference": "724562fa861e21a4071c652c8a159934e4f05592",
                 "shasum": ""
             },
             "require": {
@@ -11359,7 +11359,7 @@
             "suggest": {
                 "psr/log": "Required for using the Log middleware"
             },
-            "time": "2022-05-25T13:19:12+00:00",
+            "time": "2022-06-09T21:36:50+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -11429,7 +11429,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/6.5.6"
+                "source": "https://github.com/guzzle/guzzle/tree/6.5.7"
             },
             "funding": [
                 {
@@ -12239,17 +12239,17 @@
         },
         {
             "name": "laminas/laminas-stdlib",
-            "version": "3.7.1",
-            "version_normalized": "3.7.1.0",
+            "version": "3.10.1",
+            "version_normalized": "3.10.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-stdlib.git",
-                "reference": "bcd869e2fe88d567800057c1434f2380354fe325"
+                "reference": "0d669074845fc80a99add0f64025192f143ef836"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/bcd869e2fe88d567800057c1434f2380354fe325",
-                "reference": "bcd869e2fe88d567800057c1434f2380354fe325",
+                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/0d669074845fc80a99add0f64025192f143ef836",
+                "reference": "0d669074845fc80a99add0f64025192f143ef836",
                 "shasum": ""
             },
             "require": {
@@ -12265,7 +12265,7 @@
                 "psalm/plugin-phpunit": "^0.16.0",
                 "vimeo/psalm": "^4.7"
             },
-            "time": "2022-01-21T15:50:46+00:00",
+            "time": "2022-06-10T14:49:09+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -14992,6 +14992,7 @@
                     "type": "tidelift"
                 }
             ],
+            "abandoned": "symfony/error-handler",
             "install-path": "../symfony/debug"
         },
         {
@@ -18149,22 +18150,22 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.10.0",
-            "version_normalized": "1.10.0.0",
+            "version": "1.11.0",
+            "version_normalized": "1.11.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "6964c76c7804814a842473e0c8fd15bab0f18e25"
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/6964c76c7804814a842473e0c8fd15bab0f18e25",
-                "reference": "6964c76c7804814a842473e0c8fd15bab0f18e25",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2 || ^8.0",
-                "symfony/polyfill-ctype": "^1.8"
+                "ext-ctype": "*",
+                "php": "^7.2 || ^8.0"
             },
             "conflict": {
                 "phpstan/phpstan": "<0.12.20",
@@ -18173,7 +18174,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^8.5.13"
             },
-            "time": "2021-03-09T10:59:23+00:00",
+            "time": "2022-06-03T18:03:27+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -18204,7 +18205,7 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/1.10.0"
+                "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "install-path": "../webmozart/assert"
         },
