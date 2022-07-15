@@ -65,18 +65,24 @@ class PmCommands extends DrushCommands
     /**
      * Enable one or more modules.
      *
-     * @command pm:enable
+     * @command pm:install
      * @param $modules A comma delimited list of modules.
-     * @aliases en,pm-enable
+     * @aliases in, install, pm-install, en, pm-enable, pm:enable
      * @bootstrap root
+     *
+     * @usage drush pm:install --simulate content_moderation
+     *    Display what modules would be installed but don't install them.
      */
-    public function enable(array $modules): void
+    public function install(array $modules): void
     {
         $modules = StringUtils::csvToArray($modules);
         $todo = $this->addInstallDependencies($modules);
         $todo_str = ['!list' => implode(', ', $todo)];
         if (empty($todo)) {
             $this->logger()->notice(dt('Already enabled: !list', ['!list' => implode(', ', $modules)]));
+            return;
+        } elseif (Drush::simulate()) {
+            $this->output()->writeln(dt('The following module(s) will be enabled: !list', $todo_str));
             return;
         } elseif (array_values($todo) !== $modules) {
             $this->output()->writeln(dt('The following module(s) will be enabled: !list', $todo_str));
@@ -97,7 +103,7 @@ class PmCommands extends DrushCommands
     /**
      * Run requirements checks on the module installation.
      *
-     * @hook validate pm:enable
+     * @hook validate pm:install
      *
      * @throws UserAbortException
      * @throws MissingDependencyException
@@ -116,7 +122,15 @@ class PmCommands extends DrushCommands
         require_once DRUSH_DRUPAL_CORE . '/includes/install.inc';
         $error = false;
         foreach ($modules as $module) {
-            module_load_install($module);
+            // Note: we can't just call the API ($moduleHandler->loadInclude($module, 'install')),
+            // because the API ignores modules that haven't been installed yet. We have
+            // to do it the same way the `function drupal_check_module($module)` does.
+            $module_list = \Drupal::service('extension.list.module');
+            $file = DRUPAL_ROOT . '/' . $module_list->getPath($module) . "/$module.install";
+            if (is_file($file)) {
+                require_once $file;
+            }
+            // Once we've loaded the module, we can invoke its requirements hook.
             $requirements = $this->getModuleHandler()->invoke($module, 'requirements', ['install']);
             if (is_array($requirements) && drupal_requirements_severity($requirements) == REQUIREMENT_ERROR) {
                 $error = true;
@@ -147,12 +161,20 @@ class PmCommands extends DrushCommands
      *
      * @command pm:uninstall
      * @param $modules A comma delimited list of modules.
-     * @aliases pmu,pm-uninstall
+     * @aliases un,pmu,pm-uninstall
+     *
+     * @usage drush pm:uninstall --simulate field_ui
+     *      Display what modules would be uninstalled but don't uninstall them.
      */
     public function uninstall(array $modules): void
     {
         $modules = StringUtils::csvToArray($modules);
         $list = $this->addUninstallDependencies($modules);
+        if (Drush::simulate()) {
+            $this->output()->writeln(dt('The following extensions will be uninstalled: !list', ['!list' => implode(', ', $list)]));
+            return;
+        }
+
         if (array_values($list) !== $modules) {
             $this->output()->writeln(dt('The following extensions will be uninstalled: !list', ['!list' => implode(', ', $list)]));
             if (!$this->io()->confirm(dt('Do you want to continue?'))) {

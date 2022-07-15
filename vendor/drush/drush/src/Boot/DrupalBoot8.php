@@ -5,6 +5,7 @@ namespace Drush\Boot;
 use Drupal\Core\DrupalKernelInterface;
 use Consolidation\AnnotatedCommand\AnnotationData;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Render\HtmlResponse;
 use Drupal\Core\DrupalKernel;
 use Drush\Config\ConfigLocator;
 use Drush\Drupal\DrushLoggerServiceProvider;
@@ -135,7 +136,14 @@ class DrupalBoot8 extends DrupalBoot implements AutoloaderAwareInterface
             'SCRIPT_FILENAME' => getcwd() . '/index.php',
             'SCRIPT_NAME' => isset($parsed_url['path']) ? $parsed_url['path'] . 'index.php' : '/index.php',
         ] + $_SERVER;
-        $request = Request::create($uri, 'GET', [], [], [], $server);
+        // To do: split into Drupal 9 and Drupal 10 bootstrap
+        if (method_exists(Request::class, 'create')) {
+            // Drupal 9
+            $request = Request::create($uri, 'GET', [], [], [], $server);
+        } else {
+            // Drupal 10
+            $request = Request::createFromGlobals();
+        }
         $request->overrideGlobals();
         $this->setRequest($request);
         return true;
@@ -255,17 +263,17 @@ class DrupalBoot8 extends DrupalBoot implements AutoloaderAwareInterface
 
         // Set the command info alterers.
         if ($container->has(DrushServiceModifier::DRUSH_COMMAND_INFO_ALTERER_SERVICES)) {
-            $serviceCommandInfoAltererlist = $container->get(DrushServiceModifier::DRUSH_COMMAND_INFO_ALTERER_SERVICES);
+            $serviceCommandInfoAltererList = $container->get(DrushServiceModifier::DRUSH_COMMAND_INFO_ALTERER_SERVICES);
             $commandFactory = Drush::commandFactory();
-            foreach ($serviceCommandInfoAltererlist->getCommandList() as $altererHandler) {
+            foreach ($serviceCommandInfoAltererList->getCommandList() as $altererHandler) {
                 $commandFactory->addCommandInfoAlterer($altererHandler);
                 $this->logger->debug(dt('Commands are potentially altered in !class.', ['!class' => get_class($altererHandler)]));
             }
         }
 
-        $serviceCommandlist = $container->get(DrushServiceModifier::DRUSH_CONSOLE_SERVICES);
         if ($container->has(DrushServiceModifier::DRUSH_CONSOLE_SERVICES)) {
-            foreach ($serviceCommandlist->getCommandList() as $command) {
+            $serviceCommandList = $container->get(DrushServiceModifier::DRUSH_CONSOLE_SERVICES);
+            foreach ($serviceCommandList->getCommandList() as $command) {
                 $manager->inflect($command);
                 $this->logger->debug(dt('Add a command: !name', ['!name' => $command->getName()]));
                 $application->add($command);
@@ -273,8 +281,8 @@ class DrupalBoot8 extends DrupalBoot implements AutoloaderAwareInterface
         }
         // Do the same thing with the annotation commands.
         if ($container->has(DrushServiceModifier::DRUSH_COMMAND_SERVICES)) {
-            $serviceCommandlist = $container->get(DrushServiceModifier::DRUSH_COMMAND_SERVICES);
-            foreach ($serviceCommandlist->getCommandList() as $commandHandler) {
+            $serviceCommandList = $container->get(DrushServiceModifier::DRUSH_COMMAND_SERVICES);
+            foreach ($serviceCommandList->getCommandList() as $commandHandler) {
                 $manager->inflect($commandHandler);
                 $this->logger->debug(dt('Add a commandfile class: !name', ['!name' => get_class($commandHandler)]));
                 $runner->registerCommandClass($application, $commandHandler);
@@ -290,7 +298,11 @@ class DrupalBoot8 extends DrupalBoot implements AutoloaderAwareInterface
         parent::terminate();
 
         if ($this->kernel) {
-            $response = Response::create('');
+            if (method_exists(Response::class, 'create')) {
+                $response = Response::create('');
+            } else {
+                $response = new HtmlResponse();
+            }
             $this->kernel->terminate($this->getRequest(), $response);
         }
     }

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
+class ComposerStaticInit1b617483f9551ae67c483b420aef862f
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -218,6 +218,7 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
+            'Dflydev\\DotAccessData\\' => 22,
             'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 55,
             'DMore\\ChromeExtension\\' => 22,
             'DMore\\ChromeDriver\\' => 19,
@@ -696,6 +697,10 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
             2 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
             3 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
         ),
+        'Dflydev\\DotAccessData\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dflydev/dot-access-data/src',
+        ),
         'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 
         array (
             0 => __DIR__ . '/..' . '/dealerdirect/phpcodesniffer-composer-installer/src',
@@ -894,10 +899,6 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
             'Drupal\\Driver' => 
             array (
                 0 => __DIR__ . '/..' . '/drupal/drupal-driver/src',
-            ),
-            'Dflydev\\DotAccessData' => 
-            array (
-                0 => __DIR__ . '/..' . '/dflydev/dot-access-data/src',
             ),
         ),
         'C' => 
@@ -1949,7 +1950,6 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
         'Consolidation\\Config\\Util\\ConfigRuntimeInterface' => __DIR__ . '/..' . '/consolidation/config/src/Util/ConfigRuntimeInterface.php',
         'Consolidation\\Config\\Util\\EnvConfig' => __DIR__ . '/..' . '/consolidation/config/src/Util/EnvConfig.php',
         'Consolidation\\Config\\Util\\Interpolator' => __DIR__ . '/..' . '/consolidation/config/src/Util/Interpolator.php',
-        'Consolidation\\Filter\\Cli\\OpCommands' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Cli/OpCommands.php',
         'Consolidation\\Filter\\FactoryInterface' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/FactoryInterface.php',
         'Consolidation\\Filter\\FilterOutputData' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/FilterOutputData.php',
         'Consolidation\\Filter\\Hooks\\FilterHooks' => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src/Hooks/FilterHooks.php',
@@ -2095,9 +2095,12 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
         'DMore\\ChromeExtension\\Behat\\ServiceContainer\\ChromeExtension' => __DIR__ . '/..' . '/dmore/behat-chrome-extension/src/Behat/ServiceContainer/ChromeExtension.php',
         'DMore\\ChromeExtension\\Behat\\ServiceContainer\\Driver\\ChromeFactory' => __DIR__ . '/..' . '/dmore/behat-chrome-extension/src/Behat/ServiceContainer/Driver/ChromeFactory.php',
         'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin' => __DIR__ . '/..' . '/dealerdirect/phpcodesniffer-composer-installer/src/Plugin.php',
-        'Dflydev\\DotAccessData\\Data' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/Data.php',
-        'Dflydev\\DotAccessData\\DataInterface' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/DataInterface.php',
-        'Dflydev\\DotAccessData\\Util' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/Util.php',
+        'Dflydev\\DotAccessData\\Data' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Data.php',
+        'Dflydev\\DotAccessData\\DataInterface' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/DataInterface.php',
+        'Dflydev\\DotAccessData\\Exception\\DataException' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Exception/DataException.php',
+        'Dflydev\\DotAccessData\\Exception\\InvalidPathException' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Exception/InvalidPathException.php',
+        'Dflydev\\DotAccessData\\Exception\\MissingPathException' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Exception/MissingPathException.php',
+        'Dflydev\\DotAccessData\\Util' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Util.php',
         'Doctrine\\Common\\Annotations\\Annotation' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation.php',
         'Doctrine\\Common\\Annotations\\AnnotationException' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/AnnotationException.php',
         'Doctrine\\Common\\Annotations\\AnnotationReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/AnnotationReader.php',
@@ -4537,6 +4540,8 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
         'Drush\\Commands\\OptionsCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/OptionsCommands.php',
         'Drush\\Commands\\ValidatorsCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/ValidatorsCommands.php',
         'Drush\\Commands\\config\\ConfigPullCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/config/ConfigPullCommands.php',
+        'Drush\\Commands\\core\\ArchiveDumpCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/ArchiveDumpCommands.php',
+        'Drush\\Commands\\core\\ArchiveRestoreCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/ArchiveRestoreCommands.php',
         'Drush\\Commands\\core\\BrowseCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/BrowseCommands.php',
         'Drush\\Commands\\core\\CacheCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/CacheCommands.php',
         'Drush\\Commands\\core\\CoreCommands' => __DIR__ . '/..' . '/drush/drush/src/Commands/core/CoreCommands.php',
@@ -4675,13 +4680,9 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
         'Drush\\Sql\\SqlPgsql' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlPgsql.php',
         'Drush\\Sql\\SqlSqlite' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlSqlite.php',
         'Drush\\Sql\\SqlTableSelectionTrait' => __DIR__ . '/..' . '/drush/drush/src/Sql/SqlTableSelectionTrait.php',
-        'Drush\\Style\\DrushStyle' => __DIR__ . '/..' . '/drush/drush/src/Style/DrushStyle.php',
         'Drush\\Symfony\\BootstrapCompilerPass' => __DIR__ . '/..' . '/drush/drush/src/Symfony/BootstrapCompilerPass.php',
-        'Drush\\Symfony\\BufferedConsoleOutput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/BufferedConsoleOutput.php',
         'Drush\\Symfony\\DrushArgvInput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/DrushArgvInput.php',
         'Drush\\Symfony\\DrushStyleInjector' => __DIR__ . '/..' . '/drush/drush/src/Symfony/DrushStyleInjector.php',
-        'Drush\\Symfony\\IndiscriminateInputDefinition' => __DIR__ . '/..' . '/drush/drush/src/Symfony/IndiscriminateInputDefinition.php',
-        'Drush\\Symfony\\LessStrictArgvInput' => __DIR__ . '/..' . '/drush/drush/src/Symfony/LessStrictArgvInput.php',
         'Drush\\TestTraits\\CliTestTrait' => __DIR__ . '/..' . '/drush/drush/src/TestTraits/CliTestTrait.php',
         'Drush\\TestTraits\\DrushTestTrait' => __DIR__ . '/..' . '/drush/drush/src/TestTraits/DrushTestTrait.php',
         'Drush\\TestTraits\\OutputUtilsTrait' => __DIR__ . '/..' . '/drush/drush/src/TestTraits/OutputUtilsTrait.php',
@@ -4795,7 +4796,8 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
         'Grasmash\\YamlCli\\Command\\UnsetKeyCommand' => __DIR__ . '/..' . '/grasmash/yaml-cli/src/Command/UnsetKeyCommand.php',
         'Grasmash\\YamlCli\\Command\\UpdateKeyCommand' => __DIR__ . '/..' . '/grasmash/yaml-cli/src/Command/UpdateKeyCommand.php',
         'Grasmash\\YamlCli\\Command\\UpdateValueCommand' => __DIR__ . '/..' . '/grasmash/yaml-cli/src/Command/UpdateValueCommand.php',
-        'Grasmash\\YamlExpander\\Expander' => __DIR__ . '/..' . '/grasmash/yaml-expander/src/Expander.php',
+        'Grasmash\\YamlExpander\\Stringifier' => __DIR__ . '/..' . '/grasmash/yaml-expander/src/Stringifier.php',
+        'Grasmash\\YamlExpander\\YamlExpander' => __DIR__ . '/..' . '/grasmash/yaml-expander/src/YamlExpander.php',
         'GuzzleHttp\\Client' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Client.php',
         'GuzzleHttp\\ClientInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/ClientInterface.php',
         'GuzzleHttp\\Cookie\\CookieJar' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Cookie/CookieJar.php',
@@ -5399,16 +5401,26 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
         'Laminas\\ZendFrameworkBridge\\Module' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Module.php',
         'Laminas\\ZendFrameworkBridge\\Replacements' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/Replacements.php',
         'Laminas\\ZendFrameworkBridge\\RewriteRules' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/RewriteRules.php',
+        'League\\Container\\Argument\\ArgumentInterface' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentInterface.php',
         'League\\Container\\Argument\\ArgumentResolverInterface' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverInterface.php',
         'League\\Container\\Argument\\ArgumentResolverTrait' => __DIR__ . '/..' . '/league/container/src/Argument/ArgumentResolverTrait.php',
-        'League\\Container\\Argument\\ClassName' => __DIR__ . '/..' . '/league/container/src/Argument/ClassName.php',
-        'League\\Container\\Argument\\ClassNameInterface' => __DIR__ . '/..' . '/league/container/src/Argument/ClassNameInterface.php',
-        'League\\Container\\Argument\\ClassNameWithOptionalValue' => __DIR__ . '/..' . '/league/container/src/Argument/ClassNameWithOptionalValue.php',
-        'League\\Container\\Argument\\RawArgument' => __DIR__ . '/..' . '/league/container/src/Argument/RawArgument.php',
-        'League\\Container\\Argument\\RawArgumentInterface' => __DIR__ . '/..' . '/league/container/src/Argument/RawArgumentInterface.php',
+        'League\\Container\\Argument\\DefaultValueArgument' => __DIR__ . '/..' . '/league/container/src/Argument/DefaultValueArgument.php',
+        'League\\Container\\Argument\\DefaultValueInterface' => __DIR__ . '/..' . '/league/container/src/Argument/DefaultValueInterface.php',
+        'League\\Container\\Argument\\LiteralArgument' => __DIR__ . '/..' . '/league/container/src/Argument/LiteralArgument.php',
+        'League\\Container\\Argument\\LiteralArgumentInterface' => __DIR__ . '/..' . '/league/container/src/Argument/LiteralArgumentInterface.php',
+        'League\\Container\\Argument\\Literal\\ArrayArgument' => __DIR__ . '/..' . '/league/container/src/Argument/Literal/ArrayArgument.php',
+        'League\\Container\\Argument\\Literal\\BooleanArgument' => __DIR__ . '/..' . '/league/container/src/Argument/Literal/BooleanArgument.php',
+        'League\\Container\\Argument\\Literal\\CallableArgument' => __DIR__ . '/..' . '/league/container/src/Argument/Literal/CallableArgument.php',
+        'League\\Container\\Argument\\Literal\\FloatArgument' => __DIR__ . '/..' . '/league/container/src/Argument/Literal/FloatArgument.php',
+        'League\\Container\\Argument\\Literal\\IntegerArgument' => __DIR__ . '/..' . '/league/container/src/Argument/Literal/IntegerArgument.php',
+        'League\\Container\\Argument\\Literal\\ObjectArgument' => __DIR__ . '/..' . '/league/container/src/Argument/Literal/ObjectArgument.php',
+        'League\\Container\\Argument\\Literal\\StringArgument' => __DIR__ . '/..' . '/league/container/src/Argument/Literal/StringArgument.php',
+        'League\\Container\\Argument\\ResolvableArgument' => __DIR__ . '/..' . '/league/container/src/Argument/ResolvableArgument.php',
+        'League\\Container\\Argument\\ResolvableArgumentInterface' => __DIR__ . '/..' . '/league/container/src/Argument/ResolvableArgumentInterface.php',
         'League\\Container\\Container' => __DIR__ . '/..' . '/league/container/src/Container.php',
         'League\\Container\\ContainerAwareInterface' => __DIR__ . '/..' . '/league/container/src/ContainerAwareInterface.php',
         'League\\Container\\ContainerAwareTrait' => __DIR__ . '/..' . '/league/container/src/ContainerAwareTrait.php',
+        'League\\Container\\DefinitionContainerInterface' => __DIR__ . '/..' . '/league/container/src/DefinitionContainerInterface.php',
         'League\\Container\\Definition\\Definition' => __DIR__ . '/..' . '/league/container/src/Definition/Definition.php',
         'League\\Container\\Definition\\DefinitionAggregate' => __DIR__ . '/..' . '/league/container/src/Definition/DefinitionAggregate.php',
         'League\\Container\\Definition\\DefinitionAggregateInterface' => __DIR__ . '/..' . '/league/container/src/Definition/DefinitionAggregateInterface.php',
@@ -5926,9 +5938,65 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
         'Psy\\ParserFactory' => __DIR__ . '/..' . '/psy/psysh/src/ParserFactory.php',
         'Psy\\Readline\\GNUReadline' => __DIR__ . '/..' . '/psy/psysh/src/Readline/GNUReadline.php',
         'Psy\\Readline\\HoaConsole' => __DIR__ . '/..' . '/psy/psysh/src/Readline/HoaConsole.php',
+        'Psy\\Readline\\Hoa\\Autocompleter' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/Autocompleter.php',
+        'Psy\\Readline\\Hoa\\AutocompleterAggregate' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/AutocompleterAggregate.php',
+        'Psy\\Readline\\Hoa\\AutocompleterPath' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/AutocompleterPath.php',
+        'Psy\\Readline\\Hoa\\AutocompleterWord' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/AutocompleterWord.php',
+        'Psy\\Readline\\Hoa\\Console' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/Console.php',
+        'Psy\\Readline\\Hoa\\ConsoleCursor' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ConsoleCursor.php',
+        'Psy\\Readline\\Hoa\\ConsoleException' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ConsoleException.php',
+        'Psy\\Readline\\Hoa\\ConsoleInput' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ConsoleInput.php',
+        'Psy\\Readline\\Hoa\\ConsoleOutput' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ConsoleOutput.php',
+        'Psy\\Readline\\Hoa\\ConsoleProcessus' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ConsoleProcessus.php',
+        'Psy\\Readline\\Hoa\\ConsoleTput' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ConsoleTput.php',
+        'Psy\\Readline\\Hoa\\ConsoleWindow' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ConsoleWindow.php',
+        'Psy\\Readline\\Hoa\\Event' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/Event.php',
+        'Psy\\Readline\\Hoa\\EventBucket' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/EventBucket.php',
+        'Psy\\Readline\\Hoa\\EventException' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/EventException.php',
+        'Psy\\Readline\\Hoa\\EventListenable' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/EventListenable.php',
+        'Psy\\Readline\\Hoa\\EventListener' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/EventListener.php',
+        'Psy\\Readline\\Hoa\\EventListens' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/EventListens.php',
+        'Psy\\Readline\\Hoa\\EventSource' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/EventSource.php',
+        'Psy\\Readline\\Hoa\\Exception' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/Exception.php',
+        'Psy\\Readline\\Hoa\\ExceptionIdle' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ExceptionIdle.php',
+        'Psy\\Readline\\Hoa\\File' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/File.php',
+        'Psy\\Readline\\Hoa\\FileDirectory' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileDirectory.php',
+        'Psy\\Readline\\Hoa\\FileDoesNotExistException' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileDoesNotExistException.php',
+        'Psy\\Readline\\Hoa\\FileException' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileException.php',
+        'Psy\\Readline\\Hoa\\FileFinder' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileFinder.php',
+        'Psy\\Readline\\Hoa\\FileGeneric' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileGeneric.php',
+        'Psy\\Readline\\Hoa\\FileLink' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileLink.php',
+        'Psy\\Readline\\Hoa\\FileLinkRead' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileLinkRead.php',
+        'Psy\\Readline\\Hoa\\FileLinkReadWrite' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileLinkReadWrite.php',
+        'Psy\\Readline\\Hoa\\FileRead' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileRead.php',
+        'Psy\\Readline\\Hoa\\FileReadWrite' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/FileReadWrite.php',
+        'Psy\\Readline\\Hoa\\IStream' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/IStream.php',
+        'Psy\\Readline\\Hoa\\IteratorFileSystem' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/IteratorFileSystem.php',
+        'Psy\\Readline\\Hoa\\IteratorRecursiveDirectory' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/IteratorRecursiveDirectory.php',
+        'Psy\\Readline\\Hoa\\IteratorSplFileInfo' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/IteratorSplFileInfo.php',
+        'Psy\\Readline\\Hoa\\Protocol' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/Protocol.php',
+        'Psy\\Readline\\Hoa\\ProtocolException' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ProtocolException.php',
+        'Psy\\Readline\\Hoa\\ProtocolNode' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ProtocolNode.php',
+        'Psy\\Readline\\Hoa\\ProtocolNodeLibrary' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ProtocolNodeLibrary.php',
+        'Psy\\Readline\\Hoa\\ProtocolWrapper' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/ProtocolWrapper.php',
+        'Psy\\Readline\\Hoa\\Readline' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/Readline.php',
+        'Psy\\Readline\\Hoa\\Stream' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/Stream.php',
+        'Psy\\Readline\\Hoa\\StreamBufferable' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamBufferable.php',
+        'Psy\\Readline\\Hoa\\StreamContext' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamContext.php',
+        'Psy\\Readline\\Hoa\\StreamException' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamException.php',
+        'Psy\\Readline\\Hoa\\StreamIn' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamIn.php',
+        'Psy\\Readline\\Hoa\\StreamLockable' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamLockable.php',
+        'Psy\\Readline\\Hoa\\StreamOut' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamOut.php',
+        'Psy\\Readline\\Hoa\\StreamPathable' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamPathable.php',
+        'Psy\\Readline\\Hoa\\StreamPointable' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamPointable.php',
+        'Psy\\Readline\\Hoa\\StreamStatable' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamStatable.php',
+        'Psy\\Readline\\Hoa\\StreamTouchable' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/StreamTouchable.php',
+        'Psy\\Readline\\Hoa\\Ustring' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/Ustring.php',
+        'Psy\\Readline\\Hoa\\Xcallable' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Hoa/Xcallable.php',
         'Psy\\Readline\\Libedit' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Libedit.php',
         'Psy\\Readline\\Readline' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Readline.php',
         'Psy\\Readline\\Transient' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Transient.php',
+        'Psy\\Readline\\Userland' => __DIR__ . '/..' . '/psy/psysh/src/Readline/Userland.php',
         'Psy\\Reflection\\ReflectionClassConstant' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionClassConstant.php',
         'Psy\\Reflection\\ReflectionConstant' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionConstant.php',
         'Psy\\Reflection\\ReflectionConstant_' => __DIR__ . '/..' . '/psy/psysh/src/Reflection/ReflectionConstant_.php',
@@ -8438,11 +8506,11 @@ class ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit8c2b5c71af65f6983ab1923c3a4527bd::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$classMap;
 
         }, null, ClassLoader::class);
     }
