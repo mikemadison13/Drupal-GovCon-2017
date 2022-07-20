@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1b617483f9551ae67c483b420aef862f
+class ComposerStaticInitc787360a0aabc72a0b73bf329913b797
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -20,6 +20,7 @@ class ComposerStaticInit1b617483f9551ae67c483b420aef862f
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        'c9d07b32a2e02bc0fc582d4f0c1b56cc' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/autoload.php',
         '07d7f1a47144818725fd8d91a907ac57' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/create_uploaded_file.php',
         'da94ac5d3ca7d2dbab84ce561ce72bfd' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/marshal_headers_from_sapi.php',
         '3d97c8dcdfba8cb85d3b34f116bb248b' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/marshal_method_from_sapi.php',
@@ -43,7 +44,6 @@ class ComposerStaticInit1b617483f9551ae67c483b420aef862f
         '9b38cf48e83f5d8f60375221cd213eee' => __DIR__ . '/..' . '/phpstan/phpstan/bootstrap.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
-        'c9d07b32a2e02bc0fc582d4f0c1b56cc' => __DIR__ . '/..' . '/laminas/laminas-servicemanager/src/autoload.php',
         '2d0bd6b7e257b7230c706e6559d6a87b' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/drupal-phpunit-hack.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         'fbeead2280a8f3911a1fe6dd034f7d5e' => __DIR__ . '/..' . '/mkalkbrenner/php-htmldiff-advanced/src/HtmlDiffAdvancedInterface.php',
@@ -8506,11 +8506,11 @@ class ComposerStaticInit1b617483f9551ae67c483b420aef862f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit1b617483f9551ae67c483b420aef862f::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitc787360a0aabc72a0b73bf329913b797::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitc787360a0aabc72a0b73bf329913b797::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitc787360a0aabc72a0b73bf329913b797::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitc787360a0aabc72a0b73bf329913b797::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitc787360a0aabc72a0b73bf329913b797::$classMap;
 
         }, null, ClassLoader::class);
     }
